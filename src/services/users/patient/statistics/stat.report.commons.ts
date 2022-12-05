@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { ChartColors } from '../../../../modules/charts/chart.options';
 import { PDFGenerator } from "../../../../modules/reports/pdf.generator";
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -100,6 +101,36 @@ export default class StatReportCommons {
         return y;
     }
 
+    public addNoDataDisplay = (document: PDFKit.PDFDocument, y: number, title: string): number => {
+        y = y + 18;
+
+        document
+            .roundedRect(150, y, 300, 35, 2)
+            .lineWidth(0.1)
+            .fillOpacity(0.8)
+            .fill(ChartColors.Salmon);
+
+        y = y + 13;
+
+        document
+            .fillOpacity(1.0)
+            .fill("#444444");
+
+        document
+            .fillColor("#444444")
+            .font('Helvetica')
+            .fontSize(12);
+
+        document
+            .font('Helvetica-Bold')
+            .text(title, 35, y, { align: "center" })
+            .moveDown();
+
+        y = y + 20;
+
+        return y;
+    }
+
     public addFooter = (document: PDFKit.PDFDocument, text, logoImagePath) => {
 
         //var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Footer.png");
@@ -130,12 +161,15 @@ export default class StatReportCommons {
             .moveDown();
     }
 
-    public addLegend = (document: PDFKit.PDFDocument, y: number,
-        legendItems: any, startX: number, fontSize: number, margin = 10) => {
+    public addLegend = (
+        document: PDFKit.PDFDocument, y: number,
+        legendItems: any, startX: number, fontSize: number,
+        colorStripWidth = 150,
+        colorStripHeight = 6,
+        margin = 10) => {
 
         y = y + margin;
 
-        const colorStripWidth = 150;
         const rowYOffset = 17;
 
         document
@@ -148,7 +182,7 @@ export default class StatReportCommons {
             const color = l.Color;
 
             document
-                .roundedRect(startX, y, colorStripWidth, 6, 3)
+                .roundedRect(startX, y, colorStripWidth, colorStripHeight, 3)
                 .lineWidth(0.1)
                 .fillOpacity(0.8)
                 .fill(color);

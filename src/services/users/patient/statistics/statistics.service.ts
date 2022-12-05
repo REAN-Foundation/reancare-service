@@ -200,9 +200,12 @@ export class StatisticsService {
         };
 
         //Sleep trend
-        const SleepTrendLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
+        const sleepStats = await this._sleepRepo.getStats(patientUserId, 1);
+        const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
+        const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / sleepStats.length;
         const sleepTrend = {
-            LastMonth : SleepTrendLastMonth,
+            LastMonth           : sleepStats,
+            AverageForLastMonth : averageSleepHours.toFixed(1),
         };
 
         //Medication trends
@@ -286,9 +289,9 @@ export class StatisticsService {
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
             pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
-            pageNumber = this.addNutritionPage(document, reportModel, pageNumber);
+            pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
+            pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
             pageNumber = this.addExercisePage(document, reportModel, pageNumber);
-            pageNumber = this.addSleepPage(document, reportModel, pageNumber);
             pageNumber = this.addPatientEngagementPage(document, reportModel, pageNumber);
 
             document.end();
@@ -333,17 +336,26 @@ export class StatisticsService {
 
     private addMedicationPage = (document, model, pageNumber) => {
         var y = this._commons.addTop(document, model);
-        y = this._commons.addSectionTitle(document, y, 'Medication History');
-        this.addMedicationStats(document, model, y);
+        y = this.addMedicationStats(document, model, y);
+        const currentMedications = model.Stats.Medication.CurrentMedications;
+        y = this.addCurrentMedications(document, currentMedications, y);
         this._commons.addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
-    private addNutritionPage = (document, model, pageNumber) => {
+    private addNutritionPageA = (document, model, pageNumber) => {
         var y = this._commons.addTop(document, model);
-        y = this._commons.addSectionTitle(document, y, 'Food and Nutrition');
-        this.addNutritionStats(document, model, y);
+        y = this.addNutritionCalorieStats(document, model, y);
+        this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addNutritionPageB = (document, model, pageNumber) => {
+        var y = this._commons.addTop(document, model);
+        y = this.addNutritionServingsStats(document, model, y);
+        y = this.addSleepStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -351,17 +363,7 @@ export class StatisticsService {
 
     private addExercisePage = (document, model, pageNumber) => {
         var y = this._commons.addTop(document, model);
-        y = this._commons.addSectionTitle(document, y, 'Exercise and Physical Activity');
         this.addExerciseStats(document, model, y);
-        this._commons.addBottom(document, pageNumber, model);
-        pageNumber += 1;
-        return pageNumber;
-    };
-
-    private addSleepPage = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this._commons.addSectionTitle(document, y, 'Sleep Hours History');
-        this.addSleepStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -369,104 +371,206 @@ export class StatisticsService {
 
     private addPatientEngagementPage = (document, model, pageNumber) => {
         var y = this._commons.addTop(document, model);
-        y = this._commons.addSectionTitle(document, y, 'Summary');
-        this.addSummaryStats(document, model, y);
+        y = this.addUserTasksStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
     private addMedicationStats = (document, model, y) => {
-        y = y + 45;
 
-        var c = model.ChartImagePaths.find(x => x.key === 'MedicationsHistory_LastMonth');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 190;
-        this._commons.addText(document, 'Medication History', 75, y, 14, '#505050', 'center');
+        let chartImage = 'MedicationsHistory_LastMonth';
+        const detailedTitle = 'Medication History for Last Month';
+        const titleColor = '#505050';
+        const sectionTitle = 'Medication History';
 
-        y = y + 80;
-        c = model.ChartImagePaths.find(x => x.key === 'MedicationsOverall_LastMonth');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 190;
-        this._commons.addText(document, 'Medication Adherence', 75, y, 14, '#505050', 'center');
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 20;
+
+        y = y + 7;
+        const legend = this._imageGenerator.getMedicationStatusCategoryColors();
+        chartImage = 'MedicationsOverall_LastMonth';
+        y = this.addSquareChartImageWithLegend(document, model, chartImage, y, 'Medication Adherence for Last Month', titleColor, legend);
 
         return y;
     };
 
-    private addNutritionStats = (document, model, y) => {
+    private addCurrentMedications(document, medications, y) {
+
+        y = this._commons.addSectionTitle(document, y, "Current Medications");
+
+        if (medications.length === 0) {
+            y = y + 55;
+            y = this._commons.addNoDataDisplay(document, y, "Data not available!");
+            y = y + 100;
+            return y;
+        }
+
+        const tableTop = y + 21;
+        const ITEM_HEIGHT = 26;
+        let medicationsCount = medications.length;
+
+        if (medicationsCount > 5) {
+            medicationsCount = 5;
+        }
+
+        for (let i = 0; i < medicationsCount; i++) {
+
+            const medication = medications[i];
+            const position = tableTop + (i * ITEM_HEIGHT);
+            y = position;
+
+            const schedule = medication.TimeSchedules ? medication.TimeSchedules.join(', ') : '';
+
+            this.generateMedicationTableRow(
+                document,
+                position,
+                (i + 1).toString(),
+                medication.DrugName,
+                medication.Dose.toString(),
+                medication.DosageUnit,
+                medication.Frequency,
+                medication.FrequencyUnit,
+                schedule,
+                medication.Route,
+                medication.Duration.toString(),
+                medication.DurationUnit
+            );
+        }
+
+        y = y + ITEM_HEIGHT + 10;
+        return y;
+    }
+
+    private addNutritionCalorieStats = (document, model, y) => {
+
+        let chartImage = 'Nutrition_CaloriesConsumed_LastMonth';
+        let detailedTitle = 'Calorie Consumption for Last Month';
+        const titleColor = '#505050';
+        const sectionTitle = 'Food and Nutrition - Calories';
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 27;
 
-        var c = model.ChartImagePaths.find(x => x.key === 'Nutrition_CaloriesConsumed_LastMonth');
-        document.image(c.location, 120, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Calorie Consumption', 100, y, 13, '#505050', 'center');
+        y = this._commons.addSectionTitle(document, y, 'Food and Nutrition - Questionnaire');
 
-        y = y + 20;
-        c = model.ChartImagePaths.find(x => x.key === 'Nutrition_QuestionnaireResponses_LastMonth');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Nutrition Questionnaire Response', 100, y, 13, '#505050', 'center');
-
+        chartImage = 'Nutrition_QuestionnaireResponses_LastMonth';
+        detailedTitle = 'Nutrition Questionnaire Response';
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
 
-        c = model.ChartImagePaths.find(x => x.key === 'Nutrition_Servings_LastMonth');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Servings History', 100, y, 13, '#505050', 'center');
+        const colors = this._imageGenerator.getNutritionQuestionCategoryColors();
+        const legend = colors.map(x => {
+            return {
+                Key   : x.Key + ': ' + x.Question,
+                Color : x.Color,
+            };
+        });
+
+        y = this._commons.addLegend(document, y, legend, 125, 11, 50, 10, 15);
+
+        return y;
+    };
+
+    private addNutritionServingsStats = (document, model, y) => {
+
+        const chartImage = 'Nutrition_Servings_LastMonth';
+        const detailedTitle = 'Servings History for Last Month';
+        const titleColor = '#505050';
+        const sectionTitle = 'Food and Nutrition - Servings';
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 27;
+
+        const colors = this._imageGenerator.getNutritionServingsCategoryColors();
+        const legend = colors.map(x => {
+            return {
+                Key   : x.Key + ': ' + x.Question,
+                Color : x.Color,
+            };
+        });
+        y = this._commons.addLegend(document, y, legend, 122, 11, 35, 10, 15);
 
         return y;
     };
 
     private addExerciseStats = (document, model, y) => {
-        y = y + 30;
 
-        var c = model.ChartImagePaths.find(x => x.key === 'Exercise_CaloriesBurned_LastMonth');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Calories Burned', 70, y, 14, '#505050', 'center');
+        let chartImage = 'Exercise_CaloriesBurned_LastMonth';
+        let detailedTitle = 'Calories Burned for Last Month';
+        const titleColor = '#505050';
+        const sectionTitle = 'Exercise and Physical Activity';
 
-        y = y + 20;
-        c = model.ChartImagePaths.find(x => x.key === 'Exercise_Questionnaire_LastMonth');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Physical Activity Questionnaire', 70, y, 14, '#505050', 'center');
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
 
-        y = y + 20;
-        c = model.ChartImagePaths.find(x => x.key === 'Exercise_Questionnaire_Overall_LastMonth');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Daily Movements', 70, y, 14, '#505050', 'center');
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 23;
+
+        chartImage = 'Exercise_Questionnaire_LastMonth';
+        detailedTitle = 'Daily Movements Questionnaire for Last Month';
+        y = y + 23;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 32;
+        chartImage = 'Exercise_Questionnaire_Overall_LastMonth';
+        y = this.addSquareChartImage(document, model, chartImage, y, 'Daily Movements', titleColor, 165, 225);
+
+        return y;
+    };
+
+    private addUserTasksStats = (document, model, y) => {
+
+        let chartImage = 'UserTasks_LastMonth';
+        let detailedTitle = 'User Tasks Status for Last Month';
+        const titleColor = '#505050';
+        const sectionTitle = 'User Engagement';
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 23;
+
+        chartImage = 'UserEngagementRatio_Last6Months';
+        detailedTitle = 'User Engagement Ratio for Last 6 Months';
+        y = y + 23;
+        y = this.addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor, 165, 225);
+        y = y + 23;
+
+        let value = model.Stats.UserEngagement.Last6Months.Finished.toFixed();
+        y = this.addLabeledText(document, 'Completed Tasks', value, y);
+
+        value = model.Stats.UserEngagement.Last6Months.Unfinished.toFixed();
+        y = this.addLabeledText(document, 'Unfinished Tasks', value, y);
 
         return y;
     };
 
     private addSleepStats = (document, model, y) => {
-        y = y + 45;
 
-        const c = model.ChartImagePaths.find(x => x.key === 'SleepHours_LastMonth');
-        document
-            .image(c.location, 125, y, { width: 350, align: 'center' });
-        document
-            .fontSize(7);
-        document.moveDown();
-        y = y + 185;
-        this._commons.addText(document, 'Sleep in Hours', 90, y, 14, '#505050', 'center');
+        const chartImage = 'SleepHours_LastMonth';
+        const detailedTitle = 'Sleep in Hours for Last Month';
+        const titleColor = '#505050';
+        const sectionTitle = 'Sleep History';
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 23;
+
+        const value = model.Stats.Sleep.AverageForLastMonth?.toString();
+        y = this.addLabeledText(document, 'Average Sleep (Hours)', value, y);
 
         return y;
     };
@@ -782,28 +886,7 @@ export class StatisticsService {
         const titleColor = '#505050';
         const sectionTitle = 'Lipids';
 
-        const lipidLegend = [
-            {
-                Key   : 'Total Cholesterol',
-                Color : ChartColors.Coral,
-            },
-            {
-                Key   : 'HDL',
-                Color : ChartColors.Green,
-            },
-            {
-                Key   : 'LDL',
-                Color : ChartColors.Fuchsia,
-            },
-            {
-                Key   : 'Triglyceride Level',
-                Color : ChartColors.LightSlateGray,
-            },
-            {
-                Key   : 'A1C Level',
-                Color : ChartColors.DodgerBlue,
-            },
-        ];
+        const lipidColors = this._imageGenerator.getLipidColors();
 
         y = this._commons.addSectionTitle(document, y, sectionTitle);
 
@@ -811,7 +894,7 @@ export class StatisticsService {
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
 
-        y = this._commons.addLegend(document, y, lipidLegend, 150, 11, 10);
+        y = this._commons.addLegend(document, y, lipidColors, 150, 11, 150, 6, 10);
 
         return y;
     }
@@ -850,6 +933,72 @@ export class StatisticsService {
         y = y + 160;
         this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
         return y;
+    }
+
+    private addSquareChartImage(
+        document: PDFKit.PDFDocument, model: any,
+        chartImage: string, y: any, title: string,
+        titleColor: string,
+        imageWidth = 175,
+        startX = 75) {
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 190;
+        this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
+        return y;
+    }
+
+    private addSquareChartImageWithLegend(
+        document: PDFKit.PDFDocument, model: any,
+        chartImage: string, y: any, title: string,
+        titleColor: string,
+        legendItems,
+        legendY = 50,
+        imageWidth = 160,
+        startX = 125) {
+
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+
+        const yFrozen = y;
+        y = yFrozen + 175;
+        this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
+
+        y = yFrozen + legendY;
+        const legendStartX = startX + 200;
+        y = this._commons.addLegend(document, y, legendItems, legendStartX, 11, 60, 8, 5);
+        y = yFrozen + 190;
+        return y;
+    }
+
+    private generateMedicationTableRow(
+        document: PDFKit.PDFDocument,
+        y,
+        index,
+        drug,
+        dose,
+        dosageUnit,
+        frequency,
+        frequencyUnit,
+        timeSchedule,
+        route,
+        duration,
+        durationUnit,
+    ) {
+        var schedule = (frequency ? frequency + ' ' : '') + frequencyUnit + ' - ' + timeSchedule;
+        const d = schedule + ', ' + route + ' | ' + duration + ' ' + durationUnit;
+        const medication = drug + ', ' + d;
+        document
+            .fontSize(11)
+            .font('Helvetica')
+            .text(index, 50, y)
+            .text(medication, 75, y, { align: "left" })
+            .text(dose + ' ' + dosageUnit, 330, y, { align: "right" })
+            .moveDown();
     }
 
     //#endregion

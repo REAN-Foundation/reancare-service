@@ -14,8 +14,6 @@ const SQUARE_CHART_HEIGHT = 400;
 
 export default class ReportImageGenerator {
 
-    //#region Chart image generation
-
         public generateChartImages = async (
             reportModel: any): Promise<any> => {
 
@@ -315,16 +313,18 @@ export default class ReportImageGenerator {
                     z : c.Type,
                 };
             });
+            const categoryColors = this.getNutritionQuestionCategoryColors();
+            const categories = categoryColors.map(x => x.Key);
+            const colors = categoryColors.map(x => x.Color);
             const options: MultiBarChartOptions = {
                 Width           : RECTANGULAR_CHART_WIDTH,
                 Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'User Response',
-                CategoriesCount : 3,
-                Categories      : [ "Healthy", "Protein", "Low Salt" ],
-                Colors          : [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ],
+                CategoriesCount : categories.length,
+                Categories      : categories,
+                Colors          : colors,
                 FontSize        : '14px',
             };
-
             return await ChartGenerator.createGroupBarChart(temp, options, filename);
         }
 
@@ -336,13 +336,16 @@ export default class ReportImageGenerator {
                     z : c.Type,
                 };
             });
+            const categoryColors = this.getNutritionQuestionCategoryColors();
+            const categories = categoryColors.map(x => x.Key);
+            const colors = categoryColors.map(x => x.Color);
             const options: MultiBarChartOptions = {
                 Width           : RECTANGULAR_CHART_WIDTH,
                 Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'User Response',
-                CategoriesCount : 3,
-                Categories      : [ "Healthy", "Protein", "Low Salt" ],
-                Colors          : [ ChartColors.MediumSeaGreen, ChartColors.DodgerBlue, ChartColors.Charcoal ],
+                CategoriesCount : categories.length,
+                Categories      : categories,
+                Colors          : colors,
                 FontSize        : '9px',
             };
             return await ChartGenerator.createStackedBarChart(temp, options, filename);
@@ -356,20 +359,17 @@ export default class ReportImageGenerator {
                     z : c.Type,
                 };
             });
+            const categoryColors = this.getNutritionServingsCategoryColors();
+            const categories = categoryColors.map(x => x.Key);
+            const colors = categoryColors.map(x => x.Color);
             const options: MultiBarChartOptions = {
                 Width           : RECTANGULAR_CHART_WIDTH,
                 Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'Servings',
-                CategoriesCount : 5,
-                Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
-                Colors          : [
-                    ChartColors.MediumSeaGreen,
-                    ChartColors.Gold,
-                    ChartColors.Tan,
-                    ChartColors.DodgerBlue,
-                    ChartColors.Tomato
-                ],
-                FontSize : '14px',
+                CategoriesCount : categories.length,
+                Categories      : categories,
+                Colors          : colors,
+                FontSize        : '14px',
             };
             return await ChartGenerator.createGroupBarChart(temp, options, filename);
         }
@@ -382,20 +382,17 @@ export default class ReportImageGenerator {
                     z : c.Type
                 };
             });
+            const categoryColors = this.getNutritionServingsCategoryColors();
+            const categories = categoryColors.map(x => x.Key);
+            const colors = categoryColors.map(x => x.Color);
             const options: MultiBarChartOptions = {
                 Width           : RECTANGULAR_CHART_WIDTH,
                 Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'Servings',
-                CategoriesCount : 5,
-                Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
-                Colors          : [
-                    ChartColors.MediumSeaGreen,
-                    ChartColors.Gold,
-                    ChartColors.Tan,
-                    ChartColors.DodgerBlue,
-                    ChartColors.Tomato
-                ],
-                FontSize : '9px',
+                CategoriesCount : categories.length,
+                Categories      : categories,
+                Colors          : colors,
+                FontSize        : '9px',
             };
             return await ChartGenerator.createStackedBarChart(temp, options, filename);
         }
@@ -411,7 +408,7 @@ export default class ReportImageGenerator {
                 Width  : RECTANGULAR_CHART_WIDTH,
                 Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'Calories Burned',
-                Color  : ChartColors.OrangeRed
+                Color  : ChartColors.Tomato,
             };
             return await ChartGenerator.createBarChart(calorieStats, options, filename);
         }
@@ -427,26 +424,23 @@ export default class ReportImageGenerator {
                 Width  : RECTANGULAR_CHART_WIDTH,
                 Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'User Response',
-                Color  : ChartColors.SpringGreen
+                Color  : ChartColors.MediumAquaMarine,
             };
-
             return await ChartGenerator.createBarChart(calorieStats, options, filename);
         }
 
         private async createExerciseQuestions_DonutChart(stats: any, filename: string) {
             const yesCount = stats.filter(c => c.Response === 1).length;
             const noCount = stats.filter(c => c.Response === 0).length;
-
             const options: PieChartOptions = {
                 Width  : SQUARE_CHART_WIDTH,
                 Height : SQUARE_CHART_HEIGHT,
                 Colors : [
-                    ChartColors.MediumSeaGreen,
+                    ChartColors.MediumAquaMarine,
                     ChartColors.Coral,
                     ChartColors.DodgerBlue,
                 ],
             };
-
             const data = [
                 {
                     name  : "Yes",
@@ -457,42 +451,35 @@ export default class ReportImageGenerator {
                     value : noCount,
                 }
             ];
-
             return await ChartGenerator.createDonutChart(data, options, filename);
         }
 
         private async createMedicationConsumption_DonutChart(stats: any, filename: string) {
-
             const missedCount = stats.reduce((acc, x) => acc + x.MissedCount, 0);
             const takenCount = stats.reduce((acc, x) => acc + x.TakenCount, 0);
             const total = stats.length;
             const unmarked = total - (missedCount + takenCount);
-
+            const categoryColors = this.getMedicationStatusCategoryColors();
+            const colors = categoryColors.map(x => x.Color);
             const options: PieChartOptions = {
                 Width  : SQUARE_CHART_WIDTH,
                 Height : SQUARE_CHART_HEIGHT,
-                Colors : [
-                    ChartColors.MediumSeaGreen,
-                    ChartColors.Coral,
-                    ChartColors.DodgerBlue,
-                ],
+                Colors : colors,
             };
-
             const data = [
                 {
                     name  : "Taken",
-                    value : missedCount,
+                    value : takenCount,
                 },
                 {
                     name  : "Missed",
-                    value : takenCount,
+                    value : missedCount,
                 },
                 {
                     name  : "Unmarked",
                     value : unmarked,
                 }
             ];
-
             return await ChartGenerator.createDonutChart(data, options, filename);
         }
 
@@ -510,14 +497,13 @@ export default class ReportImageGenerator {
                     z : 'Taken',
                 });
             });
-
             const options: MultiBarChartOptions = {
                 Width           : RECTANGULAR_CHART_WIDTH,
                 Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'Medication History',
                 CategoriesCount : 2,
                 Categories      : [ "Missed", "Taken" ],
-                Colors          : [ ChartColors.Orange, ChartColors.GreenLight ],
+                Colors          : [ ChartColors.Coral, ChartColors.MediumSeaGreen ],
                 FontSize        : '9px',
             };
             return await ChartGenerator.createStackedBarChart(temp, options, filename);
@@ -536,7 +522,6 @@ export default class ReportImageGenerator {
                 YLabel : 'Sleep in Hours',
                 Color  : ChartColors.GrayDarker
             };
-
             return await ChartGenerator.createBarChart(sleepStats, options, filename);
         }
 
@@ -552,7 +537,6 @@ export default class ReportImageGenerator {
             options.Height = RECTANGULAR_CHART_HEIGHT;
             options.XAxisTimeScaled = true;
             options.YLabel = 'Body weight';
-
             return await ChartGenerator.createLineChart(temp, options, filename);
         }
 
@@ -569,7 +553,6 @@ export default class ReportImageGenerator {
             options.Color = ChartColors.BlueViolet;
             options.XAxisTimeScaled = true;
             options.YLabel = 'Blood Glucose';
-
             return await ChartGenerator.createLineChart(temp, options, filename);
         }
 
@@ -592,7 +575,11 @@ export default class ReportImageGenerator {
             options.Width = RECTANGULAR_CHART_WIDTH;
             options.Height = RECTANGULAR_CHART_HEIGHT;
             options.XAxisTimeScaled = true;
-            options.Categories = ['Diastolic', 'Systolic'];
+            const categoryColors = this.getBloodPressureTypeColors();
+            const categories = categoryColors.map(x => x.Key);
+            const colors = categoryColors.map(x => x.Color);
+            options.Categories = categories;
+            options.Colors = colors;
             options.YLabel = 'mmHg';
 
             return await ChartGenerator.createMultiLineChart(temp, options, filename);
@@ -621,20 +608,17 @@ export default class ReportImageGenerator {
             records = stats.A1CLevel.map(getRecords);
             temp.push(...records);
 
+            const categoryColors = this.getLipidColors();
+            const categories = categoryColors.map(x => x.Key);
+            const colors = categoryColors.map(x => x.Color);
             const options: MultiLineChartOptions = DefaultChartOptions.multiLineChart();
             options.Width = RECTANGULAR_CHART_WIDTH;
             options.Height = RECTANGULAR_CHART_HEIGHT;
             options.XAxisTimeScaled = true;
             options.YLabel = '';
             options.StrokeWidth = 1.5;
-            options.Colors = [
-                ChartColors.Coral,
-                ChartColors.Green,
-                ChartColors.Fuchsia,
-                ChartColors.LightSlateGray,
-                ChartColors.DodgerBlue
-            ];
-            options.Categories = ['Total Cholesterol', 'HDL', 'LDL', 'Triglyceride Level', 'A1C Level'];
+            options.Colors = colors;
+            options.Categories = categories;
 
             return await ChartGenerator.createMultiLineChart(temp, options, filename);
         }
@@ -643,15 +627,12 @@ export default class ReportImageGenerator {
             const feelings_ = stats.map(x => x.Feeling);
             const tempFeelings = this.findKeyCounts(feelings_);
             const feelings = Helper.sortObjectKeysAlphabetically(tempFeelings);
+            const feelingsColors = this.getFeelingsColors();
+            const colors = feelingsColors.map(x => x.Color);
             const options: PieChartOptions = {
                 Width  : SQUARE_CHART_WIDTH,
                 Height : SQUARE_CHART_HEIGHT,
-                Colors : [
-                    ChartColors.MediumSeaGreen,
-                    ChartColors.DodgerBlue,
-                    ChartColors.Charcoal,
-                    ChartColors.Coral,
-                ],
+                Colors : colors,
             };
             const data = this.constructDonutChartData(feelings);
             return await ChartGenerator.createDonutChart(data, options, filename);
@@ -661,29 +642,18 @@ export default class ReportImageGenerator {
             const moods_ = stats.map(x => x.Mood);
             const tempMoods = this.findKeyCounts(moods_);
             const moods = Helper.sortObjectKeysAlphabetically(tempMoods);
+            const moodsColors = this.getMoodsColors();
+            const colors = moodsColors.map(x => x.Color);
             const options: PieChartOptions = {
                 Width  : SQUARE_CHART_WIDTH,
                 Height : SQUARE_CHART_HEIGHT,
-                Colors : [
-                    ChartColors.Tomato,
-                    ChartColors.Crimson,
-                    ChartColors.DodgerBlue,
-                    ChartColors.LightSlateGray,
-                    ChartColors.MediumSeaGreen,
-                    ChartColors.Gold,
-                    ChartColors.LightGray,
-                    ChartColors.DarkSlateBlue,
-                    ChartColors.Cyan,
-                    ChartColors.OrangeRed,
-                    ChartColors.Turquoise,
-                ],
+                Colors : colors,
             };
             const data = this.constructDonutChartData(moods);
             return await ChartGenerator.createDonutChart(data, options, filename);
         }
 
         private async createEnergyLevels_BubbleChart(stats: any, filename: string) {
-
             const energyLevels_ = stats.map(x => x.EnergyLevels);
             const e_ = [];
             for (var x of energyLevels_) {
@@ -694,16 +664,6 @@ export default class ReportImageGenerator {
             const options: PieChartOptions = {
                 Width  : SQUARE_CHART_WIDTH,
                 Height : SQUARE_CHART_HEIGHT,
-                Colors : [
-                    ChartColors.OrangeRed,
-                    ChartColors.Magenta,
-                    ChartColors.DodgerBlue,
-                    ChartColors.DarkCyan,
-                    ChartColors.SlateGray,
-                    ChartColors.BlueViolet,
-                    ChartColors.Bisque,
-                    ChartColors.Lime,
-                ],
             };
             const data = this.constructDonutChartData(energyLevels);
             return await ChartGenerator.createBubbleChart(data, options, filename);
@@ -732,20 +692,17 @@ export default class ReportImageGenerator {
         }
 
         private async createUserEngagement_CircularProgress(stats: any, filename: string) {
-
             let total = stats.Finished + stats.Unfinished;
             if (total === 0) {
                 total = 1;
             }
             const percentage = (stats.Finished / total) * 100;
-
             const options: CircularProgressChartOptions = DefaultChartOptions.circularProgress();
             options.Width  = SQUARE_CHART_WIDTH;
             options.Height = SQUARE_CHART_HEIGHT;
             options.GradientColor1 = ChartColors.Lime;
             options.GradientColor2 = ChartColors.DodgerBlue;
             options.PathColor      = '#404F70';
-
             return await ChartGenerator.createCircularProgressChart(percentage, options, filename);
         }
 
@@ -763,17 +720,221 @@ export default class ReportImageGenerator {
                     z : 'Unfinished'
                 });
             }
+            const categoryColors = this.getUserTaskStatusColors();
+            const categories = categoryColors.map(x => x.Key);
+            const colors = categoryColors.map(x => x.Color);
+
             const options: MultiBarChartOptions = {
                 Width           : RECTANGULAR_CHART_WIDTH,
                 Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'User Response',
                 CategoriesCount : 2,
-                Categories      : [ "Finished", "Unfinished"],
-                Colors          : [ ChartColors.Green, ChartColors.OrangeRed ],
+                Categories      : categories,
+                Colors          : colors,
                 FontSize        : '9px',
             };
             return await ChartGenerator.createStackedBarChart(temp, options, filename);
         }
+
+        //#region Colors
+
+        public getLipidColors = () => {
+            const items = [
+                {
+                    Key   : 'Total Cholesterol',
+                    Color : ChartColors.Coral,
+                },
+                {
+                    Key   : 'HDL',
+                    Color : ChartColors.Green,
+                },
+                {
+                    Key   : 'LDL',
+                    Color : ChartColors.Fuchsia,
+                },
+                {
+                    Key   : 'Triglyceride Level',
+                    Color : ChartColors.LightSlateGray,
+                },
+                {
+                    Key   : 'A1C Level',
+                    Color : ChartColors.DodgerBlue,
+                },
+            ];
+            return items;
+        };
+
+        public getFeelingsColors = () => {
+            const items = [
+                {
+                    Key   : 'Better',
+                    Color : ChartColors.MediumSeaGreen,
+                },
+                {
+                    Key   : 'Same',
+                    Color : ChartColors.DodgerBlue,
+                },
+                {
+                    Key   : 'Unspecified',
+                    Color : ChartColors.Charcoal,
+                },
+                {
+                    Key   : 'Worse',
+                    Color : ChartColors.Coral,
+                }
+            ];
+            return items;
+        };
+
+        public getMoodsColors = () => {
+            const items = [
+                {
+                    Key   : 'Angry',
+                    Color : ChartColors.Tomato,
+                },
+                {
+                    Key   : 'Anxious',
+                    Color : ChartColors.Khaki,
+                },
+                {
+                    Key   : 'Calm',
+                    Color : ChartColors.DodgerBlue,
+                },
+                {
+                    Key   : 'Fearful',
+                    Color : ChartColors.LightSlateGray,
+                },
+                {
+                    Key   : 'Happy',
+                    Color : ChartColors.MediumSeaGreen,
+                },
+                {
+                    Key   : 'Hopeful',
+                    Color : ChartColors.Gold,
+                },
+                {
+                    Key   : 'Lonely',
+                    Color : ChartColors.LightGray,
+                },
+                {
+                    Key   : 'Sad',
+                    Color : ChartColors.SteelBlue,
+                },
+                {
+                    Key   : 'Status Quo',
+                    Color : ChartColors.LemonChiffon,
+                },
+                {
+                    Key   : 'Stressed',
+                    Color : ChartColors.Violet,
+                },
+                {
+                    Key   : 'Unspecified',
+                    Color : ChartColors.SlateGray,
+                },
+            ];
+            return items;
+        };
+
+        public getNutritionQuestionCategoryColors = () => {
+            const items = [
+                {
+                    Key      : 'Healthy',
+                    Color    : ChartColors.Green,
+                    Question : 'Were most of your food choices healthy today?',
+                },
+                {
+                    Key      : 'Protein',
+                    Color    : ChartColors.Blue,
+                    Question : 'Did you select healthy sources of protein today?',
+                },
+                {
+                    Key      : 'Low Salt',
+                    Color    : ChartColors.GrayMedium,
+                    Question : 'Did you choose or prepare foods with little or no salt today?',
+                },
+            ];
+            return items;
+        };
+
+        public getNutritionServingsCategoryColors = () => {
+            const items = [
+                {
+                    Key      : 'Veggies',
+                    Color    : ChartColors.MediumSeaGreen,
+                    Question : 'How many servings of vegetables did you eat today?',
+                },
+                {
+                    Key      : 'Fruits',
+                    Color    : ChartColors.Gold,
+                    Question : 'How many servings of fruit did you eat today',
+                },
+                {
+                    Key      : 'Grains',
+                    Color    : ChartColors.Tan,
+                    Question : 'How many servings of whole grains do you consume per day?',
+                },
+                {
+                    Key      : 'Seafood',
+                    Color    : ChartColors.DodgerBlue,
+                    Question : 'How many servings of fish or shellfish/seafood did you eat today?',
+                },
+                {
+                    Key      : 'Sugar',
+                    Color    : ChartColors.Tomato,
+                    Question : 'How many servings of sugary drinks did you drink today?',
+                },
+            ];
+            return items;
+        };
+
+        public getMedicationStatusCategoryColors = () => {
+            const items = [
+                {
+                    Key   : 'Taken',
+                    Color : ChartColors.MediumSeaGreen,
+                },
+                {
+                    Key   : 'Missed',
+                    Color : ChartColors.Coral,
+                },
+                {
+                    Key   : 'Unmarked',
+                    Color : ChartColors.SlateGray,
+                },
+            ];
+            return items;
+        };
+
+        public getBloodPressureTypeColors = () => {
+            const items = [
+                {
+                    Key   : 'Diastolic',
+                    Color : ChartColors.MediumSeaGreen,
+                },
+                {
+                    Key   : 'Systolic',
+                    Color : ChartColors.DodgerBlue,
+                },
+            ];
+            return items;
+        };
+
+        public getUserTaskStatusColors = () => {
+            const items = [
+                {
+                    Key   : 'Finished',
+                    Color : ChartColors.MediumSeaGreen,
+                },
+                {
+                    Key   : 'Unfinished',
+                    Color : ChartColors.Tomato,
+                },
+            ];
+            return items;
+        };
+
+        //#endregion
 
         private constructDonutChartData(x_) {
             const data = [];

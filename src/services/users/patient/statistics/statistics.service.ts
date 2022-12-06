@@ -45,10 +45,12 @@ import { UserTaskRepo } from "../../../../database/sql/sequelize/repositories/us
 import { IUserTaskRepo } from "../../../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 import { ICareplanRepo } from "../../../../database/repository.interfaces/clinical/careplan.repo.interface";
+import { BodyHeightRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/body.height.repo";
+import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
+
 import ReportImageGenerator from "./report.image.generator";
 import StatReportCommons from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
-import { Model } from "sequelize-typescript";
 import { ChartColors } from "../../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,6 +72,7 @@ export class StatisticsService {
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
         @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo,
         @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
+        @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
         @inject('ILabRecordRepo') private _labRecordsRepo: ILabRecordRepo,
         @inject('ISleepRepo') private _sleepRepo: ISleepRepo,
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
@@ -90,6 +93,7 @@ export class StatisticsService {
         this._medicationRepo = Loader.container.resolve(MedicationRepo);
         this._physicalActivityRepo = Loader.container.resolve(PhysicalActivityRepo);
         this._bodyWeightRepo = Loader.container.resolve(BodyWeightRepo);
+        this._bodyHeightRepo = Loader.container.resolve(BodyHeightRepo);
         this._labRecordsRepo = Loader.container.resolve(LabRecordRepo);
         this._sleepRepo = Loader.container.resolve(SleepRepo);
         this._assessmentRepo = Loader.container.resolve(AssessmentRepo);
@@ -131,9 +135,9 @@ export class StatisticsService {
             ProfileImagePath  : null,
             ReportDate        : date,
             ReportDateStr     : reportDateStr,
-            CurrentBodyWeight : '130 lbs',
-            CurrentHeight     : '5 feet, 9 inches',
-            BodyMassIndex     : '19.2',
+            CurrentBodyWeight : stats.WeightStr,
+            CurrentHeight     : stats.HeightStr,
+            BodyMassIndex     : stats.BodyMassIndex,
             Race              : race,
             Ethnicity         : ethnicity,
             Tobacco           : tobacco,
@@ -157,10 +161,22 @@ export class StatisticsService {
         };
 
         //Body weight, Lab values
+
         const bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, 6);
         const currentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
         const sum = bodyWeightStats.reduce((acc, x) => acc + x.BodyWeight, 0);
         const averageBodyWeight = bodyWeightStats.length === 0 ? null : sum / bodyWeightStats.length;
+
+        let currentHeight = null;
+        let heightUnits = 'cm';
+        const weightUnits = 'Kg';
+        const heightDto = await this._bodyHeightRepo.getRecent(patientUserId);
+        if (heightDto) {
+            currentHeight = heightDto.BodyHeight;
+            heightUnits = heightDto.Unit;
+        }
+        const { bmi, weightStr, heightStr } =
+            Helper.calculateBMI(currentHeight, heightUnits, currentBodyWeight.BodyWeight, weightUnits);
 
         const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, 6);
         const currentBloodPressure = await this._bloodPressureRepo.getRecent(patientUserId);
@@ -243,6 +259,9 @@ export class StatisticsService {
         };
 
         const stats = {
+            WeightStr        : weightStr,
+            HeightStr        : heightStr,
+            BodyMassIndex    : bmi,
             Nutrition        : nutrition,
             PhysicalActivity : physicalActivityTrend,
             Biometrics       : biometrics,
@@ -284,7 +303,7 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 8;
+            reportModel.TotalPages = 9;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
@@ -292,7 +311,8 @@ export class StatisticsService {
             pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
             pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
             pageNumber = this.addExercisePage(document, reportModel, pageNumber);
-            pageNumber = this.addPatientEngagementPage(document, reportModel, pageNumber);
+            pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
+            pageNumber = this.addDailyAssessmentPage(document, reportModel, pageNumber);
 
             document.end();
 
@@ -369,9 +389,17 @@ export class StatisticsService {
         return pageNumber;
     };
 
-    private addPatientEngagementPage = (document, model, pageNumber) => {
+    private addUserEngagementPage = (document, model, pageNumber) => {
         var y = this._commons.addTop(document, model);
         y = this.addUserTasksStats(document, model, y);
+        this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addDailyAssessmentPage = (document, model, pageNumber) => {
+        var y = this._commons.addTop(document, model);
+        y = this.addDailyAssessmentsStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -383,8 +411,9 @@ export class StatisticsService {
         const detailedTitle = 'Medication History for Last Month';
         const titleColor = '#505050';
         const sectionTitle = 'Medication History';
+        const icon = Helper.getIconsPath('medications.png');
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
@@ -393,14 +422,15 @@ export class StatisticsService {
         y = y + 7;
         const legend = this._imageGenerator.getMedicationStatusCategoryColors();
         chartImage = 'MedicationsOverall_LastMonth';
-        y = this.addSquareChartImageWithLegend(document, model, chartImage, y, 'Medication Adherence for Last Month', titleColor, legend);
+        const title = 'Medication Adherence for Last Month';
+        y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend);
 
         return y;
     };
 
     private addCurrentMedications(document, medications, y) {
-
-        y = this._commons.addSectionTitle(document, y, "Current Medications");
+        const icon = Helper.getIconsPath('current-medications.png');
+        y = this._commons.addSectionTitle(document, y, "Current Medications", icon);
 
         if (medications.length === 0) {
             y = y + 55;
@@ -451,14 +481,16 @@ export class StatisticsService {
         let detailedTitle = 'Calorie Consumption for Last Month';
         const titleColor = '#505050';
         const sectionTitle = 'Food and Nutrition - Calories';
+        let icon = Helper.getIconsPath('nutrition.png');
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 27;
 
-        y = this._commons.addSectionTitle(document, y, 'Food and Nutrition - Questionnaire');
+        icon = Helper.getIconsPath('questionnaire.png');
+        y = this._commons.addSectionTitle(document, y, 'Food and Nutrition - Questionnaire', icon);
 
         chartImage = 'Nutrition_QuestionnaireResponses_LastMonth';
         detailedTitle = 'Nutrition Questionnaire Response';
@@ -486,7 +518,8 @@ export class StatisticsService {
         const titleColor = '#505050';
         const sectionTitle = 'Food and Nutrition - Servings';
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        const icon = Helper.getIconsPath('food-servings.png');
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
@@ -510,8 +543,9 @@ export class StatisticsService {
         let detailedTitle = 'Calories Burned for Last Month';
         const titleColor = '#505050';
         const sectionTitle = 'Exercise and Physical Activity';
+        const icon = Helper.getIconsPath('exercise.png');
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
@@ -533,13 +567,18 @@ export class StatisticsService {
         let chartImage = 'UserTasks_LastMonth';
         let detailedTitle = 'User Tasks Status for Last Month';
         const titleColor = '#505050';
-        const sectionTitle = 'User Engagement';
+        let sectionTitle = 'User Tasks Status History';
+        let icon = Helper.getIconsPath('user-tasks.png');
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 23;
+
+        sectionTitle = 'User Engagement';
+        icon = Helper.getIconsPath('user-activity.png');
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         chartImage = 'UserEngagementRatio_Last6Months';
         detailedTitle = 'User Engagement Ratio for Last 6 Months';
@@ -556,14 +595,48 @@ export class StatisticsService {
         return y;
     };
 
+    private addDailyAssessmentsStats = (document, model, y) => {
+
+        let chartImage = 'DailyAssessments_Feelings_Last6Months';
+        const titleColor = '#505050';
+        const sectionTitle = 'Daily Assessments';
+        const icon = Helper.getIconsPath('feelings.png');
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
+
+        // legendY = 50,
+        // imageWidth = 160,
+        // startX = 125
+
+        y = y + 25;
+        let legend = this._imageGenerator.getFeelingsColors();
+        chartImage = 'DailyAssessments_Feelings_Last6Months';
+        let title = 'Feelings Over Last 6 Months';
+        y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend, 40, 140);
+
+        y = y + 7;
+        legend = this._imageGenerator.getMoodsColors();
+        chartImage = 'DailyAssessments_Moods_Last6Months';
+        title = 'Moods Over Last 6 Months';
+        y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend, 20, 135);
+
+        y = y + 7;
+        chartImage = 'DailyAssessments_EnergyLevels_Last6Months';
+        title = 'Energy Levels Over Last 6 Months';
+        y = this.addSquareChartImage(document, model, chartImage, y, title, titleColor, 165, 225);
+
+        return y;
+    };
+
     private addSleepStats = (document, model, y) => {
 
         const chartImage = 'SleepHours_LastMonth';
         const detailedTitle = 'Sleep in Hours for Last Month';
         const titleColor = '#505050';
         const sectionTitle = 'Sleep History';
+        const icon = Helper.getIconsPath('sleep.png');
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
@@ -615,7 +688,6 @@ export class StatisticsService {
         document
             .image(model.ProfileImagePath, 50, y, { width: 64 });
 
-        //DrawLine(document, y);
         document
             .roundedRect(135, y, 400, 65, 1)
             .lineWidth(0.1)
@@ -709,6 +781,14 @@ export class StatisticsService {
 
         document
             .font('Helvetica-Bold')
+            .text('Tobacco', labelX, y, { align: "left" })
+            .font('Helvetica')
+            .text(model.Tobacco, valueX, y, { align: "left" })
+            .moveDown();
+        y = y + rowYOffset;
+
+        document
+            .font('Helvetica-Bold')
             .text('Current Weight', labelX, y, { align: "left" })
             .font('Helvetica')
             .text(model.CurrentBodyWeight, valueX, y, { align: "left" })
@@ -723,20 +803,18 @@ export class StatisticsService {
             .moveDown();
         y = y + rowYOffset;
 
-        document
-            .font('Helvetica-Bold')
-            .text('Body Mass Index (BMI)', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.BodyMassIndex, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
+        if (model.BodyMassIndex) {
+            document
+                .font('Helvetica-Bold')
+                .text('Body Mass Index (BMI)', labelX, y, { align: "left" })
+                .font('Helvetica')
+                .text(model.BodyMassIndex.toFixed(), valueX, y, { align: "left" })
+                .moveDown();
+            y = y + rowYOffset;
+        }
 
-        document
-            .font('Helvetica-Bold')
-            .text('Tobacco', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.Tobacco, valueX, y, { align: "left" })
-            .moveDown();
+        y = this.drawBMIScale(document, y, model.BodyMassIndex);
+
         y = y + rowYOffset;
 
         return y;
@@ -752,8 +830,8 @@ export class StatisticsService {
         const enrollmentId = journey.EnrollmentId.toString();
         const startDate = journey.StartAt?.toLocaleDateString();
         const endDate = journey.EndAt?.toLocaleDateString();
-
-        y = this._commons.addSectionTitle(document, y, 'Health Journey');
+        const icon = Helper.getIconsPath('health-journey.png');
+        y = this._commons.addSectionTitle(document, y, 'Health Journey', icon);
 
         const labelX = 135;
         const valueX = 325;
@@ -807,14 +885,36 @@ export class StatisticsService {
         return y;
     };
 
+    private drawBMIScale(document: PDFKit.PDFDocument, y: number, bmi: number) {
+        const startX = 325;
+        const imageWidth = 210;
+        let bmiImage = null;
+        if (bmi < 18.5) {
+            bmiImage = Helper.getIconsPath('bmi_legend_underweight.png');
+        } else if (bmi >= 18.5 && bmi <= 24.9) {
+            bmiImage = Helper.getIconsPath('bmi_legend_normal.png');
+        } else if (bmi >= 24.9 && bmi <= 29.9) {
+            bmiImage = Helper.getIconsPath('bmi_legend_overweight.png');
+        } else if (bmi >= 29.9 && bmi <= 34.9) {
+            bmiImage = Helper.getIconsPath('bmi_legend_obese.png');
+        } else if (bmi > 34.9) {
+            bmiImage = Helper.getIconsPath('bmi_legend_extremely_obese.png');
+        }
+        if (bmiImage) {
+            document.image(bmiImage, startX, y, { width: imageWidth });
+            y = y + 17;
+        }
+        return y;
+    }
+
     private addBodyWeightStats(model: any, document: PDFKit.PDFDocument, y: any) {
 
         const chartImage = 'BodyWeight_Last6Months';
         const detailedTitle = 'Body Weight (Kg) Trend Over 6 Months';
         const titleColor = '#505050';
         const sectionTitle = 'Body Weight';
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        const icon = Helper.getIconsPath('body-weight.png');
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
@@ -838,8 +938,9 @@ export class StatisticsService {
         const detailedTitle = 'Blood Pressure Trend Over 6 Months';
         const titleColor = '#505050';
         const sectionTitle = 'Blood Pressure';
+        const icon = Helper.getIconsPath('blood-pressure.png');
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
@@ -863,8 +964,9 @@ export class StatisticsService {
         const detailedTitle = 'Blood Glucose Trend Over 6 Months';
         const titleColor = '#505050';
         const sectionTitle = 'Blood Glucose';
+        const icon = Helper.getIconsPath('blood-sugar.png');
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
@@ -885,16 +987,17 @@ export class StatisticsService {
         const detailedTitle = 'Lipids Trend Over 6 Months';
         const titleColor = '#505050';
         const sectionTitle = 'Lipids';
+        const icon = Helper.getIconsPath('blood-lipids.png');
 
         const lipidColors = this._imageGenerator.getLipidColors();
 
-        y = this._commons.addSectionTitle(document, y, sectionTitle);
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
         y = y + 25;
         y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
 
-        y = this._commons.addLegend(document, y, lipidColors, 150, 11, 150, 6, 10);
+        y = this._commons.addLegend(document, y, lipidColors, 200, 11, 65, 6, 10);
 
         return y;
     }
@@ -965,13 +1068,13 @@ export class StatisticsService {
         document.moveDown();
 
         const yFrozen = y;
-        y = yFrozen + 175;
+        y = yFrozen + imageWidth;
         this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
 
         y = yFrozen + legendY;
         const legendStartX = startX + 200;
         y = this._commons.addLegend(document, y, legendItems, legendStartX, 11, 60, 8, 5);
-        y = yFrozen + 190;
+        y = yFrozen + imageWidth + 20; //Image height
         return y;
     }
 

@@ -69,7 +69,7 @@ export default class StatReportCommons {
         return y;
     };
 
-    public addSectionTitle = (document: PDFKit.PDFDocument, y: number, pageTitle: string): number => {
+    public addSectionTitle = (document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
         y = y + 18;
 
         //DrawLine(document, y);
@@ -79,7 +79,13 @@ export default class StatReportCommons {
             .fillOpacity(0.8)
             .fill("#e8ecef");
 
-        y = y + 15;
+        y = y + 11;
+
+        if (icon) {
+            document.image(icon, 70, y, { width: 20 });
+        }
+
+        y = y + 4;
 
         document
             .fillOpacity(1.0)
@@ -156,6 +162,7 @@ export default class StatReportCommons {
         fontSize: number, color: string, alignment: Alignment) => {
         document
             .fontSize(fontSize)
+            .font('Helvetica-Bold')
             .fillColor(color)
             .text(text, textX, textY, { align: alignment })
             .moveDown();

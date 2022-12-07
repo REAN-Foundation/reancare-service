@@ -51,7 +51,6 @@ import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clin
 import ReportImageGenerator from "./report.image.generator";
 import StatReportCommons from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
-import { ChartColors } from "../../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -105,6 +104,8 @@ export class StatisticsService {
         this._userTaskRepo = Loader.container.resolve(UserTaskRepo);
         this._careplanRepo = Loader.container.resolve(CareplanRepo);
     }
+
+    //#region Model and stats
 
     public getReportModel = (
         patient: PatientDetailsDto,
@@ -275,13 +276,13 @@ export class StatisticsService {
         return stats;
     }
 
-    public generateReport = async (reportModel: any) => {
-        return await this.generateReportPDF(reportModel);
-    }
-
     //#endregion
 
     //#region Report
+
+    public generateReport = async (reportModel: any) => {
+        return await this.generateReportPDF(reportModel);
+    }
 
     private generateReportPDF = async (reportModel: any) => {
         const chartImagePaths = await this._imageGenerator.generateChartImages(reportModel);
@@ -323,6 +324,10 @@ export class StatisticsService {
             throw new Error(`Unable to generate assessment report! ${error.message}`);
         }
     };
+
+    //#endregion
+
+    //#region Pages
 
     private addMainPage = (document, model, pageNumber) => {
         var y = this._commons.addTop(document, model, false);
@@ -405,6 +410,10 @@ export class StatisticsService {
         return pageNumber;
     };
 
+    //#endregion
+
+    //#region Page contents
+
     private addMedicationStats = (document, model, y) => {
 
         let chartImage = 'MedicationsHistory_LastMonth';
@@ -415,15 +424,23 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 20;
+        }
 
         y = y + 7;
         const legend = this._imageGenerator.getMedicationStatusCategoryColors();
         chartImage = 'MedicationsOverall_LastMonth';
         const title = 'Medication Adherence for Last Month';
-        y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend);
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend);
+        }
 
         return y;
     };
@@ -433,9 +450,7 @@ export class StatisticsService {
         y = this._commons.addSectionTitle(document, y, "Current Medications", icon);
 
         if (medications.length === 0) {
-            y = y + 55;
-            y = this._commons.addNoDataDisplay(document, y, "Data not available!");
-            y = y + 100;
+            y = this._commons.addNoDataDisplay(document, y);
             return y;
         }
 
@@ -485,28 +500,34 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 27;
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 27;
+        }
 
         icon = Helper.getIconsPath('questionnaire.png');
         y = this._commons.addSectionTitle(document, y, 'Food and Nutrition - Questionnaire', icon);
-
         chartImage = 'Nutrition_QuestionnaireResponses_LastMonth';
         detailedTitle = 'Nutrition Questionnaire Response';
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
 
-        const colors = this._imageGenerator.getNutritionQuestionCategoryColors();
-        const legend = colors.map(x => {
-            return {
-                Key   : x.Key + ': ' + x.Question,
-                Color : x.Color,
-            };
-        });
-
-        y = this._commons.addLegend(document, y, legend, 125, 11, 50, 10, 15);
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 20;
+            const colors = this._imageGenerator.getNutritionQuestionCategoryColors();
+            const legend = colors.map(x => {
+                return {
+                    Key   : x.Key + ': ' + x.Question,
+                    Color : x.Color,
+                };
+            });
+            y = this._commons.addLegend(document, y, legend, 125, 11, 50, 10, 15);
+        }
 
         return y;
     };
@@ -521,19 +542,21 @@ export class StatisticsService {
         const icon = Helper.getIconsPath('food-servings.png');
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 27;
-
-        const colors = this._imageGenerator.getNutritionServingsCategoryColors();
-        const legend = colors.map(x => {
-            return {
-                Key   : x.Key + ': ' + x.Question,
-                Color : x.Color,
-            };
-        });
-        y = this._commons.addLegend(document, y, legend, 122, 11, 35, 10, 15);
-
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 27;
+            const colors = this._imageGenerator.getNutritionServingsCategoryColors();
+            const legend = colors.map(x => {
+                return {
+                    Key   : x.Key + ': ' + x.Question,
+                    Color : x.Color,
+                };
+            });
+            y = this._commons.addLegend(document, y, legend, 122, 11, 35, 10, 15);
+        }
         return y;
     };
 
@@ -547,18 +570,31 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 23;
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 23;
+        }
 
         chartImage = 'Exercise_Questionnaire_LastMonth';
         detailedTitle = 'Daily Movements Questionnaire for Last Month';
-        y = y + 23;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 32;
-        chartImage = 'Exercise_Questionnaire_Overall_LastMonth';
-        y = this.addSquareChartImage(document, model, chartImage, y, 'Daily Movements', titleColor, 165, 225);
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 23;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 32;
+        }
 
+        chartImage = 'Exercise_Questionnaire_Overall_LastMonth';
+
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = this.addSquareChartImage(document, model, chartImage, y, 'Daily Movements', titleColor, 165, 225);
+        }
         return y;
     };
 
@@ -572,9 +608,13 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 23;
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 23;
+        }
 
         sectionTitle = 'User Engagement';
         icon = Helper.getIconsPath('user-activity.png');
@@ -582,15 +622,18 @@ export class StatisticsService {
 
         chartImage = 'UserEngagementRatio_Last6Months';
         detailedTitle = 'User Engagement Ratio for Last 6 Months';
-        y = y + 23;
-        y = this.addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor, 165, 225);
-        y = y + 23;
 
-        let value = model.Stats.UserEngagement.Last6Months.Finished.toFixed();
-        y = this.addLabeledText(document, 'Completed Tasks', value, y);
-
-        value = model.Stats.UserEngagement.Last6Months.Unfinished.toFixed();
-        y = this.addLabeledText(document, 'Unfinished Tasks', value, y);
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 23;
+            y = this.addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor, 165, 225);
+            y = y + 23;
+            let value = model.Stats.UserEngagement.Last6Months.Finished.toFixed();
+            y = this.addLabeledText(document, 'Completed Tasks', value, y);
+            value = model.Stats.UserEngagement.Last6Months.Unfinished.toFixed();
+            y = this.addLabeledText(document, 'Unfinished Tasks', value, y);
+        }
 
         return y;
     };
@@ -604,29 +647,62 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        // legendY = 50,
-        // imageWidth = 160,
-        // startX = 125
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            const legend = this._imageGenerator.getFeelingsColors();
+            chartImage = 'DailyAssessments_Feelings_Last6Months';
+            const title = 'Feelings Over Last 6 Months';
+            y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend, 40, 150);
+        }
 
-        y = y + 25;
-        let legend = this._imageGenerator.getFeelingsColors();
-        chartImage = 'DailyAssessments_Feelings_Last6Months';
-        let title = 'Feelings Over Last 6 Months';
-        y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend, 40, 140);
+        y = this.addMoodsStats(document, model, y, titleColor);
 
-        y = y + 7;
-        legend = this._imageGenerator.getMoodsColors();
-        chartImage = 'DailyAssessments_Moods_Last6Months';
-        title = 'Moods Over Last 6 Months';
-        y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend, 20, 135);
-
-        y = y + 7;
-        chartImage = 'DailyAssessments_EnergyLevels_Last6Months';
-        title = 'Energy Levels Over Last 6 Months';
-        y = this.addSquareChartImage(document, model, chartImage, y, title, titleColor, 165, 225);
-
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 17;
+            chartImage = 'DailyAssessments_EnergyLevels_Last6Months';
+            const title = 'Energy Levels Over Last 6 Months';
+            y = this.addSquareChartImage(document, model, chartImage, y, title, titleColor, 185, 205);
+        }
         return y;
     };
+
+    private addMoodsStats(
+        document: PDFKit.PDFDocument,
+        model: any,
+        y: any,
+        titleColor: string
+    ) {
+
+        y = y + 35;
+
+        const chartImage = 'DailyAssessments_Moods_Last6Months';
+        const startX = 125;
+        const imageWidth = 140;
+        const title = 'Moods Over Last 6 Months';
+        const legend = this._imageGenerator.getMoodsColors();
+        const yFrozen = y;
+
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+            document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
+            document.fontSize(7);
+            document.moveDown();
+
+            y = yFrozen + imageWidth + 20;
+            this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
+
+            const legendStartX = startX + 200;
+            y = this._commons.addLegend(document, yFrozen, legend, legendStartX, 7, 45, 5, 5, 12);
+            y = yFrozen + imageWidth + 20; //Image height
+        }
+        return y;
+    }
 
     private addSleepStats = (document, model, y) => {
 
@@ -638,48 +714,17 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 23;
-
-        const value = model.Stats.Sleep.AverageForLastMonth?.toString();
-        y = this.addLabeledText(document, 'Average Sleep (Hours)', value, y);
-
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 23;
+            const value = model.Stats.Sleep.AverageForLastMonth?.toString();
+            y = this.addLabeledText(document, 'Average Sleep (Hours)', value, y);
+        }
         return y;
     };
-
-    private addSummaryStats = (document, model, y) => {
-        y = y + 30;
-
-        var c = model.ChartImagePaths.find(x => x.key === 'Nutrition_Servings_LastWeek');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Servings for Last Week', 80, y, 14, '#505050', 'center');
-
-        y = y + 20;
-        c = model.ChartImagePaths.find(x => x.key === 'Nutrition_CaloriesConsumed_LastWeek');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Calories Consumed Last Week', 100, y, 14, '#505050', 'center');
-
-        y = y + 20;
-        c = model.ChartImagePaths.find(x => x.key === 'Nutrition_QuestionnaireResponses_LastWeek');
-        document.image(c.location, 125, y, { width: 350, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 180;
-        this._commons.addText(document, 'Nutrition Responses Last Week', 100, y, 14, '#505050', 'center');
-
-        return y;
-    };
-
-    //#endregion
-
-    //#region Commons
 
     public addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: number): number => {
 
@@ -811,9 +856,8 @@ export class StatisticsService {
                 .text(model.BodyMassIndex.toFixed(), valueX, y, { align: "left" })
                 .moveDown();
             y = y + rowYOffset;
+            y = this.drawBMIScale(document, y, model.BodyMassIndex);
         }
-
-        y = this.drawBMIScale(document, y, model.BodyMassIndex);
 
         y = y + rowYOffset;
 
@@ -822,8 +866,8 @@ export class StatisticsService {
 
     private addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: number): number => {
 
-        const journey = model.Stats.Careplan.Enrollment;
-        if (journey  == null) {
+        const journey = model.Stats.Careplan?.Enrollment;
+        if (!journey) {
             return y;
         }
         const planName = journey.PlanName;
@@ -885,28 +929,6 @@ export class StatisticsService {
         return y;
     };
 
-    private drawBMIScale(document: PDFKit.PDFDocument, y: number, bmi: number) {
-        const startX = 325;
-        const imageWidth = 210;
-        let bmiImage = null;
-        if (bmi < 18.5) {
-            bmiImage = Helper.getIconsPath('bmi_legend_underweight.png');
-        } else if (bmi >= 18.5 && bmi <= 24.9) {
-            bmiImage = Helper.getIconsPath('bmi_legend_normal.png');
-        } else if (bmi >= 24.9 && bmi <= 29.9) {
-            bmiImage = Helper.getIconsPath('bmi_legend_overweight.png');
-        } else if (bmi >= 29.9 && bmi <= 34.9) {
-            bmiImage = Helper.getIconsPath('bmi_legend_obese.png');
-        } else if (bmi > 34.9) {
-            bmiImage = Helper.getIconsPath('bmi_legend_extremely_obese.png');
-        }
-        if (bmiImage) {
-            document.image(bmiImage, startX, y, { width: imageWidth });
-            y = y + 17;
-        }
-        return y;
-    }
-
     private addBodyWeightStats(model: any, document: PDFKit.PDFDocument, y: any) {
 
         const chartImage = 'BodyWeight_Last6Months';
@@ -916,18 +938,22 @@ export class StatisticsService {
         const icon = Helper.getIconsPath('body-weight.png');
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 20;
 
-        let value = model.Stats.Biometrics.Last6Months.BodyWeight.AverageBodyWeight.toFixed();
-        y = this.addLabeledText(document, 'Average Weight (Kg)', value, y);
+            let value = model.Stats.Biometrics.Last6Months.BodyWeight.AverageBodyWeight.toFixed();
+            y = this.addLabeledText(document, 'Average Weight (Kg)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight.toString();
-        y = this.addLabeledText(document, 'Current Body Weight (Kg)', value, y);
+            value = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight.toString();
+            y = this.addLabeledText(document, 'Current Body Weight (Kg)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
-        y = this.addLabeledText(document, 'Last Measured Date', value, y);
+            value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
+            y = this.addLabeledText(document, 'Last Measured Date', value, y);
+        }
 
         return y;
     }
@@ -942,18 +968,22 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 20;
 
-        let value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureDiastolic.toString();
-        y = this.addLabeledText(document, 'Recent Diastolic BP (mmHg)', value, y);
+            let value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureDiastolic.toString();
+            y = this.addLabeledText(document, 'Recent Diastolic BP (mmHg)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
-        y = this.addLabeledText(document, 'Recent Systolic BP (mmHg)', value, y);
+            value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
+            y = this.addLabeledText(document, 'Recent Systolic BP (mmHg)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
-        y = this.addLabeledText(document, 'Last Measured Date', value, y);
+            value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
+            y = this.addLabeledText(document, 'Last Measured Date', value, y);
+        }
 
         return y;
     }
@@ -968,15 +998,19 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 20;
 
-        let value = model.Stats.Biometrics.Last6Months.BloodGlucose.CurrentBloodGlucose?.toString();
-        y = this.addLabeledText(document, 'Recent Blood Glucose (mg/dL)', value, y);
+            let value = model.Stats.Biometrics.Last6Months.BloodGlucose.CurrentBloodGlucose?.toString();
+            y = this.addLabeledText(document, 'Recent Blood Glucose (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate?.toLocaleDateString();
-        y = this.addLabeledText(document, 'Last Measured Date', value, y);
+            value = model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate?.toLocaleDateString();
+            y = this.addLabeledText(document, 'Last Measured Date', value, y);
+        }
 
         return y;
     }
@@ -993,14 +1027,20 @@ export class StatisticsService {
 
         y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
 
-        y = y + 25;
-        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
-
-        y = this._commons.addLegend(document, y, lipidColors, 200, 11, 65, 6, 10);
-
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 20;
+            y = this._commons.addLegend(document, y, lipidColors, 200, 11, 65, 6, 10);
+        }
         return y;
     }
+
+    //#endregion
+
+    //#region Helpers
 
     private addLabeledText(document: PDFKit.PDFDocument, label: string, value: string, y: any) {
 
@@ -1048,14 +1088,17 @@ export class StatisticsService {
         document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
         document.fontSize(7);
         document.moveDown();
-        y = y + 190;
+        y = y + imageWidth + 10;
         this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
         return y;
     }
 
     private addSquareChartImageWithLegend(
-        document: PDFKit.PDFDocument, model: any,
-        chartImage: string, y: any, title: string,
+        document: PDFKit.PDFDocument,
+        model: any,
+        chartImage: string,
+        y: any,
+        title: string,
         titleColor: string,
         legendItems,
         legendY = 50,
@@ -1068,13 +1111,13 @@ export class StatisticsService {
         document.moveDown();
 
         const yFrozen = y;
-        y = yFrozen + imageWidth;
+        y = yFrozen + imageWidth + 20;
         this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
 
         y = yFrozen + legendY;
         const legendStartX = startX + 200;
         y = this._commons.addLegend(document, y, legendItems, legendStartX, 11, 60, 8, 5);
-        y = yFrozen + imageWidth + 20; //Image height
+        y = yFrozen + imageWidth + 30; //Image height
         return y;
     }
 
@@ -1102,6 +1145,39 @@ export class StatisticsService {
             .text(medication, 75, y, { align: "left" })
             .text(dose + ' ' + dosageUnit, 330, y, { align: "right" })
             .moveDown();
+    }
+
+    private chartExists = (model, chartImage) => {
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        if (!chart) {
+            return false;
+        }
+        if (!chart.location) {
+            return false;
+        }
+        return true;
+    };
+
+    private drawBMIScale(document: PDFKit.PDFDocument, y: number, bmi: number) {
+        const startX = 325;
+        const imageWidth = 210;
+        let bmiImage = null;
+        if (bmi < 18.5) {
+            bmiImage = Helper.getIconsPath('bmi_legend_underweight.png');
+        } else if (bmi >= 18.5 && bmi <= 24.9) {
+            bmiImage = Helper.getIconsPath('bmi_legend_normal.png');
+        } else if (bmi >= 24.9 && bmi <= 29.9) {
+            bmiImage = Helper.getIconsPath('bmi_legend_overweight.png');
+        } else if (bmi >= 29.9 && bmi <= 34.9) {
+            bmiImage = Helper.getIconsPath('bmi_legend_obese.png');
+        } else if (bmi > 34.9) {
+            bmiImage = Helper.getIconsPath('bmi_legend_extremely_obese.png');
+        }
+        if (bmiImage) {
+            document.image(bmiImage, startX, y, { width: imageWidth });
+            y = y + 17;
+        }
+        return y;
     }
 
     //#endregion

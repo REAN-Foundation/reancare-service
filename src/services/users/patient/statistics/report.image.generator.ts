@@ -94,7 +94,9 @@ export default class ReportImageGenerator {
 
         private createCareplanCharts = async (data) => {
             var locations = [];
-
+            if (data == null) {
+                return locations;
+            }
             const location = await this.createCareplan_LinearProgressChart(data.CurrentProgress * 100, 'Careplan_Progress');
             locations.push({
                 key : 'Careplan_Progress',
@@ -263,6 +265,9 @@ export default class ReportImageGenerator {
         };
 
         private async createNutritionCalorie_LineChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const lastMonthCalorieStats = stats.map(c => {
                 return {
                     x : new Date(c.DayStr),
@@ -289,6 +294,9 @@ export default class ReportImageGenerator {
         }
 
         private async createNutritionCalorie_BarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const calorieStats = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
@@ -306,6 +314,9 @@ export default class ReportImageGenerator {
         }
 
         private async createNutritionQueryForWeek_BarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
@@ -329,6 +340,9 @@ export default class ReportImageGenerator {
         }
 
         private async createNutritionQueryForMonth_StackedBarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
@@ -352,6 +366,9 @@ export default class ReportImageGenerator {
         }
 
         private async createNutritionServingsForWeek_BarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
@@ -375,6 +392,9 @@ export default class ReportImageGenerator {
         }
 
         private async createNutritionServingsForMonth_BarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
@@ -398,6 +418,9 @@ export default class ReportImageGenerator {
         }
 
         private async createExerciseCalorieForMonth_BarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const calorieStats = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
@@ -414,6 +437,9 @@ export default class ReportImageGenerator {
         }
 
         private async createExerciseQuestionForMonth_BarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const calorieStats = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
@@ -430,6 +456,9 @@ export default class ReportImageGenerator {
         }
 
         private async createExerciseQuestions_DonutChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const yesCount = stats.filter(c => c.Response === 1).length;
             const noCount = stats.filter(c => c.Response === 0).length;
             const options: PieChartOptions = {
@@ -455,6 +484,9 @@ export default class ReportImageGenerator {
         }
 
         private async createMedicationConsumption_DonutChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const missedCount = stats.reduce((acc, x) => acc + x.MissedCount, 0);
             const takenCount = stats.reduce((acc, x) => acc + x.TakenCount, 0);
             const total = stats.length;
@@ -484,6 +516,9 @@ export default class ReportImageGenerator {
         }
 
         private async createMedication_BarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = [];
             stats.forEach(x => {
                 temp.push({
@@ -510,6 +545,9 @@ export default class ReportImageGenerator {
         }
 
         private async createSleepTrend_BarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const sleepStats = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
@@ -526,6 +564,9 @@ export default class ReportImageGenerator {
         }
 
         private async createBodyWeight_LineChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = stats.map(c => {
                 return {
                     x : new Date(c.DayStr),
@@ -541,6 +582,9 @@ export default class ReportImageGenerator {
         }
 
         private async createBloodGlucose_LineChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = stats.map(c => {
                 return {
                     x : new Date(c.DayStr),
@@ -557,7 +601,9 @@ export default class ReportImageGenerator {
         }
 
         private async createBloodPressure_MultiLineChart(stats: any, filename: string) {
-
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = [];
             for (var c of stats) {
                 temp.push({
@@ -596,8 +642,9 @@ export default class ReportImageGenerator {
             };
 
             const temp = [];
+            let records = [];
 
-            let records = stats.TotalCholesterol.map(getRecords);
+            records = stats.TotalCholesterol.map(getRecords);
             temp.push(...records);
             records = stats.HDL.map(getRecords);
             temp.push(...records);
@@ -607,6 +654,10 @@ export default class ReportImageGenerator {
             temp.push(...records);
             records = stats.A1CLevel.map(getRecords);
             temp.push(...records);
+
+            if (temp.length === 0) {
+                return null;
+            }
 
             const categoryColors = this.getLipidColors();
             const categories = categoryColors.map(x => x.Key);
@@ -624,6 +675,9 @@ export default class ReportImageGenerator {
         }
 
         private async createFeelings_DonutChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const feelings_ = stats.map(x => x.Feeling);
             const tempFeelings = this.findKeyCounts(feelings_);
             const feelings = Helper.sortObjectKeysAlphabetically(tempFeelings);
@@ -639,6 +693,9 @@ export default class ReportImageGenerator {
         }
 
         private async createMoods_DonutChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const moods_ = stats.map(x => x.Mood);
             const tempMoods = this.findKeyCounts(moods_);
             const moods = Helper.sortObjectKeysAlphabetically(tempMoods);
@@ -654,6 +711,9 @@ export default class ReportImageGenerator {
         }
 
         private async createEnergyLevels_BubbleChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const energyLevels_ = stats.map(x => x.EnergyLevels);
             const e_ = [];
             for (var x of energyLevels_) {
@@ -670,6 +730,9 @@ export default class ReportImageGenerator {
         }
 
         private async createUserEngagement_DonutChart(stats: any, filename: string) {
+            if (stats == null) {
+                return null;
+            }
             const options: PieChartOptions = {
                 Width  : SQUARE_CHART_WIDTH,
                 Height : SQUARE_CHART_HEIGHT,
@@ -692,9 +755,9 @@ export default class ReportImageGenerator {
         }
 
         private async createUserEngagement_CircularProgress(stats: any, filename: string) {
-            let total = stats.Finished + stats.Unfinished;
+            const total = stats.Finished + stats.Unfinished;
             if (total === 0) {
-                total = 1;
+                return null;
             }
             const percentage = (stats.Finished / total) * 100;
             const options: CircularProgressChartOptions = DefaultChartOptions.circularProgress();
@@ -707,6 +770,9 @@ export default class ReportImageGenerator {
         }
 
         private async createUserTasks_StackedBarChart(stats: any, filename: string) {
+            if (stats.length === 0) {
+                return null;
+            }
             const temp = [];
             for (var c of stats) {
                 temp.push({
@@ -961,9 +1027,3 @@ export default class ReportImageGenerator {
         }
 
 }
-
-// feelings = ["Better", "Same", "Worse", "Unspecified"]
-// moods = ["Happy", "Lonely", "Angry", "Stressed", "Anxious",
-//  "Fearful", "Sad", "Hopeful", "Calm", "Status Quo", "Unspecified"]
-// energy_levels = ["Get off the bed", "Climb stairs", "Exercise",
-//  "Walk", "Stand", "Eat", "Get through the day without a nap", "Unspecified"]

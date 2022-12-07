@@ -107,8 +107,9 @@ export default class StatReportCommons {
         return y;
     }
 
-    public addNoDataDisplay = (document: PDFKit.PDFDocument, y: number, title: string): number => {
+    public addNoDataDisplay = (document: PDFKit.PDFDocument, y: number): number => {
         y = y + 18;
+        y = y + 55;
 
         document
             .roundedRect(150, y, 300, 35, 2)
@@ -129,10 +130,11 @@ export default class StatReportCommons {
 
         document
             .font('Helvetica-Bold')
-            .text(title, 35, y, { align: "center" })
+            .text("Data not available!", 35, y, { align: "center" })
             .moveDown();
 
         y = y + 20;
+        y = y + 100;
 
         return y;
     }
@@ -162,6 +164,7 @@ export default class StatReportCommons {
         fontSize: number, color: string, alignment: Alignment) => {
         document
             .fontSize(fontSize)
+            .opacity(1.0)
             .font('Helvetica-Bold')
             .fillColor(color)
             .text(text, textX, textY, { align: alignment })
@@ -173,11 +176,10 @@ export default class StatReportCommons {
         legendItems: any, startX: number, fontSize: number,
         colorStripWidth = 150,
         colorStripHeight = 6,
-        margin = 10) => {
+        margin = 10,
+        rowYOffset = 17) => {
 
         y = y + margin;
-
-        const rowYOffset = 17;
 
         document
             .fontSize(fontSize)
@@ -196,6 +198,7 @@ export default class StatReportCommons {
 
             document
                 .font('Helvetica')
+                .fillOpacity(1.0)
                 .text(text, startX + colorStripWidth + 15, y, { align: "left" })
                 .moveDown();
 

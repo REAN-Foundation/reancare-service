@@ -2,26 +2,16 @@
 import { inject, injectable } from "tsyringe";
 import { IMedicationConsumptionRepo } from "../../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
 import { IMedicationRepo } from "../../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
-import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
-import { IPatientRepo } from "../../../../database/repository.interfaces/users/patient/patient.repo.interface";
-import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
 import { IFoodConsumptionRepo } from "../../../../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
-import { IDocumentRepo } from "../../../../database/repository.interfaces/users/patient/document.repo.interface";
 import { IPhysicalActivityRepo } from "../../../../database/repository.interfaces/wellness/exercise/physical.activity.repo.interface";
 import { IBodyWeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { ILabRecordRepo } from "../../../../database/repository.interfaces/clinical/lab.record/lab.record.interface";
-import { IAssessmentRepo } from "../../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
 import { uuid } from "../../../../domain.types/miscellaneous/system.types";
-import { DocumentRepo } from "../../../../database/sql/sequelize/repositories/users/patient/document.repo";
 import { Loader } from "../../../../startup/loader";
 import { LabRecordRepo } from "../../../../database/sql/sequelize/repositories/clinical/lab.record/lab.record.repo";
-import { AssessmentRepo } from "../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.repo";
 import { BodyWeightRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/body.weight.repo";
 import { MedicationConsumptionRepo } from "../../../../database/sql/sequelize/repositories/clinical/medication/medication.consumption.repo";
 import { MedicationRepo } from "../../../../database/sql/sequelize/repositories/clinical/medication/medication.repo";
-import { PersonRepo } from "../../../../database/sql/sequelize/repositories/person/person.repo";
-import { PatientRepo } from "../../../../database/sql/sequelize/repositories/users/patient/patient.repo";
-import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.repo";
 import { PhysicalActivityRepo } from "../../../../database/sql/sequelize/repositories/wellness/exercise/physical.activity.repo";
 import { FoodConsumptionRepo } from "../../../../database/sql/sequelize/repositories/wellness/nutrition/food.consumption.repo";
 import { ISleepRepo } from "../../../../database/repository.interfaces/wellness/daily.records/sleep.repo.interface";
@@ -34,13 +24,9 @@ import * as fs from 'fs';
 import { IBloodPressureRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface";
 import { IBloodGlucoseRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.glucose.repo.interface";
 import { IDailyAssessmentRepo } from "../../../../database/repository.interfaces/clinical/daily.assessment/daily.assessment.repo.interface";
-import { ISymptomRepo } from "../../../../database/repository.interfaces/clinical/symptom/symptom.repo.interface";
-import { IHowDoYouFeelRepo } from "../../../../database/repository.interfaces/clinical/symptom/how.do.you.feel.repo.interface";
 import { BloodGlucoseRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/blood.glucose.repo";
 import { BloodPressureRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/blood.pressure.repo";
 import { DailyAssessmentRepo } from "../../../../database/sql/sequelize/repositories/clinical/daily.assessment/daily.assessment.repo";
-import { HowDoYouFeelRepo } from "../../../../database/sql/sequelize/repositories/clinical/symptom/how.do.you.feel.repo";
-import { SymptomRepo } from "../../../../database/sql/sequelize/repositories/clinical/symptom/symptom.repo";
 import { UserTaskRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.task.repo";
 import { IUserTaskRepo } from "../../../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
@@ -62,10 +48,6 @@ export class StatisticsService {
     _commons = new StatReportCommons();
 
     constructor(
-        @inject('IDocumentRepo') private _documentRepo: IDocumentRepo,
-        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
-        @inject('IUserRepo') private _userRepo: IUserRepo,
-        @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
@@ -76,17 +58,10 @@ export class StatisticsService {
         @inject('ISleepRepo') private _sleepRepo: ISleepRepo,
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
         @inject('IBloodGlucoseRepo') private _bloodGlucoseRepo: IBloodGlucoseRepo,
-        @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IDailyAssessmentRepo') private _dailyAssessmentRepo: IDailyAssessmentRepo,
-        @inject('ISymptomRepo') private _symptomRepoRepo: ISymptomRepo,
-        @inject('IHowDoYouFeelRepo') private _howDoYouFeelRepo: IHowDoYouFeelRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
-        this._documentRepo = Loader.container.resolve(DocumentRepo);
-        this._patientRepo = Loader.container.resolve(PatientRepo);
-        this._userRepo = Loader.container.resolve(UserRepo);
-        this._personRepo = Loader.container.resolve(PersonRepo);
         this._foodConsumptionRepo = Loader.container.resolve(FoodConsumptionRepo);
         this._medicationConsumptionRepo = Loader.container.resolve(MedicationConsumptionRepo);
         this._medicationRepo = Loader.container.resolve(MedicationRepo);
@@ -95,12 +70,9 @@ export class StatisticsService {
         this._bodyHeightRepo = Loader.container.resolve(BodyHeightRepo);
         this._labRecordsRepo = Loader.container.resolve(LabRecordRepo);
         this._sleepRepo = Loader.container.resolve(SleepRepo);
-        this._assessmentRepo = Loader.container.resolve(AssessmentRepo);
         this._bloodPressureRepo = Loader.container.resolve(BloodPressureRepo);
         this._bloodGlucoseRepo = Loader.container.resolve(BloodGlucoseRepo);
         this._dailyAssessmentRepo = Loader.container.resolve(DailyAssessmentRepo);
-        this._symptomRepoRepo = Loader.container.resolve(SymptomRepo);
-        this._howDoYouFeelRepo = Loader.container.resolve(HowDoYouFeelRepo);
         this._userTaskRepo = Loader.container.resolve(UserTaskRepo);
         this._careplanRepo = Loader.container.resolve(CareplanRepo);
     }
@@ -171,13 +143,14 @@ export class StatisticsService {
         let currentHeight = null;
         let heightUnits = 'cm';
         const weightUnits = 'Kg';
+        const currentWeight = currentBodyWeight ? currentBodyWeight.BodyWeight : null;
         const heightDto = await this._bodyHeightRepo.getRecent(patientUserId);
         if (heightDto) {
             currentHeight = heightDto.BodyHeight;
             heightUnits = heightDto.Unit;
         }
         const { bmi, weightStr, heightStr } =
-            Helper.calculateBMI(currentHeight, heightUnits, currentBodyWeight.BodyWeight, weightUnits);
+            Helper.calculateBMI(currentHeight, heightUnits, currentWeight, weightUnits);
 
         const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, 6);
         const currentBloodPressure = await this._bloodPressureRepo.getRecent(patientUserId);
@@ -220,9 +193,10 @@ export class StatisticsService {
         const sleepStats = await this._sleepRepo.getStats(patientUserId, 1);
         const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
         const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / sleepStats.length;
+        const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
         const sleepTrend = {
             LastMonth           : sleepStats,
-            AverageForLastMonth : averageSleepHours.toFixed(1),
+            AverageForLastMonth : averageSleepHoursStr,
         };
 
         //Medication trends
@@ -242,22 +216,28 @@ export class StatisticsService {
         };
 
         //Health journey / Careplan stats
+
+        let careplanStats = {
+            Enrollment      : null,
+            CurrentProgress : null,
+        };
         const activeEnrollments = await this._careplanRepo.getPatientEnrollments(patientUserId, true);
         const careplanEnrollment = activeEnrollments.length > 0 ? activeEnrollments[0] : null;
-        const start = careplanEnrollment.StartAt;
-        const end = careplanEnrollment.EndAt;
-        const current = new Date();
-        let totalDays = TimeHelper.dayDiff(start, end);
-        if (totalDays === 0) {
-            totalDays = 1;
+        if (careplanEnrollment != null) {
+            const start = careplanEnrollment.StartAt;
+            const end = careplanEnrollment.EndAt;
+            const current = new Date();
+            let totalDays = TimeHelper.dayDiff(start, end);
+            if (totalDays === 0) {
+                totalDays = 1;
+            }
+            const covered = TimeHelper.dayDiff(start, current);
+            const percentageCompletion = covered / totalDays;
+            careplanStats = {
+                Enrollment      : careplanEnrollment,
+                CurrentProgress : percentageCompletion,
+            };
         }
-        const covered = TimeHelper.dayDiff(start, current);
-        const percentageCompletion = covered / totalDays;
-
-        const careplanStats = {
-            Enrollment      : careplanEnrollment,
-            CurrentProgress : percentageCompletion,
-        };
 
         const stats = {
             WeightStr        : weightStr,
@@ -304,14 +284,15 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 9;
+            reportModel.TotalPages = 10;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
             pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
+            pageNumber = this.addExercisePage(document, reportModel, pageNumber);
             pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
             pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
-            pageNumber = this.addExercisePage(document, reportModel, pageNumber);
+            pageNumber = this.addSleepPage(document, reportModel, pageNumber);
             pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
             pageNumber = this.addDailyAssessmentPage(document, reportModel, pageNumber);
 
@@ -380,6 +361,14 @@ export class StatisticsService {
     private addNutritionPageB = (document, model, pageNumber) => {
         var y = this._commons.addTop(document, model);
         y = this.addNutritionServingsStats(document, model, y);
+        y = this.addCalorieBalanceStats(document, model, y);
+        this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addSleepPage = (document, model, pageNumber) => {
+        var y = this._commons.addTop(document, model);
         y = this.addSleepStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
         pageNumber += 1;
@@ -560,6 +549,34 @@ export class StatisticsService {
         return y;
     };
 
+    private addCalorieBalanceStats = (document, model, y) => {
+
+        const chartImage = 'CalorieBalance_LastMonth';
+        const detailedTitle = 'Calorie Balance for Last Month';
+        const titleColor = '#505050';
+        const sectionTitle = 'Calorie Balance - Consumption and Burn';
+
+        const icon = Helper.getIconsPath('calorie-balance.png');
+        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
+
+        if (!this.chartExists(model, chartImage)) {
+            y = this._commons.addNoDataDisplay(document, y);
+        } else {
+            y = y + 25;
+            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+            y = y + 27;
+            const colors = this._imageGenerator.getCalorieBalanceColors();
+            const legend = colors.map(x => {
+                return {
+                    Key   : x.Key,
+                    Color : x.Color,
+                };
+            });
+            y = this._commons.addLegend(document, y, legend, 150, 11, 35, 10, 15);
+        }
+        return y;
+    };
+
     private addExerciseStats = (document, model, y) => {
 
         let chartImage = 'Exercise_CaloriesBurned_LastMonth';
@@ -665,7 +682,7 @@ export class StatisticsService {
             y = y + 17;
             chartImage = 'DailyAssessments_EnergyLevels_Last6Months';
             const title = 'Energy Levels Over Last 6 Months';
-            y = this.addSquareChartImage(document, model, chartImage, y, title, titleColor, 185, 205);
+            y = this.addSquareChartImage(document, model, chartImage, y, title, titleColor, 195, 205);
         }
         return y;
     };
@@ -871,7 +888,7 @@ export class StatisticsService {
             return y;
         }
         const planName = journey.PlanName;
-        const enrollmentId = journey.EnrollmentId.toString();
+        const enrollmentId = journey.EnrollmentId ? journey.EnrollmentId.toString() : journey.EnrollmentStringId;
         const startDate = journey.StartAt?.toLocaleDateString();
         const endDate = journey.EndAt?.toLocaleDateString();
         const icon = Helper.getIconsPath('health-journey.png');

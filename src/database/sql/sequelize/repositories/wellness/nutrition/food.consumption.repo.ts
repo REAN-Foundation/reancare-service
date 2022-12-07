@@ -456,6 +456,9 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     private async getQuestionnaireStats(patientUserId: string, numDays: number) {
 
         const records = await this.getQuestionnaireRecords(patientUserId, numDays, DurationType.Day);
+        if (records.length === 0) {
+            return null;
+        }
         const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
 
         const records_ = records.map(x => {
@@ -617,6 +620,22 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
 
         const stats = [];
+
+        //Check whether the records exist or not
+        const from = TimeHelper.subtractDuration(reference, numDays, DurationType.Day);
+        const records = await FoodConsumption.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                FoodTypes     : null,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : new Date(),
+                }
+            }
+        });
+        if (records.length === 0) {
+            return [];
+        }
 
         for await (var day of dayList) {
 

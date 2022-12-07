@@ -551,6 +551,21 @@ export class UserTaskRepo implements IUserTaskRepo {
         let totalUnfinished = 0;
         let totalFinished = 0;
 
+        //Check whether the records exist or not
+        const from = TimeHelper.subtractDuration(reference, numDays, DurationType.Day);
+        const records = await UserTask.findAll({
+            where : {
+                UserId             : patientUserId,
+                ScheduledStartTime : {
+                    [Op.gte] : from,
+                    [Op.lte] : new Date(),
+                }
+            }
+        });
+        if (records.length === 0) {
+            return { stats, totalFinished, totalUnfinished };
+        }
+
         for await (var day of dayList) {
 
             var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);

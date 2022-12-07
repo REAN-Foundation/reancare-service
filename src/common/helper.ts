@@ -27,38 +27,44 @@ export class Helper {
 
         let height = currentHeight;
         let weight = currentWeight;
+        let height_square = 0;
         let bmi = null;
         let heightStr = 'Unspecified';
         let weightStr = 'Unspecified';
 
-        if (currentWeight == null || currentHeight == null) {
+        if (currentWeight == null && currentHeight == null) {
             return { bmi, weightStr, heightStr };
         }
 
-        if (heightUnits === 'feet' || heightUnits === 'ft') {
-            height = height * 30.48; //Convert feet to cms
-        }
-        if (!weightUnits || weightUnits !== 'Kg') {
-            weightUnits = 'Kg';
-        }
-        const heightInFeet = (height / 30.48);
-        const feet = (Math.floor(heightInFeet)).toFixed();
-        const inches = (Math.floor((heightInFeet % 1.0) * 12)).toFixed();
+        if (currentHeight) {
+            if (heightUnits === 'feet' || heightUnits === 'ft') {
+                height = height * 30.48; //Convert feet to cms
+            }
+            const heightInFeet = (height / 30.48);
+            const feet = (Math.floor(heightInFeet)).toFixed();
+            const inches = (Math.floor((heightInFeet % 1.0) * 12)).toFixed();
 
-        heightStr = height.toFixed() + ` cms (${feet} feet, ${inches} inches)`;
+            heightStr = height.toFixed() + ` cms (${feet} feet, ${inches} inches)`;
 
-        height = height / 100; //Convert to meteres
-        const height_square = height * height;
-
-        if (weightUnits === 'lbs' || weightUnits === 'lb') {
-            weight = weight * 0.453592;
+            height = height / 100; //Convert to meteres
+            height_square = height * height;
         }
-        const weightInLbs = weight / 0.453592;
-        weightStr = weight.toFixed() + ` Kg (${weightInLbs.toFixed()} lbs)`;
+
+        if (currentWeight) {
+            if (weightUnits === 'lbs' || weightUnits === 'lb') {
+                weight = weight * 0.453592;
+            }
+            if (!weightUnits) {
+                weightUnits = 'Kg';
+            }
+            const weightInLbs = weight / 0.453592;
+            weightStr = weight.toFixed() + ` Kg (${weightInLbs.toFixed()} lbs)`;
+        }
 
         if (height_square === 0) {
             return { bmi, weightStr, heightStr };
         }
+
         bmi = weight / height_square;
         return { bmi, weightStr, heightStr };
     }

@@ -425,6 +425,21 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
         const stats = [];
 
+        //Check whether the records exist or not
+        const from = TimeHelper.subtractDuration(reference, numDays, DurationType.Day);
+        const records = await MedicationConsumption.findAll({
+            where : {
+                PatientUserId     : patientUserId,
+                TimeScheduleStart : {
+                    [Op.gte] : from,
+                    [Op.lte] : new Date(),
+                }
+            }
+        });
+        if (records.length === 0) {
+            return [];
+        }
+
         for await (var day of dayList) {
 
             var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);

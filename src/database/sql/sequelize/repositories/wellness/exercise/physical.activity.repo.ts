@@ -230,6 +230,22 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
         const stats = [];
 
+        //Check whether the records exist or not
+        const from = TimeHelper.subtractDuration(reference, numDays, DurationType.Day);
+        const records = await PhysicalActivity.findAll({
+            where : {
+                PatientUserId            : patientUserId,
+                PhysicalActivityQuestion : null,
+                CreatedAt                : {
+                    [Op.gte] : from,
+                    [Op.lte] : new Date(),
+                }
+            }
+        });
+        if (records.length === 0) {
+            return [];
+        }
+
         for await (var day of dayList) {
 
             var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);

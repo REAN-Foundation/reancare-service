@@ -36,18 +36,12 @@ export default class ReportImageGenerator {
             imageLocations = await this.createCareplanCharts(reportModel.Stats.Careplan);
             chartImagePaths.push(...imageLocations);
 
+            const calorieBalanceStats = this.getCalorieBalanceStats(reportModel.Stats);
+            imageLocations = await this.createCalorieBalanceChart(calorieBalanceStats);
+            chartImagePaths.push(...imageLocations);
+
             return chartImagePaths;
         };
-
-        // Nutrition
-        // PhysicalActivity
-        // BodyWeight
-        // LabRecords
-        // Sleep
-        // Medication
-        // DailyAssessent
-        // UserEngagement
-        // Careplan
 
         private createDailyAssessentCharts = async (data) => {
             var locations = [];
@@ -121,41 +115,46 @@ export default class ReportImageGenerator {
                 location
             });
 
-            //Questionnaire
-            const qstats = [
-                ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices.Stats),
-                ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions.Stats),
-                ...(data.LastMonth.QuestionnaireStats.LowSaltFoods.Stats),
-            ];
-            location = await this.createNutritionQueryForWeek_BarChart(qstats, 'Nutrition_QuestionnaireResponses_LastWeek');
-            locations.push({
-                key : 'Nutrition_QuestionnaireResponses_LastWeek',
-                location
-            });
-            location = await this.createNutritionQueryForMonth_StackedBarChart(qstats, 'Nutrition_QuestionnaireResponses_LastMonth');
-            locations.push({
-                key : 'Nutrition_QuestionnaireResponses_LastMonth',
-                location
-            });
+            if (data.LastMonth.QuestionnaireStats) {
 
-            //Servings
-            const servingsStats = [
-                ...(data.LastMonth.QuestionnaireStats.VegetableServings.Stats),
-                ...(data.LastMonth.QuestionnaireStats.FruitServings.Stats),
-                ...(data.LastMonth.QuestionnaireStats.WholeGrainServings.Stats),
-                ...(data.LastMonth.QuestionnaireStats.SeafoodServings.Stats),
-                ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings.Stats),
-            ];
-            location = await this.createNutritionServingsForMonth_BarChart(servingsStats, 'Nutrition_Servings_LastMonth');
-            locations.push({
-                key : 'Nutrition_Servings_LastMonth',
-                location
-            });
-            location = await this.createNutritionServingsForWeek_BarChart(servingsStats, 'Nutrition_Servings_LastWeek');
-            locations.push({
-                key : 'Nutrition_Servings_LastWeek',
-                location
-            });
+                //Questionnaire
+
+                const qstats = [
+                    ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices.Stats),
+                    ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions.Stats),
+                    ...(data.LastMonth.QuestionnaireStats.LowSaltFoods.Stats),
+                ];
+                location = await this.createNutritionQueryForWeek_BarChart(qstats, 'Nutrition_QuestionnaireResponses_LastWeek');
+                locations.push({
+                    key : 'Nutrition_QuestionnaireResponses_LastWeek',
+                    location
+                });
+                location = await this.createNutritionQueryForMonth_StackedBarChart(qstats, 'Nutrition_QuestionnaireResponses_LastMonth');
+                locations.push({
+                    key : 'Nutrition_QuestionnaireResponses_LastMonth',
+                    location
+                });
+
+                //Servings
+
+                const servingsStats = [
+                    ...(data.LastMonth.QuestionnaireStats.VegetableServings.Stats),
+                    ...(data.LastMonth.QuestionnaireStats.FruitServings.Stats),
+                    ...(data.LastMonth.QuestionnaireStats.WholeGrainServings.Stats),
+                    ...(data.LastMonth.QuestionnaireStats.SeafoodServings.Stats),
+                    ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings.Stats),
+                ];
+                location = await this.createNutritionServingsForMonth_BarChart(servingsStats, 'Nutrition_Servings_LastMonth');
+                locations.push({
+                    key : 'Nutrition_Servings_LastMonth',
+                    location
+                });
+                location = await this.createNutritionServingsForWeek_BarChart(servingsStats, 'Nutrition_Servings_LastWeek');
+                locations.push({
+                    key : 'Nutrition_Servings_LastWeek',
+                    location
+                });
+            }
 
             return locations;
         };
@@ -183,6 +182,16 @@ export default class ReportImageGenerator {
 
             return locations;
         };
+
+        private createCalorieBalanceChart = async (stats) => {
+            var locations = [];
+            const location = await this.createCalorieBalance_GroupedBarChart(stats, 'CalorieBalance_LastMonth');
+            locations.push({
+                key : 'CalorieBalance_LastMonth',
+                location
+            });
+            return locations;
+        }
 
         private createBodyWeightCharts = async (data) => {
             var locations = [];
@@ -251,6 +260,11 @@ export default class ReportImageGenerator {
 
         private createMedicationTrendCharts = async (data) => {
             var locations = [];
+
+            if (data.LastMonth.length === 0) {
+                return locations;
+            }
+
             let location = await this.createMedication_BarChart(data.LastMonth.Daily, 'MedicationsHistory_LastMonth');
             locations.push({
                 key : 'MedicationsHistory_LastMonth',
@@ -307,7 +321,7 @@ export default class ReportImageGenerator {
                 Width  : RECTANGULAR_CHART_WIDTH,
                 Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'Calories',
-                Color  : ChartColors.GreenLight
+                Color  : ChartColors.MediumSeaGreen
             };
 
             return await ChartGenerator.createBarChart(calorieStats, options, filename);
@@ -431,7 +445,7 @@ export default class ReportImageGenerator {
                 Width  : RECTANGULAR_CHART_WIDTH,
                 Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'Calories Burned',
-                Color  : ChartColors.Tomato,
+                Color  : ChartColors.Coral,
             };
             return await ChartGenerator.createBarChart(calorieStats, options, filename);
         }
@@ -450,7 +464,7 @@ export default class ReportImageGenerator {
                 Width  : RECTANGULAR_CHART_WIDTH,
                 Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'User Response',
-                Color  : ChartColors.MediumAquaMarine,
+                Color  : ChartColors.MediumSeaGreen,
             };
             return await ChartGenerator.createBarChart(calorieStats, options, filename);
         }
@@ -465,7 +479,7 @@ export default class ReportImageGenerator {
                 Width  : SQUARE_CHART_WIDTH,
                 Height : SQUARE_CHART_HEIGHT,
                 Colors : [
-                    ChartColors.MediumAquaMarine,
+                    ChartColors.MediumSeaGreen,
                     ChartColors.Coral,
                     ChartColors.DodgerBlue,
                 ],
@@ -481,6 +495,32 @@ export default class ReportImageGenerator {
                 }
             ];
             return await ChartGenerator.createDonutChart(data, options, filename);
+        }
+
+        private createCalorieBalance_GroupedBarChart = async (stats: any, filename: string) => {
+            if (stats.length === 0) {
+                return null;
+            }
+            const temp = stats.map(c => {
+                return {
+                    x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+                    y : c.Calories,
+                    z : c.Type
+                };
+            });
+            const categoryColors = this.getCalorieBalanceColors();
+            const categories = categoryColors.map(x => x.Key);
+            const colors = categoryColors.map(x => x.Color);
+            const options: MultiBarChartOptions = {
+                Width           : RECTANGULAR_CHART_WIDTH,
+                Height          : RECTANGULAR_CHART_HEIGHT,
+                YLabel          : 'Calories',
+                CategoriesCount : categories.length,
+                Categories      : categories,
+                Colors          : colors,
+                FontSize        : '9px',
+            };
+            return await ChartGenerator.createGroupBarChart(temp, options, filename);
         }
 
         private async createMedicationConsumption_DonutChart(stats: any, filename: string) {
@@ -737,8 +777,8 @@ export default class ReportImageGenerator {
                 Width  : SQUARE_CHART_WIDTH,
                 Height : SQUARE_CHART_HEIGHT,
                 Colors : [
-                    ChartColors.Green,
-                    ChartColors.Orange,
+                    ChartColors.MediumSeaGreen,
+                    ChartColors.Coral,
                 ],
             };
             const data = [
@@ -763,7 +803,7 @@ export default class ReportImageGenerator {
             const options: CircularProgressChartOptions = DefaultChartOptions.circularProgress();
             options.Width  = SQUARE_CHART_WIDTH;
             options.Height = SQUARE_CHART_HEIGHT;
-            options.GradientColor1 = ChartColors.Lime;
+            options.GradientColor1 = ChartColors.MediumSeaGreen;
             options.GradientColor2 = ChartColors.DodgerBlue;
             options.PathColor      = '#404F70';
             return await ChartGenerator.createCircularProgressChart(percentage, options, filename);
@@ -812,15 +852,15 @@ export default class ReportImageGenerator {
                 },
                 {
                     Key   : 'HDL',
-                    Color : ChartColors.Green,
+                    Color : ChartColors.MediumSeaGreen,
                 },
                 {
                     Key   : 'LDL',
-                    Color : ChartColors.Fuchsia,
+                    Color : ChartColors.Purple,
                 },
                 {
                     Key   : 'Triglyceride Level',
-                    Color : ChartColors.LightSlateGray,
+                    Color : ChartColors.DarkSlateGray,
                 },
                 {
                     Key   : 'A1C Level',
@@ -856,11 +896,11 @@ export default class ReportImageGenerator {
             const items = [
                 {
                     Key   : 'Angry',
-                    Color : ChartColors.Tomato,
+                    Color : ChartColors.Coral,
                 },
                 {
                     Key   : 'Anxious',
-                    Color : ChartColors.Khaki,
+                    Color : ChartColors.DarkSlateBlue,
                 },
                 {
                     Key   : 'Calm',
@@ -868,7 +908,7 @@ export default class ReportImageGenerator {
                 },
                 {
                     Key   : 'Fearful',
-                    Color : ChartColors.LightSlateGray,
+                    Color : ChartColors.DarkTurquoise,
                 },
                 {
                     Key   : 'Happy',
@@ -876,11 +916,11 @@ export default class ReportImageGenerator {
                 },
                 {
                     Key   : 'Hopeful',
-                    Color : ChartColors.Gold,
+                    Color : ChartColors.Orange,
                 },
                 {
                     Key   : 'Lonely',
-                    Color : ChartColors.LightGray,
+                    Color : ChartColors.Charcoal,
                 },
                 {
                     Key   : 'Sad',
@@ -888,7 +928,7 @@ export default class ReportImageGenerator {
                 },
                 {
                     Key   : 'Status Quo',
-                    Color : ChartColors.LemonChiffon,
+                    Color : ChartColors.SaddleBrown,
                 },
                 {
                     Key   : 'Stressed',
@@ -906,18 +946,32 @@ export default class ReportImageGenerator {
             const items = [
                 {
                     Key      : 'Healthy',
-                    Color    : ChartColors.Green,
+                    Color    : ChartColors.MediumSeaGreen,
                     Question : 'Were most of your food choices healthy today?',
                 },
                 {
                     Key      : 'Protein',
-                    Color    : ChartColors.Blue,
+                    Color    : ChartColors.DodgerBlue,
                     Question : 'Did you select healthy sources of protein today?',
                 },
                 {
                     Key      : 'Low Salt',
-                    Color    : ChartColors.GrayMedium,
+                    Color    : ChartColors.Charcoal,
                     Question : 'Did you choose or prepare foods with little or no salt today?',
+                },
+            ];
+            return items;
+        };
+
+        public getCalorieBalanceColors = () => {
+            const items = [
+                {
+                    Key   : 'Consumed',
+                    Color : ChartColors.MediumSeaGreen,
+                },
+                {
+                    Key   : 'Burned',
+                    Color : ChartColors.Coral,
                 },
             ];
             return items;
@@ -932,7 +986,7 @@ export default class ReportImageGenerator {
                 },
                 {
                     Key      : 'Fruits',
-                    Color    : ChartColors.Gold,
+                    Color    : ChartColors.Orchid,
                     Question : 'How many servings of fruit did you eat today',
                 },
                 {
@@ -947,7 +1001,7 @@ export default class ReportImageGenerator {
                 },
                 {
                     Key      : 'Sugar',
-                    Color    : ChartColors.Tomato,
+                    Color    : ChartColors.Coral,
                     Question : 'How many servings of sugary drinks did you drink today?',
                 },
             ];
@@ -994,13 +1048,40 @@ export default class ReportImageGenerator {
                 },
                 {
                     Key   : 'Unfinished',
-                    Color : ChartColors.Tomato,
+                    Color : ChartColors.Coral,
                 },
             ];
             return items;
         };
 
         //#endregion
+
+        private getCalorieBalanceStats(stats) {
+            const balance = [];
+            const nutrition = stats.Nutrition?.LastMonth?.CalorieStats;
+            const exercise = stats.PhysicalActivity?.LastMonth?.CalorieStats;
+            if (!nutrition || nutrition.length === 0) {
+                return [];
+            }
+            if (!exercise || exercise.length === 0) {
+                return [];
+            }
+            for (var n of nutrition) {
+                balance.push({
+                    DayStr   : n.DayStr,
+                    Calories : n.Calories,
+                    Type     : 'Consumed'
+                });
+            }
+            for (var n of exercise) {
+                balance.push({
+                    DayStr   : n.DayStr,
+                    Calories : n.Calories,
+                    Type     : 'Burned'
+                });
+            }
+            return balance;
+        }
 
         private constructDonutChartData(x_) {
             const data = [];

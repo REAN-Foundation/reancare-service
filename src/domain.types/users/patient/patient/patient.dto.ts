@@ -1,6 +1,6 @@
 import { Gender } from "../../../miscellaneous/system.types";
 import { EmergencyContactDto } from "../emergency.contact/emergency.contact.dto";
-import { UserDto } from "../../user/user.dto";
+import { UserDetailsDto } from "../../user/user.dto";
 import { HealthProfileDto } from "../health.profile/health.profile.dto";
 import { PatientInsuranceDto } from "../insurance/insurance.dto";
 
@@ -25,7 +25,7 @@ export interface PatientDto {
 export interface PatientDetailsDto {
     id                  : string;
     UserId              : string;
-    User                : UserDto;
+    User                : UserDetailsDto;
     DisplayId           : string,
     EhrId?              : string;
     NationalHealthId?   : string;

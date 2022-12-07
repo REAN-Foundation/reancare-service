@@ -8,7 +8,7 @@ import {
     PrimaryKey,
     Table } from 'sequelize-typescript';
 import {
-    MaritalStatusList,
+    //MaritalStatusList,
     GenderList,
     Gender } from '../../../domain.types/miscellaneous/system.types';
 
@@ -121,10 +121,8 @@ export default class StaticEHRData extends Model {
     IsDiabetic: boolean;
 
     @Column({
-        type         : DataType.ENUM,
-        values       : MaritalStatusList,
-        defaultValue : 'Unknown',
-        allowNull    : false,
+        type      : DataType.STRING(128),
+        allowNull : true,
     })
     MaritalStatus: string;
 

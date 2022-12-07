@@ -91,7 +91,7 @@
         "max-len": [
             "warn",
             {
-                "code": 120,
+                "code": 125,
                 "tabWidth": 4,
                 "ignoreTrailingComments": true,
                 "ignoreTemplateLiterals": true,

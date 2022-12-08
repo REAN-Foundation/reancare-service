@@ -330,13 +330,20 @@ export class FileResourceService {
             var directories = getDirectories(parentFolder);
 
             for await (var d of directories) {
-                var tmp = new Date();
-                tmp.setTime(parseInt(d));
-                var createdAt = tmp;
-                var isBefore = TimeHelper.isBefore(createdAt, cleanupBefore);
-                if (isBefore) {
-                    var dPath = path.join(parentFolder, d);
-                    fs.rmSync(dPath, { recursive: true });
+                const dirPath = path.join(parentFolder, d);
+                const directoryContents = fs.readdirSync(dirPath, { withFileTypes: true });
+                for await (var c of directoryContents) {
+                    const cPath = path.join(dirPath, c.name);
+                    const stats = fs.statSync(cPath);
+                    const createdDateTime = stats.ctime;
+                    var isBefore = TimeHelper.isBefore(createdDateTime, cleanupBefore);
+                    if (isBefore) {
+                        fs.rmSync(cPath, { recursive: true });
+                    }
+                }
+                const contents = fs.readdirSync(dirPath, { withFileTypes: true });
+                if (contents.length === 0) {
+                    fs.rmSync(dirPath, { recursive: true });
                 }
             }
         }

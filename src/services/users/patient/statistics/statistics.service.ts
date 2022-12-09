@@ -288,10 +288,11 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 10;
+            reportModel.TotalPages = 11;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
+            pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
             pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
             pageNumber = this.addExercisePage(document, reportModel, pageNumber);
             pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
@@ -365,6 +366,14 @@ export class StatisticsService {
         var y = addTop(document, model);
         y = addBloodPressureStats(model, document, y);
         y = y + 15;
+        // y = addBloodPressureStats(model, document, y);
+        addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addBiometricsPageC = (document, model, pageNumber) => {
+        var y = addTop(document, model);
         y = addCholesterolStats(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;

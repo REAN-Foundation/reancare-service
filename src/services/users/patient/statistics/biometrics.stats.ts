@@ -4,6 +4,7 @@ import { LineChartOptions, ChartColors, MultiLineChartOptions } from "../../../.
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import {
     addLabeledText,
+    addLongRectangularChartImage,
     addRectangularChartImage,
     chartExists,
     RECTANGULAR_CHART_HEIGHT,
@@ -100,9 +101,6 @@ export const addBloodGlucoseStats = (model: any, document: PDFKit.PDFDocument, y
 
 export const addCholesterolStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
-    const chartImage = 'Cholesterol_Last6Months';
-    const detailedTitle = 'Lipids Trend Over 6 Months';
-    const titleColor = '#505050';
     const sectionTitle = 'Lipids';
     const icon = Helper.getIconsPath('blood-lipids.png');
 
@@ -110,13 +108,27 @@ export const addCholesterolStats = (model: any, document: PDFKit.PDFDocument, y:
 
     y = addSectionTitle(document, y, sectionTitle, icon);
 
-    if (!chartExists(model, chartImage)) {
+    const exists = chartExists(model, 'HDL_Last6Months') ||
+        chartExists(model, 'LDL_Last6Months') ||
+        chartExists(model, 'TotalCholesterol_Last6Months') ||
+        chartExists(model, 'Triglyceride_Last6Months') ||
+        chartExists(model, 'A1C_Last6Months');
+
+    if (!exists) {
         y = addNoDataDisplay(document, y);
     } else {
         y = y + 25;
-        y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
-        y = addLegend(document, y, lipidColors, 200, 11, 65, 6, 10);
+        y = addLongRectangularChartImage(document, model, 'HDL_Last6Months', y);
+        y = y + 22;
+        y = addLongRectangularChartImage(document, model, 'LDL_Last6Months', y);
+        y = y + 22;
+        y = addLongRectangularChartImage(document, model, 'TotalCholesterol_Last6Months', y);
+        y = y + 22;
+        y = addLongRectangularChartImage(document, model, 'Triglyceride_Last6Months', y);
+        y = y + 22;
+        y = addLongRectangularChartImage(document, model, 'A1C_Last6Months', y);
+        y = y + 33;
+        y = addLegend(document, y, lipidColors, 175, 11, 100, 6, 10);
     }
     return y;
 };
@@ -196,7 +208,7 @@ const createCholesterolCharts = async (data) => {
     return locations;
 };
 
-const createLipidChart = async (stats: any[], filename: string, key: string, showXAxis = false, chartHeight = 130) => {
+const createLipidChart = async (stats: any[], filename: string, key: string, showXAxis = false, chartHeight = 150) => {
     const getRecords = (c) => {
         return {
             x : new Date(c.DayStr),
@@ -236,7 +248,7 @@ const createLDLChart_LineChart = async (stats: any, filename: string) => {
 };
 
 const createTriglycerideChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.TriglycerideLevel, filename, 'Triglyceride Level');
+    return await createLipidChart(stats.TriglycerideLevel, filename, 'Triglyceride Level', true);
 };
 
 const createA1CChart_LineChart = async (stats: any, filename: string) => {

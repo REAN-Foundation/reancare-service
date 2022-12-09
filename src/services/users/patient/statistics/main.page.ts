@@ -5,7 +5,24 @@ import { addSectionTitle, addText } from "./stat.report.commons";
 
 export const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: number): number => {
 
+    y = y + 5;
+
+    document
+        .font('Helvetica-Bold')
+        .fontSize(12)
+        .text('Heart & Stroke Helper™', 35, y, { align: "center" })
+        .moveDown();
+
     y = y + 20;
+
+    const text = `Heart & Stroke Helper™ supports individuals to better manage their health condition by providing education from a trusted source and keeping track of healthy habits, health numbers, symptoms, and medications - all in one place.`;
+    document
+        .font('Helvetica')
+        .fontSize(9)
+        .text(text, 50, y, { align: "left" })
+        .moveDown();
+
+    y = y + 43;
 
     document
         .image(model.ProfileImagePath, 50, y, { width: 64 });
@@ -49,11 +66,11 @@ export const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: n
 
 export const addReportSummary = (document: PDFKit.PDFDocument, model: any, y: number): number => {
 
-    y = y + 70;
+    y = y + 45;
 
     const labelX = 135;
     const valueX = 325;
-    const rowYOffset = 23;
+    const rowYOffset = 21;
 
     document
         .fontSize(11)
@@ -99,7 +116,7 @@ export const addReportSummary = (document: PDFKit.PDFDocument, model: any, y: nu
         .moveDown();
     y = y + rowYOffset;
 
-    y = y + rowYOffset;
+    y = y + 7;
 
     document
         .font('Helvetica-Bold')
@@ -154,11 +171,19 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
     const icon = Helper.getIconsPath('health-journey.png');
     y = addSectionTitle(document, y, 'Health Journey', icon);
 
+    y = y + 18;
+    const text = `Health Journey helps you to better manage your high cholesterol and reduce your risk of heart disease and stroke.  You'll learn about healthy lifestyle habits, goal planning, shared decision-making with your care team, cholesterol medications, self-management tips, and health behavior maintenance.`;
+    document
+        .font('Helvetica')
+        .fontSize(9)
+        .text(text, 50, y, { align: "left" })
+        .moveDown();
+
     const labelX = 135;
     const valueX = 325;
     const rowYOffset = 23;
 
-    y = y + 30;
+    y = y + 60;
 
     document
         .fontSize(11)

@@ -111,6 +111,7 @@ const createExerciseQuestionForMonth_BarChart = async (stats: any, filename: str
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.YLabel = 'User Response';
     options.Color  = ChartColors.MediumSeaGreen;
+    options.ShowYAxis = false;
 
     return await ChartGenerator.createBarChart(calorieStats, options, filename);
 };

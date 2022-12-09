@@ -300,7 +300,7 @@ const getNutritionQuestionCategoryColors = () => {
         },
         {
             Key      : 'Low Salt',
-            Color    : ChartColors.Charcoal,
+            Color    : ChartColors.Coral,
             Question : 'Did you choose or prepare foods with little or no salt today?',
         },
     ];

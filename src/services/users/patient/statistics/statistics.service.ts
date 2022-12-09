@@ -35,7 +35,7 @@ import { BodyHeightRepo } from "../../../../database/sql/sequelize/repositories/
 import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { addBottom, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
-import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholesterolStats, createBiometricsCharts } from "./biometrics.stats";
+import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
 import { addCalorieBalanceStats, createCalorieBalanceChart } from "./calorie.balance.stats";
 import { createCareplanCharts } from "./careplan.stats";
 import { addDailyAssessmentsStats, createDailyAssessentCharts } from "./daily.assessments.stats";
@@ -374,7 +374,7 @@ export class StatisticsService {
 
     private addBiometricsPageC = (document, model, pageNumber) => {
         var y = addTop(document, model);
-        y = addCholesterolStats(model, document, y);
+        y = addLipidStats(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;

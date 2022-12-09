@@ -99,7 +99,7 @@ export const addBloodGlucoseStats = (model: any, document: PDFKit.PDFDocument, y
     return y;
 };
 
-export const addCholesterolStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
+export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
     const sectionTitle = 'Lipids';
     const icon = Helper.getIconsPath('blood-lipids.png');

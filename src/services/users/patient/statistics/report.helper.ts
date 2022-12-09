@@ -3,21 +3,20 @@ import { addLegend, addText } from "./stat.report.commons";
 //////////////////////////////////////////////////////////////////////////////////
 
 export const RECTANGULAR_CHART_WIDTH = 600;
-export const RECTANGULAR_CHART_HEIGHT = 250;
+export const RECTANGULAR_CHART_HEIGHT = 225;
 export const SQUARE_CHART_WIDTH = 400;
 export const SQUARE_CHART_HEIGHT = 400;
 
 //////////////////////////////////////////////////////////////////////////////////
 
 export const addLabeledText = (
-    document: PDFKit.PDFDocument, label: string, value: string, y: any) => {
+    document: PDFKit.PDFDocument, label: string, value: string, y: any, fontSize = 11, rowYOffset = 23) => {
 
     const labelX = 135;
     const valueX = 325;
-    const rowYOffset = 23;
 
     document
-        .fontSize(11)
+        .fontSize(fontSize)
         .fillColor("#444444");
 
     y = y + rowYOffset;
@@ -36,13 +35,12 @@ export const addRectangularChartImage = (
     document: PDFKit.PDFDocument, model: any,
     chartImage: string, y: any, title: string,
     titleColor: string) => {
-    const imageWidth = 350;
+    const imageWidth = 325;
     const chart = model.ChartImagePaths.find(x => x.key === chartImage);
     document.image(chart.location, 125, y, { width: imageWidth, align: 'center' });
-    document.fontSize(7);
     document.moveDown();
-    y = y + 160;
-    addText(document, title, 80, y, 12, titleColor, 'center');
+    y = y + 135;
+    addText(document, title, 80, y, 10, titleColor, 'center');
     return y;
 };
 

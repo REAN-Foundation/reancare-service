@@ -42,11 +42,13 @@
 			{ x: "Saturday", y: 34.39 },
 		];
 
-		const width = 650;
-		const height = 400;
-		const yLabel = 'Frequency'
-		const fontSize = "14px";
-		const color = "steelblue"
+		const width     = 650;
+		const height    = 400;
+		const yLabel    = 'Frequency';
+		const fontSize  = "14px";
+		const color     = "steelblue";
+		const showXAxis = true;
+		const showYAxis = true;
 
 		// customization
 
@@ -68,7 +70,9 @@
 			xPadding = 0.1,                                 // amount of x-range to reserve to separate bars
 			yFormat, 				// a format specifier string for the y-axis
 			yLabel, 				// a label for the y-axis
-			color = "currentColor"  // bar fill color
+			color = "currentColor",  // bar fill color
+			showXAxis = true,
+			showYAxis = true,
 		} = {}) {
 			// Compute values.
 			const X = d3.map(data, x);
@@ -105,20 +109,22 @@
 				.attr("viewBox", [0, 0, width, height])
 				.attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
-			svg.append("g")
-				.style("font-size", fontSize)
-				.attr("transform", `translate(${marginLeft},0)`)
-				.call(yAxis)
-				.call(g => g.select(".domain").remove())
-				.call(g => g.selectAll(".tick line").clone()
-					.attr("x2", width - marginLeft - marginRight)
-					.attr("stroke-opacity", 0.1))
-				.call(g => g.append("text")
-					.attr("x", -marginLeft)
-					.attr("y", 10)
-					.attr("fill", "currentColor")
-					.attr("text-anchor", "start")
-					.text(yLabel));
+			if (showYAxis) {
+				svg.append("g")
+					.style("font-size", fontSize)
+					.attr("transform", `translate(${marginLeft},0)`)
+					.call(yAxis)
+					.call(g => g.select(".domain").remove())
+					.call(g => g.selectAll(".tick line").clone()
+						.attr("x2", width - marginLeft - marginRight)
+						.attr("stroke-opacity", 0.1))
+					.call(g => g.append("text")
+						.attr("x", -marginLeft)
+						.attr("y", 10)
+						.attr("fill", "currentColor")
+						.attr("text-anchor", "start")
+						.text(yLabel));
+			}
 
 			const bar = svg.append("g")
 				.attr("fill", color)
@@ -133,10 +139,12 @@
 			if (title) bar.append("title")
 				.text(title);
 
-			svg.append("g")
-				.style("font-size", fontSize)
-				.attr("transform", `translate(0,${height - marginBottom})`)
-				.call(xAxis);
+			if (showXAxis) {
+				svg.append("g")
+					.style("font-size", fontSize)
+					.attr("transform", `translate(0,${height - marginBottom})`)
+					.call(xAxis);
+			}
 
 			return svg.node();
 		}
@@ -147,7 +155,9 @@
 			yLabel: yLabel,
 			width: width,
 			height: height,
-			color: color
+			color: color,
+			showXAxis: showXAxis != undefined ? showXAxis : true,
+			showYAxis: showYAxis != undefined ? showYAxis : true,
 		});
 
 	</script>

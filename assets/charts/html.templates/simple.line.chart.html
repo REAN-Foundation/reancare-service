@@ -90,14 +90,14 @@
 	const xTo             = null;
 	const yFrom           = null;
 	const yTo             = null;
-	// const xTo             = new Date("2007-06-09T00:00:00.000Z");
-	// const yFrom           = 70;
 	const xAxisTimeScaled = true;
 	const yLabel          = 'Day Close $'
 	const fontSize        = "14px";
 	const strokeWidth     = 3.5;
 	const axisColor       = "#2E4053";
 	const color 		  = "steelblue";
+	const showXAxis       = true;
+	const showYAxis       = true;
 
 	// customization
 
@@ -125,6 +125,8 @@
 		strokeLinejoin = "round",          	// stroke line join of the line
 		strokeWidth    = 2.5,              	// stroke width of line, in pixels
 		strokeOpacity  = 0.8,              	// stroke opacity of line
+		showXAxis       = true,
+		showYAxis       = true,
 	  } = {}) {
 
 		// Compute values.
@@ -167,25 +169,29 @@
 			.attr("viewBox", [0, 0, width, height])
 			.attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
-		svg.append("g")
-			.style("font-size", fontSize)
-			.attr("transform", `translate(0,${height - marginBottom})`)
-			.call(xAxis);
+		if (showXAxis) {
+			svg.append("g")
+				.style("font-size", fontSize)
+				.attr("transform", `translate(0,${height - marginBottom})`)
+				.call(xAxis);
+		}
 
-		svg.append("g")
-			.style("font-size", fontSize)
-			.attr("transform", `translate(${marginLeft},0)`)
-			.call(yAxis)
-			//.call(g => g.select(".domain").remove())
-			.call(g => g.selectAll(".tick line").clone()
-				.attr("x2", width - marginLeft - marginRight)
-				.attr("stroke-opacity", 0.1))
-			.call(g => g.append("text")
-				.attr("x", -marginLeft)
-				.attr("y", 15)
-				.attr("fill", "currentColor")
-				.attr("text-anchor", "start")
-				.text(yLabel));
+		if (showYAxis) {
+			svg.append("g")
+				.style("font-size", fontSize)
+				.attr("transform", `translate(${marginLeft},0)`)
+				.call(yAxis)
+				//.call(g => g.select(".domain").remove())
+				.call(g => g.selectAll(".tick line").clone()
+					.attr("x2", width - marginLeft - marginRight)
+					.attr("stroke-opacity", 0.1))
+				.call(g => g.append("text")
+					.attr("x", -marginLeft)
+					.attr("y", 15)
+					.attr("fill", "currentColor")
+					.attr("text-anchor", "start")
+					.text(yLabel));
+		}
 
 		svg.append("path")
 			.attr("fill", "none")
@@ -206,6 +212,8 @@
 		width: width,
 		height: height,
 		color: color,
+		showXAxis: showXAxis != undefined ? showXAxis : true,
+		showYAxis: showYAxis != undefined ? showYAxis : true,
 	});
 
 	</script>

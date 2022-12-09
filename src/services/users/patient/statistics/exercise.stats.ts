@@ -1,3 +1,4 @@
+import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
@@ -86,12 +87,12 @@ const createExerciseCalorieForMonth_BarChart = async (stats: any, filename: stri
             y : c.Calories
         };
     });
-    const options: BarChartOptions = {
-        Width  : RECTANGULAR_CHART_WIDTH,
-        Height : RECTANGULAR_CHART_HEIGHT,
-        YLabel : 'Calories Burned',
-        Color  : ChartColors.Coral,
-    };
+    const options: BarChartOptions = DefaultChartOptions.barChart();
+    options.Width  = RECTANGULAR_CHART_WIDTH;
+    options.Height = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel = 'Calories Burned';
+    options.Color  = ChartColors.Coral;
+
     return await ChartGenerator.createBarChart(calorieStats, options, filename);
 };
 
@@ -105,12 +106,12 @@ const createExerciseQuestionForMonth_BarChart = async (stats: any, filename: str
             y : c.Response
         };
     });
-    const options: BarChartOptions = {
-        Width  : RECTANGULAR_CHART_WIDTH,
-        Height : RECTANGULAR_CHART_HEIGHT,
-        YLabel : 'User Response',
-        Color  : ChartColors.MediumSeaGreen,
-    };
+    const options: BarChartOptions = DefaultChartOptions.barChart();
+    options.Width  = RECTANGULAR_CHART_WIDTH;
+    options.Height = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel = 'User Response';
+    options.Color  = ChartColors.MediumSeaGreen;
+
     return await ChartGenerator.createBarChart(calorieStats, options, filename);
 };
 

@@ -1,3 +1,4 @@
+import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
@@ -64,15 +65,16 @@ const createCalorieBalance_GroupedBarChart = async (stats: any, filename: string
     const categoryColors = getCalorieBalanceColors();
     const categories = categoryColors.map(x => x.Key);
     const colors = categoryColors.map(x => x.Color);
-    const options: MultiBarChartOptions = {
-        Width           : RECTANGULAR_CHART_WIDTH,
-        Height          : RECTANGULAR_CHART_HEIGHT,
-        YLabel          : 'Calories',
-        CategoriesCount : categories.length,
-        Categories      : categories,
-        Colors          : colors,
-        FontSize        : '9px',
-    };
+
+    const options: MultiBarChartOptions = DefaultChartOptions.multiBarChart();
+    options.Width           = RECTANGULAR_CHART_WIDTH;
+    options.Height          = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel          = 'Calories';
+    options.CategoriesCount = categories.length;
+    options.Categories      = categories;
+    options.Colors          = colors;
+    options.FontSize        = '9px';
+
     return await ChartGenerator.createGroupBarChart(temp, options, filename);
 };
 

@@ -9,6 +9,7 @@ import {
     RECTANGULAR_CHART_HEIGHT,
     RECTANGULAR_CHART_WIDTH } from "./report.helper";
 import { addNoDataDisplay, addSectionTitle } from "./stat.report.commons";
+import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -54,11 +55,11 @@ const createSleepTrend_BarChart = async (stats: any, filename: string) => {
             y : c.SleepDuration
         };
     });
-    const options: BarChartOptions = {
-        Width  : RECTANGULAR_CHART_WIDTH,
-        Height : RECTANGULAR_CHART_HEIGHT,
-        YLabel : 'Sleep in Hours',
-        Color  : ChartColors.GrayDarker
-    };
+    const options: BarChartOptions = DefaultChartOptions.barChart();
+    options.Width  = RECTANGULAR_CHART_WIDTH;
+    options.Height = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel = 'Sleep in Hours';
+    options.Color  = ChartColors.GrayDarker;
+
     return await ChartGenerator.createBarChart(sleepStats, options, filename);
 };

@@ -1,5 +1,6 @@
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
-import { DefaultChartOptions, ChartColors, LinearProgressChartOptions } from "../../../../modules/charts/chart.options";
+import { ChartColors, LinearProgressChartOptions } from "../../../../modules/charts/chart.options";
+import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 
 //////////////////////////////////////////////////////////////////////////////////
 

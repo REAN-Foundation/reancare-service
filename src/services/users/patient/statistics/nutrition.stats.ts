@@ -1,7 +1,8 @@
 import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
-import { LineChartOptions, DefaultChartOptions, BarChartOptions, ChartColors, MultiBarChartOptions } from "../../../../modules/charts/chart.options";
+import { LineChartOptions, BarChartOptions, ChartColors, MultiBarChartOptions } from "../../../../modules/charts/chart.options";
+import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import {
     addRectangularChartImage,
     chartExists,
@@ -168,12 +169,11 @@ const createNutritionCalorie_BarChart = async (stats: any, filename: string) => 
             y : c.Calories
         };
     });
-    const options: BarChartOptions = {
-        Width  : RECTANGULAR_CHART_WIDTH,
-        Height : RECTANGULAR_CHART_HEIGHT,
-        YLabel : 'Calories',
-        Color  : ChartColors.MediumSeaGreen
-    };
+    const options: BarChartOptions = DefaultChartOptions.barChart();
+    options.Width  = RECTANGULAR_CHART_WIDTH;
+    options.Height = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel = 'Calories';
+    options.Color  = ChartColors.MediumSeaGreen;
 
     return await ChartGenerator.createBarChart(calorieStats, options, filename);
 };
@@ -192,15 +192,17 @@ const createNutritionQueryForWeek_BarChart = async (stats: any, filename: string
     const categoryColors = getNutritionQuestionCategoryColors();
     const categories = categoryColors.map(x => x.Key);
     const colors = categoryColors.map(x => x.Color);
-    const options: MultiBarChartOptions = {
-        Width           : RECTANGULAR_CHART_WIDTH,
-        Height          : RECTANGULAR_CHART_HEIGHT,
-        YLabel          : 'User Response',
-        CategoriesCount : categories.length,
-        Categories      : categories,
-        Colors          : colors,
-        FontSize        : '14px',
-    };
+
+    const options: MultiBarChartOptions =  DefaultChartOptions.multiBarChart();
+    options.Width           = RECTANGULAR_CHART_WIDTH;
+    options.Height          = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel          = 'User Response';
+    options.CategoriesCount = categories.length;
+    options.Categories      = categories;
+    options.Colors          = colors;
+    options.FontSize        = '14px';
+    options.ShowYAxis       = false;
+
     return await ChartGenerator.createGroupBarChart(temp, options, filename);
 };
 
@@ -218,15 +220,17 @@ const createNutritionQueryForMonth_StackedBarChart = async (stats: any, filename
     const categoryColors = getNutritionQuestionCategoryColors();
     const categories = categoryColors.map(x => x.Key);
     const colors = categoryColors.map(x => x.Color);
-    const options: MultiBarChartOptions = {
-        Width           : RECTANGULAR_CHART_WIDTH,
-        Height          : RECTANGULAR_CHART_HEIGHT,
-        YLabel          : 'User Response',
-        CategoriesCount : categories.length,
-        Categories      : categories,
-        Colors          : colors,
-        FontSize        : '9px',
-    };
+
+    const options: MultiBarChartOptions =  DefaultChartOptions.multiBarChart();
+    options.Width           = RECTANGULAR_CHART_WIDTH;
+    options.Height          = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel          = 'User Response';
+    options.CategoriesCount = categories.length;
+    options.Categories      = categories;
+    options.Colors          = colors;
+    options.FontSize        = '9px';
+    options.ShowYAxis       = false;
+
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 
@@ -244,15 +248,15 @@ const createNutritionServingsForWeek_BarChart = async (stats: any, filename: str
     const categoryColors = getNutritionServingsCategoryColors();
     const categories = categoryColors.map(x => x.Key);
     const colors = categoryColors.map(x => x.Color);
-    const options: MultiBarChartOptions = {
-        Width           : RECTANGULAR_CHART_WIDTH,
-        Height          : RECTANGULAR_CHART_HEIGHT,
-        YLabel          : 'Servings',
-        CategoriesCount : categories.length,
-        Categories      : categories,
-        Colors          : colors,
-        FontSize        : '14px',
-    };
+    const options: MultiBarChartOptions =  DefaultChartOptions.multiBarChart();
+    options.Width           = RECTANGULAR_CHART_WIDTH;
+    options.Height          = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel          = 'Servings';
+    options.CategoriesCount = categories.length;
+    options.Categories      = categories;
+    options.Colors          = colors;
+    options.FontSize        = '14px';
+
     return await ChartGenerator.createGroupBarChart(temp, options, filename);
 };
 
@@ -270,15 +274,15 @@ const createNutritionServingsForMonth_BarChart = async (stats: any, filename: st
     const categoryColors = getNutritionServingsCategoryColors();
     const categories = categoryColors.map(x => x.Key);
     const colors = categoryColors.map(x => x.Color);
-    const options: MultiBarChartOptions = {
-        Width           : RECTANGULAR_CHART_WIDTH,
-        Height          : RECTANGULAR_CHART_HEIGHT,
-        YLabel          : 'Servings',
-        CategoriesCount : categories.length,
-        Categories      : categories,
-        Colors          : colors,
-        FontSize        : '9px',
-    };
+    const options: MultiBarChartOptions =  DefaultChartOptions.multiBarChart();
+    options.Width           = RECTANGULAR_CHART_WIDTH;
+    options.Height          = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel          = 'Servings';
+    options.CategoriesCount = categories.length;
+    options.Categories      = categories;
+    options.Colors          = colors;
+    options.FontSize        = '9px';
+
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 

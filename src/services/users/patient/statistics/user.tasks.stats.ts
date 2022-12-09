@@ -1,7 +1,8 @@
 import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
-import { DefaultChartOptions, ChartColors, MultiBarChartOptions, PieChartOptions, CircularProgressChartOptions } from "../../../../modules/charts/chart.options";
+import { ChartColors, MultiBarChartOptions, PieChartOptions, CircularProgressChartOptions } from "../../../../modules/charts/chart.options";
+import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import {
     addLabeledText,
     addRectangularChartImage,
@@ -137,15 +138,15 @@ const createUserTasks_StackedBarChart = async (stats: any, filename: string) => 
     const categories = categoryColors.map(x => x.Key);
     const colors = categoryColors.map(x => x.Color);
 
-    const options: MultiBarChartOptions = {
-        Width           : RECTANGULAR_CHART_WIDTH,
-        Height          : RECTANGULAR_CHART_HEIGHT,
-        YLabel          : 'User Response',
-        CategoriesCount : 2,
-        Categories      : categories,
-        Colors          : colors,
-        FontSize        : '9px',
-    };
+    const options: MultiBarChartOptions =  DefaultChartOptions.multiBarChart();
+    options.Width           = RECTANGULAR_CHART_WIDTH;
+    options.Height          = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel          = 'User Response';
+    options.CategoriesCount = 2;
+    options.Categories      = categories;
+    options.Colors          = colors;
+    options.FontSize        = '9px';
+
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 

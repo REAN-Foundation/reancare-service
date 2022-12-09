@@ -44,7 +44,7 @@ export class ChartGenerator {
         return await ChartGenerator.multiBarChart(templHtml, data, options, filename);
     };
 
-    static createDonutChart = async (data: any[], options: MultiBarChartOptions, filename: string)
+    static createDonutChart = async (data: any[], options: PieChartOptions, filename: string)
     : Promise<string|undefined> => {
         const templHtml = 'simple.donut.chart.html';
         const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
@@ -52,7 +52,7 @@ export class ChartGenerator {
         return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
     };
 
-    static createPieChart = async (data: any[], options: MultiBarChartOptions, filename: string)
+    static createPieChart = async (data: any[], options: PieChartOptions, filename: string)
     : Promise<string|undefined> => {
         const templHtml = 'simple.pie.chart.html';
         const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
@@ -69,7 +69,7 @@ export class ChartGenerator {
     };
 
     static createCalendarChart = async (
-        data: any[], options: ChartOptions, filename: string): Promise<string|undefined> => {
+        data: any[], options: CalendarChartOptions, filename: string): Promise<string|undefined> => {
         const templHtml = 'calendar.chart.html';
         const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
         const dataStr = ChartGenerator.createCalendarChartTextBlock(data, options);
@@ -103,7 +103,7 @@ export class ChartGenerator {
     //#region Common Privates
 
     private static generateChartImage = async (
-        pre: string, dataStr: string, post: string, filename: string, options: BarChartOptions, addMargin = false) => {
+        pre: string, dataStr: string, post: string, filename: string, options: ChartOptions, addMargin = false) => {
         const html = pre + dataStr + post;
         Helper.writeTextToFile(html, `${filename}.html`);
         const w = addMargin ? Math.round(options.Width * 1.20) : options.Width;
@@ -153,6 +153,9 @@ export class ChartGenerator {
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `14px`}";\n`;
         dataStr += `\tconst axisStrokeWidth = ${options.AxisStrokeWidth ?? `2.0`};\n`;
         dataStr += `\tconst axisColor       = "${options.AxisColor ?? `#2E4053`}";\n`;
+        dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
+        dataStr += `\tconst showYAxis       = ${options.ShowYAxis === false ? `false` : `true`};\n`;
+
         return dataStr;
     }
 
@@ -179,6 +182,8 @@ export class ChartGenerator {
         dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
         dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
         dataStr += `\tconst strokeWidth     = ${options.StrokeWidth}\n`;
+        dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
+        dataStr += `\tconst showYAxis       = ${options.ShowYAxis === false ? `false` : `true`};\n`;
         return dataStr;
     }
 
@@ -194,6 +199,8 @@ export class ChartGenerator {
         dataStr += `\tconst color           = "${options.Color}"\n`;
         dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
+        dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
+        dataStr += `\tconst showYAxis       = ${options.ShowYAxis === false ? `false` : `true`};\n`;
         return dataStr;
     }
 
@@ -211,6 +218,8 @@ export class ChartGenerator {
         dataStr += `\tconst categories      = ${JSON.stringify(options.Categories)}\n`;
         dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
+        dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
+        dataStr += `\tconst showYAxis       = ${options.ShowYAxis === false ? `false` : `true`};\n`;
         return dataStr;
     }
 

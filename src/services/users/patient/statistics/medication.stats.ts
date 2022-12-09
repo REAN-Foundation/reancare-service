@@ -1,3 +1,4 @@
+import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
@@ -159,15 +160,15 @@ const createMedication_BarChart = async (stats: any, filename: string) => {
             z : 'Taken',
         });
     });
-    const options: MultiBarChartOptions = {
-        Width           : RECTANGULAR_CHART_WIDTH,
-        Height          : RECTANGULAR_CHART_HEIGHT,
-        YLabel          : 'Medication History',
-        CategoriesCount : 2,
-        Categories      : [ "Missed", "Taken" ],
-        Colors          : [ ChartColors.Coral, ChartColors.MediumSeaGreen ],
-        FontSize        : '9px',
-    };
+    const options: MultiBarChartOptions =  DefaultChartOptions.multiBarChart();
+    options.Width           = RECTANGULAR_CHART_WIDTH;
+    options.Height          = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel          = 'Medication History';
+    options.CategoriesCount = 2;
+    options.Categories      = [ "Missed", "Taken" ];
+    options.Colors          = [ ChartColors.Coral, ChartColors.MediumSeaGreen ];
+    options.FontSize        = '9px';
+
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 

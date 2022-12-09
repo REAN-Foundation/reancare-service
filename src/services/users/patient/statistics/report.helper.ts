@@ -46,6 +46,16 @@ export const addRectangularChartImage = (
     return y;
 };
 
+export const addLongRectangularChartImage = (document: PDFKit.PDFDocument, model: any, chartImage: string, y: any) => {
+    const imageWidth = 350;
+    const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+    document.image(chart.location, 125, y, { width: imageWidth, align: 'center' });
+    document.fontSize(7);
+    document.moveDown();
+    y = y + 65;
+    return y;
+};
+
 export const addSquareChartImage = (
     document: PDFKit.PDFDocument, model: any,
     chartImage: string, y: any, title: string,

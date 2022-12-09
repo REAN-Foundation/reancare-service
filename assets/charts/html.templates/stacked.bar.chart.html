@@ -56,13 +56,15 @@
 			{ x: "SAT", y: 89.47 , z: "C" },
 		];
 
-		const width    = 650;
-		const height   = 400;
-		const yLabel   = 'Frequency'
-		const fontSize = "14px";
+		const width           = 650;
+		const height          = 400;
+		const yLabel          = 'Frequency'
+		const fontSize        = "14px";
 		const categoriesCount = 3;
-		const categories = [ "A", "B", "C" ];
-		const colors = ["red", "blue", "green" ];
+		const categories      = [ "A", "B", "C" ];
+		const colors          = ["red", "blue", "green" ];
+		const showXAxis       = true;
+		const showYAxis       = true;
 
 		// customization
 
@@ -89,6 +91,8 @@
 				yFormat, // a format specifier string for the y-axis
 				yLabel, // a label for the y-axis
 				colors = d3.schemeTableau10, // array of colors
+				showXAxis = true,
+				showYAxis = true,
 			} = {}) {
 			// Compute values.
 			const X = d3.map(data, x);
@@ -144,20 +148,22 @@
 				.attr("viewBox", [0, 0, width, height])
 				.attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
-			svg.append("g")
-				.style("font-size", fontSize)
-				.attr("transform", `translate(${marginLeft},0)`)
-				.call(yAxis)
-				.call(g => g.select(".domain").remove())
-				.call(g => g.selectAll(".tick line").clone()
-					.attr("x2", width - marginLeft - marginRight)
-					.attr("stroke-opacity", 0.1))
-				.call(g => g.append("text")
-					.attr("x", -marginLeft)
-					.attr("y", 10)
-					.attr("fill", "currentColor")
-					.attr("text-anchor", "start")
-					.text(yLabel));
+			if (showYAxis) {
+				svg.append("g")
+					.style("font-size", fontSize)
+					.attr("transform", `translate(${marginLeft},0)`)
+					.call(yAxis)
+					.call(g => g.select(".domain").remove())
+					.call(g => g.selectAll(".tick line").clone()
+						.attr("x2", width - marginLeft - marginRight)
+						.attr("stroke-opacity", 0.1))
+					.call(g => g.append("text")
+						.attr("x", -marginLeft)
+						.attr("y", 10)
+						.attr("fill", "currentColor")
+						.attr("text-anchor", "start")
+						.text(yLabel));
+			}
 
 			const bar = svg.append("g")
 				.selectAll("g")
@@ -175,10 +181,12 @@
 			if (title) bar.append("title")
 				.text(({i}) => title(i));
 
-			svg.append("g")
-				.style("font-size", fontSize)
-				.attr("transform", `translate(0,${yScale(0)})`)
-				.call(xAxis);
+			if (showXAxis) {
+				svg.append("g")
+					.style("font-size", fontSize)
+					.attr("transform", `translate(0,${yScale(0)})`)
+					.call(xAxis);
+			}
 
 			return Object.assign(svg.node(), {scales: {color}});
 		}
@@ -191,7 +199,9 @@
 			zDomain: categories,
 			colors: colors,
 			width: width,
-			height: height
+			height: height,
+			showXAxis: showXAxis != undefined ? showXAxis : true,
+			showYAxis: showYAxis != undefined ? showYAxis : true,
 		});
 
 	</script>

@@ -1,6 +1,7 @@
 import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
-import { LineChartOptions, DefaultChartOptions, ChartColors, MultiLineChartOptions } from "../../../../modules/charts/chart.options";
+import { LineChartOptions, ChartColors, MultiLineChartOptions } from "../../../../modules/charts/chart.options";
+import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import {
     addLabeledText,
     addRectangularChartImage,
@@ -167,12 +168,79 @@ const createBloodGlucoseCharts = async (data) => {
 
 const createCholesterolCharts = async (data) => {
     var locations = [];
-    const location = await createCholesterolCharts_MultiLineChart(data, 'Cholesterol_Last6Months');
+    let location = await createTotalCholesterolChart_LineChart(data, 'TotalCholesterol_Last6Months');
     locations.push({
-        key : 'Cholesterol_Last6Months',
+        key : 'TotalCholesterol_Last6Months',
+        location
+    });
+    location = await createHDLChart_LineChart(data, 'HDL_Last6Months');
+    locations.push({
+        key : 'HDL_Last6Months',
+        location
+    });
+    location = await createLDLChart_LineChart(data, 'LDL_Last6Months');
+    locations.push({
+        key : 'LDL_Last6Months',
+        location
+    });
+    location = await createA1CChart_LineChart(data, 'A1C_Last6Months');
+    locations.push({
+        key : 'A1C_Last6Months',
+        location
+    });
+    location = await createTriglycerideChart_LineChart(data, 'Triglyceride_Last6Months');
+    locations.push({
+        key : 'Triglyceride_Last6Months',
         location
     });
     return locations;
+};
+
+const createLipidChart = async (stats: any[], filename: string, key: string, showXAxis = false, chartHeight = 130) => {
+    const getRecords = (c) => {
+        return {
+            x : new Date(c.DayStr),
+            y : c.PrimaryValue,
+        };
+    };
+
+    const records = stats.map(getRecords);
+    if (records.length === 0) {
+        return null;
+    }
+
+    const categoryColors = getLipidColors();
+    const options: LineChartOptions = DefaultChartOptions.lineChart();
+    options.Width = RECTANGULAR_CHART_WIDTH;
+    options.Height = chartHeight;
+    options.XAxisTimeScaled = true;
+    options.YLabel = key;
+    options.StrokeWidth = 1.5;
+    const clr = categoryColors.find(x => x.Key === key);
+    options.Color = clr.Color;
+    options.ShowXAxis = showXAxis;
+
+    return await ChartGenerator.createLineChart(records, options, filename);
+};
+
+const createTotalCholesterolChart_LineChart = async (stats: any, filename: string) => {
+    return await createLipidChart(stats.TotalCholesterol, filename, 'Total Cholesterol');
+};
+
+const createHDLChart_LineChart = async (stats: any, filename: string) => {
+    return await createLipidChart(stats.HDL, filename, 'HDL');
+};
+
+const createLDLChart_LineChart = async (stats: any, filename: string) => {
+    return await createLipidChart(stats.LDL, filename, 'LDL');
+};
+
+const createTriglycerideChart_LineChart = async (stats: any, filename: string) => {
+    return await createLipidChart(stats.TriglycerideLevel, filename, 'Triglyceride Level');
+};
+
+const createA1CChart_LineChart = async (stats: any, filename: string) => {
+    return await createLipidChart(stats.A1CLevel, filename, 'A1C Level', true);
 };
 
 const createBodyWeight_LineChart = async (stats: any, filename: string) => {
@@ -243,49 +311,6 @@ const createBloodPressure_MultiLineChart = async (stats: any, filename: string) 
     return await ChartGenerator.createMultiLineChart(temp, options, filename);
 };
 
-const createCholesterolCharts_MultiLineChart = async (stats: any, filename: string) => {
-
-    const getRecords = (c) => {
-        return {
-            x : new Date(c.DayStr),
-            y : c.PrimaryValue,
-            z : c.DisplayName,
-        };
-    };
-
-    const temp = [];
-    let records = [];
-
-    records = stats.TotalCholesterol.map(getRecords);
-    temp.push(...records);
-    records = stats.HDL.map(getRecords);
-    temp.push(...records);
-    records = stats.LDL.map(getRecords);
-    temp.push(...records);
-    records = stats.TriglycerideLevel.map(getRecords);
-    temp.push(...records);
-    records = stats.A1CLevel.map(getRecords);
-    temp.push(...records);
-
-    if (temp.length === 0) {
-        return null;
-    }
-
-    const categoryColors = getLipidColors();
-    const categories = categoryColors.map(x => x.Key);
-    const colors = categoryColors.map(x => x.Color);
-    const options: MultiLineChartOptions = DefaultChartOptions.multiLineChart();
-    options.Width = RECTANGULAR_CHART_WIDTH;
-    options.Height = RECTANGULAR_CHART_HEIGHT;
-    options.XAxisTimeScaled = true;
-    options.YLabel = '';
-    options.StrokeWidth = 1.5;
-    options.Colors = colors;
-    options.Categories = categories;
-
-    return await ChartGenerator.createMultiLineChart(temp, options, filename);
-};
-
 const getLipidColors = () => {
     const items = [
         {
@@ -325,3 +350,46 @@ const getBloodPressureTypeColors = () => {
     ];
     return items;
 };
+
+// const createCholesterolCharts_MultiLineChart = async (stats: any, filename: string) => {
+
+//     const getRecords = (c) => {
+//         return {
+//             x : new Date(c.DayStr),
+//             y : c.PrimaryValue,
+//             z : c.DisplayName,
+//         };
+//     };
+
+//     const temp = [];
+//     let records = [];
+
+//     records = stats.TotalCholesterol.map(getRecords);
+//     temp.push(...records);
+//     records = stats.HDL.map(getRecords);
+//     temp.push(...records);
+//     records = stats.LDL.map(getRecords);
+//     temp.push(...records);
+//     records = stats.TriglycerideLevel.map(getRecords);
+//     temp.push(...records);
+//     records = stats.A1CLevel.map(getRecords);
+//     temp.push(...records);
+
+//     if (temp.length === 0) {
+//         return null;
+//     }
+
+//     const categoryColors = getLipidColors();
+//     const categories = categoryColors.map(x => x.Key);
+//     const colors = categoryColors.map(x => x.Color);
+//     const options: MultiLineChartOptions = DefaultChartOptions.multiLineChart();
+//     options.Width = RECTANGULAR_CHART_WIDTH;
+//     options.Height = RECTANGULAR_CHART_HEIGHT;
+//     options.XAxisTimeScaled = true;
+//     options.YLabel = '';
+//     options.StrokeWidth = 1.5;
+//     options.Colors = colors;
+//     options.Categories = categories;
+
+//     return await ChartGenerator.createMultiLineChart(temp, options, filename);
+// };

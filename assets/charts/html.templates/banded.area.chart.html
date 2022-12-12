@@ -35,10 +35,10 @@
 		const data = [
 		{ x: new Date ("2021-04-23"), y1: 93.24 , y2: 268.9 },
 		{ x: new Date ("2021-04-24"), y1: 95.35 , y2: 268.9 },
-		{ x: new Date ("2021-04-25"), y1: 98.84 , y2: 268.9 },
-		{ x: new Date ("2021-04-26"), y1: 99.92 , y2: 268.9 },
+		{ x: new Date ("2021-04-25"), y1: 98.84 , y2: 190.9 },
+		{ x: new Date ("2021-04-26"), y1: 99.92 , y2: 120.9 },
 		{ x: new Date ("2021-04-29"), y1: 99.82 , y2: 268.9 },
-		{ x: new Date ("2021-05-01"), y1: 99.47 , y2: 268.9 },
+		{ x: new Date ("2021-05-01"), y1: 99.47 , y2: 130.9 },
 		{ x: new Date ("2021-05-02"), y1: 100.39, y2: 268.9 },
 		{ x: new Date ("2021-05-03"), y1: 100.42, y2: 268.9 },
 		{ x: new Date ("2021-05-04"), y1: 100.81, y2: 268.9 },
@@ -84,11 +84,13 @@
 
 		];
 
-		const width    = 650;
-		const height   = 400;
-		const yLabel   = 'Frequency'
-		const fontSize = "14px";
-		const color = "skyblue";
+		const width     = 650;
+		const height    = 400;
+		const yLabel    = 'Frequency'
+		const fontSize  = "14px";
+		const color     = "skyblue";
+		const showXAxis = true;
+		const showYAxis = true;
 
 		// customization
 
@@ -112,7 +114,9 @@
 				yRange = [height - marginBottom, marginTop], // [bottom, top]
 				yFormat, // a format specifier string for the y-axis
 				yLabel, // a label for the y-axis
-				color = "currentColor" // fill color of area
+				color = "currentColor", // fill color of area
+				showXAxis = true,
+				showYAxis = true,
 			} = {}) {
 			// Compute values.
 			const X = d3.map(data, x);
@@ -147,30 +151,33 @@
 				.attr("viewBox", [0, 0, width, height])
 				.attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
-			svg.append("g")
-				.attr("transform", `translate(${marginLeft},0)`)
-				.call(yAxis)
-				.call(g => g.select(".domain").remove())
-				.call(g => g.selectAll(".tick line").clone()
-					.attr("x2", width - marginLeft - marginRight)
-					.attr("stroke-opacity", 0.1))
-				.call(g => g.append("text")
-					.style("font-size", fontSize)
-					.attr("x", -marginLeft)
-					.attr("y", 10)
-					.attr("fill", "currentColor")
-					.attr("text-anchor", "start")
-					.text(yLabel));
+			if (showYAxis) {
+				svg.append("g")
+					.attr("transform", `translate(${marginLeft},0)`)
+					.call(yAxis)
+					.call(g => g.select(".domain").remove())
+					.call(g => g.selectAll(".tick line").clone()
+						.attr("x2", width - marginLeft - marginRight)
+						.attr("stroke-opacity", 0.1))
+					.call(g => g.append("text")
+						.style("font-size", fontSize)
+						.attr("x", -marginLeft)
+						.attr("y", 10)
+						.attr("fill", "currentColor")
+						.attr("text-anchor", "start")
+						.text(yLabel));
+			}
 
 			svg.append("path")
 				.attr("fill", color)
 				.attr("d", area(I));
 
-			svg.append("g")
-				.attr("transform", `translate(0,${height - marginBottom})`)
-				.call(xAxis)
-				.call(g => g.select(".domain").remove());
-
+			if (showXAxis) {
+				svg.append("g")
+					.attr("transform", `translate(0,${height - marginBottom})`)
+					.call(xAxis)
+					.call(g => g.select(".domain").remove());
+			}
 			return svg.node();
 		}
 
@@ -183,6 +190,8 @@
 			yLabel: yLabel,
 			width: width,
 			height: height,
+			showXAxis: showXAxis != undefined ? showXAxis : true,
+			showYAxis: showYAxis != undefined ? showYAxis : true,
 		})
 
 	</script>

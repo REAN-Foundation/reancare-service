@@ -3,7 +3,10 @@ import {
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { MaritalStatusList, Severity, SeverityList } from '../../../../../../domain.types/miscellaneous/system.types';
+import {
+    //MaritalStatusList,
+    Severity,
+    SeverityList } from '../../../../../../domain.types/miscellaneous/system.types';
 import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -73,22 +76,20 @@ export default class HealthProfile extends Model {
     OtherConditions: string;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     IsDiabetic: boolean;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     HasHeartAilment: boolean;
 
     @Column({
-        type         : DataType.ENUM,
-        values       : MaritalStatusList,
-        defaultValue : 'Unknown',
-        allowNull    : false,
+        type      : DataType.STRING(128),
+        allowNull : true,
     })
     MaritalStatus: string;
 
@@ -206,32 +207,32 @@ export default class HealthProfile extends Model {
     TobaccoQuestion: string;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     TobaccoQuestionAns: boolean;
 
     @Column({
-        type         : DataType.STRING(128),
-        allowNull    : true,
+        type      : DataType.STRING(128),
+        allowNull : true,
     })
     TypeOfStroke: string;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     HasHighBloodPressure: boolean;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     HasHighCholesterol: boolean;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     HasAtrialFibrillation: boolean;
 

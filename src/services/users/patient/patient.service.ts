@@ -6,6 +6,7 @@ import { IPersonRepo } from '../../../database/repository.interfaces/person/pers
 import { IPersonRoleRepo } from '../../../database/repository.interfaces/person/person.role.repo.interface';
 import { IRoleRepo } from '../../../database/repository.interfaces/role/role.repo.interface';
 import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
+import { IHealthProfileRepo } from '../../../database/repository.interfaces/users/patient/health.profile.repo.interface';
 import { CurrentUser } from '../../../domain.types/miscellaneous/current.user';
 import { PatientDomainModel } from '../../../domain.types/users/patient/patient/patient.domain.model';
 import { PatientDetailsDto, PatientDto } from '../../../domain.types/users/patient/patient/patient.dto';
@@ -29,6 +30,7 @@ export class PatientService {
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
+        @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
             this._ehrPatientStore = Loader.container.resolve(PatientStore);
@@ -43,7 +45,6 @@ export class PatientService {
             const ehrId = await this._ehrPatientStore.create(patientDomainModel);
             patientDomainModel.EhrId = ehrId;
         }
-
         var dto = await this._patientRepo.create(patientDomainModel);
         dto = await this.updateDetailsDto(dto);
         const role = await this._roleRepo.getByName(Roles.Patient);
@@ -55,6 +56,8 @@ export class PatientService {
     public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
         var dto = await this._patientRepo.getByUserId(id);
         dto = await this.updateDetailsDto(dto);
+        var healthProfile = await this._healthProfileRepo.getByPatientUserId(id);
+        dto.HealthProfile = healthProfile;
         return dto;
     };
 
@@ -75,6 +78,7 @@ export class PatientService {
         }
 
         if (items.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const currentUser: CurrentUser = {
                 UserId        : items[0].id,
                 DisplayName   : items[0].DisplayName,
@@ -83,7 +87,7 @@ export class PatientService {
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
             };
-        
+
         }
         results.Items = items;
         return results;

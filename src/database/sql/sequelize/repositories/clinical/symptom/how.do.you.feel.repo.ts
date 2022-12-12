@@ -1,4 +1,7 @@
+import { uuid } from 'aws-sdk/clients/customerprofiles';
 import { Op } from 'sequelize';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { HowDoYouFeelDomainModel } from '../../../../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
@@ -105,7 +108,7 @@ export class HowDoYouFeelRepo implements IHowDoYouFeelRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -147,5 +150,44 @@ export class HowDoYouFeelRepo implements IHowDoYouFeelRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const records = await this.getRecords(patientUserId, numMonths);
+            return records.map(x => {
+                const dayStr = x.RecordDate.toISOString()
+                    .split('T')[0];
+                return {
+                    Feeling : x.Feeling,
+                    DayStr  : dayStr,
+                };
+            });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getRecords(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const result = await HowDoYouFeel.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        let records = result.map(x => {
+            return {
+                Feeling    : x.Feeling,
+                RecordDate : x.RecordDate,
+            };
+        });
+        records = records.sort((a, b) => b.RecordDate.getTime() - a.RecordDate.getTime());
+        return records;
+    }
 
 }

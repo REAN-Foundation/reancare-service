@@ -1,6 +1,6 @@
 {
     "local": {
-        "FileCleanup": "*/30 * * * *",
+        "FileCleanup": "*/55 * * * *",
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
@@ -8,10 +8,9 @@
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleHsSurvey": "0 11 * * *"
-
     },
     "development": {
-        "FileCleanup": "*/30 * * * *",
+        "FileCleanup": "*/55 * * * *",
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
@@ -19,8 +18,6 @@
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleHsSurvey": "0 11 * * *"
-
-
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",
@@ -44,6 +41,6 @@
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleHsSurvey": "0 11 * * *"
 
-        
+
     }
 }

@@ -200,13 +200,13 @@ export class PersonRepo implements IPersonRepo {
             if (personDomainModel.Age !== undefined) {
                 person.Age = personDomainModel.Age;
             }
-             if (personDomainModel.StrokeSurvivorOrCaregiver !== undefined) {
+            if (personDomainModel.StrokeSurvivorOrCaregiver !== undefined) {
                 person.StrokeSurvivorOrCaregiver = personDomainModel.StrokeSurvivorOrCaregiver;
             }
-             if (personDomainModel.LivingAlone !== undefined) {
+            if (personDomainModel.LivingAlone !== undefined) {
                 person.LivingAlone = personDomainModel.LivingAlone;
             }
-             if (personDomainModel.WorkedPriorToStroke !== undefined) {
+            if (personDomainModel.WorkedPriorToStroke !== undefined) {
                 person.WorkedPriorToStroke = personDomainModel.WorkedPriorToStroke;
             }
             if (personDomainModel.BirthDate !== undefined) {
@@ -238,7 +238,11 @@ export class PersonRepo implements IPersonRepo {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     search(filters: any): Promise<PersonDto[]> {
-        throw new Error('Method not implemented.');
+        const dtos: PersonDto[] = [];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        return new Promise((resolve, reject) => {
+            resolve(dtos);
+        });
     }
 
     getOrganizations = async (id: string): Promise<OrganizationDto[]> => {

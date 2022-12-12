@@ -36,12 +36,12 @@ import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clin
 import { addBottom, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
 import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
-import { addCalorieBalanceStats, createCalorieBalanceChart } from "./calorie.balance.stats";
+import { createCalorieBalanceChart } from "./calorie.balance.stats";
 import { createCareplanCharts } from "./careplan.stats";
 import { addDailyAssessmentsStats, createDailyAssessentCharts } from "./daily.assessments.stats";
 import { addExerciseStats, createPhysicalActivityCharts } from "./exercise.stats";
 import { addCurrentMedications, addMedicationStats, createMedicationTrendCharts } from "./medication.stats";
-import { addNutritionCalorieStats, addNutritionServingsStats, createNutritionCharts } from "./nutrition.stats";
+import { addNutritionQuestionnaire, addNutritionServingsStats, createNutritionCharts } from "./nutrition.stats";
 import { addSleepStats, createSleepTrendCharts } from "./sleep.stats";
 import { addUserTasksStats, createUserTaskCharts } from "./user.tasks.stats";
 import { addHealthJourney, addReportMetadata, addReportSummary } from "./main.page";
@@ -288,7 +288,7 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 11;
+            reportModel.TotalPages = 9;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
@@ -296,8 +296,8 @@ export class StatisticsService {
             pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
             pageNumber = this.addExercisePage(document, reportModel, pageNumber);
             pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
-            pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
-            pageNumber = this.addSleepPage(document, reportModel, pageNumber);
+            // pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
+            //pageNumber = this.addSleepPage(document, reportModel, pageNumber);
             pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
             pageNumber = this.addDailyAssessmentPage(document, reportModel, pageNumber);
 
@@ -366,7 +366,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         y = addBloodPressureStats(model, document, y);
         y = y + 15;
-        // y = addBloodPressureStats(model, document, y);
+        y = addSleepStats(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -392,28 +392,29 @@ export class StatisticsService {
 
     private addNutritionPageA = (document, model, pageNumber) => {
         var y = addTop(document, model);
-        y = addNutritionCalorieStats(document, model, y);
-        addBottom(document, pageNumber, model);
-        pageNumber += 1;
-        return pageNumber;
-    };
-
-    private addNutritionPageB = (document, model, pageNumber) => {
-        var y = addTop(document, model);
+        y = addNutritionQuestionnaire(document, model, y);
         y = addNutritionServingsStats(document, model, y);
-        y = addCalorieBalanceStats(document, model, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
-    private addSleepPage = (document, model, pageNumber) => {
-        var y = addTop(document, model);
-        y = addSleepStats(document, model, y);
-        addBottom(document, pageNumber, model);
-        pageNumber += 1;
-        return pageNumber;
-    };
+    // private addNutritionPageB = (document, model, pageNumber) => {
+    //     var y = addTop(document, model);
+    //     y = addNutritionServingsStats(document, model, y);
+    //     y = addCalorieBalanceStats(document, model, y);
+    //     addBottom(document, pageNumber, model);
+    //     pageNumber += 1;
+    //     return pageNumber;
+    // };
+
+    // private addSleepPage = (document, model, pageNumber) => {
+    //     var y = addTop(document, model);
+    //     y = addSleepStats(document, model, y);
+    //     addBottom(document, pageNumber, model);
+    //     pageNumber += 1;
+    //     return pageNumber;
+    // };
 
     private addExercisePage = (document, model, pageNumber) => {
         var y = addTop(document, model);

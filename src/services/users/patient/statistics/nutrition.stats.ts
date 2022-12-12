@@ -12,26 +12,26 @@ import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.comm
 
 //////////////////////////////////////////////////////////////////////////////////
 
-export const addNutritionCalorieStats = (document, model, y) => {
+export const addNutritionQuestionnaire = (document, model, y) => {
 
+    const titleColor = '#505050';
     let chartImage = 'Nutrition_CaloriesConsumed_LastMonth';
     let detailedTitle = 'Calorie Consumption for Last Month';
-    const titleColor = '#505050';
-    const sectionTitle = 'Food and Nutrition - Calories';
+    let sectionTitle = 'Food and Nutrition - Calories';
     let icon = Helper.getIconsPath('nutrition.png');
 
-    y = addSectionTitle(document, y, sectionTitle, icon);
+    // y = addSectionTitle(document, y, sectionTitle, icon);
+    // if (!chartExists(model, chartImage)) {
+    //     y = addNoDataDisplay(document, y);
+    // } else {
+    //     y = y + 25;
+    //     y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+    //     y = y + 27;
+    // }
 
-    if (!chartExists(model, chartImage)) {
-        y = addNoDataDisplay(document, y);
-    } else {
-        y = y + 25;
-        y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 27;
-    }
-
+    sectionTitle = 'Food and Nutrition - Questionnaire';
     icon = Helper.getIconsPath('questionnaire.png');
-    y = addSectionTitle(document, y, 'Food and Nutrition - Questionnaire', icon);
+    y = addSectionTitle(document, y, sectionTitle, icon);
     chartImage = 'Nutrition_QuestionnaireResponses_LastMonth';
     detailedTitle = 'Nutrition Questionnaire Response';
 

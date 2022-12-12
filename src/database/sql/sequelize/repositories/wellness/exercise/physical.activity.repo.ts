@@ -186,7 +186,8 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
     private async getQuestionnaireStats(patientUserId: string, numDays: number) {
         const timezone = await this.getPatientTimezone(patientUserId);
         var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
-
+        const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+        const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
         const records = await this.getQuestionnaireRecords(patientUserId, numDays, DurationType.Day);
         const quesrionnaireStats = records.map(x => {
             const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
@@ -197,9 +198,27 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 DayStr   : dayStr,
             };
         });
+        const stats = [];
+        for (var day of dayList) {
+            var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            const dayStr = dayStart.toISOString().split('T')[0];
+            const x = quesrionnaireStats.find(r => r.DayStr === dayStr);
+            if (x) {
+                stats.push({
+                    Response : x.Response,
+                    DayStr   : x.DayStr,
+                });
+            }
+            else {
+                stats.push({
+                    Response : 0,
+                    DayStr   : dayStr,
+                });
+            }
+        }
         return {
             Question : `Did you add movement to your day today?`,
-            Stats    : quesrionnaireStats,
+            Stats    : stats,
         };
     }
 
@@ -264,13 +283,19 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 }
             });
             let totalCaloriesForDay = 0;
-            consumptions.forEach((food) => {
-                totalCaloriesForDay += food.CaloriesBurned;
+            consumptions.forEach((e) => {
+                totalCaloriesForDay += e.CaloriesBurned;
+            });
+
+            let totalMoveMinutesForDay = 0;
+            consumptions.forEach((e) => {
+                totalMoveMinutesForDay += e.DurationInMin;
             });
 
             stats.push({
-                DayStr   : dayStr,
-                Calories : totalCaloriesForDay,
+                DayStr      : dayStr,
+                Calories    : totalCaloriesForDay,
+                MoveMinutes : totalMoveMinutesForDay
             });
         }
         return stats;

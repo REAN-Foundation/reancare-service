@@ -17,8 +17,24 @@ import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 
 export const addExerciseStats = (document, model, y) => {
 
-    let chartImage = 'Exercise_CaloriesBurned_LastMonth';
-    let detailedTitle = 'Calories Burned for Last Month';
+    // let chartImage = 'Exercise_CaloriesBurned_LastMonth';
+    // let detailedTitle = 'Calories Burned for Last Month';
+    // const titleColor = '#505050';
+    // const sectionTitle = 'Exercise and Physical Activity';
+    // const icon = Helper.getIconsPath('exercise.png');
+
+    // y = addSectionTitle(document, y, sectionTitle, icon);
+
+    // if (!chartExists(model, chartImage)) {
+    //     y = addNoDataDisplay(document, y);
+    // } else {
+    //     y = y + 25;
+    //     y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+    //     y = y + 23;
+    // }
+
+    let chartImage = 'Exercise_MoveMinutes_LastMonth';
+    let detailedTitle = 'Move Minutes for Last Month';
     const titleColor = '#505050';
     const sectionTitle = 'Exercise and Physical Activity';
     const icon = Helper.getIconsPath('exercise.png');
@@ -55,10 +71,17 @@ export const addExerciseStats = (document, model, y) => {
 
 export const createPhysicalActivityCharts = async (data) => {
     var locations = [];
+    let location = '';
 
-    let location = await createExerciseCalorieForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+    location = await createExerciseCalorieForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
     locations.push({
         key : 'Exercise_CaloriesBurned_LastMonth',
+        location
+    });
+
+    location = await createExerciseMoveMinutesForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+    locations.push({
+        key : 'Exercise_MoveMinutes_LastMonth',
         location
     });
 
@@ -91,6 +114,25 @@ const createExerciseCalorieForMonth_BarChart = async (stats: any, filename: stri
     options.Width  = RECTANGULAR_CHART_WIDTH;
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.YLabel = 'Calories Burned';
+    options.Color  = ChartColors.Coral;
+
+    return await ChartGenerator.createBarChart(calorieStats, options, filename);
+};
+
+const createExerciseMoveMinutesForMonth_BarChart = async (stats: any, filename: string) => {
+    if (stats.length === 0) {
+        return null;
+    }
+    const calorieStats = stats.map(c => {
+        return {
+            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            y : c.MoveMinutes
+        };
+    });
+    const options: BarChartOptions = DefaultChartOptions.barChart();
+    options.Width  = RECTANGULAR_CHART_WIDTH;
+    options.Height = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel = 'Duration (Minutes)';
     options.Color  = ChartColors.Coral;
 
     return await ChartGenerator.createBarChart(calorieStats, options, filename);

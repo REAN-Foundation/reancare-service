@@ -97,7 +97,7 @@ def add_daily_sleep_hours(sleep, dt):
     str = '''INSERT INTO reancare_new.daily_records_sleep (id, PatientUserId, SleepDuration, Unit, RecordDate, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{sleep}', 'hrs', '{record_date}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, sleep = sleep, record_date = dt, created = dt, updated = dt)
     out_file.write(str)
 
-def add_physical_activity(movement, calories, dt):
+def add_physical_activity(movement, calories, move_minutes, dt):
     str = ''''''
     moved  = 1 if bool(movement) == True else 0
     question = 'Did you add movement to your day today?'
@@ -105,7 +105,7 @@ def add_physical_activity(movement, calories, dt):
     id = uuid.uuid4()
     str += '''INSERT INTO reancare_new.exercise_physical_activities (id, PatientUserId, Category, PhysicalActivityQuestion, PhysicalActivityQuestionAns, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', 'Other', '{question}', '{answer}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, question = question, answer = moved, created = dt, updated = dt)
     id = uuid.uuid4()
-    str += '''INSERT INTO reancare_new.exercise_physical_activities (id, PatientUserId, Exercise, Category, CaloriesBurned, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', 'Push-up', 'Strength training', '{calories}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, calories = calories, created = dt, updated = dt)
+    str += '''INSERT INTO reancare_new.exercise_physical_activities (id, PatientUserId, Exercise, Category, CaloriesBurned, DurationInMin, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', 'Push-up', 'Strength training', '{calories}', '{move_minutes}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, calories = calories, move_minutes = move_minutes, created = dt, updated = dt)
     out_file.write(str)
 
 def add_blood_pressure(systolic, diastolic, dt):
@@ -207,7 +207,7 @@ def add_contents(contents):
         add_nutrition(c, dt)
         add_body_weight(c.body_weight, dt)
         add_daily_sleep_hours(c.daily_sleep_hours, dt)
-        add_physical_activity(c.movement_today, c.physical_activity_calories, dt)
+        add_physical_activity(c.movement_today, c.physical_activity_calories, c.move_minutes, dt)
         add_medication_consumption(c.medication_taken, dt)
         add_blood_pressure(c.blood_pressure_systolic, c.blood_pressure_diastolic, dt)
         add_blood_glucose(c.blood_glucose, dt)

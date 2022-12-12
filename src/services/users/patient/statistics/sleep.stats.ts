@@ -13,7 +13,7 @@ import { DefaultChartOptions } from "../../../../modules/charts/default.chart.op
 
 //////////////////////////////////////////////////////////////////////////////////
 
-export const addSleepStats = (document, model, y) => {
+export const addSleepStats = (model, document, y) => {
 
     const chartImage = 'SleepHours_LastMonth';
     const detailedTitle = 'Sleep in Hours for Last Month';

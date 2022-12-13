@@ -9,6 +9,7 @@ import { DonorDomainModel } from '../../domain.types/users/donor/donor.domain.mo
 import { DonorDetailsDto, DonorDto } from '../../domain.types/users/donor/donor.dto';
 import { DonorSearchFilters, DonorDetailsSearchResults, DonorSearchResults } from '../../domain.types/users/donor/donor.search.types';
 import { IDonorRepo } from '../../database/repository.interfaces/users/donor.repo.interface';
+import { TimeHelper } from '../../common/time.helper';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,9 +49,16 @@ export class DonorService {
         var results = await this._donorRepo.search(filters);
         for await (var dto of results.Items) {
             dto = await this.updateDto(dto);
+            if (filters.OnlyEligible === 'true') {
+                dto = await this.eligibleDonors(dto);
+                if (dto == null) {
+                    continue;
+                }
+            }
             items.push(dto);
         }
         results.Items = items;
+        results.RetrievedCount = items.length;
         return results;
     };
 
@@ -117,6 +125,20 @@ export class DonorService {
         dto.BirthDate = user.Person.BirthDate;
         dto.Age = user.Person.Age;
         return dto;
+    };
+
+    private eligibleDonors = async (dto: DonorDto): Promise<DonorDto > => {
+        if (dto == null) {
+            return null;
+        }
+        if (dto.Gender === 'Male' ) {
+            const dayDiff = Math.floor(TimeHelper.dayDiff(new Date(), dto.LastDonationDate));
+            return dayDiff > 90 ? dto : null;
+        }
+        else if (dto.Gender === 'Female' ) {
+            const dayDiff = Math.floor(TimeHelper.dayDiff(new Date(), dto.LastDonationDate));
+            return dayDiff > 120 ? dto : null;
+        }
     };
 
     //#endregion

@@ -1,18 +1,18 @@
 
-import { NewsfeedDto } from "../../../../../domain.types/general/newsfeed/newsfeed.dto";
-import NewsfeedModel from '../../models/general/newsfeed/newsfeed.model';
-import NewsfeedItemModel from '../../models/general/newsfeed/newsfeed.item.model';
+import { RssfeedDto } from "../../../../../domain.types/general/rss.feed/rssfeed.dto";
+import NewsfeedModel from '../../models/general/rss.feed/rss.feed.model';
+import NewsfeedItemModel from '../../models/general/rss.feed/rss.feed.item.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class NewsfeedMapper {
 
     static toDto = (
-        newsfeed: NewsfeedModel): NewsfeedDto => {
+        newsfeed: NewsfeedModel): RssfeedDto => {
         if (newsfeed == null) {
             return null;
         }
-        const dto: NewsfeedDto = {
+        const dto: RssfeedDto = {
             id       : newsfeed.id,
             UserId   : newsfeed.UserId,
             Title    : newsfeed.Title,

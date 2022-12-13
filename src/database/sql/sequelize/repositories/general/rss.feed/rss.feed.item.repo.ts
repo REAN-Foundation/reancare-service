@@ -1,20 +1,19 @@
 
-import { NewsfeedSearchFilters, NewsfeedSearchResults } from '../../../../../domain.types/general/newsfeed/newsfeed.search.types';
-import { ApiError } from '../../../../../common/api.error';
-import { Logger } from '../../../../../common/logger';
-import { INewsfeedRepo } from '../../../../repository.interfaces/general/newsfeed.repo.interface';
-import { NewsfeedDomainModel } from '../../../../../domain.types/general/newsfeed/newsfeed.domain.model';
-import { NewsfeedDto } from '../../../../../domain.types/general/newsfeed/newsfeed.dto';
-import { NewsfeedMapper } from '../../mappers/general/newsfeed.mapper';
-import NewsfeedModel from '../../models/general/newsfeed/newsfeed.model';
-import NewsfeedItemModel from '../../models/general/newsfeed/newsfeed.item.model';
+import { RssfeedSearchFilters, RssfeedSearchResults } from '../../../../../../domain.types/general/rss.feed/rssfeed.search.types';
+import { ApiError } from '../../../../../../common/api.error';
+import { Logger } from '../../../../../../common/logger';
+import { RssfeedDomainModel } from '../../../../../../domain.types/general/rss.feed/rssfeed.domain.model';
+import { RssfeedDto } from '../../../../../../domain.types/general/rss.feed/rssfeed.dto';
+import { NewsfeedMapper } from '../../../mappers/general/newsfeed.mapper';
+import NewsfeedModel from '../../../models/general/rss.feed/rss.feed.model';
+import { IRssfeedItemRepo } from '../../../../../repository.interfaces/general/rss.feed/rss.feed.item.repo.interface';
 
 ///////////////////////////////////////////////////////////////////////
 
-export class NewsfeedRepo implements INewsfeedRepo {
+export class RssfeedItemRepo implements IRssfeedItemRepo {
 
-    create = async (createModel: NewsfeedDomainModel):
-    Promise<NewsfeedDto> => {
+    create = async (createModel: RssfeedDomainModel):
+    Promise<RssfeedDto> => {
 
         try {
             const entity = {
@@ -36,7 +35,7 @@ export class NewsfeedRepo implements INewsfeedRepo {
         }
     };
 
-    getById = async (id: string): Promise<NewsfeedDto> => {
+    getById = async (id: string): Promise<RssfeedDto> => {
         try {
             const newsfeed = await NewsfeedModel.findByPk(id);
             return await NewsfeedMapper.toDto(newsfeed);
@@ -46,8 +45,8 @@ export class NewsfeedRepo implements INewsfeedRepo {
         }
     };
 
-    markAsRead = async (id: string, updateModel: NewsfeedDomainModel):
-    Promise<NewsfeedDto> => {
+    markAsRead = async (id: string, updateModel: RssfeedDomainModel):
+    Promise<RssfeedDto> => {
         try {
             const newsfeed = await NewsfeedModel.findByPk(id);
 
@@ -65,7 +64,7 @@ export class NewsfeedRepo implements INewsfeedRepo {
         }
     };
 
-    search = async (filters: NewsfeedSearchFilters): Promise<NewsfeedSearchResults> => {
+    search = async (filters: RssfeedSearchFilters): Promise<RssfeedSearchResults> => {
         try {
 
             const search = { where: {} };
@@ -110,13 +109,13 @@ export class NewsfeedRepo implements INewsfeedRepo {
 
             const foundResults = await NewsfeedModel.findAndCountAll(search);
 
-            const dtos: NewsfeedDto[] = [];
+            const dtos: RssfeedDto[] = [];
             for (const newsfeed of foundResults.rows) {
                 const dto = await NewsfeedMapper.toDto(newsfeed);
                 dtos.push(dto);
             }
 
-            const searchResults: NewsfeedSearchResults = {
+            const searchResults: RssfeedSearchResults = {
                 TotalCount     : foundResults.count,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,
@@ -134,8 +133,8 @@ export class NewsfeedRepo implements INewsfeedRepo {
 
     };
 
-    update = async (id: string, updateModel: NewsfeedDomainModel):
-    Promise<NewsfeedDto> => {
+    update = async (id: string, updateModel: RssfeedDomainModel):
+    Promise<RssfeedDto> => {
         try {
             const newsfeed = await NewsfeedModel.findByPk(id);
 

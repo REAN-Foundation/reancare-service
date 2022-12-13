@@ -18,12 +18,12 @@ import User from '../../users/user/user.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'NewsfeedItem',
-    tableName       : 'newsfeed_items',
+    modelName       : 'Rssfeed',
+    tableName       : 'rss_feeds',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class NewsfeedItem extends Model {
+export default class Rssfeed extends Model {
 
     @IsUUID(4)
     @PrimaryKey

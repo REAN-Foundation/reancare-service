@@ -6,7 +6,8 @@ import { IRssfeedRepo } from '../../../../../repository.interfaces/general/rss.f
 import { RssfeedDomainModel } from '../../../../../../domain.types/general/rss.feed/rss.feed.domain.model';
 import { RssfeedDto } from '../../../../../../domain.types/general/rss.feed/rss.feed.dto';
 import { RssfeedMapper } from '../../../mappers/general/rss.feed/rss.feed.mapper';
-import NewsfeedModel from '../../../models/general/rss.feed/rss.feed.model';
+import Rssfeed from '../../../models/general/rss.feed/rss.feed.model';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -17,18 +18,23 @@ export class RssfeedRepo implements IRssfeedRepo {
 
         try {
             const entity = {
-                UserId   : createModel.UserId,
-                Title    : createModel.Title,
-                Body     : createModel.Body,
-                Payload  : createModel.Payload ,
-                SentOn   : createModel.SentOn,
-                ReadOn   : createModel.ReadOn ,
-                ImageUrl : createModel.ImageUrl,
-                Type     : createModel.Type,
+                Title         : createModel.Title,
+                Description   : createModel.Description,
+                Link          : createModel.Link ?? null,
+                Language      : createModel.Language ?? 'en-us',
+                Copyright     : createModel.Copyright ?? null,
+                Favicon       : createModel.Favicon ?? null,
+                Image         : createModel.Image ?? null,
+                Category      : createModel.Category ?? null,
+                Tags          : createModel.Tags ?? '[]',
+                ProviderName  : createModel.ProviderName ?? null,
+                ProviderEmail : createModel.ProviderEmail ?? null,
+                ProviderLink  : createModel.ProviderLink ?? null,
+                LastUpdatedOn : new Date()
             };
 
-            const newsfeed = await NewsfeedModel.create(entity);
-            return await RssfeedMapper.toDto(newsfeed);
+            const newsfeed = await Rssfeed.create(entity);
+            return await RssfeedMapper.toFeedDto(newsfeed);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -37,27 +43,8 @@ export class RssfeedRepo implements IRssfeedRepo {
 
     getById = async (id: string): Promise<RssfeedDto> => {
         try {
-            const newsfeed = await NewsfeedModel.findByPk(id);
-            return await RssfeedMapper.toDto(newsfeed);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    markAsRead = async (id: string, updateModel: RssfeedDomainModel):
-    Promise<RssfeedDto> => {
-        try {
-            const newsfeed = await NewsfeedModel.findByPk(id);
-
-            if (updateModel.ReadOn != null) {
-                newsfeed.ReadOn = updateModel.ReadOn;
-            }
-
-            await newsfeed.save();
-
-            return await RssfeedMapper.toDto(newsfeed);
-
+            const newsfeed = await Rssfeed.findByPk(id);
+            return await RssfeedMapper.toFeedDto(newsfeed);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -70,18 +57,14 @@ export class RssfeedRepo implements IRssfeedRepo {
             const search = { where: {} };
 
             if (filters.Title != null) {
-                search.where['Title'] = filters.Title;
+                search.where['Title'] = { [Op.like]: '%' + filters.Title + '%' };
             }
 
-            if (filters.SentOn !== null) {
-                search.where['SentOn'] = filters.SentOn;
+            if (filters.Category !== null) {
+                search.where['Category'] = { [Op.like]: '%' + filters.Category + '%' };
             }
-            if (filters.ReadOn !== null) {
-                search.where['ReadOn'] = filters.ReadOn;
-            }
-
-            if (filters.Type !== null) {
-                search.where['Type'] = filters.Type;
+            if (filters.Tags !== null) {
+                search.where['Tags'] = { [Op.like]: '%' + filters.Tags + '%' };
             }
 
             let orderByColum = 'CreatedAt';
@@ -107,11 +90,11 @@ export class RssfeedRepo implements IRssfeedRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await NewsfeedModel.findAndCountAll(search);
+            const foundResults = await Rssfeed.findAndCountAll(search);
 
             const dtos: RssfeedDto[] = [];
-            for (const newsfeed of foundResults.rows) {
-                const dto = await RssfeedMapper.toDto(newsfeed);
+            for (const feed of foundResults.rows) {
+                const dto = await RssfeedMapper.toFeedDto(feed);
                 dtos.push(dto);
             }
 
@@ -136,34 +119,49 @@ export class RssfeedRepo implements IRssfeedRepo {
     update = async (id: string, updateModel: RssfeedDomainModel):
     Promise<RssfeedDto> => {
         try {
-            const newsfeed = await NewsfeedModel.findByPk(id);
+            const newsfeed = await Rssfeed.findByPk(id);
 
             if (updateModel.Title != null) {
                 newsfeed.Title = updateModel.Title;
             }
-            if (updateModel.Body != null) {
-                newsfeed.Body = updateModel.Body;
+            if (updateModel.Description != null) {
+                newsfeed.Description = updateModel.Description;
             }
-            if (updateModel.Payload != null) {
-                newsfeed.Payload = updateModel.Payload;
+            if (updateModel.Link != null) {
+                newsfeed.Link = updateModel.Link;
             }
-            if (updateModel.SentOn != null) {
-                newsfeed.SentOn = updateModel.SentOn;
+            if (updateModel.Language != null) {
+                newsfeed.Language = updateModel.Language;
             }
-            if (updateModel.ReadOn != null) {
-                newsfeed.ReadOn = updateModel.ReadOn;
+            if (updateModel.Copyright != null) {
+                newsfeed.Copyright = updateModel.Copyright;
             }
-
-            if (updateModel.ImageUrl != null) {
-                newsfeed.ImageUrl = updateModel.ImageUrl;
+            if (updateModel.Favicon != null) {
+                newsfeed.Favicon = updateModel.Favicon;
             }
-            if (updateModel.Type != null) {
-                newsfeed.Type = updateModel.Type;
+            if (updateModel.Image != null) {
+                newsfeed.Image = updateModel.Image;
             }
+            if (updateModel.Category != null) {
+                newsfeed.Category = updateModel.Category;
+            }
+            if (updateModel.Tags != null) {
+                newsfeed.Tags = JSON.stringify(updateModel.Tags);
+            }
+            if (updateModel.ProviderName != null) {
+                newsfeed.ProviderName = updateModel.ProviderName;
+            }
+            if (updateModel.ProviderEmail != null) {
+                newsfeed.ProviderEmail = updateModel.ProviderEmail;
+            }
+            if (updateModel.ProviderLink != null) {
+                newsfeed.ProviderLink = updateModel.ProviderLink;
+            }
+            newsfeed.LastUpdatedOn = new Date();
 
             await newsfeed.save();
 
-            return await RssfeedMapper.toDto(newsfeed);
+            return await RssfeedMapper.toFeedDto(newsfeed);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -174,7 +172,7 @@ export class RssfeedRepo implements IRssfeedRepo {
     delete = async (id: string): Promise<boolean> => {
         try {
 
-            const result = await NewsfeedModel.destroy({ where: { id: id } });
+            const result = await Rssfeed.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);

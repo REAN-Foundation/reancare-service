@@ -3,9 +3,9 @@ import { RssfeedSearchFilters, RssfeedSearchResults } from '../../../../../../do
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { IRssfeedRepo } from '../../../../../repository.interfaces/general/rss.feed/rss.feed.repo.interface';
-import { RssfeedDomainModel } from '../../../../../../domain.types/general/rss.feed/rssfeed.domain.model';
-import { RssfeedDto } from '../../../../../../domain.types/general/rss.feed/rssfeed.dto';
-import { NewsfeedMapper } from '../../../mappers/general/newsfeed.mapper';
+import { RssfeedDomainModel } from '../../../../../../domain.types/general/rss.feed/rss.feed.domain.model';
+import { RssfeedDto } from '../../../../../../domain.types/general/rss.feed/rss.feed.dto';
+import { RssfeedMapper } from '../../../mappers/general/rss.feed/rss.feed.mapper';
 import NewsfeedModel from '../../../models/general/rss.feed/rss.feed.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ export class RssfeedRepo implements IRssfeedRepo {
             };
 
             const newsfeed = await NewsfeedModel.create(entity);
-            return await NewsfeedMapper.toDto(newsfeed);
+            return await RssfeedMapper.toDto(newsfeed);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -38,7 +38,7 @@ export class RssfeedRepo implements IRssfeedRepo {
     getById = async (id: string): Promise<RssfeedDto> => {
         try {
             const newsfeed = await NewsfeedModel.findByPk(id);
-            return await NewsfeedMapper.toDto(newsfeed);
+            return await RssfeedMapper.toDto(newsfeed);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -56,7 +56,7 @@ export class RssfeedRepo implements IRssfeedRepo {
 
             await newsfeed.save();
 
-            return await NewsfeedMapper.toDto(newsfeed);
+            return await RssfeedMapper.toDto(newsfeed);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -111,7 +111,7 @@ export class RssfeedRepo implements IRssfeedRepo {
 
             const dtos: RssfeedDto[] = [];
             for (const newsfeed of foundResults.rows) {
-                const dto = await NewsfeedMapper.toDto(newsfeed);
+                const dto = await RssfeedMapper.toDto(newsfeed);
                 dtos.push(dto);
             }
 
@@ -163,7 +163,7 @@ export class RssfeedRepo implements IRssfeedRepo {
 
             await newsfeed.save();
 
-            return await NewsfeedMapper.toDto(newsfeed);
+            return await RssfeedMapper.toDto(newsfeed);
 
         } catch (error) {
             Logger.instance().log(error.message);

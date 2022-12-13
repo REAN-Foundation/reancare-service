@@ -1,6 +1,6 @@
 import { IRssfeedRepo } from "../../database/repository.interfaces/general/rss.feed/rss.feed.repo.interface";
-import { RssfeedDto, RssfeedItemDto } from "../../domain.types/general/rss.feed/rssfeed.dto";
-import { RssfeedDomainModel, RssfeedItemDomainModel } from "../../domain.types/general/rss.feed/rssfeed.domain.model";
+import { RssfeedDto, RssfeedItemDto } from "../../domain.types/general/rss.feed/rss.feed.dto";
+import { RssfeedDomainModel, RssfeedItemDomainModel } from "../../domain.types/general/rss.feed/rss.feed.domain.model";
 import { RssfeedSearchResults } from "../../domain.types/general/rss.feed/rssfeed.search.types";
 import { RssfeedSearchFilters } from "../../domain.types/general/rss.feed/rssfeed.search.types";
 import { inject, injectable } from "tsyringe";

@@ -1,5 +1,5 @@
-import { RssfeedDomainModel } from "../../../../domain.types/general/rss.feed/rssfeed.domain.model";
-import { RssfeedDto } from "../../../../domain.types/general/rss.feed/rssfeed.dto";
+import { RssfeedDomainModel } from "../../../../domain.types/general/rss.feed/rss.feed.domain.model";
+import { RssfeedDto } from "../../../../domain.types/general/rss.feed/rss.feed.dto";
 import { RssfeedSearchResults } from "../../../../domain.types/general/rss.feed/rssfeed.search.types";
 import { RssfeedSearchFilters } from "../../../../domain.types/general/rss.feed/rssfeed.search.types";
 

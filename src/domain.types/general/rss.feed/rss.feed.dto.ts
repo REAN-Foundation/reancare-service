@@ -8,7 +8,7 @@ export interface RssfeedDto {
     Language?     : string;
     Copyright?    : string;
     Favicon?      : string;
-    Updated?      : string;
+    Updated?      : Date;
     Image?        : string;
     Category?     : string;
     Tags?         : string[];
@@ -17,6 +17,7 @@ export interface RssfeedDto {
     ProviderLink ?: string;
     AtomFeedLink? : string;
     JsonFeedLink? : string;
+    FeedItems?    : RssfeedItemDto[]
 }
 
 export interface RssfeedItemDto {

@@ -8,11 +8,11 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
-    ForeignKey,
+    HasMany,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../../users/user/user.model';
+import RssfeedItem from './rss.feed.item.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,14 +36,6 @@ export default class Rssfeed extends Model {
     })
     id: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => User)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    UserId: string;
-
     @Column({
         type      : DataType.STRING(256),
         allowNull : false,
@@ -51,40 +43,93 @@ export default class Rssfeed extends Model {
     Title: string;
 
     @Column({
-        type      : DataType.STRING(1024),
+        type      : DataType.TEXT,
         allowNull : true,
     })
-    Body: string;
+    Description: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    ImageUrl: string;
+    Link: string;
+
+    @Column({
+        type         : DataType.TEXT,
+        allowNull    : false,
+        defaultValue : 'en-us'
+    })
+    Language: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    Copyright: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    Favicon: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Image: string;
 
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    Type: string;
+    Category: string;
+
+    @Column({
+        type         : DataType.TEXT,
+        allowNull    : false,
+        defaultValue : "[]"
+    })
+    Tags: string;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    ProviderName: string;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    ProviderEmail: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    Payload: string;
+    ProviderLink: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    AtomFeedLink: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    JsonFeedLink: string;
 
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    SentOn: Date;
+    LastUpdatedOn: Date;
 
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    ReadOn: Date;
+    @HasMany(() => RssfeedItem)
+    FeedItems: RssfeedItem[];
 
     @Column
     @CreatedAt

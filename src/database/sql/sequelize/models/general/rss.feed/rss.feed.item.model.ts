@@ -9,10 +9,11 @@ import {
     IsUUID,
     PrimaryKey,
     ForeignKey,
+    HasOne,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../../users/user/user.model';
+import Rssfeed from './rss.feed.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,12 +38,12 @@ export default class RssfeedItem extends Model {
     id: string;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
+    @ForeignKey(() => Rssfeed)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
     })
-    UserId: string;
+    FeedId: string;
 
     @Column({
         type      : DataType.STRING(256),
@@ -51,40 +52,68 @@ export default class RssfeedItem extends Model {
     Title: string;
 
     @Column({
-        type      : DataType.STRING(1024),
+        type      : DataType.TEXT,
         allowNull : true,
     })
-    Body: string;
+    Description: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    ImageUrl: string;
+    Link: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : false,
+    })
+    Content: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Image: string;
 
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    Type: string;
+    Category: string;
+
+    @Column({
+        type         : DataType.TEXT,
+        allowNull    : false,
+        defaultValue : "[]"
+    })
+    Tags: string;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    AuthorName: string;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    AuthorEmail: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    Payload: string;
+    AuthorLink: string;
 
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    SentOn: Date;
+    PublishingDate: Date;
 
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    ReadOn: Date;
+    @HasOne(() => Rssfeed)
+    Feed: Rssfeed;
 
     @Column
     @CreatedAt
@@ -97,3 +126,4 @@ export default class RssfeedItem extends Model {
     DeletedAt: Date;
 
 }
+

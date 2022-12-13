@@ -1,5 +1,5 @@
 import { BaseSearchFilters, BaseSearchResults } from "../../miscellaneous/base.search.types";
-import { RssfeedDto } from "./rssfeed.dto";
+import { RssfeedDto } from "./rss.feed.dto";
 
 //////////////////////////////////////////////////////////////////////
 

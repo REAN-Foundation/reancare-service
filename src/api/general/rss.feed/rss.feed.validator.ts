@@ -1,6 +1,6 @@
 import express from 'express';
 import { BaseValidator, Where } from '../../base.validator';
-import { RssfeedDomainModel, RssfeedItemDomainModel } from '../../../domain.types/general/rss.feed/rssfeed.domain.model';
+import { RssfeedDomainModel, RssfeedItemDomainModel } from '../../../domain.types/general/rss.feed/rss.feed.domain.model';
 import { RssfeedSearchFilters } from '../../../domain.types/general/rss.feed/rssfeed.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////

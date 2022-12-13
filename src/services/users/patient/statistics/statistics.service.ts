@@ -33,19 +33,23 @@ import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/cl
 import { ICareplanRepo } from "../../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { BodyHeightRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/body.height.repo";
 import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
-
-import ReportImageGenerator from "./report.image.generator";
-import StatReportCommons from "./stat.report.commons";
+import { addBottom, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
+import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
+import { createCalorieBalanceChart } from "./calorie.balance.stats";
+import { createCareplanCharts } from "./careplan.stats";
+import { addDailyAssessmentsStats, createDailyAssessentCharts } from "./daily.assessments.stats";
+import { addExerciseStats, createPhysicalActivityCharts } from "./exercise.stats";
+import { addCurrentMedications, addMedicationStats, createMedicationTrendCharts } from "./medication.stats";
+import { addNutritionQuestionnaire, addNutritionServingsStats, createNutritionCharts } from "./nutrition.stats";
+import { addSleepStats, createSleepTrendCharts } from "./sleep.stats";
+import { addUserTasksStats, createUserTaskCharts } from "./user.tasks.stats";
+import { addHealthJourney, addReportMetadata, addReportSummary } from "./main.page";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class StatisticsService {
-
-    _imageGenerator = new ReportImageGenerator();
-
-    _commons = new StatReportCommons();
 
     constructor(
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
@@ -77,7 +81,7 @@ export class StatisticsService {
         this._careplanRepo = Loader.container.resolve(CareplanRepo);
     }
 
-    //#region Model and stats
+    //#region Publics
 
     public getReportModel = (
         patient: PatientDetailsDto,
@@ -256,16 +260,16 @@ export class StatisticsService {
         return stats;
     }
 
-    //#endregion
-
-    //#region Report
-
     public generateReport = async (reportModel: any) => {
         return await this.generateReportPDF(reportModel);
     }
 
+    //#endregion
+
+    //#region Report
+
     private generateReportPDF = async (reportModel: any) => {
-        const chartImagePaths = await this._imageGenerator.generateChartImages(reportModel);
+        const chartImagePaths = await this.generateChartImages(reportModel);
         return await this.exportReportToPDF(reportModel, chartImagePaths);
     };
 
@@ -284,15 +288,16 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 10;
+            reportModel.TotalPages = 9;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
+            pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
             pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
             pageNumber = this.addExercisePage(document, reportModel, pageNumber);
             pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
-            pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
-            pageNumber = this.addSleepPage(document, reportModel, pageNumber);
+            // pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
+            //pageNumber = this.addSleepPage(document, reportModel, pageNumber);
             pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
             pageNumber = this.addDailyAssessmentPage(document, reportModel, pageNumber);
 
@@ -306,896 +311,134 @@ export class StatisticsService {
         }
     };
 
+    public generateChartImages = async (
+        reportModel: any): Promise<any> => {
+
+        const chartImagePaths = [];
+
+        let imageLocations = await createNutritionCharts(reportModel.Stats.Nutrition);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createPhysicalActivityCharts(reportModel.Stats.PhysicalActivity);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createBiometricsCharts(reportModel.Stats.Biometrics);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createSleepTrendCharts(reportModel.Stats.Sleep);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createMedicationTrendCharts(reportModel.Stats.Medication);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createDailyAssessentCharts(reportModel.Stats.DailyAssessent);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createUserTaskCharts(reportModel.Stats.UserEngagement);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createCareplanCharts(reportModel.Stats.Careplan);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createCalorieBalanceChart(reportModel);
+        chartImagePaths.push(...imageLocations);
+
+        return chartImagePaths;
+    };
+
     //#endregion
 
     //#region Pages
 
     private addMainPage = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model, false);
-        y = this.addReportMetadata(document, model, y);
-        y = this.addReportSummary(document, model, y);
-        y = this.addHealthJourney(document, model, y);
-        this._commons.addBottom(document, pageNumber, model);
+        var y = addTop(document, model, false);
+        y = addReportMetadata(document, model, y);
+        y = addReportSummary(document, model, y);
+        y = addHealthJourney(document, model, y);
+        addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
     private addBiometricsPageA = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this.addBodyWeightStats(model, document, y);
+        var y = addTop(document, model);
+        y = addBodyWeightStats(model, document, y);
         y = y + 15;
-        y = this.addBloodGlucoseStats(model, document, y);
-        this._commons.addBottom(document, pageNumber, model);
+        y = addBloodGlucoseStats(model, document, y);
+        addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
     private addBiometricsPageB = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this.addBloodPressureStats(model, document, y);
+        var y = addTop(document, model);
+        y = addBloodPressureStats(model, document, y);
         y = y + 15;
-        y = this.addCholesterolStats(model, document, y);
-        this._commons.addBottom(document, pageNumber, model);
+        y = addSleepStats(model, document, y);
+        addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addBiometricsPageC = (document, model, pageNumber) => {
+        var y = addTop(document, model);
+        y = addLipidStats(model, document, y);
+        addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
     private addMedicationPage = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this.addMedicationStats(document, model, y);
+        var y = addTop(document, model);
+        y = addMedicationStats(document, model, y);
         const currentMedications = model.Stats.Medication.CurrentMedications;
-        y = this.addCurrentMedications(document, currentMedications, y);
-        this._commons.addBottom(document, pageNumber, model);
+        y = addCurrentMedications(document, currentMedications, y);
+        addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
     private addNutritionPageA = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this.addNutritionCalorieStats(document, model, y);
-        this._commons.addBottom(document, pageNumber, model);
+        var y = addTop(document, model);
+        y = addNutritionQuestionnaire(document, model, y);
+        y = addNutritionServingsStats(document, model, y);
+        addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
-    private addNutritionPageB = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this.addNutritionServingsStats(document, model, y);
-        y = this.addCalorieBalanceStats(document, model, y);
-        this._commons.addBottom(document, pageNumber, model);
-        pageNumber += 1;
-        return pageNumber;
-    };
+    // private addNutritionPageB = (document, model, pageNumber) => {
+    //     var y = addTop(document, model);
+    //     y = addNutritionServingsStats(document, model, y);
+    //     y = addCalorieBalanceStats(document, model, y);
+    //     addBottom(document, pageNumber, model);
+    //     pageNumber += 1;
+    //     return pageNumber;
+    // };
 
-    private addSleepPage = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this.addSleepStats(document, model, y);
-        this._commons.addBottom(document, pageNumber, model);
-        pageNumber += 1;
-        return pageNumber;
-    };
+    // private addSleepPage = (document, model, pageNumber) => {
+    //     var y = addTop(document, model);
+    //     y = addSleepStats(document, model, y);
+    //     addBottom(document, pageNumber, model);
+    //     pageNumber += 1;
+    //     return pageNumber;
+    // };
 
     private addExercisePage = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        this.addExerciseStats(document, model, y);
-        this._commons.addBottom(document, pageNumber, model);
+        var y = addTop(document, model);
+        addExerciseStats(document, model, y);
+        addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
     private addUserEngagementPage = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this.addUserTasksStats(document, model, y);
-        this._commons.addBottom(document, pageNumber, model);
+        var y = addTop(document, model);
+        y = addUserTasksStats(document, model, y);
+        addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
 
     private addDailyAssessmentPage = (document, model, pageNumber) => {
-        var y = this._commons.addTop(document, model);
-        y = this.addDailyAssessmentsStats(document, model, y);
-        this._commons.addBottom(document, pageNumber, model);
+        var y = addTop(document, model);
+        y = addDailyAssessmentsStats(document, model, y);
+        addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
     };
-
-    //#endregion
-
-    //#region Page contents
-
-    private addMedicationStats = (document, model, y) => {
-
-        let chartImage = 'MedicationsHistory_LastMonth';
-        const detailedTitle = 'Medication History for Last Month';
-        const titleColor = '#505050';
-        const sectionTitle = 'Medication History';
-        const icon = Helper.getIconsPath('medications.png');
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 20;
-        }
-
-        y = y + 7;
-        const legend = this._imageGenerator.getMedicationStatusCategoryColors();
-        chartImage = 'MedicationsOverall_LastMonth';
-        const title = 'Medication Adherence for Last Month';
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend);
-        }
-
-        return y;
-    };
-
-    private addCurrentMedications(document, medications, y) {
-        const icon = Helper.getIconsPath('current-medications.png');
-        y = this._commons.addSectionTitle(document, y, "Current Medications", icon);
-
-        if (medications.length === 0) {
-            y = this._commons.addNoDataDisplay(document, y);
-            return y;
-        }
-
-        const tableTop = y + 21;
-        const ITEM_HEIGHT = 26;
-        let medicationsCount = medications.length;
-
-        if (medicationsCount > 5) {
-            medicationsCount = 5;
-        }
-
-        for (let i = 0; i < medicationsCount; i++) {
-
-            const medication = medications[i];
-            const position = tableTop + (i * ITEM_HEIGHT);
-            y = position;
-
-            const schedule = medication.TimeSchedules ? medication.TimeSchedules.join(', ') : '';
-
-            this.generateMedicationTableRow(
-                document,
-                position,
-                (i + 1).toString(),
-                medication.DrugName,
-                medication.Dose.toString(),
-                medication.DosageUnit,
-                medication.Frequency,
-                medication.FrequencyUnit,
-                schedule,
-                medication.Route,
-                medication.Duration.toString(),
-                medication.DurationUnit
-            );
-        }
-
-        y = y + ITEM_HEIGHT + 10;
-        return y;
-    }
-
-    private addNutritionCalorieStats = (document, model, y) => {
-
-        let chartImage = 'Nutrition_CaloriesConsumed_LastMonth';
-        let detailedTitle = 'Calorie Consumption for Last Month';
-        const titleColor = '#505050';
-        const sectionTitle = 'Food and Nutrition - Calories';
-        let icon = Helper.getIconsPath('nutrition.png');
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 27;
-        }
-
-        icon = Helper.getIconsPath('questionnaire.png');
-        y = this._commons.addSectionTitle(document, y, 'Food and Nutrition - Questionnaire', icon);
-        chartImage = 'Nutrition_QuestionnaireResponses_LastMonth';
-        detailedTitle = 'Nutrition Questionnaire Response';
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 20;
-            const colors = this._imageGenerator.getNutritionQuestionCategoryColors();
-            const legend = colors.map(x => {
-                return {
-                    Key   : x.Key + ': ' + x.Question,
-                    Color : x.Color,
-                };
-            });
-            y = this._commons.addLegend(document, y, legend, 125, 11, 50, 10, 15);
-        }
-
-        return y;
-    };
-
-    private addNutritionServingsStats = (document, model, y) => {
-
-        const chartImage = 'Nutrition_Servings_LastMonth';
-        const detailedTitle = 'Servings History for Last Month';
-        const titleColor = '#505050';
-        const sectionTitle = 'Food and Nutrition - Servings';
-
-        const icon = Helper.getIconsPath('food-servings.png');
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 27;
-            const colors = this._imageGenerator.getNutritionServingsCategoryColors();
-            const legend = colors.map(x => {
-                return {
-                    Key   : x.Key + ': ' + x.Question,
-                    Color : x.Color,
-                };
-            });
-            y = this._commons.addLegend(document, y, legend, 122, 11, 35, 10, 15);
-        }
-        return y;
-    };
-
-    private addCalorieBalanceStats = (document, model, y) => {
-
-        const chartImage = 'CalorieBalance_LastMonth';
-        const detailedTitle = 'Calorie Balance for Last Month';
-        const titleColor = '#505050';
-        const sectionTitle = 'Calorie Balance - Consumption and Burn';
-
-        const icon = Helper.getIconsPath('calorie-balance.png');
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 27;
-            const colors = this._imageGenerator.getCalorieBalanceColors();
-            const legend = colors.map(x => {
-                return {
-                    Key   : x.Key,
-                    Color : x.Color,
-                };
-            });
-            y = this._commons.addLegend(document, y, legend, 150, 11, 35, 10, 15);
-        }
-        return y;
-    };
-
-    private addExerciseStats = (document, model, y) => {
-
-        let chartImage = 'Exercise_CaloriesBurned_LastMonth';
-        let detailedTitle = 'Calories Burned for Last Month';
-        const titleColor = '#505050';
-        const sectionTitle = 'Exercise and Physical Activity';
-        const icon = Helper.getIconsPath('exercise.png');
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 23;
-        }
-
-        chartImage = 'Exercise_Questionnaire_LastMonth';
-        detailedTitle = 'Daily Movements Questionnaire for Last Month';
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 23;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 32;
-        }
-
-        chartImage = 'Exercise_Questionnaire_Overall_LastMonth';
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = this.addSquareChartImage(document, model, chartImage, y, 'Daily Movements', titleColor, 165, 225);
-        }
-        return y;
-    };
-
-    private addUserTasksStats = (document, model, y) => {
-
-        let chartImage = 'UserTasks_LastMonth';
-        let detailedTitle = 'User Tasks Status for Last Month';
-        const titleColor = '#505050';
-        let sectionTitle = 'User Tasks Status History';
-        let icon = Helper.getIconsPath('user-tasks.png');
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 23;
-        }
-
-        sectionTitle = 'User Engagement';
-        icon = Helper.getIconsPath('user-activity.png');
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        chartImage = 'UserEngagementRatio_Last6Months';
-        detailedTitle = 'User Engagement Ratio for Last 6 Months';
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 23;
-            y = this.addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor, 165, 225);
-            y = y + 23;
-            let value = model.Stats.UserEngagement.Last6Months.Finished.toFixed();
-            y = this.addLabeledText(document, 'Completed Tasks', value, y);
-            value = model.Stats.UserEngagement.Last6Months.Unfinished.toFixed();
-            y = this.addLabeledText(document, 'Unfinished Tasks', value, y);
-        }
-
-        return y;
-    };
-
-    private addDailyAssessmentsStats = (document, model, y) => {
-
-        let chartImage = 'DailyAssessments_Feelings_Last6Months';
-        const titleColor = '#505050';
-        const sectionTitle = 'Daily Assessments';
-        const icon = Helper.getIconsPath('feelings.png');
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            const legend = this._imageGenerator.getFeelingsColors();
-            chartImage = 'DailyAssessments_Feelings_Last6Months';
-            const title = 'Feelings Over Last 6 Months';
-            y = this.addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend, 40, 150);
-        }
-
-        y = this.addMoodsStats(document, model, y, titleColor);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 17;
-            chartImage = 'DailyAssessments_EnergyLevels_Last6Months';
-            const title = 'Energy Levels Over Last 6 Months';
-            y = this.addSquareChartImage(document, model, chartImage, y, title, titleColor, 195, 205);
-        }
-        return y;
-    };
-
-    private addMoodsStats(
-        document: PDFKit.PDFDocument,
-        model: any,
-        y: any,
-        titleColor: string
-    ) {
-
-        y = y + 35;
-
-        const chartImage = 'DailyAssessments_Moods_Last6Months';
-        const startX = 125;
-        const imageWidth = 140;
-        const title = 'Moods Over Last 6 Months';
-        const legend = this._imageGenerator.getMoodsColors();
-        const yFrozen = y;
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            const chart = model.ChartImagePaths.find(x => x.key === chartImage);
-            document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
-            document.fontSize(7);
-            document.moveDown();
-
-            y = yFrozen + imageWidth + 20;
-            this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
-
-            const legendStartX = startX + 200;
-            y = this._commons.addLegend(document, yFrozen, legend, legendStartX, 7, 45, 5, 5, 12);
-            y = yFrozen + imageWidth + 20; //Image height
-        }
-        return y;
-    }
-
-    private addSleepStats = (document, model, y) => {
-
-        const chartImage = 'SleepHours_LastMonth';
-        const detailedTitle = 'Sleep in Hours for Last Month';
-        const titleColor = '#505050';
-        const sectionTitle = 'Sleep History';
-        const icon = Helper.getIconsPath('sleep.png');
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 23;
-            const value = model.Stats.Sleep.AverageForLastMonth?.toString();
-            y = this.addLabeledText(document, 'Average Sleep (Hours)', value, y);
-        }
-        return y;
-    };
-
-    public addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: number): number => {
-
-        y = y + 20;
-
-        document
-            .image(model.ProfileImagePath, 50, y, { width: 64 });
-
-        document
-            .roundedRect(135, y, 400, 65, 1)
-            .lineWidth(0.1)
-            .fillOpacity(0.8)
-            .fill("#e8ecef");
-
-        y = y + 20;
-
-        document
-            .fillOpacity(1.0)
-            .lineWidth(1)
-            .fill("#444444");
-
-        document
-            .fillColor("#444444")
-            .font('Helvetica')
-            .fontSize(13);
-
-        document
-            .font('Helvetica-Bold')
-            .text('Patient', 190, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.Name, 290, y, { align: "left" })
-            .moveDown();
-
-        y = y + 23;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Patient ID', 190, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.DisplayId, 290, y, { align: "left" })
-            .moveDown();
-
-        return y;
-    };
-
-    private addReportSummary = (document: PDFKit.PDFDocument, model: any, y: number): number => {
-
-        y = y + 70;
-
-        const labelX = 135;
-        const valueX = 325;
-        const rowYOffset = 23;
-
-        document
-            .fontSize(11)
-            .fillColor("#444444");
-
-        document
-            .font('Helvetica-Bold')
-            .text('Age', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.Age, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Gender', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.Gender, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Race', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.Race, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Ethnicity', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.Ethnicity, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Mariatal Status', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.MariatalStatus, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Tobacco', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.Tobacco, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Current Weight', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.CurrentBodyWeight, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Current Height', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(model.CurrentHeight, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        if (model.BodyMassIndex) {
-            document
-                .font('Helvetica-Bold')
-                .text('Body Mass Index (BMI)', labelX, y, { align: "left" })
-                .font('Helvetica')
-                .text(model.BodyMassIndex.toFixed(), valueX, y, { align: "left" })
-                .moveDown();
-            y = y + rowYOffset;
-            y = this.drawBMIScale(document, y, model.BodyMassIndex);
-        }
-
-        y = y + rowYOffset;
-
-        return y;
-    };
-
-    private addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: number): number => {
-
-        const journey = model.Stats.Careplan?.Enrollment;
-        if (!journey) {
-            return y;
-        }
-        const planName = journey.PlanName;
-        const enrollmentId = journey.EnrollmentId ? journey.EnrollmentId.toString() : journey.EnrollmentStringId;
-        const startDate = journey.StartAt?.toLocaleDateString();
-        const endDate = journey.EndAt?.toLocaleDateString();
-        const icon = Helper.getIconsPath('health-journey.png');
-        y = this._commons.addSectionTitle(document, y, 'Health Journey', icon);
-
-        const labelX = 135;
-        const valueX = 325;
-        const rowYOffset = 23;
-
-        y = y + 30;
-
-        document
-            .fontSize(11)
-            .fillColor("#444444");
-
-        document
-            .font('Helvetica-Bold')
-            .text('Plan Name', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(planName, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Enrollment Id', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(enrollmentId, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('Start Date', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(startDate, valueX, y, { align: "left" })
-            .moveDown();
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text('End Date', labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(endDate, valueX, y, { align: "left" })
-            .moveDown();
-
-        y = y + 35;
-
-        var c = model.ChartImagePaths.find(x => x.key === 'Careplan_Progress');
-        document.image(c.location, 115, y, { width: 375, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 32;
-        this._commons.addText(document, 'Health Journey Progress', 75, y, 9, '#505050', 'center');
-        return y;
-    };
-
-    private addBodyWeightStats(model: any, document: PDFKit.PDFDocument, y: any) {
-
-        const chartImage = 'BodyWeight_Last6Months';
-        const detailedTitle = 'Body Weight (Kg) Trend Over 6 Months';
-        const titleColor = '#505050';
-        const sectionTitle = 'Body Weight';
-        const icon = Helper.getIconsPath('body-weight.png');
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 20;
-
-            let value = model.Stats.Biometrics.Last6Months.BodyWeight.AverageBodyWeight.toFixed();
-            y = this.addLabeledText(document, 'Average Weight (Kg)', value, y);
-
-            value = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight.toString();
-            y = this.addLabeledText(document, 'Current Body Weight (Kg)', value, y);
-
-            value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
-            y = this.addLabeledText(document, 'Last Measured Date', value, y);
-        }
-
-        return y;
-    }
-
-    private addBloodPressureStats(model: any, document: PDFKit.PDFDocument, y: any) {
-
-        const chartImage = 'BloodPressure_Last6Months';
-        const detailedTitle = 'Blood Pressure Trend Over 6 Months';
-        const titleColor = '#505050';
-        const sectionTitle = 'Blood Pressure';
-        const icon = Helper.getIconsPath('blood-pressure.png');
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 20;
-
-            let value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureDiastolic.toString();
-            y = this.addLabeledText(document, 'Recent Diastolic BP (mmHg)', value, y);
-
-            value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
-            y = this.addLabeledText(document, 'Recent Systolic BP (mmHg)', value, y);
-
-            value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
-            y = this.addLabeledText(document, 'Last Measured Date', value, y);
-        }
-
-        return y;
-    }
-
-    private addBloodGlucoseStats(model: any, document: PDFKit.PDFDocument, y: any) {
-
-        const chartImage = 'BloodGlucose_Last6Months';
-        const detailedTitle = 'Blood Glucose Trend Over 6 Months';
-        const titleColor = '#505050';
-        const sectionTitle = 'Blood Glucose';
-        const icon = Helper.getIconsPath('blood-sugar.png');
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 20;
-
-            let value = model.Stats.Biometrics.Last6Months.BloodGlucose.CurrentBloodGlucose?.toString();
-            y = this.addLabeledText(document, 'Recent Blood Glucose (mg/dL)', value, y);
-
-            value = model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate?.toLocaleDateString();
-            y = this.addLabeledText(document, 'Last Measured Date', value, y);
-        }
-
-        return y;
-    }
-
-    private addCholesterolStats(model: any, document: PDFKit.PDFDocument, y: any) {
-
-        const chartImage = 'Cholesterol_Last6Months';
-        const detailedTitle = 'Lipids Trend Over 6 Months';
-        const titleColor = '#505050';
-        const sectionTitle = 'Lipids';
-        const icon = Helper.getIconsPath('blood-lipids.png');
-
-        const lipidColors = this._imageGenerator.getLipidColors();
-
-        y = this._commons.addSectionTitle(document, y, sectionTitle, icon);
-
-        if (!this.chartExists(model, chartImage)) {
-            y = this._commons.addNoDataDisplay(document, y);
-        } else {
-            y = y + 25;
-            y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-            y = y + 20;
-            y = this._commons.addLegend(document, y, lipidColors, 200, 11, 65, 6, 10);
-        }
-        return y;
-    }
-
-    //#endregion
-
-    //#region Helpers
-
-    private addLabeledText(document: PDFKit.PDFDocument, label: string, value: string, y: any) {
-
-        const labelX = 135;
-        const valueX = 325;
-        const rowYOffset = 23;
-
-        document
-            .fontSize(11)
-            .fillColor("#444444");
-
-        y = y + rowYOffset;
-
-        document
-            .font('Helvetica-Bold')
-            .text(label, labelX, y, { align: "left" })
-            .font('Helvetica')
-            .text(value, valueX, y, { align: "left" })
-            .moveDown();
-
-        return y;
-    }
-
-    private addRectangularChartImage(
-        document: PDFKit.PDFDocument, model: any,
-        chartImage: string, y: any, title: string,
-        titleColor: string) {
-        const imageWidth = 350;
-        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
-        document.image(chart.location, 125, y, { width: imageWidth, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + 160;
-        this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
-        return y;
-    }
-
-    private addSquareChartImage(
-        document: PDFKit.PDFDocument, model: any,
-        chartImage: string, y: any, title: string,
-        titleColor: string,
-        imageWidth = 175,
-        startX = 75) {
-        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
-        document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-        y = y + imageWidth + 10;
-        this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
-        return y;
-    }
-
-    private addSquareChartImageWithLegend(
-        document: PDFKit.PDFDocument,
-        model: any,
-        chartImage: string,
-        y: any,
-        title: string,
-        titleColor: string,
-        legendItems,
-        legendY = 50,
-        imageWidth = 160,
-        startX = 125) {
-
-        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
-        document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
-        document.fontSize(7);
-        document.moveDown();
-
-        const yFrozen = y;
-        y = yFrozen + imageWidth + 20;
-        this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
-
-        y = yFrozen + legendY;
-        const legendStartX = startX + 200;
-        y = this._commons.addLegend(document, y, legendItems, legendStartX, 11, 60, 8, 5);
-        y = yFrozen + imageWidth + 30; //Image height
-        return y;
-    }
-
-    private generateMedicationTableRow(
-        document: PDFKit.PDFDocument,
-        y,
-        index,
-        drug,
-        dose,
-        dosageUnit,
-        frequency,
-        frequencyUnit,
-        timeSchedule,
-        route,
-        duration,
-        durationUnit,
-    ) {
-        var schedule = (frequency ? frequency + ' ' : '') + frequencyUnit + ' - ' + timeSchedule;
-        const d = schedule + ', ' + route + ' | ' + duration + ' ' + durationUnit;
-        const medication = drug + ', ' + d;
-        document
-            .fontSize(11)
-            .font('Helvetica')
-            .text(index, 50, y)
-            .text(medication, 75, y, { align: "left" })
-            .text(dose + ' ' + dosageUnit, 330, y, { align: "right" })
-            .moveDown();
-    }
-
-    private chartExists = (model, chartImage) => {
-        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
-        if (!chart) {
-            return false;
-        }
-        if (!chart.location) {
-            return false;
-        }
-        return true;
-    };
-
-    private drawBMIScale(document: PDFKit.PDFDocument, y: number, bmi: number) {
-        const startX = 325;
-        const imageWidth = 210;
-        let bmiImage = null;
-        if (bmi < 18.5) {
-            bmiImage = Helper.getIconsPath('bmi_legend_underweight.png');
-        } else if (bmi >= 18.5 && bmi <= 24.9) {
-            bmiImage = Helper.getIconsPath('bmi_legend_normal.png');
-        } else if (bmi >= 24.9 && bmi <= 29.9) {
-            bmiImage = Helper.getIconsPath('bmi_legend_overweight.png');
-        } else if (bmi >= 29.9 && bmi <= 34.9) {
-            bmiImage = Helper.getIconsPath('bmi_legend_obese.png');
-        } else if (bmi > 34.9) {
-            bmiImage = Helper.getIconsPath('bmi_legend_extremely_obese.png');
-        }
-        if (bmiImage) {
-            document.image(bmiImage, startX, y, { width: imageWidth });
-            y = y + 17;
-        }
-        return y;
-    }
 
     //#endregion
 

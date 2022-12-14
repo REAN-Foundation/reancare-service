@@ -11,6 +11,7 @@ export interface DonorSearchFilters {
     BloodGroup? : string,
     AcceptorUserId? : string,
     MedIssues? : string,
+    OnlyEligible? : boolean | string,
     IsAvailable? : boolean,
     HasDonatedEarlier? : boolean,
     CreatedDateFrom?: Date;

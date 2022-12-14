@@ -157,6 +157,24 @@ export class RssfeedRepo implements IRssfeedRepo {
             if (updateModel.ProviderLink != null) {
                 newsfeed.ProviderLink = updateModel.ProviderLink;
             }
+            if (updateModel.AtomFeedLink != null) {
+                newsfeed.AtomFeedLink = updateModel.AtomFeedLink;
+            }
+            if (updateModel.RssFeedLink != null) {
+                newsfeed.RssFeedLink = updateModel.RssFeedLink;
+            }
+            if (updateModel.JsonFeedLink != null) {
+                newsfeed.JsonFeedLink = updateModel.JsonFeedLink;
+            }
+            if (updateModel.RssFeedResourceId != null) {
+                newsfeed.RssFeedResourceId = updateModel.RssFeedResourceId;
+            }
+            if (updateModel.AtomFeedResourceId != null) {
+                newsfeed.AtomFeedResourceId = updateModel.AtomFeedResourceId;
+            }
+            if (updateModel.JsonFeedResourceId != null) {
+                newsfeed.JsonFeedResourceId = updateModel.JsonFeedResourceId;
+            }
             newsfeed.LastUpdatedOn = new Date();
 
             await newsfeed.save();

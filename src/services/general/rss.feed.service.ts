@@ -12,6 +12,7 @@ import { TimeHelper } from "../../common/time.helper";
 import { FileResourceService } from "./file.resource.service";
 import { Loader } from "../../startup/loader";
 import { ConfigurationManager } from "../../config/configuration.manager";
+import { FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,7 +60,7 @@ export class RssfeedService {
         return await this._feedItemRepo.delete(itemId);
     };
 
-    createOrUpdateFeed = async (id: uuid): Promise<{ atomFeedLink: string; jsonFeedLink: string; rssFeedLink: string}> => {
+    createOrUpdateFeed = async (id: uuid): Promise<RssfeedDto> => {
 
         const _id = Helper.generateDisplayCode();
         const record = await this._feedRepo.getById(id);
@@ -102,31 +103,56 @@ export class RssfeedService {
         const feed = new Feed(obj);
 
         feed.addCategory(record.Category ?? "General");
-          
-        const rssFeed_ = feed.rss2(); //RSS 2.0
-        const atomFeed_ = feed.atom1(); //Atom 1.0
-        const jsonFeed_ = feed.json1(); //JSON Feed 1.0
 
-        const rssFeedResource = await this.getFileResource(rssFeed_, 'rss', '.rss');
-        const atomFeedResource = await this.getFileResource(atomFeed_, 'atom', '.atom');
-        const jsonFeedResource = await this.getFileResource(jsonFeed_, 'json', '.json');
+        //Export to atom feed
+        const atomFeed_ = feed.atom1(); //Atom 1.0
+        let atomFeedResource: FileResourceDto = null;
+        if (record.AtomFeedResourceId) {
+            atomFeedResource = await this.updateFileResource(record.AtomFeedResourceId, atomFeed_);
+        }
+        else {
+            atomFeedResource = await this.createFileResource(atomFeed_, 'atom', '.atom');
+        }
+
+        //Export to rss feed
+        const rssFeed_ = feed.rss2(); //RSS 2.0
+        let rssFeedResource: FileResourceDto = null;
+        if (record.RssFeedResourceId) {
+            rssFeedResource = await this.updateFileResource(record.RssFeedResourceId, rssFeed_);
+        }
+        else {
+            rssFeedResource = await this.createFileResource(rssFeed_, 'rss', '.rss');
+        }
+
+        //Export to json feed
+        const jsonFeed_ = feed.json1(); //JSON Feed 1.0
+        let jsonFeedResource: FileResourceDto = null;
+        if (record.JsonFeedResourceId) {
+            jsonFeedResource = await this.updateFileResource(record.JsonFeedResourceId, jsonFeed_);
+        }
+        else {
+            jsonFeedResource = await this.createFileResource(jsonFeed_, 'json', '.json');
+        }
+
+        const atomFeedLink       = `${process.env.THIS_BASE_URL}/rss-feeds/${atomFeedResource.id}/atom`;
+        const rssFeedLink        = `${process.env.THIS_BASE_URL}/rss-feeds/${rssFeedResource.id}/rss`;
+        const jsonFeedLink       = `${process.env.THIS_BASE_URL}/rss-feeds/${jsonFeedResource.id}/json`;
 
         const updates = {
             AtomFeedResourceId : atomFeedResource.id,
             RssFeedResourceId  : rssFeedResource.id,
             JsonFeedResourceId : jsonFeedResource.id,
+            AtomFeedLink       : atomFeedLink,
+            RssFeedLink        : rssFeedLink,
+            JsonFeedLink       : jsonFeedLink,
         };
 
         const updated = await this._feedRepo.update(id, updates);
 
-        const atomFeedLink = atomFeedResource.Url; 
-        const jsonFeedLink = jsonFeedResource.Url;
-        const rssFeedLink = rssFeedResource.Url;
-
-        return { atomFeedLink, jsonFeedLink, rssFeedLink };
+        return updated;
     }
 
-    getFileResource = async (text: string, prefix = 'atom|rss|json', extension = '.atom|.rss|.json') => {
+    createFileResource = async (text: string, prefix = 'atom|rss|json', extension = '.atom|.rss|.json') => {
         const frService = Loader.container.resolve(FileResourceService);
         const timestamp = TimeHelper.timestamp(new Date());
         const filename = prefix + '_' + timestamp + extension;
@@ -135,6 +161,17 @@ export class RssfeedService {
         const localPath = await Helper.writeTextToFile(text, filename);
         const resource = frService.uploadLocal(localPath, cloudStoragePath, true);
         return resource;
-    }
+    };
+
+    updateFileResource = async (fileResourceId: uuid, text: string) => {
+        const frService = Loader.container.resolve(FileResourceService);
+        const record = await frService.getById(fileResourceId);
+        const filename = record.FileName;
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+        var cloudStoragePath = `rss-feeds/${systemIdentifier}/` + filename;
+        const localPath = await Helper.writeTextToFile(text, filename);
+        const resource = frService.replaceLocal(fileResourceId, localPath, cloudStoragePath, true);
+        return resource;
+    };
 
 }

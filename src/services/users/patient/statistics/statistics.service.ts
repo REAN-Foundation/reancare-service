@@ -96,10 +96,8 @@ export class StatisticsService {
         const assessmentDate = TimeHelper.getDateWithTimezone(date.toISOString(), timezone);
         const reportDateStr = assessmentDate.toLocaleDateString();
 
-        const race = patient.HealthProfile.Race && patient.HealthProfile.Race?.length > 0
-            ? patient.HealthProfile.Race : 'Unspecified';
-        const ethnicity = patient.HealthProfile.Ethnicity && patient.HealthProfile.Ethnicity?.length > 0
-            ? patient.HealthProfile.Ethnicity : 'Unspecified';
+        const race = patient.HealthProfile.Race ? patient.HealthProfile.Race : 'Unspecified';
+        const ethnicity = patient.HealthProfile.Ethnicity ? patient.HealthProfile.Ethnicity : 'Unspecified';
         const tobacco = patient.HealthProfile.TobaccoQuestionAns === true ? 'Yes' : 'No';
 
         return {
@@ -118,7 +116,7 @@ export class StatisticsService {
             Race              : race,
             Ethnicity         : ethnicity,
             Tobacco           : tobacco,
-            MariatalStatus    : patient.User.Person.MaritalStatus ?? 'Unspecified',
+            MariatalStatus    : patient.HealthProfile.MaritalStatus ?? 'Unspecified',
             Stats             : stats
         };
     };

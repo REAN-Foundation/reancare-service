@@ -9,9 +9,11 @@ import {
     IsUUID,
     PrimaryKey,
     HasMany,
+    ForeignKey,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
+import FileResource from '../file.resource/file.resource.model';
 import RssfeedItem from './rss.feed.item.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -121,6 +123,36 @@ export default class Rssfeed extends Model {
         allowNull : true,
     })
     JsonFeedLink: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    RssFeedLink: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => FileResource)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    AtomFeedResourceId: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => FileResource)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    RssFeedResourceId: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => FileResource)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    JsonFeedResourceId: string;
 
     @Column({
         type      : DataType.DATE,

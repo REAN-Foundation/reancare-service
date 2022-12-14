@@ -6,6 +6,9 @@ import { RssfeedService } from '../../../services/general/rss.feed.service';
 import { Loader } from '../../../startup/loader';
 import { RssfeedValidator } from './rss.feed.validator';
 import { BaseController } from '../../base.controller';
+import { Logger } from '../../../common/logger';
+import { FileResourceService } from '../../../services/general/file.resource.service';
+import fs from 'fs';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,11 +18,14 @@ export class RssfeedController extends BaseController {
 
     _service: RssfeedService = null;
 
+    _fileResourceService: FileResourceService = null;
+
     _validator: RssfeedValidator = new RssfeedValidator();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(RssfeedService);
+        this._fileResourceService = Loader.container.resolve(FileResourceService);
     }
 
     //#endregion
@@ -37,12 +43,10 @@ export class RssfeedController extends BaseController {
                 throw new ApiError(400, 'Could not create a feed!');
             }
 
-            const { atomFeed, jsonFeed } = await this._service.createOrUpdateFeed(feed.id);
-            feed.AtomFeedLink = atomFeed;
-            feed.JsonFeedLink = jsonFeed;
+            const updated = await this._service.createOrUpdateFeed(feed.id);
 
             ResponseHandler.success(request, response, 'Rssfeed created successfully!', 201, {
-                Rssfeed : feed,
+                Rssfeed : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -102,10 +106,11 @@ export class RssfeedController extends BaseController {
                 throw new ApiError(404, 'Rssfeed not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            let updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a feed!');
             }
+            updated = await this._service.createOrUpdateFeed(id);
 
             ResponseHandler.success(request, response, 'Rssfeed updated successfully!', 200, {
                 Rssfeed : updated,
@@ -149,6 +154,8 @@ export class RssfeedController extends BaseController {
             if (item == null) {
                 throw new ApiError(400, 'Could not add a feed item!');
             }
+            const updatedFeed = await this._service.createOrUpdateFeed(item?.FeedId);
+            Logger.instance().log(JSON.stringify(updatedFeed));
 
             ResponseHandler.success(request, response, 'Rssfeed item added successfully!', 201, {
                 RssfeedItem : item,
@@ -156,7 +163,7 @@ export class RssfeedController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     getFeedItemById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -175,7 +182,7 @@ export class RssfeedController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     updateFeedItem = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -193,6 +200,8 @@ export class RssfeedController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a feed item!');
             }
+            const updatedFeed = await this._service.createOrUpdateFeed(updated?.FeedId);
+            Logger.instance().log(JSON.stringify(updatedFeed));
 
             ResponseHandler.success(request, response, 'Rssfeed updated successfully!', 200, {
                 RssfeedItem : updated,
@@ -200,7 +209,7 @@ export class RssfeedController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     deleteFeedItem = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -209,6 +218,7 @@ export class RssfeedController extends BaseController {
 
             const itemId: uuid = await this._validator.getParamUuid(request, 'itemId');
             const existingRecord = await this._service.getFeedItemById(itemId);
+            const feedId = existingRecord.FeedId;
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed item record not found.');
             }
@@ -217,6 +227,8 @@ export class RssfeedController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Rssfeed item can not be deleted.');
             }
+            const updatedFeed = await this._service.createOrUpdateFeed(feedId);
+            Logger.instance().log(JSON.stringify(updatedFeed));
 
             ResponseHandler.success(request, response, 'Rssfeed item deleted successfully!', 200, {
                 Deleted : true,
@@ -224,6 +236,76 @@ export class RssfeedController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    getRssFeed  = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Rssfeed.GetRssFeed', request, response, false);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const feed = await this._service.getById(id);
+            if (feed == null) {
+                throw new ApiError(404, 'Rssfeed not found.');
+            }
+            const mimeType = 'application/rss+xml';
+            const resourceId = feed.RssFeedResourceId;
+            await this.stream(resourceId, response, mimeType);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getAtomFeed = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Rssfeed.GetAtomFeed', request, response, false);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const feed = await this._service.getById(id);
+            if (feed == null) {
+                throw new ApiError(404, 'Rssfeed not found.');
+            }
+            const mimeType = 'application/atom+xml';
+            const resourceId = feed.AtomFeedResourceId;
+            await this.stream(resourceId, response, mimeType);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getJsonFeed = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Rssfeed.GetJsonFeed', request, response, false);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const feed = await this._service.getById(id);
+            if (feed == null) {
+                throw new ApiError(404, 'Rssfeed not found.');
+            }
+            const mimeType = 'application/json';
+            const resourceId = feed.JsonFeedResourceId;
+            await this.stream(resourceId, response, mimeType);
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
     }
+
+    private stream = async (resourceId: string, response: express.Response, mimeType: string) => {
+        var resource = await this._fileResourceService.getById(resourceId);
+        if (!resource) {
+            throw new ApiError(404, 'Feed not found.');
+        }
+        const localDestination = await this._fileResourceService.downloadById(resourceId);
+        if (localDestination == null) {
+            throw new ApiError(404, 'File resource not found.');
+        }
+        response.setHeader('Content-type', mimeType);
+        response.setHeader('Content-disposition', 'inline');
+        var filestream = fs.createReadStream(localDestination);
+        filestream.pipe(response);
+    };
 
 }

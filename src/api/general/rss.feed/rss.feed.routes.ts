@@ -10,6 +10,12 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new RssfeedController();
 
+    //Public routes
+    router.get('/:id/rss', controller.getRssFeed);
+    router.get('/:id/atom', controller.getAtomFeed);
+    router.get('/:id/json', controller.getJsonFeed);
+
+    //Protected routes
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);

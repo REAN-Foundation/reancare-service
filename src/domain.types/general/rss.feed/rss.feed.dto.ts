@@ -17,6 +17,10 @@ export interface RssfeedDto {
     ProviderLink ?: string;
     AtomFeedLink? : string;
     JsonFeedLink? : string;
+    RssFeedLink? : string;
+    AtomFeedResourceId?: uuid;
+    RssFeedResourceId?: uuid;
+    JsonFeedResourceId?: uuid;
     FeedItems?    : RssfeedItemDto[]
 }
 

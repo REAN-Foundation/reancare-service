@@ -1,13 +1,13 @@
 import { RssfeedDomainModel } from "../../../../domain.types/general/rss.feed/rss.feed.domain.model";
-import { RssfeedDto } from "../../../../domain.types/general/rss.feed/rss.feed.dto";
+import { RssfeedItemDto } from "../../../../domain.types/general/rss.feed/rss.feed.dto";
 
 export interface IRssfeedItemRepo {
 
-    create(model: RssfeedDomainModel): Promise<RssfeedDto>;
+    create(model: RssfeedDomainModel): Promise<RssfeedItemDto>;
 
-    getById(id: string): Promise<RssfeedDto>;
+    getById(id: string): Promise<RssfeedItemDto>;
 
-    update(id: string, model: RssfeedDomainModel): Promise<RssfeedDto>;
+    update(id: string, model: RssfeedDomainModel): Promise<RssfeedItemDto>;
 
     delete(id: string): Promise<boolean>;
 

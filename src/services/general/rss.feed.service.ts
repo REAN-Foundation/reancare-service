@@ -134,9 +134,9 @@ export class RssfeedService {
             jsonFeedResource = await this.createFileResource(jsonFeed_, 'json', '.json');
         }
 
-        const atomFeedLink       = `${process.env.THIS_BASE_URL}/rss-feeds/${atomFeedResource.id}/atom`;
-        const rssFeedLink        = `${process.env.THIS_BASE_URL}/rss-feeds/${rssFeedResource.id}/rss`;
-        const jsonFeedLink       = `${process.env.THIS_BASE_URL}/rss-feeds/${jsonFeedResource.id}/json`;
+        const atomFeedLink       = `${process.env.BASE_URL}/api/v1/rss-feeds/${id}/atom`;
+        const rssFeedLink        = `${process.env.BASE_URL}/api/v1/rss-feeds/${id}/rss`;
+        const jsonFeedLink       = `${process.env.BASE_URL}/api/v1/rss-feeds/${id}/json`;
 
         const updates = {
             AtomFeedResourceId : atomFeedResource.id,

@@ -8,14 +8,11 @@ import Rssfeed from '../../../models/general/rss.feed/rss.feed.model';
 export class RssfeedMapper {
 
     static toFeedDto = (
-        feed: Rssfeed): RssfeedDto => {
+        feed: Rssfeed,
+        feedItems: RssfeedItemDto[]): RssfeedDto => {
+
         if (feed == null) {
             return null;
-        }
-
-        let items = [];
-        if (feed.FeedItems) {
-            items = feed.FeedItems.map(x => RssfeedMapper.toFeedItemDto(x));
         }
 
         const dto: RssfeedDto = {
@@ -39,7 +36,7 @@ export class RssfeedMapper {
             AtomFeedResourceId : feed.AtomFeedResourceId,
             JsonFeedResourceId : feed.JsonFeedResourceId,
             RssFeedResourceId  : feed.RssFeedResourceId,
-            FeedItems          : items,
+            FeedItems          : feedItems ?? []
         };
         return dto;
     };

@@ -8,13 +8,11 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
-    HasMany,
     ForeignKey,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import FileResource from '../file.resource/file.resource.model';
-import RssfeedItem from './rss.feed.item.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -134,7 +132,7 @@ export default class Rssfeed extends Model {
     @ForeignKey(() => FileResource)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     AtomFeedResourceId: string;
 
@@ -142,7 +140,7 @@ export default class Rssfeed extends Model {
     @ForeignKey(() => FileResource)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     RssFeedResourceId: string;
 
@@ -150,7 +148,7 @@ export default class Rssfeed extends Model {
     @ForeignKey(() => FileResource)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     JsonFeedResourceId: string;
 
@@ -159,9 +157,6 @@ export default class Rssfeed extends Model {
         allowNull : true,
     })
     LastUpdatedOn: Date;
-
-    @HasMany(() => RssfeedItem)
-    FeedItems: RssfeedItem[];
 
     @Column
     @CreatedAt

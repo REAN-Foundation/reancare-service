@@ -9,7 +9,7 @@ import {
     IsUUID,
     PrimaryKey,
     ForeignKey,
-    HasOne,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -112,7 +112,7 @@ export default class RssfeedItem extends Model {
     })
     PublishingDate: Date;
 
-    @HasOne(() => Rssfeed)
+    @BelongsTo(() => Rssfeed, 'FeedId')
     Feed: Rssfeed;
 
     @Column

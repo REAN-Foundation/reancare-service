@@ -4,10 +4,11 @@ import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { IRssfeedRepo } from '../../../../../repository.interfaces/general/rss.feed/rss.feed.repo.interface';
 import { RssfeedDomainModel } from '../../../../../../domain.types/general/rss.feed/rss.feed.domain.model';
-import { RssfeedDto } from '../../../../../../domain.types/general/rss.feed/rss.feed.dto';
+import { RssfeedDto, RssfeedItemDto } from '../../../../../../domain.types/general/rss.feed/rss.feed.dto';
 import { RssfeedMapper } from '../../../mappers/general/rss.feed/rss.feed.mapper';
 import Rssfeed from '../../../models/general/rss.feed/rss.feed.model';
 import { Op } from 'sequelize';
+import RssfeedItem from '../../../models/general/rss.feed/rss.feed.item.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -26,15 +27,16 @@ export class RssfeedRepo implements IRssfeedRepo {
                 Favicon       : createModel.Favicon ?? null,
                 Image         : createModel.Image ?? null,
                 Category      : createModel.Category ?? null,
-                Tags          : createModel.Tags ?? '[]',
+                Tags          : JSON.stringify(createModel.Tags) ?? '[]',
                 ProviderName  : createModel.ProviderName ?? null,
                 ProviderEmail : createModel.ProviderEmail ?? null,
                 ProviderLink  : createModel.ProviderLink ?? null,
                 LastUpdatedOn : new Date()
             };
 
-            const newsfeed = await Rssfeed.create(entity);
-            return await RssfeedMapper.toFeedDto(newsfeed);
+            const feed = await Rssfeed.create(entity);
+            const feedItems = await this.getFeedItems(feed.id);
+            return await RssfeedMapper.toFeedDto(feed, feedItems);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -43,8 +45,9 @@ export class RssfeedRepo implements IRssfeedRepo {
 
     getById = async (id: string): Promise<RssfeedDto> => {
         try {
-            const newsfeed = await Rssfeed.findByPk(id);
-            return await RssfeedMapper.toFeedDto(newsfeed);
+            const feed = await Rssfeed.findByPk(id);
+            const feedItems = await this.getFeedItems(feed.id);
+            return await RssfeedMapper.toFeedDto(feed, feedItems);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -94,7 +97,7 @@ export class RssfeedRepo implements IRssfeedRepo {
 
             const dtos: RssfeedDto[] = [];
             for (const feed of foundResults.rows) {
-                const dto = await RssfeedMapper.toFeedDto(feed);
+                const dto = await RssfeedMapper.toFeedDto(feed, null);
                 dtos.push(dto);
             }
 
@@ -119,67 +122,68 @@ export class RssfeedRepo implements IRssfeedRepo {
     update = async (id: string, updateModel: RssfeedDomainModel):
     Promise<RssfeedDto> => {
         try {
-            const newsfeed = await Rssfeed.findByPk(id);
+            const feed = await Rssfeed.findByPk(id);
 
             if (updateModel.Title != null) {
-                newsfeed.Title = updateModel.Title;
+                feed.Title = updateModel.Title;
             }
             if (updateModel.Description != null) {
-                newsfeed.Description = updateModel.Description;
+                feed.Description = updateModel.Description;
             }
             if (updateModel.Link != null) {
-                newsfeed.Link = updateModel.Link;
+                feed.Link = updateModel.Link;
             }
             if (updateModel.Language != null) {
-                newsfeed.Language = updateModel.Language;
+                feed.Language = updateModel.Language;
             }
             if (updateModel.Copyright != null) {
-                newsfeed.Copyright = updateModel.Copyright;
+                feed.Copyright = updateModel.Copyright;
             }
             if (updateModel.Favicon != null) {
-                newsfeed.Favicon = updateModel.Favicon;
+                feed.Favicon = updateModel.Favicon;
             }
             if (updateModel.Image != null) {
-                newsfeed.Image = updateModel.Image;
+                feed.Image = updateModel.Image;
             }
             if (updateModel.Category != null) {
-                newsfeed.Category = updateModel.Category;
+                feed.Category = updateModel.Category;
             }
             if (updateModel.Tags != null) {
-                newsfeed.Tags = JSON.stringify(updateModel.Tags);
+                feed.Tags = JSON.stringify(updateModel.Tags);
             }
             if (updateModel.ProviderName != null) {
-                newsfeed.ProviderName = updateModel.ProviderName;
+                feed.ProviderName = updateModel.ProviderName;
             }
             if (updateModel.ProviderEmail != null) {
-                newsfeed.ProviderEmail = updateModel.ProviderEmail;
+                feed.ProviderEmail = updateModel.ProviderEmail;
             }
             if (updateModel.ProviderLink != null) {
-                newsfeed.ProviderLink = updateModel.ProviderLink;
+                feed.ProviderLink = updateModel.ProviderLink;
             }
             if (updateModel.AtomFeedLink != null) {
-                newsfeed.AtomFeedLink = updateModel.AtomFeedLink;
+                feed.AtomFeedLink = updateModel.AtomFeedLink;
             }
             if (updateModel.RssFeedLink != null) {
-                newsfeed.RssFeedLink = updateModel.RssFeedLink;
+                feed.RssFeedLink = updateModel.RssFeedLink;
             }
             if (updateModel.JsonFeedLink != null) {
-                newsfeed.JsonFeedLink = updateModel.JsonFeedLink;
+                feed.JsonFeedLink = updateModel.JsonFeedLink;
             }
             if (updateModel.RssFeedResourceId != null) {
-                newsfeed.RssFeedResourceId = updateModel.RssFeedResourceId;
+                feed.RssFeedResourceId = updateModel.RssFeedResourceId;
             }
             if (updateModel.AtomFeedResourceId != null) {
-                newsfeed.AtomFeedResourceId = updateModel.AtomFeedResourceId;
+                feed.AtomFeedResourceId = updateModel.AtomFeedResourceId;
             }
             if (updateModel.JsonFeedResourceId != null) {
-                newsfeed.JsonFeedResourceId = updateModel.JsonFeedResourceId;
+                feed.JsonFeedResourceId = updateModel.JsonFeedResourceId;
             }
-            newsfeed.LastUpdatedOn = new Date();
+            feed.LastUpdatedOn = new Date();
 
-            await newsfeed.save();
+            await feed.save();
 
-            return await RssfeedMapper.toFeedDto(newsfeed);
+            const feedItems = await this.getFeedItems(feed.id);
+            return await RssfeedMapper.toFeedDto(feed, feedItems);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -192,6 +196,16 @@ export class RssfeedRepo implements IRssfeedRepo {
 
             const result = await Rssfeed.destroy({ where: { id: id } });
             return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getFeedItems = async (id: string): Promise<RssfeedItemDto[]> => {
+        try {
+            const records = await RssfeedItem.findAll({ where: { FeedId: id } });
+            return records.map(x => RssfeedMapper.toFeedItemDto(x));
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

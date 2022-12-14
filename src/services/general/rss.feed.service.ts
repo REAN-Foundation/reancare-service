@@ -159,7 +159,7 @@ export class RssfeedService {
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
         var cloudStoragePath = `rss-feeds/${systemIdentifier}/` + filename;
         const localPath = await Helper.writeTextToFile(text, filename);
-        const resource = frService.uploadLocal(localPath, cloudStoragePath, true);
+        const resource = await frService.uploadLocal(localPath, cloudStoragePath, true);
         return resource;
     };
 
@@ -170,7 +170,7 @@ export class RssfeedService {
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
         var cloudStoragePath = `rss-feeds/${systemIdentifier}/` + filename;
         const localPath = await Helper.writeTextToFile(text, filename);
-        const resource = frService.replaceLocal(fileResourceId, localPath, cloudStoragePath, true);
+        const resource = await frService.replaceLocal(fileResourceId, localPath, cloudStoragePath, true);
         return resource;
     };
 

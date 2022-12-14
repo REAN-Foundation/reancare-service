@@ -37,6 +37,10 @@ export class RssfeedController extends BaseController {
                 throw new ApiError(400, 'Could not create a feed!');
             }
 
+            const { atomFeed, jsonFeed } = await this._service.createOrUpdateFeed(feed.id);
+            feed.AtomFeedLink = atomFeed;
+            feed.JsonFeedLink = jsonFeed;
+
             ResponseHandler.success(request, response, 'Rssfeed created successfully!', 201, {
                 Rssfeed : feed,
             });

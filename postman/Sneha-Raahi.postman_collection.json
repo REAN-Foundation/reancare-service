@@ -10472,7 +10472,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Delight them with real-time updates\",\r\n    \"Body\": \"Be it subscribing to exclusive content or getting users into your email subscription list, leverage push notifications to lure them into subscribing.\",\r\n    \"SentOn\": \"10/06/2021\",\r\n    \"ImageUrl\": \"https://images.unsplash.com/photo-1667420420282-ad2653e2b20b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1266&q=80\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Delight them with real-time updates\",\r\n    \"Body\": \"Be it subscribing to exclusive content or getting users into your email subscription list, leverage push notifications to lure them into subscribing.\",\r\n    \"SentOn\": \"10/06/2021\",\r\n    \"ImageUrl\": \"https://images.unsplash.com/photo-1667420420282-ad2653e2b20b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1266&q=80\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10556,7 +10556,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Diyanu – Recurring Discounts\",\r\n    \"Body\": \"A recurring discount is a great way to encourage repeat purchases. Their customers will come back regularly to browse their catalog of new fashion wares with the discount in mind.\",\r\n    \"SentOn\": \"6/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Diyanu-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Diyanu – Recurring Discounts\",\r\n    \"Body\": \"A recurring discount is a great way to encourage repeat purchases. Their customers will come back regularly to browse their catalog of new fashion wares with the discount in mind.\",\r\n    \"SentOn\": \"6/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Diyanu-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10640,7 +10640,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Backpacker – Brand Introduction\",\r\n    \"Body\": \"Backpacker welcome message includes a unique personal story. Backpacker introduces its founder in its push message and directs new subscribers to a longer blog post that covers the history of their brand.\",\r\n    \"SentOn\": \"5/22/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Backpacker-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Backpacker – Brand Introduction\",\r\n    \"Body\": \"Backpacker welcome message includes a unique personal story. Backpacker introduces its founder in its push message and directs new subscribers to a longer blog post that covers the history of their brand.\",\r\n    \"SentOn\": \"5/22/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Backpacker-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10724,7 +10724,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Shein – Welcome Tour\",\r\n    \"Body\": \"Shein welcomes new subscribers by showcasing its latest fashion collection. Two CTAs encourage subscribers to shop for either clothing or accessories. What makes this notification stand out is its timeliness. New subscribers often have strong buying intent, so bringing your latest offers to their attention is a great way to boost conversions when interest is at its highest.\",\r\n    \"SentOn\": \"5/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Shein-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Shein – Welcome Tour\",\r\n    \"Body\": \"Shein welcomes new subscribers by showcasing its latest fashion collection. Two CTAs encourage subscribers to shop for either clothing or accessories. What makes this notification stand out is its timeliness. New subscribers often have strong buying intent, so bringing your latest offers to their attention is a great way to boost conversions when interest is at its highest.\",\r\n    \"SentOn\": \"5/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Shein-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10808,7 +10808,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Hearst – Newsletter Sign Up\",\r\n    \"Body\": \"Offer free access to gated content through a push notification to steer your audience towards your newsletter or social media pages.\",\r\n    \"SentOn\": \"5/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Hearst-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Hearst – Newsletter Sign Up\",\r\n    \"Body\": \"Offer free access to gated content through a push notification to steer your audience towards your newsletter or social media pages.\",\r\n    \"SentOn\": \"5/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Hearst-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10892,7 +10892,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Snow Joe – Price Drop\",\r\n    \"Body\": \"Snow Joe uses push notifications to inform their customers of major price drops whenever they run a clearance sale.\",\r\n    \"SentOn\": \"5/3/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Snow-Joe-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Snow Joe – Price Drop\",\r\n    \"Body\": \"Snow Joe uses push notifications to inform their customers of major price drops whenever they run a clearance sale.\",\r\n    \"SentOn\": \"5/3/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Snow-Joe-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10976,7 +10976,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"tentree – Cross Promotion\",\r\n    \"Body\": \"Tentree took advantage of their successful Kickstarter campaign to effectively cross-promote their eco backpack lineup. Retarget customers that have already shown interest in your product to increase average customer spend (AVS).\",\r\n    \"SentOn\": \"4/10/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/tentree-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"tentree – Cross Promotion\",\r\n    \"Body\": \"Tentree took advantage of their successful Kickstarter campaign to effectively cross-promote their eco backpack lineup. Retarget customers that have already shown interest in your product to increase average customer spend (AVS).\",\r\n    \"SentOn\": \"4/10/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/tentree-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11060,7 +11060,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Cutting Board – Ebook Giveaway\",\r\n    \"Body\": \"Cutting Board offered their subscribers a free ebook in a push message – as part of a larger drip campaign. Strengthen customer loyalty with high-quality content that you know your customers will appreciate.\",\r\n    \"SentOn\": \"4/4/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Cutting-Board-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Cutting Board – Ebook Giveaway\",\r\n    \"Body\": \"Cutting Board offered their subscribers a free ebook in a push message – as part of a larger drip campaign. Strengthen customer loyalty with high-quality content that you know your customers will appreciate.\",\r\n    \"SentOn\": \"4/4/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Cutting-Board-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11144,7 +11144,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Restored the ability to backup your schemas to files.\",\r\n    \"Body\": \"FabAlley – Reward Program - This is an excellent example of a push event triggered based on individual data points. Create your own customer loyalty program to encourage shoppers to spend more regularly.\",\r\n    \"SentOn\": \"4/2/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Fab-Alley-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Restored the ability to backup your schemas to files.\",\r\n    \"Body\": \"FabAlley – Reward Program - This is an excellent example of a push event triggered based on individual data points. Create your own customer loyalty program to encourage shoppers to spend more regularly.\",\r\n    \"SentOn\": \"4/2/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Fab-Alley-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11228,7 +11228,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Mid-Day Massive UI Update!\",\r\n    \"Body\": \"The UI has been overhauled to provide a faster, prettier experience.\",\r\n    \"SentOn\": \"3/23/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Mid-Day-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Mid-Day Massive UI Update!\",\r\n    \"Body\": \"The UI has been overhauled to provide a faster, prettier experience.\",\r\n    \"SentOn\": \"3/23/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Mid-Day-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11312,7 +11312,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Fox News – Complete Purchase Reminder\",\r\n    \"Body\": \"Fox News gently reminds its customers to complete their news subscription purchase with personalized push notifications.\",\r\n    \"SentOn\": \"6/18/2020\",\r\n   \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Fox-News-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Fox News – Complete Purchase Reminder\",\r\n    \"Body\": \"Fox News gently reminds its customers to complete their news subscription purchase with personalized push notifications.\",\r\n    \"SentOn\": \"6/18/2020\",\r\n   \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Fox-News-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11396,7 +11396,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Glow & Lovely – Account Creation\",\r\n    \"Body\": \"You can now limit credit card numbers by card type and country.\",\r\n    \"SentOn\": \"3/28/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"Glow & Lovely – Account Creation\",\r\n    \"Body\": \"You can now limit credit card numbers by card type and country.\",\r\n    \"SentOn\": \"3/28/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -17046,6 +17046,1423 @@
 								"SNEHA_SUPPORT",
 								"zxcv",
 								"receive"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "News feeds - Community",
+			"item": [
+				{
+					"name": "Add RSS feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ID\", jsonRes.Data.Rssfeed.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Title\": \"Community News\",\r\n    \"Description\": \"All news related to Sneha Community\",\r\n    \"Link\": \"https://www.snehamumbai.org/\",\r\n    \"Language\": \"en\",\r\n    \"Copyright\": \"© 2022 SNEH Foundation\",\r\n    \"Favicon\": \"https://www.snehamumbai.org/wp-content/themes/sneha/img/logo.png\",\r\n    \"Category\": \"News\",\r\n    \"Image\": \"https://www.snehamumbai.org/wp-content/themes/sneha/img/logo.png\",\r\n    \"Tags\": [\r\n        \"Raahi\",\r\n        \"Sneha\",\r\n        \"Community\"\r\n    ],\r\n    \"ProviderName\": \"Sneha Foundation\",\r\n    \"ProviderEmail\": \"crisis@snehamumbai.org\",\r\n    \"ProviderLink\": \"https://www.snehamumbai.org/\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get RSS feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update RSS feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Updated course module is returned\", function () {",
+									"",
+									"    var expectedName = \"Maths\";",
+									"    var expectedDurationInMins = 45;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('CourseModule');",
+									"    pm.expect(jsonRes.Data.CourseModule).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.CourseModule).to.have.property('Name');",
+									"    pm.expect(jsonRes.Data.CourseModule).to.have.property('DurationInMins');",
+									"    ",
+									"    pm.expect(jsonRes.Data.CourseModule.Name).equals(expectedName);",
+									"    pm.expect(jsonRes.Data.CourseModule.DurationInMins).equals(expectedDurationInMins);",
+									"    ",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Name\": \"Maths\",\n    \"Description\": \"Learning course\",\n    \"ImageUrl\": \"https://docs.google.com/spreadsheets/d/1FcQMxJJAIVZtyuAKJHjSgI0qr86GVttGzm65Azzm8XM/edit#gid=0\",\n    \"DurationInMins\": 45\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Rss feeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"List of course modules is returned\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('CourseModules');",
+									"    pm.expect(jsonRes.Data.CourseModules.Items.length).greaterThan(0);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/search",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"search"
+							],
+							"query": [
+								{
+									"key": "orderBy",
+									"value": "Name",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "ascending",
+									"disabled": true
+								},
+								{
+									"key": "pageIndex",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "raahi",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete RSS feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Course module is deleted\", function () {",
+									"",
+									"    var expectedValue = true;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ITEM_ID\", jsonRes.Data.RssfeedItem.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"FeedId\": \"{{RSS_FEED_ID}}\",\r\n    \"Title\": \"Field trip to Nehru Science Centre\",\r\n    \"Description\": \"Learning visits has always been a key strategy in EHSAS to build assets, agency and self-awareness in young people. On the 24th of September, 2022, 43 young people from all three sites of Dharavi, Kandivali and Kalwa visited the Nehru Science Center.\",\r\n    \"Content\": \"Our intervention on early childhood development (ECD) addresses various developmental domains such as expressive and receptive languages, gross and fine movements, relating, play and self-help activities of children from birth to three years of age to enable them to reach their full potential.\",\r\n    \"Link\": \"https://www.snehamumbai.org/media/\",\r\n    \"Image\": \"https://www.jbcnschool.edu.in/wp-content/uploads/2019/12/field-trip-nehru-science-dec-19-006.jpg\",\r\n    \"AuthorName\": \"Sneha Foundation\",\r\n    \"AuthorEmail\": \"crisis@snehamumbai.org\",\r\n    \"AuthorLink\": \"https://www.snehamumbai.org/\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ITEM_ID\", jsonRes.Data.Rssfeed.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items/{{RSS_FEED_ITEM_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items",
+								"{{RSS_FEED_ITEM_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ITEM_ID\", jsonRes.Data.Rssfeed.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Content\": \"Our intervention on early childhood development (ECD) addresses various developmental domains.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items/{{RSS_FEED_ITEM_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items",
+								"{{RSS_FEED_ITEM_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Course module is deleted\", function () {",
+									"",
+									"    var expectedValue = true;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items/{{RSS_FEED_ITEM_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items",
+								"{{RSS_FEED_ITEM_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add another feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ITEM_ID\", jsonRes.Data.RssfeedItem.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"FeedId\": \"{{RSS_FEED_ID}}\",\r\n    \"Title\": \"Over 83 per cent of toddlers eat unhealthy food in Mumbai slums, reveals survey\",\r\n    \"Description\": \"High prices of fruits and vegetables, and parents not having enough time to feed their children, results in the consumption of easily available, low-cost unhealthy foods such as wafers, vada pav, fried food, Chinese bhel, toast, butter, khari and instant noodles among kids\",\r\n    \"Content\": \"A survey released last week by SNEHA, a non-profit working in the field of malnourishment across the slums of Mumbai, shows over 83 per cent of infants, aged six months to 23 months, in these areas are consuming unhealthy, low-cost food. \",\r\n    \"Link\": \"https://www.snehamumbai.org/media/\",\r\n    \"Image\": \"https://images.mid-day.com/images/images/2022/apr/April%2012-junk_e.jpg\",\r\n    \"AuthorName\": \"Sneha Foundation\",\r\n    \"AuthorEmail\": \"crisis@snehamumbai.org\",\r\n    \"AuthorLink\": \"https://www.snehamumbai.org/\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get atom feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/atom",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}",
+								"atom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get rss feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/rss",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}",
+								"rss"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get json feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/json",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}",
+								"json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "News feeds - Raahi",
+			"item": [
+				{
+					"name": "Add RSS feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ID\", jsonRes.Data.Rssfeed.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Title\": \"Raahi News\",\r\n    \"Description\": \"All news related to Sneha Raahi application\",\r\n    \"Link\": \"https://www.snehamumbai.org/\",\r\n    \"Language\": \"en\",\r\n    \"Copyright\": \"© 2022 SNEH Foundation\",\r\n    \"Favicon\": \"https://www.snehamumbai.org/wp-content/themes/sneha/img/logo.png\",\r\n    \"Category\": \"News\",\r\n    \"Image\": \"https://www.snehamumbai.org/wp-content/themes/sneha/img/logo.png\",\r\n    \"Tags\": [\r\n        \"Raahi\",\r\n        \"Sneha\",\r\n        \"Application\"\r\n    ],\r\n    \"ProviderName\": \"Sneha Foundation\",\r\n    \"ProviderEmail\": \"crisis@snehamumbai.org\",\r\n    \"ProviderLink\": \"https://www.snehamumbai.org/\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get RSS feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update RSS feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Updated course module is returned\", function () {",
+									"",
+									"    var expectedName = \"Maths\";",
+									"    var expectedDurationInMins = 45;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('CourseModule');",
+									"    pm.expect(jsonRes.Data.CourseModule).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.CourseModule).to.have.property('Name');",
+									"    pm.expect(jsonRes.Data.CourseModule).to.have.property('DurationInMins');",
+									"    ",
+									"    pm.expect(jsonRes.Data.CourseModule.Name).equals(expectedName);",
+									"    pm.expect(jsonRes.Data.CourseModule.DurationInMins).equals(expectedDurationInMins);",
+									"    ",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Name\": \"Maths\",\n    \"Description\": \"Learning course\",\n    \"ImageUrl\": \"https://docs.google.com/spreadsheets/d/1FcQMxJJAIVZtyuAKJHjSgI0qr86GVttGzm65Azzm8XM/edit#gid=0\",\n    \"DurationInMins\": 45\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Rss feeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"List of course modules is returned\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('CourseModules');",
+									"    pm.expect(jsonRes.Data.CourseModules.Items.length).greaterThan(0);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/search",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"search"
+							],
+							"query": [
+								{
+									"key": "orderBy",
+									"value": "Name",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "ascending",
+									"disabled": true
+								},
+								{
+									"key": "pageIndex",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "raahi",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete RSS feed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Course module is deleted\", function () {",
+									"",
+									"    var expectedValue = true;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ITEM_ID\", jsonRes.Data.RssfeedItem.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"FeedId\": \"{{RSS_FEED_ID}}\",\r\n    \"Title\": \"Sneha Raahi 1.0 Beta released to dev\",\r\n    \"Description\": \"Release of Sneha Raahi web application version 1.0 Beta released to dev.\",\r\n    \"Content\": \"First version of Sneha Raahi web application released to dev.\",\r\n    \"Link\": \"https://www.snehamumbai.org/media/\",\r\n    \"Image\": \"https://www.jbcnschool.edu.in/wp-content/uploads/2019/12/field-trip-nehru-science-dec-19-006.jpg\",\r\n    \"AuthorName\": \"Sneha Foundation\",\r\n    \"AuthorEmail\": \"crisis@snehamumbai.org\",\r\n    \"AuthorLink\": \"https://www.snehamumbai.org/\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ITEM_ID\", jsonRes.Data.Rssfeed.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items/{{RSS_FEED_ITEM_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items",
+								"{{RSS_FEED_ITEM_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"RSS_FEED_ITEM_ID\", jsonRes.Data.Rssfeed.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Content\": \"Our intervention on early childhood development (ECD) addresses various developmental domains.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items/{{RSS_FEED_ITEM_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items",
+								"{{RSS_FEED_ITEM_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete feed item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Course module is deleted\", function () {",
+									"",
+									"    var expectedValue = true;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/feed-items/{{RSS_FEED_ITEM_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"feed-items",
+								"{{RSS_FEED_ITEM_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get atom feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/atom",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}",
+								"atom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get rss feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/rss",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}",
+								"rss"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get json feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/json",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"rss-feeds",
+								"{{RSS_FEED_ID}}",
+								"json"
 							]
 						}
 					},

@@ -7,6 +7,8 @@ export interface IRssfeedItemRepo {
 
     getById(id: string): Promise<RssfeedItemDto>;
 
+    getByFeedId(feedId: string): Promise<RssfeedItemDto[]>;
+
     update(id: string, model: RssfeedDomainModel): Promise<RssfeedItemDto>;
 
     delete(id: string): Promise<boolean>;

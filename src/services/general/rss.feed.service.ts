@@ -104,6 +104,27 @@ export class RssfeedService {
 
         feed.addCategory(record.Category ?? "General");
 
+        const feedItems = await this._feedItemRepo.getByFeedId(id);
+        for (var item of feedItems) {
+            const item_ = {
+                title       : item.Title,
+                id          : item.Link,
+                link        : item.Link,
+                description : item.Description,
+                content     : item.Content,
+                date        : item.PublishingDate,
+                image       : item.Image,
+                author      : [
+                    {
+                        name  : item.AuthorName,
+                        email : item.AuthorEmail,
+                        link  : item.AuthorLink,
+                    }
+                ]
+            };
+            feed.addItem(item_);
+        }
+
         //Export to atom feed
         const atomFeed_ = feed.atom1(); //Atom 1.0
         let atomFeedResource: FileResourceDto = null;

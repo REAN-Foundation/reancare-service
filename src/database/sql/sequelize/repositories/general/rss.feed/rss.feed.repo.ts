@@ -46,6 +46,9 @@ export class RssfeedRepo implements IRssfeedRepo {
     getById = async (id: string): Promise<RssfeedDto> => {
         try {
             const feed = await Rssfeed.findByPk(id);
+            if (!feed) {
+                return null;
+            }
             const feedItems = await this.getFeedItems(feed.id);
             return await RssfeedMapper.toFeedDto(feed, feedItems);
         } catch (error) {
@@ -193,7 +196,12 @@ export class RssfeedRepo implements IRssfeedRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-
+            const destryedItems = await RssfeedItem.destroy({
+                where : {
+                    FeedId : id
+                }
+            });
+            Logger.instance().log(`Destryed Ifeed items: ${destryedItems.toString()}`);
             const result = await Rssfeed.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

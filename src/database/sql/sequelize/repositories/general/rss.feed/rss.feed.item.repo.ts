@@ -47,6 +47,20 @@ export class RssfeedItemRepo implements IRssfeedItemRepo {
         }
     };
 
+    getByFeedId = async (feedId: string): Promise<RssfeedDto[]> => {
+        try {
+            const feedItems = await RssfeedItem.findAll({
+                where : {
+                    FeedId : feedId
+                }
+            });
+            return feedItems.map(x => RssfeedMapper.toFeedItemDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     update = async (id: string, updateModel: RssfeedItemDomainModel):
     Promise<RssfeedItemDto> => {
         try {

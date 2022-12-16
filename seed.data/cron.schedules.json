@@ -1,23 +1,23 @@
 {
     "local": {
-        "FileCleanup": "*/30 * * * *",
+        "FileCleanup": "*/55 * * * *",
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
-
+        "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
+        "ScheduleHsSurvey": "0 11 * * *"
     },
     "development": {
-        "FileCleanup": "*/30 * * * *",
+        "FileCleanup": "*/55 * * * *",
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
-
+        "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
+        "ScheduleHsSurvey": "0 11 * * *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",
@@ -26,7 +26,9 @@
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
-        "ScheduleDailyHighRiskCareplan": "0 3 * * *"
+        "ScheduleDailyHighRiskCareplan": "0 3 * * *",
+        "ScheduleHsSurvey": "0 11 * * *"
+
 
     },
     "production": {
@@ -36,7 +38,9 @@
         "PatientDailyTasks": "5 0 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "0 8 * * *",
-        "ScheduleDailyHighRiskCareplan": "0 3 * * *"
-        
+        "ScheduleDailyHighRiskCareplan": "0 3 * * *",
+        "ScheduleHsSurvey": "0 11 * * *"
+
+
     }
 }

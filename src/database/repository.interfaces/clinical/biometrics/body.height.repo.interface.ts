@@ -14,4 +14,6 @@ export interface IBodyHeightRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getRecent(patientUserId: string): Promise<BodyHeightDto>;
+
 }

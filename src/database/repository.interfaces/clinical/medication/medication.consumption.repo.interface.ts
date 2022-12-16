@@ -39,4 +39,6 @@ export interface IMedicationConsumptionRepo {
 
     cancelSchedule(id: string): Promise<boolean>;
 
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
+
 }

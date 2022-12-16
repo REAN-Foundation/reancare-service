@@ -10331,7 +10331,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -10363,7 +10362,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10388,7 +10388,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"You can now generate datasets using JSON and import them into other schemas using the Dataset Column type.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"11/14/2022\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Title\": \"All Recipes – Welcome Content\",\r\n    \"Body\": \"AllRecipes encourages new subscribers to browse their ever-growing collection of recipes. Their aim is to guide their subscriber to content that will arouse their interest. Their welcome message will vary based on what’s currently trending on their site.\",\r\n    \"SentOn\": \"11/14/2022\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/All-Recipes-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10415,7 +10415,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -10447,7 +10446,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10472,7 +10472,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Added support for InfluxDB\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"10/06/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Delight them with real-time updates\",\r\n    \"Body\": \"Be it subscribing to exclusive content or getting users into your email subscription list, leverage push notifications to lure them into subscribing.\",\r\n    \"SentOn\": \"10/06/2021\",\r\n    \"ImageUrl\": \"https://images.unsplash.com/photo-1667420420282-ad2653e2b20b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1266&q=80\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10499,7 +10499,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -10531,7 +10530,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10556,7 +10556,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Added the ability to import fields from a JSON schema or example JSON object.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"6/19/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Diyanu – Recurring Discounts\",\r\n    \"Body\": \"A recurring discount is a great way to encourage repeat purchases. Their customers will come back regularly to browse their catalog of new fashion wares with the discount in mind.\",\r\n    \"SentOn\": \"6/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Diyanu-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10583,7 +10583,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -10615,7 +10614,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10640,7 +10640,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"You can now create a dataset directly from a schema. You no longer need to download and reupload generated data to create a dataset!\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"5/22/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Backpacker – Brand Introduction\",\r\n    \"Body\": \"Backpacker welcome message includes a unique personal story. Backpacker introduces its founder in its push message and directs new subscribers to a longer blog post that covers the history of their brand.\",\r\n    \"SentOn\": \"5/22/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Backpacker-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10667,7 +10667,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -10699,7 +10698,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10724,7 +10724,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"You can now stream data to an MQTT endpoint! Click More > Stream to MQTT Endpoint... to get started.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"5/19/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Shein – Welcome Tour\",\r\n    \"Body\": \"Shein welcomes new subscribers by showcasing its latest fashion collection. Two CTAs encourage subscribers to shop for either clothing or accessories. What makes this notification stand out is its timeliness. New subscribers often have strong buying intent, so bringing your latest offers to their attention is a great way to boost conversions when interest is at its highest.\",\r\n    \"SentOn\": \"5/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Shein-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10751,7 +10751,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -10783,7 +10782,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10808,7 +10808,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Added types related to construction work\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"5/19/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Hearst – Newsletter Sign Up\",\r\n    \"Body\": \"Offer free access to gated content through a push notification to steer your audience towards your newsletter or social media pages.\",\r\n    \"SentOn\": \"5/19/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Hearst-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10835,7 +10835,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -10867,7 +10866,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10892,7 +10892,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Added Etherium and Tezos types.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"5/3/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Snow Joe – Price Drop\",\r\n    \"Body\": \"Snow Joe uses push notifications to inform their customers of major price drops whenever they run a clearance sale.\",\r\n    \"SentOn\": \"5/3/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Snow-Joe-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -10919,7 +10919,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -10951,7 +10950,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10976,7 +10976,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Added a download button to the preview dialog.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"4/10/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"tentree – Cross Promotion\",\r\n    \"Body\": \"Tentree took advantage of their successful Kickstarter campaign to effectively cross-promote their eco backpack lineup. Retarget customers that have already shown interest in your product to increase average customer spend (AVS).\",\r\n    \"SentOn\": \"4/10/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/tentree-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11003,7 +11003,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -11035,7 +11034,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11060,7 +11060,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"You can now use regular expressions to generate data in formulas. For example /d+{2}/.gen\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"4/4/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Cutting Board – Ebook Giveaway\",\r\n    \"Body\": \"Cutting Board offered their subscribers a free ebook in a push message – as part of a larger drip campaign. Strengthen customer loyalty with high-quality content that you know your customers will appreciate.\",\r\n    \"SentOn\": \"4/4/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Cutting-Board-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11087,7 +11087,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -11119,7 +11118,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11144,7 +11144,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Restored the ability to backup your schemas to files.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"4/2/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Restored the ability to backup your schemas to files.\",\r\n    \"Body\": \"FabAlley – Reward Program - This is an excellent example of a push event triggered based on individual data points. Create your own customer loyalty program to encourage shoppers to spend more regularly.\",\r\n    \"SentOn\": \"4/2/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Fab-Alley-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11171,7 +11171,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -11203,7 +11202,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11228,7 +11228,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Massive UI Update! The UI has been overhauled to provide a faster, prettier experience.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"3/23/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Mid-Day Massive UI Update!\",\r\n    \"Body\": \"The UI has been overhauled to provide a faster, prettier experience.\",\r\n    \"SentOn\": \"3/23/2021\",\r\n    \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Mid-Day-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11255,7 +11255,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -11287,7 +11286,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11312,7 +11312,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Added normal_dist(mean, std_dev, decimals) formula function.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"6/18/2020\",\r\n   \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Fox News – Complete Purchase Reminder\",\r\n    \"Body\": \"Fox News gently reminds its customers to complete their news subscription purchase with personalized push notifications.\",\r\n    \"SentOn\": \"6/18/2020\",\r\n   \"ImageUrl\": \"https://www.sendinblue.com/wp-content/uploads/2022/04/Fox-News-Push-Message.png\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11339,7 +11339,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"var jsonRes = pm.response.json();\r",
 									"\r",
@@ -11371,7 +11370,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11396,7 +11396,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"You can now limit credit card numbers by card type and country.\",\r\n    \"Body\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\r\n    \"SentOn\": \"3/28/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
+							"raw": "{\r\n    \"UserId\":\"{{USER_ID}}\",\r\n    \"Title\": \"Glow & Lovely – Account Creation\",\r\n    \"Body\": \"You can now limit credit card numbers by card type and country.\",\r\n    \"SentOn\": \"3/28/2021\",\r\n    \"ImageUrl\": \"https://picsum.photos/200\",\r\n    \"Type\": \"General\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -11493,6 +11493,358 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"Title\": \"Platform engineer\",\r\n    \"Description\": \"Firstly you will have to check for what violation you’ve received the show cause notice. If you really failed to conduct an AGM according to the timeline provided, your reply should contain acceptance of non-compliance and prayer for imposing low penalty due to the small size of the company. There shall be no loss to the shareholders and the general public, no repetitive nature of non-compliance etc. etc.\",\r\n    \"Link\": \"https://github.com/REAN-Foundation/reancare-service\",\r\n    \"PostDate\": \"2022-08-03\",\r\n    \"DaysActive\": 7,\r\n    \"Tags\": [\"Popular\", \"HotNews\"],\r\n    \"IsActive\": false,\r\n    \"ImageUrl\": \"https://www.complybook.com/images/blogs/original/1667016702Import%20of%20Milk%20and%20Milk%20Products.jpg\",\r\n    \"Action\": \"Apply for job\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/general/notices/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"general",
+										"notices",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add second notice",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"NOTICE_ID\", jsonRes.Data.Notice.id);\r",
+											"    pm.environment.set(\"ACTION\", jsonRes.Data.Notice.Action);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New notice is created\", function () {\r",
+											"\r",
+											"    var expectedTitle =  \"Job posting\";\r",
+											"    var expectedDaysActive = 7;\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Notice');\r",
+											"    pm.expect(jsonRes.Data.Notice).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Notice).to.have.property('Title');\r",
+											"    pm.expect(jsonRes.Data.Notice).to.have.property('DaysActive');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.Notice.Title).equals(expectedTitle);\r",
+											"    pm.expect(jsonRes.Data.Notice.DaysActive).equals(expectedDaysActive);\r",
+											"    \r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{ADMIN_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"Engineering Director\",\r\n    \"Description\": \"Long-term accommodation booking platform for students (think booking.com for student housing). Amber helps 80M+ students worldwide, find and book full-time accommodations near their universities, without the hassle of negotiation, non-standardized and cumbersome paperwork, and broken payment process. We are the largest and fastest-growing student housing platform globally, with 1M+ units listed in 6 countries and across 100+ cities. We are growing rapidly and targeting $500M in annual gross bookings value by 2022.\",\r\n    \"PostDate\": \"2022-11-03\",\r\n    \"DaysActive\": 7,\r\n    \"Tags\": [\"Popular\", \"HotNews\"],\r\n    \"IsActive\": false,\r\n    \"ImageUrl\": \"https://ncdirindia.org/Theme/Images/job_openings.png\",\r\n    \"Action\": \"Apply for job\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/general/notices/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"general",
+										"notices",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add third notice",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"NOTICE_ID\", jsonRes.Data.Notice.id);\r",
+											"    pm.environment.set(\"ACTION\", jsonRes.Data.Notice.Action);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New notice is created\", function () {\r",
+											"\r",
+											"    var expectedTitle =  \"Job posting\";\r",
+											"    var expectedDaysActive = 7;\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Notice');\r",
+											"    pm.expect(jsonRes.Data.Notice).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Notice).to.have.property('Title');\r",
+											"    pm.expect(jsonRes.Data.Notice).to.have.property('DaysActive');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.Notice.Title).equals(expectedTitle);\r",
+											"    pm.expect(jsonRes.Data.Notice.DaysActive).equals(expectedDaysActive);\r",
+											"    \r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{ADMIN_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"Engineering Manager\",\r\n    \"Description\": \"An Engineering Manager at SaaS Labs would drive the delivery of new features and improve efficiency. In this role, you will manage teams of engineers, focusing on their career growth, mentoring, and education. You will work closely with the leadership team and product team to prioritize the overall development roadmap.\",\r\n    \"PostDate\": \"2022-11-06\",\r\n    \"DaysActive\": 7,\r\n    \"Tags\": [\"Popular\", \"HotNews\"],\r\n    \"IsActive\": false,\r\n    \"ImageUrl\": \"https://cdn.shrm.org/image/upload/c_crop%2Ch_397%2Cw_706%2Cx_0%2Cy_0/c_fit%2Cf_auto%2Cq_auto%2Cw_767/v1/Benefits/iStock-896799196_jbtcxy?databtoa=eyIxNng5Ijp7IngiOjAsInkiOjAsIngyIjo3MDYsInkyIjozOTcsInciOjcwNiwiaCI6Mzk3fX0%3D\",\r\n    \"Action\": \"Apply for job\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/general/notices/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"general",
+										"notices",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add fourth notice",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"NOTICE_ID\", jsonRes.Data.Notice.id);\r",
+											"    pm.environment.set(\"ACTION\", jsonRes.Data.Notice.Action);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New notice is created\", function () {\r",
+											"\r",
+											"    var expectedTitle =  \"Job posting\";\r",
+											"    var expectedDaysActive = 7;\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Notice');\r",
+											"    pm.expect(jsonRes.Data.Notice).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Notice).to.have.property('Title');\r",
+											"    pm.expect(jsonRes.Data.Notice).to.have.property('DaysActive');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.Notice.Title).equals(expectedTitle);\r",
+											"    pm.expect(jsonRes.Data.Notice.DaysActive).equals(expectedDaysActive);\r",
+											"    \r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{ADMIN_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"Senior Manager, Software Development\",\r\n    \"Description\": \"As a Senior Engineering Manager at Shipbob you will be primarily responsible for the delivery of production level software from your teams. You will work very closely with Product Owners, QA and the Director of Engineering/VP of Engineering/Distinguished Engineer.\",\r\n    \"PostDate\": \"2022-11-06\",\r\n    \"DaysActive\": 7,\r\n    \"Tags\": [\"Popular\", \"HotNews\"],\r\n    \"IsActive\": false,\r\n    \"ImageUrl\": \"https://previews.123rf.com/images/arcady31/arcady311511/arcady31151100064/48082640-job-openings-sticker.jpg\",\r\n    \"Action\": \"Apply for job\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/general/notices/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"general",
+										"notices",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add fifth notice",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"NOTICE_ID\", jsonRes.Data.Notice.id);\r",
+											"    pm.environment.set(\"ACTION\", jsonRes.Data.Notice.Action);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New notice is created\", function () {\r",
+											"\r",
+											"    var expectedTitle =  \"Job posting\";\r",
+											"    var expectedDaysActive = 7;\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Notice');\r",
+											"    pm.expect(jsonRes.Data.Notice).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Notice).to.have.property('Title');\r",
+											"    pm.expect(jsonRes.Data.Notice).to.have.property('DaysActive');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.Notice.Title).equals(expectedTitle);\r",
+											"    pm.expect(jsonRes.Data.Notice.DaysActive).equals(expectedDaysActive);\r",
+											"    \r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{ADMIN_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"Head of Engineering\",\r\n    \"Description\": \"Systematic Ventures uses machine learning and AI to let clients see deeper into private markets. Our powerful analytics engine delivers proprietary forecasts on companies and deep analysis on industries and investors. We create tools that bring transparency and level the playing field for great companies and committed investors.\",\r\n    \"PostDate\": \"2022-11-07\",\r\n    \"DaysActive\": 7,\r\n    \"Tags\": [\"Popular\", \"HotNews\"],\r\n    \"IsActive\": false,\r\n    \"ImageUrl\": \"https://images.moneycontrol.com/static-mcnews/2017/05/jobs_hiring_1280.jpg?impolicy=website\",\r\n    \"Action\": \"Apply for job\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -16648,6 +17000,52 @@
 								"assessments",
 								"{{ASSESSMENT_ID}}",
 								"start"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ask-Sneha",
+			"item": [
+				{
+					"name": "Ask query",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authentication",
+								"value": "zxcv",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phoneNumber\": \"+91-9970155165\",\r\n    \"type\": \"text\",\r\n    \"message\": \"What is cricket?\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://reancare-api-dev.services.reanfoundation.org:443/v1/SNEHA/SNEHA_SUPPORT/zxcv/receive",
+							"protocol": "https",
+							"host": [
+								"reancare-api-dev",
+								"services",
+								"reanfoundation",
+								"org"
+							],
+							"port": "443",
+							"path": [
+								"v1",
+								"SNEHA",
+								"SNEHA_SUPPORT",
+								"zxcv",
+								"receive"
 							]
 						}
 					},

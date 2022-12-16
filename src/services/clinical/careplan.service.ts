@@ -176,8 +176,12 @@ export class CareplanService implements IUserActionService {
         return await this._handler.getPatientEligibility(patient, provider, careplanCode);
     };
 
-    public getPatientEnrollments = async (patientUserId: string) => {
-        return await this._careplanRepo.getPatientEnrollments(patientUserId);
+    public getPatientEnrollments = async (patientUserId: string, isActive: boolean) => {
+        return await this._careplanRepo.getPatientEnrollments(patientUserId, isActive);
+    };
+
+    public getCompletedEnrollments = async (daysPassed: number, planNames : string[]) => {
+        return await this._careplanRepo.getCompletedEnrollments(daysPassed, planNames);
     };
 
     public fetchTasks = async (careplanId: uuid): Promise<boolean> => {

@@ -188,26 +188,8 @@ export class PersonRepo implements IPersonRepo {
             if (personDomainModel.SelfIdentifiedGender !== undefined) {
                 person.SelfIdentifiedGender = personDomainModel.SelfIdentifiedGender;
             }
-            if (personDomainModel.MaritalStatus !== undefined) {
-                person.MaritalStatus = personDomainModel.MaritalStatus;
-            }
-            if (personDomainModel.Race !== undefined) {
-                person.Race = personDomainModel.Race;
-            }
-            if (personDomainModel.Ethnicity !== undefined) {
-                person.Ethnicity = personDomainModel.Ethnicity;
-            }
             if (personDomainModel.Age !== undefined) {
                 person.Age = personDomainModel.Age;
-            }
-            if (personDomainModel.StrokeSurvivorOrCaregiver !== undefined) {
-                person.StrokeSurvivorOrCaregiver = personDomainModel.StrokeSurvivorOrCaregiver;
-            }
-            if (personDomainModel.LivingAlone !== undefined) {
-                person.LivingAlone = personDomainModel.LivingAlone;
-            }
-            if (personDomainModel.WorkedPriorToStroke !== undefined) {
-                person.WorkedPriorToStroke = personDomainModel.WorkedPriorToStroke;
             }
             if (personDomainModel.BirthDate !== undefined) {
                 person.BirthDate = personDomainModel.BirthDate;

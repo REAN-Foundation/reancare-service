@@ -50,7 +50,7 @@ export class MessagingService {
             headers : headers
         };
         
-        const url = `${reanBotBaseUrl}REAN_BOT/${channel}/${urlToken}/send`;
+        const url = `${reanBotBaseUrl}${client}/${channel}/${urlToken}/send`;
         Logger.instance().log(`URL: ${url}`);
         Logger.instance().log(`Phone: ${toPhone}`);
         const obj = {

@@ -41,6 +41,7 @@ export class Scheduler {
                 this.scheduleMonthlyCustomTasks();
                 this.scheduleDailyCareplanPushTasks();
                 this.scheduleDailyHighRiskCareplan();
+                this.scheduleHsSurvey();
 
                 //this.scheduleDaillyPatientTasks();
 
@@ -116,6 +117,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Daily High Risk Careplan...');
                 const careplanService = Loader.container.resolve(CareplanService);
                 await careplanService.scheduleDailyHighRiskCareplan();
+            })();
+        });
+    };
+
+    private scheduleHsSurvey = () => {
+        cron.schedule(Scheduler._schedules['ScheduleHsSurvey'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Custom HS Survey Tasks...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleHsSurvey();
             })();
         });
     };

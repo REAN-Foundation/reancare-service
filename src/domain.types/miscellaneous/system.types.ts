@@ -40,9 +40,6 @@ export enum Gender {
     Female               = 'Female',
     Intersex             = 'Intersex',
     Other                = 'Other',
-    NonBinary            = 'Non-binary',
-    PreferToSelfDescribe = 'Prefer to self-describe',
-    PreferNotToAnswer    = 'Prefer not to answer',
     Unknown              = 'Unknown'
 }
 
@@ -53,9 +50,6 @@ export const GenderList: Gender[] = [
     Gender.Female,
     Gender.Intersex,
     Gender.Other,
-    Gender.NonBinary,
-    Gender.PreferToSelfDescribe,
-    Gender.PreferNotToAnswer,
     Gender.Unknown,
 ];
 
@@ -99,3 +93,9 @@ export const ProgressStatusList: ProgressStatus[] = [
     ProgressStatus.Delayed,
     ProgressStatus.Unknown,
 ];
+
+export enum OSType {
+    Linux   = 'Linux',
+    MacOS   = 'MacOS',
+    Windows = 'Windows',
+}

@@ -25,4 +25,6 @@ export interface ILabRecordRepo {
 
     getTypeByDisplayName(displayName: string): Promise<any>;
 
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
+
 }

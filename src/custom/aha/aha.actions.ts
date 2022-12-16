@@ -15,6 +15,7 @@ import { UserDeviceDetailsService } from '../../services/users/user/user.device.
 import { KccqAssessmentUtils } from './quality.of.life/kccq.assessment.utils';
 import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
 import { FileResourceService } from '../../services/general/file.resource.service';
+import { PersonService } from '../../services/person/person.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +26,8 @@ export class AHAActions {
     _assessmentService: AssessmentService = null;
 
     _patientService: PatientService = null;
+
+    _personService: PersonService = null;
 
     _userTaskService: UserTaskService = null;
 
@@ -38,6 +41,7 @@ export class AHAActions {
 
     constructor() {
         this._patientService = Loader.container.resolve(PatientService);
+        this._personService = Loader.container.resolve(PersonService);
         this._assessmentService = Loader.container.resolve(AssessmentService);
         this._userTaskService = Loader.container.resolve(UserTaskService);
         this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
@@ -164,9 +168,71 @@ export class AHAActions {
             }
         }
 
-    //#endregion
+        public scheduleHsSurvey = async () => {
+            try {
+                const daysPassed = 6;
+                var careplanEnrollments = await this._careplanService.getCompletedEnrollments(daysPassed, ["Cholesterol"]);
+                for await (var careplanEnrollment of careplanEnrollments) {
+                    Logger.instance().log(`[HsCron] Enrollment details:${JSON.stringify(careplanEnrollment)}`);
+                    var patientDetails = await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
+                    if (patientDetails.HealthSystem === null) {
+                        Logger.instance().log(`[HsCron] Skip sending survey for :${patientDetails.UserId} 
+                                as health system is ${patientDetails.HealthSystem}`);
+                        continue;
+                    }
 
-    //#region Privates
+                    const filters = {
+                        Task   : 'Cholesterol Health Behaviors',
+                        UserId : careplanEnrollment.PatientUserId,
+                    };
+                    var userTasks = await this._userTaskService.search(filters);
+                    var tasks = userTasks.Items;
+                    for await (var task of tasks) {
+                        var action = await this._careplanService.getActivity(task.ActionId);
+                        Logger.instance().log(`[HsCron] Task: ${JSON.stringify(task)}`);
+                        Logger.instance().log(`[HsCron] Activity details (Action): ${JSON.stringify(action)}`);
+
+                        if (
+                            action.Frequency === 85 &&
+                                action.Sequence === 5
+                        ) {
+                            Logger.instance().log(`[HsCron] Skip sending survey message for patient:${patientDetails.UserId} 
+                                    as Health behaviour assessment in not completed: ${action.Status}`);
+                            if (
+                                task.Finished === true &&
+                                    action.Status === 'Completed'
+                            ) {
+                                const patient =
+                                    await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
+                                const phoneNumber = patient.User.Person.Phone;
+                                const person = await this._personService.getById(patient.User.PersonId);
+                                var userFirstName = 'user';
+                                if (person && person.FirstName) {
+                                    userFirstName = person.FirstName;
+                                }
+                                const message = `Dear ${userFirstName}, Tell us what you thought about the Heart & Stroke Helper app! You will receive a $10 Amazon gift card as a token of appreciation for completing the full survey. Follow the link to share your thoughts: https://tinyurl.com/HSHCholesterol`;
+                                const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
+                                if (sendStatus) {
+                                    Logger.instance().log(`Message sent successfully`);
+                                    await this.createHsPatientSurveyTask(patient);
+                                }
+     
+                            } else {
+                                Logger.instance().log(`[HsCron] Health behaviors assessment is not finished. Status:${action.Status} `);
+                            }
+                        }
+                    }
+                }
+                Logger.instance().log(`[HsCron] Cron completed successfully.`);
+            }
+            catch (error) {
+                Logger.instance().log(`Error occured while sending HS survey message`);
+            }
+        };
+
+        //#endregion
+
+        //#region Privates
 
     private checkIfFileResourceExists = async (url) => {
         if (!url) {
@@ -217,6 +283,29 @@ export class AHAActions {
         const task = await this._commonActions.createCustomTask(domainModel);
         if (task == null) {
             Logger.instance().log('Unable to create AHA survey task!');
+        }
+
+    };
+
+    private createHsPatientSurveyTask = async (patient: PatientDetailsDto) => {
+
+        const userId = patient.User.id;
+
+        const domainModel: CustomTaskDomainModel = {
+            UserId      : userId,
+            Task        : "Patient Satisfaction Survey",
+            Description : "Take a survey to help us understand you better!",
+            Category    : UserTaskCategory.Custom,
+            Details     : {
+                Link : "https://tinyurl.com/HSHCholesterol",
+            },
+            ScheduledStartTime : new Date(),
+            ScheduledEndTime   : new Date("2023-12-31 23:59:59")
+        };
+
+        const task = await this._commonActions.createCustomTask(domainModel);
+        if (task == null) {
+            Logger.instance().log('Unable to create patient satisfaction survey task!');
         }
 
     };

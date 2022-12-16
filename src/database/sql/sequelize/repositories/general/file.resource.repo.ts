@@ -47,8 +47,8 @@ export class FileResourceRepo implements IFileResourceRepo {
     getById = async (id: string): Promise<FileResourceDetailsDto> => {
 
         const resource = await FileResource.findByPk(id);
-        if (resource === null) {
-            throw new Error('Cannot find the resource!');
+        if (resource == null) {
+            return null;
         }
         var dto = FileResourceMapper.toDetailsDto(resource);
 

@@ -171,7 +171,19 @@
             "DonationRecord.GetById",
             "DonationRecord.Search",
             "DonationRecord.Update",
-            "DonationRecord.Delete"
+            "DonationRecord.Delete",
+            "Rssfeed.Create",
+            "Rssfeed.GetById",
+            "Rssfeed.Search",
+            "Rssfeed.Update",
+            "Rssfeed.Delete",
+            "Rssfeed.AddFeedItem",
+            "Rssfeed.GetFeedItemById",
+            "Rssfeed.UpdateFeedItem",
+            "Rssfeed.DeleteFeedItem",
+            "Rssfeed.GetRssFeed",
+            "Rssfeed.GetAtomFeed",
+            "Rssfeed.GetJsonFeed"
         ]
     },
     {
@@ -565,7 +577,10 @@
             "DonationRecord.GetById",
             "DonationRecord.Search",
             "DonationRecord.Update",
-            "DonationRecord.Delete"
+            "DonationRecord.Delete",
+            "Rssfeed.GetRssFeed",
+            "Rssfeed.GetAtomFeed",
+            "Rssfeed.GetJsonFeed"
         ]
     },
     {
@@ -917,7 +932,10 @@
             "DonationRecord.GetById",
             "DonationRecord.Search",
             "DonationRecord.Update",
-            "DonationRecord.Delete"
+            "DonationRecord.Delete",
+            "Rssfeed.GetRssFeed",
+            "Rssfeed.GetAtomFeed",
+            "Rssfeed.GetJsonFeed"
         ]
     },
     {

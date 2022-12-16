@@ -110,6 +110,68 @@ export class FileResourceService {
         return resource;
     };
 
+    replaceLocal = async (
+        fileResourceId: string,
+        sourceLocation: string,
+        storageLocation: string,
+        isPublicResource: boolean
+    ): Promise<FileResourceDto> => {
+
+        var exists = fs.existsSync(sourceLocation);
+        if (!exists) {
+            Logger.instance().log('Source file location does not exist!');
+        }
+        const dto = await this._fileResourceRepo.getById(fileResourceId);
+        if (!dto) {
+            return await this.uploadLocal(sourceLocation, storageLocation, isPublicResource);
+        }
+
+        var existingStorageKey = await this._storageService.exists(storageLocation);
+        if (existingStorageKey) {
+            const deleted = await this._storageService.delete(storageLocation);
+            Logger.instance().log(`Deleted resource: ${deleted ? 'Yes' : 'No'}`);
+        }
+        var storageKey = await this._storageService.upload(storageLocation, sourceLocation);
+
+        var stats = fs.statSync(sourceLocation);
+        var filename = path.basename(sourceLocation);
+
+        var metadata: FileResourceMetadata = {
+            Version        : '1',
+            OriginalName   : filename,
+            FileName       : filename,
+            SourceFilePath : null,
+            MimeType       : Helper.getMimeType(sourceLocation),
+            Size           : stats['size'] / 1024,
+            StorageKey     : storageKey
+        };
+
+        var domainModel: FileResourceUploadDomainModel = {
+            FileMetadata           : metadata,
+            IsMultiResolutionImage : false,
+            MimeType               : Helper.getMimeType(sourceLocation),
+            IsPublicResource       : isPublicResource,
+        };
+
+        const updates: FileResourceUpdateModel = {
+            References   : [],
+            ResourceId   : fileResourceId,
+            FileMetadata : metadata,
+        };
+
+        var resource = await this._fileResourceRepo.update(fileResourceId, updates);
+
+        var versions = [];
+        domainModel.FileMetadata.ResourceId = resource.id;
+        var version = await this._fileResourceRepo.addVersion(domainModel.FileMetadata, true);
+        resource.DefaultVersion = version;
+
+        versions.push(version);
+        resource.Versions = versions;
+
+        return resource;
+    };
+
     uploadVersion = async (metadata: FileResourceMetadata, makeDefaultVersion: boolean): Promise<FileResourceDto> => {
 
         if (metadata.Version === undefined || metadata.Version === null) {

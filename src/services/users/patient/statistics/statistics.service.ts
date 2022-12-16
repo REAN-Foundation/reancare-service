@@ -96,10 +96,8 @@ export class StatisticsService {
         const assessmentDate = TimeHelper.getDateWithTimezone(date.toISOString(), timezone);
         const reportDateStr = assessmentDate.toLocaleDateString();
 
-        const race = patient.HealthProfile.Race && patient.HealthProfile.Race?.length > 0
-            ? patient.HealthProfile.Race : 'Unspecified';
-        const ethnicity = patient.HealthProfile.Ethnicity && patient.HealthProfile.Ethnicity?.length > 0
-            ? patient.HealthProfile.Ethnicity : 'Unspecified';
+        const race = patient.HealthProfile.Race ? patient.HealthProfile.Race : 'Unspecified';
+        const ethnicity = patient.HealthProfile.Ethnicity ? patient.HealthProfile.Ethnicity : 'Unspecified';
         const tobacco = patient.HealthProfile.TobaccoQuestionAns === true ? 'Yes' : 'No';
 
         return {
@@ -118,7 +116,7 @@ export class StatisticsService {
             Race              : race,
             Ethnicity         : ethnicity,
             Tobacco           : tobacco,
-            MariatalStatus    : patient.User.Person.MaritalStatus ?? 'Unspecified',
+            MariatalStatus    : patient.HealthProfile.MaritalStatus ?? 'Unspecified',
             Stats             : stats
         };
     };
@@ -299,7 +297,7 @@ export class StatisticsService {
             // pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
             //pageNumber = this.addSleepPage(document, reportModel, pageNumber);
             pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
-            pageNumber = this.addDailyAssessmentPage(document, reportModel, pageNumber);
+            this.addDailyAssessmentPage(document, reportModel, pageNumber);
 
             document.end();
 
@@ -346,7 +344,7 @@ export class StatisticsService {
         var y = addTop(document, model, false);
         y = addReportMetadata(document, model, y);
         y = addReportSummary(document, model, y);
-        y = addHealthJourney(document, model, y);
+        addHealthJourney(document, model, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -356,7 +354,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         y = addBodyWeightStats(model, document, y);
         y = y + 15;
-        y = addBloodGlucoseStats(model, document, y);
+        addBloodGlucoseStats(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -366,7 +364,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         y = addBloodPressureStats(model, document, y);
         y = y + 15;
-        y = addSleepStats(model, document, y);
+        addSleepStats(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -374,7 +372,7 @@ export class StatisticsService {
 
     private addBiometricsPageC = (document, model, pageNumber) => {
         var y = addTop(document, model);
-        y = addLipidStats(model, document, y);
+        addLipidStats(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -384,7 +382,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         y = addMedicationStats(document, model, y);
         const currentMedications = model.Stats.Medication.CurrentMedications;
-        y = addCurrentMedications(document, currentMedications, y);
+        addCurrentMedications(document, currentMedications, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -393,7 +391,7 @@ export class StatisticsService {
     private addNutritionPageA = (document, model, pageNumber) => {
         var y = addTop(document, model);
         y = addNutritionQuestionnaire(document, model, y);
-        y = addNutritionServingsStats(document, model, y);
+        addNutritionServingsStats(document, model, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -426,7 +424,7 @@ export class StatisticsService {
 
     private addUserEngagementPage = (document, model, pageNumber) => {
         var y = addTop(document, model);
-        y = addUserTasksStats(document, model, y);
+        addUserTasksStats(document, model, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -434,7 +432,7 @@ export class StatisticsService {
 
     private addDailyAssessmentPage = (document, model, pageNumber) => {
         var y = addTop(document, model);
-        y = addDailyAssessmentsStats(document, model, y);
+        addDailyAssessmentsStats(document, model, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;

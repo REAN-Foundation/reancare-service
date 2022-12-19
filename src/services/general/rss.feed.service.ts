@@ -66,7 +66,7 @@ export class RssfeedService {
         const record = await this._feedRepo.getById(id);
         const obj: FeedOptions = {
             title     : record.Title,
-            id        : record.Link ?? _id,
+            id        : record.id ?? _id,
             copyright : record.Copyright ?? "© 2022, REAN Foundation, All rights reserved."
         };
         if (record.Description) {
@@ -108,7 +108,7 @@ export class RssfeedService {
         for (var item of feedItems) {
             const item_ = {
                 title       : item.Title,
-                id          : item.Link,
+                id          : item.id,
                 link        : item.Link,
                 description : item.Description,
                 content     : item.Content,

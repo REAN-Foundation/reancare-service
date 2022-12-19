@@ -28,8 +28,9 @@ export class ChatService {
         return await this._chatRepo.getConversationMessages(conversationId);
     };
 
-    searchUserConversations = async (filters: ConversationSearchFilters): Promise<ConversationSearchResults> => {
-        return await this._chatRepo.searchUserConversations(filters);
+    searchUserConversations = async (userId: string, filters: ConversationSearchFilters)
+        : Promise<ConversationSearchResults> => {
+        return await this._chatRepo.searchUserConversations(userId, filters);
     };
 
     getConversationById = async (conversationId: string): Promise<ConversationDto> => {

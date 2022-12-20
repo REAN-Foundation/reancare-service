@@ -113,86 +113,52 @@ export class ChatRepo implements IChatRepo {
         }
     };
 
-    searchUserConversations = async (filters: ConversationSearchFilters)
+    searchUserConversations = async (userId:uuid, filters: ConversationSearchFilters)
         : Promise<ConversationSearchResults> => {
         try {
-            var conditions = [];
-            if (!filters.IsGroupconversation) {
-                if (filters.OtherUserId) {
-                    conditions = [
-                        {
-                            InitiatingUserId : filters.CurrentUserId,
-                            OtherUserId      : filters.OtherUserId,
-                        },
-                        {
-                            InitiatingUserId : filters.OtherUserId,
-                            OtherUserId      : filters.CurrentUserId,
-                        },
-                    ];
-                }
-                else {
-                    conditions = [
-                        {
-                            InitiatingUserId : filters.CurrentUserId,
-                        },
-                        {
-                            OtherUserId : filters.CurrentUserId,
-                        },
-                    ];
-                }
-                var search = {
-                    where : {
-                        [Op.or] : conditions
-                    },
-                    include : this.includeUserDetails(),
-                };
-                const { pageIndex, limit, order, orderByColum } = this.updateSearch(filters, search);
-                const foundResults = await Conversation.findAndCountAll(search);
-                const dtos = foundResults.rows.map(x => ChatMapper.toDto(x));
-                const searchResults: ConversationSearchResults = {
-                    TotalCount     : foundResults.count,
-                    RetrievedCount : dtos.length,
-                    PageIndex      : pageIndex,
-                    ItemsPerPage   : limit,
-                    Order          : order === 'DESC' ? 'descending' : 'ascending',
-                    OrderedBy      : orderByColum,
-                    Items          : dtos,
-                };
-                return searchResults;
+            var conditions = [
+                {
+                    InitiatingUserId : userId,
+                },
+                {
+                    OtherUserId : userId,
+                },
+            ];
+
+            var search = {
+                where : {
+                    [Op.or] : conditions,
+                },
+                include : this.includeUserDetails(),
+            };
+
+            if (filters.Topic != null) {
+                search.where['Topic'] =  filters.Topic ;
+
             }
-            else {
-                const conversations = await ConversationParticipant.findAll({
-                    where : {
-                        UserId : filters.CurrentUserId
-                    }
-                });
-                const conversationIds = conversations.map(x => x.ConversationId);
-                var searchOther = {
-                    where : {
-                        UserId         : filters.OtherUserId,
-                        ConversationId : conversationIds
-                    },
-                    include : [
-                        {
-                            model : Conversation,
-                            as    : 'Conversation',
-                        }
-                    ]
-                };
-                const { pageIndex, limit, order, orderByColum } = this.updateSearch(filters, searchOther);
-                const foundResults = await ConversationParticipant.findAndCountAll(searchOther);
-                const dtos = foundResults.rows.map(x => ChatMapper.toDto(x.Conversation));
-                const searchResults: ConversationSearchResults = {
-                    TotalCount     : foundResults.count,
-                    RetrievedCount : dtos.length,
-                    PageIndex      : pageIndex,
-                    ItemsPerPage   : limit,
-                    Order          : order === 'DESC' ? 'descending' : 'ascending',
-                    OrderedBy      : orderByColum,
-                    Items          : dtos,
-                };
-                return searchResults;
+            if (filters.Marked != null) {
+                search.where['Marked'] = filters.Marked;
+
             }
+            if (filters.IsGroupconversation != null) {
+                search.where['IsGroupconversation'] = filters.IsGroupconversation;
+
+            }
+            
+            const { pageIndex, limit, order, orderByColum } = this.updateSearch(filters, search);
+            const foundResults = await Conversation.findAndCountAll(search);
+            const dtos = foundResults.rows.map(x => ChatMapper.toDto(x));
+            const searchResults: ConversationSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+            return searchResults;
+           
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

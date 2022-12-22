@@ -1,4 +1,4 @@
-import { DiagnosticLabUserDomainModel } from '../../../domain.types/diagnostic.lab.user/diagnostic.lab.user.domain.model';
+import { DiagnosticLabUserDomainModel } from '../../../domain.types/users/diagnostic.lab.user/diagnostic.lab.user.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////
 

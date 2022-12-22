@@ -1,5 +1,5 @@
 import { Helper } from '../../../../../../common/helper';
-import { ImagingStudyDomainModel } from '../../../../../../domain.types/imaging.study/imaging.study.domain.model';
+import { ImagingStudyDomainModel } from '../../../../../../domain.types/clinical/imaging.study/imaging.study.domain.model';
 import { IImagingStudyStore } from '../../../../../ehr/interfaces/imaging.study.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
@@ -20,7 +20,7 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: ImagingStudyDomainModel): Promise<any> => {
         const resourceType = 'ImagingStudy';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -97,10 +97,10 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
         /*if (model.VisitEhirId != null) {
             resource['VisitId'] = model.VisitEhrId
         }*/
-        
+
         return resource;
     }
-    
+
     private updateImagingStudyFhirResource(updates: ImagingStudyDomainModel, existingResource: any): any {
 
         existingResource.resourceType = "ImagingStudy";
@@ -124,7 +124,7 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
         if (updates.InstanceCount != null) {
             existingResource['numberOfInstances'] = updates.InstanceCount;
         }
-         
+
         return existingResource;
     }
 

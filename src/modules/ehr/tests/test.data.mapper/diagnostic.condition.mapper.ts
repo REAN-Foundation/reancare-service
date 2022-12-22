@@ -1,6 +1,6 @@
 import path from 'path';
 import { Helper } from '../../../../common/helper';
-import { DiagnosticConditionDomainModel, MedicalConditionDomainModel } from '../../../../domain.types/diagnostic.condition/diagnostic.condition.domain.model';
+import { DiagnosticConditionDomainModel, MedicalConditionDomainModel } from '../../../../domain.types/clinical/diagnosis/diagnostic.condition.domain.model';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class DiagnosticConditionMapper {

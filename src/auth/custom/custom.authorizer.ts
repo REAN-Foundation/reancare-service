@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { Logger } from '../../common/logger';
 import { IAuthorizer } from '../authorizer.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
-import { RolePrivilegeService } from '../../services/role.privilege.service';
+import { RolePrivilegeService } from '../../services/role/role.privilege.service';
 import { Loader } from '../../startup/loader';
 import { ConfigurationManager } from '../../config/configuration.manager';
 
@@ -24,6 +24,12 @@ export class CustomAuthorizer implements IAuthorizer {
         try {
             const currentUser = request.currentUser;
             const context = request.context;
+            const currentClient = request.currentClient;
+            if (currentClient) {
+                if (currentClient.IsPrivileged === true) {
+                    return true;
+                }
+            }
             if (context == null || context === 'undefined') {
                 return false;
             }

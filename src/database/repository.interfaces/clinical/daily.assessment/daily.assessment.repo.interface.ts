@@ -8,4 +8,6 @@ export interface IDailyAssessmentRepo {
 
     search(filters: DailyAssessmentSearchFilters): Promise<DailyAssessmentSearchResults>;
 
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
+
 }

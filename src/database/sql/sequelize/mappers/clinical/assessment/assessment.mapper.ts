@@ -22,10 +22,12 @@ export class AssessmentMapper {
             PatientUserId          : assessment.PatientUserId,
             AssessmentTemplateId   : assessment.AssessmentTemplateId,
             ScoringApplicable      : assessment.ScoringApplicable,
+            ScoreDetails           : assessment.ScoreDetails ? JSON.parse(assessment.ScoreDetails) : null,
             Provider               : assessment.Provider,
             ProviderEnrollmentId   : assessment.ProviderEnrollmentId,
             ProviderAssessmentCode : assessment.ProviderAssessmentCode,
             ProviderAssessmentId   : assessment.ProviderAssessmentId,
+            ReportUrl              : assessment.ReportUrl,
             Status                 : assessment.Status as ProgressStatus,
             ScheduledAt            : assessment.ScheduledDateString ? new Date(assessment.ScheduledDateString) : null,
             CreatedAt              : assessment.CreatedAt,
@@ -34,6 +36,7 @@ export class AssessmentMapper {
             ParentActivityId       : assessment.ParentActivityId,
             UserTaskId             : assessment.UserTaskId,
             CurrentNodeId          : assessment.CurrentNodeId,
+            TotalNumberOfQuestions : assessment.TotalNumberOfQuestions,
         };
 
         return dto;

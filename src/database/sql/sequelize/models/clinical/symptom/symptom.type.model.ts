@@ -13,7 +13,7 @@ import {
     BelongsToMany } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import FileResource from '../../file.resource/file.resource.model';
+import FileResource from '../../general/file.resource/file.resource.model';
 import SymptomAssessmentTemplate from './symptom.assessment.template.model';
 import SymptomTypesInTemplate from './symptom.types.in.template.model';
 
@@ -83,7 +83,7 @@ export default class SymptomType extends Model {
 
     @BelongsToMany(() => SymptomAssessmentTemplate, () => SymptomTypesInTemplate)
     Templates: SymptomAssessmentTemplate[];
-    
+
     @Column
     @CreatedAt
     CreatedAt: Date;

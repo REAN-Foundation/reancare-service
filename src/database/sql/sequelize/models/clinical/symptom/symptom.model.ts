@@ -8,7 +8,7 @@ import {
     ClinicalInterpretationList, ClinicalValidationStatus, ClinicalValidationStatusList
 } from '../../../../../../domain.types/miscellaneous/clinical.types';
 import { Severity, SeverityList } from '../../../../../../domain.types/miscellaneous/system.types';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 import Visit from '../visit.model';
 import SymptomAssessment from './symptom.assessment.model';
 import SymptomAssessmentTemplate from './symptom.assessment.template.model';
@@ -66,7 +66,7 @@ export default class Symptom extends Model {
         allowNull : true,
     })
     VisitId: string;
-    
+
     @IsUUID(4)
     @ForeignKey(() => SymptomAssessment)
     @Column({
@@ -77,7 +77,7 @@ export default class Symptom extends Model {
 
     @BelongsTo(() => SymptomAssessment)
     Assessment: SymptomAssessment;
-    
+
     @IsUUID(4)
     @ForeignKey(() => SymptomAssessmentTemplate)
     @Column({
@@ -85,7 +85,7 @@ export default class Symptom extends Model {
         allowNull : true,
     })
     AssessmentTemplateId: string;
-    
+
     @IsUUID(4)
     @ForeignKey(() => SymptomType)
     @Column({
@@ -93,7 +93,7 @@ export default class Symptom extends Model {
         allowNull : true,
     })
     SymptomTypeId: string;
-    
+
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),

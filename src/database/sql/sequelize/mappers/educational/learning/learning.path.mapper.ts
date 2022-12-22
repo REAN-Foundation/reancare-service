@@ -12,12 +12,14 @@ export class LearningPathMapper {
         }
 
         const dto: LearningPathDto = {
-            id             : course.id,
-            Name           : course.Name,
-            Description    : course.Description,
-            ImageUrl       : course.ImageUrl,
-            DurationInDays : course.DurationInDays,
-            Courses        : []
+            id               : course.id,
+            Name             : course.Name,
+            Description      : course.Description,
+            ImageUrl         : course.ImageUrl,
+            DurationInDays   : course.DurationInDays,
+            Courses          : [],
+            PreferenceWeight : course.PreferenceWeight,
+            Enabled          : course.Enabled,
         };
         return dto;
     };

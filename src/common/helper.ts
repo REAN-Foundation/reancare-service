@@ -3,18 +3,71 @@ import child_process from 'child_process';
 import * as crypto from 'crypto';
 import express from 'express';
 import * as fs from 'fs';
+import * as os from 'os';
 import { generate } from 'generate-password';
 import mime = require('mime-types');
 import path from 'path';
 import { ConfigurationManager } from '../config/configuration.manager';
-import { Gender } from '../domain.types/miscellaneous/system.types';
+import { Gender, OSType } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
 import Countries from './misc/countries';
+import { DateStringFormat } from '../domain.types/miscellaneous/time.types';
+import { Logger } from './logger';
 
 ////////////////////////////////////////////////////////////////////////
 
 export class Helper {
+
+    static calculateBMI = (
+        currentHeight: number,
+        heightUnits: string,
+        currentWeight: number,
+        weightUnits: string) => {
+
+        let height = currentHeight;
+        let weight = currentWeight;
+        let height_square = 0;
+        let bmi = null;
+        let heightStr = 'Unspecified';
+        let weightStr = 'Unspecified';
+
+        if (currentWeight == null && currentHeight == null) {
+            return { bmi, weightStr, heightStr };
+        }
+
+        if (currentHeight) {
+            if (heightUnits === 'feet' || heightUnits === 'ft') {
+                height = height * 30.48; //Convert feet to cms
+            }
+            const heightInFeet = (height / 30.48);
+            const feet = (Math.floor(heightInFeet)).toFixed();
+            const inches = (Math.floor((heightInFeet % 1.0) * 12)).toFixed();
+
+            heightStr = height.toFixed() + ` cms (${feet} feet, ${inches} inches)`;
+
+            height = height / 100; //Convert to meteres
+            height_square = height * height;
+        }
+
+        if (currentWeight) {
+            if (weightUnits === 'lbs' || weightUnits === 'lb') {
+                weight = weight * 0.453592;
+            }
+            if (!weightUnits) {
+                weightUnits = 'Kg';
+            }
+            const weightInLbs = weight / 0.453592;
+            weightStr = weight.toFixed() + ` Kg (${weightInLbs.toFixed()} lbs)`;
+        }
+
+        if (height_square === 0) {
+            return { bmi, weightStr, heightStr };
+        }
+
+        bmi = weight / height_square;
+        return { bmi, weightStr, heightStr };
+    }
 
     static getResourceOwner = (request: express.Request): string => {
         if (request.params.userId) {
@@ -29,10 +82,41 @@ export class Helper {
         return null;
     };
 
+    static writeTextToFile = async (text: string, filename: string) => {
+        try {
+            var uploadFolder = ConfigurationManager.UploadTemporaryFolder();
+            var dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+            var fileFolder = path.join(uploadFolder, dateFolder);
+            if (!fs.existsSync(fileFolder)) {
+                await fs.promises.mkdir(fileFolder, { recursive: true });
+            }
+            const filePath = path.join(fileFolder, filename);
+            fs.writeFileSync(filePath, text);
+            return filePath;
+    }
+        catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
     static hasProperty = (obj, prop) => {
         return Object.prototype.hasOwnProperty.call(obj, prop);
+    };
+
+    static getOSType = () => {
+        var type = os.type();
+        switch (type) {
+            case 'Darwin':
+                return OSType.MacOS;
+            case 'Linux':
+                return OSType.Linux;
+            case 'Windows_NT':
+                return OSType.Windows;
+            default:
+                return OSType.Linux;
+        }
     }
-    
+
     static isUrl = (str) => {
         if (!str) {
             return false;
@@ -49,7 +133,7 @@ export class Helper {
         const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
     }
-    
+
     static jsonToObj = (jsonPath) => {
 
         if (!fs.existsSync(jsonPath)) {
@@ -327,7 +411,7 @@ export class Helper {
         }
         return Promise.resolve();
     }
-    
+
     public static sleep = (miliseconds) => {
         return new Promise((resolve) => {
             setTimeout(resolve, miliseconds);
@@ -386,7 +470,7 @@ export class Helper {
         if (phone == null) {
             return [];
         }
-        
+
         let phoneTemp = phone;
         phoneTemp = phoneTemp.trim();
         const countryCodes = Countries.map(x => x.PhoneCode);
@@ -402,12 +486,12 @@ export class Helper {
                 phoneTemp = phoneTemp.replace('-', '');
             }
         }
-    
+
         if (phonePrefix) {
             possiblePhoneNumbers.push(phonePrefix + phoneTemp);
             possiblePhoneNumbers.push(phonePrefix + "-" + phoneTemp);
             possiblePhoneNumbers.push(phoneTemp);
-    
+
         } else {
 
             var possibles = Countries.map(x => {
@@ -471,7 +555,7 @@ export class Helper {
 
         return downloadFolderPath;
     };
-    
+
     public static createTempDownloadFolder = async() => {
         var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
         if (fs.existsSync(tempDownloadFolder)) {
@@ -480,7 +564,7 @@ export class Helper {
         await fs.promises.mkdir(tempDownloadFolder, { recursive: true });
         return tempDownloadFolder;
     };
-    
+
     public static createTempUploadFolder = async() => {
         var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
         if (fs.existsSync(tempUploadFolder)) {
@@ -496,7 +580,7 @@ export class Helper {
         var ext = extension.startsWith('.') ? extension : '.' + extension;
         return tmp + ext;
     };
-    
+
     public static getMimeType = (pathOrExtension: string) => {
         var mimeType = mime.lookup(pathOrExtension);
         if (!mimeType) {
@@ -504,7 +588,7 @@ export class Helper {
         }
         return mimeType;
     };
-    
+
     public static getValueForEitherKeys = (obj: any, keys: string[]): string => {
         const existingKeys = Object.keys(obj);
         for (var key of keys) {
@@ -519,6 +603,37 @@ export class Helper {
     public static getEnumKeyFromValue = (obj: any, value: string): string => {
         var key = Object.keys(obj).find(key => obj[key] === value);
         return key || null;
+    };
+
+    public static getDefaultProfileImageForGender = (gender: Gender): string => {
+        const cwd = process.cwd();
+        const imageLocation = path.join(cwd, 'assets/images/stock.profile.images/');
+        if (gender === Gender.Male) {
+            return path.join(imageLocation, 'male_white.png');
+        }
+        else if (gender === Gender.Female) {
+            return path.join(imageLocation, 'female_white.png');
+        }
+        else {
+            return path.join(imageLocation, 'male_african.png');
+        }
+    };
+
+    public static getIconsPath = (filename: string): string => {
+        const cwd = process.cwd();
+        const imageLocation = path.join(cwd, 'assets/images/icons/');
+        return path.join(imageLocation, filename);
+    };
+
+    public static sortObjectKeysAlphabetically = (obj) => {
+        const sorted = Object.keys(obj)
+            .sort()
+            .reduce((accumulator, key) => {
+                accumulator[key] = obj[key];
+
+                return accumulator;
+            }, {});
+        return sorted;
     };
 
 }

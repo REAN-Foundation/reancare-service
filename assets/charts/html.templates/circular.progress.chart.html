@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Reference: https://codepen.io/adeveloperdiary/pen/LpqRQB -->
+<!-- Reference: http://www.adeveloperdiary.com/d3-js/how-to-create-progress-chart-using-d3-js/ -->
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=320" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<title>Gauge</title>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3@7" />
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-array@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-format@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-interpolate@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-time@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-time-format@4"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-scale@4"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-scale@4"></script>
+	</script>
+	<style>
+		body {
+			font-family: Helvetica, Arial, sans-serif;
+			margin: 32px;
+		}
+		.shadow {
+			-webkit-filter: drop-shadow( 0px 3px 3px rgba(0,0,0,.5) );
+			filter: drop-shadow( 0px 3px 3px rgba(0,0,0,.5) );
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="chart">
+	</div>
+
+	<script>
+
+		// customization
+
+		const percentage = 56;
+		const width = 350;
+		const height = 350;
+		const innerRadius = 110;
+		const fontSize = "90px";
+		const symbolFontSize = '40px';
+		const gradientColor1 = '#f2503f';
+		const gradientColor2 = '#ea0859';
+		const pathColor = '#404F70';
+		const textColor = 'slategray';
+
+		// customization
+
+		function circularProgressChart(container, {
+			percentage = 75,
+			marginTop    = 5,
+			marginRight  = 5,
+			marginBottom = 5,
+			marginLeft   = 5,
+			width        = 300,
+			height       = 300,
+			gradientColor1 = '#f2503f',
+			gradientColor2 = '#ea0859',
+			pathColor = '#404F70',
+			textColor = 'slategray',
+			innerRadius = 110,
+			symbolFontSize = '40px',
+			fontSize = '90px',
+			animateDuration = 750,
+		} = {}) {
+
+			var createGradient = function(svg, id, color1, color2) {
+				var defs = svg.append("svg:defs")
+
+				var red_gradient = defs.append("svg:linearGradient")
+						.attr("id", id)
+						.attr("x1", "0%")
+						.attr("y1", "0%")
+						.attr("x2", "50%")
+						.attr("y2", "100%")
+						.attr("spreadMethod", "pad");
+
+				red_gradient.append("svg:stop")
+						.attr("offset", "50%")
+						.attr("stop-color", color1)
+						.attr("stop-opacity", 1);
+
+				red_gradient.append("svg:stop")
+						.attr("offset", "100%")
+						.attr("stop-color", color2)
+						.attr("stop-opacity", 1);
+			};
+
+			var ratio = percentage/100;
+			var percent = percentage;
+			const percentageText = percent.toFixed(0);
+
+			var w = width, h = height;
+			var outerRadius=(w/2)-10;
+			var colors = [gradientColor1, gradientColor2, pathColor];
+
+			const svg = d3.select(container)
+					.append("svg:svg")
+					.attr("width", width)
+					.attr("height", height)
+					.attr("viewBox", [0, 0, width, height])
+					.attr("class", 'shadow')
+					.append('g')
+					.attr("transform", `translate(${width/2},${height/2})`)
+
+			createGradient(svg,'gradient',colors[0],colors[1]);
+
+			var arc = d3.arc()
+					.innerRadius(innerRadius)
+					.outerRadius(outerRadius)
+					.startAngle(0)
+					.endAngle(2*Math.PI);
+
+			var arcLine = d3.arc()
+					.innerRadius(innerRadius)
+					.outerRadius(outerRadius)
+					.startAngle(0)
+					.endAngle(((2*Math.PI))*ratio);
+
+			var pathBackground = svg.append('path')
+					.attr("d", arc)
+					.style("fill", colors[2])
+
+			var pathChart=svg.append('path')
+					.attr("d", arcLine)
+					.style("fill", 'url(#gradient)')
+
+			var middleCount=svg.append('text')
+					.text(percentageText)
+					.attr("class", 'middleText')
+					.attr('text-anchor', 'middle')
+					.attr("dy", 30)
+					.attr("dx", -15)
+					.style("fill", colors[1])
+					.style("font-size", fontSize)
+
+				svg.append('text')
+					.text('%')
+					.attr("class", 'percent')
+					.attr('text-anchor', 'middle')
+					.attr("dx", 50)
+					.attr("dy", -5)
+					.style("fill", colors[1])
+					.style("font-size", symbolFontSize)
+
+			return svg.node();
+		}
+
+		circularProgressChart('#chart', {
+			percentage: percentage,
+			width: width,
+			height: height,
+			gradientColor1: gradientColor1,
+			gradientColor2: gradientColor2,
+			pathColor: pathColor,
+			textColor: textColor,
+			innerRadius: innerRadius,
+			symbolFontSize: symbolFontSize,
+			fontSize: fontSize,
+		 });
+
+	</script>
+
+</body>
+
+</html>

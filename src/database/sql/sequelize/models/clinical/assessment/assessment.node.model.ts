@@ -70,7 +70,7 @@ export default class AssessmentNode extends Model {
 
     @BelongsTo(() => AssessmentTemplate)
     Template: AssessmentTemplate;
-    
+
     @IsUUID(4)
     @ForeignKey(() => AssessmentNode)
     @Column({
@@ -165,6 +165,12 @@ export default class AssessmentNode extends Model {
         defaultValue : false,
     })
     Acknowledged: boolean;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    CorrectAnswer: string;
 
     @Column
     @CreatedAt

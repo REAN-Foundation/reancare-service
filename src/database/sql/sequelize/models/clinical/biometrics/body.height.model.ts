@@ -15,8 +15,8 @@ import {
     IsDate } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../../user/user.model';
-import Person from '../../person.model';
+import User from '../../users/user/user.model';
+import Person from '../../person/person.model';
 
 ///////////////////////////////////////////////////////////////////////
 

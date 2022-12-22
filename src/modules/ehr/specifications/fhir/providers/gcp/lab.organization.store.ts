@@ -1,4 +1,4 @@
-import { OrganizationDomainModel } from '../../../../../../domain.types/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.domain.model';
 import { ILabOrganizationStore } from '../../../../interfaces/lab.organization.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
@@ -19,7 +19,7 @@ export class GcpLabOrganizationStore implements ILabOrganizationStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: OrganizationDomainModel): Promise<any> => {
         const resourceType = 'Organization';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -46,7 +46,7 @@ export class GcpLabOrganizationStore implements ILabOrganizationStore {
                     text : "pathology"
                 }
             ],
-            
+
             telecom : [],
             address : []
         };

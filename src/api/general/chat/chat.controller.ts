@@ -95,8 +95,9 @@ export class ChatController extends BaseController {
         try {
 
             await this.setContext('Chat.SearchUserConversations', request, response);
+            const userId = request.params.userId;
             const filters = await this._validator.searchUserConversations(request);
-            const userConversations = await this._service.searchUserConversations(filters);
+            const userConversations = await this._service.searchUserConversations(userId, filters);
             ResponseHandler.success(request, response, 'Conversations retrieved successfully!', 200, {
                 UserConversations : userConversations,
             });

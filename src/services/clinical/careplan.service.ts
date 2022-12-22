@@ -29,6 +29,7 @@ import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activi
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
+import { IDonorRepo } from "./../../database/repository.interfaces/users/donor.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +41,7 @@ export class CareplanService implements IUserActionService {
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IDonorRepo') private _donorRepo: IDonorRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
@@ -144,14 +146,20 @@ export class CareplanService implements IUserActionService {
 
             for (const activity of scheduledActivities) {
                 const message = `${activity.Title}:\n${activity.Description}`;
-                const patient = await this.getPatient(activity.PatientUserId);
+                let patient = null;
+                if (activity.PlanCode === 'Donor-Reminders') {
+                    patient = await this.getDonor(activity.PatientUserId);
+                } else {
+                    patient = await this.getPatient(activity.PatientUserId);
+                }
                 let phoneNumber = patient.User.Person.Phone;
                 if (activity.Provider === "REAN") {
                     phoneNumber = patient.User.Person.TelegramChatId;
                 }
+                
                 let response = null;
                 response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
-                    activity.Provider, activity.Type);
+                    activity.Provider, activity.Type, activity.PlanCode);
                 if (response === true) {
                     await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
                     Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
@@ -435,6 +443,18 @@ export class CareplanService implements IUserActionService {
         }
         patientDto.User = user;
         return patientDto;
+    }
+
+    private async getDonor(donorUserId: uuid) {
+
+        var donorDto = await this._donorRepo.getByUserId(donorUserId);
+
+        var user = await this._userRepo.getById(donorDto.UserId);
+        if (user.Person == null) {
+            user.Person = await this._personRepo.getById(user.PersonId);
+        }
+        donorDto.User = user;
+        return donorDto;
     }
 
     private async createScheduledUserTasks(patientUserId, careplanActivities) {

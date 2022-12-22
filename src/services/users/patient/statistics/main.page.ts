@@ -22,6 +22,15 @@ export const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: n
         .text(text, 50, y, { align: "left" })
         .moveDown();
 
+    y = y + 30;
+
+    const text2 = `This summary of your app activity and data can be printed and brought along to appointments with your care team and shared with them by uploading it to your patient portal.The summary is meant to give your care team understanding about your condition management between visits.`;
+    document
+        .font('Times-Italic')
+        .fontSize(9)
+        .text(text2, 50, y, { align: "left" })
+        .moveDown();
+
     y = y + 43;
 
     document

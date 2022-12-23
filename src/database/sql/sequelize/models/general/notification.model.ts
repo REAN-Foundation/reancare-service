@@ -40,9 +40,16 @@ export default class Notification extends Model {
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     UserId: string;
+
+    @Column({
+        type        : DataType.BOOLEAN,
+        allowNull   : false,
+        defaultValue: false,
+    })
+    BroadcastToAll: boolean;
 
     @Column({
         type      : DataType.STRING(256),

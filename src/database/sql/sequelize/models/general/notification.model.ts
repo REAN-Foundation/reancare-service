@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     Table,
     Column,
@@ -22,7 +23,7 @@ import User from '../users/user/user.model';
     tableName       : 'notifications',
     paranoid        : true,
     freezeTableName : true,
-})
+    })
 export default class Notification extends Model {
 
     @IsUUID(4)

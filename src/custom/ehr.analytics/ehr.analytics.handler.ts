@@ -29,9 +29,9 @@ export class EHRAnalyticsHandler {
     }, EHRAnalyticsHandler._numAsyncTasks);
 
     private static add = (model:EHRDynamicRecordDomainModel) => {
-        EHRAnalyticsHandler._q.push(model, (error, model) => {
+        EHRAnalyticsHandler._q.push(model, (model, error) => {
             if (error) {
-                Logger.instance().log(`Error recording EHR record: ${error.message}`);
+                Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error.stack, null, 2)}`);
             }
             else {

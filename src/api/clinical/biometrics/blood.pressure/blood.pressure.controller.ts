@@ -190,8 +190,6 @@ export class BloodPressureController extends BaseController {
     private sendBPMessage = async (patientUserId: uuid, model: BloodPressureDomainModel) => {
         
         const patient  = await this._patientService.getByUserId(patientUserId);
-        const deviceDetails = await this._userDeviceDetailsService.getByUserId(patientUserId);
-        const appName = deviceDetails[0].AppName;
         const phoneNumber = patient.User.Person.Phone;
         const person = await this._personService.getById(patient.User.PersonId);
         var userFirstName = 'user';

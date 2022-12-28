@@ -118,6 +118,7 @@ export class EHRAnalyticsRepo {
             }
             const entity = {
                 PatientUserId : model.PatientUserId,
+                RecordId      : model.RecordId,
                 Type          : model.Type,
                 Name          : model.Name,
                 ValueInt      : model.ValueInt,

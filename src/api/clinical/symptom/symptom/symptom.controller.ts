@@ -6,6 +6,9 @@ import { SymptomService } from '../../../../services/clinical/symptom/symptom.se
 import { Loader } from '../../../../startup/loader';
 import { SymptomValidator } from './symptom.validator';
 import { BaseController } from '../../../base.controller';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { SymptomDomainModel } from '../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +41,7 @@ export class SymptomController extends BaseController {
                 throw new ApiError(400, 'Cannot create symptom!');
             }
 
+            this.addEHRRecord(symptom.PatientUserId, symptom.id, symptom);
             ResponseHandler.success(request, response, 'Symptom created successfully!', 201, {
                 Symptom : symptom,
             });
@@ -106,6 +110,7 @@ export class SymptomController extends BaseController {
                 throw new ApiError(400, 'Unable to update symptom record!');
             }
 
+            this.addEHRRecord(updated.PatientUserId, updated.id, updated);
             ResponseHandler.success(request, response, 'Symptom record updated successfully!', 200, {
                 Symptom : updated,
             });
@@ -137,6 +142,17 @@ export class SymptomController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: SymptomDomainModel) => {
+        if (model.Symptom) {
+            EHRAnalyticsHandler.addBooleanRecord(
+                patientUserId, recordId, EHRRecordTypes.Symptom, model.IsPresent, null, model.Symptom, model.Symptom);
+        }
+    }
 
     //#endregion
 

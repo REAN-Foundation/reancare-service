@@ -16,6 +16,7 @@ import { Loader } from '../../../startup/loader';
 import { FileResourceValidator } from './file.resource.validator';
 import AdmZip = require ('adm-zip');
 import { Helper } from '../../../common/helper';
+import { FileResourceUploadDomainModel } from '../../../domain.types/general/file.resource/file.resource.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +48,25 @@ export class FileResourceController {
 
     //#region Action methods
 
+    uploadBinary = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'FileResource.Upload';
+            await this._authorizer.authorize(request, response);
+
+            const model: FileResourceUploadDomainModel = this.getBinaryUploadModel(request);
+
+            const dtos = [];
+            const dto = await this._service.uploadBinary(model);
+            dtos.push(this.sanitizeDto(dto));
+
+            ResponseHandler.success(request, response, 'File resource uploaded successfully!', 201, {
+                FileResources : dtos,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     upload = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'FileResource.Upload';
@@ -55,7 +75,7 @@ export class FileResourceController {
             var domainModels = await this._validator.upload(request);
 
             if (domainModels.length === 0) {
-                throw new ApiError(400, 'Profile picture not found!');
+                throw new ApiError(400, 'File resource not found!');
             }
             var dtos = [];
             for await (var model of domainModels) {
@@ -63,7 +83,7 @@ export class FileResourceController {
                 dtos.push(this.sanitizeDto(dto));
             }
 
-            ResponseHandler.success(request, response, 'Profile picture uploaded successfully!', 201, {
+            ResponseHandler.success(request, response, 'File resource uploaded successfully!', 201, {
                 FileResources : dtos,
             });
         } catch (error) {
@@ -396,6 +416,29 @@ export class FileResourceController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    private getBinaryUploadModel(request: express.Request) {
+        var filename = request.headers["filename"] as string;
+        var publicResource = request.headers['public'] === 'true' ? true : false;
+
+        const metadata: FileResourceMetadata = {
+            FileName     : filename,
+            OriginalName : filename,
+            MimeType     : Helper.getMimeType(filename),
+            Version      : '1',
+            StorageKey   : null,
+            Stream       : request,
+        };
+        const model: FileResourceUploadDomainModel = {
+            FileMetadata           : metadata,
+            OwnerUserId            : request.body.OwnerUserId ?? request.currentUser.UserId,
+            UploadedByUserId       : request.currentUser.UserId,
+            IsPublicResource       : publicResource,
+            IsMultiResolutionImage : false,
+            MimeType               : Helper.getMimeType(filename),
+        };
+        return model;
+    }
 
     //#endregion
 

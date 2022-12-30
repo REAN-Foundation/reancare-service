@@ -1,4 +1,4 @@
-FROM node:gallium-alpine3.15 AS builder
+FROM node:18.12.0-alpine3.15 AS builder
 ADD . /app
 RUN apk add bash
 RUN apk add --no-cache \

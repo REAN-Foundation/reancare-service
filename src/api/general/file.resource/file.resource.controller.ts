@@ -420,6 +420,8 @@ export class FileResourceController {
     private getBinaryUploadModel(request: express.Request) {
         var filename = request.headers["filename"] as string;
         var publicResource = request.headers['public'] === 'true' ? true : false;
+        const sizeStr = request.headers['size'] ? request.headers['size'] as string : null;
+        var size = sizeStr ? parseInt(sizeStr)  : 0;
 
         const metadata: FileResourceMetadata = {
             FileName     : filename,
@@ -428,6 +430,7 @@ export class FileResourceController {
             Version      : '1',
             StorageKey   : null,
             Stream       : request,
+            Size         : size,
         };
         const model: FileResourceUploadDomainModel = {
             FileMetadata           : metadata,

@@ -260,6 +260,7 @@ export class UserTaskRepo implements IUserTaskRepo {
 
         } catch (error) {
             Logger.instance().log(error.message);
+            Logger.instance().log(JSON.stringify(error));
             throw new ApiError(500, error.message);
         }
     };

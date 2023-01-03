@@ -27,6 +27,10 @@ export class FileResourceService {
 
     //#region Publics
 
+    uploadBinary = async (domainModel: FileResourceUploadDomainModel): Promise<FileResourceDto> => {
+        return await this.uploadDefaultVersion(domainModel);
+    };
+
     upload = async (domainModel: FileResourceUploadDomainModel): Promise<FileResourceDto> => {
 
         var resource: FileResourceDetailsDto = null;
@@ -370,9 +374,12 @@ export class FileResourceService {
         var dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
         var filename = fileMetadata.FileName;
         var storageKey = 'resources/' + dateFolder + '/' + filename;
-
-        await this._storageService.upload(storageKey, fileMetadata.SourceFilePath);
-
+        if (fileMetadata.Stream) {
+            await this._storageService.uploadStream(storageKey, fileMetadata.Stream);
+        }
+        else {
+            await this._storageService.upload(storageKey, fileMetadata.SourceFilePath);
+        }
         return storageKey;
     }
 

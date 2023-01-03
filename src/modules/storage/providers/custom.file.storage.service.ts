@@ -45,7 +45,7 @@ export class CustomFileStorageService implements IFileStorageService {
                 reject(error.message);
             }
         });
-    }
+    };
 
     upload = async (storageKey: string, localFilePath?: string): Promise<string> => {
         try {

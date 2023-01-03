@@ -47,7 +47,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
     upload = async (storageKey: string, localFilePath?: string): Promise<string> => {
 

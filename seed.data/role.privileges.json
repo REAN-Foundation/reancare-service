@@ -160,11 +160,18 @@
             "Chat.GetConversationBetweenTwoUsers",
             "Chat.GetMarkedConversationsForUser",
             "Chat.GetRecentConversationsForUser",
+            "PatientStatistics.GetPatientStats",
+            "PatientStatistics.GetPatientStatsReport",
             "PatientDonors.Create",
             "PatientDonors.GetById",
             "PatientDonors.Search",
             "PatientDonors.Update",
-            "PatientDonors.Delete"
+            "PatientDonors.Delete",
+            "DonationRecord.Create",
+            "DonationRecord.GetById",
+            "DonationRecord.Search",
+            "DonationRecord.Update",
+            "DonationRecord.Delete"
         ]
     },
     {
@@ -547,11 +554,18 @@
             "Volunteer.Search",
             "Volunteer.UpdateByUserId",
             "Volunteer.DeleteByUserId",
+            "PatientStatistics.GetPatientStats",
+            "PatientStatistics.GetPatientStatsReport",
             "PatientDonors.Create",
             "PatientDonors.GetById",
             "PatientDonors.Search",
             "PatientDonors.Update",
-            "PatientDonors.Delete"
+            "PatientDonors.Delete",
+            "DonationRecord.Create",
+            "DonationRecord.GetById",
+            "DonationRecord.Search",
+            "DonationRecord.Update",
+            "DonationRecord.Delete"
         ]
     },
     {
@@ -892,11 +906,18 @@
             "Volunteer.Search",
             "Volunteer.UpdateByUserId",
             "Volunteer.DeleteByUserId",
+            "PatientStatistics.GetPatientStats",
+            "PatientStatistics.GetPatientStatsReport",
             "PatientDonors.Create",
             "PatientDonors.GetById",
             "PatientDonors.Search",
             "PatientDonors.Update",
-            "PatientDonors.Delete"
+            "PatientDonors.Delete",
+            "DonationRecord.Create",
+            "DonationRecord.GetById",
+            "DonationRecord.Search",
+            "DonationRecord.Update",
+            "DonationRecord.Delete"
         ]
     },
     {

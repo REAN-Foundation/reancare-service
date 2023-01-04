@@ -17,7 +17,9 @@ export class PDFGenerator {
         var uploadFolder = ConfigurationManager.UploadTemporaryFolder();
         var dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
         var fileFolder = path.join(uploadFolder, dateFolder);
-        await fs.promises.mkdir(fileFolder, { recursive: true });
+        if (!fs.existsSync(fileFolder)) {
+            await fs.promises.mkdir(fileFolder, { recursive: true });
+        }
         const timestamp = TimeHelper.timestamp(new Date());
         var filename = filePrefix + timestamp + '.pdf';
         var absFilepath = path.join(fileFolder, filename);
@@ -79,7 +81,7 @@ export class PDFGenerator {
                     return reject(error);
                 });
         });
-    }
+    };
 
     static addHeader = (document, model, y: number, headerImagePath) => {
 

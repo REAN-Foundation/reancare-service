@@ -135,7 +135,7 @@ export class Seeder {
         this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
         this._healthSystemService = Loader.container.resolve(HealthSystemService);
     }
-    
+
     public init = async (): Promise<void> => {
         try {
             await this.createTempFolders();
@@ -650,7 +650,7 @@ export class Seeder {
 
             var t = arr[i];
             const model: HealthSystemDomainModel = {
-                Name            : t['HealthSystem']
+                Name : t['HealthSystem']
             };
             var healthSystem = await this._healthSystemService.createHealthSystem(model);
 
@@ -660,11 +660,11 @@ export class Seeder {
                     HealthSystemId : healthSystem.id,
                     Name           : t['AssociatedHospitals'][j]
                 };
-            await this._healthSystemService.createHealthSystemHospital(entity);
+                await this._healthSystemService.createHealthSystemHospital(entity);
 
             }
-        }   
+        }
 
-    }
+    };
 
 }

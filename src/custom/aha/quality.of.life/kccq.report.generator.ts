@@ -80,7 +80,7 @@ const exportReportToPDF = async (reportModel: any, absoluteChartImagePath: strin
         y = addChartImage(document, absoluteChartImagePath, y);
         y = addScoreDetails(document, reportModel, y);
         PDFGenerator.addOrderPageNumber(document, 1, 1);
-        addOrderFooter(document, "https://www.heart.org/", ahaFooterImagePath);
+        addOrderFooter(document, "https://www.heart.org/HF", ahaFooterImagePath);
         document.end();
         const localFilePath = await PDFGenerator.savePDFLocally(writeStream, absFilepath);
         const { url, resourceId } = await uploadFile(localFilePath);

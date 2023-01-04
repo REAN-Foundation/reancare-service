@@ -196,6 +196,11 @@ export class DonorValidator {
             .escape()
             .run(request);
 
+        await query('onlyEligible')
+            .optional()
+            .isBoolean()
+            .run(request);
+
         await query('hasDonatedEarlier')
             .optional()
             .isBoolean()
@@ -292,6 +297,7 @@ export class DonorValidator {
             AcceptorUserId    : request.query.acceptorUserId ?? null,
             BloodGroup        : request.query.bloodGroup ?? null,
             MedIssues         : request.query.medIssues ?? null,
+            OnlyEligible      : request.query.onlyEligible ?? null,
             IsAvailable       : request.query.isAvailable ?? null,
             HasDonatedEarlier : request.query.hasDonatedEarlier ?? null,
             CreatedDateFrom   : request.query.createdDateFrom ?? null,

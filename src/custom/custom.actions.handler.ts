@@ -71,6 +71,17 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleHsSurvey = async () => {
+        try {
+            if (this.isForAHA()) {
+                await this._ahaActions.scheduleHsSurvey();
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Error performing custom HS survey tasks.`);
+        }
+    };
+
     //#endregion
 
     //#region Privates
@@ -88,7 +99,7 @@ export class CustomActionsHandler {
         process.env.NODE_ENV === 'uat';
 
         return isForAHA;
-    }
+    };
 
     //#endregion
 

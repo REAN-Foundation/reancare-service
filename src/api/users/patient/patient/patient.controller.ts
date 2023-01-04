@@ -129,7 +129,7 @@ export class PatientController extends BaseUserController {
 
             if (request.currentClient.IsPrivileged) {
 
-                const filters = await this._validator.search(request);            
+                const filters = await this._validator.search(request);
                 const searchResults = await this._service.getPatientByPhone(filters);
                 const count = searchResults.Items.length;
                 const message =
@@ -141,7 +141,7 @@ export class PatientController extends BaseUserController {
             } else {
                 throw new ApiError(404, 'Only privileged clients are allowed to access this API!');
             }
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -254,7 +254,7 @@ export class PatientController extends BaseUserController {
 
     private addPatientToEHRRecords = (patientUserId: uuid) => {
         EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {});
-    }
+    };
 
     private addEHRRecord = (patientUserId: uuid,
         model: PersonDomainModel) => {
@@ -273,7 +273,7 @@ export class PatientController extends BaseUserController {
                 MaritalStatus : model.MaritalStatus
             });
         }
-    }
+    };
 
     //#endregion
 

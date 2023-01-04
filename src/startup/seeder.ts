@@ -665,6 +665,6 @@ export class Seeder {
             }
         }
 
-    }
+    };
 
 }

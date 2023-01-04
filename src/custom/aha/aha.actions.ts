@@ -166,73 +166,73 @@ export class AHAActions {
                 Logger.instance().log(`Error performing post registration custom actions.`);
                 Logger.instance().log(error.message);
             }
-        }
+        };
 
-        public scheduleHsSurvey = async () => {
-            try {
-                const daysPassed = 6;
-                var careplanEnrollments = await this._careplanService.getCompletedEnrollments(daysPassed, ["Cholesterol"]);
-                for await (var careplanEnrollment of careplanEnrollments) {
-                    Logger.instance().log(`[HsCron] Enrollment details:${JSON.stringify(careplanEnrollment)}`);
-                    var patientDetails = await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
-                    if (patientDetails.HealthSystem === null) {
-                        Logger.instance().log(`[HsCron] Skip sending survey for :${patientDetails.UserId} 
+    public scheduleHsSurvey = async () => {
+        try {
+            const daysPassed = 6;
+            var careplanEnrollments = await this._careplanService.getCompletedEnrollments(daysPassed, ["Cholesterol"]);
+            for await (var careplanEnrollment of careplanEnrollments) {
+                Logger.instance().log(`[HsCron] Enrollment details:${JSON.stringify(careplanEnrollment)}`);
+                var patientDetails = await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
+                if (patientDetails.HealthSystem === null) {
+                    Logger.instance().log(`[HsCron] Skip sending survey for :${patientDetails.UserId} 
                                 as health system is ${patientDetails.HealthSystem}`);
-                        continue;
-                    }
+                    continue;
+                }
 
-                    const filters = {
-                        Task   : 'Cholesterol Health Behaviors',
-                        UserId : careplanEnrollment.PatientUserId,
-                    };
-                    var userTasks = await this._userTaskService.search(filters);
-                    var tasks = userTasks.Items;
-                    for await (var task of tasks) {
-                        var action = await this._careplanService.getActivity(task.ActionId);
-                        Logger.instance().log(`[HsCron] Task: ${JSON.stringify(task)}`);
-                        Logger.instance().log(`[HsCron] Activity details (Action): ${JSON.stringify(action)}`);
+                const filters = {
+                    Task   : 'Cholesterol Health Behaviors',
+                    UserId : careplanEnrollment.PatientUserId,
+                };
+                var userTasks = await this._userTaskService.search(filters);
+                var tasks = userTasks.Items;
+                for await (var task of tasks) {
+                    var action = await this._careplanService.getActivity(task.ActionId);
+                    Logger.instance().log(`[HsCron] Task: ${JSON.stringify(task)}`);
+                    Logger.instance().log(`[HsCron] Activity details (Action): ${JSON.stringify(action)}`);
 
-                        if (
-                            action.Frequency === 85 &&
+                    if (
+                        action.Frequency === 85 &&
                                 action.Sequence === 5
-                        ) {
-                            Logger.instance().log(`[HsCron] Skip sending survey message for patient:${patientDetails.UserId} 
+                    ) {
+                        Logger.instance().log(`[HsCron] Skip sending survey message for patient:${patientDetails.UserId} 
                                     as Health behaviour assessment in not completed: ${action.Status}`);
-                            if (
-                                task.Finished === true &&
+                        if (
+                            task.Finished === true &&
                                     action.Status === 'Completed'
-                            ) {
-                                const patient =
+                        ) {
+                            const patient =
                                     await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
-                                const phoneNumber = patient.User.Person.Phone;
-                                const person = await this._personService.getById(patient.User.PersonId);
-                                var userFirstName = 'user';
-                                if (person && person.FirstName) {
-                                    userFirstName = person.FirstName;
-                                }
-                                const message = `Dear ${userFirstName}, Tell us what you thought about the Heart & Stroke Helper app! You will receive a $10 Amazon gift card as a token of appreciation for completing the full survey. Follow the link to share your thoughts: https://tinyurl.com/HSHCholesterol`;
-                                const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
-                                if (sendStatus) {
-                                    Logger.instance().log(`Message sent successfully`);
-                                    await this.createHsPatientSurveyTask(patient);
-                                }
-     
-                            } else {
-                                Logger.instance().log(`[HsCron] Health behaviors assessment is not finished. Status:${action.Status} `);
+                            const phoneNumber = patient.User.Person.Phone;
+                            const person = await this._personService.getById(patient.User.PersonId);
+                            var userFirstName = 'user';
+                            if (person && person.FirstName) {
+                                userFirstName = person.FirstName;
                             }
+                            const message = `Dear ${userFirstName}, Tell us what you thought about the Heart & Stroke Helper app! You will receive a $10 Amazon gift card as a token of appreciation for completing the full survey. Follow the link to share your thoughts: https://tinyurl.com/HSHCholesterol`;
+                            const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
+                            if (sendStatus) {
+                                Logger.instance().log(`Message sent successfully`);
+                                await this.createHsPatientSurveyTask(patient);
+                            }
+     
+                        } else {
+                            Logger.instance().log(`[HsCron] Health behaviors assessment is not finished. Status:${action.Status} `);
                         }
                     }
                 }
-                Logger.instance().log(`[HsCron] Cron completed successfully.`);
             }
-            catch (error) {
-                Logger.instance().log(`Error occured while sending HS survey message`);
-            }
-        };
+            Logger.instance().log(`[HsCron] Cron completed successfully.`);
+        }
+        catch (error) {
+            Logger.instance().log(`Error occured while sending HS survey message`);
+        }
+    };
 
-        //#endregion
+    //#endregion
 
-        //#region Privates
+    //#region Privates
 
     private checkIfFileResourceExists = async (url) => {
         if (!url) {
@@ -319,7 +319,7 @@ export class AHAActions {
         ];
 
         return eligibleClientCodes.indexOf(clientCode) >= 0;
-    }
+    };
 
     //#endregion
 

@@ -25,7 +25,7 @@ export default class DonationRecord extends Model {
         },
         allowNull : false,
     })
-    id: string;
+        id: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)
@@ -33,7 +33,7 @@ export default class DonationRecord extends Model {
         type      : DataType.UUID,
         allowNull : false,
     })
-    PatientUserId: string;
+        PatientUserId: string;
 
     @IsUUID(4)
     @ForeignKey(() => PatientDonors)
@@ -41,52 +41,52 @@ export default class DonationRecord extends Model {
         type      : DataType.UUID,
         allowNull : false,
     })
-    NetworkId: string;
+        NetworkId: string;
 
     @Column({
         type      : DataType.INTEGER,
         allowNull : false,
     })
-    RequestedQuantity: number;
+        RequestedQuantity: number;
 
     @Column({
         type      : DataType.DATE,
         allowNull : false,
     })
-    RequestedDate?   : Date;
+        RequestedDate?   : Date;
 
     @Column({
         type      : DataType.INTEGER,
         allowNull : true,
     })
-    DonatedQuantity: number;
+        DonatedQuantity: number;
 
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    DonationDate?  : Date;
+        DonationDate?  : Date;
 
     @Column({
         type      : DataType.STRING(32),
         allowNull : true,
     })
-    DonationType: string;
+        DonationType: string;
 
     @BelongsTo(() => User)
-    User: User;
+        User: User;
 
     @BelongsTo(() => PatientDonors)
-    PatientDonors: PatientDonors;
+        PatientDonors: PatientDonors;
 
     @Column
     @CreatedAt
-    CreatedAt: Date;
+        CreatedAt: Date;
 
     @UpdatedAt
-    UpdatedAt: Date;
+        UpdatedAt: Date;
 
     @DeletedAt
-    DeletedAt: Date;
+        DeletedAt: Date;
 
 }

@@ -34,7 +34,7 @@ export default class Newsfeed extends Model {
         },
         allowNull : false,
     })
-    id: string;
+        id: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)
@@ -42,58 +42,58 @@ export default class Newsfeed extends Model {
         type      : DataType.UUID,
         allowNull : false,
     })
-    UserId: string;
+        UserId: string;
 
     @Column({
         type      : DataType.STRING(256),
         allowNull : false,
     })
-    Title: string;
+        Title: string;
 
     @Column({
         type      : DataType.STRING(1024),
         allowNull : true,
     })
-    Body: string;
+        Body: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    ImageUrl: string;
+        ImageUrl: string;
 
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    Type: string;
+        Type: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    Payload: string;
+        Payload: string;
 
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    SentOn: Date;
+        SentOn: Date;
 
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    ReadOn: Date;
+        ReadOn: Date;
 
     @Column
     @CreatedAt
-    CreatedAt: Date;
+        CreatedAt: Date;
 
     @UpdatedAt
-    UpdatedAt: Date;
+        UpdatedAt: Date;
 
     @DeletedAt
-    DeletedAt: Date;
+        DeletedAt: Date;
 
 }

@@ -67,7 +67,7 @@ export class Helper {
 
         bmi = weight / height_square;
         return { bmi, weightStr, heightStr };
-    }
+    };
 
     static getResourceOwner = (request: express.Request): string => {
         if (request.params.userId) {
@@ -114,7 +114,7 @@ export class Helper {
             default:
                 return OSType.Linux;
         }
-    }
+    };
 
     static isUrl = (str) => {
         if (!str) {
@@ -126,7 +126,7 @@ export class Helper {
         } catch (err) {
             return false;
         }
-    }
+    };
 
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');

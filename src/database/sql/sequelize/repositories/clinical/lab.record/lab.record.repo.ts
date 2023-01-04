@@ -185,7 +185,7 @@ export class LabRecordRepo implements ILabRecordRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     update = async (id: string, updateModel: LabRecordDomainModel): Promise<LabRecordDto> => {
         try {

@@ -33,19 +33,20 @@ export class PatientMapper {
         }
 
         const dto: PatientDto = {
-            id          : patient.id,
-            UserId      : patient.UserId,
-            DisplayId   : patient.DisplayId,
-            EhrId       : patient.EhrId,
-            DisplayName : null,
-            FirstName   : null,
-            LastName    : null,
-            UserName    : null,
-            Phone       : null,
-            Email       : null,
-            Gender      : null,
-            BirthDate   : null,
-            Age         : null,
+            id              : patient.id,
+            UserId          : patient.UserId,
+            DisplayId       : patient.DisplayId,
+            EhrId           : patient.EhrId,
+            DisplayName     : null,
+            FirstName       : null,
+            LastName        : null,
+            UserName        : null,
+            Phone           : null,
+            Email           : null,
+            Gender          : null,
+            BirthDate       : null,
+            Age             : null,
+            ImageResourceId : null
         };
         return dto;
     };

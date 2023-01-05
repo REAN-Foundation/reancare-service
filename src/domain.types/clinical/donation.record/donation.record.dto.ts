@@ -11,6 +11,8 @@ export interface DonationRecordDto {
     DonationDetails?   : PatientDonorsDto;
     RequestedQuantity? : number;
     RequestedDate?     : Date,
+    DonorAcceptedDate? : Date,
+    DonorRejectedDate? : Date,
     DonationDate?      : Date;
     DonatedQuantity?   : number;
     DonationType?      : string;

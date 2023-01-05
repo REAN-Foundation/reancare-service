@@ -12,6 +12,8 @@ export interface DonationRecordDomainModel {
     DonationDetails?   : PatientDonorsDomainModel;
     RequestedQuantity? : number;
     RequestedDate?     : Date,
+    DonorAcceptedDate? : Date,
+    DonorRejectedDate? : Date,
     DonationDate?      : Date;
     DonatedQuantity?   : number;
     DonationType?      : string;

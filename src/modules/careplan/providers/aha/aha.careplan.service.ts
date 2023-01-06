@@ -321,7 +321,7 @@ export class AhaCareplanService implements ICareplanService {
 
         const status = this.getActivityStatus(activity.status);
         const description = this.getActivityDescription(activity.text, activity.description);
-        const transcription = this.getActivityTranscription(activity);
+        //const transcription = this.getActivityTranscription(activity);
 
         var activityUrl = this.extractUrl(activity.url, activity);
 
@@ -333,7 +333,7 @@ export class AhaCareplanService implements ICareplanService {
             Category         : category,
             Title            : title,
             Description      : description,
-            Transcription    : transcription,
+            Transcription    : description,
             Url              : activityUrl,
             Language         : 'English',
             Status           : status,

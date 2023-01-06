@@ -254,32 +254,8 @@ export class MedicationRepo implements IMedicationRepo {
             if (model.StartDate != null) {
                 medication.StartDate = model.StartDate;
             }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
+            if (model.ImageResourceId != null) {
+                medication.ImageResourceId = model.ImageResourceId;
             }
 
             await medication.save();

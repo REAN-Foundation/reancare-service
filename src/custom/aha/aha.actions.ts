@@ -166,7 +166,7 @@ export class AHAActions {
                 Logger.instance().log(`Error performing post registration custom actions.`);
                 Logger.instance().log(error.message);
             }
-        }
+        };
 
         public scheduleHsSurvey = async () => {
             try {
@@ -323,7 +323,7 @@ export class AHAActions {
         ];
 
         return eligibleClientCodes.indexOf(clientCode) >= 0;
-    }
+    };
 
     //#endregion
 

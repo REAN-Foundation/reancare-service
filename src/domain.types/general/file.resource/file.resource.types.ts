@@ -1,3 +1,5 @@
+import { Stream } from "stream";
+
 export interface ResourceReference {
     ItemId  : string;
     ItemType: string;
@@ -10,6 +12,7 @@ export enum DownloadDisposition {
     Stream     = 'stream',
     Auto       = 'auto',
 }
+
 export interface FileResourceMetadata {
     ResourceId?      : string;
     VersionId?       : string;
@@ -24,4 +27,5 @@ export interface FileResourceMetadata {
     IsPublicResource?: boolean;
     Disposition?     : DownloadDisposition;
     Url?             : string;
+    Stream?          : Stream;
 }

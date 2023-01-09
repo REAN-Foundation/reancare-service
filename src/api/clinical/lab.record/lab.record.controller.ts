@@ -150,7 +150,7 @@ export class LabRecordController extends BaseController {
                 recordId,
                 EHRRecordTypes.LabRecord, model.PrimaryValue, model.Unit, model.TypeName, model.DisplayName);
         }
-    }
+    };
 
     //#endregion
 

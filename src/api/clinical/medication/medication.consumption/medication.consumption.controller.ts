@@ -326,7 +326,7 @@ export class MedicationConsumptionController {
                 model.DrugName,
                 model.DrugName);
         }
-    }
+    };
 
     //#endregion
 

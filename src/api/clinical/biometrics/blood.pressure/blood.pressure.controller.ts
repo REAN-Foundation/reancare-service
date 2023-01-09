@@ -14,7 +14,6 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 import { PersonService } from '../../../../services/person/person.service';
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class BloodPressureController extends BaseController {
@@ -185,7 +184,7 @@ export class BloodPressureController extends BaseController {
                 'Distolic Blood Pressure',
                 'Blood Pressure');
         }
-    }
+    };
 
     private sendBPMessage = async (patientUserId: uuid, model: BloodPressureDomainModel) => {
         
@@ -203,7 +202,7 @@ export class BloodPressureController extends BaseController {
         }
 
         return true;
-    }
+    };
 
     //#endregion
 

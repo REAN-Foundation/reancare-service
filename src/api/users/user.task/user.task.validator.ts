@@ -168,6 +168,7 @@ export class UserTaskValidator extends BaseValidator {
         if (request.query.scheduledTo) {
             const scheduledToStr : string = request.query.scheduledTo as string;
             scheduledTo = await userService.getDateInUserTimeZone(userId, scheduledToStr);
+            scheduledTo = TimeHelper.addDuration(scheduledTo, 24, DurationType.Hour);
         }
 
         var filters: UserTaskSearchFilters = {
@@ -177,7 +178,7 @@ export class UserTaskValidator extends BaseValidator {
             ActionType    : request.query.actionType as string ?? null,
             ActionId      : request.query.actionId as uuid ?? null,
             ScheduledFrom : scheduledFrom,
-            ScheduledTo   : TimeHelper.addDuration(scheduledTo, 24, DurationType.Hour),
+            ScheduledTo   : scheduledTo,
             Status        : status,
         };
 

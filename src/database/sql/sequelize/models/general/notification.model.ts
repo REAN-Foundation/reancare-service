@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     Table,
     Column,
@@ -22,7 +23,7 @@ import User from '../users/user/user.model';
     tableName       : 'notifications',
     paranoid        : true,
     freezeTableName : true,
-})
+    })
 export default class Notification extends Model {
 
     @IsUUID(4)
@@ -40,9 +41,16 @@ export default class Notification extends Model {
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     UserId: string;
+
+    @Column({
+        type        : DataType.BOOLEAN,
+        allowNull   : false,
+        defaultValue: false,
+    })
+    BroadcastToAll: boolean;
 
     @Column({
         type      : DataType.STRING(256),

@@ -578,6 +578,8 @@
             "DonationRecord.Search",
             "DonationRecord.Update",
             "DonationRecord.Delete",
+            "Rssfeed.GetFeedItemById",
+            "Rssfeed.Search",
             "Rssfeed.GetRssFeed",
             "Rssfeed.GetAtomFeed",
             "Rssfeed.GetJsonFeed"
@@ -933,6 +935,8 @@
             "DonationRecord.Search",
             "DonationRecord.Update",
             "DonationRecord.Delete",
+            "Rssfeed.GetFeedItemById",
+            "Rssfeed.Search",
             "Rssfeed.GetRssFeed",
             "Rssfeed.GetAtomFeed",
             "Rssfeed.GetJsonFeed"

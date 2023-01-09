@@ -108,16 +108,20 @@ export class UserTaskController {
             if (userTask.ActionId != null && userTask.ActionType !== null) {
                 var actionResolver = new UserActionResolver();
                 const action = await actionResolver.getAction(userTask.ActionType, userTask.ActionId);
+                Logger.instance().log(JSON.stringify(action));
                 if (action) {
                     userTask['Action'] = action;
                 }
+
             }
 
             ResponseHandler.success(request, response, 'User task retrieved successfully!', 200, {
                 UserTask : userTask,
             });
+            Logger.instance().log(JSON.stringify(userTask));
 
         } catch (error) {
+            Logger.instance().log(JSON.stringify(error));
             ResponseHandler.handleError(request, response, error);
         }
     };

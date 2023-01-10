@@ -115,11 +115,11 @@ jobs:
       #     bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}
 
       - name: Mandating choosing labels while raisng a PR
-         uses: jesusvasquez333/verify-pr-label-action@v1.4.0
-         with:
-         github-token: '${{ secrets.GITHUB_TOKEN }}'
-         valid-labels: 'patch,minor,major'
-         invalid-labels: 'wontfix, invalid'    
+        uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          valid-labels: patch,minor,major
+          invalid-labels: wontfix, invalid    
 
       - name: New Release Publish
         uses: release-drafter/release-drafter@v5

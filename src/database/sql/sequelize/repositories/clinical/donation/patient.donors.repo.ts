@@ -219,6 +219,6 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

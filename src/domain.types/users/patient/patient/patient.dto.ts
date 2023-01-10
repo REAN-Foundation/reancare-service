@@ -11,6 +11,7 @@ export interface PatientDto {
     UserId     : string;
     DisplayId  : string;
     EhrId      : string;
+    DonorAcceptance : string;
     FirstName  : string;
     LastName   : string;
     DisplayName: string;
@@ -31,6 +32,7 @@ export interface PatientDetailsDto {
     NationalHealthId?   : string;
     HealthSystem?       : string;
     AssociatedHospital? : string;
+    DonorAcceptance?    : string;
     HealthProfile?      : HealthProfileDto;
     Insurances?         : PatientInsuranceDto[];
     EmergencyContacts?  : EmergencyContactDto[];

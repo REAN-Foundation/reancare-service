@@ -19,6 +19,7 @@ export class PatientMapper {
             EhrId              : patient.EhrId,
             HealthSystem       : patient.HealthSystem,
             AssociatedHospital : patient.AssociatedHospital,
+            DonorAcceptance    : patient.DonorAcceptance,
             HealthProfile      : null, //PatientMedicalProfileDto;
             Insurances         : [], //PatientInsuranceDto[];
             EmergencyContacts  : [], // PatientEmergencyContactDto[];
@@ -33,19 +34,20 @@ export class PatientMapper {
         }
 
         const dto: PatientDto = {
-            id          : patient.id,
-            UserId      : patient.UserId,
-            DisplayId   : patient.DisplayId,
-            EhrId       : patient.EhrId,
-            DisplayName : null,
-            FirstName   : null,
-            LastName    : null,
-            UserName    : null,
-            Phone       : null,
-            Email       : null,
-            Gender      : null,
-            BirthDate   : null,
-            Age         : null,
+            id              : patient.id,
+            UserId          : patient.UserId,
+            DisplayId       : patient.DisplayId,
+            EhrId           : patient.EhrId,
+            DonorAcceptance : patient.DonorAcceptance,
+            DisplayName     : null,
+            FirstName       : null,
+            LastName        : null,
+            UserName        : null,
+            Phone           : null,
+            Email           : null,
+            Gender          : null,
+            BirthDate       : null,
+            Age             : null,
         };
         return dto;
     };

@@ -6,6 +6,7 @@ export enum LabRecordType {
     TriglycerideLevel = 'Triglyceride Level',
     CholesterolRatio  = 'Cholesterol Ratio',
     A1CLevel          = 'A1C Level',
+    Lipoprotein       = 'Lipoprotein',
 
 }
 
@@ -16,4 +17,5 @@ export const LabRecordTypeList: LabRecordType [] = [
     LabRecordType.TriglycerideLevel,
     LabRecordType.CholesterolRatio,
     LabRecordType.A1CLevel,
+    LabRecordType.Lipoprotein,
 ];

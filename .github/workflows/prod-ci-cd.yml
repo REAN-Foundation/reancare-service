@@ -13,7 +13,7 @@ on:
   push:
     branches: [main1]
 
-  pull_request:
+  pull_request_target:
    types: [opened, labeled, unlabeled, synchronize]  
 
 jobs:
@@ -120,6 +120,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           valid-labels: patch,minor,major
           invalid-labels: wontfix, invalid    
+          pull-request-number: '${{ github.event.pull_request.number }}'
 
       - name: New Release Publish
         uses: release-drafter/release-drafter@v5

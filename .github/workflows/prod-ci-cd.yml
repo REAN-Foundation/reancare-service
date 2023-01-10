@@ -13,6 +13,9 @@ on:
   push:
     branches: [main1]
 
+  pull_request:
+   types: [opened, labeled, unlabeled, synchronize]  
+
 jobs:
   Deploy-ECS:
     # environment: prod
@@ -110,6 +113,13 @@ jobs:
       #     method: 'POST'
       #     data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200}'
       #     bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}
+
+      - name: Mandating choosing labels while raisng a PR
+         uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+         with:
+         github-token: '${{ secrets.GITHUB_TOKEN }}'
+         valid-labels: 'patch,minor,major'
+         invalid-labels: 'wontfix, invalid'    
 
       - name: New Release Publish
         uses: release-drafter/release-drafter@v5

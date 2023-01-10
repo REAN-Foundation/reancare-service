@@ -8,6 +8,8 @@ import { LabRecordTypeDomainModel } from "../../../domain.types/clinical/lab.rec
 import { LabRecordTypeDto } from "../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
 import { LabRecordSearchFilters } from "../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
 import { LabRecordSearchResults } from "../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
+import { LabRecordTypeSearchFilters, LabRecordTypeSearchResults }
+    from "../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +32,10 @@ export class LabRecordService {
 
     createType = async (domainModel: LabRecordTypeDomainModel): Promise<LabRecordTypeDto> => {
         return await this._labRecordRepo.createType(domainModel);
+    };
+
+    searchType = async (filters: LabRecordTypeSearchFilters): Promise<LabRecordTypeSearchResults> => {
+        return await this._labRecordRepo.searchType(filters);
     };
 
     getTypeByDisplayName = async (displayName: string): Promise<LabRecordTypeDto> => {

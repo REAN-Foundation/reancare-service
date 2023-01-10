@@ -15,6 +15,8 @@ import { LabRecordTypeMapper } from '../../../mappers/clinical/lab.record/lab.re
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import { LabRecordTypeSearchFilters, LabRecordTypeSearchResults }
+    from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -120,7 +122,7 @@ export class LabRecordRepo implements ILabRecordRepo {
                 search.where['TypeName'] = { [Op.like]: '%' + filters.TypeName + '%' };
             }
             if (filters.DisplayName != null) {
-                search.where['DisplayName'] = { [Op.like]: '%' + filters.DisplayName + '%' };
+                search.where['DisplayName'] = filters.DisplayName;
             }
             if (filters.TypeId != null) {
                 search.where['TypeId'] = filters.TypeId;
@@ -185,7 +187,63 @@ export class LabRecordRepo implements ILabRecordRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
+
+    searchType = async (filters: LabRecordTypeSearchFilters): Promise<LabRecordTypeSearchResults> => {
+        try {
+            const search = { where: {} };
+
+            if (filters.DisplayName != null) {
+                search.where['DisplayName'] = filters.DisplayName;
+            }
+    
+            let orderByColum = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await LabRecordType.findAndCountAll(search);
+            const dtos: LabRecordTypeDto[] = [];
+            for (const labRecord of foundResults.rows) {
+                const dto = await LabRecordMapper.toTypeDto(labRecord);
+                dtos.push(dto);
+            }
+
+            const searchResults: LabRecordTypeSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     update = async (id: string, updateModel: LabRecordDomainModel): Promise<LabRecordDto> => {
         try {

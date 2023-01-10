@@ -11,14 +11,15 @@ export class MeditationMapper {
             return null;
         }
         const dto: MeditationDto = {
-            id            : meditation.id,
-            EhrId         : meditation.EhrId,
-            PatientUserId : meditation.PatientUserId,
-            Meditation    : meditation.Meditation,
-            Description   : meditation.Description,
-            Category      : meditation.Category,
-            StartTime     : meditation.StartTime,
-            EndTime       : meditation.EndTime
+            id             : meditation.id,
+            EhrId          : meditation.EhrId,
+            PatientUserId  : meditation.PatientUserId,
+            Meditation     : meditation.Meditation,
+            Description    : meditation.Description,
+            Category       : meditation.Category,
+            DurationInMins : meditation.DurationInMins,
+            StartTime      : meditation.StartTime,
+            EndTime        : meditation.EndTime
 
         };
         return dto;

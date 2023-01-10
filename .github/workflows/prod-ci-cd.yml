@@ -32,13 +32,13 @@ jobs:
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: ${{ secrets.AWS_REGION }}
 
-      # - name: Declare some variables
-      #   id: vars
-      #   shell: bash
-      #   run: |
-      #     echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")"
-      #     echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      #     echo "::set-output name=repo_name::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')"
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          echo "::set-output name=repo_name::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')"
 
       # - name: Another step
       #   run: |
@@ -118,8 +118,8 @@ jobs:
         uses: jesusvasquez333/verify-pr-label-action@v1.4.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          valid-labels: patch,minor,major
-          invalid-labels: wontfix, invalid    
+          valid-labels: 'patch,minor,major'
+          invalid-labels: 'wontfix, invalid'    
           pull-request-number: '${{ github.event.pull_request.number }}'
 
       - name: New Release Publish

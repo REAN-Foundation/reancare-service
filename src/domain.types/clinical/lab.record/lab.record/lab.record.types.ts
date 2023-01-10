@@ -10,6 +10,8 @@ export enum LabRecordType {
 
 }
 
+export const LabRecordTypes = Object.keys(LabRecordType);
+
 export const LabRecordTypeList: LabRecordType [] = [
     LabRecordType.TotalCholesterol,
     LabRecordType.HDL,

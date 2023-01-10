@@ -53,6 +53,15 @@ export const addUserTasksStats = (document, model, y) => {
         y = addLabeledText(document, 'Unfinished Tasks', value, y);
     }
 
+    y = y + 50;
+
+    const text = `User Engagement Ratio = (Completed Tasks/(Completed Tasks + Unfinished Tasks)) * 100`;
+    document
+        .font('Helvetica')
+        .fontSize(10)
+        .text(text, 100, y, { align: "left" })
+        .moveDown();
+
     return y;
 };
 

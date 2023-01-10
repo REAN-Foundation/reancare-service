@@ -322,7 +322,7 @@ const getNutritionServingsCategoryColors = () => {
         {
             Key      : 'Grains',
             Color    : ChartColors.Tan,
-            Question : 'How many servings of whole grains do you consume per day?',
+            Question : 'How many servings of whole grains did you eat today?',
         },
         {
             Key      : 'Seafood',

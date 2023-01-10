@@ -92,7 +92,7 @@ export class PatientRepo implements IPatientRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     search = async (filters: PatientSearchFilters): Promise<PatientSearchResults> => {
         try {

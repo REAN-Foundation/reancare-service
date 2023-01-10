@@ -3,6 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { IHealthProfileRepo } from "../../../database/repository.interfaces/users/patient/health.profile.repo.interface";
 import { HealthProfileDomainModel } from '../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../domain.types/users/patient/health.profile/health.profile.dto';
+import { IPatientDonorsRepo } from "../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +12,7 @@ export class HealthProfileService {
 
     constructor(
         @inject('IHealthProfileRepo') private _patientHealthProfileRepo: IHealthProfileRepo,
+        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
     ) {}
 
     create = async (healthProfileDomainModel: HealthProfileDomainModel): Promise<HealthProfileDto> => {
@@ -23,7 +25,15 @@ export class HealthProfileService {
 
     updateByPatientUserId = async (patientUserId: string, healthProfileDomainModel: HealthProfileDomainModel)
     : Promise<HealthProfileDto> => {
-        return await this._patientHealthProfileRepo.updateByPatientUserId(patientUserId, healthProfileDomainModel);
+        const patientHealthProfile =
+            await this._patientHealthProfileRepo.updateByPatientUserId(patientUserId, healthProfileDomainModel);
+        const patientDonorsBridges = await this._patientDonorsRepo.search( { "PatientUserId": patientUserId });
+        if (healthProfileDomainModel.BloodTransfusionDate !== null) {
+            for (const patientBridge of patientDonorsBridges.Items) {
+                await this._patientDonorsRepo.update( patientBridge.id, { "NextDonationDate": healthProfileDomainModel.BloodTransfusionDate });
+            }
+        }
+        return patientHealthProfile;
     };
 
     deleteByPatientUserId = async (patientUserId: string): Promise<boolean> => {

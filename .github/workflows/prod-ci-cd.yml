@@ -121,6 +121,8 @@ jobs:
           valid-labels: 'patch,minor,major'
           invalid-labels: 'wontfix, invalid'    
           pull-request-number: '${{ github.event.pull_request.number }}'
+        env:
+          PR_NUMBER: ${{ github.event.number }}  
 
       - name: New Release Publish
         uses: release-drafter/release-drafter@v5

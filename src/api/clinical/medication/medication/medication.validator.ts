@@ -4,7 +4,7 @@ import { Helper } from '../../../../common/helper';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { MedicationSearchFilters } from '../../../../domain.types/clinical/medication/medication/medication.search.types';
 import {
-    MedicationAdministrationRoutes, MedicationDurationUnits
+    MedicationAdministrationRoutes, MedicationDurationUnits, MedicationFrequencyUnits
 } from "../../../../domain.types/clinical/medication/medication/medication.types";
 import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
@@ -28,8 +28,8 @@ export class MedicationValidator {
             Dose                      : parseFloat(request.body.Dose),
             DosageUnit                : request.body.DosageUnit,
             TimeSchedules             : request.body.TimeSchedules ? request.body.TimeSchedules : [],
-            Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : 0,
-            FrequencyUnit             : request.body.FrequencyUnit,
+            Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : 1,
+            FrequencyUnit             : request.body.FrequencyUnit ?? MedicationFrequencyUnits.Daily,
             Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
             Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
             DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Days,
@@ -61,10 +61,10 @@ export class MedicationValidator {
             Dose                      : request.body.Dose ?? null,
             DosageUnit                : request.body.DosageUnit ?? null,
             TimeSchedules             : request.body.TimeSchedules ?? null,
-            Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : 0,
+            Frequency                 : parseInt(request.body.Frequency) ?? null,
             FrequencyUnit             : request.body.FrequencyUnit ?? null,
             Route                     : request.body.Route ?? null,
-            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
+            Duration                  : parseInt(request.body.Duration) ?? null,
             DurationUnit              : request.body.DurationUnit ?? null,
             StartDate                 : request.body.StartDate ?? null,
             EndDate                   : request.body.EndDate ?? null,

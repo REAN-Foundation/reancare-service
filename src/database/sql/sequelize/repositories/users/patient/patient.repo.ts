@@ -69,6 +69,9 @@ export class PatientRepo implements IPatientRepo {
             if (model.AssociatedHospital != null) {
                 patient.AssociatedHospital = model.AssociatedHospital;
             }
+            if (model.DonorAcceptance != null) {
+                patient.DonorAcceptance = model.DonorAcceptance;
+            }
             await patient.save();
             return await PatientMapper.toDetailsDto(patient);
         } catch (error) {
@@ -89,7 +92,7 @@ export class PatientRepo implements IPatientRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     search = async (filters: PatientSearchFilters): Promise<PatientSearchResults> => {
         try {
@@ -156,6 +159,10 @@ export class PatientRepo implements IPatientRepo {
                 search.where['CreatedAt'] = {
                     [Op.gte] : filters.CreatedDateFrom,
                 };
+            }
+
+            if (filters.DonorAcceptance != null) {
+                search.where['DonorAcceptance'] = filters.DonorAcceptance;
             }
 
             search.include.push(includesObj);

@@ -179,7 +179,7 @@ export class PatientService {
         dto.Age = user.Person.Age;
         dto.FirstName = user.Person.FirstName;
         dto.LastName = user.Person.LastName;
-        dto.ImageResourceId = user.Person.ImageResourceId ;
+        dto.ImageResourceId = user.Person.ImageResourceId;
         return dto;
     };
 

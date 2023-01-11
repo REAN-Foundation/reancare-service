@@ -23,8 +23,7 @@ export class ChatMapper {
                 LastName        : conversation.OtherUser.Person?.LastName,
                 Prefix          : conversation.OtherUser.Person?.Prefix,
                 DisplayName     : `${conversation.OtherUser.Person?.FirstName} ${conversation.OtherUser.Person?.LastName}`,
-                ImageResourceId : conversation.OtherUser.Person?.ImageResourceId
-
+                ImageResourceId : conversation.OtherUser.Person?.ImageResourceId,
             } : null,
             InitiatingUser : conversation.InitiatingUser ? {
                 id              : conversation.InitiatingUser.id,
@@ -32,7 +31,7 @@ export class ChatMapper {
                 LastName        : conversation.InitiatingUser.Person?.LastName,
                 Prefix          : conversation.InitiatingUser.Person?.Prefix,
                 DisplayName     : `${conversation.InitiatingUser.Person?.FirstName} ${conversation.InitiatingUser.Person?.LastName}`,
-                ImageResourceId : conversation.InitiatingUser.Person?.ImageResourceId
+                ImageResourceId : conversation.InitiatingUser.Person?.ImageResourceId,
             } : null,
             Topic                : conversation.Topic,
             Users                : users ?? null,

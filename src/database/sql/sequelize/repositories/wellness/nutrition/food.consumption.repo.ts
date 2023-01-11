@@ -517,7 +517,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 Stats    : fruitServingsStatss,
             },
             WholeGrainServings : {
-                Question : `How many servings of whole grains do you consume per day?`,
+                Question : `How many servings of whole grains did you eat today?`,
                 Stats    : grainServingsStats,
             },
             SugaryDrinksServings : {

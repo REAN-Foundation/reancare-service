@@ -7,6 +7,7 @@ import { PatientInsuranceDto } from "../insurance/insurance.dto";
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface PatientDto {
+
     id              : string;
     UserId          : string;
     DisplayId       : string;
@@ -20,8 +21,8 @@ export interface PatientDto {
     Gender          : Gender;
     BirthDate       : Date;
     Age             : string;
-    ImageResourceId :string;
-}
+    ImageResourceId : string;
+
 
 export interface PatientDetailsDto {
     id                  : string;
@@ -32,6 +33,7 @@ export interface PatientDetailsDto {
     NationalHealthId?   : string;
     HealthSystem?       : string;
     AssociatedHospital? : string;
+    DonorAcceptance?    : string;
     HealthProfile?      : HealthProfileDto;
     Insurances?         : PatientInsuranceDto[];
     EmergencyContacts?  : EmergencyContactDto[];

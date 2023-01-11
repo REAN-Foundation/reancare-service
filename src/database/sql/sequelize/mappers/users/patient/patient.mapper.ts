@@ -19,6 +19,7 @@ export class PatientMapper {
             EhrId              : patient.EhrId,
             HealthSystem       : patient.HealthSystem,
             AssociatedHospital : patient.AssociatedHospital,
+            DonorAcceptance    : patient.DonorAcceptance,
             HealthProfile      : null, //PatientMedicalProfileDto;
             Insurances         : [], //PatientInsuranceDto[];
             EmergencyContacts  : [], // PatientEmergencyContactDto[];
@@ -37,6 +38,7 @@ export class PatientMapper {
             UserId          : patient.UserId,
             DisplayId       : patient.DisplayId,
             EhrId           : patient.EhrId,
+            DonorAcceptance : patient.DonorAcceptance,
             DisplayName     : null,
             FirstName       : null,
             LastName        : null,
@@ -47,6 +49,7 @@ export class PatientMapper {
             BirthDate       : null,
             Age             : null,
             ImageResourceId : null
+
         };
         return dto;
     };

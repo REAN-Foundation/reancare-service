@@ -28,11 +28,11 @@ export class MedicationValidator {
             Dose                      : parseFloat(request.body.Dose),
             DosageUnit                : request.body.DosageUnit,
             TimeSchedules             : request.body.TimeSchedules ? request.body.TimeSchedules : [],
-            Frequency                 : parseInt(request.body.Frequency),
+            Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : 0,
             FrequencyUnit             : request.body.FrequencyUnit,
             Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
             Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
-            DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Weeks,
+            DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Days,
             StartDate                 : startDate,
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? false,
@@ -61,10 +61,10 @@ export class MedicationValidator {
             Dose                      : request.body.Dose ?? null,
             DosageUnit                : request.body.DosageUnit ?? null,
             TimeSchedules             : request.body.TimeSchedules ?? null,
-            Frequency                 : request.body.Frequency ?? null,
+            Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : 0,
             FrequencyUnit             : request.body.FrequencyUnit ?? null,
             Route                     : request.body.Route ?? null,
-            Duration                  : request.body.Duration ?? null,
+            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
             DurationUnit              : request.body.DurationUnit ?? null,
             StartDate                 : request.body.StartDate ?? null,
             EndDate                   : request.body.EndDate ?? null,
@@ -145,7 +145,7 @@ export class MedicationValidator {
             .isInt()
             .run(request);
 
-        await body('FrequencyUnit').exists()
+        await body('FrequencyUnit').optional()
             .trim()
             .run(request);
 

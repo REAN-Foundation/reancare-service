@@ -65,6 +65,12 @@ export class DonationRecordRepo implements IDonationRecordRepo {
             if (model.RequestedDate != null) {
                 donationRecord.RequestedDate = model.RequestedDate;
             }
+            if (model.DonorAcceptedDate != null) {
+                donationRecord.DonorAcceptedDate = model.DonorAcceptedDate;
+            }
+            if (model.DonorRejectedDate != null) {
+                donationRecord.DonorRejectedDate = model.DonorRejectedDate;
+            }
             if (model.DonationDate != null) {
                 donationRecord.DonationDate = model.DonationDate;
             }
@@ -227,6 +233,6 @@ export class DonationRecordRepo implements IDonationRecordRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

@@ -59,11 +59,11 @@ export const addBloodPressureStats = (model: any, document: PDFKit.PDFDocument, 
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
 
-        let value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureDiastolic.toString();
-        y = addLabeledText(document, 'Recent Diastolic BP (mmHg)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
+        let value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
         y = addLabeledText(document, 'Recent Systolic BP (mmHg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureDiastolic.toString();
+        y = addLabeledText(document, 'Recent Diastolic BP (mmHg)', value, y);
 
         value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
@@ -101,7 +101,7 @@ export const addBloodGlucoseStats = (model: any, document: PDFKit.PDFDocument, y
 
 export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
-    const sectionTitle = 'Lipids';
+    const sectionTitle = 'Lab Values';
     const icon = Helper.getIconsPath('blood-lipids.png');
 
     const lipidColors = getLipidColors();

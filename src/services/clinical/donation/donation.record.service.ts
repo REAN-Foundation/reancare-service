@@ -5,6 +5,8 @@ import { DonationRecordDto } from '../../../domain.types/clinical/donation.recor
 import { DonationRecordSearchFilters } from '../../../domain.types/clinical/donation.record/donation.record.search.types';
 import { DonationRecordSearchResults } from '../../../domain.types/clinical/donation.record/donation.record.search.types';
 import { IPatientDonorsRepo } from '../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface';
+import { IPatientRepo } from '../../../database/repository.interfaces/users/patient/patient.repo.interface';
+import { DonorAcceptance } from '../../../domain.types/miscellaneous/clinical.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +15,8 @@ export class DonationRecordService {
 
     constructor(
         @inject('IDonationRecordRepo') private _donationRecordRepo: IDonationRecordRepo,
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo
+        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 
     //#region Publics
@@ -21,6 +24,7 @@ export class DonationRecordService {
     public create = async (donationRecordDomainModel: DonationRecordDomainModel): Promise<DonationRecordDto> => {
 
         var dto = await this._donationRecordRepo.create(donationRecordDomainModel);
+        await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Send });
         dto = await this.updateDetailsDto(dto);
 
         return dto;
@@ -50,6 +54,9 @@ export class DonationRecordService {
         updateModel: DonationRecordDomainModel
     ): Promise<DonationRecordDto> => {
         var dto = await this._donationRecordRepo.update(id, updateModel);
+        if (updateModel.DonorAcceptedDate !== null) {
+            await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Accepted });
+        }
         dto = await this.updateDetailsDto(dto);
         return dto;
     };

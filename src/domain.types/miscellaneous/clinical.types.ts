@@ -92,3 +92,15 @@ export const BridgeStatusList: BridgeStatus[] = [
     BridgeStatus.Inactive,
     BridgeStatus.NotResponding
 ];
+
+export enum DonorAcceptance {
+    Send     = 'Send',
+    NotSend  = 'NotSend',
+    Accepted = 'Accepted'
+}
+
+export const DonorAcceptanceList: DonorAcceptance[] = [
+    DonorAcceptance.Send,
+    DonorAcceptance.NotSend,
+    DonorAcceptance.Accepted
+];

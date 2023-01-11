@@ -56,6 +56,18 @@ export default class DonationRecord extends Model {
     RequestedDate?   : Date;
 
     @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    DonorAcceptedDate?  : Date;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    DonorRejectedDate?  : Date;
+
+    @Column({
         type      : DataType.INTEGER,
         allowNull : true,
     })

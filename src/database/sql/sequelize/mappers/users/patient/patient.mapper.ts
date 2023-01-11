@@ -48,6 +48,7 @@ export class PatientMapper {
             Gender          : null,
             BirthDate       : null,
             Age             : null,
+            ImageResourceId : patient.User.Person.ImageResourceId,
         };
         return dto;
     };

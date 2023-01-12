@@ -117,7 +117,7 @@ jobs:
       - name: Mandating choosing labels while raisng a PR
         uses: jesusvasquez333/verify-pr-label-action@v1.4.0
         with:
-          github-token: ${{ secrets.PAT_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
           valid-labels: 'patch,minor,major'
           invalid-labels: 'wontfix, invalid'    
           pull-request-number: '${{ github.event.pull_request.number }}'

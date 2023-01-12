@@ -995,7 +995,7 @@ export class AhaCareplanService implements ICareplanService {
         const userTask = await this._userTaskService.create(userTaskBody);
 
         return userTask.ActionId;
-    }
+    };
 
     private extractNewsItems = async (url: string) => {
         try {
@@ -1018,7 +1018,7 @@ export class AhaCareplanService implements ICareplanService {
         catch (error) {
             throw new ApiError(500, 'Unable to extract news items from the RSS feed!');
         }
-    }
+    };
 
     scheduleDailyHighRiskCareplan(): Promise<void> {
         throw new Error("Method not implemented.");

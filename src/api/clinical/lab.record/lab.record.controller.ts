@@ -42,7 +42,7 @@ export class LabRecordController extends BaseController {
             if (labRecord == null) {
                 throw new ApiError(400, 'Cannot create lab record!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, labRecord.id, model);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record created successfully!`, 201, {
                 LabRecord : labRecord,
             });
@@ -106,7 +106,7 @@ export class LabRecordController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update lab record!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, model.id, model);
             ResponseHandler.success(request, response, `${updated.DisplayName} record updated successfully!`, 200, {
                 LabRecord : updated,
             });
@@ -143,14 +143,14 @@ export class LabRecordController extends BaseController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, model: LabRecordDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: LabRecordDomainModel) => {
         if (model) {
             EHRAnalyticsHandler.addIntegerRecord(
                 patientUserId,
-                model.id,
+                recordId,
                 EHRRecordTypes.LabRecord, model.PrimaryValue, model.Unit, model.TypeName, model.DisplayName);
         }
-    }
+    };
 
     //#endregion
 

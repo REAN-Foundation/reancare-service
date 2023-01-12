@@ -13,7 +13,7 @@ export interface IChatRepo {
 
     getConversationMessages(conversationId: uuid): Promise<ChatMessageDto[]>;
 
-    searchUserConversations(filters: ConversationSearchFilters): Promise<ConversationSearchResults>;
+    searchUserConversations(userId: uuid, filters: ConversationSearchFilters): Promise<ConversationSearchResults>;
 
     getConversationById(conversationId: uuid): Promise<ConversationDto>;
 

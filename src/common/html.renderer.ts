@@ -29,6 +29,8 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
             const osType = Helper.getOSType();
             if (osType === OSType.Windows) {
                 delete puppeteerArgs.executablePath;
+            } else if (osType === OSType.MacOS) {
+                puppeteerArgs.executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
             }
 
             nodeHtmlToImage({

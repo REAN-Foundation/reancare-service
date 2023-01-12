@@ -9,6 +9,7 @@ export interface PatientSearchFilters extends BaseSearchFilters{
     Email?         : string;
     Name?          : string;
     Gender?        : Gender;
+    DonorAcceptance?  : string;
     BirthdateFrom? : Date;
     BirthdateTo?   : Date;
 }

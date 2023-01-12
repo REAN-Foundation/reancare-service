@@ -7,6 +7,7 @@ import { NotificationDomainModel } from '../../../../../domain.types/general/not
 import { NotificationDto } from '../../../../../domain.types/general/notification/notification.dto';
 import { NotificationMapper } from '../../mappers/general/notification.mapper';
 import NotificationModel from '../../models/general/notification.model';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -17,14 +18,15 @@ export class NotificationRepo implements INotificationRepo {
 
         try {
             const entity = {
-                UserId   : createModel.UserId,
-                Title    : createModel.Title,
-                Body     : createModel.Body,
-                Payload  : createModel.Payload ,
-                SentOn   : createModel.SentOn,
-                ReadOn   : createModel.ReadOn ,
-                ImageUrl : createModel.ImageUrl,
-                Type     : createModel.Type,
+                UserId         : createModel.UserId,
+                BroadcastToAll : createModel.BroadcastToAll,
+                Title          : createModel.Title,
+                Body           : createModel.Body,
+                Payload        : createModel.Payload ,
+                SentOn         : createModel.SentOn,
+                ReadOn         : createModel.ReadOn ,
+                ImageUrl       : createModel.ImageUrl,
+                Type           : createModel.Type,
             };
 
             const notification = await NotificationModel.create(entity);
@@ -50,7 +52,7 @@ export class NotificationRepo implements INotificationRepo {
         try {
             const notification = await NotificationModel.findByPk(id);
 
-            if (updateModel.ReadOn != null) {
+            if (updateModel.ReadOn != null && notification.BroadcastToAll !== true) {
                 notification.ReadOn = updateModel.ReadOn;
             }
 
@@ -67,7 +69,26 @@ export class NotificationRepo implements INotificationRepo {
     search = async (filters: NotificationSearchFilters): Promise<NotificationSearchResults> => {
         try {
 
-            const search = { where: {} };
+            let x = undefined;
+            if (filters.UserId != null) {
+                x = {
+                    [Op.or] : [
+                        {
+                            UserId : filters.UserId,
+                        },
+                        {
+                            BroadcastToAll : true
+                        }
+                    ]
+                };
+            }
+            else {
+                x = {
+                    BroadcastToAll : true
+                };
+            }
+
+            const search = { where: { ...x } };
 
             if (filters.Title != null) {
                 search.where['Title'] = filters.Title;
@@ -79,7 +100,7 @@ export class NotificationRepo implements INotificationRepo {
             if (filters.ReadOn !== null) {
                 search.where['ReadOn'] = filters.ReadOn;
             }
-          
+
             if (filters.Type !== null) {
                 search.where['Type'] = filters.Type;
             }
@@ -153,14 +174,14 @@ export class NotificationRepo implements INotificationRepo {
             if (updateModel.ReadOn != null) {
                 notification.ReadOn = updateModel.ReadOn;
             }
-    
+
             if (updateModel.ImageUrl != null) {
                 notification.ImageUrl = updateModel.ImageUrl;
             }
             if (updateModel.Type != null) {
                 notification.Type = updateModel.Type;
             }
-    
+
             await notification.save();
 
             return await NotificationMapper.toDto(notification);

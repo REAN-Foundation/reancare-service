@@ -17,6 +17,8 @@ export class DonationRecordMapper {
             NetworkId         : donationRecord.NetworkId,
             RequestedQuantity : donationRecord.RequestedQuantity,
             RequestedDate     : donationRecord.RequestedDate,
+            DonorAcceptedDate : donationRecord.DonorAcceptedDate,
+            DonorRejectedDate : donationRecord.DonorRejectedDate,
             DonatedQuantity   : donationRecord.DonatedQuantity,
             DonationDate      : donationRecord.DonationDate,
             DonationType      : donationRecord.DonationType

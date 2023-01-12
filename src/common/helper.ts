@@ -92,7 +92,8 @@ export class Helper {
             }
             const filePath = path.join(fileFolder, filename);
             fs.writeFileSync(filePath, text);
-        }
+            return filePath;
+    }
         catch (error) {
             Logger.instance().log(error.message);
         }

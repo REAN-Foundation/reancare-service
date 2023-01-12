@@ -23,7 +23,7 @@ export class MessagingService {
     };
 
     sendWhatsappWithReanBot = async (toPhone: string, message: string, provider:string,
-        Type:string): Promise<boolean> => {
+        Type:string, PlanCode:string): Promise<boolean> => {
 
         const reanBotBaseUrl = process.env.REANBOT_BACKEND_BASE_URL;
         const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
@@ -35,9 +35,12 @@ export class MessagingService {
             toPhone = code.concat(num);
         }
         let payload = null;
-        if (Type === 'interactive-buttons') {
+        if (Type === 'interactive-buttons' && PlanCode === 'Patient-Reminders') {
             payload = ["Yes", "Raise_Request_Yes", "No", "Raise_Request_No"];
-
+        } else if (Type === 'interactive-buttons' && PlanCode === 'Donor-Reminders') {
+            payload = ["Yes", "Generate_Certificate", "No", "Notify_Volunteer"];
+        } else if (Type === 'interactive-buttons' && PlanCode === 'Volunteer-Reminders') {
+            payload = ["Send a Reminder", "Donation_Request_Yes", "Send to OneTimeDonor", "Send_OneTimeDonor"];
         }
         const client = provider === "REAN_BW" ? "BLOOD_WARRIORS" : "MATERNAL_BOT";
         const channel = provider === "REAN_BW" ? "whatsappMeta" : "telegram";

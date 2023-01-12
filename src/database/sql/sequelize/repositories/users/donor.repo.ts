@@ -234,6 +234,6 @@ export class DonorRepo implements IDonorRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

@@ -17,6 +17,10 @@ import { PatientNetworkService } from "./patient.management/patient.network.serv
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { HealthProfileService } from "../../services/users/patient/health.profile.service";
 import { Loader } from "../../startup/loader";
+import { IDonorRepo } from "../../database/repository.interfaces/users/donor.repo.interface";
+import { DonorNetworkService } from "./donor.management/donor.network.service";
+import { IPatientDonorsRepo } from "../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
+import { VolunteerService } from "../../services/users/volunteer.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,19 +29,31 @@ export class CommunityNetworkService {
 
     _patientNetworkService: PatientNetworkService = new PatientNetworkService();
 
+    _donorNetworkService: DonorNetworkService = new DonorNetworkService();
+
     _patientHealthProfileService: HealthProfileService = null;
+
+    _volunteerService: VolunteerService = null;
 
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IDonorRepo') private _donorRepo: IDonorRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
-    ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService); }
+        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+    ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
+        this._volunteerService = Loader.container.resolve(VolunteerService); }
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
-        var patient = await this.getPatient(enrollmentDetails.PatientUserId);
+        let patient = null;
+        if (enrollmentDetails.PlanCode === 'Donor-Reminders') {
+            patient = await this.getDonor(enrollmentDetails.PatientUserId);
+        } else {
+            patient = await this.getPatient(enrollmentDetails.PatientUserId);
+        }
         if (!patient) {
             throw new Error('Patient does not exist!');
         }
@@ -64,7 +80,6 @@ export class CommunityNetworkService {
             }
 
             //Since not registered with provider, register
-
             participant = await this._careplanRepo.addPatientWithProvider(
                 enrollmentDetails.PatientUserId, provider, participantId);
 
@@ -73,8 +88,11 @@ export class CommunityNetworkService {
             }
         }
 
-        const healthProfile = await this._patientHealthProfileService.getByPatientUserId(
-            enrollmentDetails.PatientUserId);
+        let patientHealthProfile = null;
+        if (enrollmentDetails.PlanCode === 'Patient-Reminders') {
+            patientHealthProfile = await this._patientHealthProfileService.getByPatientUserId(
+                enrollmentDetails.PatientUserId);
+        }
 
         enrollmentDetails.ParticipantId = participant.ParticipantId;
         enrollmentDetails.Gender = patient.User.Person.Gender;
@@ -82,10 +100,16 @@ export class CommunityNetworkService {
         
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
 
-        var activities = await this._patientNetworkService.fetchActivities(
-            enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
-            enrollmentDetails.StartDate, healthProfile.BloodTransfusionDate, enrollmentDetails.EndDate);
-
+        if (enrollmentDetails.PlanCode === 'Patient-Reminders') {
+            var activities = await this._patientNetworkService.fetchActivities(
+                enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
+                enrollmentDetails.StartDate, patientHealthProfile.BloodTransfusionDate, enrollmentDetails.EndDate);
+        } else {
+            var activities = await this._donorNetworkService.fetchActivities(
+                enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
+                enrollmentDetails.StartDate, enrollmentDetails.EndDate);
+        }
+        
         Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
 
         const activityModels = activities.map(x => {
@@ -194,6 +218,36 @@ export class CommunityNetworkService {
         return await this._careplanRepo.getActivity(activityId);
     };
 
+    public reminderOnNoActionToDonationRequest = async (): Promise<void> => {
+
+        try {
+            const patients = await this._patientRepo.search({ "DonorAcceptance": "Send" });
+
+            if (patients.Items.length !== 0) {
+                for (const patient of patients.Items) {
+                    const bloodBridge = await this._patientDonorsRepo.search({ "PatientUserId": patient.UserId });
+                    const volunteer = await this._volunteerService.getByUserId( bloodBridge.Items[0].VolunteerUserId );
+                    const phoneNumber = volunteer.User.Person.Phone;
+                    const message = `     Update     \nNo Donor has accepted the request.\nPlease choose one of the following actions.`;
+                    let response = null;
+                    response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
+                        "REAN_BW", "interactive-buttons", "Volunteer-Reminders");
+
+                    if (response === true) {
+                        await this._patientRepo.updateByUserId( patient.UserId ,{ "DonorAcceptance": "NotSend" });
+                        Logger.instance().log(`Successfully whatsapp message send to volunteer ${phoneNumber}`);
+                    }
+                }
+                
+            } else {
+                Logger.instance().log(`Donation request not found or Donor has responded to request.`);
+            }
+        } catch (error) {
+            Logger.instance().log(`No action to donation request error ${error.message}`);
+        }
+
+    };
+
     //#region Privates
 
     private async getPatient(patientUserId: uuid) {
@@ -206,6 +260,18 @@ export class CommunityNetworkService {
         }
         patientDto.User = user;
         return patientDto;
+    }
+
+    private async getDonor(donorUserId: uuid) {
+
+        var donorDto = await this._donorRepo.getByUserId(donorUserId);
+
+        var user = await this._userRepo.getById(donorDto.UserId);
+        if (user.Person == null) {
+            user.Person = await this._personRepo.getById(user.PersonId);
+        }
+        donorDto.User = user;
+        return donorDto;
     }
 
     private async createScheduledUserTasks(patientUserId, careplanActivities) {

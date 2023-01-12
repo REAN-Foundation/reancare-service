@@ -1,4 +1,9 @@
 import express from 'express';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { MedicationConsumptionDomainModel }
+    from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
@@ -96,6 +101,7 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
 
+            await this.addEHRRecord(dto.PatientUserId, dto.id, dto);
             ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
                 MedicationConsumption : dto,
             });
@@ -306,6 +312,19 @@ export class MedicationConsumptionController {
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: MedicationConsumptionDomainModel) => {
+        if (model.IsTaken) {
+            EHRAnalyticsHandler.addBooleanRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.Medication,
+                model.IsTaken,
+                model.Dose.toString(),
+                model.DrugName,
+                model.DrugName);
         }
     };
 

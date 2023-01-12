@@ -13,11 +13,14 @@ on:
   push:
     branches: [main1]
 
-  pull_request_target:
-  #  types: [opened, labeled, unlabeled, synchronize]  
-     types:
-      - labeled
-      
+  # pull_request:
+  # #  types: [opened, labeled, unlabeled, synchronize]  
+  #    types:
+  #     - labeled
+
+  pull_request:
+   types: [labeled]
+
 jobs:
   Deploy-ECS:
     # environment: prod
@@ -116,15 +119,21 @@ jobs:
       #     data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200}'
       #     bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}
 
+      # - name: Mandating choosing labels while raisng a PR
+      #   uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+      #   with:
+      #     GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+      #     valid-labels: 'patch,minor,major'
+      #     invalid-labels: 'wontfix, invalid'    
+      #     pull-request-number: '${{ github.event.pull_request.number }}'
+      #   env:
+      #     PR_NUMBER: ${{ github.event.number }}  
+
       - name: Mandating choosing labels while raisng a PR
-        uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+        uses: NathanielHill/check-pr-label-action@v4.0.0
         with:
-          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
-          valid-labels: 'patch,minor,major'
-          invalid-labels: 'wontfix, invalid'    
-          pull-request-number: '${{ github.event.pull_request.number }}'
-        env:
-          PR_NUMBER: ${{ github.event.number }}  
+        GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        valid-labels: 'patch, minor, major'
 
       - name: New Release Publish
         uses: release-drafter/release-drafter@v5

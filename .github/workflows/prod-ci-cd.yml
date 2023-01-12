@@ -14,8 +14,10 @@ on:
     branches: [main1]
 
   pull_request_target:
-   types: [opened, labeled, unlabeled, synchronize]  
-
+  #  types: [opened, labeled, unlabeled, synchronize]  
+     types:
+      - labeled
+      
 jobs:
   Deploy-ECS:
     # environment: prod

@@ -267,7 +267,7 @@ export class PatientController extends BaseUserController {
 
     private addPatientToEHRRecords = (patientUserId: uuid) => {
         EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {});
-    }
+    };
 
     private addEHRRecord = (patientUserId: uuid,
         model: PersonDomainModel) => {
@@ -286,7 +286,7 @@ export class PatientController extends BaseUserController {
                 MaritalStatus : model.MaritalStatus
             });
         }
-    }
+    };
 
     //#endregion
 

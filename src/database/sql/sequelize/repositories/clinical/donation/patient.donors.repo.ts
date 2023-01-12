@@ -7,7 +7,6 @@ import { PatientDonorsSearchFilters, PatientDonorsSearchResults } from "../../..
 import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
 import { PatientDonorsMapper } from "../../../mappers/clinical/donation/patient.donors.mapper";
 import { IPatientDonorsRepo } from "../../../../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
-import Donor from "../../../models/users/donor.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -158,7 +157,8 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
             }
             search['order'] = [[orderByColum, order]];
             // if (filters.OrderBy) {
-            //     const personAttributes = ['Name', 'BloodGroup', 'Status', 'PatientUserId', 'NextDonationDate', 'LastDonationDate'];
+            //     const personAttributes = ['Name', 'BloodGroup',
+            //     'Status', 'PatientUserId', 'NextDonationDate', 'LastDonationDate'];
             //     const isPersonColumn = personAttributes.includes(filters.OrderBy);
             //     if (isPersonColumn) {
             //         search['order'] = [[ 'Person', filters.OrderBy, order]];
@@ -219,6 +219,6 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

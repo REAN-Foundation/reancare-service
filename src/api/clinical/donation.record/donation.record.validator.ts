@@ -18,6 +18,8 @@ export class DonationRecordValidator extends BaseValidator {
             NetworkId         : request.body.NetworkId ?? null,
             RequestedQuantity : request.body.RequestedQuantity ?? null,
             RequestedDate     : request.body.RequestedDate ?? null,
+            DonorAcceptedDate : request.body.DonorAcceptedDate ?? null,
+            DonorRejectedDate : request.body.DonorRejectedDate ?? null,
             DonationDate      : request.body.DonationDate ?? null,
             DonatedQuantity   : request.body.DonatedQuantity ?? null,
             DonationType      : request.body.DonationType ?? null,
@@ -80,6 +82,8 @@ export class DonationRecordValidator extends BaseValidator {
         await this.validateUuid(request, 'NetworkId', Where.Body, false, false);
         await this.validateInt(request, 'RequestedQuantity', Where.Body, false, false);
         await this.validateDate(request, 'RequestedDate', Where.Body, false, false);
+        await this.validateDate(request, 'DonorAcceptedDate', Where.Body, false, false);
+        await this.validateDate(request, 'DonorRejectedDate', Where.Body, false, false);
         await this.validateDate(request, 'DonationDate', Where.Body, false, false);
         await this.validateInt(request, 'DonatedQuantity', Where.Body, false, false);
         await this.validateString(request, 'DonationType', Where.Body, false, false);

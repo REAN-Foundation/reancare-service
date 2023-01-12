@@ -127,7 +127,7 @@ jobs:
       #     invalid-labels: 'wontfix, invalid'    
       #     pull-request-number: '${{ github.event.pull_request.number }}'
       #   env:
-      #     PR_NUMBER: ${{ github.event.number }}  
+      #     PR_NUMBER: ${{ github.event.number }} 
 
       - name: Mandating choosing labels while raisng a PR
         uses: NathanielHill/check-pr-label-action@v4.0.0

@@ -12,6 +12,7 @@ import {
     ForeignKey,
     BelongsTo,
 } from 'sequelize-typescript';
+import { DonorAcceptance, DonorAcceptanceList } from '../../../../../../domain.types/miscellaneous/clinical.types';
 
 import { v4 } from 'uuid';
 import Person from '../../person/person.model';
@@ -93,6 +94,14 @@ export default class Patient extends Model {
         allowNull : true,
     })
     AssociatedHospital: string;
+
+    @Column({
+        type         : DataType.ENUM,
+        allowNull    : false,
+        values       : DonorAcceptanceList,
+        defaultValue : DonorAcceptance.NotSend
+    })
+    DonorAcceptance: string;
 
     @BelongsTo(() => User)
     User: User;

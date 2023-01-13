@@ -52,5 +52,14 @@
         "NormalRangeMin": 3,
         "NormalRangeMax": 9,
         "Unit": "%"
+    },
+    {
+        "TypeName": "Cholesterol",
+        "DisplayName": "Lipoprotein",
+        "SnowmedCode": "iSopqr",
+        "LoincCode": "iSPqAb0A",
+        "NormalRangeMin": 10,
+        "NormalRangeMax": 30,
+        "Unit": "mg/dL"
     }
 ]

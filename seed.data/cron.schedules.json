@@ -7,7 +7,8 @@
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
-        "ScheduleHsSurvey": "0 11 * * *"
+        "ScheduleHsSurvey": "0 11 * * *",
+        "ReminderOnNoActionToDonationRequest": "30 12 * * *"
     },
     "development": {
         "FileCleanup": "*/55 * * * *",
@@ -17,7 +18,8 @@
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
-        "ScheduleHsSurvey": "0 11 * * *"
+        "ScheduleHsSurvey": "0 11 * * *",
+        "ReminderOnNoActionToDonationRequest": "30 12 * * *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",
@@ -27,7 +29,8 @@
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
-        "ScheduleHsSurvey": "0 11 * * *"
+        "ScheduleHsSurvey": "0 11 * * *",
+        "ReminderOnNoActionToDonationRequest": "30 12 * * *"
 
 
     },
@@ -39,7 +42,8 @@
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "0 8 * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
-        "ScheduleHsSurvey": "0 11 * * *"
+        "ScheduleHsSurvey": "0 11 * * *",
+        "ReminderOnNoActionToDonationRequest": "30 12 * * *"
 
 
     }

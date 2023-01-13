@@ -1,5 +1,6 @@
 import * as aws from 'aws-sdk';
 import fs from 'fs';
+import { Stream } from 'stream';
 import { Logger } from '../../../common/logger';
 import { IFileStorageService } from '../interfaces/file.storage.service.interface';
 
@@ -27,7 +28,27 @@ export class AWSS3FileStorageService implements IFileStorageService {
             return null;
         }
     };
-    
+
+    uploadStream = async (storageKey: string, stream: Stream): Promise<string> => {
+
+        try {
+            const s3 = this.getS3Client();
+            const params = {
+                Bucket : process.env.STORAGE_BUCKET,
+                Key    : storageKey,
+                Body   : stream
+            };
+            var stored = await s3.upload(params).promise();
+
+            Logger.instance().log(JSON.stringify(stored, null, 2));
+
+            return storageKey;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
     upload = async (storageKey: string, localFilePath?: string): Promise<string> => {
 
         try {
@@ -51,7 +72,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
     };
 
     download = async (storageKey: string, localFilePath: string): Promise<string> => {
-        
+
         const s3 = this.getS3Client();
         const params = {
             Bucket : process.env.STORAGE_BUCKET,
@@ -110,7 +131,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
             CopySource : `${BUCKET_NAME}/${OLD_KEY}`,
             Key        : NEW_KEY
         };
-    
+
         await s3.copyObject(params).promise();
         await s3.deleteObject({
             Bucket : BUCKET_NAME,
@@ -134,7 +155,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         }
         return true;
     };
-    
+
     getShareableLink(storageKey: string, durationInMinutes: number): string {
 
         const s3 = new aws.S3({

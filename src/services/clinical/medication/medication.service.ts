@@ -146,7 +146,24 @@ export class MedicationService {
 
         var frequencyUnit = model.FrequencyUnit;
         var durationUnit = model.DurationUnit;
-        
+        const duration = model.Duration;
+
+        if (frequencyUnit === MedicationFrequencyUnits.Daily) {
+            model.DurationUnit = MedicationDurationUnits.Days;
+        } else if (frequencyUnit === MedicationFrequencyUnits.Weekly) {
+            model.DurationUnit = MedicationDurationUnits.Weeks;
+        } else if (frequencyUnit === MedicationFrequencyUnits.Monthly) {
+            model.DurationUnit = MedicationDurationUnits.Months;
+        }
+
+        if (duration === null && frequencyUnit === MedicationFrequencyUnits.Daily) {
+            model.Duration = 90;
+        } else if (duration === null && frequencyUnit === MedicationFrequencyUnits.Weekly) {
+            model.Duration = 12;
+        } else if (duration === null && frequencyUnit === MedicationFrequencyUnits.Monthly) {
+            model.Duration = 3;
+        }
+
         if (frequencyUnit === MedicationFrequencyUnits.Weekly && model.Frequency > 3) {
             throw new ApiError(400, 'Weekly medication  frequency should be less than 4.');
         }

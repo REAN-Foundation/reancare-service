@@ -4,7 +4,7 @@ import { Helper } from '../../../../common/helper';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { MedicationSearchFilters } from '../../../../domain.types/clinical/medication/medication/medication.search.types';
 import {
-    MedicationAdministrationRoutes, MedicationDurationUnits, MedicationFrequencyUnits
+    MedicationAdministrationRoutes, MedicationFrequencyUnits
 } from "../../../../domain.types/clinical/medication/medication/medication.types";
 import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
@@ -31,8 +31,8 @@ export class MedicationValidator {
             Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : 1,
             FrequencyUnit             : request.body.FrequencyUnit ?? MedicationFrequencyUnits.Daily,
             Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
-            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
-            DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Days,
+            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : null,
+            DurationUnit              : request.body.DurationUnit ?? null,
             StartDate                 : startDate,
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? false,

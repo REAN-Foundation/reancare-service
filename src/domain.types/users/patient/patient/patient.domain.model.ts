@@ -1,5 +1,6 @@
 import { AddressDomainModel } from '../../../general/address/address.domain.model';
 import { UserDomainModel } from '../../user/user.domain.model';
+import { HealthProfileDomainModel } from '../health.profile/health.profile.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +18,7 @@ export interface PatientDomainModel {
     AssociatedHospital?  : string;
     DonorAcceptance?     : string;
     User?                : UserDomainModel;
+    HealthProfile?       : HealthProfileDomainModel
     InsuranceIds?        : string[];
     EmergencyContactIds? : string[];
     Address?             : AddressDomainModel;

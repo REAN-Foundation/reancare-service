@@ -47,6 +47,11 @@ export class PatientValidator extends BaseValidator {
                 DefaultTimeZone : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone : request.body.CurrentTimeZone ?? null,
             },
+            HealthProfile : {
+                BloodGroup           : request.body.BloodGroup,
+                BloodTransfusionDate : request.body.BloodTransfusionDate,
+                BloodDonationCycle   : request.body.BloodDonationCycle
+            },
             UserId  : request.params.userId ?? null,
             Address : request.body.Address ?? null,
         };

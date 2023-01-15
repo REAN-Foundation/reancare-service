@@ -6,6 +6,7 @@
 # https://github.com/actions/labeler
 
 name: PROD-CI-CD
+name: Add Labels
 
 # Controls when the workflow will run
 on:
@@ -19,14 +20,23 @@ on:
   #     - labeled
 
   pull_request:
-   types: [labeled]
+   types: opened
 
 jobs:
   Deploy-ECS:
+  add_labels:
     # environment: prod
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions-ecosystem/action-add-labels@v1
+        if: ${{ startsWith(github.event.comment.body, '/add-labels') }}
+        with:
+          labels: |
+            major
+            minor
+            patch
+
       # - name: Checkout
       #   uses: actions/checkout@v2
 

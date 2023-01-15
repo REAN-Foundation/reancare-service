@@ -28,11 +28,11 @@ tag-template: 'v$RESOLVED_VERSION'
 #       - 'dependencies'
 # exclude-labels:
 #   - 'skip-changelog'
-include-labels:
-  - 'major'
-  - 'minor'
-  - 'patch'
-  
+# include-labels:
+#   - 'major'
+#   - 'minor'
+#   - 'patch'
+
 version-resolver:
   major:
     labels:

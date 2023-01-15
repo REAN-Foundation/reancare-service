@@ -1,8 +1,7 @@
 import express from 'express';
 import { query, body, validationResult, param } from 'express-validator';
-import { DonorDomainModel } from '../../../domain.types/users/donor/donor.domain.model';
+import { VolunteerSearchFilters } from '../../../domain.types/users/Volunteer/volunteer.search.types';
 import { Helper } from '../../../common/helper';
-import { DonorSearchFilters } from '../../../domain.types/users/donor/donor.search.types';
 import { VolunteerDomainModel } from '../../../domain.types/users/Volunteer/volunteer.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +55,7 @@ export class VolunteerValidator {
 
     static create = async (
         request: express.Request
-    ): Promise<DonorDomainModel> => {
+    ): Promise<VolunteerDomainModel> => {
         await VolunteerValidator.validateBody(request, true);
         return VolunteerValidator.getDomainModel(request);
     };
@@ -153,7 +152,7 @@ export class VolunteerValidator {
 
     static search = async (
         request: express.Request
-    ): Promise<DonorSearchFilters> => {
+    ): Promise<VolunteerSearchFilters> => {
 
         await query('phone').optional()
             .trim()
@@ -254,7 +253,7 @@ export class VolunteerValidator {
         }
     }
 
-    private static getFilter(request): DonorSearchFilters {
+    private static getFilter(request): VolunteerSearchFilters {
 
         const pageIndex =
             request.query.pageIndex !== 'undefined'
@@ -266,7 +265,7 @@ export class VolunteerValidator {
                 ? parseInt(request.query.itemsPerPage as string, 10)
                 : 25;
 
-        const filters: DonorSearchFilters = {
+        const filters: VolunteerSearchFilters = {
             Phone           : request.query.phone ?? null,
             Email           : request.query.email ?? null,
             Name            : request.query.name ?? null,
@@ -300,7 +299,7 @@ export class VolunteerValidator {
         return request.params.userId;
     }
 
-    static updateByUserId = async (request: express.Request): Promise<DonorDomainModel> => {
+    static updateByUserId = async (request: express.Request): Promise<VolunteerDomainModel> => {
 
         const userId = await VolunteerValidator.getParamUserId(request);
         await VolunteerValidator.validateBody(request, false);

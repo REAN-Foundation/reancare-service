@@ -1,3 +1,4 @@
+import { DonorType } from "../../../domain.types/miscellaneous/clinical.types";
 import { AddressDto } from "../../general/address/address.dto";
 import { Gender } from "../../miscellaneous/system.types";
 import { UserDto } from "../user/user.dto";
@@ -14,6 +15,7 @@ export interface DonorDetailsDto {
     BloodGroup?        : string,
     AcceptorUserId?    : string;
     LastDonationDate?  : Date;
+    DonorType?         : DonorType;
     MedIssues?         : string[];
     IsAvailable?       : boolean;
     HasDonatedEarlier? : boolean;
@@ -32,6 +34,7 @@ export interface DonorDto {
     BloodGroup  : string;
     AcceptorUserId  : string;
     LastDonationDate  : Date;
+    DonorType?        : DonorType;
     MedIssues   : string[];
     Gender      : Gender;
     BirthDate   : Date;

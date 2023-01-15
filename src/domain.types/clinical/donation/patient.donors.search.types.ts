@@ -1,5 +1,4 @@
 import { BaseSearchResults, BaseSearchFilters } from "../../../domain.types/miscellaneous/base.search.types";
-import { Gender } from "../../miscellaneous/system.types";
 import { PatientDonorsDto } from "./patient.donors.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////

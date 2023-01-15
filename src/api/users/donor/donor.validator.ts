@@ -40,6 +40,7 @@ export class DonorValidator {
             LastDonationDate  : request.body.LastDonationDate ?? null,
             IsAvailable       : request.body.IsAvailable ?? false,
             HasDonatedEarlier : request.body.HasDonatedEarlier ?? false,
+            DonorType         : request.body.DonorType ?? false,
             AddressId         : request.body.AddressId,
         };
 
@@ -133,6 +134,11 @@ export class DonorValidator {
             .escape()
             .run(request);
 
+        await body('DonorType').optional()
+            .trim()
+            .escape()
+            .run(request);
+
         await body('MedIssues').optional()
             .run(request);
 
@@ -171,6 +177,11 @@ export class DonorValidator {
             .run(request);
 
         await query('name').optional()
+            .trim()
+            .escape()
+            .run(request);
+        
+        await query('donorType').optional()
             .trim()
             .escape()
             .run(request);
@@ -296,6 +307,7 @@ export class DonorValidator {
             Gender            : request.query.gender ?? null,
             AcceptorUserId    : request.query.acceptorUserId ?? null,
             BloodGroup        : request.query.bloodGroup ?? null,
+            DonorType         : request.query.donorType ?? null,
             MedIssues         : request.query.medIssues ?? null,
             OnlyEligible      : request.query.onlyEligible ?? null,
             IsAvailable       : request.query.isAvailable ?? null,

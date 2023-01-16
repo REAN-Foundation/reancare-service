@@ -84,7 +84,8 @@ export class PatientValidator extends BaseValidator {
                 DefaultTimeZone : body.DefaultTimeZone ?? null,
                 CurrentTimeZone : body.CurrentTimeZone ?? null,
             },
-            Address : body.Address ?? null,
+            Address         : body.Address ?? null,
+            DonorAcceptance : body.DonorAcceptance ?? null,
         };
 
         return entity;
@@ -101,6 +102,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateEmail(request, 'email', Where.Query, false, true);
         await this.validateString(request, 'name', Where.Query, false, false);
         await this.validateString(request, 'gender', Where.Query, false, false);
+        await this.validateString(request, 'donorAcceptance', Where.Query, false, false);
         await this.validateDateString(request, 'birthdateFrom', Where.Query, false, false);
         await this.validateDateString(request, 'birthdateTo', Where.Query, false, false);
         await this.validateUuid(request, 'birthdateTo', Where.Query, false, false);
@@ -114,12 +116,13 @@ export class PatientValidator extends BaseValidator {
     private getFilter(request): PatientSearchFilters {
 
         const filters: PatientSearchFilters = {
-            Phone         : request.query.phone ?? null,
-            Email         : request.query.email ?? null,
-            Name          : request.query.name ?? null,
-            Gender        : request.query.gender ?? null,
-            BirthdateFrom : request.query.birthdateFrom ?? null,
-            BirthdateTo   : request.query.birthdateTo ?? null,
+            Phone           : request.query.phone ?? null,
+            Email           : request.query.email ?? null,
+            Name            : request.query.name ?? null,
+            Gender          : request.query.gender ?? null,
+            DonorAcceptance : request.query.donorAcceptance ?? null,
+            BirthdateFrom   : request.query.birthdateFrom ?? null,
+            BirthdateTo     : request.query.birthdateTo ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -149,6 +152,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateBoolean(request, 'LivingAlone', Where.Body, false, true);
         await this.validateBoolean(request, 'WorkedPriorToStroke', Where.Body, false, true);
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
+        await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
 
         await body('AddressIds').optional()
             .isArray()

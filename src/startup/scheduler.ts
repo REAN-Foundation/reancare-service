@@ -6,6 +6,7 @@ import { FileResourceService } from '../services/general/file.resource.service';
 import { Loader } from './loader';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
+import { CommunityNetworkService } from '../modules/community.bw/community.network.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +43,7 @@ export class Scheduler {
                 this.scheduleDailyCareplanPushTasks();
                 this.scheduleDailyHighRiskCareplan();
                 this.scheduleHsSurvey();
+                this.scheduleReminderOnNoActionToDonationRequest();
 
                 //this.scheduleDaillyPatientTasks();
 
@@ -127,6 +129,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Custom HS Survey Tasks...');
                 var customActionHandler = new CustomActionsHandler();
                 await customActionHandler.scheduleHsSurvey();
+            })();
+        });
+    };
+
+    private scheduleReminderOnNoActionToDonationRequest = () => {
+        cron.schedule(Scheduler._schedules['ReminderOnNoActionToDonationRequest'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Reminder On No Action To Donation Requests...');
+                var communityNetworkService = Loader.container.resolve(CommunityNetworkService);
+                await communityNetworkService.reminderOnNoActionToDonationRequest();
             })();
         });
     };

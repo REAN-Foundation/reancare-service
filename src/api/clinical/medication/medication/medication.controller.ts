@@ -213,6 +213,10 @@ export class MedicationController {
                 throw new ApiError(404, 'Medication not found.');
             }
 
+            const startDate =
+                await this._userService.getDateInUserTimeZone(existingMedication.PatientUserId, request.body.StartDate);
+            domainModel.StartDate = startDate;
+
             const updated = await this._service.update(id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update medication record!');

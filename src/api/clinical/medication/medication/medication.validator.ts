@@ -48,7 +48,7 @@ export class MedicationValidator {
         return model;
     };
 
-    static getUpdateDomainModel = (request: express.Request): MedicationDomainModel => {
+    static getUpdateDomainModel = async (request: express.Request): Promise<MedicationDomainModel> => {
 
         const model: MedicationDomainModel = {
             id                        : request.params.id,
@@ -58,15 +58,15 @@ export class MedicationValidator {
             OrderId                   : request.body.OrderId ?? null,
             DrugName                  : request.body.DrugName ?? null,
             DrugId                    : request.body.DrugId ?? null,
-            Dose                      : request.body.Dose ?? null,
+            Dose                      : request.body.Dose ? parseFloat(request.body.Dose) : null,
             DosageUnit                : request.body.DosageUnit ?? null,
-            TimeSchedules             : request.body.TimeSchedules ?? null,
-            Frequency                 : parseInt(request.body.Frequency) ?? null,
+            TimeSchedules             : request.body.TimeSchedules ?? [],
+            Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : null,
             FrequencyUnit             : request.body.FrequencyUnit ?? null,
             Route                     : request.body.Route ?? null,
-            Duration                  : parseInt(request.body.Duration) ?? null,
+            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : null,
             DurationUnit              : request.body.DurationUnit ?? null,
-            StartDate                 : request.body.StartDate ?? null,
+            StartDate                 : request.body.StartDate,
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? null,
             RefillCount               : request.body.RefillCount ?? null,
@@ -89,7 +89,7 @@ export class MedicationValidator {
     static update = async (request: express.Request): Promise<MedicationDomainModel> => {
         const id = await MedicationValidator.getParamId(request);
         await MedicationValidator.validateUpdateBody(request);
-        const domainModel = MedicationValidator.getUpdateDomainModel(request);
+        const domainModel = await MedicationValidator.getUpdateDomainModel(request);
         domainModel.id = id;
         return domainModel;
     };

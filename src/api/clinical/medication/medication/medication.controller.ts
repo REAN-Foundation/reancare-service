@@ -234,16 +234,19 @@ export class MedicationController {
 
                 await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
 
-                var stats = await this._medicationConsumptionService.create(updated);
-
-                var consumptionSummary: ConsumptionSummaryDto = {
-                    TotalConsumptionCount   : stats.TotalConsumptionCount,
-                    PendingConsumptionCount : stats.TotalConsumptionCount * updated.Dose,
-                    TotalDoseCount          : stats.PendingConsumptionCount,
-                    PendingDoseCount        : stats.PendingConsumptionCount * updated.Dose,
-                };
-
-                updated.ConsumptionSummary = consumptionSummary;
+                if (updated.FrequencyUnit !== 'Other') {
+                    var stats = await this._medicationConsumptionService.create(updated);
+    
+                    var consumptionSummary: ConsumptionSummaryDto = {
+                        TotalConsumptionCount   : stats.TotalConsumptionCount,
+                        TotalDoseCount          : stats.TotalConsumptionCount * updated.Dose,
+                        PendingConsumptionCount : stats.PendingConsumptionCount,
+                        PendingDoseCount        : stats.PendingConsumptionCount * updated.Dose,
+                    };
+    
+                    updated.ConsumptionSummary = consumptionSummary;
+                }
+                
             }
 
             ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {

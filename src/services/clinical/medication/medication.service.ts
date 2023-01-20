@@ -27,8 +27,8 @@ export class MedicationService {
         model.IsExistingMedication = model.IsExistingMedication ?? false;
         model.TakenForLastNDays = model.TakenForLastNDays ?? null;
         model.ToBeTakenForNextNDays = model.ToBeTakenForNextNDays ?? null;
-        var repImageResourceId = await this.getRepresentativeStockImage(model.DosageUnit);
-        model.ImageResourceId = model.ImageResourceId ?? repImageResourceId;
+        // var repImageResourceId = await this.getRepresentativeStockImage(model.DosageUnit);
+        model.ImageResourceId = model.ImageResourceId ?? null;
 
         var startDate = this.calculateStartDate(model.StartDate, model.IsExistingMedication, model.TakenForLastNDays);
         var endDate = this.calculateEndDate(

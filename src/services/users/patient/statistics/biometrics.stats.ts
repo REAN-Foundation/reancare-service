@@ -29,14 +29,14 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
 
-        let value = model.Stats.Biometrics.Last6Months.BodyWeight.AverageBodyWeight.toFixed();
+        /*let value = model.Stats.Biometrics.Last6Months.BodyWeight.AverageBodyWeight.toFixed();
         y = addLabeledText(document, 'Average Weight (Kg)', value, y);
 
         value = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight.toString();
         y = addLabeledText(document, 'Current Body Weight (Kg)', value, y);
 
         value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);
+        y = addLabeledText(document, 'Last Measured Date', value, y);*/
     }
 
     return y;
@@ -118,11 +118,11 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
         y = addNoDataDisplay(document, y);
     } else {
         y = y + 25;
+        y = addLongRectangularChartImage(document, model, 'TotalCholesterol_Last6Months', y);
+        y = y + 22;
         y = addLongRectangularChartImage(document, model, 'HDL_Last6Months', y);
         y = y + 22;
         y = addLongRectangularChartImage(document, model, 'LDL_Last6Months', y);
-        y = y + 22;
-        y = addLongRectangularChartImage(document, model, 'TotalCholesterol_Last6Months', y);
         y = y + 22;
         y = addLongRectangularChartImage(document, model, 'Triglyceride_Last6Months', y);
         y = y + 22;
@@ -208,7 +208,9 @@ const createCholesterolCharts = async (data) => {
     return locations;
 };
 
-const createLipidChart = async (stats: any[], filename: string, key: string, showXAxis = false, chartHeight = 150) => {
+const createLipidChart = async (
+    stats: any[], filename: string, key: string, yLabelValue: string, showXAxis = true, chartHeight = 150
+) => {
     const getRecords = (c) => {
         return {
             x : new Date(c.DayStr),
@@ -226,7 +228,7 @@ const createLipidChart = async (stats: any[], filename: string, key: string, sho
     options.Width = RECTANGULAR_CHART_WIDTH;
     options.Height = chartHeight;
     options.XAxisTimeScaled = true;
-    options.YLabel = key;
+    options.YLabel = yLabelValue;
     options.StrokeWidth = 1.5;
     const clr = categoryColors.find(x => x.Key === key);
     options.Color = clr.Color;
@@ -236,23 +238,23 @@ const createLipidChart = async (stats: any[], filename: string, key: string, sho
 };
 
 const createTotalCholesterolChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.TotalCholesterol, filename, 'Total Cholesterol');
+    return await createLipidChart(stats.TotalCholesterol, filename, 'Total Cholesterol', 'mg/dL');
 };
 
 const createHDLChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.HDL, filename, 'HDL');
+    return await createLipidChart(stats.HDL, filename, 'HDL', 'mg/dL');
 };
 
 const createLDLChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.LDL, filename, 'LDL');
+    return await createLipidChart(stats.LDL, filename, 'LDL', 'mg/dL');
 };
 
 const createTriglycerideChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.TriglycerideLevel, filename, 'Triglyceride Level', true);
+    return await createLipidChart(stats.TriglycerideLevel, filename, 'Triglyceride Level', 'mg/dL',true);
 };
 
 const createA1CChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.A1CLevel, filename, 'A1C Level', true);
+    return await createLipidChart(stats.A1CLevel, filename, 'A1C Level', '%', true);
 };
 
 const createBodyWeight_LineChart = async (stats: any, filename: string) => {
@@ -288,7 +290,7 @@ const createBloodGlucose_LineChart = async (stats: any, filename: string) => {
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.Color = ChartColors.BlueViolet;
     options.XAxisTimeScaled = true;
-    options.YLabel = 'Blood Glucose';
+    options.YLabel = 'mg/dL';
     return await ChartGenerator.createLineChart(temp, options, filename);
 };
 

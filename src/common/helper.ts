@@ -58,7 +58,7 @@ export class Helper {
                 weightUnits = 'Kg';
             }
             const weightInLbs = weight / 0.453592;
-            weightStr = weight.toFixed() + ` Kg (${weightInLbs.toFixed()} lbs)`;
+            weightStr = weight.toFixed() + ` Kg -${weightInLbs.toFixed()} lbs`;
         }
 
         if (height_square === 0) {
@@ -93,7 +93,7 @@ export class Helper {
             const filePath = path.join(fileFolder, filename);
             fs.writeFileSync(filePath, text);
             return filePath;
-    }
+        }
         catch (error) {
             Logger.instance().log(error.message);
         }

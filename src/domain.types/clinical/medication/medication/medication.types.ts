@@ -18,6 +18,7 @@ export enum MedicationDosageUnits {
     Tablet             = 'Tablet',
     Capsule            = 'Capsule',
     Drop               = 'Drop',
+    Tube               = 'Tube',
     MetricDrop         = 'Metric drop',
     Milligram          = 'Milligram',
     Milliliter         = 'Milliliter',
@@ -36,6 +37,7 @@ export enum MedicationDosageUnits {
     Can                = 'Can',
     Container          = 'Container',
     Enema              = 'Enema',
+    Suppository        = 'Suppository',
     FluidOunce         = 'Fluid ounce',
     Gallon             = 'Gallon',
     Gum                = 'Gum',
@@ -53,8 +55,6 @@ export enum MedicationDosageUnits {
     Puff               = 'Puff',
     RingPessary        = 'Ring pessary',
     Scoopful           = 'Scoopful',
-    Suppository        = 'Suppository',
-    Tube               = 'Tube',
     Vial               = 'Vial',
 }
 
@@ -62,6 +62,7 @@ export const MedicationDosageUnitsList: MedicationDosageUnits [] = [
     MedicationDosageUnits.Tablet,
     MedicationDosageUnits.Capsule,
     MedicationDosageUnits.Drop,
+    MedicationDosageUnits.Tube,
     MedicationDosageUnits.MetricDrop,
     MedicationDosageUnits.Milligram,
     MedicationDosageUnits.Milliliter,
@@ -80,6 +81,7 @@ export const MedicationDosageUnitsList: MedicationDosageUnits [] = [
     MedicationDosageUnits.Can,
     MedicationDosageUnits.Container,
     MedicationDosageUnits.Enema,
+    MedicationDosageUnits.Suppository,
     MedicationDosageUnits.FluidOunce,
     MedicationDosageUnits.Gallon,
     MedicationDosageUnits.Gum,
@@ -97,8 +99,6 @@ export const MedicationDosageUnitsList: MedicationDosageUnits [] = [
     MedicationDosageUnits.Puff,
     MedicationDosageUnits.RingPessary,
     MedicationDosageUnits.Scoopful,
-    MedicationDosageUnits.Suppository,
-    MedicationDosageUnits.Tube,
     MedicationDosageUnits.Vial
 ];
 

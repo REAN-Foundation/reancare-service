@@ -15,12 +15,13 @@ export const MedicationTimeSchedulesList: MedicationTimeSchedules [] = [
 ];
 
 export enum MedicationDosageUnits {
+    Capsule            = 'Capsule',
+    Tablet             = 'Tablet',
     Ampule             = 'Ampule(s)',
     Application        = 'Application',
     Bar                = 'Bar',
     BiscuitWafer       = 'Biscuit wafer',
     Can                = 'Can',
-    Capsule            = 'Capsule',
     Container          = 'Container',
     Drop               = 'Drop',
     Enema              = 'Enema',
@@ -50,7 +51,6 @@ export enum MedicationDosageUnits {
     Spray              = 'Spray',
     Suppository        = 'Suppository',
     Syringe            = 'Syringe',
-    Tablet             = 'Tablet',
     Tablespoon         = 'Tablespoon',
     Teaspoon           = 'Teaspoon',
     Tube               = 'Tube',
@@ -59,12 +59,13 @@ export enum MedicationDosageUnits {
 }
 
 export const MedicationDosageUnitsList: MedicationDosageUnits [] = [
+    MedicationDosageUnits.Capsule,
+    MedicationDosageUnits.Tablet,
     MedicationDosageUnits.Ampule,
     MedicationDosageUnits.Application,
     MedicationDosageUnits.Bar,
     MedicationDosageUnits.BiscuitWafer,
     MedicationDosageUnits.Can,
-    MedicationDosageUnits.Capsule,
     MedicationDosageUnits.Container,
     MedicationDosageUnits.Drop,
     MedicationDosageUnits.Enema,
@@ -94,7 +95,6 @@ export const MedicationDosageUnitsList: MedicationDosageUnits [] = [
     MedicationDosageUnits.Spray,
     MedicationDosageUnits.Suppository,
     MedicationDosageUnits.Syringe,
-    MedicationDosageUnits.Tablet,
     MedicationDosageUnits.Tablespoon,
     MedicationDosageUnits.Teaspoon,
     MedicationDosageUnits.Tube,

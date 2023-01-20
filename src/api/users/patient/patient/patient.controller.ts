@@ -91,6 +91,9 @@ export class PatientController extends BaseUserController {
 
             const patient = await this._service.getByUserId(userId);
 
+            const healthProfile = await this._patientHealthProfileService.getByPatientUserId(userId);
+            patient.HealthProfile = healthProfile;
+
             Logger.instance().log(`Patient: ${JSON.stringify(patient)}`);
 
             if (patient == null) {

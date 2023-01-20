@@ -316,7 +316,6 @@ export class MedicationValidator {
 
         await body('ImageResourceId').optional()
             .trim()
-            .isUUID()
             .run(request);
 
         await body('IsExistingMedication').optional()

@@ -27,8 +27,8 @@ export class MedicationService {
         model.IsExistingMedication = model.IsExistingMedication ?? false;
         model.TakenForLastNDays = model.TakenForLastNDays ?? null;
         model.ToBeTakenForNextNDays = model.ToBeTakenForNextNDays ?? null;
-        var repImageResourceId = await this.getRepresentativeStockImage(model.DosageUnit);
-        model.ImageResourceId = model.ImageResourceId ?? repImageResourceId;
+        // var repImageResourceId = await this.getRepresentativeStockImage(model.DosageUnit);
+        model.ImageResourceId = model.ImageResourceId ?? null;
 
         var startDate = this.calculateStartDate(model.StartDate, model.IsExistingMedication, model.TakenForLastNDays);
         var endDate = this.calculateEndDate(
@@ -59,6 +59,18 @@ export class MedicationService {
     };
 
     update = async (id: string, medicationDomainModel: MedicationDomainModel): Promise<MedicationDto> => {
+        this.checkInputParams(medicationDomainModel);
+        var startDate = this.calculateStartDate(medicationDomainModel.StartDate,
+            medicationDomainModel.IsExistingMedication, medicationDomainModel.TakenForLastNDays);
+        var endDate = this.calculateEndDate(
+            medicationDomainModel.Duration,
+            medicationDomainModel.DurationUnit,
+            startDate,
+            medicationDomainModel.IsExistingMedication,
+            medicationDomainModel.ToBeTakenForNextNDays);
+        
+        medicationDomainModel.StartDate = startDate;
+        medicationDomainModel.EndDate = endDate;
         return await this._medicationRepo.update(id, medicationDomainModel);
     };
 
@@ -148,11 +160,11 @@ export class MedicationService {
         var durationUnit = model.DurationUnit;
         const duration = model.Duration;
 
-        if (frequencyUnit === MedicationFrequencyUnits.Daily) {
+        if (frequencyUnit === MedicationFrequencyUnits.Daily && durationUnit === null) {
             model.DurationUnit = MedicationDurationUnits.Days;
-        } else if (frequencyUnit === MedicationFrequencyUnits.Weekly) {
+        } else if (frequencyUnit === MedicationFrequencyUnits.Weekly && durationUnit === null) {
             model.DurationUnit = MedicationDurationUnits.Weeks;
-        } else if (frequencyUnit === MedicationFrequencyUnits.Monthly) {
+        } else if (frequencyUnit === MedicationFrequencyUnits.Monthly && durationUnit === null) {
             model.DurationUnit = MedicationDurationUnits.Months;
         }
 
@@ -179,13 +191,20 @@ export class MedicationService {
         var timeSchedules = model.TimeSchedules;
         if (frequencyUnit === MedicationFrequencyUnits.Daily) {
             model.Frequency = timeSchedules.length === 0 ? 1 : timeSchedules.length;
-            if (timeSchedules.length === 0) {
-                model.TimeSchedules = [MedicationTimeSchedules.Afternoon];
+            if (timeSchedules !== null) {
+                if (timeSchedules.length === 0) {
+                    model.TimeSchedules = [MedicationTimeSchedules.Afternoon];
+                }
             }
         }
         if (frequencyUnit === MedicationFrequencyUnits.Weekly || frequencyUnit === MedicationFrequencyUnits.Monthly) {
-            if (timeSchedules.length !== 1) {
-                model.TimeSchedules = [MedicationTimeSchedules.Afternoon];
+            if (timeSchedules !== null) {
+                if (timeSchedules.length === 0) {
+                    model.TimeSchedules = [MedicationTimeSchedules.Afternoon];
+                }
+            }
+            if (model.Frequency === null) {
+                model.Frequency = 1;
             }
         }
     }

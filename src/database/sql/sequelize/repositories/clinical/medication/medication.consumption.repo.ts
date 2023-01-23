@@ -93,7 +93,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             var selector = {
                 where : {
                     MedicationId      : medicationId,
-                    TimeScheduleStart : { [Op.gte]: new Date() }
+                    TimeScheduleStart : { [Op.gte]: new Date(new Date().toISOString().split('T')[0]) }
                 }
             };
 

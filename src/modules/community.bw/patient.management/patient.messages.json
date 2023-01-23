@@ -4,14 +4,14 @@
         "TimeSlot": "Morning",
         "Sequence": 1,
         "Day": 1,
-        "Message": "Hi, \nBlood transfusion date is 10 days away. Please monitor the health of your child. \nRegards \nTeam Blood Warriors"
+        "Message": "Hi, \nTransfusion is 10 days away. Please monitor the health. \nRegards, \nTeam Blood Warriors"
     },
     {
         "Name": "Message before 7 day",
         "TimeSlot": "Morning",
         "Sequence": 2,
         "Day": 2,
-        "Message": "Hi, \nBlood transfusion date is 7 days away. Please monitor the health of your child. \nWe will send a reminder in two days to send blood donation request. \nRegards \nTeam Blood Warriors"
+        "Message": "Hi, \nBlood transfusion date is 7 days away. Please monitor the health of your child. \nWe will send a reminder in two days to send blood donation request. \nRegards, \nTeam Blood Warriors"
     },
     {
         "Name": "Message before 5 day",

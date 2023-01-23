@@ -34,11 +34,13 @@ export class VolunteerValidator {
                 CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
                 GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
             },
-            MedIssues        : request.body.MedIssues ?? null,
-            BloodGroup       : request.body.BloodGroup ?? null,
-            LastDonationDate : request.body.LastDonationDate ?? null,
-            IsAvailable      : request.body.IsAvailable ?? false,
-            AddressId        : request.body.AddressId,
+            MedIssues          : request.body.MedIssues ?? null,
+            BloodGroup         : request.body.BloodGroup ?? null,
+            SelectedBridgeId   : request.body.SelectedBridgeId ?? null,
+            SelectedBloodGroup : request.body.SelectedBloodGroup ?? null,
+            LastDonationDate   : request.body.LastDonationDate ?? null,
+            IsAvailable        : request.body.IsAvailable ?? false,
+            AddressId          : request.body.AddressId,
         };
 
         if (
@@ -121,6 +123,16 @@ export class VolunteerValidator {
             .escape()
             .run(request);
 
+        await body('SelectedBloodGroup').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('SelectedBridgeId').optional()
+            .trim()
+            .escape()
+            .run(request);
+
         await body('LastDonationDate').optional()
             .trim()
             .escape()
@@ -176,6 +188,14 @@ export class VolunteerValidator {
 
         await query('bloodGroup')
             .optional();
+
+        await query('selectedBridgeId').optional()
+            .trim()
+            .run(request);
+
+        await query('selectedBloodGroup').optional()
+            .trim()
+            .run(request);
 
         await query('isAvailable')
             .optional()
@@ -266,19 +286,21 @@ export class VolunteerValidator {
                 : 25;
 
         const filters: VolunteerSearchFilters = {
-            Phone           : request.query.phone ?? null,
-            Email           : request.query.email ?? null,
-            Name            : request.query.name ?? null,
-            Gender          : request.query.gender ?? null,
-            BloodGroup      : request.query.bloodGroup ?? null,
-            MedIssues       : request.query.medIssues ?? null,
-            IsAvailable     : request.query.isAvailable ?? null,
-            CreatedDateFrom : request.query.createdDateFrom ?? null,
-            CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
+            Phone              : request.query.phone ?? null,
+            Email              : request.query.email ?? null,
+            Name               : request.query.name ?? null,
+            Gender             : request.query.gender ?? null,
+            BloodGroup         : request.query.bloodGroup ?? null,
+            SelectedBridgeId   : request.query.selectedBridgeId ?? null,
+            SelectedBloodGroup : request.query.selectedBloodGroup ?? null,
+            MedIssues          : request.query.medIssues ?? null,
+            IsAvailable        : request.query.isAvailable ?? null,
+            CreatedDateFrom    : request.query.createdDateFrom ?? null,
+            CreatedDateTo      : request.query.createdDateTo ?? null,
+            OrderBy            : request.query.orderBy ?? 'CreatedAt',
+            Order              : request.query.order ?? 'descending',
+            PageIndex          : pageIndex,
+            ItemsPerPage       : itemsPerPage,
         };
 
         return filters;

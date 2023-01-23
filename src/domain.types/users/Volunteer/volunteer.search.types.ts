@@ -10,6 +10,8 @@ export interface VolunteerSearchFilters {
     Gender?: Gender;
     BloodGroup? : string,
     MedIssues? : string,
+    SelectedBloodGroup?  : string;
+    SelectedBridgeId?    : string;
     IsAvailable? : boolean,
     CreatedDateFrom?: Date;
     CreatedDateTo?: Date;

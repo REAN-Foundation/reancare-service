@@ -3,6 +3,7 @@ import { query, body, validationResult, param } from 'express-validator';
 import { DonorDomainModel } from '../../../domain.types/users/donor/donor.domain.model';
 import { Helper } from '../../../common/helper';
 import { DonorSearchFilters } from '../../../domain.types/users/donor/donor.search.types';
+import { DonorType } from '../../../domain.types/miscellaneous/clinical.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +41,7 @@ export class DonorValidator {
             LastDonationDate  : request.body.LastDonationDate ?? null,
             IsAvailable       : request.body.IsAvailable ?? false,
             HasDonatedEarlier : request.body.HasDonatedEarlier ?? false,
-            DonorType         : request.body.DonorType ?? false,
+            DonorType         : request.body.DonorType ?? DonorType.BloodBridge,
             AddressId         : request.body.AddressId,
         };
 
@@ -196,9 +197,6 @@ export class DonorValidator {
             .trim()
             .escape()
             .run(request);
-
-        await query('bloodGroup')
-            .optional();
 
         await query('isAvailable')
             .optional()

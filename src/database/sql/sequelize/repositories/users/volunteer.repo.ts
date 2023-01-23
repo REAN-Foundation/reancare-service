@@ -76,7 +76,7 @@ export class VolunteerRepo implements IVolunteerRepo {
                 volunteer.IsAvailable = model.IsAvailable;
             }
 
-            if (volunteer.MedIssues != null && volunteer.MedIssues.length > 0) {
+            if (model.MedIssues != null && model.MedIssues.length > 0) {
 
                 var medIssues = model.MedIssues.length > 0 ?
                     JSON.stringify(model.MedIssues) : '[]';

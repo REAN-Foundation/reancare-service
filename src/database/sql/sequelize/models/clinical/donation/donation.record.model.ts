@@ -44,7 +44,6 @@ export default class DonationRecord extends Model {
     NetworkId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
@@ -52,7 +51,6 @@ export default class DonationRecord extends Model {
     EmergencyDonor: string;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

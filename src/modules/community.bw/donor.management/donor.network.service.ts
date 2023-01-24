@@ -39,7 +39,7 @@ export class DonorNetworkService implements IBloodWarriorService {
         });
 
         return activityEntities;
-    }
+    };
 
     public providerName(): string {
         return "REAN_BW";

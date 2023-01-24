@@ -256,11 +256,11 @@ export class StatisticsService {
         };
 
         return stats;
-    }
+    };
 
     public generateReport = async (reportModel: any) => {
         return await this.generateReportPDF(reportModel);
-    }
+    };
 
     //#endregion
 

@@ -90,7 +90,7 @@ export class UserHelper {
         patient.User.Person.Addresses = [address];
 
         return [ patient, true ];
-    }
+    };
 
     private createPatientWithHealthProfile = async (
         createModel: PatientDomainModel,
@@ -117,7 +117,7 @@ export class UserHelper {
             await this._userService.generateOtp(otpDetails);
         }
         return patient;
-    }
+    };
 
     private async addAddress(createModel: PatientDomainModel, person: PersonDetailsDto)
         : Promise<AddressDto> {

@@ -349,4 +349,19 @@ export class LabRecordRepo implements ILabRecordRepo {
         return records.sort((a, b) => b.RecordedAt.getTime() - a.RecordedAt.getTime());
     }
 
+    getRecent = async (patientUserId: string): Promise<LabRecordDto> => {
+        try {
+            const record = await LabRecord.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['RecordDate', 'DESC']]
+            });
+            return await LabRecordMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

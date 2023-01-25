@@ -29,14 +29,17 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
 
-        /*let value = model.Stats.Biometrics.Last6Months.BodyWeight.AverageBodyWeight.toFixed();
-        y = addLabeledText(document, 'Average Weight (Kg)', value, y);
+        let value = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight.toFixed();
+        y = addLabeledText(document, 'Starting Weight (Kg)', value, y);
 
         value = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight.toString();
         y = addLabeledText(document, 'Current Body Weight (Kg)', value, y);
 
+        value = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange.toString();
+        y = addLabeledText(document, 'Total Change in Body Weight (Kg)', value, y);
+
         value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);*/
+        y = addLabeledText(document, 'Last Measured Date', value, y);
     }
 
     return y;
@@ -59,11 +62,23 @@ export const addBloodPressureStats = (model: any, document: PDFKit.PDFDocument, 
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
 
-        let value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
+        let value = model.Stats.Biometrics.Last6Months.BloodPressure.StartingSystolicBloodPressure.toString();
+        y = addLabeledText(document, 'Starting Systolic BP (mmHg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodPressure.StartingDiastolicBloodPressure.toString();
+        y = addLabeledText(document, 'Starting Diastolic BP (mmHg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
         y = addLabeledText(document, 'Recent Systolic BP (mmHg)', value, y);
 
         value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureDiastolic.toString();
         y = addLabeledText(document, 'Recent Diastolic BP (mmHg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodPressure.TotalChangeSystolic.toString();
+        y = addLabeledText(document, 'Total Change in Systolic BP (mmHg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodPressure.TotalChangeDiastolic.toString();
+        y = addLabeledText(document, 'Total Change in Diastolic BP (mmHg)', value, y);
 
         value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
@@ -89,8 +104,14 @@ export const addBloodGlucoseStats = (model: any, document: PDFKit.PDFDocument, y
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
 
-        let value = model.Stats.Biometrics.Last6Months.BloodGlucose.CurrentBloodGlucose?.toString();
+        let value = model.Stats.Biometrics.Last6Months.BloodGlucose.StartingBloodGlucose?.toString();
+        y = addLabeledText(document, 'Starting Blood Glucose (mg/dL)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodGlucose.CurrentBloodGlucose?.toString();
         y = addLabeledText(document, 'Recent Blood Glucose (mg/dL)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodGlucose.TotalChange.toString();
+        y = addLabeledText(document, 'Total Change in Blood Glucose (mg/dL)', value, y);
 
         value = model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate?.toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);

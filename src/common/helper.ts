@@ -58,7 +58,7 @@ export class Helper {
                 weightUnits = 'Kg';
             }
             const weightInLbs = weight / 0.453592;
-            weightStr = weight.toFixed() + ` Kg -${weightInLbs.toFixed()} lbs`;
+            weightStr = weight.toFixed() + ` Kg (${weightInLbs.toFixed()} lbs)`;
         }
 
         if (height_square === 0) {

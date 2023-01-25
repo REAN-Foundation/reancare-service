@@ -151,11 +151,13 @@ export class StatisticsService {
         //Body weight, Lab values
 
         var bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, 6);
-
-        const patient = await this._patientRepo.getByUserId(patientUserId);
-        const user = await this._userRepo.getById(patient.UserId);
-        const person = await this._personRepo.getById(user.PersonId);
+        const startingWeight = bodyWeightStats[bodyWeightStats.length - 1].BodyWeight;
+        
+        // const patient = await this._patientRepo.getByUserId(patientUserId);
+        // const user = await this._userRepo.getById(patient.UserId);
+        // const person = await this._personRepo.getById(user.PersonId);
         var currentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
+        var weightUnits = 'Kg';
         
         const sum = bodyWeightStats.reduce((acc, x) => acc + x.BodyWeight, 0);
         const averageBodyWeight = bodyWeightStats.length === 0 ? null : sum / bodyWeightStats.length;
@@ -164,6 +166,7 @@ export class StatisticsService {
         let heightUnits = 'cm';
         
         const currentWeight = currentBodyWeight ? currentBodyWeight.BodyWeight : null;
+        var totalChange = currentWeight - startingWeight;
         const heightDto = await this._bodyHeightRepo.getRecent(patientUserId);
         if (heightDto) {
             currentHeight = heightDto.BodyHeight;
@@ -172,7 +175,7 @@ export class StatisticsService {
         var { bmi, weightStr, heightStr } =
             Helper.calculateBMI(currentHeight, heightUnits, currentWeight, weightUnits);
 
-        var countryCode = person.Phone.split("-")[0];
+        /*var countryCode = person.Phone.split("-")[0];
         if (countryCode === '+1' || countryCode === '+44'){
             const weight = weightStr.split("-")[1];
             weightStr = weight;
@@ -181,36 +184,73 @@ export class StatisticsService {
             const weight = weightStr.split("-")[0];
             weightStr = weight;
             var weightUnits = 'Kg';
-        }
+        }*/
         
         const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, 6);
+        var startingSystolicBloodPressure = bloodPressureStats[bloodPressureStats.length - 1].Systolic;
+        var startingDiastolicBloodPressure = bloodPressureStats[bloodPressureStats.length - 1].Diastolic;
         const currentBloodPressure = await this._bloodPressureRepo.getRecent(patientUserId);
+        var totalChangeSystolic = currentBloodPressure.Systolic - startingSystolicBloodPressure;
+        var totalChangeDiastolic = currentBloodPressure.Diastolic - startingDiastolicBloodPressure;
 
         const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, 6);
+        var startingBloodGlucose = bloodGlucoseStats[bloodGlucoseStats.length - 1].BloodGlucose;
         const currentBloodGlucose = await this._bloodGlucoseRepo.getRecent(patientUserId);
+        var totalChange = currentBloodGlucose.BloodGlucose - startingBloodGlucose;
 
         const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, 6);
+
+        var startingTotalCholesterol =
+            cholesterolStats.TotalCholesterol[cholesterolStats.TotalCholesterol.length - 1].PrimaryValue;
+        const currentTotalCholesterol = cholesterolStats.HDL[0].PrimaryValue;
+        var totalTotalCholesterolChange = currentTotalCholesterol - startingTotalCholesterol;
+
+        const startingHDL = cholesterolStats.HDL[cholesterolStats.HDL.length - 1].PrimaryValue;
+        const currentHDL = cholesterolStats.HDL[0].PrimaryValue;
+        var totalHDLChange = currentHDL - startingHDL;
+
+        var startingLDL = cholesterolStats.LDL[cholesterolStats.LDL.length - 1].PrimaryValue;
+        const currentLDL = cholesterolStats.LDL[0].PrimaryValue;
+        const totalLDLChange = currentLDL - startingLDL;
+
+        var startingTriglycerideLevel =
+            cholesterolStats.TriglycerideLevel[cholesterolStats.TriglycerideLevel.length - 1].PrimaryValue;
+        const currentTriglycerideLevel = cholesterolStats.TriglycerideLevel[0].PrimaryValue;
+        const totalTriglycerideLevelChange = currentTriglycerideLevel - startingTriglycerideLevel;
+
+        var startingA1CLevel =
+            cholesterolStats.A1CLevel[cholesterolStats.A1CLevel.length - 1].PrimaryValue;
+        const currentA1CLevel = cholesterolStats.A1CLevel[0].PrimaryValue;
+        const totalA1CLevelChange = currentA1CLevel - startingA1CLevel;
 
         const biometrics = {
             Last6Months : {
                 BloodPressure : {
-                    History                       : bloodPressureStats,
-                    CurrentBloodPressureDiastolic : currentBloodPressure ? currentBloodPressure.Diastolic : null,
-                    CurrentBloodPressureSystolic  : currentBloodPressure ? currentBloodPressure.Systolic : null,
-                    LastMeasuredDate              : currentBloodPressure ? currentBloodPressure.RecordDate : null,
+                    History                        : bloodPressureStats,
+                    StartingSystolicBloodPressure  : startingSystolicBloodPressure,
+                    StartingDiastolicBloodPressure : startingDiastolicBloodPressure,
+                    CurrentBloodPressureDiastolic  : currentBloodPressure ? currentBloodPressure.Diastolic : null,
+                    CurrentBloodPressureSystolic   : currentBloodPressure ? currentBloodPressure.Systolic : null,
+                    TotalChangeSystolic            : totalChangeSystolic,
+                    TotalChangeDiastolic           : totalChangeDiastolic,
+                    LastMeasuredDate               : currentBloodPressure ? currentBloodPressure.RecordDate : null,
                 },
                 BodyWeight : {
-                    History           : bodyWeightStats,
-                    AverageBodyWeight : averageBodyWeight,
-                    CurrentBodyWeight : currentBodyWeight ? currentBodyWeight.BodyWeight : null,
-                    LastMeasuredDate  : currentBodyWeight ? currentBodyWeight.RecordDate : null,
+                    History            : bodyWeightStats,
+                    AverageBodyWeight  : averageBodyWeight,
+                    StartingBodyWeight : startingWeight,
+                    TotalChange        : totalChange,
+                    CurrentBodyWeight  : currentBodyWeight ? currentBodyWeight.BodyWeight : null,
+                    LastMeasuredDate   : currentBodyWeight ? currentBodyWeight.RecordDate : null,
                 },
                 BloodGlucose : {
-                    History             : bloodGlucoseStats,
-                    CurrentBloodGlucose : currentBloodGlucose ? currentBloodGlucose.BloodGlucose : null,
-                    LastMeasuredDate    : currentBloodGlucose ? currentBloodGlucose.RecordDate : null,
+                    History              : bloodGlucoseStats,
+                    StartingBloodGlucose : startingBloodGlucose,
+                    CurrentBloodGlucose  : currentBloodGlucose ? currentBloodGlucose.BloodGlucose : null,
+                    TotalChange          : totalChange,
+                    LastMeasuredDate     : currentBloodGlucose ? currentBloodGlucose.RecordDate : null,
                 },
-                Cholesterol : cholesterolStats,
+                Cholesterol : cholesterolStats
             }
         };
 

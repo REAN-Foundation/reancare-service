@@ -31,4 +31,6 @@ export interface ILabRecordRepo {
 
     getStats(patientUserId: string, numMonths: number): Promise<any>;
 
+    getRecent(patientUserId: string): Promise<LabRecordDto>;
+
 }

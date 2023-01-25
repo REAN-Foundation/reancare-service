@@ -34,35 +34,35 @@ export default class StaticEHRData extends Model {
         },
         allowNull : false,
     })
-    id: string;
+        id: string;
 
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
     })
-    PatientUserId: string;
+        PatientUserId: string;
 
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    DoctorPersonId_1: string;
+        DoctorPersonId_1: string;
 
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    DoctorPersonId_2: string;
+        DoctorPersonId_2: string;
 
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    ProviderCode: string;
+        ProviderCode: string;
 
     @Column({
         type         : DataType.ENUM,
@@ -70,68 +70,68 @@ export default class StaticEHRData extends Model {
         defaultValue : Gender.Unknown,
         allowNull    : true,
     })
-    Gender: string;
+        Gender: string;
 
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    BirthDate: Date;
+        BirthDate: Date;
 
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    HealthSystem: string;
+        HealthSystem: string;
 
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    Ethnicity: string;
+        Ethnicity: string;
 
     @Column({
         type         : DataType.STRING(128),
         allowNull    : true,
         defaultValue : ''
     })
-    Race: string;
+        Race: string;
 
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    Nationality: string;
+        Nationality: string;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false,
     })
-    HasHeartAilment: boolean;
+        HasHeartAilment: boolean;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false,
     })
-    IsDiabetic: boolean;
+        IsDiabetic: boolean;
 
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    MaritalStatus: string;
+        MaritalStatus: string;
 
     @Column({
         type         : DataType.STRING(16),
         allowNull    : true,
         defaultValue : ''
     })
-    BloodGroup: string;
+        BloodGroup: string;
 
     @Length({ max: 128 })
     @Column({
@@ -139,29 +139,29 @@ export default class StaticEHRData extends Model {
         allowNull    : true,
         defaultValue : ''
     })
-    MajorAilment: string;
+        MajorAilment: string;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false,
     })
-    IsSmoker: boolean;
+        IsSmoker: boolean;
 
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    Location: string;
+        Location: string;
 
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,
     })
-    BodyHeight: number;
+        BodyHeight: number;
 
     @Column
     @CreatedAt
-    CreatedAt: Date;
+        CreatedAt: Date;
 
 }

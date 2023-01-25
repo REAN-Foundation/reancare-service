@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { Stream } from 'stream';
 import { Logger } from '../../../common/logger';
 import { IFileStorageService } from '../interfaces/file.storage.service.interface';
 
@@ -25,7 +26,27 @@ export class CustomFileStorageService implements IFileStorageService {
             return null;
         }
     };
-    
+
+    uploadStream = async (storageKey: string, stream: Stream): Promise<string> => {
+        return new Promise( (resolve, reject) => {
+            try {
+                const location = path.join(this._storagePath, storageKey);
+                const directory = path.dirname(location);
+                fs.mkdirSync(directory, { recursive: true });
+                const writeStream = fs.createWriteStream(location);
+                stream.pipe(writeStream);
+                writeStream.on('finish', async () => {
+                    writeStream.end();
+                    resolve(storageKey);
+                });
+            }
+            catch (error) {
+                Logger.instance().log(error.message);
+                reject(error.message);
+            }
+        });
+    };
+
     upload = async (storageKey: string, localFilePath?: string): Promise<string> => {
         try {
             const fileContent = fs.readFileSync(localFilePath);
@@ -89,7 +110,7 @@ export class CustomFileStorageService implements IFileStorageService {
             return false;
         }
     };
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getShareableLink(storageKey: string, _durationInMinutes: number): string {
         return path.join(this._storagePath, storageKey);

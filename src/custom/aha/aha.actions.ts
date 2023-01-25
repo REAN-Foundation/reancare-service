@@ -194,14 +194,16 @@ export class AHAActions {
 
                     if (
                         action.Frequency === 85 &&
-                                action.Sequence === 5
+                        action.Sequence === 5
                     ) {
-                        Logger.instance().log(`[HsCron] Skip sending survey message for patient:${patientDetails.UserId} 
-                                    as Health behaviour assessment in not completed: ${action.Status}`);
+                        Logger.instance().log(`[HsCron] Action Frequency & Sequence are valid.
+                            Proceed to check task status for patient:${patientDetails.UserId}`);
                         if (
                             task.Finished === true &&
-                                    action.Status === 'Completed'
+                            action.Status === 'Completed'
                         ) {
+                            Logger.instance().log(`[HsCron] Start sending SMS and creating custom task for patient Survey.
+                                for patient:${patientDetails.UserId}`);
                             const patient =
                                     await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
                             const phoneNumber = patient.User.Person.Phone;
@@ -215,6 +217,8 @@ export class AHAActions {
                             if (sendStatus) {
                                 Logger.instance().log(`Message sent successfully`);
                                 await this.createHsPatientSurveyTask(patient);
+                            } else {
+                                Logger.instance().log(`[HsCron] Failed to send SMS for ${phoneNumber}, hence skip creating task.`);
                             }
      
                         } else {

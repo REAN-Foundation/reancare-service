@@ -95,13 +95,18 @@ export class FileResourceRepo implements IFileResourceRepo {
         if (resource === null) {
             throw new Error('Cannot find the resource!');
         }
+        resource.FileName               = model.FileMetadata?.OriginalName ?? resource.FileName;
+        resource.IsMultiResolutionImage = model.IsMultiResolutionImage ?? resource.IsMultiResolutionImage;
+        resource.MimeType               = model.FileMetadata?.MimeType ?? resource.MimeType;
+        resource.UpdatedAt              = new Date();
+
         if (model.Tags != null && model.Tags.length > 0) {
             var existingTags = resource.Tags ? JSON.parse(resource.Tags) as Array<string> : [];
             existingTags.push(...model.Tags);
             existingTags = [...new Set(existingTags)];
             resource.Tags = JSON.stringify(existingTags);
-            await resource.save();
         }
+        await resource.save();
 
         var dto = FileResourceMapper.toDetailsDto(resource);
         dto.References = FileResourceMapper.toFileReferenceDtos(references);

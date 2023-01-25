@@ -102,8 +102,8 @@ export class BodyHeightController {
             const model = await BodyHeightValidator.update(request);
 
             const id: string = await BodyHeightValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
+            const existing = await this._service.getById(id);
+            if (existing == null) {
                 throw new ApiError(404, 'Height record not found.');
             }
 
@@ -126,8 +126,8 @@ export class BodyHeightController {
             await this._authorizer.authorize(request, response);
 
             const id: string = await BodyHeightValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
+            const existing = await this._service.getById(id);
+            if (existing == null) {
                 throw new ApiError(404, 'Height record not found.');
             }
 
@@ -158,7 +158,7 @@ export class BodyHeightController {
                 BodyHeight : model.BodyHeight
             });
         }
-    }
+    };
 
     //#endregion
 

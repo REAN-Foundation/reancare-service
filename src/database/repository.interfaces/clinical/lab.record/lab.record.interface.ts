@@ -1,3 +1,5 @@
+import { LabRecordTypeSearchResults, LabRecordTypeSearchFilters }
+    from "../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types";
 import { LabRecordTypeDomainModel } from "../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
 import { LabRecordTypeDto } from "../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
 import { LabRecordDomainModel } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model";
@@ -12,6 +14,8 @@ export interface ILabRecordRepo {
     getById(id: string): Promise<LabRecordDto>;
 
     search(filters: LabRecordSearchFilters): Promise<LabRecordSearchResults>;
+
+    searchType(filters: LabRecordTypeSearchFilters): Promise<LabRecordTypeSearchResults>;
 
     update(id: string, labRecordDomainModel: LabRecordDomainModel): Promise<LabRecordDto>;
 

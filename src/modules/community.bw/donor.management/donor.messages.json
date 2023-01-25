@@ -1,12 +1,17 @@
 [
     {
+        "Name": "Message on the day of donation",
+        "TimeSlot": "Morning",
         "Sequence": 1,
-        "message": "Welcome to the donor community. \nRegards \nTeam Blood Warriors"
-        
+        "Day": 1,
+        "Message": "Dear Blood Warrior, \nThis is a reminder that you have a scheduled donation today. \nPlease check the scheduler message for details."
     },
     {
+        "Name": "Confirmation message",
+        "TimeSlot": "Morning",
         "Sequence": 2,
-        "message": "Patient requires blood. The blood donation is scheduled for Date 29-09-2022. Would you be willing to donate blood on or before Date 26-09-2022. \nRegards \nTeam Blood Warriors"
-        
+        "Day": 1,
+        "Type": "interactive-buttons",
+        "Message": "Were you able to Donate today?"
     }
 ]

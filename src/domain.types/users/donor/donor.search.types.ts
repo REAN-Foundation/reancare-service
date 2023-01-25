@@ -1,3 +1,4 @@
+import { DonorType } from "../../../domain.types/miscellaneous/clinical.types";
 import { Gender } from "../../miscellaneous/system.types";
 import { DonorDetailsDto, DonorDto } from "./donor.dto";
 
@@ -14,6 +15,7 @@ export interface DonorSearchFilters {
     OnlyEligible? : boolean | string,
     IsAvailable? : boolean,
     HasDonatedEarlier? : boolean,
+    DonorType?  : DonorType;
     CreatedDateFrom?: Date;
     CreatedDateTo?: Date;
     OrderBy: string;

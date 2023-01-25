@@ -17,7 +17,9 @@ export interface FileResourceRenameDomainModel {
 }
 
 export interface FileResourceUpdateModel {
-    ResourceId: string;
-    References: ResourceReference[];
-    Tags      : string[];
+    FileMetadata?          : FileResourceMetadata;
+    ResourceId             : string;
+    References?            : ResourceReference[];
+    Tags?                  : string[];
+    IsMultiResolutionImage?: boolean;
 }

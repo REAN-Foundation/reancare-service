@@ -29,16 +29,16 @@ export class EHRAnalyticsHandler {
     }, EHRAnalyticsHandler._numAsyncTasks);
 
     private static add = (model:EHRDynamicRecordDomainModel) => {
-        EHRAnalyticsHandler._q.push(model, (error, model) => {
+        EHRAnalyticsHandler._q.push(model, (model, error) => {
             if (error) {
-                Logger.instance().log(`Error recording EHR record: ${error.message}`);
+                Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error.stack, null, 2)}`);
             }
             else {
                 Logger.instance().log(`Recorded EHR record: ${JSON.stringify(model, null, 2)}`);
             }
         });
-    }
+    };
 
     static addOrUpdatePatient = async (
         patientUserId: uuid,
@@ -46,7 +46,7 @@ export class EHRAnalyticsHandler {
     ) => {
         await EHRAnalyticsHandler._ehrDatasetRepo.addOrUpdatePatient(
             patientUserId, details);
-    }
+    };
 
     //#region Add records
 
@@ -69,7 +69,7 @@ export class EHRAnalyticsHandler {
             ValueUnit     : primaryUnit ?? null,
         };
         EHRAnalyticsHandler.add(model);
-    }
+    };
 
     static addDateRecord = (
         patientUserId: uuid,
@@ -90,7 +90,7 @@ export class EHRAnalyticsHandler {
             ValueUnit     : primaryUnit ?? null,
         };
         EHRAnalyticsHandler.add(model);
-    }
+    };
 
     static addIntegerRecord = (
         patientUserId: uuid,
@@ -111,7 +111,7 @@ export class EHRAnalyticsHandler {
             ValueUnit     : primaryUnit ?? null,
         };
         EHRAnalyticsHandler.add(model);
-    }
+    };
 
     static addFloatRecord = (
         patientUserId: uuid,
@@ -132,7 +132,7 @@ export class EHRAnalyticsHandler {
             ValueUnit     : primaryUnit ?? null,
         };
         EHRAnalyticsHandler.add(model);
-    }
+    };
 
     static addBooleanRecord = (
         patientUserId: uuid,
@@ -153,7 +153,7 @@ export class EHRAnalyticsHandler {
             ValueUnit     : primaryUnit ?? null,
         };
         EHRAnalyticsHandler.add(model);
-    }
+    };
 
     //#endregion
 

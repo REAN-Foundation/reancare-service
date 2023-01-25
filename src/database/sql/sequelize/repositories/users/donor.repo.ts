@@ -27,6 +27,7 @@ export class DonorRepo implements IDonorRepo {
                 BloodGroup        : donorDomainModel.BloodGroup,
                 AcceptorUserId    : donorDomainModel.AcceptorUserId,
                 LastDonationDate  : donorDomainModel.LastDonationDate,
+                DonorType         : donorDomainModel.DonorType,
                 IsAvailable       : donorDomainModel.IsAvailable,
                 HasDonatedEarlier : donorDomainModel.HasDonatedEarlier,
                 MedIssues         : medIssues
@@ -70,6 +71,9 @@ export class DonorRepo implements IDonorRepo {
             }
             if (model.LastDonationDate != null) {
                 donor.LastDonationDate = model.LastDonationDate;
+            }
+            if (model.DonorType != null) {
+                donor.DonorType = model.DonorType;
             }
             if (model.IsAvailable != null) {
                 donor.IsAvailable = model.IsAvailable;
@@ -144,6 +148,9 @@ export class DonorRepo implements IDonorRepo {
             }
             if (filters.AcceptorUserId != null) {
                 search.where['AcceptorUserId'] = filters.AcceptorUserId;
+            }
+            if (filters.DonorType != null) {
+                search.where['DonorType'] = filters.DonorType;
             }
 
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
@@ -234,6 +241,6 @@ export class DonorRepo implements IDonorRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

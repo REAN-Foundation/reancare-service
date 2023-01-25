@@ -107,6 +107,24 @@ export default class HealthProfile extends Model {
     })
         Race: string;
 
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    StrokeSurvivorOrCaregiver: string;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    LivingAlone: boolean;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    WorkedPriorToStroke: boolean;
+
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),

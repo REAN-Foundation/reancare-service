@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { TimeHelper } from '../../../../../../common/time.helper';
@@ -10,7 +11,9 @@ import { IMedicationConsumptionRepo } from '../../../../../repository.interfaces
 import { MedicationConsumptionMapper } from '../../../mappers/clinical/medication/medication.consumption.mapper';
 import MedicationConsumption from '../../../models/clinical/medication/medication.consumption.model';
 import Medication from '../../../models/clinical/medication/medication.model';
-import UserTask from '../../../models/user/user.task.model';
+import UserTask from '../../../models/users/user/user.task.model';
+import Patient from '../../../models/users/patient/patient.model';
+import User from '../../../models/users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,7 +39,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    markAsTaken = async(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto> => {
+    markAsTaken = async(id: uuid, takenAt: Date): Promise<MedicationConsumptionDetailsDto> => {
         try {
             const consumption = await MedicationConsumption.findByPk(id);
 
@@ -48,7 +51,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             consumption.TakenAt = takenAt;
             consumption.IsCancelled = false;
             consumption.CancelledOn = null;
-            
+
             await consumption.save();
 
             var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
@@ -60,7 +63,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    markAsMissed = async(id: string): Promise<MedicationConsumptionDetailsDto> => {
+    markAsMissed = async(id: uuid): Promise<MedicationConsumptionDetailsDto> => {
         try {
             const consumption = await MedicationConsumption.findByPk(id);
 
@@ -72,7 +75,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             consumption.TakenAt = null;
             consumption.IsCancelled = false;
             consumption.CancelledOn = null;
-            
+
             await consumption.save();
 
             var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
@@ -84,16 +87,16 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    deleteFutureMedicationSchedules = async(medicationId: string): Promise<number> => {
+    deleteFutureMedicationSchedules = async(medicationId: uuid): Promise<number> => {
         try {
 
             var selector = {
                 where : {
                     MedicationId      : medicationId,
-                    TimeScheduleStart : { [Op.gte]: new Date() }
+                    TimeScheduleStart : { [Op.gte]: new Date(new Date().toISOString().split('T')[0]) }
                 }
             };
-            
+
             const ids = (await MedicationConsumption.findAll(selector)).map(x => x.id);
             const deletedCount = await MedicationConsumption.destroy(selector);
             Logger.instance().log(`Deleted ${deletedCount} medication consumptions.`);
@@ -115,7 +118,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getSchedulesForMedication = async(medicationId: string): Promise<MedicationConsumptionDto[]> => {
+    getSchedulesForMedication = async(medicationId: uuid): Promise<MedicationConsumptionDto[]> => {
         try {
             var selector = {
                 where : {
@@ -140,8 +143,8 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     //     currentTimeZone: string,
     //     newTimeZone: string): Promise<number> => {
     // }
-    
-    getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
+
+    getById = async (id: uuid): Promise<MedicationConsumptionDetailsDto> => {
         try {
             const consumption = await MedicationConsumption.findByPk(id);
             return await MedicationConsumptionMapper.toDetailsDto(consumption);
@@ -150,7 +153,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults> => {
         try {
             const search = { where: {} };
@@ -218,20 +221,20 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getSchedulesForDay = async(patientUserId: string, date: Date)
+    getSchedulesForDay = async(patientUserId: uuid, date: Date)
         : Promise<MedicationConsumptionDto[]> => {
         try {
-            
+
             var dayStart = date;
             var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hour);
-    
+
             var search = {
                 PatientUserId     : patientUserId,
                 TimeScheduleStart : {
@@ -240,11 +243,11 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 },
                 IsCancelled : false
             };
-    
+
             const entities = await MedicationConsumption.findAll({
                 where : search
             });
-    
+
             var dtos = entities.map(x => MedicationConsumptionMapper.toDto(x));
             var fn = (a, b) => {
                 return a.TimeScheduleStart.getTime() - b.TimeScheduleStart.getTime();
@@ -261,7 +264,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     getSchedulesForPatientForDuration = async (patientUserId: string, from: Date, to: Date)
     : Promise<MedicationConsumptionDto[]> => {
         try {
-   
+
             const entities = await MedicationConsumption.findAll({
                 where : {
                     PatientUserId     : patientUserId,
@@ -272,9 +275,9 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     IsCancelled : false
                 }
             });
-            
+
             return entities.map(x => MedicationConsumptionMapper.toDto(x));
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -296,20 +299,20 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             if (filterTaken) {
                 filter['IsTaken'] = false;
             }
-   
+
             const entities = await MedicationConsumption.findAll({
                 where : filter
             });
-            
+
             return entities.map(x => MedicationConsumptionMapper.toDto(x));
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         try {
             await Medication.destroy({ where: { id: id } });
             return true;
@@ -319,10 +322,10 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getPendingConsumptionCountForMedication = async (medicationId: string): Promise<number> => {
-        
+    getPendingConsumptionCountForMedication = async (medicationId: uuid): Promise<number> => {
+
         try {
-   
+
             const count = await MedicationConsumption.count({
                 where : {
                     MedicationId      : medicationId,
@@ -332,9 +335,9 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     },
                 }
             });
-            
+
             return count;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -342,19 +345,19 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
     };
 
-    getTotalConsumptionCountForMedication = async (medicationId: string): Promise<number> => {
+    getTotalConsumptionCountForMedication = async (medicationId: uuid): Promise<number> => {
 
         try {
-   
+
             const count = await MedicationConsumption.count({
                 where : {
                     MedicationId : medicationId,
                     IsCancelled  : false
                 }
             });
-            
+
             return count;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -362,10 +365,10 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
     };
 
-    cancelSchedule = async (id: string): Promise<boolean> => {
-        
+    cancelSchedule = async (id: uuid): Promise<boolean> => {
+
         try {
-   
+
             var schedule = await MedicationConsumption.findByPk(id);
             if (schedule === null) {
                 return false;
@@ -375,7 +378,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             await schedule.save();
 
             return true;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -391,7 +394,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 return null;
             }
             consumption.EhrId = ehrId;
-            
+
             await consumption.save();
 
             var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
@@ -402,5 +405,107 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const numDays = 30 * numMonths;
+            return await this.getDayByDayStats(patientUserId, numDays);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getDayByDayStats(patientUserId: string, numDays: number) {
+
+        const timezone = await this.getPatientTimezone(patientUserId);
+        const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
+
+        const stats = [];
+
+        //Check whether the records exist or not
+        const from = TimeHelper.subtractDuration(reference, numDays, DurationType.Day);
+        const records = await MedicationConsumption.findAll({
+            where : {
+                PatientUserId     : patientUserId,
+                TimeScheduleStart : {
+                    [Op.gte] : from,
+                    [Op.lte] : new Date(),
+                }
+            }
+        });
+        if (records.length === 0) {
+            return [];
+        }
+
+        for await (var day of dayList) {
+
+            var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            var dayEnd = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
+
+            const dayStr = dayStart.toISOString().split('T')[0];
+
+            const takenCount = await MedicationConsumption.count({
+                where : {
+                    PatientUserId     : patientUserId,
+                    TimeScheduleStart : {
+                        [Op.gte] : dayStart,
+                        [Op.lte] : dayEnd
+                    },
+                    IsCancelled : false,
+                    IsTaken     : true,
+                    IsMissed    : false,
+                }
+            });
+            const missedCount = await MedicationConsumption.count({
+                where : {
+                    PatientUserId     : patientUserId,
+                    TimeScheduleStart : {
+                        [Op.gte] : dayStart,
+                        [Op.lte] : dayEnd
+                    },
+                    IsCancelled : false,
+                    IsTaken     : false,
+                    IsMissed    : true,
+                }
+            });
+            stats.push({
+                DayStr      : dayStr,
+                TakenCount  : takenCount,
+                MissedCount : missedCount,
+            });
+        }
+
+        const totalMissed = stats.map(x => x.MissedCount).reduce((a, b) => a + b, 0);
+        const totalTaken = stats.map(x => x.TakenCount).reduce((a, b) => a + b, 0);
+
+        return {
+            TotalMissedCount : totalMissed,
+            TotalTakenCount  : totalTaken,
+            Daily            : stats
+        };
+    }
+
+    private async getPatientTimezone(patientUserId: string) {
+        let timezone = '+05:30';
+        const patient = await Patient.findOne({
+            where : {
+                UserId : patientUserId
+            },
+            include : [
+                {
+                    model    : User,
+                    as       : 'User',
+                    required : true,
+                }
+            ]
+        });
+        if (patient) {
+            timezone = patient.User.CurrentTimeZone;
+        }
+        return timezone;
+    }
 
 }

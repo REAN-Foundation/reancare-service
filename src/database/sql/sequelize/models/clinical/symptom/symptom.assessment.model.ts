@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 import {
     ProgressStatus, ProgressStatusList
 } from '../../../../../../domain.types/miscellaneous/system.types';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 import SymptomAssessmentTemplate from './symptom.assessment.template.model';
 import Symptom from './symptom.model';
 
@@ -53,7 +53,7 @@ export default class SymptomAssessment extends Model {
         allowNull : false,
     })
     Title: string;
-    
+
     @IsUUID(4)
     @ForeignKey(() => SymptomAssessmentTemplate)
     @Column({
@@ -64,14 +64,14 @@ export default class SymptomAssessment extends Model {
 
     @BelongsTo(() => SymptomAssessmentTemplate)
     AssessmentTemplate: SymptomAssessmentTemplate;
-    
+
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : false,
     })
     AssessmentDate: Date;
-    
+
     @Length({ max: 32 })
     @Column({
         type         : DataType.STRING(32),

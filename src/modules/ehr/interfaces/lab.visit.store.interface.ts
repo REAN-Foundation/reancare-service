@@ -1,4 +1,4 @@
-import { LabVisitDomainModel } from '../../../domain.types/lab.visit/lab.visit.domain.model';
+import { LabVisitDomainModel } from '../../../domain.types/clinical/lab.visit/lab.visit.domain.model';
 
 export interface ILabVisitStore {
     create(labVisitDomainModel: LabVisitDomainModel): Promise<any>;

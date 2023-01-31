@@ -17,7 +17,7 @@ import {
 } from '../../../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.types';
 
 import { v4 } from 'uuid';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -73,7 +73,7 @@ export default class FoodComponentMonitoring extends Model {
     @Column({
         type      : DataType.STRING(256),
         allowNull : false,
-    
+
     })
     Unit: string;
 

@@ -2,7 +2,7 @@ import { Helper } from '../../../../../../common/helper';
 import { IDiagnosticLabUserStore } from '../../../../interfaces/diagnostic.lab.user.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
-import { DiagnosticLabUserDomainModel } from '../../../../../../domain.types/diagnostic.lab.user/diagnostic.lab.user.domain.model';
+import { DiagnosticLabUserDomainModel } from '../../../../../../domain.types/users/diagnostic.lab.user/diagnostic.lab.user.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ export class GcpDiagnosticLabUserStore implements IDiagnosticLabUserStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: DiagnosticLabUserDomainModel): Promise<any> => {
         const resourceType = 'Practitioner';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -47,7 +47,7 @@ export class GcpDiagnosticLabUserStore implements IDiagnosticLabUserStore {
             telecom      : [],
             address      : []
         };
-        
+
         if (model.BirthDate != null) {
             var str = Helper.formatDate(model.BirthDate);
             resource['birthDate'] = str;

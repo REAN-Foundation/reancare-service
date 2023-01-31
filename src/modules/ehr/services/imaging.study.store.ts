@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { IImagingStudyStore } from '../interfaces/imaging.study.store.interface';
 import { injectable, inject } from "tsyringe";
-import { ImagingStudyDomainModel } from '../../../domain.types/imaging.study/imaging.study.domain.model';
+import { ImagingStudyDomainModel } from '../../../domain.types/clinical/imaging.study/imaging.study.domain.model';
 
 ///////////////////////////////////////////////////////////////////
 

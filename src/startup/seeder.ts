@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { UserHelper } from "../api/helpers/user.helper";
+import { UserHelper } from "../api/users/user.helper";
 import { inject, injectable } from "tsyringe";
 import * as SeededDrugs from '../../seed.data/drugs.seed.json';
 import * as SeededKnowledgeNuggets from '../../seed.data/knowledge.nuggets.seed.json';
@@ -9,21 +9,23 @@ import * as SeededAssessmentTemplates from '../../seed.data/symptom.assessment.t
 import * as SeededSymptomTypes from '../../seed.data/symptom.types.json';
 import * as SeededNutritionQuestionnaire from '../../seed.data/nutrition.questionnaire.json';
 import * as SeededLabRecordTypes from '../../seed.data/lab.record.types.seed.json';
+import * as seededHealthSystemsAndHospitals from '../../seed.data/health.systems.and.hospitals.seed..json';
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
-import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
+import { IApiClientRepo } from "../database/repository.interfaces/api.client/api.client.repo.interface";
 import { IDrugRepo } from "../database/repository.interfaces/clinical/medication/drug.repo.interface";
 import { IMedicationStockImageRepo } from "../database/repository.interfaces/clinical/medication/medication.stock.image.repo.interface";
 import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
 import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
 import { IKnowledgeNuggetRepo } from "../database/repository.interfaces/educational/knowledge.nugget.repo.interface";
-import { IHealthPriorityRepo } from "../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
-import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
-import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
-import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
-import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privilege.repo.interface";
-import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
-import { IUserRepo } from "../database/repository.interfaces/user/user.repo.interface";
+import { IHealthPriorityRepo } from "../database/repository.interfaces/users/patient/health.priority.repo.interface";
+import { IInternalTestUserRepo } from "../database/repository.interfaces/users/user/internal.test.user.repo.interface";
+import { IPersonRepo } from "../database/repository.interfaces/person/person.repo.interface";
+import { IPersonRoleRepo } from "../database/repository.interfaces/person/person.role.repo.interface";
+import { IRolePrivilegeRepo } from "../database/repository.interfaces/role/role.privilege.repo.interface";
+import { IRoleRepo } from "../database/repository.interfaces/role/role.repo.interface";
+import { IUserRepo } from "../database/repository.interfaces/users/user/user.repo.interface";
+import { IHealthSystemRepo } from "../database/repository.interfaces/users/patient/health.system.repo.interface";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { DrugDomainModel } from "../domain.types/clinical/medication/drug/drug.domain.model";
 import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
@@ -31,33 +33,36 @@ import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/s
 import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
 import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
 import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
-import { HealthPriorityTypeDomainModel } from "../domain.types/patient/health.priority.type/health.priority.type.domain.model";
-import { HealthPriorityTypeList } from "../domain.types/patient/health.priority.type/health.priority.types";
-import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
+import { HealthPriorityTypeDomainModel } from "../domain.types/users/patient/health.priority.type/health.priority.type.domain.model";
+import { HealthPriorityTypeList } from "../domain.types/users/patient/health.priority.type/health.priority.types";
+import { PatientDomainModel } from "../domain.types/users/patient/patient/patient.domain.model";
 import { Roles } from "../domain.types/role/role.types";
-import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
-import { ApiClientService } from "../services/api.client.service";
+import { UserDomainModel } from "../domain.types/users/user/user.domain.model";
+import { ApiClientService } from "../services/api.client/api.client.service";
 import { DrugService } from "../services/clinical/medication/drug.service";
 import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/symptom.assessment.template.service";
 import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.service";
 import { KnowledgeNuggetService } from "../services/educational/knowledge.nugget.service";
-import { FileResourceService } from "../services/file.resource.service";
-import { HealthPriorityService } from "../services/patient/health.priority/health.priority.service";
-import { HealthProfileService } from "../services/patient/health.profile.service";
-import { PatientService } from "../services/patient/patient.service";
-import { PersonService } from "../services/person.service";
-import { RoleService } from "../services/role.service";
-import { UserService } from "../services/user/user.service";
+import { FileResourceService } from "../services/general/file.resource.service";
+import { HealthPriorityService } from "../services/users/patient/health.priority.service";
+import { HealthProfileService } from "../services/users/patient/health.profile.service";
+import { PatientService } from "../services/users/patient/patient.service";
+import { PersonService } from "../services/person/person.service";
+import { RoleService } from "../services/role/role.service";
+import { UserService } from "../services/users/user/user.service";
 import { FoodConsumptionService } from "../services/wellness/nutrition/food.consumption.service";
 import { Loader } from "./loader";
 import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
 import { LabRecordService } from "../services/clinical/lab.record/lab.record.service";
-import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.domain.model";
-import { LabRecordType } from "../domain.types/clinical/lab.records/lab.record/lab.record.types";
+import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
+import { LabRecordType } from "../domain.types/clinical/lab.record/lab.record/lab.record.types";
 import { IFoodConsumptionRepo }
     from "../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
 import { NutritionQuestionnaireDomainModel }
     from "../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model";
+import { HealthSystemDomainModel } from "../domain.types/users/patient/health.system/health.system.domain.model";
+import { HealthSystemHospitalDomainModel } from "../domain.types/users/patient/health.system/health.system.hospital.domain.model";
+import { HealthSystemService } from "../services/users/patient/health.system.service";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -92,6 +97,8 @@ export class Seeder {
 
     _foodConsumptionService: FoodConsumptionService = null;
 
+    _healthSystemService: HealthSystemService = null;
+
     _userHelper = new UserHelper();
 
     constructor(
@@ -110,6 +117,7 @@ export class Seeder {
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
         @inject('ILabRecordRepo') private _labRecordRepo: ILabRecordRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
+        @inject('IHealthSystemRepo') private _healthSystemRepo: IHealthSystemRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -125,6 +133,7 @@ export class Seeder {
         this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
         this._labRecordService = Loader.container.resolve(LabRecordService);
         this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
+        this._healthSystemService = Loader.container.resolve(HealthSystemService);
     }
 
     public init = async (): Promise<void> => {
@@ -143,6 +152,7 @@ export class Seeder {
             await this.seedHealthPriorityTypes();
             await this.seedLabReportTypes();
             await this.seedNutritionQuestionnaire();
+            await this.seedHealthSystemsAndHospitals();
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -192,7 +202,7 @@ export class Seeder {
         const SeededSystemAdmin = this.loadJSONSeedFile('system.admin.seed.json');
 
         const role = await this._roleRepo.getByName(Roles.SystemAdmin);
-       
+
         const userDomainModel: UserDomainModel = {
             Person : {
                 Phone     : SeededSystemAdmin.Phone,
@@ -249,19 +259,19 @@ export class Seeder {
     };
 
     private seedDefaultRoles = async () => {
-        
+
         const existing = await this._roleRepo.search();
-        if (existing.length === 10) {
+        if (existing.length === 11) {
             await this._roleRepo.create({
-                RoleName    : Roles.Donor,
+                RoleName    : Roles.Volunteer,
                 Description :
-                    'Represents blood donor as a person.',
+                    'Represents a person managing the blood bridge.',
             });
         }
         if (existing.length > 0) {
             return;
         }
-        
+
         await this._roleRepo.create({
             RoleName    : Roles.SystemAdmin,
             Description : 'Admin of the system having elevated privileges.',
@@ -304,15 +314,20 @@ export class Seeder {
             Description :
                 'Represents a health social worker/health support professional representing government/private health service.',
         });
+        await this._roleRepo.create({
+            RoleName    : Roles.Donor,
+            Description :
+                'Represents blood donor as a person.',
+        });
 
         Logger.instance().log('Seeded default roles successfully!');
     };
 
     private seedInternalPatients = async () => {
         try {
-            var number = parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS);
-            var arr = JSON.parse("[" + [...Array(number)].map((_, i) => 1000000001 + i * 1) + "]");
-            if (arr.length == number) {
+            var numInternalTestUsers = parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS);
+            var arr = JSON.parse("[" + [...Array(numInternalTestUsers)].map((_, i) => 1000000001 + i * 1) + "]");
+            if (arr.length === numInternalTestUsers) {
                 for (let i = 0; i < arr.length; i++) {
                     var phone = arr[i];
                     var exists = await this._personRepo.personExistsWithPhone(phone.toString());
@@ -347,7 +362,7 @@ export class Seeder {
 
         return patient != null;
     };
-    
+
     private seedMedicationStockImages = async () => {
 
         var images = await this._medicationStockImageRepo.getAll();
@@ -378,7 +393,7 @@ export class Seeder {
                 ResourceId : uploaded.DefaultVersion.ResourceId,
                 PublicUrl  : uploaded.DefaultVersion.Url
             };
-            
+
             var medStockImage = await this._medicationStockImageRepo.create(domainModel);
             if (!medStockImage) {
                 Logger.instance().log('Error occurred while seeding medication stock images!');
@@ -420,7 +435,7 @@ export class Seeder {
         }
         var storagePath = 'assets/images/symptom.images/' + fileName;
         var sourceFileLocation = path.join(process.cwd(), "./assets/images/symptom.images/", fileName);
-        
+
         var uploaded = await this._fileResourceService.uploadLocal(
             sourceFileLocation,
             storagePath,
@@ -435,7 +450,7 @@ export class Seeder {
         }
         var storagePath = 'assets/images/nutrition.images/' + fileName;
         var sourceFileLocation = path.join(process.cwd(), "./assets/images/nutrition.images/", fileName);
-        
+
         var uploaded = await this._fileResourceService.uploadLocal(
             sourceFileLocation,
             storagePath,
@@ -445,7 +460,7 @@ export class Seeder {
     };
 
     public seedSymptomAsseessmentTemplates = async () => {
-    
+
         const count = await this._symptomAssessmentTemplateRepo.totalCount();
         if (count > 0) {
             Logger.instance().log("Symptom based assessment templates have already been seeded!");
@@ -512,7 +527,7 @@ export class Seeder {
     };
 
     public seedDrugs = async () => {
-        
+
         const count = await this._drugRepo.totalCount();
         if (count > 0) {
             Logger.instance().log("Drugs have already been seeded!");
@@ -533,7 +548,7 @@ export class Seeder {
     };
 
     public seedHealthPriorityTypes = async () => {
-        
+
         const count = await this._healthPriorityRepo.totalTypesCount();
         if (count > 0) {
             Logger.instance().log("Health priority types have already been seeded!");
@@ -553,33 +568,35 @@ export class Seeder {
 
     public seedLabReportTypes = async () => {
         
-        const count = await this._labRecordRepo.totalTypesCount();
-        if (count > 0) {
-            Logger.instance().log("Lab record types have already been seeded!");
-            return;
-        }
-
         Logger.instance().log('Seeding lab record types...');
 
         const arr = SeededLabRecordTypes['default'];
 
         for (let i = 0; i < arr.length; i++) {
             var c = arr[i];
-            let recordType = await this._labRecordService.getTypeByDisplayName(c.DisplayName);
-            if (recordType == null) {
-                const model: LabRecordTypeDomainModel = {
-                    TypeName       : c['TypeName'],
-                    DisplayName    : c['DisplayName'] as LabRecordType,
-                    SnowmedCode    : c['SnowmedCode'],
-                    LoincCode      : c['LoincCode'],
-                    NormalRangeMin : c['NormalRangeMin'],
-                    NormalRangeMax : c['NormalRangeMax'],
-                    Unit           : c['Unit'],
-                };
-                recordType = await this._labRecordService.createType(model);
-                var str = JSON.stringify(recordType, null, '  ');
-                Logger.instance().log(str);
+
+            const filters = {
+                DisplayName : c['DisplayName']
+            };
+            const existingRecord = await this._labRecordService.searchType(filters);
+            if (existingRecord.Items.length > 0) {
+                Logger.instance().log(`Lab record type has already been exist ${c['DisplayName']}!`);
+                continue;
             }
+
+            const model: LabRecordTypeDomainModel = {
+                TypeName       : c['TypeName'],
+                DisplayName    : c['DisplayName'] as LabRecordType,
+                SnowmedCode    : c['SnowmedCode'],
+                LoincCode      : c['LoincCode'],
+                NormalRangeMin : c['NormalRangeMin'],
+                NormalRangeMax : c['NormalRangeMax'],
+                Unit           : c['Unit'],
+            };
+            var recordType = await this._labRecordService.createType(model);
+            var str = JSON.stringify(recordType, null, '  ');
+            Logger.instance().log(str);
+        
         }
     };
 
@@ -617,6 +634,39 @@ export class Seeder {
             };
             await this._foodConsumptionService.createNutritionQuestionnaire(model);
         }
+    };
+
+    public seedHealthSystemsAndHospitals = async () => {
+
+        const count = await this._healthSystemRepo.totalCount();
+        if (count > 0) {
+            Logger.instance().log("Health systems and associated hospitals have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding health systems and associated hospitals...');
+
+        const arr = seededHealthSystemsAndHospitals['default'];
+
+        for (let i = 0; i < arr.length; i++) {
+
+            var t = arr[i];
+            const model: HealthSystemDomainModel = {
+                Name : t['HealthSystem']
+            };
+            var healthSystem = await this._healthSystemService.createHealthSystem(model);
+
+            for (let j = 0; j < t['AssociatedHospitals'].length; j++) {
+
+                const entity: HealthSystemHospitalDomainModel = {
+                    HealthSystemId : healthSystem.id,
+                    Name           : t['AssociatedHospitals'][j]
+                };
+                await this._healthSystemService.createHealthSystemHospital(entity);
+
+            }
+        }
+
     };
 
 }

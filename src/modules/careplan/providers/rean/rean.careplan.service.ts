@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ICareplanService } from "../../interfaces/careplan.service.interface";
 import needle = require('needle');
 import { Logger } from '../../../../common/logger';
@@ -12,13 +13,13 @@ import {
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
 import { Loader } from '../../../../startup/loader';
-import { UserTaskService } from '../../../../services/user/user.task.service';
+import { UserTaskService } from '../../../../services/users/user/user.task.service';
 import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
 import { TimeHelper } from "../../../../common/time.helper";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
-import { ActionPlanDto } from "../../../../domain.types/action.plan/action.plan.dto";
-import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
-import { HealthPriorityDto } from "../../../../domain.types/patient/health.priority/health.priority.dto";
+import { ActionPlanDto } from "../../../../domain.types/users/patient/action.plan/action.plan.dto";
+import { GoalDto } from "../../../../domain.types/users/patient/goal/goal.dto";
+import { HealthPriorityDto } from "../../../../domain.types/users/patient/health.priority/health.priority.dto";
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 import { CareplanService } from "../../../../services/clinical/careplan.service";
 
@@ -80,7 +81,7 @@ export class ReanCareplanService implements ICareplanService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public getPatientEligibility = async (user: any, planCode: string) => {
-        
+
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise((resolve, reject) => {
             const patientBirthDate : Date = user.Person.BirthDate;
@@ -127,7 +128,7 @@ export class ReanCareplanService implements ICareplanService {
 
         const enrollmentData : EnrollmentDomainModel = {
             ParticipantId  : model.ParticipantId,
-            CareplanId     : parseInt(model.PlanCode),
+            PlanCode       : model.PlanCode,
             StartDate      : new Date(model.StartDateStr),
             EndDate        : TimeHelper.addDuration(model.StartDate,240,DurationType.Day),
             EnrollmentDate : new Date(),
@@ -155,18 +156,18 @@ export class ReanCareplanService implements ICareplanService {
 
         careplanCode: string, enrollmentId: string,
         participantId: string ): Promise<CareplanActivity[]> => {
-    
+
         const careplanApiBaseUrl = process.env.CAREPLAN_API_BASE_URL;
-        const url = `${careplanApiBaseUrl}/enrollment-tasks/search?careplanId=${careplanCode}&participantId=${participantId}`;
+        const url = `${careplanApiBaseUrl}/enrollment-tasks/search?enrollmentId=${enrollmentId}`;
         const headerOptions = await this.getHeaderOptions();
         var response = await needle("get", url, headerOptions);
-    
+
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
             Logger.instance().error('Unable to fetch tasks for given participant id!', response.statusCode, null);
             throw new ApiError(500, "Rean careplan fetching task service error: " + response.body.error.message);
         }
-        
+
         Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.Data.Items.length)}`);
 
         var activities = response.body.Data.Items;
@@ -197,7 +198,7 @@ export class ReanCareplanService implements ICareplanService {
     };
 
     scheduleDailyHighRiskCareplan = async (): Promise<void> => {
-    
+
         const enrollments = await this._careplanRepo.getAllCareplanEnrollment();
         Logger.instance().log(`Number of enrollments retrived ${enrollments.length}.`);
 
@@ -212,8 +213,8 @@ export class ReanCareplanService implements ICareplanService {
                             Provider       : "REAN",
                             PatientUserId  : enrollment.PatientUserId,
                             ParticipantId  : enrollment.ParticipantId,
-                            PlanName       : "Maternity-High-Risk",
-                            PlanCode       : "2",
+                            PlanName       : "High Risk Maternity Careplan",
+                            PlanCode       : "Maternity-High-Risk",
                             StartDateStr   : new Date(enrollment.StartAt).toString(),
                             StartDate      : new Date(enrollment.StartAt),
                             EndDate        : TimeHelper.addDuration(new Date(enrollment.StartAt),240, DurationType.Day),
@@ -221,23 +222,23 @@ export class ReanCareplanService implements ICareplanService {
                             WeekOffset     : 0,
                             DayOffset      : 0
                         };
-            
+
                         const enrollmentDto = await this._careplanService.enrollAndCreateTask(enrollmentData);
                         Logger.instance().log(`Enrollment for high risk careplan: ${enrollmentDto}`);
-                        
+
                     } else {
                         Logger.instance().log(`Not able to switch from normal to high risk careplan`);
                     }
 
                     enrollment.HasHighRisk = false ;
                     await this._careplanRepo.updateRisk( enrollment);
-                
+
                 }
             });
         } else {
             Logger.instance().log(`No enrollments fetched from careplan task.`);
         }
-            
+
     };
 
     //#endregion
@@ -245,7 +246,7 @@ export class ReanCareplanService implements ICareplanService {
     //#region Goals, priorities and action plans
 
     private async getHeaderOptions() {
-        
+
         var headers = {
             'Content-Type' : 'application/json',
             'x-api-key'    : process.env.CAREPLAN_API_KEY,
@@ -278,7 +279,7 @@ export class ReanCareplanService implements ICareplanService {
         enrollmentId: string | number, activityId: string, updates: any): Promise<CareplanActivity> {
         throw new Error("Method not implemented.");
     }
-    
+
     convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<CAssessmentTemplate> {
         throw new Error("Method not implemented.");
     }
@@ -294,7 +295,7 @@ export class ReanCareplanService implements ICareplanService {
     updateActionPlan(enrollmentId: string, actionName: string): Promise<ActionPlanDto> {
         throw new Error("Method not implemented.");
     }
-    
+
     updateGoal(enrollmentId: string, goalName: string): Promise<GoalDto> {
         throw new Error("Method not implemented.");
     }

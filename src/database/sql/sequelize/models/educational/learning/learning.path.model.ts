@@ -58,6 +58,18 @@ export default class LearningPath extends Model {
     })
     DurationInDays: number;
 
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    PreferenceWeight: number;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    Enabled: boolean;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

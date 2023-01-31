@@ -1,11 +1,11 @@
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
-import { DoctorDomainModel } from '../../../../../../domain.types/doctor/doctor.domain.model';
+import { DoctorDomainModel } from '../../../../../../domain.types/users/doctor/doctor.domain.model';
 import { IDoctorStore } from '../../../../interfaces/doctor.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { FhirHelper } from '../../fhir.helper';
-import { DoctorSearchFilters } from '../../../../../../domain.types/doctor/doctor.search.types';
+import { DoctorSearchFilters } from '../../../../../../domain.types/users/doctor/doctor.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@ export class GcpDoctorStore implements IDoctorStore {
         var str = JSON.stringify(filter, null, 2);
         Logger.instance().log(`Created FHIR resource ${str}`);
     };
-    
+
     update = async (resourceId:string, updates: DoctorDomainModel): Promise<any> => {
         const resourceType = 'Practitioner';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -55,7 +55,7 @@ export class GcpDoctorStore implements IDoctorStore {
             telecom      : [],
             address      : []
         };
-        
+
         if (model.User.Person.BirthDate != null) {
             var str = Helper.formatDate(model.User.Person.BirthDate);
             resource['birthDate'] = str;

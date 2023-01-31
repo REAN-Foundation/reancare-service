@@ -2,16 +2,21 @@ import { Logger } from '../../../../../../common/logger';
 import { ApiError } from '../../../../../../common/api.error';
 import { Op } from 'sequelize';
 import { ILabRecordRepo } from '../../../../../../database/repository.interfaces/clinical/lab.record/lab.record.interface';
-import { LabRecordDomainModel } from '../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.domain.model';
-import { LabRecordDto } from '../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.dto';
-import { LabRecordTypeDto } from '../../../../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.dto';
-import { LabRecordTypeDomainModel } from '../../../../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.domain.model';
-import { LabRecordSearchFilters } from '../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types';
-import { LabRecordSearchResults } from '../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types';
+import { LabRecordDomainModel } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
+import { LabRecordDto } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto';
+import { LabRecordTypeDto } from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto';
+import { LabRecordTypeDomainModel } from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model';
+import { LabRecordSearchFilters } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types';
+import { LabRecordSearchResults } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types';
 import LabRecordType from '../../../models/clinical/lab.record/lab.record.type.model';
 import LabRecord from '../../../models/clinical/lab.record/lab.record.model';
 import { LabRecordMapper } from '../../../mappers/clinical/lab.record/lab.record.mapper';
 import { LabRecordTypeMapper } from '../../../mappers/clinical/lab.record/lab.record.type.mapper';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import { LabRecordTypeSearchFilters, LabRecordTypeSearchResults }
+    from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -32,7 +37,6 @@ export class LabRecordRepo implements ILabRecordRepo {
                 OrderId        : createModel.OrderId ?? null,
                 RecordedAt     : createModel.RecordedAt
             };
-
             const labRecord = await LabRecord.create(entity);
             return await LabRecordMapper.toDto(labRecord);
         } catch (error) {
@@ -40,7 +44,7 @@ export class LabRecordRepo implements ILabRecordRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     getLabRecordTypes = async (displayName?: string): Promise<LabRecordTypeDto[]> => {
         try {
             const filter = { where: {} };
@@ -82,11 +86,11 @@ export class LabRecordRepo implements ILabRecordRepo {
                 NormalRangeMin : model.NormalRangeMin,
                 NormalRangeMax : model.NormalRangeMax,
                 Unit           : model.Unit,
-                
+
             };
             const labRecordType = await LabRecordType.create(entity);
             return await LabRecordTypeMapper.toTypeDto(labRecordType);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -118,7 +122,7 @@ export class LabRecordRepo implements ILabRecordRepo {
                 search.where['TypeName'] = { [Op.like]: '%' + filters.TypeName + '%' };
             }
             if (filters.DisplayName != null) {
-                search.where['DisplayName'] = { [Op.like]: '%' + filters.DisplayName + '%' };
+                search.where['DisplayName'] = filters.DisplayName;
             }
             if (filters.TypeId != null) {
                 search.where['TypeId'] = filters.TypeId;
@@ -178,17 +182,73 @@ export class LabRecordRepo implements ILabRecordRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
+
+    searchType = async (filters: LabRecordTypeSearchFilters): Promise<LabRecordTypeSearchResults> => {
+        try {
+            const search = { where: {} };
+
+            if (filters.DisplayName != null) {
+                search.where['DisplayName'] = filters.DisplayName;
+            }
+    
+            let orderByColum = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await LabRecordType.findAndCountAll(search);
+            const dtos: LabRecordTypeDto[] = [];
+            for (const labRecord of foundResults.rows) {
+                const dto = await LabRecordMapper.toTypeDto(labRecord);
+                dtos.push(dto);
+            }
+
+            const searchResults: LabRecordTypeSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     update = async (id: string, updateModel: LabRecordDomainModel): Promise<LabRecordDto> => {
         try {
             const labReport = await LabRecord.findByPk(id);
-            
+
             if (updateModel.PatientUserId != null) {
                 labReport.PatientUserId = updateModel.PatientUserId;
             }
@@ -246,5 +306,47 @@ export class LabRecordRepo implements ILabRecordRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const records = await this.getRecords(patientUserId, numMonths);
+            const records_ = records.map(x => {
+                const dayStr = x.RecordedAt.toISOString()
+                    .split('T')[0];
+                return {
+                    TypeName     : x.TypeName,
+                    DisplayName  : x.DisplayName,
+                    PrimaryValue : x.PrimaryValue,
+                    Unit         : x.Unit,
+                    DayStr       : dayStr,
+                };
+            });
+            return {
+                TotalCholesterol  : records_.filter(x => x.DisplayName === 'Total Cholesterol'),
+                HDL               : records_.filter(x => x.DisplayName === 'HDL'),
+                LDL               : records_.filter(x => x.DisplayName === 'LDL'),
+                TriglycerideLevel : records_.filter(x => x.DisplayName === 'Triglyceride Level'),
+                A1CLevel          : records_.filter(x => x.DisplayName === 'A1C Level'),
+            };
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getRecords(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const records = await LabRecord.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        return records.sort((a, b) => b.RecordedAt.getTime() - a.RecordedAt.getTime());
+    }
 
 }

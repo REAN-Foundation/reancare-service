@@ -14,7 +14,7 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -56,7 +56,7 @@ export default class Meditation extends Model {
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
-        allowNull : false,
+        allowNull : true,
     })
     Meditation: string;
 
@@ -74,6 +74,12 @@ export default class Meditation extends Model {
         defaultValue : 'Mindfulness'
     })
     Category: string;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    DurationInMins: number;
 
     @IsDate
     @Column({

@@ -15,4 +15,5 @@ export interface AssessmentTemplateDto {
     FileResourceId?               : uuid;
     RootNodeId?                   : uuid;
     QnAs?                         : any[];
+    TotalNumberOfQuestions?       : number;
 }

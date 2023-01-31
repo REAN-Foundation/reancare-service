@@ -18,12 +18,14 @@ export class LearningPathRepo implements ILearningPathRepo {
     Promise<LearningPathDto> => {
         try {
             const entity = {
-                Name           : createModel.Name,
-                Description    : createModel.Description,
-                ImageUrl       : createModel.ImageUrl,
-                DurationInDays : createModel.DurationInDays,
-                StartDate      : createModel.StartDate,
-                EndDate        : createModel.EndDate,
+                Name             : createModel.Name,
+                Description      : createModel.Description,
+                ImageUrl         : createModel.ImageUrl,
+                DurationInDays   : createModel.DurationInDays,
+                StartDate        : createModel.StartDate,
+                EndDate          : createModel.EndDate,
+                PreferenceWeight : createModel.PreferenceWeight,
+                Enabled          : createModel.Enabled,
             };
 
             const course = await LearningPath.create(entity);
@@ -116,6 +118,12 @@ export class LearningPathRepo implements ILearningPathRepo {
             }
             if (updateModel.DurationInDays != null) {
                 course.DurationInDays = updateModel.DurationInDays;
+            }
+            if (updateModel.PreferenceWeight != null) {
+                course.PreferenceWeight = updateModel.PreferenceWeight;
+            }
+            if (updateModel.Enabled != null) {
+                course.Enabled = updateModel.Enabled;
             }
 
             await course.save();

@@ -66,9 +66,11 @@ export class AssessmentService {
         model.Provider = template.Provider;
         model.ProviderAssessmentCode = template.ProviderAssessmentCode;
         model.Title = model.Title ?? template.Title;
+        model.ScoringApplicable = template.ScoringApplicable;
         model.Type = template.Type;
         model.ScheduledDateString = model.ScheduledDateString ?? new Date().toISOString()
             .split('T')[0];
+        model.TotalNumberOfQuestions = template.TotalNumberOfQuestions;
 
         return await this._assessmentRepo.create(model);
     };
@@ -1010,6 +1012,7 @@ export class AssessmentService {
             ExpectedResponseType : questionNode.QueryResponseType as QueryResponseType,
             Options              : questionNode.Options,
             ProviderGivenCode    : questionNode.ProviderGivenCode,
+            CorrectAnswer        : questionNode.CorrectAnswer ? JSON.parse(questionNode.CorrectAnswer) : null,
         };
         return query;
     }

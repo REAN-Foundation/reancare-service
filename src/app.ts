@@ -3,10 +3,11 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
 import "reflect-metadata";
-import { Router } from './api/routes/router';
+import { Router } from './api/router';
+import { Helper } from './common/helper';
 import { Logger } from './common/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
-import { EHRDbConnector } from './custom/ehr.insights.records/ehr.db.connector';
+import { EHRDbConnector } from './custom/ehr.analytics/ehr.db.connector';
 import { Loader } from './startup/loader';
 
 /////////////////////////////////////////////////////////////////////////
@@ -109,6 +110,8 @@ export default class Application {
                 const port = process.env.PORT;
                 const server = this._app.listen(port, () => {
                     const serviceName = 'REANCare api' + '-' + process.env.NODE_ENV;
+                    const osType = Helper.getOSType();
+                    Logger.instance().log(`Operating system: ${osType}`);
                     Logger.instance().log(serviceName + ' is up and listening on port ' + process.env.PORT.toString());
                     this._app.emit("server_started");
                 });

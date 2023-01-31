@@ -14,7 +14,7 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../user/user.model';
+import User from '../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,7 +37,7 @@ export default class EmergencyEvent extends Model {
         allowNull : false,
     })
     id: string;
-    
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),

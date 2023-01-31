@@ -1,4 +1,4 @@
-import { LabRecordTypeDto } from "../../../../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.dto";
+import { LabRecordTypeDto } from "../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
 
 export class LabRecordTypeMapper {
 
@@ -17,9 +17,9 @@ export class LabRecordTypeMapper {
             NormalRangeMin : labRecordType.NormalRangeMin,
             NormalRangeMax : labRecordType.NormalRangeMax,
             Unit           : labRecordType.Unit,
-            
+
         };
-        
+
         return dto;
     };
 

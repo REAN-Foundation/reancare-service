@@ -16,7 +16,7 @@ export class BodyWeightMapper {
             EhrId            : bodyWeight.EhrId,
             BodyWeight       : bodyWeight.BodyWeight,
             Unit             : bodyWeight.Unit,
-            RecordDate       : bodyWeight.RecordDate,
+            RecordDate       : bodyWeight.RecordDate ?? bodyWeight.CreatedAt,
             RecordedByUserId : bodyWeight.RecordedByUserId
         };
         return dto;

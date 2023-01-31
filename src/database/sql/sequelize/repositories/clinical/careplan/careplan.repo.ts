@@ -13,11 +13,13 @@ import CareplanActivity from "../../../models/clinical/careplan/careplan.activit
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityMapper } from '../../../mappers/clinical/careplan/activity.mapper';
 import { Op } from 'sequelize';
-import { HealthPriorityDto } from '../../../../../../domain.types/patient/health.priority/health.priority.dto';
-import HealthPriority from '../../../models/patient/health.priority/health.priority.model';
-import { HealthPriorityMapper } from '../../../mappers/patient/health.priority/health.priority.mapper';
+import { HealthPriorityDto } from '../../../../../../domain.types/users/patient/health.priority/health.priority.dto';
+import HealthPriority from '../../../models/users/patient/health.priority.model';
+import { HealthPriorityMapper } from '../../../mappers/users/patient/health.priority.mapper';
 import { Helper } from '../../../../../../common/helper';
-import UserTask from '../../../models/user/user.task.model';
+import UserTask from '../../../models/users/user/user.task.model';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -103,13 +105,17 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public getPatientEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
+    public getPatientEnrollments = async (patientUserId: string, isActive: boolean): Promise<EnrollmentDto[]> => {
         try {
+            var where_clause = { PatientUserId: patientUserId };
+            if (isActive) {
+                where_clause['EndDate'] = { [Op.gte]: new Date() };
+            }
+
             const enrollments = await CareplanEnrollment.findAll({
-                where : {
-                    PatientUserId : patientUserId
-                }
+                where : where_clause
             });
+
             return enrollments.map(x => {
                 return EnrollmentMapper.toDto(x);
             });
@@ -130,6 +136,32 @@ export class CareplanRepo implements ICareplanRepo {
                 },
             });
             return EnrollmentMapper.toDto(enrollment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public getCompletedEnrollments = async (daysPassed: number, planNames: string[]): Promise<EnrollmentDto[]> => {
+        try {
+            var today = new Date();
+            var endDate = TimeHelper.subtractDuration(today, daysPassed, DurationType.Day);
+            Logger.instance().log(`[HsCron] Enrollment End date:${endDate}`);
+            var endOfDay = TimeHelper.endOf(endDate, DurationType.Day);
+            var startOfDay = TimeHelper.startOf(endDate, DurationType.Day);
+            Logger.instance().log(`[HsCron] start and end of the day:${startOfDay} and ${endOfDay}`);
+            var enrollments = await CareplanEnrollment.findAll({
+                where : {
+                    EndDate : {
+                        [Op.and] : [ { [Op.gte]: startOfDay }, { [Op.lte]: endOfDay } ],
+                    },
+                    PlanName : {
+                        [Op.or] : planNames,
+                    },
+                },
+            });
+            return enrollments.map(x => {
+                return EnrollmentMapper.toDto(x);
+            });
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -173,7 +205,7 @@ export class CareplanRepo implements ICareplanRepo {
                 }
                 activityEntities.push(entity);
             });
-            
+
             const records = await CareplanActivity.bulkCreate(activityEntities);
 
             var dtos = [];
@@ -305,7 +337,7 @@ export class CareplanRepo implements ICareplanRepo {
         : Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
-            
+
             record.RawContent = JSON.stringify(activityDetails.RawContent);
             if (!record.Title) {
                 record.Title = activityDetails.Title;
@@ -321,6 +353,9 @@ export class CareplanRepo implements ICareplanRepo {
             }
             if (!record.Description) {
                 record.Description = activityDetails.Description;
+            }
+            if (!record.Transcription) {
+                record.Transcription = activityDetails.Transcription;
             }
             if (!Helper.isUrl(record.Url)) {
                 if (record.Url !== activityDetails.Url && Helper.isUrl(activityDetails.Url)) {
@@ -406,7 +441,9 @@ export class CareplanRepo implements ICareplanRepo {
 
             const foundResults = await CareplanActivity.findAndCountAll({
                 where : {
-                    Provider : "REAN"
+                    Provider : {
+                        [Op.or] : ["REAN", "REAN_BW"]
+                    },
                 },
                 order : [[orderByColum, order]]
             });
@@ -438,7 +475,7 @@ export class CareplanRepo implements ICareplanRepo {
             if (model.HasHighRisk != null) {
                 updateRisk.HasHighRisk = model.HasHighRisk;
             }
-    
+
             await updateRisk.save();
 
             return EnrollmentMapper.toDto(updateRisk);
@@ -458,7 +495,7 @@ export class CareplanRepo implements ICareplanRepo {
                     ScheduledAt   : { [Op.gte]: new Date() }
                 }
             };
-            
+
             const ids = (await CareplanActivity.findAll(selector)).map(x => x.id);
             const deletedCount = await CareplanActivity.destroy(selector);
             Logger.instance().log(`Deleted ${deletedCount} careplan task.`);
@@ -470,7 +507,7 @@ export class CareplanRepo implements ICareplanRepo {
                     }
                 });
                 Logger.instance().log(`Deleted ${deletedTaskCount} careplan associated user tasks.`);
-                
+
             }
             return deletedCount;
         } catch (error) {

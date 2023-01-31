@@ -2,10 +2,10 @@ import {
     Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUrl, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { ProgressStatus, ProgressStatusList } from '../../../../../../domain.types/miscellaneous/system.types';
-import { UserTaskCategory, UserTaskCategoryList } from '../../../../../../domain.types/user/user.task/user.task.types';
+import { UserTaskCategory, UserTaskCategoryList } from '../../../../../../domain.types/users/user.task/user.task.types';
 import { v4 } from 'uuid';
-import UserTask from '../../user/user.task.model';
-import User from '../../user/user.model';
+import UserTask from '../../users/user/user.task.model';
+import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -69,7 +69,7 @@ export default class CareplanActivity extends Model {
         allowNull : false,
     })
     PlanName: string;
-    
+
     @Column({
         type      : DataType.STRING(128),
         allowNull : false,
@@ -101,6 +101,12 @@ export default class CareplanActivity extends Model {
         allowNull : true,
     })
     Description: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Transcription: string;
 
     @IsUrl
     @Column({

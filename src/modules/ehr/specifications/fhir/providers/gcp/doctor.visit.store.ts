@@ -1,5 +1,5 @@
 import { Helper } from '../../../../../../common/helper';
-import { DoctorVisitDomainModel } from '../../../../../../domain.types/doctor.visit/doctor.visit.domain.model';
+import { DoctorVisitDomainModel } from '../../../../../../domain.types/clinical/doctor.visit/doctor.visit.domain.model';
 import { IDoctorVisitStore } from '../../../../../ehr/interfaces/doctor.visit.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
@@ -20,7 +20,7 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: DoctorVisitDomainModel): Promise<any> => {
         const resourceType = 'Encounter';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -55,7 +55,7 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
                 {
                     individual : {
                         reference : `Practitioner/${model.RecordedByUserId}`,
-                        
+
                     }
                 }
             ],
@@ -89,7 +89,7 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
             resource.participant.push({
                 individual : {
                     reference : `Practitioner/${model.RecordedByUserId}`,
-        
+
                 }
             });
         }
@@ -108,7 +108,7 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
         if (updates.EndDate != null) {
             existingResource.period.end = Helper.formatDate(updates.EndDate);
         }
- 
+
         return existingResource;
     }
 

@@ -9,7 +9,7 @@ export interface EnrollmentDomainModel {
     ParticipantStringId?  : number | string;
     EnrollmentId?   : number | string;
     EnrollmentStringId?   : number | string;
-    CareplanId?     : number;
+    CareplanId?     : number | string;
     StartDateStr?   : string;
     EndDateStr?     : string;
     StartDate?      : Date;

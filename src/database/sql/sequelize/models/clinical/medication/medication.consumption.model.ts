@@ -4,7 +4,7 @@ import {
     Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 import Drug from './drug.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ export default class MedicationConsumption extends Model {
         allowNull : false,
     })
     MedicationId: string;
-   
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),

@@ -10,6 +10,7 @@ export interface AssessmentDto {
     PatientUserId          : uuid;
     AssessmentTemplateId   : uuid;
     ScoringApplicable?     : boolean;
+    ScoreDetails?          : any;
     ProviderEnrollmentId?  : string;
     ProviderAssessmentCode?: string;
     ProviderAssessmentId?  : string;
@@ -17,10 +18,12 @@ export interface AssessmentDto {
     Status                 : ProgressStatus;
     ParentActivityId?      : uuid;
     UserTaskId?            : uuid;
+    ReportUrl?             : string;
     CurrentNodeId?         : uuid;
     ScheduledAt?           : Date;
     StartedAt?             : Date;
     FinishedAt?            : Date;
     CreatedAt              : Date;
     UserResponses?         : any[];
+    TotalNumberOfQuestions?: number;
 }

@@ -2,12 +2,14 @@ import { inject, injectable } from "tsyringe";
 import { CareplanHandler } from '../../../modules/careplan/careplan.handler';
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { ILabRecordRepo } from "../../../database/repository.interfaces/clinical/lab.record/lab.record.interface";
-import { LabRecordDomainModel } from "../../../domain.types/clinical/lab.records/lab.record/lab.record.domain.model";
-import { LabRecordDto } from "../../../domain.types/clinical/lab.records/lab.record/lab.record.dto";
-import { LabRecordTypeDomainModel } from "../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.domain.model";
-import { LabRecordTypeDto } from "../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.dto";
-import { LabRecordSearchFilters } from "../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types";
-import { LabRecordSearchResults } from "../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types";
+import { LabRecordDomainModel } from "../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model";
+import { LabRecordDto } from "../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
+import { LabRecordTypeDomainModel } from "../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
+import { LabRecordTypeDto } from "../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
+import { LabRecordSearchFilters } from "../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
+import { LabRecordSearchResults } from "../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
+import { LabRecordTypeSearchFilters, LabRecordTypeSearchResults }
+    from "../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,9 +29,13 @@ export class LabRecordService {
 
         return await this._labRecordRepo.create(model);
     };
-    
+
     createType = async (domainModel: LabRecordTypeDomainModel): Promise<LabRecordTypeDto> => {
         return await this._labRecordRepo.createType(domainModel);
+    };
+
+    searchType = async (filters: LabRecordTypeSearchFilters): Promise<LabRecordTypeSearchResults> => {
+        return await this._labRecordRepo.searchType(filters);
     };
 
     getTypeByDisplayName = async (displayName: string): Promise<LabRecordTypeDto> => {

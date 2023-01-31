@@ -31,6 +31,43 @@ export class TimeHelper {
         return date.getTime().toString();
     };
 
+    static getWeekDay = (date: Date, short: boolean): string => {
+        const idx = date.getDay();
+        if (short) {
+            var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+            return days[idx];
+        }
+        else {
+            var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            return days[idx];
+        }
+    };
+
+    static getStartOfDay = (date: Date, offsetMinutes: number) => {
+        const tempDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
+        const todayStr = tempDate.toISOString()
+            .split('T')[0];
+        const reference = new Date(todayStr);
+        return reference;
+    }
+
+    static getDayOfMonth = (date: Date): string => {
+        var tokens = date.toISOString().split('T')[0];
+        const day = tokens[0].split('-')[1];
+        return day;
+    };
+
+    static getDayOfMonthFromISODateStr = (dateStr: string): string => {
+        const day = dateStr.split('-')[2];
+        return day;
+    };
+
+    static getMonth = (date: Date): string => {
+        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        var month = months[ date.getMonth() ];
+        return month;
+    }
+
     static getDateString = (date: Date, format: DateStringFormat): string => {
 
         if (format === DateStringFormat.YYYY_MM_DD) {
@@ -43,7 +80,7 @@ export class TimeHelper {
 
         var date_ = utc === true ? dayjs(date).utc() : dayjs(date);
         var newDate_ = date_;
-        
+
         if (durationType === DurationType.Milisecond) {
             newDate_ = date_.add(durationValue, 'milliseconds');
         }
@@ -77,7 +114,7 @@ export class TimeHelper {
 
         var date_ = utc === true ? dayjs(date).utc() : dayjs(date);
         var newDate_ = dayjs().utc();
-        
+
         if (durationType === DurationType.Milisecond) {
             newDate_ = date_.subtract(durationValue, 'milliseconds');
         }
@@ -119,11 +156,11 @@ export class TimeHelper {
 
         var durationInHours = 0;
         var tokens = str.toLowerCase().split(":");
-    
+
         for (var i = 0; i < tokens.length; i++) {
-    
+
             var x = tokens[i];
-    
+
             if (x.includes("h")) {
                 x = x.replace("h", "");
                 var hours = parseInt(x);
@@ -188,7 +225,7 @@ export class TimeHelper {
         else if (timezoneOffsetStr.includes('-')) {
             offsetTmp = offsetTmp.replace('-', '+');
         }
-    
+
         if (timezoneOffsetStr.includes(':')) {
             var tokens = offsetTmp.split(":");
             var offset_hours = parseInt(tokens[0]);
@@ -347,7 +384,7 @@ export class TimeHelper {
         return TimeHelper.strToUtc(str, offsetMinutes);
     };
 
-    static dayDiff = (first: Date, second: Date) => {
+    static dayDiff = (first: Date, second: Date|undefined) => {
         const diff = first.getTime() - second.getTime();
         var dayDiff = diff / (1000 * 60 * 60 * 24);
         return dayDiff;

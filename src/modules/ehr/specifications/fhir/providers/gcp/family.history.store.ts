@@ -1,4 +1,4 @@
-import { FamilyHistoryDomainModel } from '../../../../../../domain.types/family.history/family.history.domain.model';
+import { FamilyHistoryDomainModel } from '../../../../../../domain.types/clinical/family.history/family.history.domain.model';
 import { IFamilyHistoryStore } from '../../../../../ehr/interfaces/family.history.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
@@ -20,7 +20,7 @@ export class GcpFamilyHistoryStore implements IFamilyHistoryStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: FamilyHistoryDomainModel): Promise<any> => {
         const resourceType = 'FamilyMemberHistory';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);

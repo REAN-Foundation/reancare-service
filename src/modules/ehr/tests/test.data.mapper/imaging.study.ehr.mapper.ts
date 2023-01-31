@@ -1,6 +1,6 @@
 import path from "path";
 import { Helper } from "../../../../common/helper";
-import { ImagingStudyDomainModel } from "../../../../domain.types/imaging.study/imaging.study.domain.model";
+import { ImagingStudyDomainModel } from "../../../../domain.types/clinical/imaging.study/imaging.study.domain.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +11,7 @@ export class ImagingStudyMapper {
         const cwd = process.cwd();
         const jsonPath = path.join(cwd, 'src/modules/ehr/tests/test.data/', 'Imaging.study.domain.model.json');
         var obj = Helper.jsonToObj(jsonPath);
-        
+
         var model: ImagingStudyDomainModel = {
             PatientUserId                : obj.PatientUserId,
             EhrId                        : obj.EhrId,

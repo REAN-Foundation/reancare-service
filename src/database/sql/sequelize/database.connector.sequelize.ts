@@ -7,6 +7,8 @@ import { IDatabaseConnector } from '../../database.connector.interface';
 import { DbConfig } from './database.config';
 import { MysqlClient } from './dialect.clients/mysql.client';
 import { PostgresqlClient } from './dialect.clients/postgresql.client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 //////////////////////////////////////////////////////////////
 
@@ -19,30 +21,8 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
         try {
             const config = DbConfig.config;
             const dialect: Dialect = this.getDialect();
-            const modelsPath = [
-                __dirname + '/models',
-                __dirname + '/models/action.plan',
-                __dirname + '/models/clinical',
-                __dirname + '/models/clinical/biometrics',
-                __dirname + '/models/clinical/daily.assessment',
-                __dirname + '/models/clinical/medication',
-                __dirname + '/models/clinical/symptom',
-                __dirname + '/models/clinical/careplan',
-                __dirname + '/models/clinical/assessment',
-                __dirname + '/models/educational',
-                __dirname + '/models/educational/learning',
-                __dirname + '/models/file.resource',
-                __dirname + '/models/general',
-                __dirname + '/models/patient',
-                __dirname + '/models/patient/health.priority',
-                __dirname + '/models/user',
-                __dirname + '/models/wellness/daily.records',
-                __dirname + '/models/wellness/exercise',
-                __dirname + '/models/wellness/nutrition',
-                __dirname + '/models/wellness/food.component.monitoring',
-                __dirname + '/models/thirdparty',
-                __dirname + '/models/clinical/lab.record',
-            ];
+            const modelsFolder = path.join(__dirname, '/models');
+            const modelsPath = getFoldersRecursively(modelsFolder);
             const options = {
                 host    : config.host,
                 dialect : dialect,
@@ -65,7 +45,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
 
             await this.createDatabase();
             await this._sequelize.authenticate();
-            await this._sequelize.sync({ alter: true });
+            await this._sequelize.sync({ force: false, alter: true });
 
             Logger.instance().log(`Connected to database.`);
 
@@ -170,4 +150,21 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
         return PostgresqlClient;
     }
 
+}
+
+function getFoldersRecursively(location: string) {
+    const items = fs.readdirSync(location, { withFileTypes: true });
+    let paths = [];
+    for (const item of items) {
+        if (item.isDirectory()) {
+            const fullPath = path.join(location, item.name);
+            const childrenPaths = getFoldersRecursively(fullPath);
+            paths = [
+                ...paths,
+                fullPath,
+                ...childrenPaths,
+            ];
+        }
+    }
+    return paths;
 }

@@ -6,7 +6,7 @@ import {
     DailyAssessmentFeelings, DailyAssessmentFeelingList, DailyAssessmentMoods,
     DailyAssessmentMoodList, DailyAssessmentEnergyLevels, DailyAssessmentEnergyLevelList
 } from '../../../../../../domain.types/clinical/daily.assessment/daily.assessment.types';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -71,14 +71,14 @@ export default class HowDoYouFeel extends Model {
         defaultValue : `["${DailyAssessmentEnergyLevels.UnSpecified}"]`
     })
     EnergyLevels: string;
-    
+
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : false,
     })
     RecordDate: Date;
-    
+
     @Column
     @CreatedAt
     CreatedAt: Date;

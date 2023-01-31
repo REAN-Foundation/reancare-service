@@ -21,8 +21,8 @@ import {
 import {
     ProgressStatus, ProgressStatusList
 } from '../../../../../../domain.types/miscellaneous/system.types';
-import User from '../../user/user.model';
-import UserTask from '../../user/user.task.model';
+import User from '../../users/user/user.model';
+import UserTask from '../../users/user/user.task.model';
 import AssessmentNode from './assessment.node.model';
 import AssessmentTemplate from './assessment.template.model';
 
@@ -130,6 +130,12 @@ export default class Assessment extends Model {
     })
     ProviderEnrollmentId: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    ReportUrl: string;
+
     @Length({ max: 32 })
     @Column({
         type         : DataType.STRING(32),
@@ -187,6 +193,19 @@ export default class Assessment extends Model {
 
     @BelongsTo(() => UserTask)
     UserTask: UserTask;
+
+    @Column({
+        type         : DataType.TEXT,
+        defaultValue : null,
+        allowNull    : true,
+    })
+    ScoreDetails: string;
+
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    TotalNumberOfQuestions: number;
 
     @Column
     @CreatedAt

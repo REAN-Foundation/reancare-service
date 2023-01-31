@@ -12,6 +12,9 @@ import {
     BelongsTo,
 
 } from 'sequelize-typescript';
+import {
+    CourseContentType,
+    CourseContentTypeList } from "../../../../../../domain.types/educational/learning/course.content/course.content.type";
 
 import { v4 } from 'uuid';
 import Course from './course.model';
@@ -92,8 +95,10 @@ export default class CourseContent extends Model {
     DurationInMins: number;
 
     @Column({
-        type      : DataType.TEXT,
-        allowNull : true,
+        type         : DataType.ENUM,
+        allowNull    : false,
+        defaultValue : CourseContentType.Video,
+        values       : CourseContentTypeList,
     })
     ContentType: string;
 
@@ -102,6 +107,12 @@ export default class CourseContent extends Model {
         allowNull : true,
     })
     ResourceLink: string;
+
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    ActionTemplateId: string;
 
     @Column({
         type      : DataType.INTEGER,

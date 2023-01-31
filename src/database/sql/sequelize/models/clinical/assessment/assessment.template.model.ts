@@ -17,7 +17,7 @@ import {
     AssessmentType,
     AssessmentTypeList,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
-import FileResource from '../../file.resource/file.resource.model';
+import FileResource from '../../general/file.resource/file.resource.model';
 import AssessmentNode from './assessment.node.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -122,6 +122,12 @@ export default class AssessmentTemplate extends Model {
 
     @BelongsTo(() => FileResource)
     FileResource: FileResource;
+
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    TotalNumberOfQuestions: number;
 
     @Column
     @CreatedAt

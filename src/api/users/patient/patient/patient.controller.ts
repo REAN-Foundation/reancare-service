@@ -16,6 +16,7 @@ import { PersonService } from '../../../../services/person/person.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -89,6 +90,9 @@ export class PatientController extends BaseUserController {
             }
 
             const patient = await this._service.getByUserId(userId);
+
+            const healthProfile = await this._patientHealthProfileService.getByPatientUserId(userId);
+            patient.HealthProfile = healthProfile;
 
             Logger.instance().log(`Patient: ${JSON.stringify(patient)}`);
 
@@ -165,6 +169,18 @@ export class PatientController extends BaseUserController {
             }
             const personDomainModel: PersonDomainModel = updateModel.User.Person;
             personDomainModel.id = updatedUser.Person.id;
+
+            const healthProfile: HealthProfileDomainModel = {
+
+                MaritalStatus             : personDomainModel.MaritalStatus,
+                Race                      : personDomainModel.Race,
+                Ethnicity                 : personDomainModel.Ethnicity,
+                StrokeSurvivorOrCaregiver : personDomainModel.StrokeSurvivorOrCaregiver,
+                LivingAlone               : personDomainModel.LivingAlone,
+                WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
+
+            };
+            await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
@@ -254,7 +270,7 @@ export class PatientController extends BaseUserController {
 
     private addPatientToEHRRecords = (patientUserId: uuid) => {
         EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {});
-    }
+    };
 
     private addEHRRecord = (patientUserId: uuid,
         model: PersonDomainModel) => {
@@ -273,7 +289,7 @@ export class PatientController extends BaseUserController {
                 MaritalStatus : model.MaritalStatus
             });
         }
-    }
+    };
 
     //#endregion
 

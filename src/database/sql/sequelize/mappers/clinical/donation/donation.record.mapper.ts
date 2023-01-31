@@ -12,16 +12,18 @@ export class DonationRecordMapper {
         }
 
         const dto: DonationRecordDto = {
-            id                : donationRecord.id,
-            PatientUserId     : donationRecord.PatientUserId,
-            NetworkId         : donationRecord.NetworkId,
-            RequestedQuantity : donationRecord.RequestedQuantity,
-            RequestedDate     : donationRecord.RequestedDate,
-            DonorAcceptedDate : donationRecord.DonorAcceptedDate,
-            DonorRejectedDate : donationRecord.DonorRejectedDate,
-            DonatedQuantity   : donationRecord.DonatedQuantity,
-            DonationDate      : donationRecord.DonationDate,
-            DonationType      : donationRecord.DonationType
+            id                        : donationRecord.id,
+            PatientUserId             : donationRecord.PatientUserId,
+            NetworkId                 : donationRecord.NetworkId,
+            EmergencyDonor            : donationRecord.EmergencyDonor,
+            VolunteerOfEmergencyDonor : donationRecord.VolunteerOfEmergencyDonor,
+            RequestedQuantity         : donationRecord.RequestedQuantity,
+            RequestedDate             : donationRecord.RequestedDate,
+            DonorAcceptedDate         : donationRecord.DonorAcceptedDate,
+            DonorRejectedDate         : donationRecord.DonorRejectedDate,
+            DonatedQuantity           : donationRecord.DonatedQuantity,
+            DonationDate              : donationRecord.DonationDate,
+            DonationType              : donationRecord.DonationType
         };
         return dto;
     };

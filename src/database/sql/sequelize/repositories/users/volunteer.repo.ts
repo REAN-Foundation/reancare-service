@@ -55,32 +55,38 @@ export class VolunteerRepo implements IVolunteerRepo {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateByUserId = async (userId: string, model: VolunteerDomainModel): Promise<VolunteerDetailsDto> => {
         try {
-            const donor = await Volunteer.findOne({ where: { UserId: userId } });
+            const volunteer = await Volunteer.findOne({ where: { UserId: userId } });
 
             if (model.EhrId != null) {
-                donor.EhrId = model.EhrId;
+                volunteer.EhrId = model.EhrId;
             }
             if (model.BloodGroup != null) {
-                donor.BloodGroup = model.BloodGroup;
+                volunteer.BloodGroup = model.BloodGroup;
             }
             if (model.LastDonationDate != null) {
-                donor.LastDonationDate = model.LastDonationDate;
+                volunteer.LastDonationDate = model.LastDonationDate;
+            }
+            if (model.SelectedBloodGroup != null) {
+                volunteer.SelectedBloodGroup = model.SelectedBloodGroup;
+            }
+            if (model.SelectedBridgeId != null) {
+                volunteer.SelectedBridgeId = model.SelectedBridgeId;
             }
             if (model.IsAvailable != null) {
-                donor.IsAvailable = model.IsAvailable;
+                volunteer.IsAvailable = model.IsAvailable;
             }
 
-            if (donor.MedIssues != null && donor.MedIssues.length > 0) {
+            if (model.MedIssues != null && model.MedIssues.length > 0) {
 
                 var medIssues = model.MedIssues.length > 0 ?
                     JSON.stringify(model.MedIssues) : '[]';
 
-                donor.MedIssues = medIssues;
+                volunteer.MedIssues = medIssues;
             }
 
-            await donor.save();
+            await volunteer.save();
 
-            const dto = await VolunteerMapper.toDetailsDto(donor);
+            const dto = await VolunteerMapper.toDetailsDto(volunteer);
 
             return dto;
 
@@ -125,11 +131,17 @@ export class VolunteerRepo implements IVolunteerRepo {
             if (filters.BloodGroup != null) {
                 search.where['BloodGroup'] = { [Op.substring]: '%' + filters.BloodGroup + '%' };
             }
+            if (filters.SelectedBloodGroup != null) {
+                search.where['SelectedBloodGroup'] = { [Op.substring]: '%' + filters.SelectedBloodGroup + '%' };
+            }
             if (filters.MedIssues != null) {
                 search.where['MedIssues'] = { [Op.like]: '%' + filters.MedIssues + '%' };
             }
             if (filters.IsAvailable != null) {
                 search.where['IsAvailable'] = filters.IsAvailable;
+            }
+            if (filters.SelectedBridgeId != null) {
+                search.where['SelectedBridgeId'] = filters.SelectedBridgeId;
             }
 
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
@@ -220,6 +232,6 @@ export class VolunteerRepo implements IVolunteerRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

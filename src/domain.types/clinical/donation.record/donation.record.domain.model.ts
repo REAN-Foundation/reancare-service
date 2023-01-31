@@ -7,6 +7,8 @@ export interface DonationRecordDomainModel {
     id?                : uuid;
     PatientUserId?     : uuid;
     NetworkId?         : uuid;
+    EmergencyDonor?    : uuid;
+    VolunteerOfEmergencyDonor? : uuid;
     DonationDetails?   : PatientDonorsDomainModel;
     RequestedQuantity? : number;
     RequestedDate?     : Date,

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { IDiagnosticConditionStore } from '../interfaces/diagnostic.condition.store.interface';
 import { injectable, inject } from "tsyringe";
-import { DiagnosticConditionDomainModel } from "../../../domain.types/diagnostic.condition/diagnostic.condition.domain.model";
+import { DiagnosticConditionDomainModel } from "../../../domain.types/clinical/diagnosis/diagnostic.condition.domain.model";
 
 ///////////////////////////////////////////////////////////////////
 

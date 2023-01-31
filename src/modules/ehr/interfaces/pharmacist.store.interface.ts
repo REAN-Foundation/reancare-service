@@ -1,4 +1,4 @@
-import { PharmacistDomainModel } from '../../../domain.types/pharmacist/pharmacist.domain.types';
+import { PharmacistDomainModel } from '../../../domain.types/users/pharmacist/pharmacist.domain.types';
 
 ////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,6 +1,7 @@
 import { BaseSearchResults, BaseSearchFilters } from "../../../miscellaneous/base.search.types";
 import { uuid } from "../../../miscellaneous/system.types";
 import { CourseContentDto } from "./course.content.dto";
+import { CourseContentType } from "./course.content.type";
 
 export interface CourseContentSearchFilters extends BaseSearchFilters{
     Title?          : string;
@@ -9,7 +10,7 @@ export interface CourseContentSearchFilters extends BaseSearchFilters{
     ModuleId?       : uuid;
     DurationFrom?   : number;
     DurationTo?     : number;
-    ContentType?    : string;
+    ContentType?    : CourseContentType;
     Sequence?       : number;
 }
 

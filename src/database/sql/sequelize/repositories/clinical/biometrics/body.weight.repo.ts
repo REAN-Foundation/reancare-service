@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { TimeHelper } from '../../../../../../common/time.helper';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { BodyWeightDomainModel } from '../../../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
@@ -7,6 +8,7 @@ import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../../..
 import { IBodyWeightRepo } from '../../../../../repository.interfaces/clinical/biometrics/body.weight.repo.interface';
 import { BodyWeightMapper } from '../../../mappers/clinical/biometrics/body.weight.mapper';
 import BodyWeight from '../../../models/clinical/biometrics/body.weight.model';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -163,5 +165,59 @@ export class BodyWeightRepo implements IBodyWeightRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: string, numMonths: number): Promise<any> => {
+        try {
+            const records = await this.getRecords(patientUserId, numMonths);
+            return records.map(x => {
+                const dayStr = x.CreatedAt.toISOString()
+                    .split('T')[0];
+                return {
+                    BodyWeight : x.BodyWeight,
+                    DayStr     : dayStr,
+                };
+            });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getRecent = async (patientUserId: string): Promise<BodyWeightDto> => {
+        try {
+            const bodyWeight = await BodyWeight.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['CreatedAt', 'DESC']]
+            });
+            return await BodyWeightMapper.toDto(bodyWeight);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getRecords(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const result = await BodyWeight.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        let bodyWeights = result.map(x => {
+            return {
+                BodyWeight : x.BodyWeight,
+                CreatedAt  : x.CreatedAt,
+            };
+        });
+        bodyWeights = bodyWeights.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+        return bodyWeights;
+    }
 
 }

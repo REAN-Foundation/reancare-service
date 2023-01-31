@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FamilyHistoryDomainModel } from '../../../../domain.types/family.history/family.history.domain.model';
+import { FamilyHistoryDomainModel } from '../../../../domain.types/clinical/family.history/family.history.domain.model';
 import { IFamilyHistoryStore } from '../../interfaces/family.history.store.interface';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ export class MockFamilyHistoryStore implements IFamilyHistoryStore {
     getById = async (resourceId: string): Promise<any> => {
         return null;
     };
-    
+
     search = async (filter: any): Promise<any> => {
         return null;
     };

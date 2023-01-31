@@ -1,12 +1,12 @@
 import { inject, injectable } from "tsyringe";
 import { ICareplanRepo } from "../../database/repository.interfaces/clinical/careplan.repo.interface";
-import { IPatientRepo } from "../../database/repository.interfaces/patient/patient.repo.interface";
-import { IPersonRepo } from "../../database/repository.interfaces/person.repo.interface";
-import { IUserRepo } from "../../database/repository.interfaces/user/user.repo.interface";
+import { IPatientRepo } from "../../database/repository.interfaces/users/patient/patient.repo.interface";
+import { IPersonRepo } from "../../database/repository.interfaces/person/person.repo.interface";
+import { IUserRepo } from "../../database/repository.interfaces/users/user/user.repo.interface";
 import { IAssessmentRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
 import { IAssessmentTemplateRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
 import { IAssessmentHelperRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
-import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
+import { IUserTaskRepo } from "../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { EnrollmentDomainModel } from '../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
 import { ApiError } from "../../common/api.error";
@@ -14,12 +14,12 @@ import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { ProgressStatus, uuid } from "../../domain.types/miscellaneous/system.types";
 import { ParticipantDomainModel } from "../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { CareplanActivityDomainModel } from "../../domain.types/clinical/careplan/activity/careplan.activity.domain.model";
-import { UserTaskCategory } from "../../domain.types/user/user.task/user.task.types";
-import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
+import { UserTaskCategory } from "../../domain.types/users/user.task/user.task.types";
+import { UserActionType } from "../../domain.types/users/user.task/user.task.types";
 import { TimeHelper } from "../../common/time.helper";
 import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
-import { IUserActionService } from "../user/user.action.service.interface";
+import { IUserActionService } from "../users/user/user.action.service.interface";
 import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
 import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
@@ -27,8 +27,9 @@ import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
-import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
+import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
+import { IDonorRepo } from "./../../database/repository.interfaces/users/donor.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +41,7 @@ export class CareplanService implements IUserActionService {
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IDonorRepo') private _donorRepo: IDonorRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
@@ -113,43 +115,75 @@ export class CareplanService implements IUserActionService {
         return await this.enrollAndCreateTask(enrollmentDetails);
     };
 
+    private timer = ms => new Promise(res => setTimeout(res, ms));
+
     public scheduleDailyCareplanPushTasks = async (): Promise<void> => {
-    
+
         const activities = await this._careplanRepo.getAllReanActivities();
+        const scheduledActivities = [];
 
         if (activities.length !== 0) {
-            activities.forEach(async activity => {
-                const todayDate = new Date().toISOString().split('T')[1];
-                const num = todayDate.split('.')[0];
-                const num1 = num.split(':')[1];
-                const activityDate = activity.ScheduledAt.toISOString().split('T')[1];
-                const num2 = activityDate.split('.')[0];
-                const num3 = num2.split(':')[1];
-   
-                if (num1 === num3) {
-                    const message = activity.Description;
-                    const patient = await this.getPatient(activity.PatientUserId);
-                    const phoneNumber = patient.User.Person.Phone;
-                    await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
-                   
-                    Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
-                
+            for (const activity of activities) {
+
+                const todayDateTime = new Date().toISOString()
+                    .split('T');
+                const activityDateTime = activity.ScheduledAt.toISOString().split('T');
+
+                if (todayDateTime[0] === activityDateTime[0]) {
+                    const num = todayDateTime[1].split('.')[0];
+                    const num1 = num.split(':',2);
+                    const num2 = num1[0].concat(':', num1[1]);
+
+                    const num3 = activityDateTime[1].split('.')[0];
+                    const num4 = num3.split(':',2);
+                    const num5 = num4[0].concat(':', num4[1]);
+
+                    if (num2 === num5){
+                        scheduledActivities.push(activity);
+                    }
                 }
-            });
+            }
+
+            for (const activity of scheduledActivities) {
+                const message = `${activity.Title}:\n${activity.Description}`;
+                let patient = null;
+                if (activity.PlanCode === 'Donor-Reminders') {
+                    patient = await this.getDonor(activity.PatientUserId);
+                } else {
+                    patient = await this.getPatient(activity.PatientUserId);
+                }
+                let phoneNumber = patient.User.Person.Phone;
+                if (activity.Provider === "REAN") {
+                    phoneNumber = patient.User.Person.TelegramChatId;
+                }
+                
+                let response = null;
+                response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
+                    activity.Provider, activity.Type, activity.PlanCode);
+                if (response === true) {
+                    await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
+                    Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                }
+                await this.timer(500);
+            }
         } else {
             Logger.instance().log(`No activities fetched from careplan task.`);
         }
-            
+
     };
 
     public getPatientEligibility = async (patient: any, provider: string, careplanCode: string) => {
         return await this._handler.getPatientEligibility(patient, provider, careplanCode);
     };
 
-    public getPatientEnrollments = async (patientUserId: string) => {
-        return await this._careplanRepo.getPatientEnrollments(patientUserId);
+    public getPatientEnrollments = async (patientUserId: string, isActive: boolean) => {
+        return await this._careplanRepo.getPatientEnrollments(patientUserId, isActive);
     };
-    
+
+    public getCompletedEnrollments = async (daysPassed: number, planNames : string[]) => {
+        return await this._careplanRepo.getCompletedEnrollments(daysPassed, planNames);
+    };
+
     public fetchTasks = async (careplanId: uuid): Promise<boolean> => {
 
         var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
@@ -169,7 +203,7 @@ export class CareplanService implements IUserActionService {
 
             var existing: boolean = await this._careplanRepo.activityExists(
                 x.Provider, x.EnrollmentId, x.ProviderActionId, x.Sequence, x.ScheduledAt);
-            
+
             if (existing) {
                 continue;
             }
@@ -186,6 +220,7 @@ export class CareplanService implements IUserActionService {
                 ProviderActionId : x.ProviderActionId,
                 Title            : x.Title,
                 Description      : x.Description,
+                Transcription    : x.Transcription,
                 Url              : x.Url,
                 Language         : x.Language,
                 ScheduledAt      : x.ScheduledAt,
@@ -201,13 +236,13 @@ export class CareplanService implements IUserActionService {
                 enrollment.PatientUserId,
                 enrollmentId,
                 activityModel);
-    
+
             careplanActivities.push(careplanActivity);
 
         }
 
         await this.createScheduledUserTasks(enrollment.PatientUserId, careplanActivities);
-    
+
         return true;
     };
 
@@ -229,7 +264,7 @@ export class CareplanService implements IUserActionService {
                 activity.EnrollmentId,
                 activity.ProviderActionId,
                 scheduledAt);
-        
+
             details.PatientUserId = activity.PatientUserId;
             details.Provider = activity.Provider;
             details.PlanCode = activity.PlanCode;
@@ -239,7 +274,8 @@ export class CareplanService implements IUserActionService {
             activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
             details.Title = activity.Title;
             details.Description = activity.Description;
-            
+            details.Transcription = activity.Transcription;
+
             //Handle assessment activities in special manner...
             if (activity.Category === UserTaskCategory.Assessment ||
             activity.Type === 'Assessment') {
@@ -270,7 +306,7 @@ export class CareplanService implements IUserActionService {
     };
 
     public updateAction = async (activityId: uuid, updates: any): Promise<any> => {
-        
+
         var activity = await this._careplanRepo.updateActivity(activityId, ProgressStatus.Completed, new Date());
 
         var activityUpdates = {
@@ -284,9 +320,9 @@ export class CareplanService implements IUserActionService {
             activity.PlanCode,
             activity.EnrollmentId,
             activity.ProviderActionId, activityUpdates);
-        
+
         Logger.instance().log(JSON.stringify(details, null, 2));
-    
+
         activity['Details'] = details;
 
         return activity;
@@ -333,7 +369,7 @@ export class CareplanService implements IUserActionService {
     };
 
     public getAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
- 
+
         if (!model) {
             throw new Error('Invalid careplan activity encountered!');
         }
@@ -348,7 +384,7 @@ export class CareplanService implements IUserActionService {
         if (existingTemplate) {
             return existingTemplate;
         }
-        
+
         var assessmentTemplate: CAssessmentTemplate =
             await this._handler.convertToAssessmentTemplate(model);
 
@@ -365,7 +401,7 @@ export class CareplanService implements IUserActionService {
         scheduledAt: string): Promise<AssessmentDto> => {
 
         var existingAssessment = await this._assessmentRepo.getByActivityId(activity.id);
-    
+
         if (existingAssessment) {
             return existingAssessment;
         }
@@ -407,6 +443,18 @@ export class CareplanService implements IUserActionService {
         }
         patientDto.User = user;
         return patientDto;
+    }
+
+    private async getDonor(donorUserId: uuid) {
+
+        var donorDto = await this._donorRepo.getByUserId(donorUserId);
+
+        var user = await this._userRepo.getById(donorDto.UserId);
+        if (user.Person == null) {
+            user.Person = await this._personRepo.getById(user.PersonId);
+        }
+        donorDto.User = user;
+        return donorDto;
     }
 
     private async createScheduledUserTasks(patientUserId, careplanActivities) {
@@ -477,17 +525,17 @@ export class CareplanService implements IUserActionService {
             throw new ApiError(500, 'Error while enrolling patient to careplan');
         }
         enrollmentDetails.EnrollmentId = enrollmentId;
-    
+
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
-    
+
         var activities = await this._handler.fetchActivities(
             enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode,
             enrollmentDetails.ParticipantId, enrollmentId, enrollmentDetails.StartDate, enrollmentDetails.EndDate);
-    
+
         Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
-    
+
         const activityModels = activities.map(x => {
-    
+
             var a: CareplanActivityDomainModel = {
                 PatientUserId    : enrollmentDetails.PatientUserId,
                 EnrollmentId     : enrollmentId,
@@ -507,10 +555,10 @@ export class CareplanService implements IUserActionService {
                 Frequency        : x.Frequency,
                 Status           : x.Status
             };
-    
+
             return a;
         });
-    
+
         var careplanActivities = await this._careplanRepo.addActivities(
             enrollmentDetails.Provider,
             enrollmentDetails.PlanName,
@@ -518,12 +566,12 @@ export class CareplanService implements IUserActionService {
             enrollmentDetails.PatientUserId,
             enrollmentId,
             activityModels);
-    
+
         Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
-    
+
         //task scheduling
         await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
-    
+
         return dto;
     }
 
@@ -533,7 +581,6 @@ export class CareplanService implements IUserActionService {
 
         var startDate = enrollment.StartAt;
         var endDate = enrollment.EndAt;
-
         var today = new Date();
         var begin =  new Date(startDate);
         var end =  new Date(endDate);
@@ -542,37 +589,39 @@ export class CareplanService implements IUserActionService {
         var dayOfCurrentWeek = -1;
         var message = "Your careplan is in progress.";
 
+        var careplanStatus = {
+            CurrentWeek      : currentWeek,
+            DayOfCurrentWeek : dayOfCurrentWeek,
+            Message          : message,
+            TotalWeeks       : 0,
+            StartDate        : null,
+            EndDate          : null,
+        };
+
         if (TimeHelper.isBefore(today, begin)) {
-            currentWeek = 0;
-            dayOfCurrentWeek = 0;
-            message = "Your careplan has not yet started.";
-            return { currentWeek, dayOfCurrentWeek, message };
+            careplanStatus.CurrentWeek = 0;
+            careplanStatus.DayOfCurrentWeek = 0;
+            careplanStatus.Message = "Your careplan has not yet started.";
+        } else if (TimeHelper.isAfter(today, end)){
+            careplanStatus.Message = "Your careplan has been finished.";
+        } else {
+            // current week
+            var diff = Math.abs(today.getTime() - begin.getTime());
+            var days = Math.floor(diff / (1000 * 3600 * 24));
+            currentWeek = (Math.floor(days / 7)) + 1;
+            dayOfCurrentWeek = (days % 7) + 1;
+            careplanStatus.CurrentWeek = currentWeek;
+            careplanStatus.DayOfCurrentWeek = dayOfCurrentWeek;
         }
-        if (TimeHelper.isAfter(today, end)){
-            message = "Your careplan has been finished.";
-            return { currentWeek, dayOfCurrentWeek, message };
-        }
-
-        // current week
-        var diff = Math.abs(today.getTime() - begin.getTime());
-        var days = Math.floor(diff / (1000 * 3600 * 24));
-        currentWeek = (Math.floor(days / 7)) + 1;
-        dayOfCurrentWeek = (days % 7) + 1;
-
+        
         // total weeks
         var duration = Math.abs(end.getTime() - begin.getTime());
         var totalDays = Math.floor(duration / (1000 * 3600 * 24));
         var totalWeeks = (Math.floor(totalDays / 7));
 
-        var careplanStatus = {
-
-            CurrentWeek      : currentWeek,
-            DayOfCurrentWeek : dayOfCurrentWeek,
-            Message          : message,
-            TotalWeeks       : totalWeeks,
-            StartDate        : startDate,
-            EndDate          : endDate,
-        };
+        careplanStatus.TotalWeeks = totalWeeks;
+        careplanStatus.StartDate = startDate;
+        careplanStatus.EndDate = endDate;
 
         return careplanStatus;
     };

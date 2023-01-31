@@ -1,8 +1,8 @@
 import { healthcare_v1 } from 'googleapis';
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
-import { PatientDomainModel } from '../../../../../../domain.types/patient/patient/patient.domain.model';
-import { PatientSearchFilters } from '../../../../../../domain.types/patient/patient/patient.search.types';
+import { PatientDomainModel } from '../../../../../../domain.types/users/patient/patient/patient.domain.model';
+import { PatientSearchFilters } from '../../../../../../domain.types/users/patient/patient/patient.search.types';
 import { IPatientStore } from '../../../../interfaces/patient.store.interface';
 import { FhirHelper } from '../../fhir.helper';
 import { GcpHelper } from './helper.gcp';
@@ -28,7 +28,7 @@ export class GcpPatientStore implements IPatientStore {
         var str = JSON.stringify(filter, null, 2);
         Logger.instance().log(`Created FHIR resource ${str}`);
     };
-    
+
     update = async (resourceId:string, updates: PatientDomainModel): Promise<any> => {
         const resourceType = 'Patient';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -55,7 +55,7 @@ export class GcpPatientStore implements IPatientStore {
             telecom      : [],
             address      : []
         };
-        
+
         if (model.User.Person.BirthDate != null) {
             var str = Helper.formatDate(model.User.Person.BirthDate);
             resource['birthDate'] = str;
@@ -159,7 +159,7 @@ export class GcpPatientStore implements IPatientStore {
             }
             existingResource.address.push(address);
         }
-        
+
         return existingResource;
     }
 

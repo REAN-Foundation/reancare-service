@@ -5,6 +5,11 @@ export interface NoticeActionDomainModel {
     UserId?        : uuid;
     NoticeId?      : uuid;
     Action?        : string;
-    ActionTakenAt? : Date;
-    ActionContent? : string;
+    Contents?      : Contents[];
 }
+
+export interface Contents{
+    Title?        : string;
+    ResourseId?   : string;
+}
+

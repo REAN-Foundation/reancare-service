@@ -1,6 +1,6 @@
 import { injectable, inject } from "tsyringe";
 import { ILabVisitStore } from '../interfaces/lab.visit.store.interface';
-import { LabVisitDomainModel } from '../../../domain.types/lab.visit/lab.visit.domain.model';
+import { LabVisitDomainModel } from '../../../domain.types/clinical/lab.visit/lab.visit.domain.model';
 
 ///////////////////////////////////////////////////////////////////
 

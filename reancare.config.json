@@ -62,8 +62,8 @@
                     "Provider" : "AHA",
                     "Name": "Stroke",
                     "Code": "Stroke",
-                    "DisplayName": "AHA-Stroke",
-                    "DefaultDurationDays": 84,
+                    "DisplayName": "Stroke",
+                    "DefaultDurationDays": 91,
                     "Description": "A stroke occurs when a blood vessel that carries oxygen and nutrients to the brain is either blocked by a clot or bursts (or ruptures).\nWhen that happens, part of the brain cannot get the blood (and oxygen) it needs, so it and brain cells die.\nThe HCA Healthcare Foundation is proud to be a national supporter of the American Stroke Association’s Together to End Stroke™.\nFor more information, visit: https://www.stroke.org."
                 }
             ]
@@ -76,10 +76,41 @@
                 {
                     "Provider" : "REAN",
                     "Name": "Maternity Careplan",
-                    "Code": "1",
+                    "Code": "DMC-Maternity",
                     "DisplayName": "Maternity Careplan",
                     "DefaultDurationDays": 100,
                     "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
+                },
+                {
+                    "Provider" : "REAN",
+                    "Name": "High Risk Maternity Careplan",
+                    "Code": "Maternity-High-Risk",
+                    "DisplayName": "Maternity Careplan",
+                    "DefaultDurationDays": 100,
+                    "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
+                }
+            ]
+        },
+        { 
+            "Enabled": true,
+            "Provider": "REAN_BW",
+            "Service": "ReanBWService",
+            "Plans": [
+                {
+                    "Provider" : "REAN_BW",
+                    "Name": "Patient messages",
+                    "Code": "Patient-Reminders",
+                    "DisplayName": "Blood Warior Patient",
+                    "DefaultDurationDays": 30,
+                    "Description": "Blood warrior patient messages."
+                },
+                {
+                    "Provider" : "REAN_BW",
+                    "Name": "Donor messages",
+                    "Code": "Donor-Reminders",
+                    "DisplayName": "Blood Warior Donor",
+                    "DefaultDurationDays": 30,
+                    "Description": "Blood warrior donor messages."
                 }
             ]
         }

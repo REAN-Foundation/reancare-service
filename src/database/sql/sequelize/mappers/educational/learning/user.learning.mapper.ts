@@ -18,6 +18,7 @@ export class UserLearningMapper {
             CourseId             : userLearning.CourseId,
             ModuleId             : userLearning.ModuleId,
             ContentId            : userLearning.ContentId,
+            ActionId             : userLearning.ActionId,
             CreatedDate          : userLearning.CreatedAt,
             UpdateDate           : userLearning.UpdatedAt,
             ProgressStatus       : userLearning.ProgressStatus as ProgressStatus,

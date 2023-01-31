@@ -1,5 +1,6 @@
-import { LabRecordType } from "../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.types";
-import { LabRecordDto } from "../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.dto";
+import { LabRecordType } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types";
+import { LabRecordDto } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
+import { LabRecordTypeDto } from "../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
 
 export class LabRecordMapper {
 
@@ -22,9 +23,30 @@ export class LabRecordMapper {
             ReportId       : labRecord.ReportId,
             OrderId        : labRecord.OrderId,
             RecordedAt     : labRecord.RecordedAt,
-            
+
         };
-        
+
+        return dto;
+    };
+
+    static toTypeDto = (labRecordType ): LabRecordTypeDto => {
+
+        if (labRecordType == null){
+            return null;
+        }
+
+        const dto: LabRecordTypeDto = {
+            id             : labRecordType.id,
+            TypeName       : labRecordType.TypeName,
+            DisplayName    : labRecordType.DisplayName,
+            SnowmedCode    : labRecordType.SnowmedCode,
+            LoincCode      : labRecordType.LoincCode,
+            NormalRangeMin : labRecordType.NormalRangeMin,
+            NormalRangeMax : labRecordType.NormalRangeMax,
+            Unit           : labRecordType.Unit,
+    
+        };
+
         return dto;
     };
 

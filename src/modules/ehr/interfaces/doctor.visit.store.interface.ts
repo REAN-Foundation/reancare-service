@@ -1,5 +1,5 @@
 
-import { DoctorVisitDomainModel } from '../../../domain.types/doctor.visit/doctor.visit.domain.model';
+import { DoctorVisitDomainModel } from '../../../domain.types/clinical/doctor.visit/doctor.visit.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////
 

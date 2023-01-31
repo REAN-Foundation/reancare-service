@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import {
     SymptomsProgress, SymptomsProgressList
 } from '../../../../../../domain.types/clinical/symptom/how.do.you.feel/symptom.progress.types';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 import SymptomAssessment from './symptom.assessment.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -53,21 +53,21 @@ export default class HowDoYouFeel extends Model {
         defaultValue : SymptomsProgress.Same
     })
     Feeling: string;
-    
+
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : false,
     })
     RecordDate: Date;
-    
+
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : false,
     })
     Comments: string;
-    
+
     @IsUUID(4)
     @ForeignKey(() => SymptomAssessment)
     @Column({

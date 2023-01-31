@@ -147,4 +147,19 @@ export class BodyHeightRepo implements IBodyHeightRepo {
         }
     };
 
+    getRecent = async (patientUserId: string): Promise<BodyHeightDto> => {
+        try {
+            const bodyWeight = await BodyHeight.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['CreatedAt', 'DESC']]
+            });
+            return await BodyHeightMapper.toDto(bodyWeight);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

@@ -1,7 +1,7 @@
 import path from 'path';
-import { AddressDomainModel } from '../../../../domain.types/address/address.domain.model';
+import { AddressDomainModel } from '../../../../domain.types/general/address/address.domain.model';
 import { Helper } from "../../../../common/helper";
-import { DiagnosticLabUserDomainModel } from '../../../../domain.types/diagnostic.lab.user/diagnostic.lab.user.domain.model';
+import { DiagnosticLabUserDomainModel } from '../../../../domain.types/users/diagnostic.lab.user/diagnostic.lab.user.domain.model';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class DiagnosticLabUserMapper {
@@ -20,7 +20,7 @@ export class DiagnosticLabUserMapper {
             State       : diagObj.Address.State ?? '',
             Country     : diagObj.Address.Country ?? '',
             PostalCode  : diagObj.Address.PostalCode ?? '',
-            
+
         };
 
         var model: DiagnosticLabUserDomainModel = {

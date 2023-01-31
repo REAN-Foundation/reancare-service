@@ -4,7 +4,7 @@ export interface NoticeActionDto {
     id?            : uuid;
     UserId?        : uuid;
     NoticeId?      : uuid;
+    Notice?        : any;
     Action?        : string;
-    ActionTakenAt? : Date;
-    ActionContent? : string;
+    Contents?      : string[];
 }

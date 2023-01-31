@@ -1,9 +1,11 @@
-import { LabRecordTypeDomainModel } from "../../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.domain.model";
-import { LabRecordTypeDto } from "../../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.dto";
-import { LabRecordDomainModel } from "../../../../domain.types/clinical/lab.records/lab.record/lab.record.domain.model";
-import { LabRecordDto } from "../../../../domain.types/clinical/lab.records/lab.record/lab.record.dto";
-import { LabRecordSearchResults } from "../../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types";
-import { LabRecordSearchFilters } from "../../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types";
+import { LabRecordTypeSearchResults, LabRecordTypeSearchFilters }
+    from "../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types";
+import { LabRecordTypeDomainModel } from "../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
+import { LabRecordTypeDto } from "../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
+import { LabRecordDomainModel } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model";
+import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
+import { LabRecordSearchResults } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
+import { LabRecordSearchFilters } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
 
 export interface ILabRecordRepo {
 
@@ -12,6 +14,8 @@ export interface ILabRecordRepo {
     getById(id: string): Promise<LabRecordDto>;
 
     search(filters: LabRecordSearchFilters): Promise<LabRecordSearchResults>;
+
+    searchType(filters: LabRecordTypeSearchFilters): Promise<LabRecordTypeSearchResults>;
 
     update(id: string, labRecordDomainModel: LabRecordDomainModel): Promise<LabRecordDto>;
 
@@ -24,5 +28,7 @@ export interface ILabRecordRepo {
     createType(healthPriorityTypeDomainModel: LabRecordTypeDomainModel): Promise<LabRecordTypeDto>;
 
     getTypeByDisplayName(displayName: string): Promise<any>;
+
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
 
 }

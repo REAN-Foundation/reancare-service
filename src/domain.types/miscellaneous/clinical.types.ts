@@ -70,3 +70,37 @@ export const VisitTypeList: VisitType[] = [
     VisitType.TeleVisit,
     VisitType.Unknown
 ];
+
+export enum DonorType {
+    OneTime     = 'One time',
+    BloodBridge = 'Blood bridge'
+}
+
+export const DonorTypeList: DonorType[] = [
+    DonorType.OneTime,
+    DonorType.BloodBridge
+];
+
+export enum BridgeStatus {
+    Active        = 'Active',
+    Inactive      = 'Inactive',
+    NotResponding = 'Not Responding'
+}
+
+export const BridgeStatusList: BridgeStatus[] = [
+    BridgeStatus.Active,
+    BridgeStatus.Inactive,
+    BridgeStatus.NotResponding
+];
+
+export enum DonorAcceptance {
+    Send     = 'Send',
+    NotSend  = 'NotSend',
+    Accepted = 'Accepted'
+}
+
+export const DonorAcceptanceList: DonorAcceptance[] = [
+    DonorAcceptance.Send,
+    DonorAcceptance.NotSend,
+    DonorAcceptance.Accepted
+];

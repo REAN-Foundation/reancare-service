@@ -13,6 +13,8 @@ import { PatientDetailsDto } from '../../domain.types/users/patient/patient/pati
 import { UserDetailsDto } from '../../domain.types/users/user/user.dto';
 import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { RoleDto } from '../../domain.types/role/role.dto';
+import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
+import { AddressDto } from '../../domain.types/general/address/address.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,6 +85,10 @@ export class UserHelper {
         if (!patient) {
             throw new ApiError(500, `An error has occurred while creating patient!`);
         }
+
+        const address = await this.addAddress(createModel, person);
+        patient.User.Person.Addresses = [address];
+
         return [ patient, true ];
     }
 
@@ -111,6 +117,24 @@ export class UserHelper {
             await this._userService.generateOtp(otpDetails);
         }
         return patient;
+    }
+
+    private async addAddress(createModel: PatientDomainModel, person: PersonDetailsDto)
+        : Promise<AddressDto> {
+        if (createModel.Address) {
+            const addressModel: AddressDomainModel = {
+                AddressLine : createModel.Address.AddressLine ?? '',
+                Type        : createModel.Address.Type ?? 'Home',
+                City        : createModel.Address.City ?? '',
+                PostalCode  : createModel.Address.PostalCode ?? null,
+                Country     : createModel.Address.Country ?? '',
+                State       : createModel.Address.State ?? ''
+            };
+            const address = await this._addressService.create(addressModel);
+            await this._personService.addAddress(person.id, address.id);
+            return address;
+        }
+        return null;
     }
 
     private async createUser(

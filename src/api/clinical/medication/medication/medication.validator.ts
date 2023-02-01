@@ -4,7 +4,7 @@ import { Helper } from '../../../../common/helper';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { MedicationSearchFilters } from '../../../../domain.types/clinical/medication/medication/medication.search.types';
 import {
-    MedicationAdministrationRoutes, MedicationDurationUnits
+    MedicationAdministrationRoutes, MedicationFrequencyUnits
 } from "../../../../domain.types/clinical/medication/medication/medication.types";
 import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
@@ -28,11 +28,11 @@ export class MedicationValidator {
             Dose                      : parseFloat(request.body.Dose),
             DosageUnit                : request.body.DosageUnit,
             TimeSchedules             : request.body.TimeSchedules ? request.body.TimeSchedules : [],
-            Frequency                 : parseInt(request.body.Frequency),
-            FrequencyUnit             : request.body.FrequencyUnit,
+            Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : 1,
+            FrequencyUnit             : request.body.FrequencyUnit ?? MedicationFrequencyUnits.Daily,
             Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
-            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
-            DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Weeks,
+            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : null,
+            DurationUnit              : request.body.DurationUnit ?? null,
             StartDate                 : startDate,
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? false,
@@ -48,7 +48,7 @@ export class MedicationValidator {
         return model;
     };
 
-    static getUpdateDomainModel = (request: express.Request): MedicationDomainModel => {
+    static getUpdateDomainModel = async (request: express.Request): Promise<MedicationDomainModel> => {
 
         const model: MedicationDomainModel = {
             id                        : request.params.id,
@@ -58,15 +58,15 @@ export class MedicationValidator {
             OrderId                   : request.body.OrderId ?? null,
             DrugName                  : request.body.DrugName ?? null,
             DrugId                    : request.body.DrugId ?? null,
-            Dose                      : request.body.Dose ?? null,
+            Dose                      : request.body.Dose ? parseFloat(request.body.Dose) : null,
             DosageUnit                : request.body.DosageUnit ?? null,
-            TimeSchedules             : request.body.TimeSchedules ?? null,
-            Frequency                 : request.body.Frequency ?? null,
+            TimeSchedules             : request.body.TimeSchedules ?? [],
+            Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : null,
             FrequencyUnit             : request.body.FrequencyUnit ?? null,
             Route                     : request.body.Route ?? null,
-            Duration                  : request.body.Duration ?? null,
+            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : null,
             DurationUnit              : request.body.DurationUnit ?? null,
-            StartDate                 : request.body.StartDate ?? null,
+            StartDate                 : request.body.StartDate,
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? null,
             RefillCount               : request.body.RefillCount ?? null,
@@ -89,7 +89,7 @@ export class MedicationValidator {
     static update = async (request: express.Request): Promise<MedicationDomainModel> => {
         const id = await MedicationValidator.getParamId(request);
         await MedicationValidator.validateUpdateBody(request);
-        const domainModel = MedicationValidator.getUpdateDomainModel(request);
+        const domainModel = await MedicationValidator.getUpdateDomainModel(request);
         domainModel.id = id;
         return domainModel;
     };
@@ -145,7 +145,7 @@ export class MedicationValidator {
             .isInt()
             .run(request);
 
-        await body('FrequencyUnit').exists()
+        await body('FrequencyUnit').optional()
             .trim()
             .run(request);
 
@@ -316,7 +316,6 @@ export class MedicationValidator {
 
         await body('ImageResourceId').optional()
             .trim()
-            .isUUID()
             .run(request);
 
         await body('IsExistingMedication').optional()

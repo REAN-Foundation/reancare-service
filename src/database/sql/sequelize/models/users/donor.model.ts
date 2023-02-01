@@ -1,6 +1,7 @@
 import {
     BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
+import { DonorType, DonorTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
 import { v4 } from 'uuid';
 import Person from '../person/person.model';
 import User from './user/user.model';
@@ -73,6 +74,14 @@ export default class Donor extends Model {
         allowNull : true,
     })
     LastDonationDate?  : Date;
+
+    @Column({
+        type         : DataType.STRING(32),
+        allowNull    : false,
+        values       : DonorTypeList,
+        defaultValue : DonorType.BloodBridge
+    })
+    DonorType: DonorType;
 
     @Column({
         type      : DataType.STRING(1024),

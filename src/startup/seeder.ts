@@ -567,34 +567,36 @@ export class Seeder {
     };
 
     public seedLabReportTypes = async () => {
-
-        const count = await this._labRecordRepo.totalTypesCount();
-        if (count > 0) {
-            Logger.instance().log("Lab record types have already been seeded!");
-            return;
-        }
-
+        
         Logger.instance().log('Seeding lab record types...');
 
         const arr = SeededLabRecordTypes['default'];
 
         for (let i = 0; i < arr.length; i++) {
             var c = arr[i];
-            let recordType = await this._labRecordService.getTypeByDisplayName(c.DisplayName);
-            if (recordType == null) {
-                const model: LabRecordTypeDomainModel = {
-                    TypeName       : c['TypeName'],
-                    DisplayName    : c['DisplayName'] as LabRecordType,
-                    SnowmedCode    : c['SnowmedCode'],
-                    LoincCode      : c['LoincCode'],
-                    NormalRangeMin : c['NormalRangeMin'],
-                    NormalRangeMax : c['NormalRangeMax'],
-                    Unit           : c['Unit'],
-                };
-                recordType = await this._labRecordService.createType(model);
-                var str = JSON.stringify(recordType, null, '  ');
-                Logger.instance().log(str);
+
+            const filters = {
+                DisplayName : c['DisplayName']
+            };
+            const existingRecord = await this._labRecordService.searchType(filters);
+            if (existingRecord.Items.length > 0) {
+                Logger.instance().log(`Lab record type has already been exist ${c['DisplayName']}!`);
+                continue;
             }
+
+            const model: LabRecordTypeDomainModel = {
+                TypeName       : c['TypeName'],
+                DisplayName    : c['DisplayName'] as LabRecordType,
+                SnowmedCode    : c['SnowmedCode'],
+                LoincCode      : c['LoincCode'],
+                NormalRangeMin : c['NormalRangeMin'],
+                NormalRangeMax : c['NormalRangeMax'],
+                Unit           : c['Unit'],
+            };
+            var recordType = await this._labRecordService.createType(model);
+            var str = JSON.stringify(recordType, null, '  ');
+            Logger.instance().log(str);
+        
         }
     };
 
@@ -665,6 +667,6 @@ export class Seeder {
             }
         }
 
-    }
+    };
 
 }

@@ -1,8 +1,7 @@
 import express from 'express';
 import { query, body, validationResult, param } from 'express-validator';
-import { DonorDomainModel } from '../../../domain.types/users/donor/donor.domain.model';
+import { VolunteerSearchFilters } from '../../../domain.types/users/Volunteer/volunteer.search.types';
 import { Helper } from '../../../common/helper';
-import { DonorSearchFilters } from '../../../domain.types/users/donor/donor.search.types';
 import { VolunteerDomainModel } from '../../../domain.types/users/Volunteer/volunteer.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -35,11 +34,13 @@ export class VolunteerValidator {
                 CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
                 GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
             },
-            MedIssues        : request.body.MedIssues ?? null,
-            BloodGroup       : request.body.BloodGroup ?? null,
-            LastDonationDate : request.body.LastDonationDate ?? null,
-            IsAvailable      : request.body.IsAvailable ?? false,
-            AddressId        : request.body.AddressId,
+            MedIssues          : request.body.MedIssues ?? null,
+            BloodGroup         : request.body.BloodGroup ?? null,
+            SelectedBridgeId   : request.body.SelectedBridgeId ?? null,
+            SelectedBloodGroup : request.body.SelectedBloodGroup ?? null,
+            LastDonationDate   : request.body.LastDonationDate ?? null,
+            IsAvailable        : request.body.IsAvailable ?? false,
+            AddressId          : request.body.AddressId,
         };
 
         if (
@@ -56,7 +57,7 @@ export class VolunteerValidator {
 
     static create = async (
         request: express.Request
-    ): Promise<DonorDomainModel> => {
+    ): Promise<VolunteerDomainModel> => {
         await VolunteerValidator.validateBody(request, true);
         return VolunteerValidator.getDomainModel(request);
     };
@@ -122,6 +123,16 @@ export class VolunteerValidator {
             .escape()
             .run(request);
 
+        await body('SelectedBloodGroup').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('SelectedBridgeId').optional()
+            .trim()
+            .escape()
+            .run(request);
+
         await body('LastDonationDate').optional()
             .trim()
             .escape()
@@ -153,7 +164,7 @@ export class VolunteerValidator {
 
     static search = async (
         request: express.Request
-    ): Promise<DonorSearchFilters> => {
+    ): Promise<VolunteerSearchFilters> => {
 
         await query('phone').optional()
             .trim()
@@ -177,6 +188,14 @@ export class VolunteerValidator {
 
         await query('bloodGroup')
             .optional();
+
+        await query('selectedBridgeId').optional()
+            .trim()
+            .run(request);
+
+        await query('selectedBloodGroup').optional()
+            .trim()
+            .run(request);
 
         await query('isAvailable')
             .optional()
@@ -254,7 +273,7 @@ export class VolunteerValidator {
         }
     }
 
-    private static getFilter(request): DonorSearchFilters {
+    private static getFilter(request): VolunteerSearchFilters {
 
         const pageIndex =
             request.query.pageIndex !== 'undefined'
@@ -266,20 +285,22 @@ export class VolunteerValidator {
                 ? parseInt(request.query.itemsPerPage as string, 10)
                 : 25;
 
-        const filters: DonorSearchFilters = {
-            Phone           : request.query.phone ?? null,
-            Email           : request.query.email ?? null,
-            Name            : request.query.name ?? null,
-            Gender          : request.query.gender ?? null,
-            BloodGroup      : request.query.bloodGroup ?? null,
-            MedIssues       : request.query.medIssues ?? null,
-            IsAvailable     : request.query.isAvailable ?? null,
-            CreatedDateFrom : request.query.createdDateFrom ?? null,
-            CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
+        const filters: VolunteerSearchFilters = {
+            Phone              : request.query.phone ?? null,
+            Email              : request.query.email ?? null,
+            Name               : request.query.name ?? null,
+            Gender             : request.query.gender ?? null,
+            BloodGroup         : request.query.bloodGroup ?? null,
+            SelectedBridgeId   : request.query.selectedBridgeId ?? null,
+            SelectedBloodGroup : request.query.selectedBloodGroup ?? null,
+            MedIssues          : request.query.medIssues ?? null,
+            IsAvailable        : request.query.isAvailable ?? null,
+            CreatedDateFrom    : request.query.createdDateFrom ?? null,
+            CreatedDateTo      : request.query.createdDateTo ?? null,
+            OrderBy            : request.query.orderBy ?? 'CreatedAt',
+            Order              : request.query.order ?? 'descending',
+            PageIndex          : pageIndex,
+            ItemsPerPage       : itemsPerPage,
         };
 
         return filters;
@@ -300,7 +321,7 @@ export class VolunteerValidator {
         return request.params.userId;
     }
 
-    static updateByUserId = async (request: express.Request): Promise<DonorDomainModel> => {
+    static updateByUserId = async (request: express.Request): Promise<VolunteerDomainModel> => {
 
         const userId = await VolunteerValidator.getParamUserId(request);
         await VolunteerValidator.validateBody(request, false);

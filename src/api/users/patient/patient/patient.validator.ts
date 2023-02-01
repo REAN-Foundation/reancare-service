@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import express from 'express';
 import { body } from 'express-validator';
 import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
@@ -55,41 +56,36 @@ export class PatientValidator extends BaseValidator {
 
     getUpdateDomainModel = async (request: express.Request): Promise<PatientDomainModel> => {
 
-        const birthdate = request.body.BirthDate !== undefined ?
-            (request.body.BirthDate !== null ? new Date(Date.parse(request.body.BirthDate)) : null) : undefined;
+        const body = request.body;
+        const birthdate = body.BirthDate !== undefined ?
+            (body.BirthDate !== null ? new Date(Date.parse(body.BirthDate)) : null) : undefined;
 
         const entity: PatientDomainModel = {
             User : {
                 Person : {
-                    FirstName      : request.body.FirstName !== undefined ? request.body.FirstName : undefined,
-                    LastName       : request.body.LastName !== undefined ? request.body.LastName : undefined,
-                    Prefix         : request.body.Prefix !== undefined ? request.body.Prefix : undefined,
-                    Email          : request.body.Email !== undefined ? request.body.Email : undefined,
-                    TelegramChatId : request.body.TelegramChatId !== undefined ?
-                        request.body.TelegramChatId : undefined,
-                    Gender               : request.body.Gender !== undefined ? request.body.Gender : undefined,
-                    SelfIdentifiedGender : request.body.SelfIdentifiedGender !== undefined ?
-                        request.body.SelfIdentifiedGender : undefined,
-                    MaritalStatus : request.body.MaritalStatus !== undefined ?
-                        request.body.MaritalStatus : undefined,
-                    Race : request.body.Race !== undefined ? request.body.Race : undefined,
-                    Ethnicity : request.body.Ethnicity !== undefined ? request.body.Ethnicity : undefined,
-                    BirthDate       : birthdate,
-                    Age             : request.body.Age !== undefined ? request.body.Age : undefined,
-                    StrokeSurvivorOrCaregiver : request.body.StrokeSurvivorOrCaregiver !== undefined ?
-                        request.body.StrokeSurvivorOrCaregiver : undefined,
-                    LivingAlone             : request.body.LivingAlone !== undefined ?
-                        request.body.LivingAlone : undefined,
-                    WorkedPriorToStroke             : request.body.WorkedPriorToStroke !== undefined ?
-                        request.body.WorkedPriorToStroke : undefined,
-
-                    ImageResourceId : request.body.ImageResourceId !== undefined ?
-                        request.body.ImageResourceId : undefined,
+                    FirstName                 : body.FirstName !== undefined ? body.FirstName                                : undefined,
+                    LastName                  : body.LastName !== undefined ? body.LastName                                  : undefined,
+                    Prefix                    : body.Prefix !== undefined ? body.Prefix                                      : undefined,
+                    Email                     : body.Email !== undefined ? body.Email                                        : undefined,
+                    TelegramChatId            : body.TelegramChatId !== undefined ? body.TelegramChatId                      : undefined,
+                    Gender                    : body.Gender !== undefined ? body.Gender                                      : undefined,
+                    SelfIdentifiedGender      : body.SelfIdentifiedGender !== undefined ? body.SelfIdentifiedGender          : undefined,
+                    MaritalStatus             : body.MaritalStatus !== undefined ? body.MaritalStatus                        : undefined,
+                    Race                      : body.Race !== undefined ? body.Race                                          : undefined,
+                    Ethnicity                 : body.Ethnicity !== undefined ? body.Ethnicity                                : undefined,
+                    BirthDate                 : birthdate,
+                    Age                       : body.Age !== undefined ? body.Age                                            : undefined,
+                    StrokeSurvivorOrCaregiver : body.StrokeSurvivorOrCaregiver !== undefined ? body.StrokeSurvivorOrCaregiver : undefined,
+                    LivingAlone               : body.LivingAlone !== undefined ? body.LivingAlone                            : undefined,
+                    WorkedPriorToStroke       : body.WorkedPriorToStroke !== undefined ? body.WorkedPriorToStroke            : undefined,
+                    ImageResourceId           : body.ImageResourceId !== undefined ? body.ImageResourceId                    : undefined,
                 },
-                Password        : request.body.Password ?? null,
-                DefaultTimeZone : request.body.DefaultTimeZone ?? null,
-                CurrentTimeZone : request.body.CurrentTimeZone ?? null,
+                Password        : body.Password ?? null,
+                DefaultTimeZone : body.DefaultTimeZone ?? null,
+                CurrentTimeZone : body.CurrentTimeZone ?? null,
             },
+            Address         : body.Address ?? null,
+            DonorAcceptance : body.DonorAcceptance ?? null,
         };
 
         return entity;
@@ -106,6 +102,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateEmail(request, 'email', Where.Query, false, true);
         await this.validateString(request, 'name', Where.Query, false, false);
         await this.validateString(request, 'gender', Where.Query, false, false);
+        await this.validateString(request, 'donorAcceptance', Where.Query, false, false);
         await this.validateDateString(request, 'birthdateFrom', Where.Query, false, false);
         await this.validateDateString(request, 'birthdateTo', Where.Query, false, false);
         await this.validateUuid(request, 'birthdateTo', Where.Query, false, false);
@@ -119,12 +116,13 @@ export class PatientValidator extends BaseValidator {
     private getFilter(request): PatientSearchFilters {
 
         const filters: PatientSearchFilters = {
-            Phone         : request.query.phone ?? null,
-            Email         : request.query.email ?? null,
-            Name          : request.query.name ?? null,
-            Gender        : request.query.gender ?? null,
-            BirthdateFrom : request.query.birthdateFrom ?? null,
-            BirthdateTo   : request.query.birthdateTo ?? null,
+            Phone           : request.query.phone ?? null,
+            Email           : request.query.email ?? null,
+            Name            : request.query.name ?? null,
+            Gender          : request.query.gender ?? null,
+            DonorAcceptance : request.query.donorAcceptance ?? null,
+            BirthdateFrom   : request.query.birthdateFrom ?? null,
+            BirthdateTo     : request.query.birthdateTo ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -154,6 +152,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateBoolean(request, 'LivingAlone', Where.Body, false, true);
         await this.validateBoolean(request, 'WorkedPriorToStroke', Where.Body, false, true);
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
+        await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
 
         await body('AddressIds').optional()
             .isArray()

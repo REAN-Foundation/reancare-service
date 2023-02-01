@@ -81,6 +81,18 @@ export default class Volunteer extends Model {
     })
     IsAvailable: boolean;
 
+    @Column({
+        type      : DataType.STRING(16),
+        allowNull : true,
+    })
+    SelectedBloodGroup: string;
+
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    SelectedBridgeId: string;
+
     @BelongsTo(() => User)
     User: User;
 

@@ -19,6 +19,8 @@ import { HealthProfileService } from "../../services/users/patient/health.profil
 import { Loader } from "../../startup/loader";
 import { IDonorRepo } from "../../database/repository.interfaces/users/donor.repo.interface";
 import { DonorNetworkService } from "./donor.management/donor.network.service";
+import { IPatientDonorsRepo } from "../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
+import { VolunteerService } from "../../services/users/volunteer.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +33,8 @@ export class CommunityNetworkService {
 
     _patientHealthProfileService: HealthProfileService = null;
 
+    _volunteerService: VolunteerService = null;
+
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
@@ -38,7 +42,9 @@ export class CommunityNetworkService {
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
-    ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService); }
+        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+    ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
+        this._volunteerService = Loader.container.resolve(VolunteerService); }
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
@@ -210,6 +216,36 @@ export class CommunityNetworkService {
 
     public getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
         return await this._careplanRepo.getActivity(activityId);
+    };
+
+    public reminderOnNoActionToDonationRequest = async (): Promise<void> => {
+
+        try {
+            const patients = await this._patientRepo.search({ "DonorAcceptance": "Send" });
+
+            if (patients.Items.length !== 0) {
+                for (const patient of patients.Items) {
+                    const bloodBridge = await this._patientDonorsRepo.search({ "PatientUserId": patient.UserId });
+                    const volunteer = await this._volunteerService.getByUserId( bloodBridge.Items[0].VolunteerUserId );
+                    const phoneNumber = volunteer.User.Person.Phone;
+                    const message = `     Update     \nNo Donor has accepted the request.\nPlease choose one of the following actions.`;
+                    let response = null;
+                    response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
+                        "REAN_BW", "interactive-buttons", "Volunteer-Reminders");
+
+                    if (response === true) {
+                        await this._patientRepo.updateByUserId( patient.UserId ,{ "DonorAcceptance": "NotSend" });
+                        Logger.instance().log(`Successfully whatsapp message send to volunteer ${phoneNumber}`);
+                    }
+                }
+                
+            } else {
+                Logger.instance().log(`Donation request not found or Donor has responded to request.`);
+            }
+        } catch (error) {
+            Logger.instance().log(`No action to donation request error ${error.message}`);
+        }
+
     };
 
     //#region Privates

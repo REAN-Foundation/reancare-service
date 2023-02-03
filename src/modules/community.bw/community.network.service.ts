@@ -125,7 +125,7 @@ export class CommunityNetworkService {
                 Category         : x.Category,
                 ProviderActionId : x.ProviderActionId,
                 Title            : x.Title,
-                Description      : x.Description,
+                Description      : JSON.stringify(x.Description),
                 Url              : x.Url,
                 Language         : x.Language,
                 ScheduledAt      : x.ScheduledAt,

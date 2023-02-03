@@ -145,7 +145,7 @@ export class CareplanService implements IUserActionService {
             }
 
             for (const activity of scheduledActivities) {
-                const message = `${activity.Title}:\n${activity.Description}`;
+                let message = activity.Description;
                 let patient = null;
                 if (activity.PlanCode === 'Donor-Reminders') {
                     patient = await this.getDonor(activity.PatientUserId);
@@ -155,6 +155,7 @@ export class CareplanService implements IUserActionService {
                 let phoneNumber = patient.User.Person.Phone;
                 if (activity.Provider === "REAN") {
                     phoneNumber = patient.User.Person.TelegramChatId;
+                    message = `${activity.Title}:\n${activity.Description}`;
                 }
                 
                 let response = null;

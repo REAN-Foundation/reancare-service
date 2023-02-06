@@ -1,3 +1,4 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
 export interface MedicationConsumptionDomainModel {
     id?               : string,
@@ -31,4 +32,9 @@ export interface MedicationConsumptionSummaryDomainModel {
     Date?             : Date;
     PastMonthsCount?  : number;
     FutureMonthsCount?: number;
+}
+
+export interface PreviousDayMedicationConsumptionDomainModel {
+    PatientUserIds?    : uuid[];
+    Date?             : Date;
 }

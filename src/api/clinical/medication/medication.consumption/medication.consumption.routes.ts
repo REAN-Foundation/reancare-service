@@ -22,6 +22,7 @@ export const register = (app: express.Application): void => {
     router.get('/schedule-for-day/:patientUserId/:date', authenticator.authenticateClient, authenticator.authenticateUser, controller.getScheduleForDay);
     router.get('/summary-for-day/:patientUserId/:date', authenticator.authenticateClient, authenticator.authenticateUser, controller.getSummaryForDay);
     router.get('/summary-for-calendar-months/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getSummaryByCalendarMonths);
+    router.post('/previous-day-medication-consumption', authenticator.authenticateClient, authenticator.authenticateUser, controller.previousDayMedicationConsumption);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
 
     app.use('/api/v1/clinical/medication-consumptions', router);

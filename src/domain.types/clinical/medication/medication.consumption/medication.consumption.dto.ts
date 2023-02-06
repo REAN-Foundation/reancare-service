@@ -66,3 +66,8 @@ export interface SummaryForMonthDto {
     DaysInMonth?    : number,
     SummaryForMonth?: SummarizedScheduleDto[];
 }
+
+export interface PatientSummaryForDayDto {
+    PatientUserId? : string;
+    SummaryForDay: SummarizedScheduleDto[];
+}

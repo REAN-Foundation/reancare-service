@@ -10,7 +10,7 @@ import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
-import { MedicationConsumptionDetailsDto, MedicationConsumptionDto, MedicationConsumptionStatsDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { MedicationConsumptionDetailsDto, MedicationConsumptionDto, MedicationConsumptionStatsDto, PatientSummaryForDayDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
 import { MedicationDto } from "../../../domain.types/clinical/medication/medication/medication.dto";
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
@@ -356,6 +356,30 @@ export class MedicationConsumptionService implements IUserActionService {
             SummaryForDay : classifiedList
         };
         return summary;
+    };
+
+    previousDayMedicationConsumption = async (patientUserIds: string[], date: Date)
+    : Promise<any> => {
+        const medicalDetails = [];
+        date = date ? date : TimeHelper.subtractDuration(new Date(new Date().toISOString()
+            .split('T')[0]), 1, DurationType.Day);
+        for (const patientUserId of patientUserIds) {
+            var consumptions = await this._medicationConsumptionRepo.getSchedulesForDay(patientUserId, date);
+            var classifiedList = await this.classifyByDrugs(consumptions);
+            for (const object of classifiedList) {
+                delete object['Schedules'];
+            }
+            var summary : PatientSummaryForDayDto = {
+                PatientUserId : patientUserId,
+                SummaryForDay : classifiedList
+            };
+            medicalDetails.push(summary);
+        }
+        const patientMedicalDetails = {
+            Date           : date,
+            MedicalDetails : medicalDetails
+        };
+        return patientMedicalDetails;
     };
 
     getSummaryByCalendarMonths = async (

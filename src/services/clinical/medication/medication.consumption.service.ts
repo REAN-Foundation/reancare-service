@@ -31,7 +31,7 @@ import * as MessageTemplates from '../../../modules/communication/message.templa
 @injectable()
 export class MedicationConsumptionService implements IUserActionService {
 
-    _ehrMedicationConsumptionStore: MedicationConsumptionStore = null
+    _ehrMedicationConsumptionStore: MedicationConsumptionStore = null;
 
     constructor(
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,

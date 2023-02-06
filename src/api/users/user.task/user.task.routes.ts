@@ -22,6 +22,7 @@ export const register = (app: express.Application): void => {
     router.put("/:id/cancel", authenticator.authenticateClient, authenticator.authenticateUser, controller.cancelTask);
 
     router.get("/users/:userId/summary-for-day/:date", authenticator.authenticateClient, authenticator.authenticateUser, controller.getTaskSummaryForDay);
+    router.post("/users/summary-for-day", authenticator.authenticateClient, authenticator.authenticateUser, controller.getTaskSummaryForPreviousDay);
     router.get('/display-id/:displayId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByDisplayId);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);

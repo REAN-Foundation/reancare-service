@@ -362,6 +362,35 @@ export class UserTaskController {
         }
     };
 
+    getTaskSummaryForPreviousDay = async(request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'UserTask.SummaryForPreviousDay';
+            await this._authorizer.authorize(request, response);
+
+            const summaries = [];
+            const { userIds, date } = await this._validator.getTaskSummaryForPreviousDay(request);
+            for ( const userId of userIds) {
+                const summary = await this._service.getTaskSummaryForDay(userId, date);
+                summary.PatientUserId = userId;
+                delete summary.PendingTasks;
+                delete summary.InProgressTasks;
+                delete summary.CompletedTasks;
+                summaries.push(summary);
+            }
+            const patientUserTaskDetails = {
+                Date           : date,
+                UserTaskReport : summaries
+            };
+
+            ResponseHandler.success(request, response, 'User task retrived successfully!', 200, {
+                UserTaskSummaryForDay : patientUserTaskDetails
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.Delete';

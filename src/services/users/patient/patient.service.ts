@@ -133,6 +133,15 @@ export class PatientService {
         return await this._patientRepo.getAllPatientUserIds();
     };
 
+    public getUserIDsByDateRange = async (filters: PatientSearchFilters): Promise<any[]> => {
+        const results = await this._patientRepo.search(filters);
+        var patientUserIds = [];
+        results.Items.forEach(p => {
+            patientUserIds.push(p.UserId);
+        });
+        return patientUserIds;
+    };
+
     public checkforExistingPersonWithRole
         = async (domainModel: PatientDomainModel, roleId: number): Promise<PersonDetailsDto> => {
 

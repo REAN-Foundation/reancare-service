@@ -151,6 +151,43 @@ export class PatientController extends BaseUserController {
         }
     };
 
+    getAllPatient = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Patient.GetAllPatient', request, response, false);
+
+            const allPatientUserIds = await this._service.getAllPatientUserIds();
+            const count = allPatientUserIds.length;
+            const message =
+                    count === 0 ? 'No records found!' : `Total ${count} patient user ids retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, {
+                PatientUserIds : allPatientUserIds,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getUserIDsByDateRange = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Patient.GetUserIDsByDateRange', request, response, false);
+
+            const filters = await this._validator.search(request);
+            const allPatientUserIds = await this._service.getUserIDsByDateRange(filters);
+            const count = allPatientUserIds.length;
+            const message =
+                    count === 0 ? 'No records found!' : `Total ${count} patient user ids retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, {
+                PatientUserIds : allPatientUserIds,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Patient.UpdateByUserId', request, response);

@@ -52,7 +52,7 @@ jobs:
           echo "Branch: ${{ steps.vars.outputs.branch }}"
           echo "Sha: ${{ steps.vars.outputs.sha_short }}"
           echo "Repo: ${{ steps.vars.outputs.repo_name }}"
-          export NODE_OPTIONS="--max-old-space-size=8192"
+          export NODE_OPTIONS=--max-old-space-size=8192
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1

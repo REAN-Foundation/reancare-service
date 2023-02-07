@@ -37,7 +37,7 @@ import { PatientRepo } from "../../../../database/sql/sequelize/repositories/use
 import { IPatientRepo } from "../../../../database/repository.interfaces/users/patient/patient.repo.interface";
 import { addBottom, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
-import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
+import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
 import { createCalorieBalanceChart } from "./calorie.balance.stats";
 import { createCareplanCharts } from "./careplan.stats";
 import { addDailyAssessmentsStats, createDailyAssessentCharts } from "./daily.assessments.stats";
@@ -153,9 +153,20 @@ export class StatisticsService {
         var bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, 6);
         const startingWeight = bodyWeightStats[bodyWeightStats.length - 1].BodyWeight;
         
-        // const patient = await this._patientRepo.getByUserId(patientUserId);
-        // const user = await this._userRepo.getById(patient.UserId);
-        // const person = await this._personRepo.getById(user.PersonId);
+        const patient = await this._patientRepo.getByUserId(patientUserId);
+        const user = await this._userRepo.getById(patient.UserId);
+        const person = await this._personRepo.getById(user.PersonId);
+        var countryCode = person.Phone.split("-")[0];
+
+        /*if (countryCode === '+1' || countryCode === '+44'){
+            const weight = weightStr.split("-")[1];
+            weightStr = weight;
+            weightUnits = 'lbs';
+        } else {
+            const weight = weightStr.split("-")[0];
+            weightStr = weight;
+            var weightUnits = 'Kg';
+        }*/
         var currentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
         var weightUnits = 'Kg';
         
@@ -175,17 +186,6 @@ export class StatisticsService {
         var { bmi, weightStr, heightStr } =
             Helper.calculateBMI(currentHeight, heightUnits, currentWeight, weightUnits);
 
-        /*var countryCode = person.Phone.split("-")[0];
-        if (countryCode === '+1' || countryCode === '+44'){
-            const weight = weightStr.split("-")[1];
-            weightStr = weight;
-            weightUnits = 'lbs';
-        } else {
-            const weight = weightStr.split("-")[0];
-            weightStr = weight;
-            var weightUnits = 'Kg';
-        }*/
-        
         const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, 6);
         var startingSystolicBloodPressure = bloodPressureStats[bloodPressureStats.length - 1].Systolic;
         var startingDiastolicBloodPressure = bloodPressureStats[bloodPressureStats.length - 1].Diastolic;
@@ -196,31 +196,40 @@ export class StatisticsService {
         const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, 6);
         var startingBloodGlucose = bloodGlucoseStats[bloodGlucoseStats.length - 1].BloodGlucose;
         const currentBloodGlucose = await this._bloodGlucoseRepo.getRecent(patientUserId);
-        var totalChange = currentBloodGlucose.BloodGlucose - startingBloodGlucose;
+        var totalBloodGlucoseChange = currentBloodGlucose.BloodGlucose - startingBloodGlucose;
 
         const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, 6);
-
+        const getRecentChol = await this._labRecordsRepo.getRecent(patientUserId, 'Total Cholesterol');
         var startingTotalCholesterol =
             cholesterolStats.TotalCholesterol[cholesterolStats.TotalCholesterol.length - 1].PrimaryValue;
-        const currentTotalCholesterol = cholesterolStats.HDL[0].PrimaryValue;
-        var totalTotalCholesterolChange = currentTotalCholesterol - startingTotalCholesterol;
+        const currentTotalCholesterol = getRecentChol.PrimaryValue;
+        var lastMeasuredChol = getRecentChol.RecordedAt;
+        var totalCholesterolChange = currentTotalCholesterol - startingTotalCholesterol;
 
         const startingHDL = cholesterolStats.HDL[cholesterolStats.HDL.length - 1].PrimaryValue;
-        const currentHDL = cholesterolStats.HDL[0].PrimaryValue;
+        const getRecentHDL = await this._labRecordsRepo.getRecent(patientUserId, 'HDL');
+        const currentHDL = getRecentHDL.PrimaryValue;
+        const lastMeasuredHDL = getRecentHDL.RecordedAt;
         var totalHDLChange = currentHDL - startingHDL;
 
         var startingLDL = cholesterolStats.LDL[cholesterolStats.LDL.length - 1].PrimaryValue;
-        const currentLDL = cholesterolStats.LDL[0].PrimaryValue;
+        const getRecentLDL = await this._labRecordsRepo.getRecent(patientUserId, 'LDL');
+        const currentLDL = getRecentLDL.PrimaryValue;
+        const lastMeasuredLDL = getRecentLDL.RecordedAt;
         const totalLDLChange = currentLDL - startingLDL;
 
         var startingTriglycerideLevel =
             cholesterolStats.TriglycerideLevel[cholesterolStats.TriglycerideLevel.length - 1].PrimaryValue;
-        const currentTriglycerideLevel = cholesterolStats.TriglycerideLevel[0].PrimaryValue;
+        const getRecentTrigy = await this._labRecordsRepo.getRecent(patientUserId, 'Triglyceride Level');
+        const currentTriglycerideLevel = getRecentTrigy.PrimaryValue;
+        const lastMeasuredTrigly = getRecentTrigy.RecordedAt;
         const totalTriglycerideLevelChange = currentTriglycerideLevel - startingTriglycerideLevel;
 
         var startingA1CLevel =
             cholesterolStats.A1CLevel[cholesterolStats.A1CLevel.length - 1].PrimaryValue;
-        const currentA1CLevel = cholesterolStats.A1CLevel[0].PrimaryValue;
+        const getRecentA1C = await this._labRecordsRepo.getRecent(patientUserId, 'A1C Level');
+        const currentA1CLevel = getRecentA1C.PrimaryValue;
+        const lastMeasuredA1C = getRecentA1C.RecordedAt;
         const totalA1CLevelChange = currentA1CLevel - startingA1CLevel;
 
         const biometrics = {
@@ -237,6 +246,7 @@ export class StatisticsService {
                 },
                 BodyWeight : {
                     History            : bodyWeightStats,
+                    CountryCode        : countryCode,
                     AverageBodyWeight  : averageBodyWeight,
                     StartingBodyWeight : startingWeight,
                     TotalChange        : totalChange,
@@ -247,10 +257,42 @@ export class StatisticsService {
                     History              : bloodGlucoseStats,
                     StartingBloodGlucose : startingBloodGlucose,
                     CurrentBloodGlucose  : currentBloodGlucose ? currentBloodGlucose.BloodGlucose : null,
-                    TotalChange          : totalChange,
+                    TotalChange          : totalBloodGlucoseChange,
                     LastMeasuredDate     : currentBloodGlucose ? currentBloodGlucose.RecordDate : null,
                 },
-                Cholesterol : cholesterolStats
+                Cholesterol : cholesterolStats,
+                    
+                TotalCholesterol : {
+                    StartingTotalCholesterol : startingTotalCholesterol,
+                    CurrentTotalCholesterol  : currentTotalCholesterol,
+                    TotalCholesterolChange   : totalCholesterolChange,
+                    LastMeasuredChol         : lastMeasuredChol,
+                },
+                HDL : {
+                    StartingHDL     : startingHDL,
+                    CurrentHDL      : currentHDL,
+                    TotalHDLChange  : totalHDLChange,
+                    LastMeasuredHDL : lastMeasuredHDL,
+                },
+                LDL : {
+                    StartingLDL     : startingLDL,
+                    CurrentLDL      : currentLDL,
+                    TotalLDLChange  : totalLDLChange,
+                    LastMeasuredLDL : lastMeasuredLDL,
+                },
+                TriglycerideLevel : {
+                    StartingTriglycerideLevel    : startingTriglycerideLevel,
+                    CurrentTriglycerideLevel     : currentTriglycerideLevel,
+                    TotalTriglycerideLevelChange : totalTriglycerideLevelChange,
+                    LastMeasuredTrigly           : lastMeasuredTrigly,
+                },
+                A1CLevel : {
+                    StartingA1CLevel    : startingA1CLevel,
+                    CurrentA1CLevel     : currentA1CLevel,
+                    TotalA1CLevelChange : totalA1CLevelChange,
+                    LastMeasuredA1C     : lastMeasuredA1C,
+                }
+
             }
         };
 
@@ -320,6 +362,7 @@ export class StatisticsService {
 
         const stats = {
             WeightStr        : weightStr,
+            CountryCode      : countryCode,
             HeightStr        : heightStr,
             BodyMassIndex    : bmi,
             Nutrition        : nutrition,
@@ -363,11 +406,12 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 9;
+            reportModel.TotalPages = 10;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
+            pageNumber = this.addBiometricsPageD(document, reportModel, pageNumber);
             pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
             pageNumber = this.addExercisePage(document, reportModel, pageNumber);
             pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
@@ -450,6 +494,14 @@ export class StatisticsService {
     private addBiometricsPageC = (document, model, pageNumber) => {
         var y = addTop(document, model);
         addLipidStats(model, document, y);
+        addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addBiometricsPageD = (document, model, pageNumber) => {
+        var y = addTop(document, model);
+        addCholStats(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;

@@ -12,8 +12,8 @@ export const SQUARE_CHART_HEIGHT = 400;
 export const addLabeledText = (
     document: PDFKit.PDFDocument, label: string, value: string, y: any, fontSize = 11, rowYOffset = 23) => {
 
-    const labelX = 100;
-    const valueX = 325;
+    const labelX = 135;
+    const valueX = 360;
 
     document
         .fontSize(fontSize)

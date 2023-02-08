@@ -39,7 +39,21 @@
         "TimeSlot": "Morning",
         "Sequence": 3,
         "Day": 3,
-        "TemplateName": "interactive-buttons",
-        "Message": "Hi, \nWe are 5 days away from blood transfusion. \nShall we raise a donation request?"
+        "TemplateName": "reminder_three",
+        "Message": { "Variables" : [
+            {
+                "type": "text",
+                "text": "5"
+            },
+            {
+                "type": "text",
+                "text": "blood transfusion"
+            },
+            {
+                "type": "text",
+                "text": "donation"
+            }],
+            "ButtonsIds" : ["Raise_Request_Yes", "Raise_Request_No"]
+        }
     }
 ]

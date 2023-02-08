@@ -39,7 +39,7 @@ export class MessagingService {
         if (message.Variables) {
             templateName = type;
             type = "template";
-            buttonIds = message.ButtonIds? message.ButtonIds : null;
+            buttonIds = message.ButtonIds ? message.ButtonIds : null;
             message = JSON.stringify(message);
 
         }

@@ -25,7 +25,7 @@ export class DonorNetworkService implements IBloodWarriorService {
                 Provider               : this.providerName(),
                 ProviderActionId       : activity.Sequence,
                 Title                  : activity.Name,
-                Type                   : activity.Type ?? 'text',
+                Type                   : activity.TemplateName,
                 PlanCode               : careplanCode,
                 Description            : activity.Message,
                 Language               : 'English',

@@ -18,4 +18,6 @@ export interface VolunteerDomainModel {
     Address?          : AddressDomainModel;
     SelectedBloodGroup?  : string;
     SelectedBridgeId?    : string;
+    SelectedPhoneNumber?    : string;
+    LastDonationRecordId?   : string;
 }

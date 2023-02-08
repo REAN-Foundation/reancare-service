@@ -41,7 +41,7 @@ export class PatientNetworkService implements IBloodWarriorService {
         });
 
         return activityEntities;
-    }
+    };
 
     public getPlanDetails(provider: string, planCode: string): CareplanConfig {
         var enabledProvider = this.isEnabledProvider(provider);

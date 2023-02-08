@@ -93,6 +93,18 @@ export default class Volunteer extends Model {
     })
     SelectedBridgeId: string;
 
+    @Column({
+        type      : DataType.STRING(16),
+        allowNull : true,
+    })
+    SelectedPhoneNumber: string;
+
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
+    LastDonationRecordId: string;
+
     @BelongsTo(() => User)
     User: User;
 

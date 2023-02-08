@@ -72,6 +72,12 @@ export class VolunteerRepo implements IVolunteerRepo {
             if (model.SelectedBridgeId != null) {
                 volunteer.SelectedBridgeId = model.SelectedBridgeId;
             }
+            if (model.SelectedPhoneNumber != null) {
+                volunteer.SelectedPhoneNumber = model.SelectedPhoneNumber;
+            }
+            if (model.LastDonationRecordId != null) {
+                volunteer.LastDonationRecordId = model.LastDonationRecordId;
+            }
             if (model.IsAvailable != null) {
                 volunteer.IsAvailable = model.IsAvailable;
             }

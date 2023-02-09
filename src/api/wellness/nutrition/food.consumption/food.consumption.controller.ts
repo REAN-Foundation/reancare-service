@@ -203,7 +203,7 @@ export class FoodConsumptionController extends BaseController {
     };
 
     private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: FoodConsumptionDomainModel) => {
-        if (model.UserResponse) {
+        if (model.FoodTypes[0] === "GenericNutrition") {
             EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
                 recordId,
@@ -241,11 +241,11 @@ export class FoodConsumptionController extends BaseController {
                 );
         }
         if (model.FoodTypes[0] === "Salt") {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
                 recordId,
                 EHRRecordTypes.NutritionSalt,
-                model.Servings,
+                model.UserResponse,
                 model.ServingUnit,
                 'Nutrition-Salt'
                 );
@@ -271,11 +271,11 @@ export class FoodConsumptionController extends BaseController {
                 );
         }
         if (model.FoodTypes[0] === "Protein") {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
                 recordId,
                 EHRRecordTypes.NutritionProtein,
-                model.Servings,
+                model.UserResponse,
                 model.ServingUnit,
                 'Nutrition-Protein'
                 );

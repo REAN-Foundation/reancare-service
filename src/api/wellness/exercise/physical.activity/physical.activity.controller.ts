@@ -11,6 +11,7 @@ import { PhysicalActivityDomainModel } from
     '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
 import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import TrustedComms from 'twilio/lib/rest/preview/TrustedComms';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -149,7 +150,14 @@ export class PhysicalActivityController extends BaseController {
     };
 
     private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PhysicalActivityDomainModel) => {
-        if (model.PhysicalActivityQuestionAns) {
+        if (model.PhysicalActivityQuestionAns === true) {
+            EHRAnalyticsHandler.addBooleanRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.PhysicalActivity,
+                model.PhysicalActivityQuestionAns);
+        }
+        if (model.PhysicalActivityQuestionAns === false) {
             EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
                 recordId,

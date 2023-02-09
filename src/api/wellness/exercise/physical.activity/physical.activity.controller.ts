@@ -7,6 +7,10 @@ import { PhysicalActivityService } from '../../../../services/wellness/exercise/
 import { Loader } from '../../../../startup/loader';
 import { PhysicalActivityValidator } from './physical.activity.validator';
 import { BaseController } from '../../../base.controller';
+import { PhysicalActivityDomainModel } from
+    '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +51,7 @@ export class PhysicalActivityController extends BaseController {
             if (physicalActivity == null) {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
-
+            this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, domainModel);
             ResponseHandler.success(request, response, 'Physical activity record created successfully!', 201, {
                 PhysicalActivity : physicalActivity,
             });
@@ -142,6 +146,17 @@ export class PhysicalActivityController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PhysicalActivityDomainModel) => {
+        if (model.PhysicalActivityQuestionAns) {
+            EHRAnalyticsHandler.addBooleanRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.PhysicalActivity,
+                model.PhysicalActivityQuestionAns);
+        }
+
     };
 
     //#endregion

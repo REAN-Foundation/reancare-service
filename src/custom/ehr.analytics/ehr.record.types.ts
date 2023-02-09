@@ -26,6 +26,15 @@ export enum EHRRecordTypes {
     Mood                          = 'Mood',
     EnergyLevel                   = 'Energy-Level',
     LabRecord                     = 'Lab-Record',
+    PhysicalActivity              = 'Physical-Activity',
+    Nutrition                     = 'Nutrition',
+    NutritionFruit                = 'Nutrition-Fruit',
+    NutritionVegetables           = 'Nutrition-Vegetables',
+    NutritionSugaryDrinks         = 'Nutrition-SugaryDrinks',
+    NutritionSalt                 = 'Nutrition-Salt',
+    NutritionSeaFood              = 'Nutrition-SeaFood',
+    NutritionGrains               = 'Nutrition-Grains',
+    NutritionProtein              = 'Nutrition-Protein',
     Other                         = 'Other'
 }
 

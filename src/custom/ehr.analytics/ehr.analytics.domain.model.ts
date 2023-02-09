@@ -25,8 +25,10 @@ export interface EHRStaticRecordDomainModel {
     OtherDoctorPersonId?: uuid;
     ProviderCode?       : string;
     HealthSystem?       : string;
+    AssociatedHospital? : string;
     Gender?             : Gender;
     BirthDate?          : Date;
+    Age?                : string;
     BodyHeight?         : number;
     Ethnicity?          : string;
     Race?               : string;

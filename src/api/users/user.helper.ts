@@ -131,6 +131,7 @@ export class UserHelper {
                 City        : createModel.Address.City ?? '',
                 PostalCode  : createModel.Address.PostalCode ?? null,
                 Country     : createModel.Address.Country ?? '',
+                Location    : createModel.Address.Location ?? '',
                 State       : createModel.Address.State ?? ''
             };
             const address = await this._addressService.create(addressModel);

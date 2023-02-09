@@ -131,7 +131,7 @@ export class CommunityNetworkService {
                 Category         : x.Category,
                 ProviderActionId : x.ProviderActionId,
                 Title            : x.Title,
-                Description      : x.Description,
+                Description      : JSON.stringify(x.Description),
                 Url              : x.Url,
                 Language         : x.Language,
                 ScheduledAt      : x.ScheduledAt,
@@ -242,10 +242,16 @@ export class CommunityNetworkService {
                     }
                     const volunteer = await this._volunteerService.getByUserId( volunteerUserId );
                     const phoneNumber = volunteer.User.Person.Phone;
-                    const message = `     Update     \nNo Donor has accepted the request.\nPlease choose one of the following actions.`;
+                    const message = {
+                        Variables  : [],
+                        ButtonsIds : [
+                            "Donation_Request_Yes",
+                            "Send_OneTimeDonor"
+                        ]
+                    };
                     let response = null;
-                    response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
-                        "REAN_BW", "interactive-buttons", "Volunteer-Reminders");
+                    response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, JSON.stringify(message),
+                        "REAN_BW", "donor_request_ignored", "Volunteer-Reminders");
 
                     if (response === true) {
                         await this._patientRepo.updateByUserId( patient.UserId ,{ "DonorAcceptance": "NotSend" });

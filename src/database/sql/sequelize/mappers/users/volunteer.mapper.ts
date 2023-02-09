@@ -17,18 +17,20 @@ export class VolunteerMapper {
         }
 
         const dto: VolunteerDetailsDto = {
-            id                 : volunteer.id,
-            UserId             : volunteer.UserId,
-            User               : null,
-            DisplayId          : volunteer.DisplayId,
-            EhrId              : volunteer.EhrId,
-            BloodGroup         : volunteer.BloodGroup,
-            LastDonationDate   : volunteer.LastDonationDate,
-            SelectedBridgeId   : volunteer.SelectedBridgeId,
-            SelectedBloodGroup : volunteer.SelectedBloodGroup,
-            IsAvailable        : volunteer.IsAvailable,
-            MedIssues          : medIssues,
-            Address            : []
+            id                   : volunteer.id,
+            UserId               : volunteer.UserId,
+            User                 : null,
+            DisplayId            : volunteer.DisplayId,
+            EhrId                : volunteer.EhrId,
+            BloodGroup           : volunteer.BloodGroup,
+            LastDonationDate     : volunteer.LastDonationDate,
+            SelectedBridgeId     : volunteer.SelectedBridgeId,
+            SelectedBloodGroup   : volunteer.SelectedBloodGroup,
+            SelectedPhoneNumber  : volunteer.SelectedPhoneNumber,
+            LastDonationRecordId : volunteer.LastDonationRecordId,
+            IsAvailable          : volunteer.IsAvailable,
+            MedIssues            : medIssues,
+            Address              : []
         };
         return dto;
     };
@@ -45,22 +47,24 @@ export class VolunteerMapper {
         }
 
         const dto: VolunteerDto = {
-            id                 : volunteer.id,
-            UserId             : volunteer.UserId,
-            DisplayId          : volunteer.DisplayId,
-            EhrId              : volunteer.EhrId,
-            BloodGroup         : volunteer.BloodGroup,
-            LastDonationDate   : volunteer.LastDonationDate,
-            SelectedBridgeId   : volunteer.SelectedBridgeId,
-            SelectedBloodGroup : volunteer.SelectedBloodGroup,
-            MedIssues          : medIssues,
-            DisplayName        : null,
-            UserName           : null,
-            Phone              : null,
-            Email              : null,
-            Gender             : null,
-            BirthDate          : null,
-            Age                : null,
+            id                   : volunteer.id,
+            UserId               : volunteer.UserId,
+            DisplayId            : volunteer.DisplayId,
+            EhrId                : volunteer.EhrId,
+            BloodGroup           : volunteer.BloodGroup,
+            LastDonationDate     : volunteer.LastDonationDate,
+            SelectedBridgeId     : volunteer.SelectedBridgeId,
+            SelectedBloodGroup   : volunteer.SelectedBloodGroup,
+            SelectedPhoneNumber  : volunteer.SelectedPhoneNumber,
+            LastDonationRecordId : volunteer.LastDonationRecordId,
+            MedIssues            : medIssues,
+            DisplayName          : null,
+            UserName             : null,
+            Phone                : null,
+            Email                : null,
+            Gender               : null,
+            BirthDate            : null,
+            Age                  : null,
         };
         return dto;
     };

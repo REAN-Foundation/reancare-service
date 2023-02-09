@@ -34,13 +34,15 @@ export class VolunteerValidator {
                 CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
                 GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
             },
-            MedIssues          : request.body.MedIssues ?? null,
-            BloodGroup         : request.body.BloodGroup ?? null,
-            SelectedBridgeId   : request.body.SelectedBridgeId ?? null,
-            SelectedBloodGroup : request.body.SelectedBloodGroup ?? null,
-            LastDonationDate   : request.body.LastDonationDate ?? null,
-            IsAvailable        : request.body.IsAvailable ?? false,
-            AddressId          : request.body.AddressId,
+            MedIssues            : request.body.MedIssues ?? null,
+            BloodGroup           : request.body.BloodGroup ?? null,
+            SelectedBridgeId     : request.body.SelectedBridgeId ?? null,
+            SelectedBloodGroup   : request.body.SelectedBloodGroup ?? null,
+            SelectedPhoneNumber  : request.body.SelectedPhoneNumber ?? null,
+            LastDonationRecordId : request.body.LastDonationRecordId ?? null,
+            LastDonationDate     : request.body.LastDonationDate ?? null,
+            IsAvailable          : request.body.IsAvailable ?? false,
+            AddressId            : request.body.AddressId,
         };
 
         if (
@@ -129,6 +131,16 @@ export class VolunteerValidator {
             .run(request);
 
         await body('SelectedBridgeId').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('SelectedPhoneNumber').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('LastDonationRecordId').optional()
             .trim()
             .escape()
             .run(request);

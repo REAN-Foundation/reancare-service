@@ -16,4 +16,8 @@ export interface VolunteerDomainModel {
     IsAvailable?      : boolean;
     AddressId?        : string;
     Address?          : AddressDomainModel;
+    SelectedBloodGroup?  : string;
+    SelectedBridgeId?    : string;
+    SelectedPhoneNumber?    : string;
+    LastDonationRecordId?   : string;
 }

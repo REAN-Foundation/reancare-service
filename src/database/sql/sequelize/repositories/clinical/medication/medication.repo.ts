@@ -257,6 +257,12 @@ export class MedicationRepo implements IMedicationRepo {
             if (model.ImageResourceId != null) {
                 medication.ImageResourceId = model.ImageResourceId;
             }
+            if (model.Instructions != null) {
+                medication.Instructions = model.Instructions;
+            }
+            if (model.EndDate != null) {
+                medication.EndDate = model.EndDate;
+            }
 
             await medication.save();
 

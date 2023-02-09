@@ -91,7 +91,7 @@ export class CustomAuthenticator implements IAuthenticator {
             Logger.instance().log(JSON.stringify(err, null, 2));
             res = {
                 Result        : false,
-                Message       : 'Forebidden user access',
+                Message       : 'Forbidden user access',
                 HttpErrorCode : 403,
             };
             return res;
@@ -121,7 +121,7 @@ export class CustomAuthenticator implements IAuthenticator {
             if (!client) {
                 res = {
                     Result        : false,
-                    Message       : 'Invalid API Key: Forebidden access',
+                    Message       : 'Invalid API Key: Forbidden access',
                     HttpErrorCode : 403,
                 };
                 return res;

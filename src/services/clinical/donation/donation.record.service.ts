@@ -24,9 +24,10 @@ export class DonationRecordService {
     public create = async (donationRecordDomainModel: DonationRecordDomainModel): Promise<DonationRecordDto> => {
 
         var dto = await this._donationRecordRepo.create(donationRecordDomainModel);
-        await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Send });
+        if (dto.PatientUserId !== null) {
+            await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Send });
+        }
         dto = await this.updateDetailsDto(dto);
-
         return dto;
     };
 
@@ -73,8 +74,10 @@ export class DonationRecordService {
         if (dto == null) {
             return null;
         }
-        var patientDonors = await this._patientDonorsRepo.getById(dto.NetworkId);
-        dto.DonationDetails = patientDonors;
+        if (dto.NetworkId) {
+            var patientDonors = await this._patientDonorsRepo.getById(dto.NetworkId);
+            dto.DonationDetails = patientDonors;
+        }
         return dto;
     };
 

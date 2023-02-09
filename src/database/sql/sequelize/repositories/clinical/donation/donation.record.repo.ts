@@ -17,13 +17,15 @@ export class DonationRecordRepo implements IDonationRecordRepo {
 
         try {
             const entity = {
-                PatientUserId     : donationRecordDomainModel.PatientUserId,
-                NetworkId         : donationRecordDomainModel.NetworkId,
-                RequestedQuantity : donationRecordDomainModel.RequestedQuantity,
-                RequestedDate     : donationRecordDomainModel.RequestedDate,
-                DonatedQuantity   : donationRecordDomainModel.DonatedQuantity,
-                DonationDate      : donationRecordDomainModel.DonationDate,
-                DonationType      : donationRecordDomainModel.DonationType
+                PatientUserId             : donationRecordDomainModel.PatientUserId,
+                NetworkId                 : donationRecordDomainModel.NetworkId,
+                EmergencyDonor            : donationRecordDomainModel.EmergencyDonor,
+                VolunteerOfEmergencyDonor : donationRecordDomainModel.VolunteerOfEmergencyDonor,
+                RequestedQuantity         : donationRecordDomainModel.RequestedQuantity,
+                RequestedDate             : donationRecordDomainModel.RequestedDate,
+                DonatedQuantity           : donationRecordDomainModel.DonatedQuantity,
+                DonationDate              : donationRecordDomainModel.DonationDate,
+                DonationType              : donationRecordDomainModel.DonationType
             };
 
             const donationRecord = await DonationRecord.create(entity);
@@ -58,6 +60,12 @@ export class DonationRecordRepo implements IDonationRecordRepo {
             }
             if (model.NetworkId != null) {
                 donationRecord.NetworkId = model.NetworkId;
+            }
+            if (model.EmergencyDonor != null) {
+                donationRecord.EmergencyDonor = model.EmergencyDonor;
+            }
+            if (model.VolunteerOfEmergencyDonor != null) {
+                donationRecord.VolunteerOfEmergencyDonor = model.VolunteerOfEmergencyDonor;
             }
             if (model.RequestedQuantity != null) {
                 donationRecord.RequestedQuantity = model.RequestedQuantity;
@@ -98,10 +106,15 @@ export class DonationRecordRepo implements IDonationRecordRepo {
 
             const search: any = { where: {}, include: [] };
 
+            let IsPatientDonorsRequired = false;
+            if (filters.DonorUserId || filters.VolunteerUserId || filters.Name || filters.BloodGroup || filters.Status) {
+                IsPatientDonorsRequired = true;
+            }
+
             const includesObj =
             {
                 model    : PatientDonors,
-                required : true,
+                required : IsPatientDonorsRequired,
                 where    : {
                 },
             };
@@ -111,6 +124,12 @@ export class DonationRecordRepo implements IDonationRecordRepo {
             }
             if (filters.NetworkId != null) {
                 search.where['NetworkId'] =  filters.NetworkId;
+            }
+            if (filters.EmergencyDonor != null) {
+                search.where['EmergencyDonor'] =  filters.EmergencyDonor;
+            }
+            if (filters.VolunteerOfEmergencyDonor != null) {
+                search.where['VolunteerOfEmergencyDonor'] =  filters.VolunteerOfEmergencyDonor;
             }
             if (filters.DonorUserId != null) {
                 includesObj.where['DonorUserId'] =  filters.DonorUserId;

@@ -16,6 +16,10 @@ export interface VolunteerDetailsDto {
     MedIssues?         : string[];
     IsAvailable?       : boolean;
     Address?           : AddressDto[];
+    SelectedBloodGroup?  : string;
+    SelectedBridgeId?    : string;
+    SelectedPhoneNumber?    : string;
+    LastDonationRecordId?   : string;
 }
 
 export interface VolunteerDto {
@@ -29,6 +33,10 @@ export interface VolunteerDto {
     Email       : string;
     BloodGroup  : string;
     LastDonationDate  : Date;
+    SelectedBloodGroup?  : string;
+    SelectedBridgeId?    : string;
+    SelectedPhoneNumber?    : string;
+    LastDonationRecordId?   : string;
     MedIssues   : string[];
     Gender      : Gender;
     BirthDate   : Date;

@@ -15,12 +15,13 @@ export class MeditationRepo implements IMeditationRepo {
     Promise<MeditationDto> => {
         try {
             const entity = {
-                PatientUserId : createModel.PatientUserId,
-                Meditation    : createModel.Meditation,
-                Description   : createModel.Description,
-                Category      : createModel.Category,
-                StartTime     : createModel.StartTime,
-                EndTime       : createModel.EndTime
+                PatientUserId  : createModel.PatientUserId,
+                Meditation     : createModel.Meditation,
+                Description    : createModel.Description,
+                Category       : createModel.Category,
+                DurationInMins : createModel.DurationInMins,
+                StartTime      : createModel.StartTime,
+                EndTime        : createModel.EndTime
             };
 
             const meditation = await MeditationModel.create(entity);
@@ -52,6 +53,9 @@ export class MeditationRepo implements IMeditationRepo {
             }
             if (filters.Meditation !== null) {
                 search.where['Meditation'] = filters.Meditation;
+            }
+            if (filters.DurationInMins !== null) {
+                search.where['DurationInMins'] = filters.DurationInMins;
             }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
@@ -117,6 +121,9 @@ export class MeditationRepo implements IMeditationRepo {
             }
             if (updateModel.Category != null) {
                 meditation.Category = updateModel.Category;
+            }
+            if (updateModel.DurationInMins != null) {
+                meditation.DurationInMins = updateModel.DurationInMins;
             }
             if (updateModel.StartTime != null) {
                 meditation.StartTime = updateModel.StartTime;

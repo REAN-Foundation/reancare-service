@@ -8,9 +8,11 @@ export interface DonationRecordSearchFilters extends BaseSearchFilters {
     PatientUserId?     : string;
     DonorUserId?       : string;
     VolunteerUserId?   : string;
+    EmergencyDonor?    : string;
+    VolunteerOfEmergencyDonor? : string;
     NetworkId?         : string;
-    BloodGroup?        : string,
-    Status?            : string,
+    BloodGroup?        : string;
+    Status?            : string;
     RequestedDateFrom? : Date;
     RequestedDateTo?   : Date;
     DonationDateFrom?  : Date;

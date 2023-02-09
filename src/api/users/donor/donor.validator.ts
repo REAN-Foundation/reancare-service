@@ -3,6 +3,7 @@ import { query, body, validationResult, param } from 'express-validator';
 import { DonorDomainModel } from '../../../domain.types/users/donor/donor.domain.model';
 import { Helper } from '../../../common/helper';
 import { DonorSearchFilters } from '../../../domain.types/users/donor/donor.search.types';
+import { DonorType } from '../../../domain.types/miscellaneous/clinical.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +41,7 @@ export class DonorValidator {
             LastDonationDate  : request.body.LastDonationDate ?? null,
             IsAvailable       : request.body.IsAvailable ?? false,
             HasDonatedEarlier : request.body.HasDonatedEarlier ?? false,
+            DonorType         : request.body.DonorType ?? DonorType.BloodBridge,
             AddressId         : request.body.AddressId,
         };
 
@@ -133,6 +135,11 @@ export class DonorValidator {
             .escape()
             .run(request);
 
+        await body('DonorType').optional()
+            .trim()
+            .escape()
+            .run(request);
+
         await body('MedIssues').optional()
             .run(request);
 
@@ -174,6 +181,11 @@ export class DonorValidator {
             .trim()
             .escape()
             .run(request);
+        
+        await query('donorType').optional()
+            .trim()
+            .escape()
+            .run(request);
 
         await query('gender').optional()
             .isAlpha()
@@ -185,9 +197,6 @@ export class DonorValidator {
             .trim()
             .escape()
             .run(request);
-
-        await query('bloodGroup')
-            .optional();
 
         await query('isAvailable')
             .optional()
@@ -296,6 +305,7 @@ export class DonorValidator {
             Gender            : request.query.gender ?? null,
             AcceptorUserId    : request.query.acceptorUserId ?? null,
             BloodGroup        : request.query.bloodGroup ?? null,
+            DonorType         : request.query.donorType ?? null,
             MedIssues         : request.query.medIssues ?? null,
             OnlyEligible      : request.query.onlyEligible ?? null,
             IsAvailable       : request.query.isAvailable ?? null,

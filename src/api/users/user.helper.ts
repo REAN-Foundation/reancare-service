@@ -90,7 +90,7 @@ export class UserHelper {
         patient.User.Person.Addresses = [address];
 
         return [ patient, true ];
-    }
+    };
 
     private createPatientWithHealthProfile = async (
         createModel: PatientDomainModel,
@@ -120,7 +120,7 @@ export class UserHelper {
             createModel.HealthProfile);
         patient.HealthProfile = healthProfile;
         return patient;
-    }
+    };
  
     private async addAddress(createModel: PatientDomainModel, person: PersonDetailsDto)
         : Promise<AddressDto> {

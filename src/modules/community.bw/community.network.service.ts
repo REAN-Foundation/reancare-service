@@ -21,6 +21,8 @@ import { IDonorRepo } from "../../database/repository.interfaces/users/donor.rep
 import { DonorNetworkService } from "./donor.management/donor.network.service";
 import { IPatientDonorsRepo } from "../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
 import { VolunteerService } from "../../services/users/volunteer.service";
+import { IDonationRecordRepo } from "../../database/repository.interfaces/clinical/donation/donation.record.repo.interface";
+import { PatientService } from "../../services/users/patient/patient.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +32,8 @@ export class CommunityNetworkService {
     _patientNetworkService: PatientNetworkService = new PatientNetworkService();
 
     _donorNetworkService: DonorNetworkService = new DonorNetworkService();
+
+    _patientService: PatientService = null;
 
     _patientHealthProfileService: HealthProfileService = null;
 
@@ -43,8 +47,10 @@ export class CommunityNetworkService {
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+        @inject('IDonationRecordRepo') private _donationRecordRepo: IDonationRecordRepo,
     ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
-        this._volunteerService = Loader.container.resolve(VolunteerService); }
+        this._volunteerService = Loader.container.resolve(VolunteerService); 
+        this._patientService = Loader.container.resolve(PatientService); }
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
@@ -125,7 +131,7 @@ export class CommunityNetworkService {
                 Category         : x.Category,
                 ProviderActionId : x.ProviderActionId,
                 Title            : x.Title,
-                Description      : x.Description,
+                Description      : JSON.stringify(x.Description),
                 Url              : x.Url,
                 Language         : x.Language,
                 ScheduledAt      : x.ScheduledAt,
@@ -221,17 +227,31 @@ export class CommunityNetworkService {
     public reminderOnNoActionToDonationRequest = async (): Promise<void> => {
 
         try {
-            const patients = await this._patientRepo.search({ "DonorAcceptance": "Send" });
+            const patients = await this._patientService.search({ "DonorAcceptance": "Send" });
 
             if (patients.Items.length !== 0) {
                 for (const patient of patients.Items) {
-                    const bloodBridge = await this._patientDonorsRepo.search({ "PatientUserId": patient.UserId });
-                    const volunteer = await this._volunteerService.getByUserId( bloodBridge.Items[0].VolunteerUserId );
+                    let volunteerUserId = null;
+                    if (patient.FirstName === "dummy_patient") {
+                        const donationRecord = await this._donationRecordRepo.search({ "PatientUserId": patient.UserId });
+                        volunteerUserId = donationRecord.Items[0].VolunteerOfEmergencyDonor;
+
+                    } else {
+                        const bloodBridge = await this._patientDonorsRepo.search({ "PatientUserId": patient.UserId });
+                        volunteerUserId = bloodBridge.Items[0].VolunteerUserId;
+                    }
+                    const volunteer = await this._volunteerService.getByUserId( volunteerUserId );
                     const phoneNumber = volunteer.User.Person.Phone;
-                    const message = `     Update     \nNo Donor has accepted the request.\nPlease choose one of the following actions.`;
+                    const message = {
+                        Variables  : [],
+                        ButtonsIds : [
+                            "Donation_Request_Yes",
+                            "Send_OneTimeDonor"
+                        ]
+                    };
                     let response = null;
-                    response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
-                        "REAN_BW", "interactive-buttons", "Volunteer-Reminders");
+                    response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, JSON.stringify(message),
+                        "REAN_BW", "donor_request_ignored", "Volunteer-Reminders");
 
                     if (response === true) {
                         await this._patientRepo.updateByUserId( patient.UserId ,{ "DonorAcceptance": "NotSend" });

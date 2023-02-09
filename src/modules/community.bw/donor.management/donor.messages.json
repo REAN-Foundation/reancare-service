@@ -4,14 +4,30 @@
         "TimeSlot": "Morning",
         "Sequence": 1,
         "Day": 1,
-        "Message": "Dear Blood Warrior, \nThis is a reminder that you have a scheduled donation today. \nPlease check the scheduler message for details."
+        "TemplateName": "donation_day_reminder_donor",
+        "Message": { "Variables" : [
+            {
+                "type": "text",
+                "text": "Blood"
+            }]
+        }
     },
     {
         "Name": "Confirmation message",
         "TimeSlot": "Morning",
         "Sequence": 2,
         "Day": 1,
-        "Type": "interactive-buttons",
-        "Message": "Were you able to Donate today?"
+        "TemplateName": "donor_feedback_1",
+        "Message": { "Variables" : [
+            {
+                "type": "text",
+                "text": "Blood Warrior"
+            },
+            {
+                "type": "text",
+                "text": "Blood"
+            }],
+            "ButtonsIds" : ["Generate_Certificate", "Home_Menu"]
+        }
     }
 ]

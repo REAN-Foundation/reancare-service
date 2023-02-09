@@ -11,7 +11,6 @@ import { PhysicalActivityDomainModel } from
     '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
 import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
-import TrustedComms from 'twilio/lib/rest/preview/TrustedComms';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -98,7 +98,7 @@ export class EHRAnalyticsRepo {
         }
         model = await model.save();
         return model;
-    }
+    };
 
     create = async (model: EHRDynamicRecordDomainModel): Promise<boolean> => {
         try {

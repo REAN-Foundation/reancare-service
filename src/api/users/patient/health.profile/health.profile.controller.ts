@@ -144,7 +144,7 @@ export class HealthProfileController extends BaseController{
                 MaritalStatus : model.MaritalStatus
             });
         }
-    }
+    };
 
     //#endregion
 

@@ -195,7 +195,7 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(400, 'Unable to update patient record!');
             }
             await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
-            let addresses = await this._personService.getAddresses(personDomainModel.id);
+            const addresses = await this._personService.getAddresses(personDomainModel.id);
             let location = null;
             if (addresses.length >= 1) {
                 location = addresses[0].Location;

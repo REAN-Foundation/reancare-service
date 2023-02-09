@@ -74,6 +74,7 @@ import { register as registerPatientStatisticsRoutes } from './users/patient/sta
 import { register as registerRssfeedRoutes } from './general/rss.feed/rss.feed.routes';
 import { register as registerPatientDonorsRoutes } from './clinical/donation/patient.donors.routes';
 import { register as registerDonationRecordRoutes } from './clinical/donation.record/donation.record.routes';
+import { register as registerWearableWebhookTerraRoutes } from './webhook/wearable.webhook.routes';
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
@@ -171,6 +172,7 @@ export class Router {
                 registerRssfeedRoutes(this._app);
                 registerPatientDonorsRoutes(this._app);
                 registerDonationRecordRoutes(this._app);
+                registerWearableWebhookTerraRoutes(this._app);
 
                 resolve(true);
 

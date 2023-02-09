@@ -90,7 +90,7 @@ export class UserHelper {
         patient.User.Person.Addresses = [address];
 
         return [ patient, true ];
-    }
+    };
 
     private createPatientWithHealthProfile = async (
         createModel: PatientDomainModel,
@@ -103,7 +103,7 @@ export class UserHelper {
             throw new ApiError(400, 'Cannot create patient!');
         }
 
-        const healthProfile = await this._patientHealthProfileService.createDefault(user.id);
+        let healthProfile = await this._patientHealthProfileService.createDefault(user.id);
         patient.HealthProfile = healthProfile;
 
         if (person.Phone !== null) {
@@ -116,9 +116,12 @@ export class UserHelper {
             };
             await this._userService.generateOtp(otpDetails);
         }
+        healthProfile = await this._patientHealthProfileService.updateByPatientUserId(patient.UserId,
+            createModel.HealthProfile);
+        patient.HealthProfile = healthProfile;
         return patient;
-    }
-
+    };
+ 
     private async addAddress(createModel: PatientDomainModel, person: PersonDetailsDto)
         : Promise<AddressDto> {
         if (createModel.Address) {

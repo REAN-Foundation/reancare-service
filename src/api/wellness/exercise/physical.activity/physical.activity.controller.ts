@@ -149,7 +149,7 @@ export class PhysicalActivityController extends BaseController {
     };
 
     private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PhysicalActivityDomainModel) => {
-        if (model.PhysicalActivityQuestionAns) {
+        if (model.PhysicalActivityQuestionAns !== undefined) {
             EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
                 recordId,

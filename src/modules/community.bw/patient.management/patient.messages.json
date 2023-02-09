@@ -4,21 +4,56 @@
         "TimeSlot": "Morning",
         "Sequence": 1,
         "Day": 1,
-        "Message": "Hi, \nBlood transfusion date is 10 days away. Please monitor the health of your child. \nRegards \nTeam Blood Warriors"
+        "TemplateName": "reminder_1",
+        "Message": { "Variables" : [
+            {
+                "type": "text",
+                "text": "Blood Warrior"
+            },
+            {
+                "type": "text",
+                "text": "Blood"
+            },
+            {
+                "type": "text",
+                "text": "Blood"
+            }]
+        }
     },
     {
         "Name": "Message before 7 day",
         "TimeSlot": "Morning",
         "Sequence": 2,
         "Day": 2,
-        "Message": "Hi, \nBlood transfusion date is 7 days away. Please monitor the health of your child. \nWe will send a reminder in two days to send blood donation request. \nRegards \nTeam Blood Warriors"
+        "TemplateName": "reminder_2",
+        "Message": { "Variables" : [
+            {
+                "type": "text",
+                "text": "patient"
+            }],
+            "ButtonsIds" : ["Feeling_Good", "Feeling_Unwell"]
+        }
     },
     {
         "Name": "Message before 5 day",
         "TimeSlot": "Morning",
         "Sequence": 3,
         "Day": 3,
-        "Type": "interactive-buttons",
-        "Message": "Hi, \nWe are 5 days away from blood transfusion. \nShall we raise a donation request?"
+        "TemplateName": "reminder_three",
+        "Message": { "Variables" : [
+            {
+                "type": "text",
+                "text": "5"
+            },
+            {
+                "type": "text",
+                "text": "blood transfusion"
+            },
+            {
+                "type": "text",
+                "text": "donation"
+            }],
+            "ButtonsIds" : ["Raise_Request_Yes", "Raise_Request_No"]
+        }
     }
 ]

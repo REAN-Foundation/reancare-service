@@ -196,7 +196,6 @@ export default class Medication extends Model {
     })
     Instructions: string;
 
-    @IsUUID(4)
     @ForeignKey(() => FileResource)
     @Column({
         type      : DataType.UUID,

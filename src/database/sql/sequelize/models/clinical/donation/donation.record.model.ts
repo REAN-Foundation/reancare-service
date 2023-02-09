@@ -31,7 +31,7 @@ export default class DonationRecord extends Model {
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     PatientUserId: string;
 
@@ -39,9 +39,23 @@ export default class DonationRecord extends Model {
     @ForeignKey(() => PatientDonors)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     NetworkId: string;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    EmergencyDonor: string;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    VolunteerOfEmergencyDonor: string;
 
     @Column({
         type      : DataType.INTEGER,

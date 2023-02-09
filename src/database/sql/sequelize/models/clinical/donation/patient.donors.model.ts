@@ -3,9 +3,7 @@ import {
 } from 'sequelize-typescript';
 import { BridgeStatus, BridgeStatusList, DonorType, DonorTypeList } from '../../../../../../domain.types/miscellaneous/clinical.types';
 import { v4 } from 'uuid';
-import Donor from '../../users/donor.model';
 import User from '../../users/user/user.model';
-import Volunteer from '../../users/volunteer.model';
 
 ///////////////////////////////////////////////////////////////////////
 

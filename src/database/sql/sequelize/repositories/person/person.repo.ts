@@ -164,55 +164,37 @@ export class PersonRepo implements IPersonRepo {
         try {
             const person = await Person.findOne({ where: { id: id } });
 
-            if (personDomainModel.Prefix !== undefined) {
+            if (personDomainModel.Prefix != null) {
                 person.Prefix = personDomainModel.Prefix;
             }
-            if (personDomainModel.FirstName !== undefined) {
+            if (personDomainModel.FirstName != null) {
                 person.FirstName = personDomainModel.FirstName;
             }
-            if (personDomainModel.LastName !== undefined) {
+            if (personDomainModel.LastName != null) {
                 person.LastName = personDomainModel.LastName;
             }
-            if (personDomainModel.Phone !== undefined) {
+            if (personDomainModel.Phone != null) {
                 person.Phone = personDomainModel.Phone;
             }
-            if (personDomainModel.Email !== undefined) {
+            if (personDomainModel.Email != null) {
                 person.Email = personDomainModel.Email;
             }
-            if (personDomainModel.TelegramChatId !== undefined) {
+            if (personDomainModel.TelegramChatId != null) {
                 person.TelegramChatId = personDomainModel.TelegramChatId;
             }
-            if (personDomainModel.Gender !== undefined) {
+            if (personDomainModel.Gender != null) {
                 person.Gender = Helper.getEnumKeyFromValue(Gender, personDomainModel.Gender);
             }
-            if (personDomainModel.SelfIdentifiedGender !== undefined) {
+            if (personDomainModel.SelfIdentifiedGender != null) {
                 person.SelfIdentifiedGender = personDomainModel.SelfIdentifiedGender;
             }
-            if (personDomainModel.MaritalStatus !== undefined) {
-                person.MaritalStatus = personDomainModel.MaritalStatus;
-            }
-            if (personDomainModel.Race !== undefined) {
-                person.Race = personDomainModel.Race;
-            }
-            if (personDomainModel.Ethnicity !== undefined) {
-                person.Ethnicity = personDomainModel.Ethnicity;
-            }
-            if (personDomainModel.Age !== undefined) {
+            if (personDomainModel.Age != null) {
                 person.Age = personDomainModel.Age;
             }
-            if (personDomainModel.StrokeSurvivorOrCaregiver !== undefined) {
-                person.StrokeSurvivorOrCaregiver = personDomainModel.StrokeSurvivorOrCaregiver;
-            }
-            if (personDomainModel.LivingAlone !== undefined) {
-                person.LivingAlone = personDomainModel.LivingAlone;
-            }
-            if (personDomainModel.WorkedPriorToStroke !== undefined) {
-                person.WorkedPriorToStroke = personDomainModel.WorkedPriorToStroke;
-            }
-            if (personDomainModel.BirthDate !== undefined) {
+            if (personDomainModel.BirthDate != null) {
                 person.BirthDate = personDomainModel.BirthDate;
             }
-            if (personDomainModel.ImageResourceId !== undefined) {
+            if (personDomainModel.ImageResourceId != null) {
                 person.ImageResourceId = personDomainModel.ImageResourceId;
             }
 

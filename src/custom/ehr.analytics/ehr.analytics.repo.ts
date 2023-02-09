@@ -28,11 +28,10 @@ export class EHRAnalyticsRepo {
                 PatientUserId : patientUserId
             });
         }
-
         if (model.DoctorPersonId_1 === null) {
             model.DoctorPersonId_1 = details.DoctorPersonId;
         }
-        else if (model.DoctorPersonId_2 !== null) {
+        else if (model.DoctorPersonId_2 === null) {
             model.DoctorPersonId_2 = details.DoctorPersonId;
         }
         else if (details.OtherDoctorPersonId !== null) {
@@ -46,14 +45,23 @@ export class EHRAnalyticsRepo {
         if (details.ProviderCode) {
             model.ProviderCode = details.ProviderCode;
         }
+        if (details.MajorAilment) {
+            model.MajorAilment = details.MajorAilment;
+        }
         if (details.HealthSystem) {
             model.HealthSystem = details.HealthSystem;
+        }
+        if (details.AssociatedHospital) {
+            model.AssociatedHospital = details.AssociatedHospital;
         }
         if (details.Gender) {
             model.Gender = details.Gender;
         }
         if (details.BirthDate) {
             model.BirthDate = details.BirthDate;
+        }
+        if (details.Age) {
+            model.Age = details.Age;
         }
         if (details.Ethnicity) {
             model.Ethnicity = details.Ethnicity;

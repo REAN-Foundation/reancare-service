@@ -89,6 +89,7 @@ export class AddressValidator extends BaseValidator {
         await this.validateString(request, 'District', Where.Body, false, true);
         await this.validateString(request, 'State', Where.Body, false, true);
         await this.validateString(request, 'Country', Where.Body, false, true);
+        await this.validateString(request, 'Location', Where.Body, false, true);
         await this.validateString(request, 'PostalCode', Where.Body, false, true);
         await this.validateString(request, 'Longitude', Where.Body, false, true);
         await this.validateString(request, 'Lattitude', Where.Body, false, true);
@@ -103,6 +104,7 @@ export class AddressValidator extends BaseValidator {
         await this.validateString(request, 'District', Where.Body, false, true);
         await this.validateString(request, 'State', Where.Body, false, true);
         await this.validateString(request, 'Country', Where.Body, false, true);
+        await this.validateString(request, 'Location', Where.Body, false, true);
         await this.validateString(request, 'PostalCode', Where.Body, false, true);
         await this.validateString(request, 'Longitude', Where.Body, false, true);
         await this.validateString(request, 'Lattitude', Where.Body, false, true);

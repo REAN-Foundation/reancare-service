@@ -94,6 +94,11 @@ export class HealthProfileController extends BaseController{
                 Ethnicity : model.Ethnicity
             });
         }
+        if (model.MajorAilment) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                MajorAilment : model.MajorAilment
+            });
+        }
         if (model.BloodGroup) {
             EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
                 BloodGroup : model.BloodGroup

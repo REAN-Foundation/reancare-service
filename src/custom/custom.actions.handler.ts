@@ -99,7 +99,7 @@ export class CustomActionsHandler {
         process.env.NODE_ENV === 'uat';
 
         return isForAHA;
-    }
+    };
 
     //#endregion
 

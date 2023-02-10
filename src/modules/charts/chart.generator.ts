@@ -109,7 +109,7 @@ export class ChartGenerator {
         const w = addMargin ? Math.round(options.Width * 1.20) : options.Width;
         const h = addMargin ? Math.round(options.Height * 1.20) : options.Height;
         return await htmlTextToPNG(html, w, h, `${filename}.png`);
-    }
+    };
 
     private static extractPrePostTextBlocks(templHtml: string) {
         const cwd = process.cwd();

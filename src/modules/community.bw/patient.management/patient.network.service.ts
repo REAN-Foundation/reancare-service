@@ -27,7 +27,7 @@ export class PatientNetworkService implements IBloodWarriorService {
                 Provider               : this.providerName(),
                 ProviderActionId       : activity.Sequence,
                 Title                  : activity.Name,
-                Type                   : activity.Type ?? 'text',
+                Type                   : activity.TemplateName,
                 PlanCode               : careplanCode,
                 Description            : activity.Message,
                 Language               : 'English',
@@ -41,7 +41,7 @@ export class PatientNetworkService implements IBloodWarriorService {
         });
 
         return activityEntities;
-    }
+    };
 
     public getPlanDetails(provider: string, planCode: string): CareplanConfig {
         var enabledProvider = this.isEnabledProvider(provider);

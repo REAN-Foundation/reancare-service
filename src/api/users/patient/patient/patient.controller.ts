@@ -185,7 +185,6 @@ export class PatientController extends BaseUserController {
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
-            this.addEHRRecord(userId, personDomainModel);
             updateModel.HealthSystem = request.body.HealthSystem;
             updateModel.AssociatedHospital = request.body.AssociatedHospital;
             const updatedPatient = await this._service.updateByUserId(
@@ -195,8 +194,13 @@ export class PatientController extends BaseUserController {
             if (updatedPatient == null) {
                 throw new ApiError(400, 'Unable to update patient record!');
             }
-
             await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
+            const addresses = await this._personService.getAddresses(personDomainModel.id);
+            let location = null;
+            if (addresses.length >= 1) {
+                location = addresses[0].Location;
+            }
+            this.addEHRRecord(userId, personDomainModel, updatedPatient, location);
 
             const patient = await this._service.getByUserId(userId);
 
@@ -273,10 +277,15 @@ export class PatientController extends BaseUserController {
     };
 
     private addEHRRecord = (patientUserId: uuid,
-        model: PersonDomainModel) => {
+        model: PersonDomainModel, updatedModel: any, location: string) => {
         if (model.BirthDate) {
             EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
                 BirthDate : model.BirthDate
+            });
+        }
+        if (updatedModel.User.Person.Age) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                Age : updatedModel.User.Person.Age
             });
         }
         if (model.Gender) {
@@ -287,6 +296,31 @@ export class PatientController extends BaseUserController {
         if (model.MaritalStatus) {
             EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
                 MaritalStatus : model.MaritalStatus
+            });
+        }
+        if (model.Ethnicity) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                Ethnicity : model.Ethnicity
+            });
+        }
+        if (model.Race) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                Race : model.Race
+            });
+        }
+        if (updatedModel.HealthSystem) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                HealthSystem : updatedModel.HealthSystem
+            });
+        }
+        if (updatedModel.AssociatedHospital) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                AssociatedHospital : updatedModel.AssociatedHospital
+            });
+        }
+        if (location) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                Location : location
             });
         }
     };

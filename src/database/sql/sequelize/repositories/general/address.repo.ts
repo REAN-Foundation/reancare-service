@@ -68,6 +68,9 @@ export class AddressRepo implements IAddressRepo {
             if (filters.Country != null) {
                 search.where['Country'] = { [Op.like]: '%' + filters.Country + '%' };
             }
+            if (filters.Country != null) {
+                search.where['Location'] = { [Op.like]: '%' + filters.Location + '%' };
+            }
             if (filters.PostalCode != null) {
                 search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
             }
@@ -172,6 +175,9 @@ export class AddressRepo implements IAddressRepo {
             }
             if (addressDomainModel.Country !== undefined) {
                 address.Country = addressDomainModel.Country;
+            }
+            if (addressDomainModel.Location !== undefined) {
+                address.Location = addressDomainModel.Location;
             }
             if (addressDomainModel.PostalCode !== undefined) {
                 address.PostalCode = addressDomainModel.PostalCode;

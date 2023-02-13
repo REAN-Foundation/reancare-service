@@ -34,6 +34,7 @@ export interface PatientDetailsDto {
     HealthSystem?       : string;
     AssociatedHospital? : string;
     DonorAcceptance?    : string;
+    FirstName?    : string;
     HealthProfile?      : HealthProfileDto;
     Insurances?         : PatientInsuranceDto[];
     EmergencyContacts?  : EmergencyContactDto[];

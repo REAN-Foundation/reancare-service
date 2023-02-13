@@ -78,12 +78,24 @@ export default class StaticEHRData extends Model {
     })
         BirthDate: Date;
 
+    @Column({
+        type      : DataType.STRING(28),
+        allowNull : true,
+    })
+    Age: string;
+
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
         HealthSystem: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    AssociatedHospital: string;
 
     @Length({ max: 128 })
     @Column({

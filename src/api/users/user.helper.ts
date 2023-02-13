@@ -103,7 +103,7 @@ export class UserHelper {
             throw new ApiError(400, 'Cannot create patient!');
         }
 
-        const healthProfile = await this._patientHealthProfileService.createDefault(user.id);
+        let healthProfile = await this._patientHealthProfileService.createDefault(user.id);
         patient.HealthProfile = healthProfile;
 
         if (person.Phone !== null) {
@@ -116,6 +116,9 @@ export class UserHelper {
             };
             await this._userService.generateOtp(otpDetails);
         }
+        healthProfile = await this._patientHealthProfileService.updateByPatientUserId(patient.UserId,
+            createModel.HealthProfile);
+        patient.HealthProfile = healthProfile;
         return patient;
     };
 
@@ -128,6 +131,7 @@ export class UserHelper {
                 City        : createModel.Address.City ?? '',
                 PostalCode  : createModel.Address.PostalCode ?? null,
                 Country     : createModel.Address.Country ?? '',
+                Location    : createModel.Address.Location ?? '',
                 State       : createModel.Address.State ?? ''
             };
             const address = await this._addressService.create(addressModel);

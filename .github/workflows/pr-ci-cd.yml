@@ -43,9 +43,10 @@ jobs:
         id: vars
         shell: bash
         run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")"
+          # echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")"
           # echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
           # echo "::set-output name=repo_name::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')"
+          echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "repo_name=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')" >> $GITHUB_OUTPUT
 

@@ -56,7 +56,7 @@
     "pdfkit": "^0.13.0",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
-    "puppeteer": "^19.3.0",
+    "puppeteer": "^19.5.2",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.28.0",
     "sequelize-typescript": "^2.1.3",

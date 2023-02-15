@@ -14,7 +14,7 @@ RUN apk add chromium \
 WORKDIR /app
 COPY package*.json /app/
 # RUN npm install -g typescript
-RUN rm -f package-lock.json && npm install -g typescript
+RUN npm install -g typescript
 COPY src ./src
 COPY tsconfig.json ./
 # RUN npm install 
@@ -41,10 +41,8 @@ ADD . /app
 WORKDIR /app
 
 COPY package*.json /app/
-# RUN npm install pm2 -g 
-# RUN npm install sharp
-RUN rm -f package-lock.json && npm install pm2 -g 
-RUN rm -f package-lock.json && npm install sharp 
+RUN npm install pm2 -g 
+RUN npm install sharp
 COPY --from=builder ./app/dist/ .
 
 RUN chmod +x /app/entrypoint.sh

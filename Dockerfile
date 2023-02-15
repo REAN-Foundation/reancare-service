@@ -17,7 +17,7 @@ COPY package*.json /app/
 RUN npm install -g typescript
 COPY src ./src
 COPY tsconfig.json ./
-RUN npm install 
+RUN npm install --package-lock-only
 # RUN rm -f package-lock.json && npm instal
 RUN npm run build
 

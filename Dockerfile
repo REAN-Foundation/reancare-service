@@ -13,7 +13,7 @@ RUN apk add chromium \
     harfbuzz
 WORKDIR /app
 COPY package*.json /app/
-RUN npm install -g typescript
+RUN npm install -g typescript --no-package-lock
 COPY src ./src
 COPY tsconfig.json ./
 RUN npm install --no-package-lock
@@ -39,8 +39,8 @@ ADD . /app
 WORKDIR /app
 
 COPY package*.json /app/
-RUN npm install pm2 -g
-RUN npm install sharp
+RUN npm install pm2 -g --no-package-lock
+RUN npm install sharp --no-package-lock
 COPY --from=builder ./app/dist/ .
 
 RUN chmod +x /app/entrypoint.sh

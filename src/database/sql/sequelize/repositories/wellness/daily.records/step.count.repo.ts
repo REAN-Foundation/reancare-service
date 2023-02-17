@@ -40,7 +40,7 @@ export class StepCountRepo implements IStepCountRepo {
 
     getByRecordDate = async (date: Date): Promise<StepCountDto> => {
         try {
-            let new_date = new Date(date);
+            const new_date = new Date(date);
             const sleep =  await StepCount.findOne({
                 where : {
                     RecordDate : new_date

@@ -32,7 +32,7 @@ export class SleepController extends BaseController{
             await this.setContext('DailyRecords.Sleep.Create', request, response);
 
             const model = await this._validator.create(request);
-            let recordDate = request.body.RecordDate;
+            const recordDate = request.body.RecordDate;
         
             var existingRecord = await this._service.getByRecordDate(recordDate);
             if (existingRecord !== null) {

@@ -35,7 +35,7 @@ export class StepCountController extends BaseController {
             await this.setContext('DailyRecords.StepCount.Create', request, response);
 
             const domainModel = await this._validator.create(request);
-            let recordDate = request.body.RecordDate;
+            const recordDate = request.body.RecordDate;
         
             var existingRecord = await this._service.getByRecordDate(recordDate);
             if (existingRecord !== null) {

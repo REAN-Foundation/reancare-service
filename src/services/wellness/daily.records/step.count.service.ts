@@ -21,6 +21,10 @@ export class StepCountService {
         return await this._stepCountRepo.getById(id);
     };
 
+    getByRecordDate = async (recordDate: Date): Promise<StepCountDto> => {
+        return await this._stepCountRepo.getByRecordDate(recordDate);
+    };
+
     search = async (filters: StepCountSearchFilters): Promise<StepCountSearchResults> => {
         return await this._stepCountRepo.search(filters);
     };

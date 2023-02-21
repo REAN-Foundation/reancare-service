@@ -35,15 +35,15 @@ export class StepCountController extends BaseController {
             await this.setContext('DailyRecords.StepCount.Create', request, response);
 
             const domainModel = await this._validator.create(request);
-
-            if (domainModel.PatientUserId != null) {
-                var organization = await this._patientService.getByUserId(domainModel.PatientUserId);
-                if (organization == null) {
-                    throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
-                }
+            const recordDate = request.body.RecordDate;
+        
+            var existingRecord = await this._service.getByRecordDate(recordDate);
+            if (existingRecord !== null) {
+                var stepCount = await this._service.update(existingRecord.id, domainModel);
+            } else {
+                var stepCount = await this._service.create(domainModel);
             }
 
-            const stepCount = await this._service.create(domainModel);
             if (stepCount == null) {
                 throw new ApiError(400, 'Cannot create Step Count!');
             }

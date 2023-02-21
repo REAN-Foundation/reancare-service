@@ -32,7 +32,14 @@ export class SleepController extends BaseController{
             await this.setContext('DailyRecords.Sleep.Create', request, response);
 
             const model = await this._validator.create(request);
-            const sleep = await this._service.create(model);
+            const recordDate = request.body.RecordDate;
+        
+            var existingRecord = await this._service.getByRecordDate(recordDate);
+            if (existingRecord !== null) {
+                var sleep = await this._service.update(existingRecord.id, model);
+            } else {
+                var sleep = await this._service.create(model);
+            }
             if (sleep == null) {
                 throw new ApiError(400, 'Cannot create record for sleep!');
             }

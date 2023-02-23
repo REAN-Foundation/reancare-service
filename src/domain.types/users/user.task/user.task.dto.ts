@@ -35,4 +35,5 @@ export interface TaskSummaryDto {
     CompletedTasks : UserTaskDto[];
     InProgressTasks: UserTaskDto[];
     PendingTasks   : UserTaskDto[];
+    PatientUserId? : string
 }

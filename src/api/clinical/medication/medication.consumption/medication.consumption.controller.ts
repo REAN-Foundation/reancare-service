@@ -315,6 +315,30 @@ export class MedicationConsumptionController {
         }
     };
 
+    previousDayMedicationConsumption = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'MedicationConsumption.GetPreviousDayMedicationConsumption';
+
+            await this._authorizer.authorize(request, response);
+
+            const model = await MedicationConsumptionValidator.previousDayMedicationConsumption(request);
+
+            const summary = await this._service.previousDayMedicationConsumption(
+                model.PatientUserIds, model.Date );
+
+            if (summary === null) {
+                throw new ApiError(404, 'Previous day medication consumption summary cannot be retrieved.');
+            }
+
+            ResponseHandler.success(request, response, 'Previous day medication consumption summary retrieved successfully!', 200, {
+                MedicationConsumptionSummary : summary,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: MedicationConsumptionDomainModel) => {
         if (model.IsTaken) {
             EHRAnalyticsHandler.addBooleanRecord(

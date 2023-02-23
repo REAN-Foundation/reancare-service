@@ -98,6 +98,19 @@ export class UserTaskValidator extends BaseValidator {
         return { userId, date };
     };
 
+    getTaskSummaryForPreviousDay = async (request: express.Request): Promise<any> => {
+        await this.validateArray(request, 'UserIds', Where.Body, true, false);
+        await this.validateDateString(request, 'date', Where.Query, false, false);
+        this.validateRequest(request);
+        const userIds = request.body.UserIds;
+        var todayStr = new Date()
+            .toISOString()
+            .split('T')[0];
+        const todayDate = TimeHelper.subtractDuration(new Date(todayStr), 1, DurationType.Day);
+        var date = request.query.date ? request.query.date : todayDate.toISOString().split('T')[0];
+        return { userIds, date };
+    };
+
     private async validateCreateBody(request) {
 
         await this.validateUuid(request, 'UserId', Where.Body, true, false);

@@ -45,3 +45,4 @@ COPY --from=builder ./app/dist/ .
 
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
+# test

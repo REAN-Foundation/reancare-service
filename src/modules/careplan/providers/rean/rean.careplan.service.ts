@@ -175,14 +175,17 @@ export class ReanCareplanService implements ICareplanService {
 
         activities.forEach(async activity => {
 
+            const templateVariables = { Variables: activity.Asset.TemplateVariables };
+
             var entity: CareplanActivity = {
                 ParticipantId          : activity.ParticipantId,
                 EnrollmentId           : activity.EnrollmentId,
                 Provider               : this.providerName(),
                 ProviderActionId       : activity.id,
                 Title                  : activity.Asset.Name,
+                Type                   : activity.Asset.TemplateName,
                 PlanCode               : activity.Asset.AssetCode,
-                Description            : activity.Asset.Description,
+                Description            : JSON.stringify(templateVariables),
                 Language               : 'English',
                 ScheduledAt            : activity.ScheduledDate,
                 TimeSlot               : activity.TimeSlot,

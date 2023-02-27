@@ -79,6 +79,6 @@ jobs:
           tags: reancare/services:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-        # env:
-        #   # 7 GiB by default on GitHub, setting this to 16 GiB
-        #   NODE_OPTIONS: --max-old-space-size=16384
+        env:
+          # 7 GiB by default on GitHub, setting this to 16 GiB
+          NODE_OPTIONS: "--max_old_space_size=4096"

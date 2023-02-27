@@ -5,6 +5,7 @@ import { TimeHelper } from "../../../common/time.helper";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 import { CareplanConfig } from "../../../config/configuration.types";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { Logger } from "./../../../common/logger";
 
 export class PatientNetworkService implements IBloodWarriorService {
 
@@ -18,8 +19,10 @@ export class PatientNetworkService implements IBloodWarriorService {
         var activityEntities: CareplanActivity[] = [];
 
         activities.forEach(async activity => {
-            let activityDate = TimeHelper.addDuration(startDate, activity.Day, DurationType.Day);
+            Logger.instance().log(`Blood transfusion date: ${bloodTransfusionDate}`);
+            let activityDate = TimeHelper.subtractDuration(bloodTransfusionDate, activity.Day, DurationType.Day);
             activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
+            Logger.instance().log(`Date of patient reminder  ${activity.Sequence}: ${activityDate}`);
 
             var entity: CareplanActivity = {
                 ParticipantId          : participantId,

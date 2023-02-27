@@ -35,7 +35,7 @@ export class DonorValidator {
                 CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
                 GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
             },
-            MedIssues         : request.body.MedIssues ?? null,
+            MedIssues         : request.body.MedIssues ?? [],
             BloodGroup        : request.body.BloodGroup ?? null,
             AcceptorUserId    : request.body.AcceptorUserId ?? null,
             LastDonationDate  : request.body.LastDonationDate ?? null,

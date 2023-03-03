@@ -145,18 +145,18 @@ export class CareplanService implements IUserActionService {
             }
 
             for (const activity of scheduledActivities) {
-                let message = activity.Description;
+                const message = activity.Description;
                 let patient = null;
                 if (activity.PlanCode === 'Donor-Reminders') {
                     patient = await this.getDonor(activity.PatientUserId);
                 } else {
                     patient = await this.getPatient(activity.PatientUserId);
                 }
-                let phoneNumber = patient.User.Person.Phone;
-                if (activity.Provider === "REAN") {
-                    phoneNumber = patient.User.Person.TelegramChatId;
-                    message = `${activity.Title}:\n${activity.Description}`;
-                }
+                const phoneNumber = patient.User.Person.Phone;
+                // if (activity.Provider === "REAN") {
+                //     phoneNumber = patient.User.Person.TelegramChatId;
+                //     message = `${activity.Title}:\n${activity.Description}`;
+                // }
                 
                 let response = null;
                 response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,

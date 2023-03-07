@@ -17,7 +17,9 @@ on:
 jobs:
   Deploy-ECS:
     environment: dev
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default Larger Runners
+      labels: ubuntu-latest-4-cores
 
     steps:
       - name: Checkout

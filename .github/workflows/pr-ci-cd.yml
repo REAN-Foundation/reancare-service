@@ -84,3 +84,47 @@ jobs:
         env:
           # 7 GiB by default on GitHub, setting this to 16 GiB
           NODE_OPTIONS: "--max_old_space_size=8192"
+  
+  TAG_CREATION:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.sha }}
+        fetch-depth: '0'
+      
+    - name: label_checks
+      uses: docker://agilepathway/pull-request-label-checker:latest
+      with:
+          one_of: major,minor,patch
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Bump version and push tag(major)
+      if: contains(github.event.pull_request.labels.*.name, 'major')
+      uses: anothrNick/github-tag-action@1.61.0
+      env:
+        DEFAULT_BUMP: major
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        RELEASE_BRANCHES: main
+        VERBOSE: true
+
+    - name: Bump version and push tag(minor)
+      if: contains(github.event.pull_request.labels.*.name, 'minor')
+      uses: anothrNick/github-tag-action@1.61.0
+      env:
+        DEFAULT_BUMP: minor
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        RELEASE_BRANCHES: main
+        VERBOSE: true
+
+    - name: Bump version and push tag(patch)
+      if: contains(github.event.pull_request.labels.*.name, 'patch')
+      uses: anothrNick/github-tag-action@1.61.0
+      env:
+        DEFAULT_BUMP: patch
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        RELEASE_BRANCHES: main
+        VERBOSE: true

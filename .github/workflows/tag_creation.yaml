@@ -4,14 +4,6 @@ on:
     branches:
       - main
 jobs:
-  check_labels:
-    name: Check labels
-    runs-on: ubuntu-latest
-    steps:
-      - uses: docker://agilepathway/pull-request-label-checker:latest
-        with:
-          one_of: major,minor,patch
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   TAG_CREATION:
     runs-on: ubuntu-22.04
@@ -20,7 +12,13 @@ jobs:
       with:
         ref: ${{ github.sha }}
         fetch-depth: '0'
-
+      
+    - name: label_checks
+      uses: docker://agilepathway/pull-request-label-checker:latest
+      with:
+          one_of: major,minor,patch
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+    
     - name: Bump version and push tag(major)
       if: contains(github.event.pull_request.labels.*.name, 'major')
       uses: anothrNick/github-tag-action@1.61.0

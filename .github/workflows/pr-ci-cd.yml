@@ -126,5 +126,5 @@ jobs:
         DEFAULT_BUMP: patch
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        RELEASE_BRANCHES: main
+        RELEASE_BRANCHES: develop
         VERBOSE: true

@@ -86,7 +86,7 @@ jobs:
           NODE_OPTIONS: "--max_old_space_size=8192"
   
   TAG_CREATION:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
       with:

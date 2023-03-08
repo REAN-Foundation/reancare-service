@@ -105,6 +105,7 @@ jobs:
       env:
         DEFAULT_BUMP: major
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_BRANCHES: develop
         WITH_V: true
         VERBOSE: true
 
@@ -114,6 +115,7 @@ jobs:
       env:
         DEFAULT_BUMP: minor
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_BRANCHES: develop
         WITH_V: true
         VERBOSE: true
 
@@ -123,5 +125,6 @@ jobs:
       env:
         DEFAULT_BUMP: patch
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_BRANCHES: develop
         WITH_V: true
         VERBOSE: true

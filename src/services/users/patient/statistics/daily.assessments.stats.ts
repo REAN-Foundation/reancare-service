@@ -72,8 +72,9 @@ const addMoodsStats = (
         y = yFrozen + imageWidth + 20;
         addText(document, title, 80, y, 12, titleColor, 'center');
 
+        y = y + 53;
         const legendStartX = startX + 200;
-        y = addLegend(document, yFrozen, legend, legendStartX, 7, 45, 5, 5, 12);
+        y = addLegend(document, yFrozen, legend, legendStartX, 11, 45, 5, 5, 12);
         y = yFrozen + imageWidth + 20; //Image height
     }
     return y;
@@ -106,7 +107,12 @@ const createFeelings_DonutChart = async (stats: any, filename: string) => {
         return null;
     }
     const feelings_ = stats.map(x => x.Feeling);
+
     const tempFeelings = findKeyCounts(feelings_);
+    tempFeelings['Better'] = ((tempFeelings['Better'] / feelings_.length) * 100).toFixed(2);
+    tempFeelings['Same'] = ((tempFeelings['Same'] / feelings_.length) * 100).toFixed(2);
+    tempFeelings['Unspecified'] = ((tempFeelings['Unspecified'] / feelings_.length) * 100).toFixed(2);
+    tempFeelings['Worse'] = ((tempFeelings['Worse'] / feelings_.length) * 100).toFixed(2);
     const feelings = Helper.sortObjectKeysAlphabetically(tempFeelings);
     const feelingsColors = getFeelingsColors();
     const colors = feelingsColors.map(x => x.Color);

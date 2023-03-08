@@ -13,7 +13,7 @@ export const addLabeledText = (
     document: PDFKit.PDFDocument, label: string, value: string, y: any, fontSize = 11, rowYOffset = 23) => {
 
     const labelX = 135;
-    const valueX = 325;
+    const valueX = 360;
 
     document
         .fontSize(fontSize)

@@ -334,7 +334,7 @@ export class LabRecordRepo implements ILabRecordRepo {
         }
     };
 
-    private async getRecords(patientUserId: string, months: number) {
+    getRecords = async (patientUserId: string, months: number): Promise<any> => {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
         const records = await LabRecord.findAll({
@@ -348,5 +348,21 @@ export class LabRecordRepo implements ILabRecordRepo {
         });
         return records.sort((a, b) => b.RecordedAt.getTime() - a.RecordedAt.getTime());
     }
+
+    getRecent = async (patientUserId: string, displayName: string): Promise<LabRecordDto> => {
+        try {
+            const record = await LabRecord.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                    DisplayName   : displayName,
+                },
+                order : [['RecordedAt', 'DESC']]
+            });
+            return await LabRecordMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
 }

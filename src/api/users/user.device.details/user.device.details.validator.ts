@@ -12,13 +12,14 @@ export class UserDeviceDetailsValidator {
     static getDomainModel = (request: express.Request): UserDeviceDetailsDomainModel => {
 
         const UserDeviceDetailsModel: UserDeviceDetailsDomainModel = {
-            Token      : request.body.Token,
-            UserId     : request.body.UserId,
-            DeviceName : request.body.DeviceName,
-            OSType     : request.body.OSType,
-            OSVersion  : request.body.OSVersion,
-            AppName    : request.body.AppName,
-            AppVersion : request.body.AppVersion,
+            Token            : request.body.Token,
+            DeviceIdentifier : request.body.DeviceIdentifier,
+            UserId           : request.body.UserId,
+            DeviceName       : request.body.DeviceName,
+            OSType           : request.body.OSType,
+            OSVersion        : request.body.OSVersion,
+            AppName          : request.body.AppName,
+            AppVersion       : request.body.AppVersion,
 
         };
 
@@ -126,6 +127,11 @@ export class UserDeviceDetailsValidator {
             .run(request);
 
         await body('Token').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('DeviceIdentifier').optional()
             .trim()
             .escape()
             .run(request);

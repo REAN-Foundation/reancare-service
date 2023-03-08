@@ -10,11 +10,15 @@ export interface IUserDeviceDetailsRepo {
 
     getByUserId(userId: string): Promise<UserDeviceDetailsDto[]>;
 
+    getExistingRecord(deviceDetails: any): Promise<UserDeviceDetailsDto>;
+
     search(filters: UserDeviceDetailsSearchFilters): Promise<UserDeviceDetailsSearchResults>;
 
     update(id: string, userDeviceDetailsDomainModel: UserDeviceDetailsDomainModel):
     Promise<UserDeviceDetailsDto>;
 
     delete(id: string): Promise<boolean>;
+
+    invalidateOtherDevices(deviceDetails: any): Promise<boolean>;
 
 }

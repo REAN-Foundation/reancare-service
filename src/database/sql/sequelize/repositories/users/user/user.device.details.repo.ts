@@ -1,5 +1,6 @@
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
+import { Op } from 'sequelize';
 import { UserDeviceDetailsDomainModel } from "../../../../../../domain.types/users/user.device.details/user.device.domain.model";
 import { UserDeviceDetailsDto } from "../../../../../../domain.types/users/user.device.details/user.device.dto";
 import { UserDeviceDetailsSearchFilters, UserDeviceDetailsSearchResults } from "../../../../../../domain.types/users/user.device.details/user.device.search.types";
@@ -15,13 +16,14 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
     Promise<UserDeviceDetailsDto> => {
         try {
             const entity = {
-                UserId     : userDeviceDetailsDomainModel.UserId,
-                Token      : userDeviceDetailsDomainModel.Token,
-                DeviceName : userDeviceDetailsDomainModel.DeviceName,
-                OSType     : userDeviceDetailsDomainModel.OSType,
-                OSVersion  : userDeviceDetailsDomainModel.OSVersion,
-                AppName    : userDeviceDetailsDomainModel.AppName,
-                AppVersion : userDeviceDetailsDomainModel.AppVersion
+                UserId           : userDeviceDetailsDomainModel.UserId,
+                Token            : userDeviceDetailsDomainModel.Token,
+                DeviceIdentifier : userDeviceDetailsDomainModel.DeviceIdentifier,
+                DeviceName       : userDeviceDetailsDomainModel.DeviceName,
+                OSType           : userDeviceDetailsDomainModel.OSType,
+                OSVersion        : userDeviceDetailsDomainModel.OSVersion,
+                AppName          : userDeviceDetailsDomainModel.AppName,
+                AppVersion       : userDeviceDetailsDomainModel.AppVersion
             };
 
             const userDeviceDetails = await UserDeviceDetailsModel.create(entity);
@@ -52,6 +54,25 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
                 }
             });
             return userDeviceDetailsList.map(x => UserDeviceDetailsMapper.toDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getExistingRecord = async (deviceDetails: any): Promise<UserDeviceDetailsDto> => {
+        try {
+
+            const existingRecord =  await UserDeviceDetailsModel.findOne({
+                where : {
+                    UserId           : deviceDetails.UserId,
+                    AppName          : deviceDetails.AppName,
+                    DeviceIdentifier : deviceDetails.DeviceIdentifier,
+
+                }
+            });
+            return await UserDeviceDetailsMapper.toDto(existingRecord);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -142,6 +163,9 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (userDeviceDetailsDomainModel.Token != null) {
                 userDeviceDetails.Token = userDeviceDetailsDomainModel.Token;
             }
+            if (userDeviceDetailsDomainModel.DeviceIdentifier != null) {
+                userDeviceDetails.DeviceIdentifier = userDeviceDetailsDomainModel.DeviceIdentifier;
+            }
             if (userDeviceDetailsDomainModel.DeviceName != null) {
                 userDeviceDetails.DeviceName = userDeviceDetailsDomainModel.DeviceName;
             }
@@ -172,6 +196,22 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             Logger.instance().log(id);
 
             const result = await UserDeviceDetailsModel.destroy({ where: { id: id } });
+            return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    invalidateOtherDevices = async (deviceDetails: any): Promise<boolean> => {
+        try {
+
+            const result = await UserDeviceDetailsModel.destroy({
+                where: {
+                    DeviceIdentifier : deviceDetails.DeviceIdentifier,
+                    UserId           : {[Op.not]: deviceDetails.UserId}
+                } 
+            });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);

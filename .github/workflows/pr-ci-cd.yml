@@ -33,9 +33,9 @@ jobs:
           DEFAULT_BRANCH: develop
 
   Build-Docker-Image:
-    runs-on: 
-      group: Default Larger Runners
-      labels: ubuntu-latest-4-cores
+    runs-on: ubuntu-latest 
+#       group: Default Larger Runners
+#       labels: ubuntu-latest-4-cores
 
     steps:
       - name: Checkout
@@ -86,6 +86,7 @@ jobs:
           NODE_OPTIONS: "--max_old_space_size=8192"
   
   TAG_CREATION:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

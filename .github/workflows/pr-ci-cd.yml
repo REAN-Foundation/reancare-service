@@ -106,7 +106,6 @@ jobs:
         DEFAULT_BUMP: major
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        RELEASE_BRANCHES: main
         VERBOSE: true
 
     - name: Bump version and push tag(minor)
@@ -116,7 +115,6 @@ jobs:
         DEFAULT_BUMP: minor
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        RELEASE_BRANCHES: main
         VERBOSE: true
 
     - name: Bump version and push tag(patch)
@@ -126,5 +124,4 @@ jobs:
         DEFAULT_BUMP: patch
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        RELEASE_BRANCHES: develop
         VERBOSE: true

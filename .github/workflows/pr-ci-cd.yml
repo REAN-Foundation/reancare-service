@@ -4,7 +4,6 @@
 # To use this workflow, you will need to set up a .github/labeler.yml
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler
-# test
 
 name: PR-CI-CD
 
@@ -34,7 +33,9 @@ jobs:
           DEFAULT_BRANCH: develop
 
   Build-Docker-Image:
-    runs-on: ubuntu-latest
+    runs-on: 
+      group: Default Larger Runners
+      labels: ubuntu-latest-4-cores
 
     steps:
       - name: Checkout

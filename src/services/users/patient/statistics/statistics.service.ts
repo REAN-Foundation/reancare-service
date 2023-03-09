@@ -51,6 +51,7 @@ import { PersonRepo } from "../../../../database/sql/sequelize/repositories/pers
 import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
 import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.repo";
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
+import { addSummaryPageAPart1, addSummaryPageAPart2, addSummaryPageBPart1, addSummaryPageBPart2 } from "./summary.page";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -152,7 +153,7 @@ export class StatisticsService {
 
         var bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, 6);
         const startingWeight = bodyWeightStats[bodyWeightStats.length - 1].BodyWeight;
-        
+
         const patient = await this._patientRepo.getByUserId(patientUserId);
         const user = await this._userRepo.getById(patient.UserId);
         const person = await this._personRepo.getById(user.PersonId);
@@ -169,13 +170,13 @@ export class StatisticsService {
         }*/
         var currentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
         var weightUnits = 'Kg';
-        
+
         const sum = bodyWeightStats.reduce((acc, x) => acc + x.BodyWeight, 0);
         const averageBodyWeight = bodyWeightStats.length === 0 ? null : sum / bodyWeightStats.length;
 
         let currentHeight = null;
         let heightUnits = 'cm';
-        
+
         const currentWeight = currentBodyWeight ? currentBodyWeight.BodyWeight : null;
         var totalChange = currentWeight - startingWeight;
         const heightDto = await this._bodyHeightRepo.getRecent(patientUserId);
@@ -261,7 +262,7 @@ export class StatisticsService {
                     LastMeasuredDate     : currentBloodGlucose ? currentBloodGlucose.RecordDate : null,
                 },
                 Cholesterol : cholesterolStats,
-                    
+
                 TotalCholesterol : {
                     StartingTotalCholesterol : startingTotalCholesterol,
                     CurrentTotalCholesterol  : currentTotalCholesterol,
@@ -406,8 +407,10 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 10;
+            reportModel.TotalPages = 12;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
+            pageNumber = this.addSummaryPageA(document, reportModel, pageNumber);
+            pageNumber = this.addSummaryPageB(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
@@ -466,6 +469,26 @@ export class StatisticsService {
         y = addReportMetadata(document, model, y);
         y = addReportSummary(document, model, y);
         addHealthJourney(document, model, y);
+        addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addSummaryPageA = (document, model, pageNumber) => {
+        var y = addTop(document, model);
+        y = addSummaryPageAPart1(model, document, y);
+        y = y + 15;
+        addSummaryPageAPart2(model, document, y);
+        addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addSummaryPageB = (document, model, pageNumber) => {
+        var y = addTop(document, model);
+        y = addSummaryPageBPart1(model, document, y);
+        y = y + 15;
+        addSummaryPageBPart2(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;

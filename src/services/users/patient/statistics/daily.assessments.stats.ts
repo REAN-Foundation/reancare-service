@@ -102,7 +102,7 @@ export const createDailyAssessentCharts = async (data) => {
     return locations;
 };
 
-const createFeelings_DonutChart = async (stats: any, filename: string) => {
+export const createFeelings_DonutChart = async (stats: any, filename: string) => {
     if (stats.length === 0) {
         return null;
     }
@@ -162,7 +162,7 @@ const createEnergyLevels_BubbleChart = async (stats: any, filename: string) => {
     return await ChartGenerator.createBubbleChart(data, options, filename);
 };
 
-const getFeelingsColors = () => {
+export const getFeelingsColors = () => {
     const items = [
         {
             Key   : 'Better',
@@ -184,7 +184,7 @@ const getFeelingsColors = () => {
     return items;
 };
 
-const getMoodsColors = () => {
+export const getMoodsColors = () => {
     const items = [
         {
             Key   : 'Angry',

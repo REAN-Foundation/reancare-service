@@ -2,7 +2,7 @@ import {
     Column, CreatedAt, DataType, DeletedAt, IsUUID,
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-import { LabRecordTypes } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types';
+import { LabRecordTypeList } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types';
 import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ export default class LabRecordType extends Model {
     @Column({
         type      : DataType.ENUM,
         allowNull : true,
-        values    : LabRecordTypes,
+        values    : LabRecordTypeList,
     })
     DisplayName: string;
 

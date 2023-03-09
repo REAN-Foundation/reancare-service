@@ -16,7 +16,7 @@ import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 //////////////////////////////////////////////////////////////////////////////////
 
 export const addMedicationStats = (document, model, y) => {
-    
+
     const titleColor = '#505050';
     const legend = getMedicationStatusCategoryColors();
     let chartImage = 'MedicationsOverall_LastMonth';
@@ -26,7 +26,7 @@ export const addMedicationStats = (document, model, y) => {
     } else {
         y = addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend);
     }
-    
+
     y = y + 7;
 
     chartImage = 'MedicationsHistory_LastMonth';
@@ -112,7 +112,7 @@ export const createMedicationTrendCharts = async (data) => {
     return locations;
 };
 
-const createMedicationConsumption_DonutChart = async (stats: any, filename: string) => {
+export const createMedicationConsumption_DonutChart = async (stats: any, filename: string) => {
     if (stats.length === 0) {
         return null;
     }

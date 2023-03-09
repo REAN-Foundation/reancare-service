@@ -286,7 +286,7 @@ const createNutritionServingsForMonth_BarChart = async (stats: any, filename: st
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 
-const getNutritionQuestionCategoryColors = () => {
+export const getNutritionQuestionCategoryColors = () => {
     const items = [
         {
             Key      : 'Healthy',

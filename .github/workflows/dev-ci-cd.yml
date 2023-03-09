@@ -7,7 +7,7 @@
 
 name: Dev-CI-CD
 
-# Controls when the workflow will run
+## Controls when the workflow will run
 on:
   # Triggers the workflow on push events but only for the develop branch
   push:
@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")" >> $GITHUB_OUTPUT
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "repo_name=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')" >> $GITHUB_OUTPUT
+          echo "repo_name=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')" >> $GITHUB_OUTPUT  
 
       - name: Another step
         run: |
@@ -70,6 +70,9 @@ jobs:
           tags: ${{ steps.login-ecr.outputs.registry }}/reancare-service-dev-uat:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+        env:
+          # 7 GiB by default on GitHub, setting this to 16 GiB
+          NODE_OPTIONS: "--max_old_space_size=8192"
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

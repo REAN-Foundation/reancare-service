@@ -44,6 +44,22 @@ export class SleepRepo implements ISleepRepo {
         }
     };
 
+    getByRecordDate = async (date: Date): Promise<SleepDto> => {
+        try {
+            const new_date = new Date(date);
+            const sleep =  await Sleep.findOne({
+                where : {
+                    RecordDate : new_date
+                }
+            });
+            return await SleepMapper.toDto(sleep);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: SleepSearchFilters): Promise<SleepSearchResults> => {
         try {
             const search = { where: {} };

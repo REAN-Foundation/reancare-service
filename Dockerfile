@@ -19,7 +19,7 @@ COPY tsconfig.json ./
 RUN npm install
 RUN npm run build
 
-# RUN npm run build
+##RUN npm run build
 
 FROM node:18.12.0-alpine3.15
 RUN apk add bash

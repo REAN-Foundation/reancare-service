@@ -200,9 +200,6 @@ export class CareplanRepo implements ICareplanRepo {
                     Status           : activity.Status
                 };
                 count++;
-                if (entity.Provider === "REAN") {
-                    entity.Type = "Message";
-                }
                 activityEntities.push(entity);
             });
 

@@ -4,6 +4,7 @@
 # To use this workflow, you will need to set up a .github/labeler.yml
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler
+# test
 
 name: PR-CI-CD
 
@@ -79,3 +80,6 @@ jobs:
           tags: reancare/services:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+        env:
+          # 7 GiB by default on GitHub, setting this to 16 GiB
+          NODE_OPTIONS: "--max_old_space_size=8192"

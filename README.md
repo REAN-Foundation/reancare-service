@@ -1,6 +1,6 @@
 # REANCare Service
 
-REANCare service is the main healthcare backend API service for REAN Foundation's healthcare software ecosystem.
+REANcare service is the main healthcare backend API service for REAN Foundation's healthcare software ecosystem.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 

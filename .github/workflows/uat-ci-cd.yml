@@ -23,12 +23,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          
-      - name: Checking labels of PR
-        uses: docker://agilepathway/pull-request-label-checker:latest
-        with:
-          one_of: major,minor,patch
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint Code Base
         uses: docker://ghcr.io/github/super-linter:latest
@@ -47,6 +41,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Checking labels of PR
+        uses: docker://agilepathway/pull-request-label-checker:latest
+        with:
+          one_of: major,minor,patch
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

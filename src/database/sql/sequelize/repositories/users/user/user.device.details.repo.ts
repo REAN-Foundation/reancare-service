@@ -16,13 +16,13 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
     Promise<UserDeviceDetailsDto> => {
         try {
             const entity = {
-                UserId           : userDeviceDetailsDomainModel.UserId,
-                Token            : userDeviceDetailsDomainModel.Token,
-                DeviceName       : userDeviceDetailsDomainModel.DeviceName,
-                OSType           : userDeviceDetailsDomainModel.OSType,
-                OSVersion        : userDeviceDetailsDomainModel.OSVersion,
-                AppName          : userDeviceDetailsDomainModel.AppName,
-                AppVersion       : userDeviceDetailsDomainModel.AppVersion
+                UserId     : userDeviceDetailsDomainModel.UserId,
+                Token      : userDeviceDetailsDomainModel.Token,
+                DeviceName : userDeviceDetailsDomainModel.DeviceName,
+                OSType     : userDeviceDetailsDomainModel.OSType,
+                OSVersion  : userDeviceDetailsDomainModel.OSVersion,
+                AppName    : userDeviceDetailsDomainModel.AppName,
+                AppVersion : userDeviceDetailsDomainModel.AppVersion
             };
 
             const userDeviceDetails = await UserDeviceDetailsModel.create(entity);

@@ -56,7 +56,6 @@ export class UserDeviceDetailsController {
                 var UserDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
             }
 
-            // const UserDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
             if (UserDeviceDetails == null) {
                 throw new ApiError(400, 'Cannot create record for user device details!');
             }

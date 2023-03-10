@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
@@ -113,6 +114,7 @@ export const createMedicationTrendCharts = async (data) => {
 };
 
 export const createMedicationConsumption_DonutChart = async (stats: any, filename: string) => {
+    //console.log(JSON.stringify(stats, null, 2));
     if (stats.length === 0) {
         return null;
     }
@@ -173,7 +175,7 @@ const createMedication_BarChart = async (stats: any, filename: string) => {
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 
-const getMedicationStatusCategoryColors = () => {
+export const getMedicationStatusCategoryColors = () => {
     const items = [
         {
             Key   : 'Taken',

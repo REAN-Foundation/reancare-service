@@ -1,14 +1,13 @@
 import { TimeHelper } from "../../../../common/time.helper";
 import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
-import { LineChartOptions, ChartColors, MultiLineChartOptions, MultiBarChartOptions, PieChartOptions } from "../../../../modules/charts/chart.options";
+import { LineChartOptions, MultiBarChartOptions, PieChartOptions } from "../../../../modules/charts/chart.options";
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { createFeelings_DonutChart, getFeelingsColors } from "./daily.assessments.stats";
-import { createMedicationConsumption_DonutChart } from "./medication.stats";
+import { createMedicationConsumption_DonutChart, getMedicationStatusCategoryColors } from "./medication.stats";
 import { getNutritionQuestionCategoryColors } from "./nutrition.stats";
 import {
-    addLabeledText,
-    addLongRectangularChartImage,
+    addTableRow,
     addRectangularChartImage,
     chartExists,
     constructDonutChartData,
@@ -16,208 +15,108 @@ import {
     RECTANGULAR_CHART_HEIGHT,
     RECTANGULAR_CHART_WIDTH,
     SQUARE_CHART_HEIGHT,
-    SQUARE_CHART_WIDTH} from "./report.helper";
+    SQUARE_CHART_WIDTH,
+    TableRowProperties,
+    addSquareChartImageWithLegend,
+    addSquareChartImage } from "./report.helper";
 import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 
 export const addSummaryPageAPart1 = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
-    const chartImage = 'BodyWeight_Last6Months';
-    var detailedTitle = 'Body Weight (Kg) Trend Over 6 Months';
-    const titleColor = '#505050';
-    const sectionTitle = 'Body Weight';
+    const sectionTitle = 'Lab Values over Past 30 Days';
     const icon = Helper.getIconsPath('body-weight.png');
     y = addSectionTitle(document, y, sectionTitle, icon);
 
-    if (model.Stats.CountryCode === '+91'){
-        var startingWeight = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight;
-        var currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight;
-        var totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange;
-    } else {
-        detailedTitle = 'Body Weight (lbs) Trend Over 6 Months';
-        startingWeight = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight * 2.20462;
-        currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight * 2.20462;
-        totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange * 2.20462;
+    var useBodyWeightKg = false;
+    var startingWeight = model.Stats.Biometrics.LastMonth.BodyWeight.StartingBodyWeight;
+    var currentWeight = model.Stats.Biometrics.LastMonth.BodyWeight.CurrentBodyWeight;
+    var totalChange = model.Stats.Biometrics.LastMonth.BodyWeight.TotalChange;
+    if (model.Stats.CountryCode !== '+91'){
+        useBodyWeightKg = true;
+        startingWeight = model.Stats.Biometrics.LastMonth.BodyWeight.StartingBodyWeight * 2.20462;
+        currentWeight = model.Stats.Biometrics.LastMonth.BodyWeight.CurrentBodyWeight * 2.20462;
+        totalChange = model.Stats.Biometrics.LastMonth.BodyWeight.TotalChange * 2.20462;
     }
 
-    if (!chartExists(model, chartImage)) {
-        y = addNoDataDisplay(document, y);
-    } else {
-        y = y + 25;
-        y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
+    const labValues = model.Stats.Biometrics.LastMonth;
 
-        let value = startingWeight.toFixed();
-        y = addLabeledText(document, 'Starting Weight (Kg)', value, y);
+    const vals = [];
+    vals.push([true, 'Value', 'Starting', 'Current', 'Change']);
+    vals.push([false, useBodyWeightKg ? 'Body weight (Kg)' : 'Body weight (lbs)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
+    vals.push([false, 'Blood Glucose (mg/dL)', labValues.BloodGlucose.StartingBloodGlucose, labValues.BloodGlucose.CurrentBloodGlucose, labValues.BloodGlucose.TotalChange]);
+    vals.push([false, 'BP (mmHg) - Systolic', labValues.BloodPressure.StartingSystolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureSystolic, labValues.BloodPressure.TotalChangeSystolic]);
+    vals.push([false, 'BP (mmHg) - Diastolic', labValues.BloodPressure.StartingDiastolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureDiastolic, labValues.BloodPressure.TotalChangeDiastolic]);
+    vals.push([false, 'Total Cholesterol', labValues.Lipids.TotalCholesterol.StartingTotalCholesterol, labValues.Lipids.TotalCholesterol.CurrentTotalCholesterol, labValues.Lipids.TotalCholesterol.TotalCholesterolChange]);
+    vals.push([false, 'HDL', labValues.Lipids.HDL.StartingHDL, labValues.Lipids.HDL.CurrentHDL, labValues.Lipids.HDL.TotalHDLChange]);
+    vals.push([false, 'LDL', labValues.Lipids.LDL.StartingLDL, labValues.Lipids.LDL.CurrentLDL, labValues.Lipids.LDL.TotalLDLChange]);
+    vals.push([false, 'Triglyceride', labValues.Lipids.TriglycerideLevel.StartingTriglycerideLevel, labValues.Lipids.TriglycerideLevel.CurrentTriglycerideLevel, labValues.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange]);
+    vals.push([false, 'A1C level', labValues.Lipids.A1CLevel.StartingA1CLevel, labValues.Lipids.A1CLevel.CurrentA1CLevel, labValues.Lipids.A1CLevel.TotalA1CLevelChange]);
 
-        value = currentWeight.toFixed();
-        y = addLabeledText(document, 'Current Body Weight (Kg)', value, y);
-
-        value = totalChange.toFixed();
-        y = addLabeledText(document, 'Total Change in Body Weight (Kg)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);
+    for (var r of vals) {
+        const row: TableRowProperties = {
+            IsHeaderRow : r[0],
+            FontSize    : 11,
+            RowOffset   : 23,
+            Columns     : [
+                {
+                    XOffset : 120,
+                    Text    : r[1]
+                },
+                {
+                    XOffset : 240,
+                    Text    : r[2]
+                },
+                {
+                    XOffset : 320,
+                    Text    : r[3]
+                },
+                {
+                    XOffset : 400,
+                    Text    : r[4]
+                }
+            ]
+        };
+        y = addTableRow(document, y, row);
     }
-
     return y;
 };
 
 export const addSummaryPageAPart2 = (model: any, document: PDFKit.PDFDocument, y: any) => {
-
-    const chartImage = 'BloodPressure_Last6Months';
-    const detailedTitle = 'Blood Pressure Trend Over 6 Months';
-    const titleColor = '#505050';
-    const sectionTitle = 'Blood Pressure';
-    const icon = Helper.getIconsPath('blood-pressure.png');
-
-    y = addSectionTitle(document, y, sectionTitle, icon);
-
-    if (!chartExists(model, chartImage)) {
-        y = addNoDataDisplay(document, y);
-    } else {
-        y = y + 25;
-        y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
-
-        let value = model.Stats.Biometrics.Last6Months.BloodPressure.StartingSystolicBloodPressure.toString();
-        y = addLabeledText(document, 'Starting Systolic BP (mmHg)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.StartingDiastolicBloodPressure.toString();
-        y = addLabeledText(document, 'Starting Diastolic BP (mmHg)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
-        y = addLabeledText(document, 'Current Systolic BP (mmHg)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureDiastolic.toString();
-        y = addLabeledText(document, 'Current Diastolic BP (mmHg)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.TotalChangeSystolic.toString();
-        y = addLabeledText(document, 'Total Change in Systolic BP (mmHg)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.TotalChangeDiastolic.toString();
-        y = addLabeledText(document, 'Total Change in Diastolic BP (mmHg)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);
-    }
-
+    y = addMedicationSummary(y, document, model);
+    y = addBodyWeightSummary(y, document, model);
     return y;
 };
 
 export const addSummaryPageBPart1 = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
-    const chartImage = 'BloodGlucose_Last6Months';
-    const detailedTitle = 'Blood Glucose Trend Over 6 Months';
-    const titleColor = '#505050';
-    const sectionTitle = 'Blood Glucose';
-    const icon = Helper.getIconsPath('blood-sugar.png');
-
-    y = addSectionTitle(document, y, sectionTitle, icon);
-
-    if (!chartExists(model, chartImage)) {
-        y = addNoDataDisplay(document, y);
-    } else {
-        y = y + 25;
-        y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        y = y + 20;
-
-        let value = model.Stats.Biometrics.Last6Months.BloodGlucose.StartingBloodGlucose?.toString();
-        y = addLabeledText(document, 'Starting Blood Glucose (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodGlucose.CurrentBloodGlucose?.toString();
-        y = addLabeledText(document, 'Current Blood Glucose (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodGlucose.TotalChange.toString();
-        y = addLabeledText(document, 'Total Change in Blood Glucose (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate?.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);
-    }
+    y = addNutritionQuestionSummary(y, document, model);
+    y = addDailyMovementQuestionSummary(y, document, model);
 
     return y;
 };
 
 export const addSummaryPageBPart2 = (model: any, document: PDFKit.PDFDocument, y: any) => {
-
-    const sectionTitle = 'Lab Values';
-    const icon = Helper.getIconsPath('blood-lipids.png');
-
-    //const lipidColors = getLipidColors();
-
-    y = addSectionTitle(document, y, sectionTitle, icon);
-
-    const exists = chartExists(model, 'HDL_Last6Months') ||
-        chartExists(model, 'LDL_Last6Months') ||
-        chartExists(model, 'TotalCholesterol_Last6Months');
-        //chartExists(model, 'Triglyceride_Last6Months') ||
-        //chartExists(model, 'A1C_Last6Months');
-
-    if (!exists) {
-        y = addNoDataDisplay(document, y);
-    } else {
-        y = y + 25;
-        y = addLongRectangularChartImage(document, model, 'TotalCholesterol_Last6Months', y);
-        y = y + 25;
-        let value = model.Stats.Biometrics.Last6Months.TotalCholesterol.StartingTotalCholesterol.toString();
-        y = addLabeledText(document, 'Starting Total Cholesterol (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.TotalCholesterol.CurrentTotalCholesterol.toString();
-        y = addLabeledText(document, 'Current Total Cholesterol (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.TotalCholesterol.TotalCholesterolChange.toString();
-        y = addLabeledText(document, 'Total change in Total Cholesterol (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.TotalCholesterol.LastMeasuredChol?.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);
-
-        y = y + 35;
-        y = addLongRectangularChartImage(document, model, 'HDL_Last6Months', y);
-        y = y + 25;
-        value = model.Stats.Biometrics.Last6Months.HDL.StartingHDL.toString();
-        y = addLabeledText(document, 'Starting HDL (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.HDL.CurrentHDL.toString();
-        y = addLabeledText(document, 'Current HDL (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.HDL.TotalHDLChange.toString();
-        y = addLabeledText(document, 'Total change in HDL (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.HDL.LastMeasuredHDL?.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);
-
-        y = y + 35;
-        y = addLongRectangularChartImage(document, model, 'LDL_Last6Months', y);
-        y = y + 25;
-        value = model.Stats.Biometrics.Last6Months.LDL.StartingLDL.toString();
-        y = addLabeledText(document, 'Starting LDL (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.LDL.CurrentLDL.toString();
-        y = addLabeledText(document, 'Current LDL (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.LDL.TotalLDLChange.toString();
-        y = addLabeledText(document, 'Total change in LDL (mg/dL)', value, y);
-
-        value = model.Stats.Biometrics.Last6Months.LDL.LastMeasuredLDL?.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);
-
-    }
+    y = addSymptomSummary(y, document, model);
+    y = addMoodsSummary(y, document, model);
     return y;
 };
 
 export const createSummaryCharts = async (data) => {
     var locations = [];
 
-    var loc = await createMedAdherenceSummaryChart(data.LastMonth.Medication.History);
+    var loc = await createMedAdherenceSummaryChart(data.Medication.LastMonth.Daily);
     locations.push(...loc);
-    loc = await createWeightSummaryChart(data.LastMonth.BodyWeight.History, data.LastMonth.BodyWeight.CountryCode);
+    loc = await createWeightSummaryChart(data.Biometrics.LastMonth.BodyWeight.History, data.Biometrics.LastMonth.BodyWeight.CountryCode);
     locations.push(...loc);
-    loc = await createNutritionSummaryChart(data.LastMonth.Nutrition.History);
+    loc = await createNutritionSummaryChart(data.Nutrition.LastMonth.QuestionnaireStats);
     locations.push(...loc);
-    loc = await createSymptomsSummaryChart(data.LastMonth.Symptom);
+    // loc = await createDailyMovementSummaryChart(data.Nutrition.LastMonth.History);
+    // locations.push(...loc);
+    loc = await createSymptomsSummaryChart(data.Symptom.LastMonth);
     locations.push(...loc);
-    loc = await createMoodsSummaryChart(data.LastMonth.Moods);
+    loc = await createMoodsSummaryChart(data.Moods.LastMonth);
     locations.push(...loc);
 
     return locations;
@@ -225,7 +124,7 @@ export const createSummaryCharts = async (data) => {
 
 const createMedAdherenceSummaryChart = async (data) => {
     var locations = [];
-    var location = await createMedicationConsumption_DonutChart(data.LastMonth.Daily, 'MedicationsSummary_LastMonth');
+    var location = await createMedicationConsumption_DonutChart(data, 'MedicationsSummary_LastMonth');
     locations.push({
         key : 'MedicationsSummary_LastMonth',
         location
@@ -245,7 +144,7 @@ const createWeightSummaryChart = async (data, countryCode) => {
 
 const createNutritionSummaryChart = async (data) => {
     var locations = [];
-    const location = await createNutritionQuerySummary_BarChart(data, 'NutritionQuestionSummary_LastMonth');
+    const location = await createNutritionQueryForMonth_GroupedBarChart(data, 'NutritionQuestionSummary_LastMonth');
     locations.push({
         key : 'NutritionQuestionSummary_LastMonth',
         location
@@ -304,13 +203,18 @@ const createBodyWeight_LineChart = async (stats: any, filename: string, countryC
     return await ChartGenerator.createLineChart(temp, options, filename);
 };
 
-const createNutritionQuerySummary_BarChart = async (stats: any, filename: string) => {
-    if (stats.length === 0) {
+const createNutritionQueryForMonth_GroupedBarChart = async (stats: any, filename: string) => {
+    const qstats = [
+        ...(stats.HealthyFoodChoices.Stats),
+        ...(stats.HealthyProteinConsumptions.Stats),
+        ...(stats.LowSaltFoods.Stats),
+    ];
+    if (qstats.length === 0) {
         return null;
     }
-    const temp = stats.map(c => {
+    const temp = qstats.map(c => {
         return {
-            x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
+            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
             y : c.Response,
             z : c.Type,
         };
@@ -326,11 +230,39 @@ const createNutritionQuerySummary_BarChart = async (stats: any, filename: string
     options.CategoriesCount = categories.length;
     options.Categories      = categories;
     options.Colors          = colors;
-    options.FontSize        = '14px';
+    options.FontSize        = '9px';
     options.ShowYAxis       = false;
 
     return await ChartGenerator.createGroupBarChart(temp, options, filename);
 };
+
+// const createNutritionQuerySummary_BarChart = async (stats: any, filename: string) => {
+//     if (stats.length === 0) {
+//         return null;
+//     }
+//     const temp = stats.map(c => {
+//         return {
+//             x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
+//             y : c.Response,
+//             z : c.Type,
+//         };
+//     });
+//     const categoryColors = getNutritionQuestionCategoryColors();
+//     const categories = categoryColors.map(x => x.Key);
+//     const colors = categoryColors.map(x => x.Color);
+
+//     const options: MultiBarChartOptions =  DefaultChartOptions.multiBarChart();
+//     options.Width           = RECTANGULAR_CHART_WIDTH;
+//     options.Height          = RECTANGULAR_CHART_HEIGHT;
+//     options.YLabel          = 'User Response';
+//     options.CategoriesCount = categories.length;
+//     options.Categories      = categories;
+//     options.Colors          = colors;
+//     options.FontSize        = '14px';
+//     options.ShowYAxis       = false;
+
+//     return await ChartGenerator.createGroupBarChart(temp, options, filename);
+// };
 
 const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: string) => {
     if (stats.length === 0) {
@@ -354,3 +286,126 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
     const data = constructDonutChartData(feelings);
     return await ChartGenerator.createDonutChart(data, options, filename);
 };
+
+function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'NutritionQuestionSummary_LastMonth';
+    const detailedTitle = 'Nutrition Question Summary for Last Month';
+    const titleColor = '#505050';
+    const sectionTitle = 'Nutrition Question Summary';
+    const icon = Helper.getIconsPath('nutrition.png');
+
+    y = addSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 25;
+        y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 20;
+        const colors = getNutritionQuestionCategoryColors();
+        const legend = colors.map(x => {
+            return {
+                Key   : x.Key + ': ' + x.Question,
+                Color : x.Color,
+            };
+        });
+        y = addLegend(document, y, legend, 125, 11, 50, 10, 15);
+    }
+    return y;
+}
+
+function addDailyMovementQuestionSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'Exercise_Questionnaire_Overall_LastMonth';
+    const detailedTitle = 'Daily Movement Question Summary for Last Month';
+    const titleColor = '#505050';
+    const sectionTitle = 'Daily Movement Question Summary';
+    const icon = Helper.getIconsPath('exercise.png');
+
+    y = addSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 25;
+        if (!chartExists(model, chartImage)) {
+            y = addNoDataDisplay(document, y);
+        } else {
+            y = addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor, 165, 225);
+        }
+    }
+    return y;
+}
+
+function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'MedicationsSummary_LastMonth';
+    const detailedTitle = 'Medication Adherence for Last Month';
+    const titleColor = '#505050';
+    const sectionTitle = 'Medication Adherence Summary';
+    const icon = Helper.getIconsPath('medications.png');
+    const legend = getMedicationStatusCategoryColors();
+    y = addSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 8;
+        y = addSquareChartImageWithLegend(document, model, chartImage, y, detailedTitle, titleColor, legend);
+        y = y + 7;
+    }
+    return y;
+}
+
+function addBodyWeightSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'BodyWeightSummary_LastMonth';
+    const detailedTitle = 'Body weight for Last Month';
+    const titleColor = '#505050';
+    const sectionTitle = 'Body weight Summary';
+    const icon = Helper.getIconsPath('body-weight.png');
+    y = addSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 8;
+        y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor, );
+        y = y + 7;
+    }
+    return y;
+}
+
+function addSymptomSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'SymptomsSummary_LastMonth';
+    const detailedTitle = 'Relative Symptoms over Past 30 Days';
+    const titleColor = '#505050';
+    const sectionTitle = 'Relative Symptoms';
+    const icon = Helper.getIconsPath('feelings.png');
+
+    y = addSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 25;
+        const legend = getFeelingsColors();
+        y = addSquareChartImageWithLegend(document, model, chartImage, y, detailedTitle, titleColor, legend, 40, 150);
+    }
+    return y;
+}
+
+function addMoodsSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'MoodsSummary_LastMonth';
+    const detailedTitle = 'Moods over Past 30 Days';
+    const titleColor = '#505050';
+    // const sectionTitle = 'Summary of Moods';
+    // const icon = Helper.getIconsPath('feelings.png');
+
+    // y = addSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 25;
+        y = addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+    }
+    return y;
+}

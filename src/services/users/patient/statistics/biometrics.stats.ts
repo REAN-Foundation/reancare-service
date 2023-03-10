@@ -32,7 +32,7 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
         currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight * 2.20462;
         totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange * 2.20462;
     }
-    
+
     if (!chartExists(model, chartImage)) {
         y = addNoDataDisplay(document, y);
     } else {
@@ -152,46 +152,46 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
         y = y + 25;
         y = addLongRectangularChartImage(document, model, 'TotalCholesterol_Last6Months', y);
         y = y + 25;
-        let value = model.Stats.Biometrics.Last6Months.TotalCholesterol.StartingTotalCholesterol.toString();
+        let value = model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.StartingTotalCholesterol.toString();
         y = addLabeledText(document, 'Starting Total Cholesterol (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.TotalCholesterol.CurrentTotalCholesterol.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.CurrentTotalCholesterol.toString();
         y = addLabeledText(document, 'Current Total Cholesterol (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.TotalCholesterol.TotalCholesterolChange.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.TotalCholesterolChange.toString();
         y = addLabeledText(document, 'Total change in Total Cholesterol (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.TotalCholesterol.LastMeasuredChol?.toLocaleDateString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.LastMeasuredChol?.toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 35;
         y = addLongRectangularChartImage(document, model, 'HDL_Last6Months', y);
         y = y + 25;
-        value = model.Stats.Biometrics.Last6Months.HDL.StartingHDL.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.HDL.StartingHDL.toString();
         y = addLabeledText(document, 'Starting HDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.HDL.CurrentHDL.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.HDL.CurrentHDL.toString();
         y = addLabeledText(document, 'Current HDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.HDL.TotalHDLChange.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.HDL.TotalHDLChange.toString();
         y = addLabeledText(document, 'Total change in HDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.HDL.LastMeasuredHDL?.toLocaleDateString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.HDL.LastMeasuredHDL?.toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 35;
         y = addLongRectangularChartImage(document, model, 'LDL_Last6Months', y);
         y = y + 25;
-        value = model.Stats.Biometrics.Last6Months.LDL.StartingLDL.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.LDL.StartingLDL.toString();
         y = addLabeledText(document, 'Starting LDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.LDL.CurrentLDL.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.LDL.CurrentLDL.toString();
         y = addLabeledText(document, 'Current LDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.LDL.TotalLDLChange.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.LDL.TotalLDLChange.toString();
         y = addLabeledText(document, 'Total change in LDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.LDL.LastMeasuredLDL?.toLocaleDateString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.LDL.LastMeasuredLDL?.toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
     }
@@ -220,31 +220,31 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         y = y + 25;
         y = addLongRectangularChartImage(document, model, 'Triglyceride_Last6Months', y);
         y = y + 25;
-        let value = model.Stats.Biometrics.Last6Months.TriglycerideLevel.StartingTriglycerideLevel.toString();
+        let value = model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.StartingTriglycerideLevel.toString();
         y = addLabeledText(document, 'Starting Triglyceride Level (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.TriglycerideLevel.CurrentTriglycerideLevel.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.CurrentTriglycerideLevel.toString();
         y = addLabeledText(document, 'Current Triglyceride Level (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.TriglycerideLevel.TotalTriglycerideLevelChange.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange.toString();
         y = addLabeledText(document, 'Total change in Triglyceride Level (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.TriglycerideLevel.LastMeasuredTrigly?.toLocaleDateString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.LastMeasuredTrigly?.toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 55;
         y = addLongRectangularChartImage(document, model, 'A1C_Last6Months', y);
         y = y + 25;
-        value = model.Stats.Biometrics.Last6Months.A1CLevel.StartingA1CLevel.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.StartingA1CLevel.toString();
         y = addLabeledText(document, 'Starting A1C Level (%)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.A1CLevel.CurrentA1CLevel.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.CurrentA1CLevel.toString();
         y = addLabeledText(document, 'Current A1C Level (%)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.A1CLevel.TotalA1CLevelChange.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.TotalA1CLevelChange.toString();
         y = addLabeledText(document, 'Total change in A1C Level (%)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.A1CLevel.LastMeasuredA1C?.toLocaleDateString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.LastMeasuredA1C?.toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 53;
@@ -401,7 +401,7 @@ const createBodyWeight_LineChart = async (stats: any, filename: string, countryC
             };
         });
     }
-    
+
     options.Width = RECTANGULAR_CHART_WIDTH;
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.XAxisTimeScaled = true;

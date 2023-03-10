@@ -52,12 +52,6 @@ export default class UserDeviceDetails extends Model {
     })
     Token: string;
 
-    @Column({
-        type      : DataType.STRING(512),
-        allowNull : true,
-    })
-    DeviceIdentifier: string;
-
     @Length({ max: 512 })
     @Column({
         type      : DataType.STRING(512),

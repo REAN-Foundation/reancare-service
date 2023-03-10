@@ -1,6 +1,5 @@
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
-import { Op } from 'sequelize';
 import { UserDeviceDetailsDomainModel } from "../../../../../../domain.types/users/user.device.details/user.device.domain.model";
 import { UserDeviceDetailsDto } from "../../../../../../domain.types/users/user.device.details/user.device.dto";
 import { UserDeviceDetailsSearchFilters, UserDeviceDetailsSearchResults } from "../../../../../../domain.types/users/user.device.details/user.device.search.types";

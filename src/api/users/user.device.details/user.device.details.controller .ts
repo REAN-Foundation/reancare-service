@@ -47,7 +47,7 @@ export class UserDeviceDetailsController {
                 Token   : request.body.Token,
                 UserId  : request.body.UserId,
                 AppName : request.body.AppName
-            }
+            };
 
             var existingRecord = await this._service.getExistingRecord(deviceDetails);
             if (existingRecord !== null) {

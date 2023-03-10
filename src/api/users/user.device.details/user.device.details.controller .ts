@@ -43,7 +43,19 @@ export class UserDeviceDetailsController {
 
             const userDeviceDetailsDomainModel = await UserDeviceDetailsValidator.create(request);
 
-            const UserDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
+            const deviceDetails = {
+                Token   : request.body.Token,
+                UserId  : request.body.UserId,
+                AppName : request.body.AppName
+            };
+
+            var existingRecord = await this._service.getExistingRecord(deviceDetails);
+            if (existingRecord !== null) {
+                var UserDeviceDetails = await this._service.update(existingRecord.id, userDeviceDetailsDomainModel);
+            } else {
+                var UserDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
+            }
+
             if (UserDeviceDetails == null) {
                 throw new ApiError(400, 'Cannot create record for user device details!');
             }

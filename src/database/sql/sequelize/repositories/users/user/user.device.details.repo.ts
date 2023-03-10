@@ -58,6 +58,25 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
         }
     };
 
+    getExistingRecord = async (deviceDetails: any): Promise<UserDeviceDetailsDto> => {
+        try {
+
+            const existingRecord =  await UserDeviceDetailsModel.findOne({
+                where : {
+                    UserId  : deviceDetails.UserId,
+                    AppName : deviceDetails.AppName,
+                    Token   : deviceDetails.Token,
+
+                }
+            });
+            return await UserDeviceDetailsMapper.toDto(existingRecord);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: UserDeviceDetailsSearchFilters): Promise<UserDeviceDetailsSearchResults> => {
         try {
             const search = { where: {} };

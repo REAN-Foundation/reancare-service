@@ -44,9 +44,9 @@ export class UserDeviceDetailsController {
             const userDeviceDetailsDomainModel = await UserDeviceDetailsValidator.create(request);
 
             const deviceDetails = {
-                DeviceIdentifier : request.body.DeviceIdentifier,
-                UserId           : request.body.UserId,
-                AppName          : request.body.AppName
+                Token   : request.body.Token,
+                UserId  : request.body.UserId,
+                AppName : request.body.AppName
             }
 
             var existingRecord = await this._service.getExistingRecord(deviceDetails);
@@ -55,9 +55,6 @@ export class UserDeviceDetailsController {
             } else {
                 var UserDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
             }
-
-            // delete all device records which does not belongs to this patient
-            await this._service.invalidateOtherDevices(deviceDetails);
 
             // const UserDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
             if (UserDeviceDetails == null) {

@@ -13,7 +13,6 @@ export class UserDeviceDetailsValidator {
 
         const UserDeviceDetailsModel: UserDeviceDetailsDomainModel = {
             Token            : request.body.Token,
-            DeviceIdentifier : request.body.DeviceIdentifier,
             UserId           : request.body.UserId,
             DeviceName       : request.body.DeviceName,
             OSType           : request.body.OSType,
@@ -127,11 +126,6 @@ export class UserDeviceDetailsValidator {
             .run(request);
 
         await body('Token').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('DeviceIdentifier').optional()
             .trim()
             .escape()
             .run(request);

@@ -18,7 +18,6 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             const entity = {
                 UserId           : userDeviceDetailsDomainModel.UserId,
                 Token            : userDeviceDetailsDomainModel.Token,
-                DeviceIdentifier : userDeviceDetailsDomainModel.DeviceIdentifier,
                 DeviceName       : userDeviceDetailsDomainModel.DeviceName,
                 OSType           : userDeviceDetailsDomainModel.OSType,
                 OSVersion        : userDeviceDetailsDomainModel.OSVersion,
@@ -65,9 +64,9 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
 
             const existingRecord =  await UserDeviceDetailsModel.findOne({
                 where : {
-                    UserId           : deviceDetails.UserId,
-                    AppName          : deviceDetails.AppName,
-                    DeviceIdentifier : deviceDetails.DeviceIdentifier,
+                    UserId  : deviceDetails.UserId,
+                    AppName : deviceDetails.AppName,
+                    Token   : deviceDetails.Token,
 
                 }
             });
@@ -163,9 +162,6 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (userDeviceDetailsDomainModel.Token != null) {
                 userDeviceDetails.Token = userDeviceDetailsDomainModel.Token;
             }
-            if (userDeviceDetailsDomainModel.DeviceIdentifier != null) {
-                userDeviceDetails.DeviceIdentifier = userDeviceDetailsDomainModel.DeviceIdentifier;
-            }
             if (userDeviceDetailsDomainModel.DeviceName != null) {
                 userDeviceDetails.DeviceName = userDeviceDetailsDomainModel.DeviceName;
             }
@@ -196,22 +192,6 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             Logger.instance().log(id);
 
             const result = await UserDeviceDetailsModel.destroy({ where: { id: id } });
-            return result === 1;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    invalidateOtherDevices = async (deviceDetails: any): Promise<boolean> => {
-        try {
-
-            const result = await UserDeviceDetailsModel.destroy({
-                where: {
-                    DeviceIdentifier : deviceDetails.DeviceIdentifier,
-                    UserId           : {[Op.not]: deviceDetails.UserId}
-                } 
-            });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);

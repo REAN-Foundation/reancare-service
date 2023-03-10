@@ -14,7 +14,6 @@ export class UserDeviceDetailsMapper {
             id               : userDeviceDetails.id,
             UserId           : userDeviceDetails.UserId,
             Token            : userDeviceDetails.Token,
-            DeviceIdentifier : userDeviceDetails.DeviceIdentifier,
             DeviceName       : userDeviceDetails.DeviceName,
             OSType           : userDeviceDetails.OSType,
             OSVersion        : userDeviceDetails.OSVersion,

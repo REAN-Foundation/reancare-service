@@ -19,6 +19,4 @@ export interface IUserDeviceDetailsRepo {
 
     delete(id: string): Promise<boolean>;
 
-    invalidateOtherDevices(deviceDetails: any): Promise<boolean>;
-
 }

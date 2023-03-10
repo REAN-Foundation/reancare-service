@@ -43,10 +43,6 @@ export class UserDeviceDetailsService {
         return await this._userDeviceDetailsRepo.delete(id);
     };
 
-    invalidateOtherDevices = async (deviceDetails: any): Promise<boolean> => {
-        return await this._userDeviceDetailsRepo.invalidateOtherDevices(deviceDetails);
-    };
-
     deleteByUserId = async (userId: string): Promise<boolean> => {
         const details = await this.getByUserId(userId);
         if (details.length > 0) {

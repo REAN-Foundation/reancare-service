@@ -33,21 +33,25 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
+          
+  Label_Checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking labels of PR
+        uses: docker://agilepathway/pull-request-label-checker:latest
+        with:
+          one_of: Major,Minor,Patch
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   Deploy-ECS:
+    needs: Label_Checks 
     environment: uat
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - name: Checking labels of PR
-        uses: docker://agilepathway/pull-request-label-checker:latest
-        with:
-          one_of: major,minor,patch
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-
+    
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

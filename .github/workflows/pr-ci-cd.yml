@@ -43,7 +43,7 @@ jobs:
         
         
       - name: New Release Publish
-        uses: release-drafter/release-drafter@5.23
+        uses: release-drafter/release-drafter@5.23.0
         with:
           publish : true
         env:

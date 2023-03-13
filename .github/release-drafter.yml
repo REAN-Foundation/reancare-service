@@ -41,11 +41,7 @@ version-resolver:
   default: major
 template: |
   ## Summary
-
   ## Changes
-
   $CHANGES
-
   ## This release was made possible by the following contributors:
-
   $CONTRIBUTORS

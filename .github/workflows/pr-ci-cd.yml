@@ -10,9 +10,12 @@ name: PR-CI-CD
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the develop branch
-  pull_request:
-    branches:
-      develop
+
+
+  push:
+    branches: [tagcreation_workflow]
+
+
     
 jobs:
   CodeScan-ESLint:
@@ -32,10 +35,38 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: develop
-          
+
+
+
   Label_Checks:
-    permissions: write-all
     runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+
+#       - name: Checking labels of PR
+#         uses: docker://agilepathway/pull-request-label-checker:latest
+#         with:
+#           one_of: major,minor,patch
+#           repo_token: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: New Release Publish
+        uses: release-drafter/release-drafter@v5
+        with:
+          publish : true
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+
+  Build-Docker-Image:
+    runs-on:
+      group: Default Larger Runners
+      labels: ubuntu-latest-4-cores
+
     steps:
     
       - name: Checkout Code

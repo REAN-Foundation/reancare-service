@@ -12,8 +12,6 @@ on:
   # Triggers the workflow on push or pull request events but only for the develop branch
   pull_request:
     branches: [develop]
-permissions:
-    pull-requests: write
     
 jobs:
   CodeScan-ESLint:
@@ -35,6 +33,7 @@ jobs:
           DEFAULT_BRANCH: develop
           
   Label_Checks:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     

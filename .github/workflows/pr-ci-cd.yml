@@ -31,8 +31,18 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: develop
+          
+  Label_Checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking labels of PR
+        uses: docker://agilepathway/pull-request-label-checker:latest
+        with:
+          one_of: Major,Minor,Patch
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   Build-Docker-Image:
+    needs: Label_Checks
     runs-on: 
       group: Default Larger Runners
       labels: ubuntu-latest-4-cores

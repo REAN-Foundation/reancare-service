@@ -56,7 +56,7 @@ jobs:
         with:
           publish : true
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
 
 

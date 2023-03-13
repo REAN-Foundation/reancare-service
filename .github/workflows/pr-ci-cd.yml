@@ -12,7 +12,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the develop branch
 
   push:
-    branches: [test/workflow]
+    branches: [tagcreation_workflow]
   
   pull_request:
     branches:
@@ -50,11 +50,18 @@ jobs:
           ref: ${{ github.sha }}
 
 
-      - name: Checking labels of PR
-        uses: docker://agilepathway/pull-request-label-checker:latest
+#       - name: Checking labels of PR
+#         uses: docker://agilepathway/pull-request-label-checker:latest
+#         with:
+#           one_of: major,minor,patch
+#           repo_token: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: New Release Publish
+        uses: release-drafter/release-drafter@v5
         with:
-          one_of: major,minor,patch
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          publish : true
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
 
   Build-Docker-Image:
     runs-on:

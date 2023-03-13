@@ -43,7 +43,9 @@ jobs:
         
         
       - name: New Release Publish
-        uses: technote-space/release-github-actions@v6
+        uses: release-drafter/release-drafter@v5
+        with:
+          Publish: True
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
           

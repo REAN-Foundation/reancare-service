@@ -13,10 +13,6 @@ on:
 
   push:
     branches: [tagcreation_workflow]
-  
-  pull_request:
-    branches:
-      - develop
 
 
 jobs:

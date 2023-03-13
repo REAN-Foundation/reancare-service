@@ -13,6 +13,10 @@ on:
 
   push:
     branches: [test/workflow]
+  
+  pull_request:
+    branches:
+      - develop
 
 
 jobs:

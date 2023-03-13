@@ -7,7 +7,7 @@ categories:
       - 'breaking-change'
   - title: '🌟New features and non-breaking changes'
     labels:
-      - 'major'
+      - 'Major'
       - 'feature'
   - title: '🌟 Minor Changes'
     labels:
@@ -29,16 +29,16 @@ categories:
 exclude-labels:
   - 'skip-changelog'
 version-resolver:
-  major:
+  Major:
     labels:
-      - 'major'
-  minor:
+      - 'Major'
+  Minor:
     labels:
-      - 'minor'
-  patch:
+      - 'Minor'
+  Patch:
     labels:
-      - 'patch'
-  default: major
+      - 'Patch'
+  default: Major
 template: |
   ## Summary
 

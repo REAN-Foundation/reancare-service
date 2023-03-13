@@ -94,3 +94,10 @@ jobs:
         env:
           # 7 GiB by default on GitHub, setting this to 16 GiB
           NODE_OPTIONS: "--max_old_space_size=8192"
+      
+      - name: New Release Publish
+        uses: release-drafter/release-drafter@v5
+        with:
+          publish : true
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}

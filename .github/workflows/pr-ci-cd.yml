@@ -10,8 +10,10 @@ name: PR-CI-CD
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the develop branch
-  pull_request:
-    branches: [develop]
+
+  push:
+    branches: [main2]
+
 
 jobs:
   CodeScan-ESLint:
@@ -32,6 +34,7 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: develop
 
+
   Label_Checks:
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +51,6 @@ jobs:
         with:
           one_of: major,minor,patch
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-
 
   Build-Docker-Image:
     runs-on:

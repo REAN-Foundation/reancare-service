@@ -33,6 +33,8 @@ jobs:
           DEFAULT_BRANCH: develop
           
   Label_Checks:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checking labels of PR

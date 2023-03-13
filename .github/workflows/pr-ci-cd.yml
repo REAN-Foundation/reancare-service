@@ -12,7 +12,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the develop branch
   pull_request:
     branches: [develop]
-    
+
 jobs:
   CodeScan-ESLint:
     runs-on: ubuntu-latest
@@ -32,8 +32,26 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: develop
 
+  Label_Checks:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+
+      - name: Checking labels of PR
+        uses: docker://agilepathway/pull-request-label-checker:latest
+        with:
+          one_of: major,minor,patch
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+
   Build-Docker-Image:
-    runs-on: 
+    runs-on:
       group: Default Larger Runners
       labels: ubuntu-latest-4-cores
 

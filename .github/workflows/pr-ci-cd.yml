@@ -39,10 +39,11 @@ jobs:
     steps:
     
       - name: Checkout Code
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
         with:
-         ref: ${{ github.sha }}
-         fetch-depth: '0'
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+         
           
       - name: Checking labels of PR
         uses: docker://agilepathway/pull-request-label-checker:latest

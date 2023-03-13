@@ -41,11 +41,10 @@ jobs:
           one_of: major,minor,patch
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         
-        
       - name: New Release Publish
         uses: release-drafter/release-drafter@v5
         with:
-          Publish: True
+          publish : true
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
           

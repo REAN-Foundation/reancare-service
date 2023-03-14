@@ -191,9 +191,11 @@ export class StatisticsService {
             Helper.calculateBMI(currentHeight, heightUnits, currentWeight, weightUnits);
 
         //Daily assessments
-        const dailyAssessments = await this._dailyAssessmentRepo.getStats(patientUserId, 6);
+        const dailyAssessmentsLast6Months = await this._dailyAssessmentRepo.getStats(patientUserId, 6);
+        const dailyAssessmentsLastMonth = await this._dailyAssessmentRepo.getStats(patientUserId, 1);
         const dailyAssessmentTrend = {
-            Last6Months : dailyAssessments
+            Last6Months : dailyAssessmentsLast6Months,
+            LastMonth   : dailyAssessmentsLastMonth,
         };
 
         //Sleep trend

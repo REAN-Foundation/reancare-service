@@ -1,9 +1,9 @@
 import { TimeHelper } from "../../../../common/time.helper";
 import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
-import { LineChartOptions, MultiBarChartOptions, PieChartOptions } from "../../../../modules/charts/chart.options";
+import { BarChartOptions, ChartColors, LineChartOptions, MultiBarChartOptions, PieChartOptions } from "../../../../modules/charts/chart.options";
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
-import { createFeelings_DonutChart, getFeelingsColors } from "./daily.assessments.stats";
+import { createFeelings_DonutChart, getFeelingsColors, getMoodsColors } from "./daily.assessments.stats";
 import { createMedicationConsumption_DonutChart, getMedicationStatusCategoryColors } from "./medication.stats";
 import { getNutritionQuestionCategoryColors } from "./nutrition.stats";
 import {
@@ -106,69 +106,41 @@ export const addSummaryPageBPart2 = (model: any, document: PDFKit.PDFDocument, y
 export const createSummaryCharts = async (data) => {
     var locations = [];
 
-    var loc = await createMedAdherenceSummaryChart(data.Medication.LastMonth.Daily);
-    locations.push(...loc);
-    loc = await createWeightSummaryChart(data.Biometrics.LastMonth.BodyWeight.History, data.Biometrics.LastMonth.BodyWeight.CountryCode);
-    locations.push(...loc);
-    loc = await createNutritionSummaryChart(data.Nutrition.LastMonth.QuestionnaireStats);
-    locations.push(...loc);
-    // loc = await createDailyMovementSummaryChart(data.Nutrition.LastMonth.History);
-    // locations.push(...loc);
-    loc = await createSymptomsSummaryChart(data.Symptom.LastMonth);
-    locations.push(...loc);
-    loc = await createMoodsSummaryChart(data.Moods.LastMonth);
-    locations.push(...loc);
-
-    return locations;
-};
-
-const createMedAdherenceSummaryChart = async (data) => {
-    var locations = [];
-    var location = await createMedicationConsumption_DonutChart(data, 'MedicationsSummary_LastMonth');
+    var location = await createMedicationConsumption_DonutChart(data.Medication.LastMonth.Daily, 'MedicationsSummary_LastMonth');
     locations.push({
         key : 'MedicationsSummary_LastMonth',
         location
     });
-    return locations;
-};
+    locations.push(...location);
 
-const createWeightSummaryChart = async (data, countryCode) => {
-    var locations = [];
-    const location = await createBodyWeight_LineChart(data, 'BodyWeightSummary_LastMonth', countryCode);
+    location = await createBodyWeight_LineChart(data.Biometrics.LastMonth.BodyWeight.History, 'BodyWeightSummary_LastMonth', data.Biometrics.LastMonth.BodyWeight.CountryCode);
     locations.push({
         key : 'BodyWeightSummary_LastMonth',
         location
     });
-    return locations;
-};
+    locations.push(...location);
 
-const createNutritionSummaryChart = async (data) => {
-    var locations = [];
-    const location = await createNutritionQueryForMonth_GroupedBarChart(data, 'NutritionQuestionSummary_LastMonth');
+    location = await createNutritionQueryForMonth_GroupedBarChart(data.Nutrition.LastMonth.QuestionnaireStats, 'NutritionQuestionSummary_LastMonth');
     locations.push({
         key : 'NutritionQuestionSummary_LastMonth',
         location
     });
-    return locations;
-};
+    locations.push(...location);
 
-const createSymptomsSummaryChart = async (data) => {
-    var locations = [];
-    const location = await createFeelings_DonutChart(data, 'SymptomsSummary_LastMonth');
+    location = await createFeelings_DonutChart(data.DailyAssessent.LastMonth, 'SymptomsSummary_LastMonth');
     locations.push({
         key : 'SymptomsSummary_LastMonth',
         location
     });
-    return locations;
-};
+    locations.push(...location);
 
-const createMoodsSummaryChart = async (data) => {
-    var locations = [];
-    const location = await createMoodsSummaryChart_HorizontalBarChart(data, 'MoodsSummary_LastMonth');
+    location = await createMoodsSummaryChart_HorizontalBarChart(data.DailyAssessent.LastMonth, 'MoodsSummary_LastMonth');
     locations.push({
         key : 'MoodsSummary_LastMonth',
         location
     });
+    locations.push(...location);
+
     return locations;
 };
 
@@ -236,56 +208,33 @@ const createNutritionQueryForMonth_GroupedBarChart = async (stats: any, filename
     return await ChartGenerator.createGroupBarChart(temp, options, filename);
 };
 
-// const createNutritionQuerySummary_BarChart = async (stats: any, filename: string) => {
-//     if (stats.length === 0) {
-//         return null;
-//     }
-//     const temp = stats.map(c => {
-//         return {
-//             x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
-//             y : c.Response,
-//             z : c.Type,
-//         };
-//     });
-//     const categoryColors = getNutritionQuestionCategoryColors();
-//     const categories = categoryColors.map(x => x.Key);
-//     const colors = categoryColors.map(x => x.Color);
-
-//     const options: MultiBarChartOptions =  DefaultChartOptions.multiBarChart();
-//     options.Width           = RECTANGULAR_CHART_WIDTH;
-//     options.Height          = RECTANGULAR_CHART_HEIGHT;
-//     options.YLabel          = 'User Response';
-//     options.CategoriesCount = categories.length;
-//     options.Categories      = categories;
-//     options.Colors          = colors;
-//     options.FontSize        = '14px';
-//     options.ShowYAxis       = false;
-
-//     return await ChartGenerator.createGroupBarChart(temp, options, filename);
-// };
-
 const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: string) => {
+
     if (stats.length === 0) {
         return null;
     }
-    const feelings_ = stats.map(x => x.Feeling);
-
-    const tempFeelings = findKeyCounts(feelings_);
-    tempFeelings['Better'] = ((tempFeelings['Better'] / feelings_.length) * 100).toFixed(2);
-    tempFeelings['Same'] = ((tempFeelings['Same'] / feelings_.length) * 100).toFixed(2);
-    tempFeelings['Unspecified'] = ((tempFeelings['Unspecified'] / feelings_.length) * 100).toFixed(2);
-    tempFeelings['Worse'] = ((tempFeelings['Worse'] / feelings_.length) * 100).toFixed(2);
-    const feelings = Helper.sortObjectKeysAlphabetically(tempFeelings);
-    const feelingsColors = getFeelingsColors();
-    const colors = feelingsColors.map(x => x.Color);
-    const options: PieChartOptions = {
-        Width  : SQUARE_CHART_WIDTH,
-        Height : SQUARE_CHART_HEIGHT,
-        Colors : colors,
-    };
-    const data = constructDonutChartData(feelings);
-    return await ChartGenerator.createDonutChart(data, options, filename);
+    const moods_ = stats.map(x => x.Mood);
+    const tempMoods = findKeyCounts(moods_);
+    const moods = Helper.sortObjectKeysAlphabetically(tempMoods);
+    //const moodsColors = getMoodsColors();
+    //const colors = moodsColors.map(x => x.Color);
+    const options: BarChartOptions = DefaultChartOptions.barChart();
+    options.Width  = RECTANGULAR_CHART_WIDTH;
+    options.Height = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel = 'Moods';
+    options.Color  = ChartColors.DodgerBlue;
+    var data = [];
+    for (var k of Object.keys(moods)) {
+        var m = {
+            x: k,
+            y: moods[k]
+        }
+        data.push(m);
+    }
+    return await ChartGenerator.createBarChart(data, options, filename);
 };
+
+//#region Add to PDF
 
 function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'NutritionQuestionSummary_LastMonth';
@@ -409,3 +358,5 @@ function addMoodsSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     }
     return y;
 }
+
+//#endregion 

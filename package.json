@@ -28,7 +28,7 @@
     "adm-zip": "^0.5.10",
     "ansi-regex": "^6.0.1",
     "approx-string-match": "^1.1.0",
-    "aws-sdk": "^2.1319.0",
+    "aws-sdk": "^2.1320.0",
     "async": "^3.2.4",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",

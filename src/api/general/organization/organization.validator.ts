@@ -18,7 +18,7 @@ export class OrganizationValidator {
             About                            : request.body.About ?? null,
             OperationalSince                 : request.body.OperationalSince ?? null,
             ParentOrganizationId             : request.body.ParentOrganizationId ?? null,
-            AddressIds                       : request.body.AddressIds ?? null,
+            AddressIds                       : request.body.AddressIds ?? [],
             ImageResourceId                  : request.body.ImageResourceId ?? null,
             IsHealthFacility                 : request.body.IsHealthFacility ?? null,
             NationalHealthFacilityRegistryId : request.body.NationalHealthFacilityRegistryId ?? null,
@@ -104,6 +104,12 @@ export class OrganizationValidator {
             .trim()
             .escape()
             .isBoolean()
+            .run(request);
+
+        await query('addressIds').optional()
+            .trim()
+            .escape()
+            .isArray()
             .run(request);
 
         await query('createdDateFrom').optional()

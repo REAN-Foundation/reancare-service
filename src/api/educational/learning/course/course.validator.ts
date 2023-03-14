@@ -13,11 +13,11 @@ export class CourseValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): CourseDomainModel => {
         const model: CourseDomainModel = {
-            LearningPathId : request.body.LearningPathId,
-            Name           : request.body.Name,
-            Description    : request.body.Description,
-            ImageUrl       : request.body.ImageUrl,
-            DurationInDays : request.body.DurationInDays,
+            LearningPathIds : request.body.LearningPathIds ?? [],
+            Name            : request.body.Name,
+            Description     : request.body.Description,
+            ImageUrl        : request.body.ImageUrl,
+            DurationInDays  : request.body.DurationInDays,
         };
         return model;
     };
@@ -42,7 +42,7 @@ export class CourseValidator extends BaseValidator {
     };
 
     private  async validateCreateBody(request) {
-        await this.validateUuid(request, 'LearningPathId', Where.Body, false, false);
+        await this.validateArray(request, 'LearningPathIds', Where.Body, false, false);
         await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, true);
         await this.validateString(request, 'ImageUrl', Where.Body, false, true);

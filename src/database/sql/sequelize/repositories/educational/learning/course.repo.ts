@@ -9,6 +9,7 @@ import { CourseSearchFilters,
 import { ICourseRepo } from '../../../../../repository.interfaces/educational/learning/course.repo.interface';
 import { CourseMapper } from '../../../mappers/educational/learning/course.mapper';
 import Course from '../../../models/educational/learning/course.model';
+import LearningCourses from '../../../models/educational/learning/learning.courses.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -18,7 +19,6 @@ export class CourseRepo implements ICourseRepo {
     Promise<CourseDto> => {
         try {
             const entity = {
-                LearningPathId : createModel.LearningPathId,
                 Name           : createModel.Name,
                 Description    : createModel.Description,
                 ImageUrl       : createModel.ImageUrl,
@@ -26,6 +26,7 @@ export class CourseRepo implements ICourseRepo {
             };
 
             const course = await Course.create(entity);
+            await this.addLearningPaths(course.id, createModel.LearningPathIds);
             return await CourseMapper.toDto(course);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -106,10 +107,6 @@ export class CourseRepo implements ICourseRepo {
     Promise<CourseDto> => {
         try {
             const course = await Course.findByPk(id);
-
-            if (updateModel.LearningPathId != null) {
-                course.LearningPathId = updateModel.LearningPathId;
-            }
             if (updateModel.Name != null) {
                 course.Name = updateModel.Name;
             }
@@ -124,7 +121,7 @@ export class CourseRepo implements ICourseRepo {
             }
 
             await course.save();
-
+            await this.addLearningPaths(course.id, updateModel.LearningPathIds);
             return await CourseMapper.toDto(course);
 
         } catch (error) {
@@ -146,11 +143,52 @@ export class CourseRepo implements ICourseRepo {
 
     getCoursesForLearningPath = async (learningPathId: string): Promise<CourseDto[]> => {
         try {
-            const courses = await Course.findAll({ where: { LearningPathId: learningPathId } });
-            return courses.map(x => CourseMapper.toDto(x));
+            // const courses = await Course.findAll({ where: { LearningPathId: learningPathId } });
+            const learningCourses = await LearningCourses.findAll({ where   : { LearningPathId: learningPathId },
+                include : [
+                    {
+                        model : Course
+                    }
+                ]
+            }
+            );
+            var list = learningCourses.map(x => x.Course);
+            return list.map(y => CourseMapper.toDto(y));
+            // return courses.map(x => CourseMapper.toDto(x));
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
+
+    private addLearningPaths = async (courseId,learningPathIds) => {
+        if (learningPathIds !== null && learningPathIds.length > 0) {
+            for await (var learningPathId of learningPathIds) {
+                await this.addLearningPath(courseId,learningPathId);
+            }
+        }
+    };
+
+    addLearningPath = async (id: string, learningPathId: string): Promise<boolean> => {
+        try {
+            const learningCourse = await LearningCourses.findAll({
+                where : {
+                    CourseId       : id,
+                    LearningPathId : learningPathId,
+                }
+            });
+            if (learningCourse.length > 0) {
+                return false;
+            }
+            var entity = await LearningCourses.create({
+                CourseId       : id,
+                LearningPathId : learningPathId,
+            });
+            return entity != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

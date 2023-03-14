@@ -13,7 +13,7 @@ export class CourseMapper {
 
         const dto: CourseDto = {
             id             : course.id,
-            LearningPathId : course.LearningPathId,
+            // LearningPathId : course.LearningPathId,
             Name           : course.Name,
             Description    : course.Description,
             ImageUrl       : course.ImageUrl,

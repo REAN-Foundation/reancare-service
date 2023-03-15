@@ -47,7 +47,7 @@ jobs:
           fetch-depth: 0
           
       - name: Check labels
-      - uses: docker://agilepathway/pull-request-label-checker:latest
+        uses: docker://agilepathway/pull-request-label-checker:latest
         with:
           one_of: major,minor,patch
           repo_token: ${{ secrets.GITHUB_TOKEN }}

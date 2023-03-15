@@ -19,6 +19,7 @@ export class LearningPathValidator extends BaseValidator {
             DurationInDays   : request.body.DurationInDays,
             PreferenceWeight : request.body.PreferenceWeight,
             Enabled          : request.body.Enabled,
+            CourseIds        : request.body.CourseIds ?? [],
         };
         return model;
     };
@@ -49,6 +50,7 @@ export class LearningPathValidator extends BaseValidator {
         await this.validateDecimal(request, 'DurationInDays', Where.Body, false, true);
         await this.validateDecimal(request, 'PreferenceWeight', Where.Body, false, true);
         await this.validateBoolean(request, 'Enabled', Where.Body, false, true);
+        await this.validateArray(request, 'CourseIds', Where.Body, false, true);
         this.validateRequest(request);
     }
 
@@ -59,6 +61,7 @@ export class LearningPathValidator extends BaseValidator {
         await this.validateDecimal(request, 'DurationInDays', Where.Body, false, false);
         await this.validateDecimal(request, 'PreferenceWeight', Where.Body, false, false);
         await this.validateBoolean(request, 'Enabled', Where.Body, false, false);
+        await this.validateArray(request, 'CourseIds', Where.Body, false, false);
         this.validateRequest(request);
     }
 

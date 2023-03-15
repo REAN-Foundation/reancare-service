@@ -1,4 +1,5 @@
 import { uuid } from "../../../miscellaneous/system.types";
+import { CourseDto } from "../course/course.dto";
 
 export interface LearningPathDto {
     id?                 : uuid,
@@ -6,7 +7,12 @@ export interface LearningPathDto {
     Description?        : string;
     ImageUrl?           : string;
     DurationInDays?     : number;
-    Courses?            : any[];
+    Courses?            : LearningCourseDto[];
     PreferenceWeight?   : number;
     Enabled?            : boolean;
+}
+
+export interface LearningCourseDto {
+    id?                 : uuid,
+    Courses?            : CourseDto[];
 }

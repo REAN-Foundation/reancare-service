@@ -194,7 +194,17 @@
             "Rssfeed.DeleteFeedItem",
             "Rssfeed.GetRssFeed",
             "Rssfeed.GetAtomFeed",
-            "Rssfeed.GetJsonFeed"
+            "Rssfeed.GetJsonFeed",
+            "Medication.Drug.Create",
+            "Medication.Drug.GetById",
+            "Medication.Drug.Update",
+            "Medication.Drug.Delete",
+            "Medication.Drug.Search",
+            "SymptomType.Create",
+            "SymptomType.GetById",
+            "SymptomType.Update",
+            "SymptomType.Search",
+            "SymptomType.Delete"
         ]
     },
     {

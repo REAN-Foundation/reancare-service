@@ -32,6 +32,7 @@ export class RssfeedValidator extends BaseValidator {
     getDomainModel = (request: express.Request): RssfeedDomainModel => {
 
         const model: RssfeedDomainModel = {
+            id            : request.body.id ?? null,
             Title         : request.body.Title,
             Description   : request.body.Description,
             Link          : request.body.Link,

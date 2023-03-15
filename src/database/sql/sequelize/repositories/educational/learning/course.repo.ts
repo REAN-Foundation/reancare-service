@@ -8,10 +8,8 @@ import { CourseSearchFilters,
 } from "../../../../../../domain.types/educational/learning/course/course.search.types";
 import { ICourseRepo } from '../../../../../repository.interfaces/educational/learning/course.repo.interface';
 import { CourseMapper } from '../../../mappers/educational/learning/course.mapper';
-import CourseContent from '../../../models/educational/learning/course.content.model';
 import Course from '../../../models/educational/learning/course.model';
-import CourseModule from '../../../models/educational/learning/course.module.model';
-import LearningCourses from '../../../models/educational/learning/learning.course.model';
+import LearningCourses from '../../../models/educational/learning/learning.courses.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -49,22 +47,7 @@ export class CourseRepo implements ICourseRepo {
     search = async (filters: CourseSearchFilters): Promise<CourseSearchResults> => {
         try {
 
-            const search = { where : {} ,
-
-                include : [
-                    {
-                        model    : CourseModule,
-                        as       : "CourseModules",
-                        required : true,
-                        include  : [
-                            {
-                                model : CourseContent,
-                                as    : "CourseContents",
-                            }
-                        ]
-                    }
-                ]
-            };
+            const search = { where: {} };
 
             if (filters.Name != null) {
                 search.where['Name'] = { [Op.like]: '%' + filters.Name + '%' };

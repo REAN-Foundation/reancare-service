@@ -1,5 +1,4 @@
 import { uuid } from "../../../miscellaneous/system.types";
-import { CourseModuleDto } from "../course.module/course.module.dto";
 
 export interface CourseDto {
     id?             : uuid,
@@ -8,5 +7,5 @@ export interface CourseDto {
     Description?    : string;
     ImageUrl?       : string;
     DurationInDays? : number;
-    Modules?        : CourseModuleDto[];
+    Modules?        : any[];
 }

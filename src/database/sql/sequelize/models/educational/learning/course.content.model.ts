@@ -51,9 +51,6 @@ export default class CourseContent extends Model {
     })
     ModuleId: string;
 
-    @BelongsTo(() =>  CourseModule)
-    CourseModule:  CourseModule;
-
     @IsUUID(4)
     @ForeignKey(() => Course)
     @Column({

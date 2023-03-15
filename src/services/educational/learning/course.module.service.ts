@@ -6,7 +6,7 @@ import { CourseModuleDto } from '../../../domain.types/educational/learning/cour
 import { CourseModuleSearchFilters,
     CourseModuleSearchResults
 } from '../../../domain.types/educational/learning/course.module/course.module.search.types';
-import { ICourseContentRepo } from "../../../database/repository.interfaces/educational/learning/course.content.repo.interface";
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -14,7 +14,6 @@ export class CourseModuleService {
 
     constructor(
         @inject('ICourseModuleRepo') private _courseModuleRepo: ICourseModuleRepo,
-        @inject('ICourseContentRepo') private _courseContentRepo: ICourseContentRepo,
     ) {}
 
     create = async (courseModuleDomainModel: CourseModuleDomainModel): Promise<CourseModuleDto> => {
@@ -22,10 +21,7 @@ export class CourseModuleService {
     };
 
     getById = async (id: uuid): Promise<CourseModuleDto> => {
-        const module = await this._courseModuleRepo.getById(id);
-        const contents = await this._courseContentRepo.GetContentsForModule(module.id);
-        module['Contents'] = contents;
-        return  module;
+        return await this._courseModuleRepo.getById(id);
     };
 
     search = async (filters: CourseModuleSearchFilters): Promise<CourseModuleSearchResults> => {

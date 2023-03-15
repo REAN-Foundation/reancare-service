@@ -48,7 +48,7 @@ jobs:
           
       - name: Check labels
         run: |
-          echo "${{ github.event.action }}"
+          echo "${{ github.event.name }}"
 
 #         if: ${{github.event.name == 'pull_request' }}
 #         uses: docker://agilepathway/pull-request-label-checker:latest

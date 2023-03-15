@@ -14,7 +14,7 @@ on:
     branches:
       [testing_checks]
   # Triggers the workflow on push or pull request events but only for the develop branch
-  pull_request:
+  pull_request_target:
     branches: [testing_checks]
     
 jobs:

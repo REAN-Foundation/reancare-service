@@ -263,7 +263,7 @@ export const createBiometricsCharts = async (data) => {
     locations.push(...bloddPressureLocations);
     const bloodGlucoseLocations = await createBloodGlucoseCharts(data.Last6Months.BloodGlucose.History);
     locations.push(...bloodGlucoseLocations);
-    const cholesterolLocations = await createCholesterolCharts(data.Last6Months.Cholesterol);
+    const cholesterolLocations = await createCholesterolCharts(data.Last6Months.Lipids);
     locations.push(...cholesterolLocations);
 
     return locations;
@@ -359,23 +359,23 @@ const createLipidChart = async (
 };
 
 const createTotalCholesterolChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.TotalCholesterol, filename, 'Total Cholesterol', 'mg/dL');
+    return await createLipidChart(stats.History.TotalCholesterol, filename, 'Total Cholesterol', 'mg/dL');
 };
 
 const createHDLChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.HDL, filename, 'HDL', 'mg/dL');
+    return await createLipidChart(stats.History.HDL, filename, 'HDL', 'mg/dL');
 };
 
 const createLDLChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.LDL, filename, 'LDL', 'mg/dL');
+    return await createLipidChart(stats.History.LDL, filename, 'LDL', 'mg/dL');
 };
 
 const createTriglycerideChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.TriglycerideLevel, filename, 'Triglyceride Level', 'mg/dL',true);
+    return await createLipidChart(stats.History.TriglycerideLevel, filename, 'Triglyceride Level', 'mg/dL',true);
 };
 
 const createA1CChart_LineChart = async (stats: any, filename: string) => {
-    return await createLipidChart(stats.A1CLevel, filename, 'A1C Level', '%', true);
+    return await createLipidChart(stats.History.A1CLevel, filename, 'A1C Level', '%', true);
 };
 
 const createBodyWeight_LineChart = async (stats: any, filename: string, countryCode: string) => {

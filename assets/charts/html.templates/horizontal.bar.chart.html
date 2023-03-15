@@ -35,11 +35,6 @@
 			  background: white;
 			}
 
-			#chart {
-			  height: 400px;
-			  width: 700px;
-			}
-
 			svg {
 			  shape-rendering: crispEdges;
 			}
@@ -90,6 +85,7 @@
 		const HEIGHT = 400;
 		const WIDTH = 700;
 		const fontSize  = "13px";
+		const showXAxis = true;
 
 		// customization
 
@@ -102,8 +98,10 @@
 		    const valueMargin = 10;
 		    const width = WIDTH;
 		    const height = HEIGHT;
-		    const barHeight = (height-axisMargin-margin*2)* 0.8/data.length;
-		    const barPadding = (height-axisMargin-margin*2)*0.2/data.length;
+		    // const barHeight = (height-axisMargin-margin*2)* 0.8/data.length;
+		    // const barPadding = (height-axisMargin-margin*2)*0.2/data.length;
+		    const barHeight = (height-margin*2)* 0.8/data.length;
+		    const barPadding = (height-margin*2)*0.2/data.length;
 		    var data, bar, xAxis, labelWidth = 0;
 
 			max = d3.max(data.map(function(i){ 
@@ -113,7 +111,9 @@
 			const svg = d3.select(container)
 				.append("svg")
 				.attr("width", width)
-				.attr("height", HEIGHT);
+				.attr("height", HEIGHT)
+				.attr("viewBox", [0, 0, width, height])
+				.attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
 				bar = svg.selectAll("g")
 				  .data(data)
@@ -126,6 +126,7 @@
 				     return "translate(" + margin + "," + (i * (barHeight + barPadding) + barPadding) + ")";
 				  });
 
+				//Bar headers
 				bar.append("text")
 				  .attr("class", "label")
 				  .attr("y", barHeight / 2)
@@ -133,16 +134,14 @@
 				  .text(function(d){
 				    return d[0];
 				  }).each(function() {
-				    labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+				    labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width)) + 5;
 				  });
 
 				scale = d3.scaleLinear()
 				  .domain([0, max])
 				  .range([0, width - margin*2 - labelWidth]);
 
-				xAxis = d3.axisBottom(scale)
-				  .tickSizeOuter(-height + 2*margin + axisMargin);
-
+				//Bars
 				bar.append("rect")
 				  .attr("transform", "translate("+labelWidth+", 0)")
 				  .attr("height", barHeight)
@@ -150,6 +149,7 @@
 				    return scale(d[1]);
 				  });
 
+				//Value text on the bar
 				bar.append("text")
 				  .attr("class", "value")
 				  .attr("y", barHeight / 2)
@@ -164,11 +164,16 @@
 				    return Math.max(width + valueMargin, scale(d[1]));
 				  });
 
+			  if (showXAxis) {
+				xAxis = d3.axisBottom(scale)
+				  .tickSizeOuter(-height + 2*margin + axisMargin);
+
 				svg.insert("g",":first-child")
 				 .attr("class", "axis")
 				 .style("font-size", fontSize)
 				 .attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin)+")")
 				 .call(xAxis);
+			  }
 
 			return svg.node();
 		}

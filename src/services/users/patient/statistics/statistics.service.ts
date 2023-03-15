@@ -51,7 +51,7 @@ import { PersonRepo } from "../../../../database/sql/sequelize/repositories/pers
 import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
 import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.repo";
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
-import { addSummaryPageAPart1, addSummaryPageAPart2, addSummaryPageBPart1, addSummaryPageBPart2, createSummaryCharts } from "./summary.page";
+import { addLabValuesTable, addSummaryPageAPart2, addSummaryPageBPart1, addSummaryPageBPart2, createSummaryCharts } from "./summary.page";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -510,7 +510,7 @@ export class StatisticsService {
 
     private addSummaryPageA = (document, model, pageNumber) => {
         var y = addTop(document, model);
-        y = addSummaryPageAPart1(model, document, y);
+        y = addLabValuesTable(model, document, y);
         y = y + 15;
         addSummaryPageAPart2(model, document, y);
         addBottom(document, pageNumber, model);

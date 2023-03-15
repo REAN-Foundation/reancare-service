@@ -7,7 +7,12 @@ export interface LearningPathDto {
     Description?        : string;
     ImageUrl?           : string;
     DurationInDays?     : number;
-    Courses?            : CourseDto[];
+    Courses?            : LearningCourseDto[];
     PreferenceWeight?   : number;
     Enabled?            : boolean;
+}
+
+export interface LearningCourseDto {
+    id?                 : uuid,
+    Courses?            : CourseDto[];
 }

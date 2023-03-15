@@ -8,14 +8,12 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
-    // ForeignKey,
-    // BelongsToMany,
-    // BelongsTo,
     HasMany,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import CourseLearningPath from './learning.courses.model';
+import CourseModule from './course.module.model';
+import CourseLearningPath from './learning.course.model';
 // import LearningPath from './learning.path.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -74,8 +72,9 @@ export default class Course extends Model {
     
     @HasMany(() => CourseLearningPath)
     CourseLearningPath: CourseLearningPath[];
-    // @BelongsToMany(() => LearningPath, () =>LearningCourses )
-    // LearningPath: LearningPath[];
+
+    @HasMany(() => CourseModule)
+    CourseModules: CourseModule[];
 
     @Column
     @CreatedAt

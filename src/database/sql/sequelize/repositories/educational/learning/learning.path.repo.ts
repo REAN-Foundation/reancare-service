@@ -10,7 +10,7 @@ import { LearningPathSearchFilters,
 import { ILearningPathRepo } from '../../../../../repository.interfaces/educational/learning/learning.path.repo.interface';
 import { LearningPathMapper } from '../../../mappers/educational/learning/learning.path.mapper';
 import Course from '../../../models/educational/learning/course.model';
-import LearningCourses from '../../../models/educational/learning/learning.courses.model';
+import LearningCourses from '../../../models/educational/learning/learning.course.model';
 import LearningPath from '../../../models/educational/learning/learning.path.model';
 import { CourseMapper } from '../../../mappers/educational/learning/course.mapper';
 

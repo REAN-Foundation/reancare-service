@@ -17,7 +17,7 @@ export class LearningPathMapper {
             Description      : course.Description,
             ImageUrl         : course.ImageUrl,
             DurationInDays   : course.DurationInDays,
-            Courses          : [],
+            Courses          : course.LearningCourses,
             PreferenceWeight : course.PreferenceWeight,
             Enabled          : course.Enabled,
         };

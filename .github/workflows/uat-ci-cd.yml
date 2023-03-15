@@ -54,7 +54,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   Deploy-ECS:
-    needs: Label_Checks
     environment: uat
     runs-on: ubuntu-latest
 

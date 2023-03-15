@@ -121,7 +121,7 @@ export class UserHelper {
         patient.HealthProfile = healthProfile;
         return patient;
     };
- 
+
     private async addAddress(createModel: PatientDomainModel, person: PersonDetailsDto)
         : Promise<AddressDto> {
         if (createModel.Address) {

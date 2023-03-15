@@ -15,7 +15,7 @@ on:
       - 'release/**'
       - '!release/aha**'   # excludes master
     
-  pull_request:
+  pull_request_target:
     types: [opened, edited]
     branches: main
 

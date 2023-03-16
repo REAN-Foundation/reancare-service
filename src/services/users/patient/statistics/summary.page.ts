@@ -13,14 +13,14 @@ import {
     RECTANGULAR_CHART_HEIGHT,
     RECTANGULAR_CHART_WIDTH,
     TableRowProperties } from "./report.helper";
-import { 
-    addSectionTitle, 
-    addLegend, 
-    SECOND_COLUMN_START, 
-    addFirstColumnSectionTitle, 
-    addNoDataDisplayFirstColumn, 
-    addNoDataDisplaySecondColumn, 
-    addSecondColumnSectionTitle 
+import {
+    addSectionTitle,
+    addLegend,
+    SECOND_COLUMN_START,
+    addFirstColumnSectionTitle,
+    addNoDataDisplayFirstColumn,
+    addNoDataDisplaySecondColumn,
+    addSecondColumnSectionTitle
 } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
         var m = {
             x : k,
             y : moods[k]
-        }
+        };
         data.push(m);
     }
     return await ChartGenerator.createHorizontalBarChart(data, options, filename);
@@ -364,7 +364,7 @@ function addDailyMovementQuestionSummary(y: any, document: PDFKit.PDFDocument, m
         y = addLegend(document, y, legend, legendStartX, legendFontSize, 25, 8, 5);
         y = yFrozen + imageWidth + 25; //Image height
 
-        y = y + 2;    
+        y = y + 2;
     }
     return y;
 }
@@ -423,4 +423,4 @@ function addMoodsSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     return y;
 }
 
-//#endregion 
+//#endregion

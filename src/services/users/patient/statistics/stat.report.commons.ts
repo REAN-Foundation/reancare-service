@@ -223,11 +223,10 @@ export const addLabeledEntry = (
         .moveDown();
 };
 
-
-export const addFirstColumnSectionTitle = (document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
+export const addFirstColumnSectionTitle = (
+    document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
     y = y + 14;
 
-    //DrawLine(document, y);
     document
         .roundedRect(50, y, 230, 35, 2)
         .lineWidth(0.1)
@@ -262,7 +261,8 @@ export const addFirstColumnSectionTitle = (document: PDFKit.PDFDocument, y: numb
     return y;
 };
 
-export const addSecondColumnSectionTitle = (document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
+export const addSecondColumnSectionTitle = (
+    document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
     y = y + 14;
 
     //DrawLine(document, y);

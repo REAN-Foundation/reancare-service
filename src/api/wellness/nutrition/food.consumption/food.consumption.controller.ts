@@ -218,7 +218,7 @@ export class FoodConsumptionController extends BaseController {
                 model.Servings,
                 model.ServingUnit,
                 'Nutrition-Fruit'
-                );
+            );
         }
         if (model.FoodTypes[0] === "Vegetables") {
             EHRAnalyticsHandler.addFloatRecord(
@@ -228,7 +228,7 @@ export class FoodConsumptionController extends BaseController {
                 model.Servings,
                 model.ServingUnit,
                 'Nutrition-Vegetables'
-                );
+            );
         }
         if (model.FoodTypes[0] === "Sugary drinks") {
             EHRAnalyticsHandler.addFloatRecord(
@@ -238,7 +238,7 @@ export class FoodConsumptionController extends BaseController {
                 model.Servings,
                 model.ServingUnit,
                 'Nutrition-SugaryDrinks'
-                );
+            );
         }
         if (model.FoodTypes[0] === "Salt") {
             EHRAnalyticsHandler.addBooleanRecord(
@@ -248,7 +248,7 @@ export class FoodConsumptionController extends BaseController {
                 model.UserResponse,
                 model.ServingUnit,
                 'Nutrition-Salt'
-                );
+            );
         }
         if (model.FoodTypes[0] === "Sea food") {
             EHRAnalyticsHandler.addFloatRecord(
@@ -258,7 +258,7 @@ export class FoodConsumptionController extends BaseController {
                 model.Servings,
                 model.ServingUnit,
                 'Nutrition-SeaFood'
-                );
+            );
         }
         if (model.FoodTypes[0] === "Grains") {
             EHRAnalyticsHandler.addFloatRecord(
@@ -268,7 +268,7 @@ export class FoodConsumptionController extends BaseController {
                 model.Servings,
                 model.ServingUnit,
                 'Nutrition-Grains'
-                );
+            );
         }
         if (model.FoodTypes[0] === "Protein") {
             EHRAnalyticsHandler.addBooleanRecord(
@@ -278,7 +278,7 @@ export class FoodConsumptionController extends BaseController {
                 model.UserResponse,
                 model.ServingUnit,
                 'Nutrition-Protein'
-                );
+            );
         }
 
     };

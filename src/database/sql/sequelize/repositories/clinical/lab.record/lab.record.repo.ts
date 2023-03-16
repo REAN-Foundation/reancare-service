@@ -358,7 +358,7 @@ export class LabRecordRepo implements ILabRecordRepo {
                 },
                 order : [['RecordedAt', 'DESC']]
             });
-            return await LabRecordMapper.toDto(record);
+            return LabRecordMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

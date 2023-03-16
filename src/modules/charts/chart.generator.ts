@@ -214,7 +214,7 @@ export class ChartGenerator {
 
     private static createHorizontalBarChartTextBlock(data: any[], options: BarChartOptions) {
         let dataStr = `\n\tconst data = [\n`;
-        for (var d of data) {
+        for (const d of data) {
             const str = `\t\t[ "${d.x?.toString()}", ${d.y?.toString()} ],\n`;
             dataStr += str;
         }

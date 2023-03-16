@@ -19,18 +19,20 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
     var detailedTitle = 'Body Weight (Kg) Trend Over 6 Months';
     const titleColor = '#505050';
     const sectionTitle = 'Body Weight';
+
     const icon = Helper.getIconsPath('body-weight.png');
     y = addSectionTitle(document, y, sectionTitle, icon);
 
+    var detailedTitle = 'Body Weight (lbs) Trend Over 6 Months';
+    var startingWeight = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight * 2.20462;
+    var currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight * 2.20462;
+    var totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange * 2.20462;
+
     if (model.Stats.CountryCode === '+91'){
-        var startingWeight = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight;
-        var currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight;
-        var totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange;
-    } else {
-        detailedTitle = 'Body Weight (lbs) Trend Over 6 Months';
-        startingWeight = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight * 2.20462;
-        currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight * 2.20462;
-        totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange * 2.20462;
+        detailedTitle = 'Body Weight (Kg) Trend Over 6 Months';
+        startingWeight = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight;
+        currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight;
+        totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange;
     }
 
     if (!chartExists(model, chartImage)) {
@@ -383,16 +385,15 @@ const createBodyWeight_LineChart = async (stats: any, filename: string, countryC
         return null;
     }
     var options: LineChartOptions = DefaultChartOptions.lineChart();
-    if (countryCode === '+91') {
-        var temp = stats.map(c => {
-            return {
-                x : new Date(c.DayStr),
-                y : c.BodyWeight
-            };
-        });
-        options.YLabel = 'Kg';
+    var temp = stats.map(c => {
+        return {
+            x : new Date(c.DayStr),
+            y : c.BodyWeight
+        };
+    });
+    options.YLabel = 'Kg';
 
-    } else {
+    if (countryCode !== '+91') {
         options.YLabel = 'lbs';
         temp = stats.map(c => {
             return {

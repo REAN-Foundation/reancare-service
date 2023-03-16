@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html>
-<!-- Reference: https://observablehq.com/collection/@d3/charts -->
 
-<head>
+<head lang="en">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=320" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<title>Horizontal Bar Chart</title>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3@7" />
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-array@3"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-format@3"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-interpolate@3"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-time@3"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-time-format@4"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-scale@4"></script>
-	</script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3@7"/>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-array@3"/>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-color@3"/>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-format@3"/>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-interpolate@3"/>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-time@3"/>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-time-format@4"/>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-scale@4"/>
 	<style>
 		body {
 			font-family: Helvetica, Arial, sans-serif;
@@ -89,8 +87,7 @@
 
 		// customization
 
-		function barChart(container, data, {
-		} = {}) {
+		function barChart(container, data) {
 
 			// Compute values.
 			const axisMargin = 20;
@@ -98,13 +95,11 @@
 		    const valueMargin = 10;
 		    const width = WIDTH;
 		    const height = HEIGHT;
-		    // const barHeight = (height-axisMargin-margin*2)* 0.8/data.length;
-		    // const barPadding = (height-axisMargin-margin*2)*0.2/data.length;
 		    const barHeight = (height-margin*2)* 0.8/data.length;
 		    const barPadding = (height-margin*2)*0.2/data.length;
-		    var data, bar, xAxis, labelWidth = 0;
+		    var bar, xAxis, labelWidth = 0;
 
-			max = d3.max(data.map(function(i){ 
+			var max = d3.max(data.map(function(i){ 
 			  return i[1];
 			}));
 
@@ -137,7 +132,7 @@
 				    labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width)) + 5;
 				  });
 
-				scale = d3.scaleLinear()
+				var scale = d3.scaleLinear()
 				  .domain([0, max])
 				  .range([0, width - margin*2 - labelWidth]);
 

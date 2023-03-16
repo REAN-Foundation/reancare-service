@@ -347,7 +347,7 @@ export class LabRecordRepo implements ILabRecordRepo {
             }
         });
         return records.sort((a, b) => b.RecordedAt.getTime() - a.RecordedAt.getTime());
-    }
+    };
 
     getRecent = async (patientUserId: string, displayName: string): Promise<LabRecordDto> => {
         try {

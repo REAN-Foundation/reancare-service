@@ -12,8 +12,16 @@ import {
     findKeyCounts,
     RECTANGULAR_CHART_HEIGHT,
     RECTANGULAR_CHART_WIDTH,
-    TableRowProperties} from "./report.helper";
-import { addSectionTitle, addLegend, SECOND_COLUMN_START, addFirstColumnSectionTitle, addNoDataDisplayFirstColumn, addNoDataDisplaySecondColumn, addSecondColumnSectionTitle } from "./stat.report.commons";
+    TableRowProperties } from "./report.helper";
+import { 
+    addSectionTitle, 
+    addLegend, 
+    SECOND_COLUMN_START, 
+    addFirstColumnSectionTitle, 
+    addNoDataDisplayFirstColumn, 
+    addNoDataDisplaySecondColumn, 
+    addSecondColumnSectionTitle 
+} from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -218,8 +226,8 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
     var data = [];
     for (var k of Object.keys(moods)) {
         var m = {
-            x: k,
-            y: moods[k]
+            x : k,
+            y : moods[k]
         }
         data.push(m);
     }

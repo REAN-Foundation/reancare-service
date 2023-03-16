@@ -14,6 +14,10 @@ on:
     branches:
       - 'release/**'
       - '!release/aha**'   # excludes master
+    
+  pull_request:
+    types: [opened, edited]
+    branches: main
 
 jobs:
   CodeScan-ESLint:
@@ -33,8 +37,23 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
+          
+  Label_Checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Check labels
+      - uses: docker://agilepathway/pull-request-label-checker:latest
+        with:
+          one_of: major,minor,patch
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   Deploy-ECS:
+    needs: Label_Checks
     environment: uat
     runs-on: ubuntu-latest
 

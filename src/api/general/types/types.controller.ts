@@ -1,10 +1,11 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
-import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, SeverityList } from '../../../domain.types/miscellaneous/system.types';
+import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, SeverityList, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { TypesService } from '../../../services/general/types.service';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
+import { TypesValidator } from './types.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,10 +14,13 @@ export class TypesController extends BaseController {
     //#region member variables and constructors
 
     _service: TypesService = null;
+    
+    _validator = new TypesValidator();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(TypesService);
+       
     }
 
     //#endregion
@@ -178,6 +182,94 @@ export class TypesController extends BaseController {
                 LabRecordTypes : labRecordTypes,
             });
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createPriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('HealthPriorityType.Create', request, response);
+
+            const domainModel = await this._validator.createPriorityType(request);
+            const priorityType = await this._service.createPriorityType(domainModel);
+            if (priorityType == null) {
+                throw new ApiError(400, 'Cannot create priority type!');
+            }
+
+            ResponseHandler.success(request, response, 'Priority type created successfully!', 201, {
+                PriorityType : priorityType,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPriorityTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('HealthPriorityType.GetById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const priorityType = await this._service.getPriorityTypeById(id);
+            if (priorityType == null) {
+                throw new ApiError(404, 'Priority type not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Priority type retrieved successfully!', 200, {
+                PriorityType : priorityType,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updatePriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('HealthPriorityType.Update', request, response);
+
+            const domainModel = await this._validator.updatePriorityType(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getPriorityTypeById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Priority type not found.');
+            }
+
+            const updated = await this._service.updatePriorityType(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update a priority type!');
+            }
+
+            ResponseHandler.success(request, response, 'Priority type updated successfully!', 200, {
+                PriorityType : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deletePriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('HealthPriorityType.Delete', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getPriorityTypeById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Priority type record not found.');
+            }
+
+            const deleted = await this._service.deletePriorityType(id);
+            if (!deleted) {
+                throw new ApiError(400, 'Priority type can not be deleted.');
+            }
+
+            ResponseHandler.success(request, response, ' Priority type deleted successfully!', 200, {
+                Deleted : true,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

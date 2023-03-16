@@ -8,6 +8,7 @@ import { OrganizationTypeList } from "../../domain.types/general/organization/or
 import { RoleDto } from "../../domain.types/role/role.dto";
 import { LabRecordTypeDto } from "../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
 import { ILabRecordRepo } from "../../database/repository.interfaces/clinical/lab.record/lab.record.interface";
+import { HealthPriorityTypeDomainModel } from "../../domain.types/users/patient/health.priority.type/health.priority.type.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,6 +59,24 @@ export class TypesService {
         }
 
         return labRecordTypes;
+    };
+
+    createPriorityType = async (healthPriorityTypeDomainModel: HealthPriorityTypeDomainModel):
+     Promise<HealthPriorityTypeDto> => {
+        return await this._healthPriorityRepo.createType(healthPriorityTypeDomainModel);
+    };
+
+    getPriorityTypeById = async (id: string): Promise<HealthPriorityTypeDto> => {
+        return await this._healthPriorityRepo.getPriorityTypeById(id);
+    };
+
+    updatePriorityType = async (id: string, healthPriorityTypeDomainModel: HealthPriorityTypeDomainModel):
+     Promise<HealthPriorityTypeDto> => {
+        return await this._healthPriorityRepo.updatePriorityType(id, healthPriorityTypeDomainModel);
+    };
+
+    deletePriorityType = async (id: string): Promise<boolean> => {
+        return await this._healthPriorityRepo.deletePriorityType(id);
     };
 
 }

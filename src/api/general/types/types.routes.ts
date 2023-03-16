@@ -20,6 +20,12 @@ export const register = (app: express.Application): void => {
     router.get('/severities', authenticator.authenticateClient, controller.getSeverities);
     router.get('/priorities', authenticator.authenticateClient, controller.getPriorityTypes);
     router.get('/lab-records', authenticator.authenticateClient, controller.getLabRecordTypes);
+    
+    //Priority type
+    router.post('/priorities/', authenticator.authenticateClient, authenticator.authenticateUser, controller.createPriorityType);
+    router.get('/priorities/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPriorityTypeById);
+    router.put('/priorities/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.updatePriorityType);
+    router.delete('/priorities/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.deletePriorityType);
 
     app.use('/api/v1/types', router);
 };

@@ -204,7 +204,12 @@
             "SymptomType.GetById",
             "SymptomType.Update",
             "SymptomType.Search",
-            "SymptomType.Delete"
+            "SymptomType.Delete",
+            "HealthPriorityType.Create",
+            "HealthPriorityType.GetById",
+            "HealthPriorityType.Update",
+            "HealthPriorityType.Delete"
+
         ]
     },
     {

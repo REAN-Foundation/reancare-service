@@ -254,7 +254,7 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
 
 function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'NutritionQuestionSummary_LastMonth';
-    const sectionTitle = 'Nutrition Question Summary';
+    const sectionTitle = 'Nutrition Questions';
     const icon = Helper.getIconsPath('nutrition.png');
 
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
@@ -263,11 +263,10 @@ function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model
         y = addNoDataDisplayFirstColumn(document, y);
     } else {
         const yFrozen = y;
-        y = y + 9;
         const imageWidth = 140;
         const startX = 50;
         const chart = model.ChartImagePaths.find(x => x.key === chartImage);
-        document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
+        document.image(chart.location, startX, y, { width: imageWidth, align: 'center', height: 100 });
         document.fontSize(7);
         document.moveDown();
 
@@ -275,8 +274,8 @@ function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model
         
         const legendY = 25;
         y = yFrozen + legendY;
-        const legendFontSize = 9;
-        const legendStartX = startX + 135;
+        const legendFontSize = 8;
+        const legendStartX = startX + 155;
         const colorStripWidth = 20;
         const legendRowOffset = 10;
         const colors = getNutritionQuestionCategoryColors();

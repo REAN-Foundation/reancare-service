@@ -582,7 +582,7 @@ export class Seeder {
             };
 
             const existingRecord = await this._labRecordService.searchType(filters);
-            console.log(JSON.stringify(existingRecord, null, 2));
+            //console.log(JSON.stringify(existingRecord, null, 2));
             if (existingRecord.Items.length > 0) {
                 Logger.instance().log(`Lab record type has already been exist ${c['DisplayName']}!`);
                 continue;

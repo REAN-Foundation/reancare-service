@@ -1,34 +1,26 @@
 import { TimeHelper } from "../../../../common/time.helper";
 import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
-import { BarChartOptions, ChartColors, LineChartOptions, MultiBarChartOptions, PieChartOptions } from "../../../../modules/charts/chart.options";
+import { BarChartOptions, ChartColors, LineChartOptions, MultiBarChartOptions } from "../../../../modules/charts/chart.options";
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
-import { createFeelings_DonutChart, getFeelingsColors, getMoodsColors } from "./daily.assessments.stats";
+import { createFeelings_DonutChart, getFeelingsColors } from "./daily.assessments.stats";
 import { createMedicationConsumption_DonutChart, getMedicationStatusCategoryColors } from "./medication.stats";
 import { getNutritionQuestionCategoryColors } from "./nutrition.stats";
 import {
     addTableRow,
     chartExists,
-    constructDonutChartData,
     findKeyCounts,
     RECTANGULAR_CHART_HEIGHT,
     RECTANGULAR_CHART_WIDTH,
-    SQUARE_CHART_HEIGHT,
-    SQUARE_CHART_WIDTH,
-    TableRowProperties,
-    addSquareChartImageWithLegend,
-    addSquareChartImage, 
-    addRectangularChartImage} from "./report.helper";
-import { addSectionTitle, addNoDataDisplay, addLegend, addText } from "./stat.report.commons";
-
-const SECOND_COLUMN_START = 310;
+    TableRowProperties} from "./report.helper";
+import { addSectionTitle, addLegend, SECOND_COLUMN_START, addFirstColumnSectionTitle, addNoDataDisplayFirstColumn, addNoDataDisplaySecondColumn, addSecondColumnSectionTitle } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 
 export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
-    const sectionTitle = 'Lab Values over Past 30 Days';
-    const icon = Helper.getIconsPath('body-weight.png');
+    const sectionTitle = 'Changes in Lab Values and Body Weight';
+    const icon = Helper.getIconsPath('blood-lipids.png');
     y = addSectionTitle(document, y, sectionTitle, icon);
 
     var useBodyWeightKg = false;
@@ -46,15 +38,15 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
 
     const vals = [];
     vals.push([true, 'Value', 'Starting', 'Current', 'Change']);
-    vals.push([false, useBodyWeightKg ? 'Body weight (Kg)' : 'Body weight (lbs)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
     vals.push([false, 'Blood Glucose (mg/dL)', labValues.BloodGlucose.StartingBloodGlucose, labValues.BloodGlucose.CurrentBloodGlucose, labValues.BloodGlucose.TotalChange]);
     vals.push([false, 'BP (mmHg) - Systolic', labValues.BloodPressure.StartingSystolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureSystolic, labValues.BloodPressure.TotalChangeSystolic]);
     vals.push([false, 'BP (mmHg) - Diastolic', labValues.BloodPressure.StartingDiastolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureDiastolic, labValues.BloodPressure.TotalChangeDiastolic]);
-    vals.push([false, 'Total Cholesterol', labValues.Lipids.TotalCholesterol.StartingTotalCholesterol, labValues.Lipids.TotalCholesterol.CurrentTotalCholesterol, labValues.Lipids.TotalCholesterol.TotalCholesterolChange]);
-    vals.push([false, 'HDL', labValues.Lipids.HDL.StartingHDL, labValues.Lipids.HDL.CurrentHDL, labValues.Lipids.HDL.TotalHDLChange]);
-    vals.push([false, 'LDL', labValues.Lipids.LDL.StartingLDL, labValues.Lipids.LDL.CurrentLDL, labValues.Lipids.LDL.TotalLDLChange]);
-    vals.push([false, 'Triglyceride', labValues.Lipids.TriglycerideLevel.StartingTriglycerideLevel, labValues.Lipids.TriglycerideLevel.CurrentTriglycerideLevel, labValues.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange]);
-    vals.push([false, 'A1C level', labValues.Lipids.A1CLevel.StartingA1CLevel, labValues.Lipids.A1CLevel.CurrentA1CLevel, labValues.Lipids.A1CLevel.TotalA1CLevelChange]);
+    vals.push([false, 'Total Cholesterol (mg/dL)', labValues.Lipids.TotalCholesterol.StartingTotalCholesterol, labValues.Lipids.TotalCholesterol.CurrentTotalCholesterol, labValues.Lipids.TotalCholesterol.TotalCholesterolChange]);
+    vals.push([false, 'HDL (mg/dL)', labValues.Lipids.HDL.StartingHDL, labValues.Lipids.HDL.CurrentHDL, labValues.Lipids.HDL.TotalHDLChange]);
+    vals.push([false, 'LDL (mg/dL)', labValues.Lipids.LDL.StartingLDL, labValues.Lipids.LDL.CurrentLDL, labValues.Lipids.LDL.TotalLDLChange]);
+    vals.push([false, 'Triglyceride (mg/dL)', labValues.Lipids.TriglycerideLevel.StartingTriglycerideLevel, labValues.Lipids.TriglycerideLevel.CurrentTriglycerideLevel, labValues.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange]);
+    vals.push([false, 'A1C level (%)', labValues.Lipids.A1CLevel.StartingA1CLevel, labValues.Lipids.A1CLevel.CurrentA1CLevel, labValues.Lipids.A1CLevel.TotalA1CLevelChange]);
+    vals.push([false, useBodyWeightKg ? 'Body weight (Kg)' : 'Body weight (lbs)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
 
     for (var r of vals) {
         const row: TableRowProperties = {
@@ -85,7 +77,7 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
     return y;
 };
 
-export const addSummaryPageAPart2 = (model: any, document: PDFKit.PDFDocument, y: any) => {
+export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: any) => {
     const rowShift = 143;
     var yFrozen = y;
     y = addMedicationSummary(y, document, model);
@@ -97,29 +89,13 @@ export const addSummaryPageAPart2 = (model: any, document: PDFKit.PDFDocument, y
     y = yFrozen;
     y = addDailyMovementQuestionSummary(y, document, model);
     yFrozen += rowShift;
-    // y = yFrozen;
-    // y = addSymptomSummary(y, document, model);
-    // y = yFrozen;
-    // y = addMoodsSummary(y, document, model);
-    // yFrozen += rowShift;
+    y = yFrozen;
+    y = addSymptomSummary(y, document, model);
+    y = yFrozen;
+    y = addMoodsSummary(y, document, model);
+    yFrozen += rowShift;
     y = yFrozen;
     return y;
-};
-
-export const addSummaryPageBPart1 = (model: any, document: PDFKit.PDFDocument, y: any) => {
-
-    // y = addNutritionQuestionSummary(y, document, model);
-    // y = addDailyMovementQuestionSummary(y, document, model);
-
-    return y;
-};
-
-export const addSummaryPageBPart2 = (model: any, document: PDFKit.PDFDocument, y: any) => {
-    // const yFrozen = y;
-    // y = addSymptomSummary(y, document, model);
-    // y = yFrozen;
-    // y = addMoodsSummary(y, document, model);
-    // return y;
 };
 
 export const createSummaryCharts = async (data) => {
@@ -252,6 +228,59 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
 
 //#region Add to PDF
 
+function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'MedicationsSummary_LastMonth';
+    const sectionTitle = 'Medication Adherence';
+    const icon = Helper.getIconsPath('medications.png');
+    const legend = getMedicationStatusCategoryColors();
+    y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplayFirstColumn(document, y);
+    } else {
+        y = y + 9;
+
+        const imageWidth = 90;
+        const startX = 55;
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        document.image(chart.location, startX, y, { width: imageWidth, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+    
+        const yFrozen = y;
+        const legendY = 30;
+        y = yFrozen + legendY;
+        const legendFontSize = 9;
+        const legendStartX = startX + 135;
+        const colorStripWidth = 20;
+        const legendRowOffset = 10;
+        y = addLegend(document, y, legend, legendStartX, legendFontSize, colorStripWidth, 6, 5, legendRowOffset);
+        y = yFrozen + imageWidth + 25;
+
+        y = y + 2;
+    }
+    return y;
+}
+
+function addBodyWeightSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'BodyWeightSummary_LastMonth';
+    const sectionTitle = 'Body weight';
+    const icon = Helper.getIconsPath('body-weight.png');
+    y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplaySecondColumn(document, y);
+    } else {
+        y = y + 20;
+        const imageWidth = 200;
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        document.image(chart.location, SECOND_COLUMN_START + 5, y, { width: imageWidth, align: 'center' });
+        document.moveDown();
+        y = y + 135;
+    }
+    return y;
+}
+
 function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'NutritionQuestionSummary_LastMonth';
     const sectionTitle = 'Nutrition Questions';
@@ -262,16 +291,15 @@ function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model
     if (!chartExists(model, chartImage)) {
         y = addNoDataDisplayFirstColumn(document, y);
     } else {
+        y = y + 15;
         const yFrozen = y;
         const imageWidth = 140;
         const startX = 50;
         const chart = model.ChartImagePaths.find(x => x.key === chartImage);
-        document.image(chart.location, startX, y, { width: imageWidth, align: 'center', height: 100 });
+        document.image(chart.location, startX, y, { width: imageWidth, align: 'center', height: 80 });
         document.fontSize(7);
         document.moveDown();
 
-        //y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-        
         const legendY = 25;
         y = yFrozen + legendY;
         const legendFontSize = 8;
@@ -333,11 +361,11 @@ function addDailyMovementQuestionSummary(y: any, document: PDFKit.PDFDocument, m
     return y;
 }
 
-function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) {
-    const chartImage = 'MedicationsSummary_LastMonth';
-    const sectionTitle = 'Medication Adherence';
-    const icon = Helper.getIconsPath('medications.png');
-    const legend = getMedicationStatusCategoryColors();
+function addSymptomSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'SymptomsSummary_LastMonth';
+    const sectionTitle = 'Relative Symptoms';
+    const icon = Helper.getIconsPath('feelings.png');
+    const legend = getFeelingsColors();
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 
     if (!chartExists(model, chartImage)) {
@@ -363,22 +391,22 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
         y = yFrozen + imageWidth + 25; //Image height
 
         y = y + 2;
+        //y = addSquareChartImageWithLegend(document, model, chartImage, y, detailedTitle, titleColor, legend, 40, 150);
     }
     return y;
 }
 
-function addBodyWeightSummary(y: any, document: PDFKit.PDFDocument, model: any) {
-    const chartImage = 'BodyWeightSummary_LastMonth';
-    const sectionTitle = 'Body weight';
-    const icon = Helper.getIconsPath('body-weight.png');
+function addMoodsSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'MoodsSummary_LastMonth';
+    const sectionTitle = 'Moods';
+    const icon = Helper.getIconsPath('moods.png');
     y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);
 
     if (!chartExists(model, chartImage)) {
         y = addNoDataDisplaySecondColumn(document, y);
     } else {
         y = y + 20;
-        //y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor, );
-        const imageWidth = 200;
+        const imageWidth = 240;
         const chart = model.ChartImagePaths.find(x => x.key === chartImage);
         document.image(chart.location, SECOND_COLUMN_START + 5, y, { width: imageWidth, align: 'center' });
         document.moveDown();
@@ -386,178 +414,5 @@ function addBodyWeightSummary(y: any, document: PDFKit.PDFDocument, model: any) 
     }
     return y;
 }
-
-function addSymptomSummary(y: any, document: PDFKit.PDFDocument, model: any) {
-    const chartImage = 'SymptomsSummary_LastMonth';
-    const detailedTitle = 'Relative Symptoms over Past 30 Days';
-    const titleColor = '#505050';
-    const sectionTitle = 'Relative Symptoms';
-    const icon = Helper.getIconsPath('feelings.png');
-
-    y = addSectionTitle(document, y, sectionTitle, icon);
-
-    if (!chartExists(model, chartImage)) {
-        y = addNoDataDisplay(document, y);
-    } else {
-        y = y + 25;
-        const legend = getFeelingsColors();
-        y = addSquareChartImageWithLegend(document, model, chartImage, y, detailedTitle, titleColor, legend, 40, 150);
-    }
-    return y;
-}
-
-function addMoodsSummary(y: any, document: PDFKit.PDFDocument, model: any) {
-    const chartImage = 'MoodsSummary_LastMonth';
-    const detailedTitle = 'Moods over Past 30 Days';
-    const titleColor = '#505050';
-    // const sectionTitle = 'Summary of Moods';
-    // const icon = Helper.getIconsPath('feelings.png');
-
-    // y = addSectionTitle(document, y, sectionTitle, icon);
-
-    if (!chartExists(model, chartImage)) {
-        y = addNoDataDisplay(document, y);
-    } else {
-        y = y + 25;
-        y = addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor);
-    }
-    return y;
-}
-
-const addFirstColumnSectionTitle = (document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
-    y = y + 14;
-
-    //DrawLine(document, y);
-    document
-        .roundedRect(50, y, 230, 35, 2)
-        .lineWidth(0.1)
-        .fillOpacity(0.8)
-        .fill("#e8ecef");
-
-    y = y + 10;
-
-    if (icon) {
-        document.image(icon, 65, y, { width: 16 });
-    }
-
-    y = y + 4;
-
-    document
-        .fillOpacity(1.0)
-        .lineWidth(1)
-        .fill("#444444");
-
-    document
-        .fillColor("#444444")
-        .font('Helvetica')
-        .fontSize(12);
-
-    document
-        .font('Helvetica-Bold')
-        .text(pageTitle, 92, y, { align: "left" })
-        .moveDown();
-
-    y = y + 17;
-
-    return y;
-};
-
-const addSecondColumnSectionTitle = (document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
-    y = y + 14;
-
-    //DrawLine(document, y);
-    document
-        .roundedRect(SECOND_COLUMN_START, y, 230, 35, 2)
-        .lineWidth(0.1)
-        .fillOpacity(0.8)
-        .fill("#e8ecef");
-
-    y = y + 10;
-
-    if (icon) {
-        document.image(icon, SECOND_COLUMN_START + 16, y, { width: 16 });
-    }
-
-    y = y + 4;
-
-    document
-        .fillOpacity(1.0)
-        .lineWidth(1)
-        .fill("#444444");
-
-    document
-        .fillColor("#444444")
-        .font('Helvetica')
-        .fontSize(12);
-
-    document
-        .font('Helvetica-Bold')
-        .text(pageTitle, SECOND_COLUMN_START + 40, y, { align: "left" })
-        .moveDown();
-
-    y = y + 17;
-
-    return y;
-};
-
-const addNoDataDisplayFirstColumn = (document: PDFKit.PDFDocument, y: number): number => {
-    y = y + 60;
-
-    document
-        .roundedRect(60, y, 200, 35, 2)
-        .lineWidth(0.1)
-        .fillOpacity(0.8)
-        .fill(ChartColors.Salmon);
-
-    y = y + 13;
-
-    document
-        .fillOpacity(1.0)
-        .fill("#444444");
-
-    document
-        .fillColor("#444444")
-        .font('Helvetica')
-        .fontSize(10);
-
-    document
-        .font('Helvetica-Bold')
-        .text("Data not available!", 65, y, { align: "left" })
-        .moveDown();
-
-    y = y + 120;
-
-    return y;
-};
-
-const addNoDataDisplaySecondColumn = (document: PDFKit.PDFDocument, y: number): number => {
-    y = y + 60;
-
-    document
-        .roundedRect(SECOND_COLUMN_START, y, 200, 35, 2)
-        .lineWidth(0.1)
-        .fillOpacity(0.8)
-        .fill(ChartColors.Salmon);
-
-    y = y + 13;
-
-    document
-        .fillOpacity(1.0)
-        .fill("#444444");
-
-    document
-        .fillColor("#444444")
-        .font('Helvetica')
-        .fontSize(10);
-
-    document
-        .font('Helvetica-Bold')
-        .text("Data not available!", SECOND_COLUMN_START + 10, y, { align: "left" })
-        .moveDown();
-
-    y = y + 120;
-
-    return y;
-};
 
 //#endregion 

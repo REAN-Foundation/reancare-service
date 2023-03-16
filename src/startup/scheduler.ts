@@ -64,7 +64,7 @@ export class Scheduler {
             (async () => {
                 Logger.instance().log('Running scheducled jobs: temp file clean-up...');
                 var service = Loader.container.resolve(FileResourceService);
-                //await service.cleanupTempFiles();
+                await service.cleanupTempFiles();
             })();
         });
     };

@@ -51,7 +51,7 @@ import { PersonRepo } from "../../../../database/sql/sequelize/repositories/pers
 import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
 import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.repo";
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
-import { addLabValuesTable, addSummaryPageAPart2, addSummaryPageBPart1, addSummaryPageBPart2, createSummaryCharts } from "./summary.page";
+import { addLabValuesTable, addSummaryGraphs, createSummaryCharts } from "./summary.page";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -439,10 +439,9 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 12;
+            reportModel.TotalPages = 11;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
-            pageNumber = this.addSummaryPageA(document, reportModel, pageNumber);
-            pageNumber = this.addSummaryPageB(document, reportModel, pageNumber);
+            pageNumber = this.addSummaryPage(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
@@ -499,7 +498,7 @@ export class StatisticsService {
     //#region Pages
 
     private addMainPage = (document, model, pageNumber) => {
-        var y = addTop(document, model, false);
+        var y = addTop(document, model, null, false);
         y = addReportMetadata(document, model, y);
         y = addReportSummary(document, model, y);
         addHealthJourney(document, model, y);
@@ -508,21 +507,11 @@ export class StatisticsService {
         return pageNumber;
     };
 
-    private addSummaryPageA = (document, model, pageNumber) => {
-        var y = addTop(document, model);
+    private addSummaryPage = (document, model, pageNumber) => {
+        var y = addTop(document, model, 'Summary over Last 30 Days');
         y = addLabValuesTable(model, document, y);
         y = y + 15;
-        addSummaryPageAPart2(model, document, y);
-        addBottom(document, pageNumber, model);
-        pageNumber += 1;
-        return pageNumber;
-    };
-
-    private addSummaryPageB = (document, model, pageNumber) => {
-        var y = addTop(document, model);
-        y = addSummaryPageBPart1(model, document, y);
-        y = y + 15;
-        addSummaryPageBPart2(model, document, y);
+        addSummaryGraphs(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;

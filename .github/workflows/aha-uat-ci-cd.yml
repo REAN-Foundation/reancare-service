@@ -75,17 +75,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build and push
+      - name: Pull Docker Image
         id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./
-          file: ./Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: public.ecr.aws/i9y2d4u3/reancare:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+        run: |
+          docker pull 167414264568.dkr.ecr.us-west-2.amazonaws.com/reancare-service-dev-uat:develop_1b3fa45
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

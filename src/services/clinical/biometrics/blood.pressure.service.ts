@@ -87,6 +87,6 @@ export class BloodPressureService {
         for await (var device of deviceList) {
             await Loader.notificationService.sendNotificationToDevice(device.Token, message);
         }
-    }
+    };
 
 }

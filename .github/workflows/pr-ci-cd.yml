@@ -41,8 +41,9 @@ jobs:
             repo: https://github.com/REAN-Foundation/reancare-service.git
           
        - run: |
-          echo ${{ steps.tagname.outputs.tag/v }}
-  
+          tagname=`echo ${{ steps.tagname.outputs.tag }}`
+          echo $tagname//v
+          
   Build-Docker-Image:
     runs-on: 
       group: Default Larger Runners

@@ -42,7 +42,7 @@ jobs:
           
        - run: |
           tagname=`echo ${{ steps.tagname.outputs.tag }}`
-          echo $tagname//v
+          echo "${tagname//v}"
           
   Build-Docker-Image:
     runs-on: 

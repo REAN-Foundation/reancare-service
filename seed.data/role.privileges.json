@@ -204,7 +204,25 @@
             "SymptomType.GetById",
             "SymptomType.Update",
             "SymptomType.Search",
-            "SymptomType.Delete"
+            "SymptomType.Delete",
+            "HealthPriorityType.Create",
+            "HealthPriorityType.GetById",
+            "HealthPriorityType.Update",
+            "HealthPriorityType.Delete",
+            "RoleType.Create",
+            "RoleType.GetById",
+            "RoleType.Update",
+            "RoleType.Delete",
+            "LabRecordType.Create",
+            "LabRecordType.GetById",
+            "LabRecordType.Update",
+            "LabRecordType.Delete",
+            "GoalType.Create",
+            "GoalType.GetById",
+            "GoalType.GetGoalTypes",
+            "GoalType.Update",
+            "GoalType.Delete"
+
         ]
     },
     {

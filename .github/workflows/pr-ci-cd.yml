@@ -38,7 +38,7 @@ jobs:
        - uses: tdemin/find-latest-tag@v1
          id: tagname
          with:
-            repo: https://github.com/13AMohit/wordpress.git
+            repo: https://github.com/REAN-Foundation/reancare-service.git
           
        - run: |
           echo ${{ steps.tagname.outputs.tag }}

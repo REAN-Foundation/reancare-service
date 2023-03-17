@@ -32,6 +32,17 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: develop
 
+  Get_Tag:
+    runs-on: ubuntu-latest
+    steps:
+       - uses: tdemin/find-latest-tag@v1
+         id: tagname
+         with:
+            repo: https://github.com/13AMohit/wordpress.git
+          
+       - run: |
+          echo ${{ steps.tagname.outputs.tag }}
+  
   Build-Docker-Image:
     runs-on: 
       group: Default Larger Runners

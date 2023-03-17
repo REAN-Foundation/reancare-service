@@ -334,6 +334,63 @@ export class LabRecordRepo implements ILabRecordRepo {
         }
     };
 
+    getLabRecordTypeById = async (id: string): Promise<LabRecordTypeDto> => {
+        try {
+            const labRecordType = await LabRecordType.findByPk(id);
+            return await LabRecordMapper.toTypeDto(labRecordType);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    updateLabRecordType = async (id: string, updateModel: LabRecordTypeDomainModel): Promise<LabRecordTypeDto> => {
+        try {
+            const labRecordType = await LabRecordType.findByPk(id);
+
+            if (updateModel.TypeName != null) {
+                labRecordType.TypeName = updateModel.TypeName;
+            }
+            if (updateModel.DisplayName != null) {
+                labRecordType.DisplayName = updateModel.DisplayName;
+            }
+            if (updateModel.SnowmedCode != null) {
+                labRecordType.SnowmedCode = updateModel.SnowmedCode;
+            }
+            if (updateModel.LoincCode  != null) {
+                labRecordType.LoincCode  = updateModel.LoincCode ;
+            }
+            if (updateModel.NormalRangeMin  != null) {
+                labRecordType.NormalRangeMin  = updateModel.NormalRangeMin ;
+            }
+            if (updateModel.NormalRangeMax != null) {
+                labRecordType.NormalRangeMax = updateModel.NormalRangeMax;
+            }
+            if (updateModel.Unit != null) {
+                labRecordType.Unit  = updateModel.Unit ;
+            }
+
+            await labRecordType.save();
+
+            return await LabRecordMapper.toTypeDto(labRecordType);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    deleteLabRecordType = async (id: string): Promise<boolean> => {
+        try {
+
+            const result = await LabRecordType.destroy({ where: { id: id } });
+            return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     private async getRecords(patientUserId: string, months: number) {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);

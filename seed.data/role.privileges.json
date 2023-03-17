@@ -208,7 +208,20 @@
             "HealthPriorityType.Create",
             "HealthPriorityType.GetById",
             "HealthPriorityType.Update",
-            "HealthPriorityType.Delete"
+            "HealthPriorityType.Delete",
+            "RoleType.Create",
+            "RoleType.GetById",
+            "RoleType.Update",
+            "RoleType.Delete",
+            "LabRecordType.Create",
+            "LabRecordType.GetById",
+            "LabRecordType.Update",
+            "LabRecordType.Delete",
+            "GoalType.Create",
+            "GoalType.GetById",
+            "GoalType.GetGoalTypes",
+            "GoalType.Update",
+            "GoalType.Delete"
 
         ]
     },

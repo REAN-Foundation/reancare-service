@@ -20,6 +20,7 @@ export const register = (app: express.Application): void => {
     router.get('/severities', authenticator.authenticateClient, controller.getSeverities);
     router.get('/priorities', authenticator.authenticateClient, controller.getPriorityTypes);
     router.get('/lab-records', authenticator.authenticateClient, controller.getLabRecordTypes);
+    router.get('/goal-types', authenticator.authenticateClient, controller.getGoalTypes);
     
     //Priority type
     router.post('/priorities/', authenticator.authenticateClient, authenticator.authenticateUser, controller.createPriorityType);
@@ -27,5 +28,24 @@ export const register = (app: express.Application): void => {
     router.put('/priorities/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.updatePriorityType);
     router.delete('/priorities/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.deletePriorityType);
 
+    //Person role
+    router.post('/person-roles/', authenticator.authenticateClient, authenticator.authenticateUser, controller.createRoleType);
+    router.get('/person-roles/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getRoleTypeById);
+    router.put('/person-roles/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateRoleType);
+    router.delete('/person-roles/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteRoleType);
+
+    //Lab record
+    router.post('/lab-records/', authenticator.authenticateClient, authenticator.authenticateUser, controller.createLabRecordType);
+    router.get('/lab-records/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getLabRecordTypeById);
+    router.put('/lab-records/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateLabRecordType);
+    router.delete('/lab-records/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteLabRecordType);
+
+    //Goal type
+    router.post('/goal-types/', authenticator.authenticateClient, authenticator.authenticateUser, controller.createGoalType);
+    router.get('/goal-types/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getGoalTypeById);
+    router.put('/goal-types/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateGoalType);
+    router.delete('/goal-types/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteGoalType);
+
     app.use('/api/v1/types', router);
 };
+

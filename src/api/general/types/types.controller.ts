@@ -187,6 +187,7 @@ export class TypesController extends BaseController {
         }
     };
 
+    // Priority type
     createPriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
@@ -274,6 +275,294 @@ export class TypesController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    // Role type
+
+    createRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('RoleType.Create', request, response);
+
+            const domainModel = await this._validator.createRoleType(request);
+            const roleType = await this._service.createRoleType(domainModel);
+            if (roleType  == null) {
+                throw new ApiError(400, 'Cannot create role type!');
+            }
+
+            ResponseHandler.success(request, response, 'Role type created successfully!', 201, {
+                RoleType : roleType ,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getRoleTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('RoleType.GetById', request, response);
+
+            const id:number = parseInt(request.params.id);
+            const roleType = await this._service.getRoleTypeById(id);
+            if (roleType == null) {
+                throw new ApiError(404, 'Role type not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Role type retrieved successfully!', 200, {
+                RoleType : roleType,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateRoleType= async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('RoleType.Update', request, response);
+
+            const domainModel = await this._validator.updateRoleType(request);
+            const id:number = parseInt(request.params.id);
+            const existingRecord = await this._service.getRoleTypeById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Role type  not found.');
+            }
+
+            const updated = await this._service.updateRoleType(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update a role type !');
+            }
+
+            ResponseHandler.success(request, response, 'Role type updated successfully!', 200, {
+                RoleType : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deleteRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('RoleType.Delete', request, response);
+
+            const id:number = parseInt(request.params.id);
+            const existingRecord = await this._service.getRoleTypeById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Role type record not found.');
+            }
+
+            const deleted = await this._service.deleteRoleType(id);
+            if (!deleted) {
+                throw new ApiError(400, 'Role type can not be deleted.');
+            }
+
+            ResponseHandler.success(request, response, 'Role type  deleted successfully!', 200, {
+                Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    // Lab record type
+
+    createLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('LabRecordType.Create', request, response);
+
+            const model = await this._validator.createLabRecordType(request);
+            const labRecordType = await this._service.createLabRecordType(model);
+            if (labRecordType == null) {
+                throw new ApiError(400, 'Could not create a lab record Type!');
+            }
+
+            ResponseHandler.success(request, response, 'Lab record type created successfully!', 201, {
+                LabRecordType : labRecordType,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getLabRecordTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('LabRecordType.GetById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const labRecordType = await this._service.getLabRecordTypeById(id);
+            if (labRecordType == null) {
+                throw new ApiError(404, 'Lab record type not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Lab record type retrieved successfully!', 200, {
+                LabRecordType : labRecordType,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('LabRecordType.Update', request, response);
+
+            const domainModel = await this._validator.updateLabRecordType(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getLabRecordTypeById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'LabRecordType not found.');
+            }
+
+            const updated = await this._service.updateLabRecordType(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update a lab record type!');
+            }
+
+            ResponseHandler.success(request, response, 'Lab record type updated successfully!', 200, {
+                LabRecordType : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deleteLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('LabRecordType.Delete', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getLabRecordTypeById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Lab record type record not found.');
+            }
+
+            const deleted = await this._service.deleteLabRecordType(id);
+            if (!deleted) {
+                throw new ApiError(400, 'Lab record type can not be deleted.');
+            }
+
+            ResponseHandler.success(request, response, 'Lab record type deleted successfully!', 200, {
+                Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    //Goal type
+
+    createGoalType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('GoalType.Create', request, response);
+
+            const model = await this._validator.createGoalType(request);
+            const goalType = await this._service.createGoalType(model);
+            if (goalType == null) {
+                throw new ApiError(400, 'Could not create a Goal type!');
+            }
+
+            ResponseHandler.success(request, response, 'Goal type created successfully!', 201, {
+                GoalType : goalType,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getGoalTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('GoalType.GetById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const goalType = await this._service.getGoalTypeById(id);
+            if (goalType == null) {
+                throw new ApiError(404, 'Goal type not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Goal type retrieved successfully!', 200, {
+                GoalType : goalType,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getGoalTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('GoalType.GetGoalTypes', request, response, false);
+
+            const tags : string = request.query.tags as string ?? null;
+            const goalTypes = await this._service.getGoalTypes(tags);
+            if (goalTypes .length === 0) {
+                throw new ApiError(400, 'Cannot fetch goal types!');
+            }
+
+            ResponseHandler.success(request, response, 'Fetched goal types successfully!', 201, {
+                goalTypes : goalTypes ,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    updateGoalType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('GoalType.Update', request, response);
+
+            const domainModel = await this._validator.updateGoalType(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getGoalTypeById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Goal type not found.');
+            }
+
+            const updated = await this._service.updateGoalType(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update a Goal type!');
+            }
+
+            ResponseHandler.success(request, response, 'Goal type updated successfully!', 200, {
+                GoalType : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deleteGoalType = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('GoalType.Delete', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getGoalTypeById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Goal type record not found.');
+            }
+
+            const deleted = await this._service.deleteGoalType(id);
+            if (!deleted) {
+                throw new ApiError(400, 'Goal type can not be deleted.');
+            }
+
+            ResponseHandler.success(request, response, 'Goal type deleted successfully!', 200, {
+                Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

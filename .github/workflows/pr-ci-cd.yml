@@ -39,10 +39,9 @@ jobs:
          id: tagname
          with:
             repo: https://github.com/REAN-Foundation/reancare-service.git
-            tag: '^v'
           
        - run: |
-          echo ${{ steps.tagname.outputs.tag }}
+          echo ${{ steps.tagname.outputs.tag//v }}
   
   Build-Docker-Image:
     runs-on: 

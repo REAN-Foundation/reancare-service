@@ -40,9 +40,14 @@ jobs:
          with:
             repo: https://github.com/REAN-Foundation/reancare-service.git
           
-       - run: |
-          tagname=`echo ${{ steps.tagname.outputs.tag }}`
-          echo "${tagname//v}"
+          
+       - uses: cardinalby/git-get-release-action@v1
+         env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: https://github.com/REAN-Foundation/careplan-service.git
+         with:
+            releaseName: '31.0.0'
+            repo: https://github.com/REAN-Foundation/reancare-service.git
           
   Build-Docker-Image:
     runs-on: 

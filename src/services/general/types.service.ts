@@ -134,7 +134,7 @@ export class TypesService {
         return await this._goalTypeRepo.getGoalTypeById(id);
     };
 
-    getGoalTypes = async (tags?: string): Promise<HealthPriorityTypeDto[]> => {
+    getGoalTypes = async (tags?: string): Promise<GoalTypeDto[]> => {
         var goalTypes = await this._goalTypeRepo.getGoalTypes(tags);
 
         if (!goalTypes || goalTypes.length === 0) {

@@ -501,7 +501,7 @@ export class TypesController extends BaseController {
 
             const tags : string = request.query.tags as string ?? null;
             const goalTypes = await this._service.getGoalTypes(tags);
-            if (goalTypes .length === 0) {
+            if (goalTypes.length === 0) {
                 throw new ApiError(400, 'Cannot fetch goal types!');
             }
 

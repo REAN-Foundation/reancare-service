@@ -46,7 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: https://github.com/REAN-Foundation/careplan-service.git
          with:
-            tag: '31.0.0'
+            tag: 'v31.0.0'
             repo: https://github.com/REAN-Foundation/reancare-service.git
           
   Build-Docker-Image:

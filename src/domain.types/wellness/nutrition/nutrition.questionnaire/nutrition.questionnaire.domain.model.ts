@@ -8,5 +8,5 @@ export interface NutritionQuestionnaireDomainModel {
     Tags                 : string[];
     ServingUnit?         : string;
     ImageResourceId?     : uuid;
-    QuestionInfo?        : string   
+    QuestionInfo?        : string
 }

@@ -58,7 +58,7 @@ const createSleepTrend_BarChart = async (stats: any, filename: string) => {
     const options: BarChartOptions = DefaultChartOptions.barChart();
     options.Width  = RECTANGULAR_CHART_WIDTH;
     options.Height = RECTANGULAR_CHART_HEIGHT;
-    options.YLabel = 'Sleep in Hours';
+    options.YLabel = 'Per 24-hour period';
     options.Color  = ChartColors.GrayDarker;
 
     return await ChartGenerator.createBarChart(sleepStats, options, filename);

@@ -23,7 +23,7 @@ import User from '../users/user/user.model';
     tableName       : 'notifications',
     paranoid        : true,
     freezeTableName : true,
-    })
+})
 export default class Notification extends Model {
 
     @IsUUID(4)
@@ -46,9 +46,9 @@ export default class Notification extends Model {
     UserId: string;
 
     @Column({
-        type        : DataType.BOOLEAN,
-        allowNull   : false,
-        defaultValue: false,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
     })
     BroadcastToAll: boolean;
 

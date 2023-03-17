@@ -33,8 +33,8 @@ export default class HealthSystemHospital extends Model {
     HealthSystemId: string;
 
     @Column({
-        type         : DataType.STRING(256),
-        allowNull    : true,
+        type      : DataType.STRING(256),
+        allowNull : true,
     })
     Name: string;
 

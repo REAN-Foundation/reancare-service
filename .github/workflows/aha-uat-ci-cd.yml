@@ -80,6 +80,11 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+        
+      - name: list images
+        id: iamge_tag
+        run: |
+          aws ecr describe-repositories
 
       - name: Pull Docker Image
         id: docker_build

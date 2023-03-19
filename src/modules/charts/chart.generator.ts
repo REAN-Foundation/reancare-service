@@ -32,6 +32,14 @@ export class ChartGenerator {
         return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
     };
 
+    static createHorizontalBarChart = async (
+        data: any[], options: BarChartOptions, filename: string): Promise<string|undefined> => {
+        const templHtml = 'horizontal.bar.chart.html';
+        const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
+        const dataStr = ChartGenerator.createHorizontalBarChartTextBlock(data, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options, true);
+    };
+
     static createGroupBarChart = async (data: any[], options: MultiBarChartOptions, filename: string)
         : Promise<string|undefined> => {
         const templHtml = 'group.bar.chart.html';
@@ -109,7 +117,7 @@ export class ChartGenerator {
         const w = addMargin ? Math.round(options.Width * 1.20) : options.Width;
         const h = addMargin ? Math.round(options.Height * 1.20) : options.Height;
         return await htmlTextToPNG(html, w, h, `${filename}.png`);
-    }
+    };
 
     private static extractPrePostTextBlocks(templHtml: string) {
         const cwd = process.cwd();
@@ -201,6 +209,20 @@ export class ChartGenerator {
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
         dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
         dataStr += `\tconst showYAxis       = ${options.ShowYAxis === false ? `false` : `true`};\n`;
+        return dataStr;
+    }
+
+    private static createHorizontalBarChartTextBlock(data: any[], options: BarChartOptions) {
+        let dataStr = `\n\tconst data = [\n`;
+        for (const d of data) {
+            const str = `\t\t[ "${d.x?.toString()}", ${d.y?.toString()} ],\n`;
+            dataStr += str;
+        }
+        dataStr += `\t];\n\n`;
+        dataStr += `\tconst WIDTH           = ${options.Width};\n`;
+        dataStr += `\tconst HEIGHT          = ${options.Height};\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ?? `13px`}";\n`;
+        dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
         return dataStr;
     }
 

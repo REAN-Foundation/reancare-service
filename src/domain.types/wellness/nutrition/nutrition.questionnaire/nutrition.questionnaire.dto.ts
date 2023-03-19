@@ -6,7 +6,7 @@ export interface NutritionQuestionnaireDto {
     QuestionType?        : string;
     AssociatedFoodTypes? : string[];
     Tags                 : string[];
-    ServingUnit?         : string; 
+    ServingUnit?         : string;
     ImageResourceId?     : uuid;
-    QuestionInfo?        : string     
+    QuestionInfo?        : string
 }

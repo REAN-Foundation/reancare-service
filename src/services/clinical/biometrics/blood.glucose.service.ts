@@ -24,7 +24,7 @@ export class BloodGlucoseService {
 
     create = async (bloodGlucoseDomainModel: BloodGlucoseDomainModel): Promise<BloodGlucoseDto> => {
 
-        if (this._ehrBloodGlucoseStore) { 
+        if (this._ehrBloodGlucoseStore) {
             const ehrId = await this._ehrBloodGlucoseStore.add(bloodGlucoseDomainModel);
             bloodGlucoseDomainModel.EhrId = ehrId;
         }
@@ -39,8 +39,8 @@ export class BloodGlucoseService {
 
     update = async (id: string, bloodGlucoseDomainModel: BloodGlucoseDomainModel): Promise<BloodGlucoseDto> => {
         var dto = await this._bloodGlucoseRepo.update(id, bloodGlucoseDomainModel);
-        if (this._ehrBloodGlucoseStore) { 
-            await this._ehrBloodGlucoseStore.update(dto.EhrId, dto);   
+        if (this._ehrBloodGlucoseStore) {
+            await this._ehrBloodGlucoseStore.update(dto.EhrId, dto);
         }
         return dto;
     };

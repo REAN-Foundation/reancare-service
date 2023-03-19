@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import fs from "fs";
 import path from "path";
 import { UserHelper } from "../api/users/user.helper";
@@ -567,10 +568,11 @@ export class Seeder {
     };
 
     public seedLabReportTypes = async () => {
-        
+
         Logger.instance().log('Seeding lab record types...');
 
         const arr = SeededLabRecordTypes['default'];
+        //console.log(JSON.stringify(arr, null, 2));
 
         for (let i = 0; i < arr.length; i++) {
             var c = arr[i];
@@ -578,7 +580,9 @@ export class Seeder {
             const filters = {
                 DisplayName : c['DisplayName']
             };
+
             const existingRecord = await this._labRecordService.searchType(filters);
+            //console.log(JSON.stringify(existingRecord, null, 2));
             if (existingRecord.Items.length > 0) {
                 Logger.instance().log(`Lab record type has already been exist ${c['DisplayName']}!`);
                 continue;
@@ -593,10 +597,11 @@ export class Seeder {
                 NormalRangeMax : c['NormalRangeMax'],
                 Unit           : c['Unit'],
             };
+
             var recordType = await this._labRecordService.createType(model);
             var str = JSON.stringify(recordType, null, '  ');
             Logger.instance().log(str);
-        
+
         }
     };
 

@@ -95,7 +95,7 @@ export const addReportSummary = (document: PDFKit.PDFDocument, model: any, y: nu
 
     document
         .font('Helvetica-Bold')
-        .text('Gender', labelX, y, { align: "left" })
+        .text('Sex', labelX, y, { align: "left" })
         .font('Helvetica')
         .text(model.Gender, valueX, y, { align: "left" })
         .moveDown();
@@ -119,9 +119,9 @@ export const addReportSummary = (document: PDFKit.PDFDocument, model: any, y: nu
 
     document
         .font('Helvetica-Bold')
-        .text('Mariatal Status', labelX, y, { align: "left" })
+        .text('Marital Status', labelX, y, { align: "left" })
         .font('Helvetica')
-        .text(model.MariatalStatus, valueX, y, { align: "left" })
+        .text(model.MaritalStatus, valueX, y, { align: "left" })
         .moveDown();
     y = y + rowYOffset;
 
@@ -174,14 +174,14 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
         return y;
     }
     const planName = journey.PlanName;
-    const enrollmentId = journey.EnrollmentId ? journey.EnrollmentId.toString() : journey.EnrollmentStringId;
+    // const enrollmentId = journey.EnrollmentId ? journey.EnrollmentId.toString() : journey.EnrollmentStringId;
     const startDate = journey.StartAt?.toLocaleDateString();
     const endDate = journey.EndAt?.toLocaleDateString();
     const icon = Helper.getIconsPath('health-journey.png');
     y = addSectionTitle(document, y, 'Health Journey', icon);
 
     y = y + 18;
-    const text = `Health Journey helps you to better manage your high cholesterol and reduce your risk of heart disease and stroke.  You'll learn about healthy lifestyle habits, goal planning, shared decision-making with your care team, cholesterol medications, self-management tips, and health behavior maintenance.`;
+    const text = `The Health Journey helps you to better manage your condition and reduce your risk of heart disease and stroke. You'll learn about healthy lifestyle habits, goal planning, shared decision-making with your care team, medications, self-management tips, and health behavior maintenance.`;
     document
         .font('Helvetica')
         .fontSize(9)
@@ -206,13 +206,13 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
         .moveDown();
     y = y + rowYOffset;
 
-    document
+    /*document
         .font('Helvetica-Bold')
         .text('Enrollment Id', labelX, y, { align: "left" })
         .font('Helvetica')
         .text(enrollmentId, valueX, y, { align: "left" })
         .moveDown();
-    y = y + rowYOffset;
+    y = y + rowYOffset;*/
 
     document
         .font('Helvetica-Bold')

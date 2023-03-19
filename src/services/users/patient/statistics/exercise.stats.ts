@@ -34,7 +34,7 @@ export const addExerciseStats = (document, model, y) => {
     // }
 
     let chartImage = 'Exercise_MoveMinutes_LastMonth';
-    let detailedTitle = 'Move Minutes for Last Month';
+    const detailedTitle = 'Move Minutes for Last Month';
     const titleColor = '#505050';
     const sectionTitle = 'Exercise and Physical Activity';
     const icon = Helper.getIconsPath('exercise.png');
@@ -49,7 +49,7 @@ export const addExerciseStats = (document, model, y) => {
         y = y + 23;
     }
 
-    chartImage = 'Exercise_Questionnaire_LastMonth';
+    /*chartImage = 'Exercise_Questionnaire_LastMonth';
     detailedTitle = 'Daily Movements Questionnaire for Last Month';
     if (!chartExists(model, chartImage)) {
         y = addNoDataDisplay(document, y);
@@ -57,8 +57,9 @@ export const addExerciseStats = (document, model, y) => {
         y = y + 23;
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 32;
-    }
+    } */
 
+    y = y + 100;
     chartImage = 'Exercise_Questionnaire_Overall_LastMonth';
 
     if (!chartExists(model, chartImage)) {
@@ -132,7 +133,7 @@ const createExerciseMoveMinutesForMonth_BarChart = async (stats: any, filename: 
     const options: BarChartOptions = DefaultChartOptions.barChart();
     options.Width  = RECTANGULAR_CHART_WIDTH;
     options.Height = RECTANGULAR_CHART_HEIGHT;
-    options.YLabel = 'Duration (Minutes)';
+    options.YLabel = 'Minutes/day';
     options.Color  = ChartColors.Coral;
 
     return await ChartGenerator.createBarChart(calorieStats, options, filename);

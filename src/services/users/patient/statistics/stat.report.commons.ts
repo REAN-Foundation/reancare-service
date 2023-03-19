@@ -5,6 +5,7 @@ import { PDFGenerator } from "../../../../modules/reports/pdf.generator";
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export type Alignment = "left" | "right" | "center";
+export const SECOND_COLUMN_START = 310;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,12 +14,13 @@ export function addBottom(document: any, pageNumber: any, model: any) {
     addFooter(document, "https://www.heart.org/", model.FooterImagePath);
 }
 
-export function addTop(document: any, model: any, addToNewPage = true) {
+export function addTop(document: any, model: any, title: string = null, addToNewPage = true) {
     var y = 17;
     if (addToNewPage) {
         addNewPage(document);
     }
-    y = addHeader(document, model.ReportTitle, y, model.HeaderImagePath);
+    const headerTitle = title ?? model.ReportTitle;
+    y = addHeader(document, headerTitle, y, model.HeaderImagePath);
     y = addReportDate(y, document, model);
     return y;
 }
@@ -221,3 +223,139 @@ export const addLabeledEntry = (
         .moveDown();
 };
 
+export const addFirstColumnSectionTitle = (
+    document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
+    y = y + 14;
+
+    document
+        .roundedRect(50, y, 230, 35, 2)
+        .lineWidth(0.1)
+        .fillOpacity(0.8)
+        .fill("#e8ecef");
+
+    y = y + 10;
+
+    if (icon) {
+        document.image(icon, 65, y, { width: 16 });
+    }
+
+    y = y + 4;
+
+    document
+        .fillOpacity(1.0)
+        .lineWidth(1)
+        .fill("#444444");
+
+    document
+        .fillColor("#444444")
+        .font('Helvetica')
+        .fontSize(12);
+
+    document
+        .font('Helvetica-Bold')
+        .text(pageTitle, 92, y, { align: "left" })
+        .moveDown();
+
+    y = y + 17;
+
+    return y;
+};
+
+export const addSecondColumnSectionTitle = (
+    document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
+    y = y + 14;
+
+    //DrawLine(document, y);
+    document
+        .roundedRect(SECOND_COLUMN_START, y, 230, 35, 2)
+        .lineWidth(0.1)
+        .fillOpacity(0.8)
+        .fill("#e8ecef");
+
+    y = y + 10;
+
+    if (icon) {
+        document.image(icon, SECOND_COLUMN_START + 16, y, { width: 16 });
+    }
+
+    y = y + 4;
+
+    document
+        .fillOpacity(1.0)
+        .lineWidth(1)
+        .fill("#444444");
+
+    document
+        .fillColor("#444444")
+        .font('Helvetica')
+        .fontSize(12);
+
+    document
+        .font('Helvetica-Bold')
+        .text(pageTitle, SECOND_COLUMN_START + 40, y, { align: "left" })
+        .moveDown();
+
+    y = y + 17;
+
+    return y;
+};
+
+export const addNoDataDisplayFirstColumn = (document: PDFKit.PDFDocument, y: number): number => {
+    y = y + 60;
+
+    document
+        .roundedRect(60, y, 200, 35, 2)
+        .lineWidth(0.1)
+        .fillOpacity(0.8)
+        .fill(ChartColors.Salmon);
+
+    y = y + 13;
+
+    document
+        .fillOpacity(1.0)
+        .fill("#444444");
+
+    document
+        .fillColor("#444444")
+        .font('Helvetica')
+        .fontSize(10);
+
+    document
+        .font('Helvetica-Bold')
+        .text("Data not available!", 65, y, { align: "left" })
+        .moveDown();
+
+    y = y + 120;
+
+    return y;
+};
+
+export const addNoDataDisplaySecondColumn = (document: PDFKit.PDFDocument, y: number): number => {
+    y = y + 60;
+
+    document
+        .roundedRect(SECOND_COLUMN_START, y, 200, 35, 2)
+        .lineWidth(0.1)
+        .fillOpacity(0.8)
+        .fill(ChartColors.Salmon);
+
+    y = y + 13;
+
+    document
+        .fillOpacity(1.0)
+        .fill("#444444");
+
+    document
+        .fillColor("#444444")
+        .font('Helvetica')
+        .fontSize(10);
+
+    document
+        .font('Helvetica-Bold')
+        .text("Data not available!", SECOND_COLUMN_START + 10, y, { align: "left" })
+        .moveDown();
+
+    y = y + 120;
+
+    return y;
+};

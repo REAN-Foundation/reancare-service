@@ -6,7 +6,7 @@ import {
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
 import LabRecordType from './lab.record.type.model';
-import { LabRecordTypes } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types';
+import { LabRecordTypeList } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -68,7 +68,7 @@ export default class LabRecord extends Model {
     @Column({
         type      : DataType.ENUM,
         allowNull : true,
-        values    : LabRecordTypes,
+        values    : LabRecordTypeList,
     })
     DisplayName: string;
 

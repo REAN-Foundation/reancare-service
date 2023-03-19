@@ -26,7 +26,7 @@ export class BodyTemperatureService {
     create = async (bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
 
-        if (this._ehrTemperatureStore) {            
+        if (this._ehrTemperatureStore) {
             const ehrId = await this._ehrTemperatureStore.add(bodyTemperatureDomainModel);
             bodyTemperatureDomainModel.EhrId = ehrId;
         }
@@ -46,7 +46,7 @@ export class BodyTemperatureService {
     update = async (id: uuid, bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
         var dto = await this._bodyTemperatureRepo.update(id, bodyTemperatureDomainModel);
-        if (this._ehrTemperatureStore) { 
+        if (this._ehrTemperatureStore) {
             await this._ehrTemperatureStore.update(dto.EhrId, dto);
         }
         return dto;

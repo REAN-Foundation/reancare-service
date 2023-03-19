@@ -25,7 +25,7 @@ export class BodyWeightService {
 
     create = async (bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
 
-        if (this._ehrBodyWeightStore) {            
+        if (this._ehrBodyWeightStore) {
             const ehrId = await this._ehrBodyWeightStore.add(bodyWeightDomainModel);
             bodyWeightDomainModel.EhrId = ehrId;
         }
@@ -44,7 +44,7 @@ export class BodyWeightService {
 
     update = async (id: uuid, bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
         var dto = await this._bodyWeightRepo.update(id, bodyWeightDomainModel);
-        if (this._ehrBodyWeightStore) { 
+        if (this._ehrBodyWeightStore) {
             await this._ehrBodyWeightStore.update(dto.EhrId, dto);
         }
         return dto;

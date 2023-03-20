@@ -67,7 +67,7 @@ export class BodyHeightValidator {
             .toDate()
             .run(request);
 
-        await query('PatientUserId').optional()
+        await query('patientUserId').optional()
             .trim()
             .escape()
             .isUUID()
@@ -157,6 +157,7 @@ export class BodyHeightValidator {
             request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
         const filters: BodyHeightSearchFilters = {
+            PatientUserId   : request.query.patientUserId ?? null,
             CreatedDateFrom : request.query.createdDateFrom ?? null,
             CreatedDateTo   : request.query.createdDateTo ?? null,
             OrderBy         : request.query.orderBy ?? 'CreatedAt',

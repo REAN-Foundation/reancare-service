@@ -45,8 +45,8 @@ export class KccqAssessmentUtils {
         else {
             const taskCreationDate = userTask.Items[0].CreatedAt;
             const dayDiff = TimeHelper.dayDiff(new Date(), taskCreationDate);
-            if (dayDiff > 30) {
-                Logger.instance().log(`[KCCQTask] Creating custom task as 30 days have passed.
+            if (dayDiff > 14) {
+                Logger.instance().log(`[KCCQTask] Creating custom task as 14 days have passed.
                         PatientUserId: ${JSON.stringify(patientUserId)}`);
                 await commonActions.createAssessmentTask(patientUserId, assessmentTemplateName);
             } else {

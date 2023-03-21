@@ -56,9 +56,9 @@ jobs:
           tag=${{ steps.result_release.outputs.tag_name }}
           zipfile_url=${{ steps.result_release.outputs.zipball_url }}
           tarfile_url=${{ steps.result_release.outputs.tarball_url }}
-          wget zipfile_url
-          wget tarfile_url
-          unzip tag
+          wget $zipfile_url
+          wget $tarfile_url
+          unzip $tag
           ls
          shell: bash
         

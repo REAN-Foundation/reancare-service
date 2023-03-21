@@ -1,6 +1,8 @@
 import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
 import { PatientSearchFilters, PatientSearchResults } from '../../../../domain.types/users/patient/patient/patient.search.types';
 import { PatientDetailsDto } from '../../../../domain.types/users/patient/patient/patient.dto';
+import { AuthDomainModel } from '../.../../../../../domain.types/webhook/auth.domain.model';
+import { ReAuthDomainModel } from '../../../../domain.types/webhook/reauth.domain.model';
 
 export interface IPatientRepo {
 
@@ -17,6 +19,10 @@ export interface IPatientRepo {
     deleteByUserId(userId: string): Promise<boolean>;
 
     getAllPatientUserIds(): Promise<any[]>;
+
+    terraAuth(userId: string, updateModel: AuthDomainModel);
+
+    terraReAuth(userId: string, updateModel: ReAuthDomainModel);
 
     // searchFull(filters: PatientSearchFilters): Promise<PatientDetailsSearchResults>;
 }

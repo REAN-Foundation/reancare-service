@@ -18,6 +18,8 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
             const entity = {
                 PatientUserId         : createModel.PatientUserId,
                 EhrId                 : createModel.EhrId,
+                TerraSummaryId        : createModel.TerraSummaryId,
+                Provider              : createModel.Provider,
                 BloodOxygenSaturation : createModel.BloodOxygenSaturation,
                 Unit                  : createModel.Unit,
                 RecordDate            : createModel.RecordDate,
@@ -153,6 +155,12 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
             }
             if (updateModel.RecordedByUserId != null) {
                 bloodOxygenSaturation.RecordedByUserId = updateModel.RecordedByUserId;
+            }
+            if (updateModel.TerraSummaryId != null) {
+                bloodOxygenSaturation.TerraSummaryId = updateModel.TerraSummaryId;
+            }
+            if (updateModel.Provider != null) {
+                bloodOxygenSaturation.Provider = updateModel.Provider;
             }
     
             await bloodOxygenSaturation.save();

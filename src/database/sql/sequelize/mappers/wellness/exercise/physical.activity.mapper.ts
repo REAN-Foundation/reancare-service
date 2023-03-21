@@ -21,6 +21,8 @@ export class PhysicalActivityMapper {
             CaloriesBurned              : physicalActivity.CaloriesBurned,
             StartTime                   : physicalActivity.StartTime,
             EndTime                     : physicalActivity.EndTime,
+            TerraSummaryId              : physicalActivity.TerraSummaryId,
+            Provider                    : physicalActivity.Provider,
             DurationInMin               : physicalActivity.DurationInMin,
             PhysicalActivityQuestion    : physicalActivity.PhysicalActivityQuestion,
             PhysicalActivityQuestionAns : physicalActivity.PhysicalActivityQuestionAns,

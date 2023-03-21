@@ -8,11 +8,12 @@ import { TeraWebhookService } from '../../../../../services/webhook/wearable.web
 import { Loader } from '../../../../../startup/loader';
 import { WebhookRawDataService } from '../../../../../services/webhook/webhook.rawdata.service';
 import { TeraWebhookActivityService } from '../../../../../services/webhook/wearable.webhook.activity.service';
+import { IWebhooksService } from '../../interfaces/webhooks.service.interface';
 //import Terra from 'terra-api';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class TeraWebhookController extends BaseUserController {
+export class TeraWebhookController extends BaseUserController implements IWebhooksService {
 
     _service: TeraWebhookService = null;
 

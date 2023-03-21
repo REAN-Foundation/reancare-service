@@ -53,7 +53,14 @@ jobs:
 
        - name: get data
          run: |
-          echo ${{ steps.result_release.outputs.body }}
+          body=${{ steps.result_release.outputs.body }}
+          tag=${{ steps.result_release.outputs.tag_name }}
+          zipfile_url=${{ steps.result_release.outputs.zipball_url }}
+          tarfile_url=${{ steps.result_release.outputs.tarball_url }}
+          echo $body
+          echo $tag
+          echo $zipfile_url
+          echo $tarfile_url
         
 
   Build-Docker-Image:

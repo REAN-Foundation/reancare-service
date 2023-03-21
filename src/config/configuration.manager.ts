@@ -119,7 +119,7 @@ export class ConfigurationManager {
 
     public static JwtExpiresIn = (): number => {
         return ConfigurationManager._config.JwtExpiresIn;
-    }
+    };
 
     public static FileStorageProvider = (): FileStorageProvider => {
         return ConfigurationManager._config.FileStorage.Provider;
@@ -170,7 +170,7 @@ export class ConfigurationManager {
 
     public static SessionExpiresIn = (): number => {
         return ConfigurationManager._config.SessionExpiresIn;
-    }
+    };
 
     private static checkConfigSanity() {
 

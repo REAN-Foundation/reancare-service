@@ -14,6 +14,8 @@ export class PulseMapper {
             id               : pulse.id,
             EhrId            : pulse.EhrId,
             PatientUserId    : pulse.PatientUserId,
+            TerraSummaryId   : pulse.TerraSummaryId,
+            Provider         : pulse.Provider,
             Pulse            : pulse.Pulse,
             Unit             : pulse.Unit,
             RecordDate       : pulse.RecordDate,

@@ -37,6 +37,8 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         try {
             const entity = {
                 PatientUserId   : createModel.PatientUserId,
+                TerraSummaryId  : createModel.TerraSummaryId,
+                Provider        : createModel.Provider,
                 Food            : createModel.Food,
                 Description     : createModel.Description,
                 ConsumedAs      : createModel.ConsumedAs,

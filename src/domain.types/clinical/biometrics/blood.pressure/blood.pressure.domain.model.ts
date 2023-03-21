@@ -4,6 +4,8 @@ export interface BloodPressureDomainModel {
     id?              : uuid;
     EhrId?           : string;
     PatientUserId?   : uuid;
+    TerraSummaryId?   : string;
+    Provider?         : string;
     Systolic         : number;
     Diastolic        : number;
     Unit             : string;

@@ -21,6 +21,8 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
                 EhrId            : createModel.EhrId,
+                TerraSummaryId   : createModel.TerraSummaryId,
+                Provider         : createModel.Provider,
                 BloodGlucose     : createModel.BloodGlucose,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate,
@@ -152,6 +154,12 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
             }
             if (updateModel.RecordedByUserId != null) {
                 bloodGlucose.RecordedByUserId = updateModel.RecordedByUserId;
+            }
+            if (updateModel.TerraSummaryId != null) {
+                bloodGlucose.TerraSummaryId = updateModel.TerraSummaryId;
+            }
+            if (updateModel.Provider != null) {
+                bloodGlucose.Provider = updateModel.Provider;
             }
 
             await bloodGlucose.save();

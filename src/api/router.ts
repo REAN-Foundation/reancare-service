@@ -74,7 +74,7 @@ import { register as registerPatientStatisticsRoutes } from './users/patient/sta
 import { register as registerRssfeedRoutes } from './general/rss.feed/rss.feed.routes';
 import { register as registerPatientDonorsRoutes } from './clinical/donation/patient.donors.routes';
 import { register as registerDonationRecordRoutes } from './clinical/donation.record/donation.record.routes';
-import { register as registerWearableWebhookTerraRoutes } from './webhook/wearable.webhook.routes';
+import { register as registerWearableWebhookTerraRoutes } from './device.data/webhooks/providers/terra/terra.webhook.routes';
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {

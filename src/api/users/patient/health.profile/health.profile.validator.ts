@@ -89,7 +89,6 @@ export class HealthProfileValidator extends BaseValidator {
         await this.validateBoolean(request, 'HasHighCholesterol', Where.Body, false, true);
         await this.validateBoolean(request, 'HasAtrialFibrillation', Where.Body, false, true);
 
-
         this.validateRequest(request);
 
         if (this.isTruthy(request.body.BloodGroup) &&

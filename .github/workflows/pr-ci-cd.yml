@@ -60,6 +60,7 @@ jobs:
           echo $tag
           echo $zipfile_url
           echo $tarfile_url
+         shell: bash
         
 
   Build-Docker-Image:

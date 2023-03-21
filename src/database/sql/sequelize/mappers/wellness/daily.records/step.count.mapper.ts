@@ -11,11 +11,13 @@ export class StepCountMapper {
         }
 
         const dto: StepCountDto = {
-            id            : stepCount.id,
-            PatientUserId : stepCount.PatientUserId,
-            StepCount     : stepCount.StepCount,
-            Unit          : stepCount.Unit,
-            RecordDate    : stepCount.RecordDate,
+            id             : stepCount.id,
+            PatientUserId  : stepCount.PatientUserId,
+            TerraSummaryId : stepCount.TerraSummaryId,
+            Provider       : stepCount.Provider,
+            StepCount      : stepCount.StepCount,
+            Unit           : stepCount.Unit,
+            RecordDate     : stepCount.RecordDate,
         };
         return dto;
     };

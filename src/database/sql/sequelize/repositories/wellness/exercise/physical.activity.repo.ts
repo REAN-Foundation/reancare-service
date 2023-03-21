@@ -30,6 +30,8 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 StartTime                   : createModel.StartTime ?? null,
                 EndTime                     : createModel.EndTime ?? null,
                 DurationInMin               : createModel.DurationInMin ?? null,
+                TerraSummaryId              : createModel.TerraSummaryId ?? null,
+                Provider                    : createModel.Provider ?? null,
                 PhysicalActivityQuestion    : "Did you add movement to your day today?",
                 PhysicalActivityQuestionAns : createModel.PhysicalActivityQuestionAns ?? null,
             };

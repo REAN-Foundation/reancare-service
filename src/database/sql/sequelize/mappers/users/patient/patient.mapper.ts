@@ -20,6 +20,9 @@ export class PatientMapper {
             HealthSystem       : patient.HealthSystem,
             AssociatedHospital : patient.AssociatedHospital,
             DonorAcceptance    : patient.DonorAcceptance,
+            TerraUserId        : patient.TerraUserId,
+            TerraProvider      : patient.TerraProvider,
+            TerraScopes        : patient.TerraScopes,
             HealthProfile      : null, //PatientMedicalProfileDto;
             Insurances         : [], //PatientInsuranceDto[];
             EmergencyContacts  : [], // PatientEmergencyContactDto[];
@@ -39,6 +42,7 @@ export class PatientMapper {
             DisplayId       : patient.DisplayId,
             EhrId           : patient.EhrId,
             DonorAcceptance : patient.DonorAcceptance,
+            TerraUserId     : patient.TerraUserId,
             DisplayName     : null,
             FirstName       : null,
             LastName        : null,

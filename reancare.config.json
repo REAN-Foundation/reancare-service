@@ -125,6 +125,12 @@
             "Code": "GoogleForms"
         }
     ],
+    "WebhookControllerProviders" : [
+        {
+            "Provider": "Terra",
+            "Code": "Terra"
+        }
+    ],
     "MaxUploadFileSize": 104857600,
     "JwtExpiresIn": 2592000,
     "SessionExpiresIn": 2592000

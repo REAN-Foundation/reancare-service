@@ -49,7 +49,7 @@ export class MessagingService {
             headers : headers
         };
         
-        const url = `${reanBotBaseUrl}${client}/whatsappMeta/${urlToken}/send`;
+        const url = `${reanBotBaseUrl}REAN_BOT/whatsappMeta/${urlToken}/send`;
         Logger.instance().log(`URL: ${url}`);
         Logger.instance().log(`Phone: ${toPhone}`);
         const obj = {
@@ -61,7 +61,7 @@ export class MessagingService {
             message      : message,
             payload      : buttonIds
         };
-        
+        Logger.instance().log(`Body of request: ${JSON.stringify(obj)}`);
         const resp1 = await needle('post', url, obj, options);
         if (resp1.statusCode !== 200) {
             Logger.instance().log(`Failed to send message to phone number: ${toPhone}`);

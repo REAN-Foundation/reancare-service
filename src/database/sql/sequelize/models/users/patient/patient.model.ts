@@ -77,6 +77,25 @@ export default class Patient extends Model {
     })
     MedicalProfileId: string;
 
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TerraUserId: string;
+
+    @Column({
+        type      : DataType.STRING(32),
+        allowNull : true,
+    })
+    TerraProvider: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    TerraScopes: string;
+
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,

@@ -13,6 +13,8 @@ export interface PhysicalActivityDto {
     ImageResourceId?             : string;
     StartTime?                   : Date;
     EndTime?                     : Date;
+    TerraSummaryId?              : string;
+    Provider?                    : string;
     DurationInMin?               : number;
     PhysicalActivityQuestion?    : string;
     PhysicalActivityQuestionAns? : boolean;

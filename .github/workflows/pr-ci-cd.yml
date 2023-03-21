@@ -15,7 +15,7 @@ on:
     
 jobs:
   CodeScan-ESLint:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -33,9 +33,10 @@ jobs:
           DEFAULT_BRANCH: develop
 
   Build-Docker-Image:
-    runs-on: 
-      group: Default Larger Runners
-      labels: ubuntu-latest-4-cores
+    runs-on:
+      self-hosted
+#       group: Default Larger Runners
+#       labels: ubuntu-latest-4-cores
 
     steps:
       - name: Checkout

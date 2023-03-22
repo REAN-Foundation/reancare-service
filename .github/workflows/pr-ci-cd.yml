@@ -40,6 +40,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Declare some variables
         id: vars
@@ -84,3 +91,5 @@ jobs:
         env:
           # 7 GiB by default on GitHub, setting this to 16 GiB
           NODE_OPTIONS: "--max_old_space_size=8192"
+        
+      - run: sleep 5m

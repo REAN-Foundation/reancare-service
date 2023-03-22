@@ -81,7 +81,7 @@
     ],
     "WebhookControllerProviders" : [
         {
-            "Provider": "Teraa",
+            "Provider": "Terra",
             "Code": "Terra"
         }
     ],

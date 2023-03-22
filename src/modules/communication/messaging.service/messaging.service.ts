@@ -49,7 +49,7 @@ export class MessagingService {
             headers : headers
         };
         
-        const url = `${reanBotBaseUrl}REAN_BOT/whatsappMeta/${urlToken}/send`;
+        const url = `${reanBotBaseUrl}${client}/whatsappMeta/${urlToken}/send`;
         Logger.instance().log(`URL: ${url}`);
         Logger.instance().log(`Phone: ${toPhone}`);
         const obj = {

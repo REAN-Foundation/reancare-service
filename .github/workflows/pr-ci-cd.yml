@@ -47,10 +47,10 @@ jobs:
          uses: cardinalby/git-get-release-action@v1
          env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
-          GITHUB_REPOSITORY: https://github.com/13AMohit/wordpress
+#           GITHUB_REPOSITORY: https://github.com/13AMohit/wordpress
          with:
             tag: ${{ steps.tagname.outputs.tag }}
-#             repo: https://github.com/REAN-Foundation/rean-bot-wrapper.git
+            repo: 13AMohit/wordpress
         
 #        - name: get data
 #          run: |

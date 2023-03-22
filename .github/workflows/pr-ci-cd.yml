@@ -51,6 +51,18 @@ jobs:
             tag: 'v30.0.0'
 #             repo: https://github.com/REAN-Foundation/reancare-service.git
 
+
+       - name: Get release
+         id: result_releas
+         uses: cardinalby/git-get-release-action@v1
+         env:
+          GITHUB_TOKEN: ${{ github.token }}
+#           GITHUB_REPOSITORY: https://github.com/REAN-Foundation/careplan-service.git
+         with:
+            tag: 'v30.0.0'
+#             repo: https://github.com/REAN-Foundation/reancare-service.git 
+        
+        
        - name: get data
          run: |
           tag=${{ steps.result_release.outputs.tag_name }}

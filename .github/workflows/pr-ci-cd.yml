@@ -53,7 +53,7 @@ jobs:
             repo: REAN-Foundation/rean-health-guru-app
     outputs:
       Output1: ${{ steps.result_release.outputs.id }}
-      Output2: $ {{ steps.result_release.outputs.name }}
+      Output2: ${{ steps.result_release.outputs.name }}
           
           
           

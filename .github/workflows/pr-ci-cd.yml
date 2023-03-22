@@ -40,6 +40,7 @@ jobs:
          uses: tdemin/find-latest-tag@v1
          with:
             repo: https://github.com/REAN-Foundation/reancare-service.git
+       - run: echo ${{ steps.tagname.outputs.tag }}
           
        - name: Get release
          id: result_release
@@ -48,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 #           GITHUB_REPOSITORY: https://github.com/REAN-Foundation/careplan-service.git
          with:
-            tag: 'v30.0.0'
+            tag: 'steps.tagname.outputs.tag'
 #             repo: https://github.com/REAN-Foundation/reancare-service.git
   test2:
     runs-on: ubuntu-latest

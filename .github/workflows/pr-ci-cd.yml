@@ -50,8 +50,9 @@ jobs:
          with:
             tag: 'v30.0.0'
 #             repo: https://github.com/REAN-Foundation/reancare-service.git
-
-
+  test2:
+    runs-on: ubuntu-latest
+    steps:
        - name: Get release
          id: result_releas
          uses: cardinalby/git-get-release-action@v1

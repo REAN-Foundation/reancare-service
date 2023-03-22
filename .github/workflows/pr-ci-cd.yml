@@ -51,16 +51,21 @@ jobs:
          with:
             tag: ${{ steps.tagname.outputs.tag }}
             repo: REAN-Foundation/rean-health-guru-app
-       - run: |
-          echo ${{ steps.result_release.outputs.id }}
+    outputs:
+      Output1: ${{ steps.result_release.outputs.id }}
+      Output2: $ {{ steps.result_release.outputs.name }}
           
           
           
   Get_data:
-      runs-on: ubuntu-latest
-      steps:
-        - name: data tesing
-          run : echo ${{ steps.result_release.outputs.id }}
+    needs: Get_Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: data tesing
+        run : | 
+          echo ${{ needs.Get_Tag.outputs.Output1 }}
+          echo ${{ needs.Get_Tag.outputs.Output2 }}
+              
         
 #        - name: get data
 #          run: |

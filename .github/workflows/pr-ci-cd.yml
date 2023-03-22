@@ -46,24 +46,11 @@ jobs:
          id: result_release
          uses: cardinalby/git-get-release-action@v1
          env:
-          GITHUB_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: https://github.com/REAN-Foundation/rean-health-guru-app.git
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+          GITHUB_REPOSITORY: https://github.com/13AMohit/wordpress
          with:
             tag: ${{ steps.tagname.outputs.tag }}
 #             repo: https://github.com/REAN-Foundation/rean-bot-wrapper.git
-  test2:
-    runs-on: ubuntu-latest
-    steps:
-       - name: Get release
-         id: result_releas
-         uses: cardinalby/git-get-release-action@v1
-         env:
-          GITHUB_TOKEN: ${{ github.token }}
-#           GITHUB_REPOSITORY: https://github.com/REAN-Foundation/careplan-service.git
-         with:
-            tag: 'v30.0.0'
-#             repo: https://github.com/REAN-Foundation/reancare-service.git 
-        
         
 #        - name: get data
 #          run: |

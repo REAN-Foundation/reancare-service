@@ -33,7 +33,7 @@ jobs:
 #           DEFAULT_BRANCH: develop
           
   Get_Tag:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
        - name: get tags 
          id: tagname
@@ -60,7 +60,7 @@ jobs:
           wget $tarfile_url
           unzip $tag
           echo ${{ github.event.pull_request.head.sha }}
-          echo ${{ GITHUB_SHA }}
+          echo ${{ github.sha }}
           ls
          shell: bash
         

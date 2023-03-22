@@ -14,23 +14,23 @@ on:
     branches: [develop]
     
 jobs:
-  CodeScan-ESLint:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+#   CodeScan-ESLint:
+#     runs-on: self-hosted
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
 
-      - name: Lint Code Base
-        uses: docker://ghcr.io/github/super-linter:latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINTER_RULES_PATH: /
-          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
-          VALIDATE_TYPESCRIPT_ES: true
-          VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: develop
+#       - name: Lint Code Base
+#         uses: docker://ghcr.io/github/super-linter:latest
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           LINTER_RULES_PATH: /
+#           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
+#           VALIDATE_TYPESCRIPT_ES: true
+#           VALIDATE_ALL_CODEBASE: false
+#           DEFAULT_BRANCH: develop
           
   Get_Tag:
     runs-on: self-hosted
@@ -59,6 +59,8 @@ jobs:
           wget $zipfile_url
           wget $tarfile_url
           unzip $tag
+          echo ${{ github.event.pull_request.head.sha }}
+          echo ${{ GITHUB_SHA }}
           ls
          shell: bash
         

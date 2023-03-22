@@ -53,6 +53,14 @@ jobs:
             repo: REAN-Foundation/rean-health-guru-app
        - run: |
           echo ${{ steps.result_release.outputs.id }}
+          
+          
+          
+  Get_data:
+      runs-on: ubuntu-latest
+      steps:
+        - name: data tesing
+          run : echo ${{ steps.result_release.outputs.id }}
         
 #        - name: get data
 #          run: |

@@ -11,6 +11,11 @@ name: AHA-UAT-CI-CD
 on:
   # Triggers the workflow on push events but only for the develop branch
   workflow_dispatch:
+    inputs:
+      Tag_name:
+        description: Tag name of your release
+        default: 31.1.0
+        required: true
 
 jobs:
 
@@ -37,6 +42,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Get release
+        id: result_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+           tag: ${{ github.event.inputs.Tag_name }}
+           repo: REAN-Foundation/reancare-service
+           
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -75,20 +90,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./
-          file: ./Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: public.ecr.aws/i9y2d4u3/reancare:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Pulling Image
+        run: |
+          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.name }}_${{ steps.result_release.outputs.id }}
 
       - name: Download task definition
         run: |
@@ -101,7 +105,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: default
-          image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.name }}_${{ steps.result_release.outputs.id }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

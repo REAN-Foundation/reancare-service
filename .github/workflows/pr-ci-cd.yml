@@ -39,7 +39,7 @@ jobs:
          id: tagname
          uses: tdemin/find-latest-tag@v1
          with:
-            repo: https://github.com/REAN-Foundation/rean-health-guru-app.git
+            repo: https://github.com/13AMohit/wordpress
        - run: echo ${{ steps.tagname.outputs.tag }}
           
        - name: Get release

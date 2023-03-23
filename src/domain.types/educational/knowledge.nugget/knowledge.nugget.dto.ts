@@ -5,5 +5,6 @@ export interface KnowledgeNuggetDto {
     DetailedInformation?: string;
     PostDate?: Date;
     AdditionalResources?: string[];
-    Tags?: string[];
+    Tags?               : string[];
+    CreatedAt?          : Date;
 }

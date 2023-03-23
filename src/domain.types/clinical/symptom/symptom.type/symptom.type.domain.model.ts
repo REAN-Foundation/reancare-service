@@ -5,6 +5,7 @@ export interface SymptomTypeDomainModel {
     Symptom?        : string;
     Description?    : string;
     Tags?           : string[];
+    PostDate?       : Date;
     Language?       : string;
     ImageResourceId?: uuid;
 }

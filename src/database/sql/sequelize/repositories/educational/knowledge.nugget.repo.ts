@@ -53,6 +53,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
                 TopicName           : model.TopicName,
                 BriefInformation    : model.BriefInformation,
                 DetailedInformation : model.DetailedInformation,
+                PostDate            : model.PostDate,
                 AdditionalResources : additionalResources,
                 Tags                : tags
             };
@@ -83,6 +84,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
             if (filters.TopicName != null) {
                 search.where['TopicName'] = { [Op.like]: '%' + filters.TopicName + '%' };
             }
+            
             if (filters.Tags != null) {
                 search.where['Tags'] = filters.Tags;
             }
@@ -148,6 +150,9 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
             }
             if (updateModel.DetailedInformation != null) {
                 knowledgeNugget.DetailedInformation = updateModel.DetailedInformation;
+            }
+            if (updateModel.PostDate != null) {
+                knowledgeNugget.PostDate = updateModel.PostDate;
             }
             if (updateModel.AdditionalResources != null) {
                 

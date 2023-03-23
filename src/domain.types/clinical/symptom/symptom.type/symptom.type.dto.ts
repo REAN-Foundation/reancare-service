@@ -4,6 +4,7 @@ export interface SymptomTypeDto {
     EhrId?          : string;
     Symptom?        : string;
     Description?    : string;
+    PostDate?       : Date;
     Tags?           : string;
     Language?       : string;
     ImageResourceId?: string;

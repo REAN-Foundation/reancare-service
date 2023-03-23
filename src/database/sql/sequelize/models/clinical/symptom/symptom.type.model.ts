@@ -58,6 +58,12 @@ export default class SymptomType extends Model {
     })
     Description: string;
 
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    PostDate: Date;
+
     @Length({ max: 512 })
     @Column({
         type      : DataType.STRING(512),

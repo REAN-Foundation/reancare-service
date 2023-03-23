@@ -16,6 +16,7 @@ export class SymptomTypeMapper {
             EhrId           : symptomType.EhrId,
             Symptom         : symptomType.Symptom,
             Description     : symptomType.Description,
+            PostDate        : symptomType.PostDate,
             Tags            : symptomType.Tags ? JSON.parse(symptomType.Tags) : [],
             Language        : symptomType.Language,
             ImageResourceId : symptomType.ImageResourceId,

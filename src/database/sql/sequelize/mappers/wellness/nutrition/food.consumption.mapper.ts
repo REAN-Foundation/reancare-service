@@ -19,21 +19,23 @@ export class FoodConsumptionMapper {
             return null;
         }
         const dto: FoodConsumptionDto = {
-            id                : foodConsumption.id,
-            EhrId             : foodConsumption.EhrId,
-            PatientUserId     : foodConsumption.PatientUserId,
-            Food              : foodConsumption.Food,
-            FoodTypes         : foodConsumption.FoodTypes ? JSON.parse(foodConsumption.FoodTypes) : [],
-            Servings          : foodConsumption.Servings,
-            ServingUnit       : foodConsumption.ServingUnit,
-            UserResponse      : foodConsumption.UserResponse,
-            Tags              : foodConsumption.Tags ? JSON.parse(foodConsumption.Tags) : [],
-            Description       : foodConsumption.Description,
-            ConsumedAs        : FoodConsumptionEvents[foodConsumption.ConsumedAs] ?? null,
-            Calories          : foodConsumption.Calories,
-            ImageResourceId   : foodConsumption.ImageResourceId,
-            StartTime         : foodConsumption.StartTime,
-            EndTime           : foodConsumption.EndTime,
+            id              : foodConsumption.id,
+            EhrId           : foodConsumption.EhrId,
+            PatientUserId   : foodConsumption.PatientUserId,
+            TerraSummaryId  : foodConsumption.TerraSummaryId,
+            Provider        : foodConsumption.Provider,
+            Food            : foodConsumption.Food,
+            FoodTypes       : foodConsumption.FoodTypes ? JSON.parse(foodConsumption.FoodTypes) : [],
+            Servings        : foodConsumption.Servings,
+            ServingUnit     : foodConsumption.ServingUnit,
+            UserResponse    : foodConsumption.UserResponse,
+            Tags            : foodConsumption.Tags ? JSON.parse(foodConsumption.Tags) : [],
+            Description     : foodConsumption.Description,
+            ConsumedAs      : FoodConsumptionEvents[foodConsumption.ConsumedAs] ?? null,
+            Calories        : foodConsumption.Calories,
+            ImageResourceId : foodConsumption.ImageResourceId,
+            StartTime       : foodConsumption.StartTime,
+            EndTime         : foodConsumption.EndTime,
 
         };
         return dto;

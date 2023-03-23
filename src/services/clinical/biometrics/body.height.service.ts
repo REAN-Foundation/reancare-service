@@ -24,9 +24,9 @@ export class BodyHeightService {
 
     create = async (bodyHeightDomainModel: BodyHeightDomainModel): Promise<BodyHeightDto> => {
 
-        if (this._ehrBiometricsHeightStore) { 
+        if (this._ehrBiometricsHeightStore) {
             const ehrId = await this._ehrBiometricsHeightStore.add(bodyHeightDomainModel);
-            bodyHeightDomainModel.EhrId = ehrId;                 
+            bodyHeightDomainModel.EhrId = ehrId;
         }
 
         var dto = await this._bodyHeightRepo.create(bodyHeightDomainModel);
@@ -43,7 +43,7 @@ export class BodyHeightService {
 
     update = async (id: string, BodyHeightDomainModel: BodyHeightDomainModel): Promise<BodyHeightDto> => {
         var dto = await this._bodyHeightRepo.update(id, BodyHeightDomainModel);
-        if (this._ehrBiometricsHeightStore) { 
+        if (this._ehrBiometricsHeightStore) {
             await this._ehrBiometricsHeightStore.update(dto.EhrId, dto);
         }
         return dto;

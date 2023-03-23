@@ -7,7 +7,6 @@ import { HealthSystemDomainModel } from
 import { HealthSystemDto } from "../../../../domain.types/users/patient/health.system/health.system.dto";
 import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
-
 export interface IHealthSystemRepo {
 
     createHealthSystem(healthSystemDomainModel: HealthSystemDomainModel): Promise<HealthSystemDto>;

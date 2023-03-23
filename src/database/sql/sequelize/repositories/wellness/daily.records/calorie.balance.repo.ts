@@ -16,6 +16,8 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
         try {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
+                TerraSummaryId   : createModel.TerraSummaryId ?? null,
+                Provider         : createModel.Provider ?? null,
                 CaloriesConsumed : createModel.CaloriesConsumed,
                 CaloriesBurned   : createModel.CaloriesBurned,
                 Unit             : createModel.Unit,
@@ -158,6 +160,12 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
             if (updateModel.RecordDate != null) {
                 calorieBalance.RecordDate = updateModel.RecordDate;
             }
+            if (updateModel.TerraSummaryId != null) {
+                calorieBalance.TerraSummaryId = updateModel.TerraSummaryId;
+            }
+            if (updateModel.Provider != null) {
+                calorieBalance.Provider = updateModel.Provider;
+            }
 
             await calorieBalance.save();
 
@@ -173,6 +181,23 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
         try {
             const result = await CalorieBalance.destroy({ where: { id: id } });
             return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByRecordDate = async (date: Date, patientUserId : string): Promise<CalorieBalanceDto> => {
+        try {
+            const new_date = new Date(date);
+            const calorieBalance =  await CalorieBalance.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                    RecordDate    : new_date
+                }
+            });
+            return await CalorieBalanceMapper.toDto(calorieBalance);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

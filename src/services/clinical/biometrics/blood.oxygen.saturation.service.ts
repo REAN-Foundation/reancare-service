@@ -27,9 +27,9 @@ export class BloodOxygenSaturationService {
     create = async (bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel):
     Promise<BloodOxygenSaturationDto> => {
 
-        if (this._ehrBloodOxygenSaturationStore) { 
+        if (this._ehrBloodOxygenSaturationStore) {
             const ehrId = await this._ehrBloodOxygenSaturationStore.add(bloodOxygenSaturationDomainModel);
-            bloodOxygenSaturationDomainModel.EhrId = ehrId;        
+            bloodOxygenSaturationDomainModel.EhrId = ehrId;
         }
 
         var dto = await this._bloodOxygenSaturationRepo.create(bloodOxygenSaturationDomainModel);
@@ -47,7 +47,7 @@ export class BloodOxygenSaturationService {
     update = async (id: uuid, bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel):
     Promise<BloodOxygenSaturationDto> => {
         var dto = await this._bloodOxygenSaturationRepo.update(id, bloodOxygenSaturationDomainModel);
-        if (this._ehrBloodOxygenSaturationStore) { 
+        if (this._ehrBloodOxygenSaturationStore) {
             await this._ehrBloodOxygenSaturationStore.update(dto.EhrId, dto);
         }
         return dto;

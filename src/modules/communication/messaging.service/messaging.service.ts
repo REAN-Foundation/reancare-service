@@ -61,7 +61,7 @@ export class MessagingService {
             message      : message,
             payload      : buttonIds
         };
-        
+        Logger.instance().log(`Body of request: ${JSON.stringify(obj)}`);
         const resp1 = await needle('post', url, obj, options);
         if (resp1.statusCode !== 200) {
             Logger.instance().log(`Failed to send message to phone number: ${toPhone}`);

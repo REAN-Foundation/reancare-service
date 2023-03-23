@@ -21,6 +21,9 @@ export class PatientMapper {
             AssociatedHospital : patient.AssociatedHospital,
             DonorAcceptance    : patient.DonorAcceptance,
             IsRemindersLoaded  : patient.IsRemindersLoaded,
+            TerraUserId        : patient.TerraUserId,
+            TerraProvider      : patient.TerraProvider,
+            TerraScopes        : patient.TerraScopes,
             HealthProfile      : null, //PatientMedicalProfileDto;
             Insurances         : [], //PatientInsuranceDto[];
             EmergencyContacts  : [], // PatientEmergencyContactDto[];
@@ -40,6 +43,7 @@ export class PatientMapper {
             DisplayId         : patient.DisplayId,
             EhrId             : patient.EhrId,
             DonorAcceptance   : patient.DonorAcceptance,
+            TerraUserId       : patient.TerraUserId,
             IsRemindersLoaded : patient.IsRemindersLoaded,
             DisplayName       : null,
             FirstName         : null,
@@ -50,7 +54,7 @@ export class PatientMapper {
             Gender            : null,
             BirthDate         : null,
             Age               : null,
-            ImageResourceId   : null,
+            ImageResourceId   : null
         };
         return dto;
     };

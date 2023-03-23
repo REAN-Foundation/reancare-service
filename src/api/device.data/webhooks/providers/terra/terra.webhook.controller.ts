@@ -37,12 +37,12 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
 
             const terraPayload : TerraPayload = request.body;
             Logger.instance().log(`Tera webhook information ${JSON.stringify(terraPayload)}`);
-            const entity = {
-                Provider : "Terra",
-                Type     : terraPayload.type,
-                RawData  : JSON.stringify(terraPayload)
-            };
-            await this._rawDataService.create(entity);
+            // const entity = {
+            //     Provider : "Terra",
+            //     Type     : terraPayload.type,
+            //     RawData  : JSON.stringify(terraPayload)
+            // };
+            //await this._rawDataService.create(entity);
 
             switch (terraPayload.type) {
                 // case 'athlete': {
@@ -66,7 +66,7 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                     break;
                 case 'daily': {
                     const dailyDomainModel = await TeraWebhookValidator.daily(request);
-                    //await this._service.daily(dailyDomainModel);
+                    await this._service.daily(dailyDomainModel);
                     Logger.instance().log(`Tera user activity request ${JSON.stringify(dailyDomainModel)}`);
                 }
                     break;

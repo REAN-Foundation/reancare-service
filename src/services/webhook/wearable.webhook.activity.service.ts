@@ -1,9 +1,7 @@
 import { inject, injectable } from "tsyringe";
-import { IBodyWeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { BodyWeightStore } from "../../modules/ehr/services/body.weight.store";
 import { Loader } from "../../startup/loader";
-import { IBodyHeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { ActivityDomainModel, ActivityType } from "../../domain.types/webhook/activity.domain.model";
 import { IStepCountRepo } from "../../database/repository.interfaces/wellness/daily.records/step.count.interface";
 import { ICalorieBalanceRepo } from "../../database/repository.interfaces/wellness/daily.records/calorie.balance.repo.interface";
@@ -19,8 +17,6 @@ export class TeraWebhookActivityService {
     _ehrBodyWeightStore: BodyWeightStore = null;
 
     constructor(
-        @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
-        @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
         @inject('IStepCountRepo') private _stepCountRepo: IStepCountRepo,
         @inject('ICalorieBalanceRepo') private _calorieBalanceRepo: ICalorieBalanceRepo,
         @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo
@@ -40,7 +36,7 @@ export class TeraWebhookActivityService {
                     Provider       : activityDomainModel.User.Provider,
                     StepCount      : activity.DistanceData.Summary.Steps ?? null,
                     Unit           : "steps",
-                    RecordDate     : new Date(activity.MetaData.StartTime) ?? null,
+                    RecordDate     : new Date(activity.MetaData.StartTime.split('T')[0]) ?? null,
                 };
                 await this._stepCountRepo.create(entity);
             }

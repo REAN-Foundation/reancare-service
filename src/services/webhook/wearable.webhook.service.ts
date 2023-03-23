@@ -19,6 +19,10 @@ import { ICalorieBalanceRepo } from "../../database/repository.interfaces/wellne
 import { ApiError } from "../../common/api.error";
 import { IWaterConsumptionRepo } from "../../database/repository.interfaces/wellness/nutrition/water.consumption.repo.interface";
 import { BodyDomainModel } from "../../domain.types/webhook/body.domain.model";
+import { IStepCountRepo } from "../../database/repository.interfaces/wellness/daily.records/step.count.interface";
+import { DailyDomainModel } from "../../domain.types/webhook/daily.domain.model";
+import { IBodyWeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
+import { IBodyHeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +41,9 @@ export class TeraWebhookService {
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
         @inject('ICalorieBalanceRepo') private _calorieBalanceRepo: ICalorieBalanceRepo,
         @inject('IWaterConsumptionRepo') private _waterConsumptionRepo: IWaterConsumptionRepo,
+        @inject('IStepCountRepo') private _stepCountRepo: IStepCountRepo,
+        @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
+        @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
             this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
@@ -93,12 +100,12 @@ export class TeraWebhookService {
                 PatientUserId    : nutritionDomainModel.User.ReferenceId,
                 Provider         : nutritionDomainModel.User.Provider,
                 CaloriesConsumed : nutritionDomainModel.Summary.Macros.Calories,
-                RecordDate       : new Date(nutritionDomainModel.MetaData.StartTime)
+                RecordDate       : new Date(nutritionDomainModel.MetaData.StartTime.split('T')[0])
             };
             var caloriesConsumed = await this._calorieBalanceRepo.create(domainModel);
         }
         if (caloriesConsumed == null) {
-            throw new ApiError(400, 'Cannot create Step Count!');
+            throw new ApiError(400, 'Cannot create calorie consumption!');
         }
 
         // Adding water summary data in daily records
@@ -116,7 +123,7 @@ export class TeraWebhookService {
                 PatientUserId : nutritionDomainModel.User.ReferenceId,
                 Provider      : nutritionDomainModel.User.Provider,
                 Volume        : nutritionDomainModel.Summary.WaterMl,
-                Time          : new Date(nutritionDomainModel.MetaData.StartTime)
+                Time          : new Date(nutritionDomainModel.MetaData.StartTime.split('T')[0])
             };
             var waterConsumed = await this._waterConsumptionRepo.create(waterDomainModel);
         }
@@ -195,6 +202,25 @@ export class TeraWebhookService {
                 await this._bodyTemperatureRepo.create(bodyTempDomainModel);
 
             });
+
+            const measurementSamples = body.MeasurementsData.Measurements;
+            measurementSamples.forEach(async measurement => {
+                const bodyHeightDomainModel = {
+                    PatientUserId : bodyDomainModel.User.ReferenceId,
+                    BodyHeight    : measurement.HeightCm,
+                    Unit          : "cm",
+                    RecordDate    : new Date(measurement.MeasurementTime)
+                };
+                await this._bodyHeightRepo.create(bodyHeightDomainModel);
+
+                const bodyWeightDomainModel = {
+                    PatientUserId : bodyDomainModel.User.ReferenceId,
+                    BodyWeight    : measurement.WeightKg,
+                    Unit          : "Kg",
+                    RecordDate    : new Date(measurement.MeasurementTime)
+                };
+                await this._bodyWeightRepo.create(bodyWeightDomainModel);
+            });
         });
     };
 
@@ -204,10 +230,84 @@ export class TeraWebhookService {
 
     };
 
-    daily = async (reAuthDomainModel: ReAuthDomainModel) => {
+    daily = async (dailyDomainModel: DailyDomainModel) => {
 
-        await this._patientRepo.terraReAuth( reAuthDomainModel.NewUser.ReferenceId, reAuthDomainModel);
+        const dailyData = dailyDomainModel.Data;
+        dailyData.forEach(async daily => {
 
+            const oxygenSamples = daily.OxygenData.SaturationSamples;
+            oxygenSamples.forEach(async bloodOxygen => {
+                const bloodOxygenDomainModel = {
+                    PatientUserId         : dailyDomainModel.User.ReferenceId,
+                    Provider              : dailyDomainModel.User.Provider,
+                    BloodOxygenSaturation : bloodOxygen.Percentage,
+                    Unit                  : "%",
+                    RecordDate            : new Date(bloodOxygen.TimeStamp)
+                };
+                await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
+
+            });
+
+            const heartRateSamples = daily.HeartRateData.Detailed.HrSamples;
+            heartRateSamples.forEach(async heartRate => {
+                const heartRateDomainModel = {
+                    PatientUserId : dailyDomainModel.User.ReferenceId,
+                    Provider      : dailyDomainModel.User.Provider,
+                    Pulse         : heartRate.BPM,
+                    Unit          : "bpm",
+                    RecordDate    : new Date(heartRate.TimeStamp)
+                };
+                await this._pulseRepo.create(heartRateDomainModel);
+
+            });
+
+            // Adding calorie summary data in daily records
+            const recordDate = daily.MetaData.StartTime.split('T')[0];
+            var existingRecord =
+            await this._calorieBalanceRepo.getByRecordDate(new Date(recordDate), dailyDomainModel.User.ReferenceId);
+            if (existingRecord !== null) {
+                const domainModel = {
+                    Provider       : dailyDomainModel.User.Provider,
+                    CaloriesBurned : existingRecord.CaloriesBurned + daily.CaloriesData.NetActivityCalories
+                };
+                var caloriesBurned = await this._calorieBalanceRepo.update(existingRecord.id, domainModel);
+            } else {
+                const domainModel = {
+                    PatientUserId  : dailyDomainModel.User.ReferenceId,
+                    Provider       : dailyDomainModel.User.Provider,
+                    CaloriesBurned : daily.CaloriesData.NetActivityCalories,
+                    RecordDate     : new Date(daily.MetaData.StartTime.split('T')[0])
+                };
+                var caloriesBurned = await this._calorieBalanceRepo.create(domainModel);
+            }
+            if (caloriesBurned == null) {
+                throw new ApiError(400, 'Cannot create Calories Burned!');
+            }
+
+            // Adding step count data in daily records
+            var existingStepRecord = await this._stepCountRepo.getByRecordDateAndPatientUserId(new Date(recordDate),
+                dailyDomainModel.User.ReferenceId);
+            if (existingStepRecord !== null) {
+                const domainModel = {
+                    Provider   : dailyDomainModel.User.Provider,
+                    StepCount  : daily.DistanceData.Steps,
+                    RecordDate : null
+                };
+                var stepCount = await this._stepCountRepo.update(existingStepRecord.id, domainModel);
+            } else {
+                const domainModel = {
+                    PatientUserId : dailyDomainModel.User.ReferenceId,
+                    Provider      : dailyDomainModel.User.Provider,
+                    StepCount     : daily.DistanceData.Steps,
+                    RecordDate    : new Date(recordDate.split('T')[0]),
+                    Unit          : "steps"
+                };
+                var stepCount = await this._stepCountRepo.create(domainModel);
+            }
+            if (stepCount == null) {
+                throw new ApiError(400, 'Cannot create step count!');
+            }
+        });
     };
 
 }

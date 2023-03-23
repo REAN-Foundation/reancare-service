@@ -81,8 +81,8 @@ export default class Application {
 
         return new Promise((resolve, reject) => {
             try {
-                this._app.use(express.urlencoded({ extended: true }));
-                this._app.use(express.json());
+                this._app.use(express.urlencoded({ limit: '50mb', extended: true }));
+                this._app.use(express.json( { limit: '50mb' }));
                 this._app.use(helmet());
                 this._app.use(cors());
 

@@ -139,9 +139,30 @@ export class TeraWebhookValidator extends BaseValidator {
         const dailyData = request.body.data ?? [];
         const dailyArray = [];
         for (const daily of dailyData) {
+
+            const heartArray = [];
+            const heartRateSamples = daily.heart_rate_data.detailed.hr_samples;
+            heartRateSamples.forEach( heartRate => {
+                const heartRateDomainModel = {
+                    BPM       : heartRate.bpm,
+                    TimeStamp : heartRate.timestamp
+                };
+                heartArray.push(heartRateDomainModel);
+            });
+
+            const oxygenArray = [];
+            const oxygenSamples = daily.oxygen_data.saturation_samples;
+            oxygenSamples.forEach( oxygen => {
+                const oxygenDomainModel = {
+                    Percentage : oxygen.percentage,
+                    TimeStamp  : oxygen.timestamp
+                };
+                oxygenArray.push(oxygenDomainModel);
+            });
+
             const dailyDomainModel : Daily = {
                 OxygenData : {
-                    SaturationSamples       : daily.oxygen_data.saturation_samples,
+                    SaturationSamples       : oxygenArray,
                     AvgSaturationPercentage : daily.oxygen_data.avg_saturation_percentage,
                     Vo2maxMlPerMinPerKg     : daily.oxygen_data.vo2max_ml_per_min_per_kg
                 },
@@ -200,7 +221,7 @@ export class TeraWebhookValidator extends BaseValidator {
                         AvgHrBpm     : daily.heart_rate_data.summary.avg_hr_bpm
                     },
                     Detailed : {
-                        HrSamples : daily.heart_rate_data.detailed.hr_samples
+                        HrSamples : heartArray
                     }
                 },
                 ActiveDurationsData : {
@@ -252,7 +273,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
             const heartArray = [];
             const heartRateSamples = body.heart_data.heart_rate_data.detailed.hr_samples;
-            heartRateSamples.forEach(async heartRate => {
+            heartRateSamples.forEach( heartRate => {
                 const heartRateDomainModel = {
                     BPM       : heartRate.bpm,
                     TimeStamp : heartRate.timestamp
@@ -262,10 +283,10 @@ export class TeraWebhookValidator extends BaseValidator {
 
             const bpArray = [];
             const bpSamples = body.blood_pressure_data.blood_pressure_samples;
-            bpSamples.forEach(async bp => {
+            bpSamples.forEach( bp => {
                 const bpDomainModel = {
-                    DiastolicBPmmHg : bp.diastolic_bp_mmHg,
-                    SystolicBPmmHg  : bp.systolic_bp_mmHg,
+                    DiastolicBPmmHg : bp.diastolic_bp,
+                    SystolicBPmmHg  : bp.systolic_bp,
                     TimeStamp       : bp.timestamp
                 };
                 bpArray.push(bpDomainModel);
@@ -273,7 +294,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
             const oxygenArray = [];
             const oxygenSamples = body.oxygen_data.saturation_samples;
-            oxygenSamples.forEach(async oxygen => {
+            oxygenSamples.forEach( oxygen => {
                 const oxygenDomainModel = {
                     Percentage : oxygen.percentage,
                     TimeStamp  : oxygen.timestamp
@@ -283,9 +304,13 @@ export class TeraWebhookValidator extends BaseValidator {
 
             const tempArray = [];
             const tempSamples = body.temperature_data.body_temperature_samples;
-            tempSamples.forEach(async temp => {
+            tempSamples.forEach( temp => {
+                let tempFahrenheit = 0;
+                if ( temp.temperature_celsius < 80) {
+                    tempFahrenheit = (temp.temperature_celsius * 1.8) + 32;
+                }
                 const tempDomainModel = {
-                    TemperatureCelsius : temp.temperature_celsius,
+                    TemperatureCelsius : tempFahrenheit,
                     TimeStamp          : temp.timestamp
                 };
                 tempArray.push(tempDomainModel);
@@ -293,12 +318,23 @@ export class TeraWebhookValidator extends BaseValidator {
 
             const glucoseArray = [];
             const glucoseSamples = body.glucose_data.blood_glucose_samples;
-            glucoseSamples.forEach(async glucose => {
+            glucoseSamples.forEach( glucose => {
                 const glucoseDomainModel = {
                     BloodGlucoseMgPerDL : glucose.blood_glucose_mg_per_dL,
                     TimeStamp           : glucose.timestamp
                 };
                 glucoseArray.push(glucoseDomainModel);
+            });
+
+            const measurementsArray = [];
+            const measurementSamples = body.measurements_data.measurements;
+            measurementSamples.forEach( measurement => {
+                const measurementDomainModel = {
+                    HeightCm        : measurement.height_cm,
+                    WeightKg        : measurement.weight_kg,
+                    MeasurementTime : measurement.measurement_time
+                };
+                measurementsArray.push(measurementDomainModel);
             });
 
             const bodyDomainModel : Body = {
@@ -331,7 +367,7 @@ export class TeraWebhookValidator extends BaseValidator {
                     SkinTemperaturSamples     : body.temperature_data.skin_temperature_samples
                 },
                 MeasurementsData : {
-                    Measurements : body.measurements_data.measurements
+                    Measurements : measurementsArray
                 },
                 HeartData : {
                     AfibClassificationSamples : body.heart_data.afib_classification_samples,

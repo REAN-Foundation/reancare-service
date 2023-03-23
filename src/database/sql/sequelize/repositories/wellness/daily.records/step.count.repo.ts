@@ -56,6 +56,23 @@ export class StepCountRepo implements IStepCountRepo {
         }
     };
 
+    getByRecordDateAndPatientUserId = async (date: Date, patientUserId : string): Promise<StepCountDto> => {
+        try {
+            const new_date = new Date(date);
+            const sleep =  await StepCount.findOne({
+                where : {
+                    RecordDate    : new_date,
+                    PatientUserId : patientUserId,
+                }
+            });
+            return await StepCountMapper.toDto(sleep);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: StepCountSearchFilters): Promise<StepCountSearchResults> => {
         try {
             const search = { where: {} };

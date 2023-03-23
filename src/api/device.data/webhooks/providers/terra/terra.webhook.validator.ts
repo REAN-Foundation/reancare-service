@@ -350,14 +350,6 @@ export class TeraWebhookValidator extends BaseValidator {
                 HydrationData : {
                     DayTotalWaterConsumptionMl : body.hydration_data.day_total_water_consumption_ml
                 },
-                DeviceData : {
-                    Name                : body.device_data.name,
-                    HardwareVersion     : body.device_data.hardware_version,
-                    Manufacturer        : body.device_data.manufacturer,
-                    SoftwareVersion     : body.device_data.software_version,
-                    ActivationTimestamp : body.device_data.activation_timestamp,
-                    SerialNumber        : body.device_data.serial_number,
-                },
                 BloodPressureData : {
                     BloodPressureSamples : bpArray
                 },

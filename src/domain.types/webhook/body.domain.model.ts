@@ -20,7 +20,7 @@ export interface Body {
   HydrationData?: {
     DayTotalWaterConsumptionMl: Option<number>;
   };
-  DeviceData: {
+  DeviceData?: {
     Name: Option<string>;
     HardwareVersion: Option<string>;
     Manufacturer: Option<string>;

@@ -11,7 +11,7 @@ export class LabRecordTypeMapper {
         const dto: LabRecordTypeDto = {
             id             : labRecordType.id,
             TypeName       : labRecordType.TypeName,
-            DisplayName    : labRecordType.DisplayName as LabRecordType,
+            DisplayName    : labRecordType.DisplayName,
             SnowmedCode    : labRecordType.SnowmedCode,
             LoincCode      : labRecordType.LoincCode,
             NormalRangeMin : labRecordType.NormalRangeMin,

@@ -87,22 +87,22 @@ export interface TemperatureSample {
 }
 
 export interface MeasurementDataSample {
-  MeasurementTime: string;
-  BMI: Option<number>;
-  BMR: Option<number>;
-  RMR: Option<number>;
-  EstimatedFitnessAge: Option<number>;
-  SkinFoldMm: Option<number>;
-  BodyfatPercentage: Option<number>;
+  MeasurementTime?: string;
+  BMI?: Option<number>;
+  BMR?: Option<number>;
+  RMR?: Option<number>;
+  EstimatedFitnessAge?: Option<number>;
+  SkinFoldMm?: Option<number>;
+  BodyfatPercentage?: Option<number>;
   WeightKg: Option<number>;
   HeightCm: Option<number>;
-  BoneMassKg: Option<number>;
-  MuscleMassKg: Option<number>;
-  LeanMassKg: Option<number>;
-  WaterPercentage: Option<number>;
-  InsulinUnits: Option<number>;
-  InsulinType: Option<string>;
-  UrineColor: Option<string>;
+  BoneMassKg?: Option<number>;
+  MuscleMassKg?: Option<number>;
+  LeanMassKg?: Option<number>;
+  WaterPercentage?: Option<number>;
+  InsulinUnits?: Option<number>;
+  InsulinType?: Option<string>;
+  UrineColor?: Option<string>;
 }
 
 export interface AFibClassificationSample {

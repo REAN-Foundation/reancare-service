@@ -12,6 +12,7 @@ export interface PatientDto {
     DisplayId        : string;
     EhrId            : string;
     DonorAcceptance  : string;
+    IsRemindersLoaded  : boolean;
     FirstName        : string;
     LastName         : string;
     DisplayName      : string;
@@ -34,6 +35,7 @@ export interface PatientDetailsDto {
     HealthSystem?       : string;
     AssociatedHospital? : string;
     DonorAcceptance?    : string;
+    IsRemindersLoaded?    : boolean;
     FirstName?    : string;
     HealthProfile?      : HealthProfileDto;
     Insurances?         : PatientInsuranceDto[];

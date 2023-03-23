@@ -72,6 +72,9 @@ export class PatientRepo implements IPatientRepo {
             if (model.DonorAcceptance != null) {
                 patient.DonorAcceptance = model.DonorAcceptance;
             }
+            if (model.IsRemindersLoaded != null) {
+                patient.IsRemindersLoaded = model.IsRemindersLoaded;
+            }
             await patient.save();
             return await PatientMapper.toDetailsDto(patient);
         } catch (error) {

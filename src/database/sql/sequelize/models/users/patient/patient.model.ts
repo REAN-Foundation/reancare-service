@@ -103,6 +103,13 @@ export default class Patient extends Model {
     })
     DonorAcceptance: string;
 
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    IsRemindersLoaded: boolean;
+
     @BelongsTo(() => User)
     User: User;
 

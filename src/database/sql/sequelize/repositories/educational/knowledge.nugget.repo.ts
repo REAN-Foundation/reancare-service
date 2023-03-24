@@ -86,7 +86,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
             }
             
             if (filters.Tags != null) {
-                search.where['Tags'] = filters.Tags;
+                search.where['Tags'] = { [Op.like]: '%' + filters.Tags + '%' };
             }
 
             let orderByColum = 'CreatedAt';

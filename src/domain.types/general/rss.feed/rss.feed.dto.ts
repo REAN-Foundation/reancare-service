@@ -22,6 +22,7 @@ export interface RssfeedDto {
     RssFeedResourceId?: uuid;
     JsonFeedResourceId?: uuid;
     FeedItems?    : RssfeedItemDto[];
+    CreatedAt?          : Date;
 }
 
 export interface RssfeedItemDto {

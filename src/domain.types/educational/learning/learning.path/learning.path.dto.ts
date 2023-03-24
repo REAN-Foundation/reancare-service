@@ -10,6 +10,7 @@ export interface LearningPathDto {
     Courses?            : LearningCourseDto[];
     PreferenceWeight?   : number;
     Enabled?            : boolean;
+    CreatedAt?          : Date;
 }
 
 export interface LearningCourseDto {

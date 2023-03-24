@@ -3,7 +3,6 @@ export interface KnowledgeNuggetDto {
     TopicName?: string;
     BriefInformation?: string;
     DetailedInformation?: string;
-    PostDate?: Date;
     AdditionalResources?: string[];
     Tags?               : string[];
     CreatedAt?          : Date;

@@ -18,7 +18,6 @@ export class SymptomTypeValidator extends BaseValidator {
             Symptom         : request.body.Symptom ?? null,
             Description     : request.body.Description ?? null,
             Language        : request.body.Language,
-            PostDate        : request.body.PostDate ?? new Date(),
             Tags            : request.body.Tags ?? [],
             ImageResourceId : request.body.ImageResourceId ?? null,
         };
@@ -60,7 +59,6 @@ export class SymptomTypeValidator extends BaseValidator {
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, false);
         await this.validateString(request, 'Symptom', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
-        await this.validateDate(request, 'PostDate', Where.Body, false, true);
         await this.validateArray(request, 'Tags', Where.Body, false, false);
         await this.validateString(request, 'Language', Where.Body, true, false);
 
@@ -72,7 +70,6 @@ export class SymptomTypeValidator extends BaseValidator {
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, false);
         await this.validateString(request, 'Symptom', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
-        await this.validateDate(request, 'PostDate', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, false);
         await this.validateString(request, 'Language', Where.Body, false, false);
 
@@ -82,8 +79,8 @@ export class SymptomTypeValidator extends BaseValidator {
     private getFilter(request): SymptomTypeSearchFilters {
 
         const filters: SymptomTypeSearchFilters = {
-            Symptom     : request.query.symptom ?? null,
-            Tag         : request.query.tag ?? null,
+            Symptom : request.query.symptom ?? null,
+            Tag     : request.query.tag ?? null,
         };
         return this.updateBaseSearchFilters(request, filters);
     }

@@ -26,7 +26,6 @@ export class KnowledgeNuggetMapper {
             id                  : knowledgeNugget.id,
             TopicName           : knowledgeNugget.TopicName,
             BriefInformation    : knowledgeNugget.BriefInformation,
-            PostDate            : knowledgeNugget.PostDate,
             DetailedInformation : knowledgeNugget.DetailedInformation,
             AdditionalResources : additionalResources,
             Tags                : tags,

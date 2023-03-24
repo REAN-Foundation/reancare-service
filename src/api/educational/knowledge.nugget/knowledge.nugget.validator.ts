@@ -17,7 +17,6 @@ export class KnowledgeNuggetValidator extends BaseValidator {
             TopicName           : request.body.TopicName ?? null,
             BriefInformation    : request.body.BriefInformation ?? null,
             DetailedInformation : request.body.DetailedInformation ?? null,
-            PostDate            : request.body.PostDate ?? new Date(),
             AdditionalResources : request.body.AdditionalResources ?? [],
             Tags                : request.body.Tags ?? [],
         };
@@ -33,7 +32,6 @@ export class KnowledgeNuggetValidator extends BaseValidator {
     search = async (request: express.Request): Promise<KnowledgeNuggetSearchFilters> => {
 
         await this.validateString(request, 'topicName', Where.Query, false, false);
-        await this.validateDate(request, 'postDate', Where.Query, false, false);
         await this.validateString(request, 'tags', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
@@ -57,7 +55,6 @@ export class KnowledgeNuggetValidator extends BaseValidator {
         await this.validateString(request, 'TopicName', Where.Body, false, false);
         await this.validateString(request, 'BriefInformation', Where.Body, false, false);
         await this.validateString(request, 'DetailedInformation', Where.Body, false, false);
-        await this.validateDate(request, 'PostDate', Where.Body, false, true);
         await this.validateArray(request, 'AdditionalResources', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, false);
 
@@ -69,7 +66,6 @@ export class KnowledgeNuggetValidator extends BaseValidator {
         await this.validateString(request, 'TopicName', Where.Body, false, false);
         await this.validateString(request, 'BriefInformation', Where.Body, false, false);
         await this.validateString(request, 'DetailedInformation', Where.Body, false, false);
-        await this.validateDate(request, 'PostDate', Where.Body, false, false);
         await this.validateArray(request, 'AdditionalResources', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, false);
 

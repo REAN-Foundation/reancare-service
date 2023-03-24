@@ -47,12 +47,6 @@ export default class KnowledgeNugget extends Model {
     })
     DetailedInformation: string;
 
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    PostDate: Date;
-
     @Length({ max: 1024 })
     @Column({
         type      : DataType.STRING(1024),

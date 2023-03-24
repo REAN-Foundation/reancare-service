@@ -4,7 +4,6 @@ export interface KnowledgeNuggetDomainModel {
     TopicName?: string;
     BriefInformation?: string;
     DetailedInformation?: string;
-    PostDate?: Date;
     AdditionalResources?: string[];
     Tags?: string[];
 }

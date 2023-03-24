@@ -17,7 +17,6 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             const entity = {
                 Symptom         : model.Symptom,
                 Description     : model.Description ?? null,
-                PostDate        : model.PostDate,
                 Tags            : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
                 Language        : model.Language ?? 'en-US',
                 ImageResourceId : model.ImageResourceId ?? null,
@@ -131,9 +130,6 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             }
             if (updateModel.Language != null) {
                 symptomType.Language = updateModel.Language;
-            }
-            if (updateModel.PostDate != null) {
-                symptomType.PostDate = updateModel.PostDate;
             }
             if (updateModel.ImageResourceId != null) {
                 symptomType.ImageResourceId = updateModel.ImageResourceId;

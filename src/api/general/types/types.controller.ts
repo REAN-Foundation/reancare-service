@@ -187,6 +187,24 @@ export class TypesController extends BaseController {
         }
     };
 
+    getQueryResponseTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.GetQueryResponseTypes', request, response, false);
+
+            const types = await this._service.getQueryResponseTypes();
+            if (types === null || types.length === 0) {
+                throw new ApiError(400, 'Cannot get query response types!');
+            }
+
+            ResponseHandler.success(request, response, 'Query response types retrieved successfully!', 200, {
+                QueryResponseTypes : types,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     // Priority type
     createPriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

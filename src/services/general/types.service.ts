@@ -14,6 +14,7 @@ import { LabRecordTypeDomainModel } from "../../domain.types/clinical/lab.record
 import { IGoalRepo } from "../../database/repository.interfaces/users/patient/goal.repo.interface";
 import { GoalTypeDto } from "../../domain.types/users/patient/goal.type/goal.type.dto";
 import { GoalTypeDomainModel } from "../../domain.types/users/patient/goal.type/goal.type.domain.model";
+import { QueryResponseTypeList } from "../../domain.types/clinical/assessment/assessment.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +37,14 @@ export class TypesService {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise((resolve, reject) => {
             resolve(OrganizationTypeList);
+        });
+    };
+
+    getQueryResponseTypes = async (): Promise<string[]> => {
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        return new Promise((resolve, reject) => {
+            resolve(QueryResponseTypeList);
         });
     };
 

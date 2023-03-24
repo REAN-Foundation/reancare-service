@@ -9,4 +9,5 @@ export interface CourseDto {
     ImageUrl?       : string;
     DurationInDays? : number;
     Modules?        : CourseModuleDto[];
+    CreatedAt?          : Date;
 }

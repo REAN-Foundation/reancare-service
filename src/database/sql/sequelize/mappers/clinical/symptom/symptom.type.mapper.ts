@@ -19,6 +19,7 @@ export class SymptomTypeMapper {
             Tags            : symptomType.Tags ? JSON.parse(symptomType.Tags) : [],
             Language        : symptomType.Language,
             ImageResourceId : symptomType.ImageResourceId,
+            CreatedAt       : symptomType.CreatedAt,
         };
         
         return dto;

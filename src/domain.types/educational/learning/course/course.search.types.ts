@@ -6,6 +6,7 @@ import { CourseDto } from "./course.dto";
 
 export interface CourseSearchFilters extends BaseSearchFilters{
     Name?: string;
+    DurationInDays?  : number;
     LearningPathId?: uuid;
 }
 

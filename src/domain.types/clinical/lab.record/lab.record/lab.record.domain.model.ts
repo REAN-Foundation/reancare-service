@@ -6,7 +6,7 @@ export interface LabRecordDomainModel {
     EhrId?          : uuid;
     PatientUserId   : uuid;
     TypeName ?      : string;
-    DisplayName     : LabRecordType;
+    DisplayName     : string;
     TypeId ?        : uuid;
     PrimaryValue    : decimal;
     SecondaryValue? : decimal;

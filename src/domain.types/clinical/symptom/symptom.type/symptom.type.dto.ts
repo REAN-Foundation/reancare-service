@@ -7,4 +7,5 @@ export interface SymptomTypeDto {
     Tags?           : string;
     Language?       : string;
     ImageResourceId?: string;
+    CreatedAt?      : Date;
 }

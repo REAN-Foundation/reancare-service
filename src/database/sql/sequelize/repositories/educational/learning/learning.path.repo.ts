@@ -73,6 +73,9 @@ export class LearningPathRepo implements ILearningPathRepo {
             if (filters.Name != null) {
                 search.where['Name'] = { [Op.like]: '%' + filters.Name + '%' };
             }
+            if (filters.PreferenceWeight != null) {
+                search.where['PreferenceWeight'] = filters.PreferenceWeight;
+            }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

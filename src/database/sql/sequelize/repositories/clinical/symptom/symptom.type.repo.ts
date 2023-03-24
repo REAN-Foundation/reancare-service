@@ -61,6 +61,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             if (filters.Symptom != null) {
                 search.where['Symptom'] = { [Op.like]: '%' + filters.Symptom + '%' };
             }
+            
             if (filters.Tag != null) {
                 search.where['Tags'] = { [Op.like]: '%' + filters.Tag + '%' };
             }

@@ -31,6 +31,7 @@ export class LearningPathValidator extends BaseValidator {
 
     search = async (request: express.Request): Promise<LearningPathSearchFilters> => {
         await this.validateString(request, 'name', Where.Query, false, false);
+        await this.validateDecimal(request, 'PreferenceWeight', Where.Body, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getFilter(request);
@@ -68,6 +69,7 @@ export class LearningPathValidator extends BaseValidator {
     private getFilter(request): LearningPathSearchFilters {
         var filters: LearningPathSearchFilters = {
             Name : request.query.name ?? null,
+            PreferenceWeight : request.query.preferenceWeight ?? null,
         };
         return this.updateBaseSearchFilters(request, filters);
     }

@@ -69,6 +69,9 @@ export class CourseRepo implements ICourseRepo {
             if (filters.Name != null) {
                 search.where['Name'] = { [Op.like]: '%' + filters.Name + '%' };
             }
+            if (filters.DurationInDays != null) {
+                search.where['DurationInDays'] = filters.DurationInDays;
+            }
             if (filters.LearningPathId != null) {
                 search.where['LearningPathId'] = filters.LearningPathId;
             }

@@ -54,7 +54,7 @@
     "node-html-to-image": "^3.3.0",
     "node-xlsx": "^0.21.0",
     "pdfkit": "^0.13.0",
-    "pg": "^8.9.0",
+    "pg": "^8.10.0",
     "pg-hstore": "^2.3.3",
     "puppeteer": "^19.7.2",
     "reflect-metadata": "^0.1.13",

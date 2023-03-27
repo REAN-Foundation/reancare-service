@@ -21,7 +21,7 @@ on:
 
 jobs:
   CodeScan-ESLint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-4-cores
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3

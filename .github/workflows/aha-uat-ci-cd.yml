@@ -13,8 +13,8 @@ on:
   workflow_dispatch:
     inputs:
       Tag_name:
-        description: Tag name of your release
-        default: 31.1.0
+        description: Tag name of your release(please include "v" if needed)
+        default: v31.1.0
         required: true
 
 jobs:

@@ -12,8 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: New Release Publish
+        id: release
         uses: release-drafter/release-drafter@v5
         with:
           publish : true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - run: |
+         echo ${{ steps.release.outputs }}

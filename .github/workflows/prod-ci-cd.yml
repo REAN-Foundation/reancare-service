@@ -10,8 +10,8 @@ name: PROD-CI-CD
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push events but only for the develop branch
-  push:
-    branches: [main]
+  pull_request:
+    branches: [develop]
 
 jobs:
   
@@ -26,18 +26,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
        
-      - name: Get release
-        id: result_release
-        uses: cardinalby/git-get-release-action@v1
-        env:
-         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
-        with:
-           tag: ${{ steps.new_publish.outputs.tag_name }}
-           repo: REAN-Foundation/reancare-service
+#       - name: Get release
+#         id: result_release
+#         uses: cardinalby/git-get-release-action@v1
+#         env:
+#          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+#         with:
+#            tag: ${{ steps.new_publish.outputs.tag_name }}
+#            repo: REAN-Foundation/reancare-service
            
     outputs:
-      release_id: ${{ steps.result_release.outputs.id }}
-      release_name: ${{ steps.result_release.outputs.name }}
+      release_id: ${{ steps.new_publish.outputs.id }}
+      release_name: ${{ steps.new_publish.outputs.tag_name }}
     
 
 
@@ -50,6 +50,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      
+      - name: printing data 
+        run: |
+          echo ${{ needs.Get_Tag.outputs.release_name }}
+          echo ${{ needs.Get_Tag.outputs.release_id }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

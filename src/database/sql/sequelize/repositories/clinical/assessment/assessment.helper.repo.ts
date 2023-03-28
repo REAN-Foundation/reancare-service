@@ -40,6 +40,9 @@ import { AssessmentHelperMapper } from '../../../mappers/clinical/assessment/ass
 import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
 import { Helper } from '../../../../../../common/helper';
 import ScoringCondition from '../../../models/clinical/assessment/scoring.condition.model';
+import { AssessmentNodeSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
+import { AssessmentNodeSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -525,6 +528,70 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             thisNode = await thisNode.save();
             return await this.populateNodeDetails(thisNode);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public searchNode = async ( filters:AssessmentNodeSearchFilters):
+     Promise<AssessmentNodeSearchResults> => {
+        try {
+            const search = { where : {
+                // TemplateId : templateId
+            } };
+
+            if (filters.Title != null) {
+                search.where['Title'] = { [Op.like]: '%' + filters.Title + '%' };
+            }
+            if (filters.NodeType != null) {
+                search.where['NodeType'] = { [Op.like]: '%' + filters.NodeType + '%' };
+            }
+            if (filters.TemplateId != null) {
+                search.where['TemplateId'] = filters.TemplateId;
+            }
+            let orderByColum = 'Title';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await AssessmentNode.findAndCountAll(search);
+ 
+            const dtos: CAssessmentNode[] = [];
+            for (const doctorNote of foundResults.rows) {
+                const dto = await this.populateNodeDetails(doctorNote);
+                dtos.push(dto);
+            }
+
+            const searchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos
+            };
+            return searchResults;
 
         } catch (error) {
             Logger.instance().log(error.message);

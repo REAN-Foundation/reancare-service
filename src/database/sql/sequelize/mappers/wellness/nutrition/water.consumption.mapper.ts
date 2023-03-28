@@ -11,11 +11,13 @@ export class WaterConsumptionMapper {
             return null;
         }
         const dto: WaterConsumptionDto = {
-            id            : waterConsumption.id,
-            EhrId         : waterConsumption.EhrId,
-            PatientUserId : waterConsumption.PatientUserId,
-            Volume        : waterConsumption.Volume,
-            Time          : waterConsumption.Time,
+            id             : waterConsumption.id,
+            EhrId          : waterConsumption.EhrId,
+            PatientUserId  : waterConsumption.PatientUserId,
+            TerraSummaryId : waterConsumption.TerraSummaryId,
+            Provider       : waterConsumption.Provider,
+            Volume         : waterConsumption.Volume,
+            Time           : waterConsumption.Time,
         };
         return dto;
     };

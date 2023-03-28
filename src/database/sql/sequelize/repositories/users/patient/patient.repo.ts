@@ -8,6 +8,8 @@ import { IPatientRepo } from "../../../../../repository.interfaces/users/patient
 import { PatientMapper } from "../../../mappers/users/patient/patient.mapper";
 import Patient from "../../../models/users/patient/patient.model";
 import Person from "../../../models/person/person.model";
+import { AuthDomainModel } from '../../../../../../domain.types/webhook/auth.domain.model';
+import { ReAuthDomainModel } from '../../../../../../domain.types/webhook/reauth.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -71,6 +73,9 @@ export class PatientRepo implements IPatientRepo {
             }
             if (model.DonorAcceptance != null) {
                 patient.DonorAcceptance = model.DonorAcceptance;
+            }
+            if (model.IsRemindersLoaded != null) {
+                patient.IsRemindersLoaded = model.IsRemindersLoaded;
             }
             await patient.save();
             return await PatientMapper.toDetailsDto(patient);
@@ -232,6 +237,50 @@ export class PatientRepo implements IPatientRepo {
             });
 
             return patientUserIds;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    terraAuth = async (reference_id: string, model: AuthDomainModel) => {
+        try {
+            const patient = await Patient.findOne({ where: { UserId: reference_id } });
+
+            if (model.User.UserId != null) {
+                patient.TerraUserId = model.User.UserId;
+            }
+            if (model.User.Provider != null) {
+                patient.TerraProvider = model.User.Provider;
+            }
+            if (model.User.Scopes != null) {
+                patient.TerraScopes = model.User.Scopes;
+            }
+            await patient.save();
+            await PatientMapper.toDetailsDto(patient);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    terraReAuth = async (referenceId: string, model: ReAuthDomainModel) => {
+        try {
+            const patient = await Patient.findOne({ where: { UserId: referenceId } });
+
+            if (model.NewUser.UserId != null) {
+                patient.TerraUserId = model.NewUser.UserId;
+            }
+            if (model.NewUser.Provider != null) {
+                patient.TerraProvider = model.NewUser.Provider;
+            }
+            if (model.NewUser.Scopes != null) {
+                patient.TerraScopes = model.NewUser.Scopes;
+            }
+            await patient.save();
+            await PatientMapper.toDetailsDto(patient);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

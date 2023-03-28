@@ -17,6 +17,7 @@ export interface PatientDomainModel {
     HealthSystem?        : string;
     AssociatedHospital?  : string;
     DonorAcceptance?     : string;
+    IsRemindersLoaded?   : boolean;
     User?                : UserDomainModel;
     HealthProfile?       : HealthProfileDomainModel
     InsuranceIds?        : string[];

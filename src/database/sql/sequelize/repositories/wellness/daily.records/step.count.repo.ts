@@ -15,10 +15,12 @@ export class StepCountRepo implements IStepCountRepo {
     create = async (createModel: StepCountDomainModel): Promise<StepCountDto> => {
         try {
             const entity = {
-                PatientUserId : createModel.PatientUserId ?? null,
-                StepCount     : createModel.StepCount ?? null,
-                Unit          : createModel.Unit ?? null,
-                RecordDate    : createModel.RecordDate ?? null,
+                PatientUserId  : createModel.PatientUserId ?? null,
+                TerraSummaryId : createModel.TerraSummaryId ?? null,
+                Provider       : createModel.Provider ?? null,
+                StepCount      : createModel.StepCount ?? null,
+                Unit           : createModel.Unit ?? null,
+                RecordDate     : createModel.RecordDate ?? null,
             };
             const stepCount = await StepCount.create(entity);
             return await StepCountMapper.toDto(stepCount);
@@ -44,6 +46,23 @@ export class StepCountRepo implements IStepCountRepo {
             const sleep =  await StepCount.findOne({
                 where : {
                     RecordDate : new_date
+                }
+            });
+            return await StepCountMapper.toDto(sleep);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByRecordDateAndPatientUserId = async (date: Date, patientUserId : string): Promise<StepCountDto> => {
+        try {
+            const new_date = new Date(date);
+            const sleep =  await StepCount.findOne({
+                where : {
+                    RecordDate    : new_date,
+                    PatientUserId : patientUserId,
                 }
             });
             return await StepCountMapper.toDto(sleep);
@@ -142,6 +161,12 @@ export class StepCountRepo implements IStepCountRepo {
             }
             if (updateModel.Unit != null) {
                 stepCount.Unit = updateModel.Unit;
+            }
+            if (updateModel.TerraSummaryId != null) {
+                stepCount.TerraSummaryId = updateModel.TerraSummaryId;
+            }
+            if (updateModel.Provider != null) {
+                stepCount.Provider = updateModel.Provider;
             }
 
             await stepCount.save();

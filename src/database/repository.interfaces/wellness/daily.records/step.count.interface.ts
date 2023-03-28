@@ -18,4 +18,6 @@ export interface IStepCountRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getByRecordDateAndPatientUserId(recordDate: Date, patientUserId: string): Promise<StepCountDto>;
+
 }

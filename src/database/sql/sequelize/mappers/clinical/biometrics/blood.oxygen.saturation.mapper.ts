@@ -14,6 +14,8 @@ export class BloodOxygenSaturationMapper {
             id                    : bloodOxygenSaturation.id,
             EhrId                 : bloodOxygenSaturation.EhrId,
             PatientUserId         : bloodOxygenSaturation.PatientUserId,
+            TerraSummaryId        : bloodOxygenSaturation.TerraSummaryId,
+            Provider              : bloodOxygenSaturation.Provider,
             BloodOxygenSaturation : bloodOxygenSaturation.BloodOxygenSaturation,
             Unit                  : bloodOxygenSaturation.Unit,
             RecordDate            : bloodOxygenSaturation.RecordDate,

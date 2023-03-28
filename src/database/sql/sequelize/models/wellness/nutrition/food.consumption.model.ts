@@ -61,6 +61,20 @@ export default class FoodConsumption extends Model {
         type      : DataType.STRING(128),
         allowNull : true,
     })
+    TerraSummaryId: string;
+
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Provider: string;
+
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
     Food: string;
 
     @Length({ max: 128 })

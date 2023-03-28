@@ -21,6 +21,8 @@ export class BloodPressureRepo implements IBloodPressureRepo {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
                 EhrId            : createModel.EhrId,
+                TerraSummaryId   : createModel.TerraSummaryId,
+                Provider         : createModel.Provider,
                 Systolic         : createModel.Systolic,
                 Diastolic        : createModel.Diastolic,
                 Unit             : createModel.Unit,
@@ -170,6 +172,12 @@ export class BloodPressureRepo implements IBloodPressureRepo {
             }
             if (updateModel.RecordedByUserId != null) {
                 bloodPressure.RecordedByUserId = updateModel.RecordedByUserId;
+            }
+            if (updateModel.TerraSummaryId != null) {
+                bloodPressure.TerraSummaryId = updateModel.TerraSummaryId;
+            }
+            if (updateModel.Provider != null) {
+                bloodPressure.Provider = updateModel.Provider;
             }
 
             await bloodPressure.save();

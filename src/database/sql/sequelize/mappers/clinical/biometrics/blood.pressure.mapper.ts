@@ -14,6 +14,8 @@ export class BloodPressureMapper {
             id               : bloodPressure.id,
             EhrId            : bloodPressure.EhrId,
             PatientUserId    : bloodPressure.PatientUserId,
+            TerraSummaryId   : bloodPressure.TerraSummaryId,
+            Provider         : bloodPressure.Provider,
             Systolic         : bloodPressure.Systolic,
             Diastolic        : bloodPressure.Diastolic,
             Unit             : bloodPressure.Unit,

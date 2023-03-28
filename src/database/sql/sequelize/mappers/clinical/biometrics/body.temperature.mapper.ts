@@ -14,6 +14,8 @@ export class BodyTemperatureMapper {
             id               : bodyTemperature.id,
             EhrId            : bodyTemperature.EhrId,
             PatientUserId    : bodyTemperature.PatientUserId,
+            TerraSummaryId   : bodyTemperature.TerraSummaryId,
+            Provider         : bodyTemperature.Provider,
             BodyTemperature  : bodyTemperature.BodyTemperature,
             Unit             : bodyTemperature.Unit,
             RecordDate       : bodyTemperature.RecordDate,

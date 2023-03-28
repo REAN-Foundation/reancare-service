@@ -22,6 +22,8 @@ export class FoodConsumptionMapper {
             id              : foodConsumption.id,
             EhrId           : foodConsumption.EhrId,
             PatientUserId   : foodConsumption.PatientUserId,
+            TerraSummaryId  : foodConsumption.TerraSummaryId,
+            Provider        : foodConsumption.Provider,
             Food            : foodConsumption.Food,
             FoodTypes       : foodConsumption.FoodTypes ? JSON.parse(foodConsumption.FoodTypes) : [],
             Servings        : foodConsumption.Servings,

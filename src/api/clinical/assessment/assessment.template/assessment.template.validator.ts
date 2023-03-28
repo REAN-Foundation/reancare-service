@@ -98,7 +98,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
 
         var templateId = await this.getParamUuid(request, 'id');
-        await this.validateUuid(request, 'ParentNodeId', Where.Body, false, true);
+        await this.validateString(request, 'ParentNodeId', Where.Body, false, true);
         await this.validateString(request, 'NodeType', Where.Body, true, false);
         await this.validateString(request, 'Title', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, true);

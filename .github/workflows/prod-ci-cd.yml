@@ -41,11 +41,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
-      - name: printing data 
-        run: |
-          echo ${{ needs.Get_Tag.outputs.release_name }}
-          echo ${{ needs.Get_Tag.outputs.release_id }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

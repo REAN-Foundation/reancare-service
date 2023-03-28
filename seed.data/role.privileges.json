@@ -95,6 +95,7 @@
             "AssessmentTemplate.UpdateNode",
             "AssessmentTemplate.DeleteNode",
             "AssessmentTemplate.GetNode",
+            "AssessmentTemplate.SearchNode",
             "Forms.Connect",
             "Forms.ExportAssessmentTemplateAsForm",
             "Forms.AddAssessmentTemplateAsForm",

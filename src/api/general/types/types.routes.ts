@@ -21,6 +21,7 @@ export const register = (app: express.Application): void => {
     router.get('/priorities', authenticator.authenticateClient, controller.getPriorityTypes);
     router.get('/lab-records', authenticator.authenticateClient, controller.getLabRecordTypes);
     router.get('/goal-types', authenticator.authenticateClient, controller.getGoalTypes);
+    router.get('/query-response-types', authenticator.authenticateClient, controller.getQueryResponseTypes);
     
     //Priority type
     router.post('/priorities/', authenticator.authenticateClient, authenticator.authenticateUser, controller.createPriorityType);

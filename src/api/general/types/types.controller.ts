@@ -159,7 +159,7 @@ export class TypesController extends BaseController {
                 throw new ApiError(400, 'Cannot fetch priorities types!');
             }
 
-            ResponseHandler.success(request, response, 'Fetched priority types successfully!', 201, {
+            ResponseHandler.success(request, response, 'Fetched priority types successfully!', 200, {
                 PriorityTypes : priorityTypes,
             });
 

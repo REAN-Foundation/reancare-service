@@ -524,7 +524,7 @@ export class TypesController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Fetched goal types successfully!', 200, {
-                goalTypes : goalTypes ,
+                GoalTypes : goalTypes ,
             });
 
         } catch (error) {

@@ -39,13 +39,12 @@ export class GoalMapper {
         }
 
         const typeDto: GoalTypeDto = {
-            id   : goalType.id,
-            Type : goalType.Type,
-            Tags : goalType.Tags ? JSON.parse(goalType.Tags) : [],
+            id        : goalType.id,
+            Type      : goalType.Type,
+            Tags      : goalType.Tags ? JSON.parse(goalType.Tags) : [],
+            CreatedAt : goalType.CreatedAt,
         };
 
         return typeDto;
     };
-
-
 }

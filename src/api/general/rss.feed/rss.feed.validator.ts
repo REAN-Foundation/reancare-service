@@ -84,7 +84,7 @@ export class RssfeedValidator extends BaseValidator {
     search = async (request: express.Request): Promise<RssfeedSearchFilters> => {
 
         await this.validateString(request, 'title', Where.Query, false, false);
-        await this.validateDate(request, 'category', Where.Query, false, false);
+        await this.validateString(request, 'category', Where.Query, false, false);
         await this.validateDate(request, 'tags', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);

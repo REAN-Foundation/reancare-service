@@ -523,8 +523,8 @@ export class TypesController extends BaseController {
                 throw new ApiError(400, 'Cannot fetch goal types!');
             }
 
-            ResponseHandler.success(request, response, 'Fetched goal types successfully!', 200, {
-                goalTypes : goalTypes ,
+            ResponseHandler.success(request, response, 'Fetched goal types successfully!', 201, {
+                GoalTypes : goalTypes ,
             });
 
         } catch (error) {

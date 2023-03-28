@@ -15,7 +15,7 @@ on:
 
 jobs:
   
-  Get-Release:
+  Publish-Release:
     runs-on: ubuntu-latest
     steps:
       - name: New Release Publish
@@ -34,7 +34,7 @@ jobs:
 
 
   Deploy-ECS:
-    needs: Get-Release
+    needs: Publish-Release
     environment: prod
     runs-on: ubuntu-latest
 

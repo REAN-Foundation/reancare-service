@@ -19,17 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: New Release Publish
+        id: new_publish
         uses: release-drafter/release-drafter@v5
         with:
           publish : true
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
-      
-      - name: get latest tag 
-        id: tagname
-        uses: tdemin/find-latest-tag@v1
-        with:
-           repo: https://github.com/REAN-Foundation/reancare-service.git
        
       - name: Get release
         id: result_release
@@ -37,7 +32,7 @@ jobs:
         env:
          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
         with:
-           tag: ${{ steps.tagname.outputs.tag }}
+           tag: ${{ steps.new_publish.outputs.tag_name }}
            repo: REAN-Foundation/reancare-service
            
     outputs:

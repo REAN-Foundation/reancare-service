@@ -60,7 +60,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                     [Op.lte] : filters.MaxValue,
                 };
             } else if (filters.MinValue !== null && filters.MaxValue === null) {
-                search.where['CreatedAt'] = {
+                search.where['BodyWeight'] = {
                     [Op.gte] : filters.MinValue,
                 };
             }

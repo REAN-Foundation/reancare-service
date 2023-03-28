@@ -47,12 +47,20 @@ export class BodyHeightRepo implements IBodyHeightRepo {
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.like]: '%' + filters.PatientUserId + '%' };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.MinValue != null && filters.MaxValue != null) {
                 search.where['BodyHeight'] = {
                     [Op.gte] : filters.MinValue,
                     [Op.lte] : filters.MaxValue,
+                };
+            } else if (filters.MinValue === null && filters.MaxValue !== null) {
+                search.where['BodyHeight'] = {
+                    [Op.lte] : filters.MaxValue,
+                };
+            } else if (filters.MinValue !== null && filters.MaxValue === null) {
+                search.where['BodyHeight'] = {
+                    [Op.gte] : filters.MinValue,
                 };
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
@@ -69,7 +77,7 @@ export class BodyHeightRepo implements IBodyHeightRepo {
                     [Op.gte] : filters.CreatedDateFrom,
                 };
             }
-            let orderByColum = 'BodyHeight';
+            let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }

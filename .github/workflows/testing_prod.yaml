@@ -28,7 +28,6 @@ jobs:
 
   Deploy-ECS:
     needs: Publish-Release
-    environment: prod
     runs-on: ubuntu-latest
 
     steps:

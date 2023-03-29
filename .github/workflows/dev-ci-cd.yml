@@ -17,8 +17,7 @@ on:
 jobs:
   Deploy-ECS:
     environment: dev
-    runs-on: 
-      self-hosted
+    runs-on: ubuntu-latest
 #       group: Default Larger Runners
 #       labels: ubuntu-latest-4-cores
 

@@ -538,9 +538,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     public searchNode = async ( filters:AssessmentNodeSearchFilters):
      Promise<AssessmentNodeSearchResults> => {
         try {
-            const search = { where : {
-                // TemplateId : templateId
-            } };
+            const search = { where: {} };
 
             if (filters.Title != null) {
                 search.where['Title'] = { [Op.like]: '%' + filters.Title + '%' };

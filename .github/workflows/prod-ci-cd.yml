@@ -31,8 +31,6 @@ jobs:
 #       release_name: ${{ steps.new_publish.outputs.tag_name }}
     
 
-
-
   Deploy-ECS:
     needs: Publish-Release
     environment: prod

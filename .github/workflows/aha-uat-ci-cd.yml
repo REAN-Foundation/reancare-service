@@ -92,7 +92,7 @@ jobs:
 
       - name: Pulling Image
         run: |
-          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.name }}_${{ steps.result_release.outputs.id }}
+          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.id }}
 
       - name: Download task definition
         run: |
@@ -105,7 +105,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: default
-          image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.name }}_${{ steps.result_release.outputs.id }}
+          image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.id }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

@@ -5,6 +5,8 @@ export interface FoodConsumptionDomainModel {
     id?                : uuid,
     EhrId?             : string;
     PatientUserId?     : uuid;
+    TerraSummaryId?    : string;
+    Provider?          : string;
     Food?              : string;
     FoodTypes?         : string[];
     Servings?          : number;

@@ -67,6 +67,11 @@ export interface FormServiceProvider {
     Code    : string;
 }
 
+export interface WebhookControllerProvider {
+    Provider: string;
+    Code    : string;
+}
+
 export interface Configurations {
     SystemIdentifier    : string;
     BaseUrl             : string;
@@ -86,5 +91,6 @@ export interface Configurations {
     MaxUploadFileSize   : number;
     JwtExpiresIn        : number;
     FormServiceProviders: FormServiceProvider[];
+    WebhookControllerProviders: WebhookControllerProvider[];
     SessionExpiresIn    : number;
 }

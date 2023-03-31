@@ -63,10 +63,11 @@ export class ConfigurationManager {
                 Download                   : configuration.TemporaryFolders.Download as string,
                 CleanupFolderBeforeMinutes : configuration.TemporaryFolders.CleanupFolderBeforeMinutes as number,
             },
-            FormServiceProviders : configuration.FormServiceProviders,
-            MaxUploadFileSize    : configuration.MaxUploadFileSize,
-            JwtExpiresIn         : configuration.JwtExpiresIn,
-            SessionExpiresIn     : configuration.SessionExpiresIn,
+            FormServiceProviders       : configuration.FormServiceProviders,
+            WebhookControllerProviders : configuration.WebhookControllerProviders,
+            MaxUploadFileSize          : configuration.MaxUploadFileSize,
+            JwtExpiresIn               : configuration.JwtExpiresIn,
+            SessionExpiresIn           : configuration.SessionExpiresIn,
         };
 
         ConfigurationManager.checkConfigSanity();
@@ -118,7 +119,7 @@ export class ConfigurationManager {
 
     public static JwtExpiresIn = (): number => {
         return ConfigurationManager._config.JwtExpiresIn;
-    }
+    };
 
     public static FileStorageProvider = (): FileStorageProvider => {
         return ConfigurationManager._config.FileStorage.Provider;
@@ -163,9 +164,13 @@ export class ConfigurationManager {
         return ConfigurationManager._config.FormServiceProviders;
     };
 
+    public static webhookControllerProviders = (): { Provider: string; Code: string; } [] => {
+        return ConfigurationManager._config.WebhookControllerProviders;
+    };
+
     public static SessionExpiresIn = (): number => {
         return ConfigurationManager._config.SessionExpiresIn;
-    }
+    };
 
     private static checkConfigSanity() {
 

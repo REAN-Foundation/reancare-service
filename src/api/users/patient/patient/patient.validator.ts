@@ -89,8 +89,9 @@ export class PatientValidator extends BaseValidator {
                 DefaultTimeZone : body.DefaultTimeZone ?? null,
                 CurrentTimeZone : body.CurrentTimeZone ?? null,
             },
-            Address         : body.Address ?? null,
-            DonorAcceptance : body.DonorAcceptance ?? null,
+            Address           : body.Address ?? null,
+            DonorAcceptance   : body.DonorAcceptance ?? null,
+            IsRemindersLoaded : body.IsRemindersLoaded ?? false,
         };
 
         return entity;
@@ -158,6 +159,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateBoolean(request, 'WorkedPriorToStroke', Where.Body, false, true);
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
         await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsRemindersLoaded', Where.Body, false, true);
 
         await body('AddressIds').optional()
             .isArray()

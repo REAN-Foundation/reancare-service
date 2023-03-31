@@ -64,6 +64,20 @@ export default class BloodPressure extends Model {
     })
     PatientUserId: string;
 
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    TerraSummaryId: string;
+
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Provider: string;
+
     // @IsUUID(4)
     // @ForeignKey(() => Encounter)
     // @Column({

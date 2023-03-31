@@ -200,7 +200,8 @@ export class AhaAssessmentConverter {
 
                 condition.OperatorType = ConditionOperatorType.In;
                 condition.FirstOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ReceivedAnswer', null);
-
+                
+                rule.value = rule.values ? rule.values : rule.value;
                 var arr = this.getOptionSequenceArrayForAnswer(node.Options, rule.value);
                 condition.SecondOperand = new ConditionOperand(ConditionOperandDataType.Array, 'ExpectedAnswer', arr);
             }

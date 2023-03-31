@@ -15,6 +15,8 @@ export class BloodGlucoseMapper {
             id               : bloodGlucose.id,
             EhrId            : bloodGlucose.EhrId,
             PatientUserId    : bloodGlucose.PatientUserId,
+            TerraSummaryId   : bloodGlucose.TerraSummaryId,
+            Provider         : bloodGlucose.Provider,
             BloodGlucose     : bloodGlucose.BloodGlucose,
             Unit             : bloodGlucose.Unit,
             RecordDate       : bloodGlucose.RecordDate,

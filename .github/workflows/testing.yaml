@@ -19,5 +19,6 @@ jobs:
             aws-region: ${{ secrets.AWS_REGION }}
       
         - name:  list images
-          run: aws ecr-public describe-repositories --region us-east-1
+          run: aws ecr-public list-images --repository-name reancare --region us-east-1
+#           run: aws ecr-public describe-repositories --region us-east-1
           shell: bash

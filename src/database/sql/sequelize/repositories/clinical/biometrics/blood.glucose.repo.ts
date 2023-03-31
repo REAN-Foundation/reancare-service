@@ -26,7 +26,6 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                 RecordDate       : createModel.RecordDate,
                 RecordedByUserId : createModel.RecordedByUserId,
             };
-
             const bloodGlucose = await BloodGlucose.create(entity);
             return await BloodGlucoseMapper.toDto(bloodGlucose);
         } catch (error) {

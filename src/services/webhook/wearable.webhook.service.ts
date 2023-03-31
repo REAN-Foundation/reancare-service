@@ -205,21 +205,25 @@ export class TeraWebhookService {
 
             const measurementSamples = body.MeasurementsData.Measurements;
             measurementSamples.forEach(async measurement => {
-                const bodyHeightDomainModel = {
-                    PatientUserId : bodyDomainModel.User.ReferenceId,
-                    BodyHeight    : measurement.HeightCm,
-                    Unit          : "cm",
-                    RecordDate    : new Date(measurement.MeasurementTime)
-                };
-                await this._bodyHeightRepo.create(bodyHeightDomainModel);
+                if (measurement.HeightCm) {
+                    const bodyHeightDomainModel = {
+                        PatientUserId : bodyDomainModel.User.ReferenceId,
+                        BodyHeight    : measurement.HeightCm,
+                        Unit          : "cm",
+                        RecordDate    : new Date(measurement.MeasurementTime)
+                    };
+                    await this._bodyHeightRepo.create(bodyHeightDomainModel);
+                }
 
-                const bodyWeightDomainModel = {
-                    PatientUserId : bodyDomainModel.User.ReferenceId,
-                    BodyWeight    : measurement.WeightKg,
-                    Unit          : "Kg",
-                    RecordDate    : new Date(measurement.MeasurementTime)
-                };
-                await this._bodyWeightRepo.create(bodyWeightDomainModel);
+                if (measurement.WeightKg) {
+                    const bodyWeightDomainModel = {
+                        PatientUserId : bodyDomainModel.User.ReferenceId,
+                        BodyWeight    : measurement.WeightKg,
+                        Unit          : "Kg",
+                        RecordDate    : new Date(measurement.MeasurementTime)
+                    };
+                    await this._bodyWeightRepo.create(bodyWeightDomainModel);
+                }
             });
         });
     };

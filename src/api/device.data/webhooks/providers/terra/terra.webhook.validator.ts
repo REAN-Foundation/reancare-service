@@ -317,7 +317,13 @@ export class TeraWebhookValidator extends BaseValidator {
             });
 
             const glucoseArray = [];
-            const glucoseSamples = body.glucose_data.blood_glucose_samples;
+            let glucoseSamples = [];
+            if (body.glucose_data) {
+                glucoseSamples = body.glucose_data.blood_glucose_samples ?? [];
+            }
+            if (body.insulin_data) {
+                glucoseSamples = body.insulin_data.blood_glucose_samples ?? [];
+            }
             glucoseSamples.forEach( glucose => {
                 const glucoseDomainModel = {
                     BloodGlucoseMgPerDL : glucose.blood_glucose_mg_per_dL,
@@ -337,11 +343,23 @@ export class TeraWebhookValidator extends BaseValidator {
                 measurementsArray.push(measurementDomainModel);
             });
 
+            let bodyDeviceData = null;
+            if (body.device_data) {
+                bodyDeviceData = {
+                    Name                : body.device_data.name ?? null,
+                    HardwareVersion     : body.device_data.hardware_version ?? null,
+                    Manufacturer        : body.device_data.manufacturer ?? null,
+                    SoftwareVersion     : body.device_data.software_version ?? null,
+                    ActivationTimestamp : body.device_data.activation_timestamp ?? null,
+                    SerialNumber        : body.device_data.serial_number ?? null,
+                };
+            }
+
             const bodyDomainModel : Body = {
                 OxygenData : {
-                    SaturationSamples       : oxygenArray,
-                    AvgSaturationPercentage : body.oxygen_data.avg_saturation_percentage,
-                    Vo2maxMlPerMinPerKg     : body.oxygen_data.vo2max_ml_per_min_per_kg
+                    SaturationSamples : oxygenArray,
+                    //AvgSaturationPercentage : body.oxygen_data.avg_saturation_percentage,
+                    //Vo2maxMlPerMinPerKg     : body.oxygen_data.vo2max_ml_per_min_per_kg
                 },
                 MetaData : {
                     EndTime   : body.metadata.end_time,
@@ -350,13 +368,14 @@ export class TeraWebhookValidator extends BaseValidator {
                 HydrationData : {
                     DayTotalWaterConsumptionMl : body.hydration_data.day_total_water_consumption_ml
                 },
+                DeviceData        : bodyDeviceData,
                 BloodPressureData : {
                     BloodPressureSamples : bpArray
                 },
                 TemperatureData : {
-                    BodyTemperatureSamples    : tempArray,
-                    AmbientTemperatureSamples : body.temperature_data.ambient_temperature_samples,
-                    SkinTemperaturSamples     : body.temperature_data.skin_temperature_samples
+                    BodyTemperatureSamples : tempArray
+                    //AmbientTemperatureSamples : body.temperature_data.ambient_temperature_samples,
+                    //SkinTemperaturSamples     : body.temperature_data.skin_temperature_samples
                 },
                 MeasurementsData : {
                     Measurements : measurementsArray
@@ -380,8 +399,8 @@ export class TeraWebhookValidator extends BaseValidator {
                     PulseWaveVelocitySamples : body.heart_data.pulse_wave_velocity_samples
                 },
                 GlucoseData : {
-                    BloodGlucoseSamples       : glucoseArray,
-                    DayAvgBloodGlucoseMgPerDL : body.glucose_data.day_avg_blood_glucose_mg_per_dL
+                    BloodGlucoseSamples : glucoseArray,
+                    //DayAvgBloodGlucoseMgPerDL : body.glucose_data.day_avg_blood_glucose_mg_per_dL
                 }
             };
             bodyArray.push(bodyDomainModel);

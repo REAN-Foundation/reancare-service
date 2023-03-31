@@ -10,8 +10,8 @@ export interface BodyDomainModel {
 export interface Body {
   OxygenData: {
     SaturationSamples: Array<OxygenSaturationSample>;
-    AvgSaturationPercentage: Option<number>;
-    Vo2maxMlPerMinPerKg: Option<number>;
+    AvgSaturationPercentage?: Option<number>;
+    Vo2maxMlPerMinPerKg?: Option<number>;
   };
   MetaData: {
     EndTime: string;
@@ -33,8 +33,8 @@ export interface Body {
   };
   TemperatureData: {
     BodyTemperatureSamples: Array<TemperatureSample>;
-    AmbientTemperatureSamples: Array<TemperatureSample>;
-    SkinTemperaturSamples: Array<TemperatureSample>;
+    AmbientTemperatureSamples?: Array<TemperatureSample>;
+    SkinTemperaturSamples?: Array<TemperatureSample>;
   };
   MeasurementsData: {
     Measurements: Array<MeasurementDataSample>;
@@ -59,7 +59,7 @@ export interface Body {
   };
   GlucoseData: {
     BloodGlucoseSamples: Array<GlucoseDataSample>;
-    DayAvgBloodGlucoseMgPerDL: Option<number>;
+    DayAvgBloodGlucoseMgPerDL?: Option<number>;
   };
 }
 

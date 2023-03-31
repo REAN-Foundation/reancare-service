@@ -7,8 +7,8 @@ import { BloodGlucoseService } from '../../../../services/clinical/biometrics/bl
 import { Loader } from '../../../../startup/loader';
 import { BloodGlucoseValidator } from './blood.glucose.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

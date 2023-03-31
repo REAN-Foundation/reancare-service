@@ -7,7 +7,7 @@ import { Router } from './api/router';
 import { Helper } from './common/helper';
 import { Logger } from './common/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
-import { EHRDbConnector } from './custom/ehr.analytics/ehr.db.connector';
+import { EHRDbConnector } from './modules/ehr.analytics/ehr.db.connector';
 import { Loader } from './startup/loader';
 
 /////////////////////////////////////////////////////////////////////////

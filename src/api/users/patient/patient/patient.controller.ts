@@ -15,7 +15,7 @@ import { UserDeviceDetailsService } from '../../../../services/users/user/user.d
 import { PersonService } from '../../../../services/person/person.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////

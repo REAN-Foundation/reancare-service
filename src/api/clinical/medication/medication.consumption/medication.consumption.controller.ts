@@ -1,6 +1,6 @@
 import express from 'express';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { MedicationConsumptionDomainModel }
     from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';

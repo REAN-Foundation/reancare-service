@@ -7,8 +7,8 @@ import { Loader } from '../../../../startup/loader';
 import { PulseValidator } from './pulse.validator';
 import { BaseController } from '../../../base.controller';
 import { PulseDomainModel } from '../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

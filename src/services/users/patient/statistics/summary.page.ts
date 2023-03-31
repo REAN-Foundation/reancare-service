@@ -141,14 +141,14 @@ export const createSummaryCharts = async (data) => {
         });
     }
 
-    // location = await createMoodsSummaryChart_HorizontalBarChart(
-    //data?.DailyAssessent?.LastMonth, 'MoodsSummary_LastMonth');
-    //if (location) {
-    // locations.push({
-    //     key : 'MoodsSummary_LastMonth',
-    //     location
-    // });
-    //}
+    location = await createMoodsSummaryChart_HorizontalBarChart(
+        data?.DailyAssessent?.LastMonth, 'MoodsSummary_LastMonth');
+    if (location) {
+        locations.push({
+            key : 'MoodsSummary_LastMonth',
+            location
+        });
+    }
 
     return locations;
 };

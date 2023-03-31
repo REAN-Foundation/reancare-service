@@ -19,5 +19,5 @@ jobs:
             aws-region: ${{ secrets.AWS_REGION }}
       
         - name:  list images
-          run: aws ecr list-images --repository-name reancare
+          run: aws ecr describe-repositories
           shell: bash

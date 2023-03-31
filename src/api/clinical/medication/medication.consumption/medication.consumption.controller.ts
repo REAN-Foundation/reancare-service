@@ -1,6 +1,7 @@
 import express from 'express';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { MedicationConsumptionDomainModel }
     from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -59,7 +60,17 @@ export class MedicationConsumptionController {
             if (dtos.length === 0) {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
             }
-
+            for (var dto of dtos) {
+                AwardsFactsService.addOrUpdateMedicationFact({
+                    PatientUserId : dto.PatientUserId,
+                    Facts         : {
+                        Taken  : true,
+                        Missed : false,
+                    },
+                    RecordId   : dto.id,
+                    RecordDate : dto.TimeScheduleEnd,
+                });
+            }
             ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
                 MedicationConsumptions : dtos,
             });
@@ -81,7 +92,17 @@ export class MedicationConsumptionController {
             if (dtos.length === 0) {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
             }
-
+            for (var dto of dtos) {
+                AwardsFactsService.addOrUpdateMedicationFact({
+                    PatientUserId : dto.PatientUserId,
+                    Facts         : {
+                        Taken  : false,
+                        Missed : true,
+                    },
+                    RecordId   : dto.id,
+                    RecordDate : dto.TimeScheduleEnd,
+                });
+            }
             ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {
                 MedicationConsumptions : dtos,
             });
@@ -102,6 +123,16 @@ export class MedicationConsumptionController {
             }
 
             await this.addEHRRecord(dto.PatientUserId, dto.id, dto);
+            AwardsFactsService.addOrUpdateMedicationFact({
+                PatientUserId : dto.PatientUserId,
+                Facts         : {
+                    Taken  : true,
+                    Missed : false,
+                },
+                RecordId   : dto.id,
+                RecordDate : dto.TimeScheduleEnd,
+            });
+
             ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
                 MedicationConsumption : dto,
             });
@@ -120,7 +151,15 @@ export class MedicationConsumptionController {
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
-
+            AwardsFactsService.addOrUpdateMedicationFact({
+                PatientUserId : dto.PatientUserId,
+                Facts         : {
+                    Taken  : false,
+                    Missed : true,
+                },
+                RecordId   : dto.id,
+                RecordDate : dto.TimeScheduleEnd,
+            });
             ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {
                 MedicationConsumption : dto,
             });

@@ -48,9 +48,9 @@ jobs:
         run: |
           sudo mkdir /home/image_meta/
           cd /home/image_meta/
-          aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag==${{ steps.result_release.outputs.id }}].imageTag" --output text >> ./image_tag.txt
+          aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='${{ steps.result_release.outputs.id }}'].imageTag" --output text >> ./image_tag.txt
           IMAGE_TAG=`cat ./image_tag.txt`
-          if [ ${{ steps.result_release.outputs.id }} != $IMAGE_TAG ]; then exit 1; fi
+          if [ '${{ steps.result_release.outputs.id }}' != $IMAGE_TAG ]; then exit 1; fi
           if [ ${{ steps.checkTag.outputs.exists }} == false ]; then exit 1; fi
         shell: bash
 

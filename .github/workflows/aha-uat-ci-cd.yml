@@ -29,7 +29,6 @@ jobs:
           tag: ${{ github.event.inputs.Tag_name }}
       
       - name: Get release
-        if: ${{ steps.checkTag.outputs.exists == 'true' }}
         id: result_release
         uses: cardinalby/git-get-release-action@v1
         env:

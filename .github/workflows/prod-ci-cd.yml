@@ -11,7 +11,7 @@ name: PROD-CI-CD
 on:
   # Triggers the workflow on push events but only for the develop branch
   push:
-    branches: [develop]
+    branches: [feature/aha_fix]
 
 jobs:
   

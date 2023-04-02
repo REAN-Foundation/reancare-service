@@ -23,4 +23,4 @@ jobs:
 #           run: aws ecr-public describe-repositories --region us-east-1
           shell: bash
         - name: testing
-          run: echo $IMAGE_META
+          run: echo $test

@@ -14,10 +14,52 @@ on:
     inputs:
       Tag_name:
         description: Tag name of your release(please include "v" if needed)
-        default: v31.1.0
         required: true
 
 jobs:
+
+
+  Github-ECR-Tag-Check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: check tag
+        uses: mukunku/tag-exists-action@v1.2.0
+        id: checkTag
+        with: 
+          tag: ${{ github.event.inputs.Tag_name }}
+      
+      - name: Get release
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        id: result_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+           tag: ${{ github.event.inputs.Tag_name }}
+           repo: REAN-Foundation/reancare-service
+       
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name:  ECR Image Tag Check
+        run: |
+          sudo mkdir /home/image_meta/
+          cd /home/image_meta/
+          aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='${{ steps.result_release.outputs.id }}'].imageTag" --output text >> ./image_tag.txt
+          IMAGE_TAG=`cat ./image_tag.txt`
+          if [ '${{ steps.result_release.outputs.id }}' != $IMAGE_TAG ]; then exit 1; fi
+          if [ ${{ steps.checkTag.outputs.exists }} == false ]; then exit 1; fi
+        shell: bash
+      
+    outputs:
+      release_id: ${{ steps.result_release.outputs.id }}
+
+
   Deploy-ECS:
     environment: aha-prod
     runs-on: ubuntu-latest
@@ -59,7 +101,7 @@ jobs:
 
       - name: Pulling Image
         run: |
-          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.id }}
+          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
 
 
       - name: Download task definition
@@ -73,7 +115,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: default
-          image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.id }}
+          image: public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

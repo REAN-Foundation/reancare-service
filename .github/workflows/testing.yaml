@@ -24,7 +24,7 @@ jobs:
             cd /home/ubuntu
             aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='v33.0.0_97362532'].imageTag" --output text >> ./test.txt
             test=`cat ./test.txt`
-            echo $test
+            echo " tag exists $test "
           shell: bash
 #         - name: testing
 #           run: echo $test

@@ -14,36 +14,22 @@ on:
     inputs:
       Tag_name:
         description: Tag name of your release(please include "v" if needed)
-        default: v31.1.0
         required: true
 
 jobs:
 
-  CodeScan-ESLint:
+  Github-ECR-Tag-Check:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Lint Code Base
-        uses: github/super-linter@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINTER_RULES_PATH: /
-          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
-          VALIDATE_TYPESCRIPT_ES: true
-
-  Deploy-ECS:
-    environment: aha-uat
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        
+      - name: check tag
+        uses: mukunku/tag-exists-action@v1.2.0
+        id: checkTag
+        with: 
+          tag: ${{ github.event.inputs.Tag_name }}
+      
       - name: Get release
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
         id: result_release
         uses: cardinalby/git-get-release-action@v1
         env:
@@ -51,67 +37,118 @@ jobs:
         with:
            tag: ${{ github.event.inputs.Tag_name }}
            repo: REAN-Foundation/reancare-service
-           
-
+       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Amazon ECR
+          
+      - name:  ECR Image Tag Check
         run: |
-          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
-
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Pulling Image
-        run: |
-          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.id }}
-
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} \
-          --query taskDefinition > task-definition.json
-
-      - name: New image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: default
-          image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.id }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          wait-for-service-stability: true
-
-      - name: Task Definition Variable
-        id: taskdefintionvar
+          sudo mkdir /home/image_meta/
+          cd /home/image_meta/
+          aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag==${{ steps.result_release.outputs.id }}].imageTag" --output text >> ./image_tag.txt
+          IMAGE_TAG=`cat ./image_tag.txt`
+          if [ ${{ steps.result_release.outputs.id }} != $IMAGE_TAG ]; then exit 1; fi
+          if [ ${{ steps.checkTag.outputs.exists }} == false ]; then exit 1; fi
         shell: bash
-        run: |
-          echo "task_definition_arn=$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')" >> $GITHUB_OUTPUT
 
-      - name: Task Defintion ARN
-        run: |
-          echo "Task Defintion: ${{ steps.taskdefintionvar.outputs.task_definition_arn }}"
 
-      - name: Deploy Amazon ECS task definition using Duplo API
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ secrets.DUPLO_ID }}/UpdateEcsService'
-          method: 'POST'
-          data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200, "DnsPrfx": ""}'
-          bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}
+#   CodeScan-ESLint:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
+
+#       - name: Lint Code Base
+#         uses: github/super-linter@v4
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           LINTER_RULES_PATH: /
+#           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
+#           VALIDATE_TYPESCRIPT_ES: true
+
+#   Deploy-ECS:
+#     environment: aha-uat
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
+        
+#       - name: Get release
+#         id: result_release
+#         uses: cardinalby/git-get-release-action@v1
+#         env:
+#          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+#         with:
+#            tag: ${{ github.event.inputs.Tag_name }}
+#            repo: REAN-Foundation/reancare-service
+           
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ secrets.AWS_REGION }}
+
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v2
+
+#       - name: Login to Amazon ECR
+#         run: |
+#           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+
+#       - name: Cache Docker layers
+#         uses: actions/cache@v3
+#         with:
+#           path: /tmp/.buildx-cache
+#           key: ${{ runner.os }}-buildx-${{ github.sha }}
+#           restore-keys: |
+#             ${{ runner.os }}-buildx-
+
+#       - name: Pulling Image
+#         run: |
+#           docker pull public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.id }}
+
+#       - name: Download task definition
+#         run: |
+#           aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} \
+#           --query taskDefinition > task-definition.json
+
+#       - name: New image ID in the Amazon ECS task definition
+#         id: task-def
+#         uses: aws-actions/amazon-ecs-render-task-definition@v1
+#         with:
+#           task-definition: task-definition.json
+#           container-name: default
+#           image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.result_release.outputs.id }}
+
+#       - name: Deploy Amazon ECS task definition
+#         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#         with:
+#           task-definition: ${{ steps.task-def.outputs.task-definition }}
+#           wait-for-service-stability: true
+
+#       - name: Task Definition Variable
+#         id: taskdefintionvar
+#         shell: bash
+#         run: |
+#           echo "task_definition_arn=$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')" >> $GITHUB_OUTPUT
+
+#       - name: Task Defintion ARN
+#         run: |
+#           echo "Task Defintion: ${{ steps.taskdefintionvar.outputs.task_definition_arn }}"
+
+#       - name: Deploy Amazon ECS task definition using Duplo API
+#         uses: fjogeleit/http-request-action@master
+#         with:
+#           url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ secrets.DUPLO_ID }}/UpdateEcsService'
+#           method: 'POST'
+#           data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200, "DnsPrfx": ""}'
+#           bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}

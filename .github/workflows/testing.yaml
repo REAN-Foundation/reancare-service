@@ -1,11 +1,8 @@
 name: testing
 
 on:
-  workflow_dispatch:
-    inputs:
-      Tag_name:
-        description: Tag name of your release(please include "v" if needed)
-        required: true
+  pull_request:
+    branches: develop
 
 jobs:
   Github-ECR-Tag-Check:
@@ -16,17 +13,17 @@ jobs:
         uses: mukunku/tag-exists-action@v1.2.0
         id: checkTag
         with: 
-          tag: ${{ github.event.inputs.Tag_name }}
+          tag: v32.0.0
       
-      - name: Get release
-        if: ${{ steps.checkTag.outputs.exists == 'true' }}
-        id: result_release
-        uses: cardinalby/git-get-release-action@v1
-        env:
-         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
-        with:
-           tag: ${{ github.event.inputs.Tag_name }}
-           repo: REAN-Foundation/reancare-service
+#       - name: Get release
+#         if: ${{ steps.checkTag.outputs.exists == 'true' }}
+#         id: result_release
+#         uses: cardinalby/git-get-release-action@v1
+#         env:
+#          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+#         with:
+#            tag: v32.0.0
+#            repo: REAN-Foundation/reancare-service
        
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -39,9 +36,9 @@ jobs:
         run: |
           sudo mkdir /home/image_meta/
           cd /home/image_meta/
-          aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag==${{ steps.result_release.outputs.id }}].imageTag" --output text >> ./image_tag.txt
+          aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='97776691'].imageTag" --output text >> ./image_tag.txt
           IMAGE_TAG=`cat ./image_tag.txt`
-          if [ ${{ steps.result_release.outputs.id }} != $IMAGE_TAG ]; then exit 1; fi
+          if [ '97776691' != $IMAGE_TAG ]; then exit 1; fi
         shell: bash
 
 

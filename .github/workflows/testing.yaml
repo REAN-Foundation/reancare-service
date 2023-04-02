@@ -1,30 +1,82 @@
 name: testing
 
 on:
-  pull_request:
-    branches: develop
+  workflow_dispatch:
+    inputs:
+      Tag_name:
+        description: Tag name of your release(please include "v" if needed)
+        required: true
 
 jobs:
-  test:
+  Github-ECR-Tag-Check:
     runs-on: ubuntu-latest
+    
     steps:
-        - name: Checkout
-          uses: actions/checkout@v3
-
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v1
-          with:
-            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws-region: ${{ secrets.AWS_REGION }}
+      - name: check tag
+        uses: mukunku/tag-exists-action@v1.2.0
+        id: checkTag
+        with: 
+          tag: ${{ github.event.inputs.Tag_name }}
       
-        - name:  list images
-          run: |
-            sudo mkdir /home/ubuntu/
-            cd /home/ubuntu
-            aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='v33.0.0_97362532'].imageTag" --output text >> ./test.txt
-            test=`cat ./test.txt`
-            echo " tag exists $test "
-          shell: bash
-#         - name: testing
-#           run: echo $test
+      - name: Get release
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        id: result_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+           tag: ${{ github.event.inputs.Tag_name }}
+           repo: REAN-Foundation/reancare-service
+       
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name:  ECR Image Tag Check
+        run: |
+          sudo mkdir /home/image_meta/
+          cd /home/image_meta/
+          aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag==${{ steps.result_release.outputs.id }}].imageTag" --output text >> ./image_tag.txt
+          IMAGE_TAG=`cat ./image_tag.txt`
+          if [ ${{ steps.result_release.outputs.id }} != $IMAGE_TAG ]; then exit 1; fi
+        shell: bash
+
+
+
+
+
+
+
+
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+          
+#         - name: Configure AWS credentials
+#           uses: aws-actions/configure-aws-credentials@v1
+#           with:
+#             aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#             aws-region: ${{ secrets.AWS_REGION }}
+        
+#         - name: check tag
+#           uses: mukunku/tag-exists-action@v1.2.0
+#           id: checkTag
+#           with: 
+#             tag: v7.0.1
+      
+#         - name:  list images
+#           run: |
+#             sudo mkdir /home/image_meta/
+#             cd /home/image_meta/
+#             aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='v33.0.0_97362532'].imageTag" --output text >> ./image_tag.txt
+#             IMAGE_TAG=`cat ./image_tag.txt`
+#           shell: bash
+          
+#         - name: Github Tag and ECR image Tag Check
+#           run: |
+#             if [ ${{ steps.checkTag.outputs.exists }} == false ]; then exit 1; fi
+#             if [ ${{ steps.checkTag.outputs.exists }} == '' ]; then exit 1; fi

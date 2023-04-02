@@ -19,8 +19,8 @@ jobs:
             aws-region: ${{ secrets.AWS_REGION }}
       
         - name:  list images
-          run: test= ` aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='v33.0.0_97362532'].imageTag" --output text `
-#           run: aws ecr-public describe-repositories --region us-east-1
-          shell: bash
-        - name: testing
-          run: echo $test
+          run: TEST=`aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='v33.0.0_97362532'].imageTag" --output text `
+#           echo $TEST
+#           shell: bash
+#         - name: testing
+#           run: echo $test

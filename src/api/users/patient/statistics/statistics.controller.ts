@@ -114,7 +114,7 @@ export class StatisticsController {
         const documentDto = await patientDocumentService.upload(documentModel);
         Logger.instance().log(`Document Id: ${documentDto.id}`);
         return url;
-    }
+    };
 
     private uploadFile = async (sourceLocation: string) => {
         const filename = path.basename(sourceLocation);

@@ -71,6 +71,7 @@ export class StatisticsController {
             const patient = await this._patientService.getByUserId(patientUserId);
             const stats = await this._service.getPatientStats(patientUserId);
             const reportModel = this._service.getReportModel(patient, stats);
+            Logger.instance().log(`Report Model :: ${JSON.stringify(reportModel)}`);
             if (reportModel.ImageResourceId != null) {
                 const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
                 reportModel.ProfileImagePath = profileImageLocation ??

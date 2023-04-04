@@ -174,9 +174,13 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     [Op.gte] : filters.DateFrom,
                     [Op.lte] : filters.DateTo,
                 };
-            } else {
-                search.where['TimeScheduleEnd'] = {
-                    [Op.gte] : new Date(),
+            } else if (filters.DateFrom != null && filters.DateTo == null) {
+                search.where['TimeScheduleStart'] = {
+                    [Op.gte] : filters.DateFrom,
+                };
+            } else if (filters.DateFrom == null && filters.DateTo != null) {
+                search.where['TimeScheduleStart'] = {
+                    [Op.lte] : filters.DateTo,
                 };
             }
 

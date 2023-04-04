@@ -11,6 +11,7 @@ import { EHRDbConnector } from './modules/ehr.analytics/ehr.db.connector';
 import { AwardsFactsDBConnector } from './modules/awards.facts/awards.facts.db.connector';
 
 import { Loader } from './startup/loader';
+import { AwardsFactsService } from './modules/awards.facts/awards.facts.service';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -56,6 +57,7 @@ export default class Application {
 
             //Connect with Awards facts database
             await AwardsFactsDBConnector.connect();
+            await AwardsFactsService.initialize();
 
             //Set-up middlewares
             await this.setupMiddlewares();

@@ -7,6 +7,7 @@ import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { Repository } from 'typeorm';
 import * as asyncLib from 'async';
 import needle = require('needle');
+import axios from 'axios';
 import { Helper } from '../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ export class AwardsFactsService {
 
     static _medfactRepository: Repository<MedicationFact> = AwardsFactsSource.getRepository(MedicationFact);
 
-    static _eventTypes: { id: uuid; Name: string; Description: string; } [] = [];
+    static _eventTypes = [];
 
     static _initialized = false;
 
@@ -74,13 +75,13 @@ export class AwardsFactsService {
 
     private static record = async(model: AwardsFact) => {
 
-        if (!this._initialized) {
+        if (!AwardsFactsService._initialized) {
             await this.initialize();
         }
 
         if (model.FactType === 'Medication') {
             await this.updateMedicationFact(model);
-            const eventType = this._eventTypes.find(x => x.Name === 'Medication');
+            const eventType = AwardsFactsService._eventTypes.find(x => x.Name === 'Medication');
             if (eventType) {
                 //Send event to awards service
                 await this.notifyAwardsService(eventType.id, model);
@@ -95,12 +96,12 @@ export class AwardsFactsService {
             var response = await needle('get', url, options);
             if (response.statusCode === 200) {
                 Logger.instance().log('Successfully triggered award event!');
-                this._eventTypes = response.body.Data;
-                this._initialized = true;
+                AwardsFactsService._eventTypes = response.body.Data.Types;
+                AwardsFactsService._initialized = true;
                 return true;
             } else {
                 Logger.instance().error('Unable to trigger award event!', response.statusCode, response.Data);
-                this._initialized = true;
+                AwardsFactsService._initialized = true;
                 return false;
             }
         }
@@ -111,19 +112,22 @@ export class AwardsFactsService {
 
     private static notifyAwardsService = async (eventTypeId: uuid, model: AwardsFact) => {
         try {
-            const options = Helper.getNeedleOptions(headers);
+            const options = {
+                headers : headers,
+                json    : true,
+            };
             var url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/engine/events';
             var body = {
                 TypeId      : eventTypeId,
                 ReferenceId : model.PatientUserId,
                 Payload     : model,
             };
-            var response = await needle('post', url, body, options);
-            if (response.statusCode === 201) {
+            var response = await axios.post(url, body, { headers });
+            if (response.status === 201) {
                 Logger.instance().log('Successfully triggered award event!');
                 return true;
             } else {
-                Logger.instance().error('Unable to trigger award event!', response.statusCode, response.body.Data);
+                Logger.instance().error('Unable to trigger award event!', response.status, response.data);
                 return false;
             }
         }

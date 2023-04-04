@@ -386,6 +386,22 @@ export class UserTaskController {
         }
     };
 
+    deletePatientFutureTask = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'UserTask.DeleteFutureTask';
+            await this._authorizer.authorize(request, response);
+
+            const userId: string = await this._validator.getParamUuid(request, 'userId');
+            const deletedUserTask = await this._service.getFutureTaskByUserId(userId);
+
+            ResponseHandler.success(request, response, `Total ${deletedUserTask} user task record deleted successfully!`, 200, {
+                Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
     //#region Privates

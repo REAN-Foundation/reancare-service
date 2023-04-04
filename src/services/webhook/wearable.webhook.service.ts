@@ -23,6 +23,7 @@ import { IStepCountRepo } from "../../database/repository.interfaces/wellness/da
 import { DailyDomainModel } from "../../domain.types/webhook/daily.domain.model";
 import { IBodyWeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { IBodyHeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
+import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,14 +58,20 @@ export class TeraWebhookService {
 
     auth = async (authDomainModel: AuthDomainModel) => {
 
-        await this._patientRepo.terraAuth( authDomainModel.User.ReferenceId, authDomainModel);
-
+        if (authDomainModel.User.ReferenceId) {
+            await this._patientRepo.terraAuth( authDomainModel.User.ReferenceId, authDomainModel);
+        } else {
+            Logger.instance().log(`Reference id is null for ${authDomainModel.User.UserId} terra user id`);
+        }
     };
 
     reAuth = async (reAuthDomainModel: ReAuthDomainModel) => {
 
-        await this._patientRepo.terraReAuth( reAuthDomainModel.NewUser.ReferenceId, reAuthDomainModel);
-
+        if (reAuthDomainModel.NewUser.ReferenceId) {
+            await this._patientRepo.terraReAuth( reAuthDomainModel.NewUser.ReferenceId, reAuthDomainModel);
+        } else {
+            Logger.instance().log(`Reference id is null for ${reAuthDomainModel.NewUser.UserId} terra user id`);
+        }
     };
 
     nutrition = async (nutritionDomainModel: NutritionDomainModel) => {

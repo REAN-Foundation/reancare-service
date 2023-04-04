@@ -26,6 +26,7 @@ export const register = (app: express.Application): void => {
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.delete('/users/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deletePatientFutureTask);
 
     app.use('/api/v1/user-tasks', router);
 };

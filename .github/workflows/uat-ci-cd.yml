@@ -28,6 +28,7 @@ jobs:
         with:
           fetch-depth: 0
 
+
       - name: Lint Code Base
         uses: docker://ghcr.io/github/super-linter:latest
         env:

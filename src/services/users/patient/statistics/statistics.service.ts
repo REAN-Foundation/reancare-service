@@ -109,8 +109,7 @@ export class StatisticsService {
         const patientName = patient.User.Person.DisplayName;
         const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
         const assessmentDate = TimeHelper.getDateWithTimezone(date.toISOString(), timezone);
-        const reportDate = TimeHelper.addDuration(assessmentDate, 1, DurationType.Day);
-        const reportDateStr = reportDate.toLocaleDateString();
+        const reportDateStr = assessmentDate.toLocaleDateString();
 
         const race = patient.HealthProfile.Race ? patient.HealthProfile.Race : 'Unspecified';
         const ethnicity = patient.HealthProfile.Ethnicity ? patient.HealthProfile.Ethnicity : 'Unspecified';

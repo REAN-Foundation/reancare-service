@@ -15,7 +15,6 @@ import { TimeHelper } from '../../../../common/time.helper';
 import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.types';
 import * as path from 'path';
 import { PersonService } from '../../../../services/person/person.service';
-import { ConfigurationManager } from '../../../../config/configuration.manager';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,25 +70,11 @@ export class StatisticsController {
             await this._authorizer.authorize(request, response);
 
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
-            const patient = await this._patientService.getByUserId(patientUserId);
-            const stats = await this._service.getPatientStats(patientUserId);
-            const reportModel = this._service.getReportModel(patient, stats);
-            Logger.instance().log(`Report Model :: ${JSON.stringify(reportModel)}`);
-            if (reportModel.ImageResourceId != null) {
-                const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
-                reportModel.ProfileImagePath = profileImageLocation ??
-                    Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
-            }
-            else {
-                reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
-            }
-            const { filename, localFilePath } = await this._service.generateReport(reportModel);
-            const reportUrl = this.createReportDocument(reportModel, filename, localFilePath);
+            this.triggerReportGeneration(patientUserId);
             ResponseHandler.success(request, response,
                 'Your health report is getting downloaded, please check in the medical records after few minutes!', 200, {
-                ReportUrl : reportUrl,
+                ReportUrl : "",
             });
-            this.sendMessageForReportUpdate(reportUrl, reportModel);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -136,7 +121,6 @@ export class StatisticsController {
         const patient  = await this._patientService.getByUserId(reportModel.PatientUserId);
         const phoneNumber = patient.User.Person.Phone;
         const person = await this._personService.getById(patient.User.PersonId);
-        const systemIdentifier = ConfigurationManager.SystemIdentifier();
         var userFirstName = 'user';
         if (person && person.FirstName) {
             userFirstName = person.FirstName;
@@ -144,10 +128,10 @@ export class StatisticsController {
         var sendStatus = false;
         Logger.instance().log(`Report URL for Patient ${reportModel.PatientUserId} : ${url}`);
         if (url) {
-            const message = `Hi ${userFirstName}, This message is from ${systemIdentifier} App. Your health report has been generated successfully, please check in the medical records.`;
+            const message = `Hi ${userFirstName}, This message is from Heart & Stroke Helper App. Your health report has been generated successfully, please check in the medical records.`;
             sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
         } else {
-            const message = `Hi ${userFirstName}, This message is from ${systemIdentifier} App. There was some issue while generating your health report, please try again!`;
+            const message = `Hi ${userFirstName}, This message is from Heart & Stroke Helper App. There was some issue while generating your health report, please try again!`;
             sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
         }
         if (sendStatus) {
@@ -157,5 +141,23 @@ export class StatisticsController {
         return true;
     };
     //#endregion
+
+    private triggerReportGeneration = async (patientUserId: string): Promise<any> => {
+        const stats = await this._service.getPatientStats(patientUserId);
+        const patient = await this._patientService.getByUserId(patientUserId);
+        const reportModel = this._service.getReportModel(patient, stats);
+        if (reportModel.ImageResourceId != null) {
+            const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
+            reportModel.ProfileImagePath = profileImageLocation ??
+                Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
+        }
+        else {
+            reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
+        }
+        const { filename, localFilePath } = await this._service.generateReport(reportModel);
+        const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
+        this.sendMessageForReportUpdate(reportUrl, reportModel);
+        return reportUrl;
+    };
 
 }

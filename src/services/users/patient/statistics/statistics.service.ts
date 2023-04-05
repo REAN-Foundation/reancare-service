@@ -52,6 +52,7 @@ import { IPersonRepo } from "../../../../database/repository.interfaces/person/p
 import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.repo";
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
 import { addLabValuesTable, addSummaryGraphs, createSummaryCharts } from "./summary.page";
+import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -108,7 +109,8 @@ export class StatisticsService {
         const patientName = patient.User.Person.DisplayName;
         const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
         const assessmentDate = TimeHelper.getDateWithTimezone(date.toISOString(), timezone);
-        const reportDateStr = assessmentDate.toLocaleDateString();
+        const reportDate = TimeHelper.addDuration(assessmentDate, 1, DurationType.Day);
+        const reportDateStr = reportDate.toLocaleDateString();
 
         const race = patient.HealthProfile.Race ? patient.HealthProfile.Race : 'Unspecified';
         const ethnicity = patient.HealthProfile.Ethnicity ? patient.HealthProfile.Ethnicity : 'Unspecified';

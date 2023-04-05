@@ -14,6 +14,8 @@ import { DocumentService } from '../../../../services/users/patient/document.ser
 import { TimeHelper } from '../../../../common/time.helper';
 import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.types';
 import * as path from 'path';
+import { PersonService } from '../../../../services/person/person.service';
+import { ConfigurationManager } from '../../../../config/configuration.manager';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,12 +35,13 @@ export class StatisticsController {
 
     _validator: StatisticsValidator = new StatisticsValidator();
 
-    _personService: any;
+    _personService: PersonService = null;
 
     constructor() {
         this._service = Loader.container.resolve(StatisticsService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._patientService = Loader.container.resolve(PatientService);
+        this._personService = Loader.container.resolve(PersonService);
         this._documentService = Loader.container.resolve(DocumentService);
         this._authorizer = Loader.authorizer;
     }
@@ -81,10 +84,12 @@ export class StatisticsController {
                 reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
             }
             const { filename, localFilePath } = await this._service.generateReport(reportModel);
-            const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
-            ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
+            const reportUrl = this.createReportDocument(reportModel, filename, localFilePath);
+            ResponseHandler.success(request, response,
+                'Your health report is getting downloaded, please check in the medical records after few minutes!', 200, {
                 ReportUrl : reportUrl,
             });
+            this.sendMessageForReportUpdate(reportUrl, reportModel);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -94,7 +99,7 @@ export class StatisticsController {
 
     //#region Privates
 
-    createReportDocument = async (reportModel: any, filename: string, localFilePath: string): Promise<string> => {
+    createReportDocument = async (reportModel: any, filename: string, localFilePath: string): Promise<any> => {
         const { url, resourceId } = await this.uploadFile(localFilePath);
         const mimeType = Helper.getMimeType(filename);
         const documentModel: DocumentDomainModel = {
@@ -126,6 +131,31 @@ export class StatisticsController {
         return { url, resourceId };
     };
 
+    private sendMessageForReportUpdate = async (url: any, reportModel: any) => {
+        
+        const patient  = await this._patientService.getByUserId(reportModel.PatientUserId);
+        const phoneNumber = patient.User.Person.Phone;
+        const person = await this._personService.getById(patient.User.PersonId);
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+        var userFirstName = 'user';
+        if (person && person.FirstName) {
+            userFirstName = person.FirstName;
+        }
+        var sendStatus = false;
+        Logger.instance().log(`Report URL for Patient ${reportModel.PatientUserId} : ${url}`);
+        if (url) {
+            const message = `Hi ${userFirstName}, This message is from ${systemIdentifier} App. Your health report has been generated successfully, please check in the medical records.`;
+            sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
+        } else {
+            const message = `Hi ${userFirstName}, This message is from ${systemIdentifier} App. There was some issue while generating your health report, please try again!`;
+            sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
+        }
+        if (sendStatus) {
+            Logger.instance().log(`Message sent successfully`);
+        }
+
+        return true;
+    };
     //#endregion
 
 }

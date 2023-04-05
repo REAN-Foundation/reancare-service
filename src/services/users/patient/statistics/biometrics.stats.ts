@@ -34,25 +34,40 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
         currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight;
         totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange;
     }
-
+   
     if (!chartExists(model, chartImage)) {
         y = addNoDataDisplay(document, y);
     } else {
         y = y + 25;
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
+    
+        if (model.Stats.CountryCode === '+91') {
+            let value = startingWeight.toFixed();
+            y = addLabeledText(document, 'Starting Weight (Kg)', value, y);
 
-        let value = startingWeight.toFixed();
-        y = addLabeledText(document, 'Starting Weight (Kg)', value, y);
+            value = currentWeight.toFixed();
+            y = addLabeledText(document, 'Current Body Weight (Kg)', value, y);
 
-        value = currentWeight.toFixed();
-        y = addLabeledText(document, 'Current Body Weight (Kg)', value, y);
+            value = totalChange.toFixed();
+            y = addLabeledText(document, 'Total Change in Body Weight (Kg)', value, y);
 
-        value = totalChange.toFixed();
-        y = addLabeledText(document, 'Total Change in Body Weight (Kg)', value, y);
+            value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
+            y = addLabeledText(document, 'Last Measured Date', value, y);
+        } else {
+            let value = startingWeight.toFixed();
+            y = addLabeledText(document, 'Starting Weight (lbs)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
-        y = addLabeledText(document, 'Last Measured Date', value, y);
+            value = currentWeight.toFixed();
+            y = addLabeledText(document, 'Current Body Weight (lbs)', value, y);
+
+            value = totalChange.toFixed();
+            y = addLabeledText(document, 'Total Change in Body Weight (lbs)', value, y);
+
+            value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
+            y = addLabeledText(document, 'Last Measured Date', value, y);
+        }
+        
     }
 
     return y;

@@ -108,9 +108,17 @@ export class StatisticsService {
         const date = new Date();
         const patientName = patient.User.Person.DisplayName;
         const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
-        const assessmentDate = TimeHelper.getDateWithTimezone(date.toISOString(), timezone);
-        const reportDateStr = assessmentDate.toLocaleDateString();
-
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
+        const dateObj = new Date(assessmentDate);
+        const options: Intl.DateTimeFormatOptions = {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+        };
+        const reportDateStr = new Intl.DateTimeFormat('en-US', options).format(dateObj);
+        Logger.instance().log(`Report Date:: ${reportDateStr}`);
+        
         const race = patient.HealthProfile.Race ? patient.HealthProfile.Race : 'Unspecified';
         const ethnicity = patient.HealthProfile.Ethnicity ? patient.HealthProfile.Ethnicity : 'Unspecified';
         const tobacco = patient.HealthProfile.TobaccoQuestionAns === true ? 'Yes' : 'No';

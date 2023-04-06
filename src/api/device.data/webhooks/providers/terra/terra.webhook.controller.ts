@@ -67,19 +67,20 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                 case 'daily': {
                     const dailyDomainModel = await TeraWebhookValidator.daily(request);
                     await this._service.daily(dailyDomainModel);
-                    Logger.instance().log(`Tera user activity request ${JSON.stringify(dailyDomainModel)}`);
+                    Logger.instance().log(`Tera user daily request ${JSON.stringify(dailyDomainModel)}`);
                 }
                     break;
                 case 'sleep': {
-                    const nutritionDomainModel = await TeraWebhookValidator.sleep(request);
-                    //await this._service.sleep(nutritionDomainModel);
-                    Logger.instance().log(`Tera user activity request ${JSON.stringify(nutritionDomainModel)}`);
+                    const sleepDomainModel = await TeraWebhookValidator.sleep(request);
+                    const activityService = Loader.container.resolve(TeraWebhookActivityService);
+                    await activityService.sleep(sleepDomainModel);
+                    Logger.instance().log(`Tera user sleep request ${JSON.stringify(sleepDomainModel)}`);
                 }
                     break;
                 case 'nutrition': {
                     const nutritionDomainModel = await TeraWebhookValidator.nutrition(request);
                     await this._service.nutrition(nutritionDomainModel);
-                    Logger.instance().log(`Tera user activity request ${JSON.stringify(nutritionDomainModel)}`);
+                    Logger.instance().log(`Tera user nutrition request ${JSON.stringify(nutritionDomainModel)}`);
                 }
                     break;
                 case 'auth': {

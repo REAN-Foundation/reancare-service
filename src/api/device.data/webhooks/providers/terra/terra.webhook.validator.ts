@@ -113,7 +113,7 @@ export class TeraWebhookValidator extends BaseValidator {
                     NetActivityCalories : activity.calories_data.net_activity_calories,
                 },
                 ActiveDurationsData : {
-                    ActivitySeconds : parseInt(activity.active_durations_data.activity_seconds)
+                    ActivitySeconds : activity.active_durations_data.activity_seconds
                 }
             };
             activities.push(activityModel);

@@ -8,6 +8,9 @@ import { ICalorieBalanceRepo } from "../../database/repository.interfaces/wellne
 import { PhysicalActivityCategories, Intensity } from "../../domain.types/wellness/exercise/physical.activity/physical.activity.types";
 import { IPhysicalActivityRepo } from "../../database/repository.interfaces/wellness/exercise/physical.activity.repo.interface";
 import { PhysicalActivityDomainModel } from "../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model";
+import { ISleepRepo } from "../../database/repository.interfaces/wellness/daily.records/sleep.repo.interface";
+import { SleepDomainModel } from "../../domain.types/webhook/sleep.domain.model";
+import { ApiError } from "../../common/api.error";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +22,8 @@ export class TeraWebhookActivityService {
     constructor(
         @inject('IStepCountRepo') private _stepCountRepo: IStepCountRepo,
         @inject('ICalorieBalanceRepo') private _calorieBalanceRepo: ICalorieBalanceRepo,
-        @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo
+        @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo,
+        @inject('ISleepRepo') private _sleepRepo: ISleepRepo
     ) {
         if (ConfigurationManager.EhrEnabled()) {
             this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
@@ -29,18 +33,6 @@ export class TeraWebhookActivityService {
     activity = async (activityDomainModel: ActivityDomainModel) => {
         
         activityDomainModel.Data.forEach(async activity => {
-            if (activity.DistanceData.Summary.Steps) {
-                const entity = {
-                    PatientUserId  : activityDomainModel.User.ReferenceId ?? null,
-                    TerraSummaryId : activity.MetaData.SummaryId,
-                    Provider       : activityDomainModel.User.Provider,
-                    StepCount      : activity.DistanceData.Summary.Steps ?? null,
-                    Unit           : "steps",
-                    RecordDate     : new Date(activity.MetaData.StartTime.split('T')[0]) ?? null,
-                };
-                await this._stepCountRepo.create(entity);
-            }
-
             const durationInMin = activity.ActiveDurationsData.ActivitySeconds / 60;
             const category = await this.getActivityType(activity.MetaData.Type);
             
@@ -53,12 +45,39 @@ export class TeraWebhookActivityService {
                 Intensity      : Intensity.Moderate,
                 StartTime      : new Date(activity.MetaData.StartTime),
                 EndTime        : new Date(activity.MetaData.EndTime),
-                DurationInMin  : parseInt(`${durationInMin}`),
+                DurationInMin  : parseInt(`${durationInMin}`) ? parseInt(`${durationInMin}`) : null,
                 TerraSummaryId : activity.MetaData.SummaryId,
                 Provider       : activityDomainModel.User.Provider,
             };
             await this._physicalActivityRepo.create(activityModel);
         });
+    };
+
+    sleep = async (sleepDomainModel: SleepDomainModel) => {
+        
+        const sleep = sleepDomainModel.Data;
+        var existingStepRecord = await this._sleepRepo.getByRecordDateAndPatientUserId(new Date(sleep.MetaData.StartTime.split('T')[0]),
+            sleepDomainModel.User.ReferenceId);
+        if (existingStepRecord !== null) {
+            const domainModel = {
+                Provider      : sleepDomainModel.User.Provider,
+                SleepDuration : parseInt(`${sleep.SleepDurationsData.Asleep.DurationAsleepStateSeconds / 60}`),
+                Unit          : "minutes"
+            };
+            var sleepRecord = await this._sleepRepo.update(existingStepRecord.id, domainModel);
+        } else {
+            const domainModel = {
+                PatientUserId : sleepDomainModel.User.ReferenceId,
+                Provider      : sleepDomainModel.User.Provider,
+                SleepDuration : parseInt(`${sleep.SleepDurationsData.Asleep.DurationAsleepStateSeconds / 60}`),
+                RecordDate    : new Date(sleep.MetaData.StartTime.split('T')[0]),
+                Unit          : "minutes"
+            };
+            var sleepRecord = await this._sleepRepo.create(domainModel);
+        }
+        if (sleepRecord == null) {
+            throw new ApiError(400, 'Cannot create sleep record!');
+        }
     };
 
     public getActivityType = async (type) => {

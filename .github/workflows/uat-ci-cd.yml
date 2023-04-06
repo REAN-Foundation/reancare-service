@@ -137,7 +137,6 @@ jobs:
         id: taskdefintionvar
         shell: bash
         run: |
-          # echo "::set-output name=task_definition_arn::$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')"
           echo "task_definition_arn=$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')" >> $GITHUB_OUTPUT
 
       - name: Task Defintion ARN

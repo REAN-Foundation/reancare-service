@@ -291,7 +291,7 @@ export class RssfeedController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     private stream = async (resourceId: string, response: express.Response, mimeType: string) => {
         var resource = await this._fileResourceService.getById(resourceId);

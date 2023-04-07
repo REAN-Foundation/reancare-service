@@ -171,7 +171,7 @@ export class RssfeedService {
         const updated = await this._feedRepo.update(id, updates);
 
         return updated;
-    }
+    };
 
     createFileResource = async (text: string, prefix = 'atom|rss|json', extension = '.atom|.rss|.json') => {
         const frService = Loader.container.resolve(FileResourceService);

@@ -29,7 +29,7 @@ export default class HealthProfile extends Model {
         },
         allowNull : false,
     })
-    id: string;
+        id: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)
@@ -37,27 +37,27 @@ export default class HealthProfile extends Model {
         type      : DataType.UUID,
         allowNull : false,
     })
-    PatientUserId: string;
+        PatientUserId: string;
 
     @Column({
         type         : DataType.STRING(16),
         allowNull    : true,
         defaultValue : ''
     })
-    BloodGroup: string;
+        BloodGroup: string;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    BloodTransfusionDate: Date;
+        BloodTransfusionDate: Date;
 
     @Column({
         type      : DataType.INTEGER,
         allowNull : true
     })
-    BloodDonationCycle: number;
+        BloodDonationCycle: number;
 
     @Length({ max: 128 })
     @Column({
@@ -65,7 +65,7 @@ export default class HealthProfile extends Model {
         allowNull    : true,
         defaultValue : ''
     })
-    MajorAilment: string;
+        MajorAilment: string;
 
     @Length({ max: 512 })
     @Column({
@@ -73,39 +73,39 @@ export default class HealthProfile extends Model {
         allowNull    : true,
         defaultValue : ''
     })
-    OtherConditions: string;
+        OtherConditions: string;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    IsDiabetic: boolean;
+        IsDiabetic: boolean;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    HasHeartAilment: boolean;
+        HasHeartAilment: boolean;
 
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    MaritalStatus: string;
+        MaritalStatus: string;
 
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    Ethnicity: string;
+        Ethnicity: string;
 
     @Column({
         type         : DataType.STRING(128),
         allowNull    : true,
         defaultValue : ''
     })
-    Race: string;
+        Race: string;
 
     @Column({
         type      : DataType.STRING(128),
@@ -130,28 +130,28 @@ export default class HealthProfile extends Model {
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    Nationality: string;
+        Nationality: string;
 
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    Occupation: string;
+        Occupation: string;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false,
     })
-    SedentaryLifestyle: boolean;
+        SedentaryLifestyle: boolean;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false,
     })
-    IsSmoker: boolean;
+        IsSmoker: boolean;
 
     @Column({
         type         : DataType.ENUM,
@@ -159,21 +159,21 @@ export default class HealthProfile extends Model {
         values       : SeverityList,
         defaultValue : Severity.Low
     })
-    SmokingSeverity: string;
+        SmokingSeverity: string;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    SmokingSince: Date;
+        SmokingSince: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false,
     })
-    IsDrinker: boolean;
+        IsDrinker: boolean;
 
     @Column({
         type         : DataType.ENUM,
@@ -181,87 +181,87 @@ export default class HealthProfile extends Model {
         values       : SeverityList,
         defaultValue : Severity.Low
     })
-    DrinkingSeverity: string;
+        DrinkingSeverity: string;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    DrinkingSince: Date;
+        DrinkingSince: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false,
     })
-    SubstanceAbuse: boolean;
+        SubstanceAbuse: boolean;
 
     @Length({ max: 512 })
     @Column({
         type      : DataType.STRING(512),
         allowNull : true,
     })
-    ProcedureHistory: string;
+        ProcedureHistory: string;
 
     @Length({ max: 512 })
     @Column({
         type      : DataType.STRING(512),
         allowNull : true,
     })
-    ObstetricHistory: string;
+        ObstetricHistory: string;
 
     @Length({ max: 512 })
     @Column({
         type      : DataType.STRING(512),
         allowNull : true,
     })
-    OtherInformation: string;
+        OtherInformation: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    TobaccoQuestion: string;
+        TobaccoQuestion: string;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    TobaccoQuestionAns: boolean;
+        TobaccoQuestionAns: boolean;
 
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    TypeOfStroke: string;
+        TypeOfStroke: string;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    HasHighBloodPressure: boolean;
+        HasHighBloodPressure: boolean;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    HasHighCholesterol: boolean;
+        HasHighCholesterol: boolean;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    HasAtrialFibrillation: boolean;
+        HasAtrialFibrillation: boolean;
 
     @Column
     @CreatedAt
-    CreatedAt: Date;
+        CreatedAt: Date;
 
     @UpdatedAt
-    UpdatedAt: Date;
+        UpdatedAt: Date;
 
     @DeletedAt
-    DeletedAt: Date;
+        DeletedAt: Date;
 
 }

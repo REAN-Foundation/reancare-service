@@ -7,32 +7,65 @@ export const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: n
 
     y = y + 5;
 
-    document
-        .font('Helvetica-Bold')
-        .fontSize(12)
-        .text('Heart & Stroke Helper™', 35, y, { align: "center" })
-        .moveDown();
+    var clientList = ["HCHLSTRL", "REANPTNT"];
+    if (clientList.indexOf(model.ClientCode) >= 0) {
 
-    y = y + 20;
+        document
+            .font('Helvetica-Bold')
+            .fontSize(12)
+            .text('Heart & Stroke Helper™', 35, y, { align: "center" })
+            .moveDown();
 
-    const text = `Heart & Stroke Helper™ supports individuals to better manage their health condition by providing education from a trusted source and keeping track of healthy habits, health numbers, symptoms, and medications - all in one place.`;
-    document
-        .font('Helvetica')
-        .fontSize(9)
-        .text(text, 50, y, { align: "left" })
-        .moveDown();
+        y = y + 20;
 
-    y = y + 30;
+        const text = `Heart & Stroke Helper™ supports individuals to better manage their health condition by providing education from a trusted source and keeping track of healthy habits, health numbers, symptoms, and medications - all in one place.`;
+        document
+            .font('Helvetica')
+            .fontSize(9)
+            .text(text, 50, y, { align: "left" })
+            .moveDown();
 
-    const text2 = `This summary of your app activity and data can be printed and brought along to appointments with your care team and shared with them by uploading it to your patient portal.The summary is meant to give your care team understanding about your condition management between visits.`;
-    document
-        .font('Times-Italic')
-        .fontSize(9)
-        .text(text2, 50, y, { align: "left" })
-        .moveDown();
+        y = y + 30;
 
-    y = y + 43;
+        const text2 = `This summary of your app activity and data can be printed and brought along to appointments with your care team and shared with them by uploading it to your patient portal.The summary is meant to give your care team understanding about your condition management between visits.`;
+        document
+            .font('Times-Italic')
+            .fontSize(9)
+            .text(text2, 50, y, { align: "left" })
+            .moveDown();
 
+        y = y + 43;
+        
+    } else {
+
+        document
+            .font('Helvetica-Bold')
+            .fontSize(12)
+            .text('HF Helper', 35, y, { align: "center" })
+            .moveDown();
+
+        y = y + 20;
+
+        const text = `The HF Helper app can help heart failure patients stay healthy between office visits by tracking their symptoms, managing medication, and sharing health information with their doctor - all in one place.`;
+        document
+            .font('Helvetica')
+            .fontSize(9)
+            .text(text, 50, y, { align: "left" })
+            .moveDown();
+
+        y = y + 30;
+
+        const text2 = `This summary of your app activity and data can be printed and brought along to appointments with your care team and shared with them by uploading it to your patient portal.The summary is meant to give your care team understanding about your condition management between visits.`;
+        document
+            .font('Times-Italic')
+            .fontSize(9)
+            .text(text2, 50, y, { align: "left" })
+            .moveDown();
+
+        y = y + 43;
+
+    }
+    
     document
         .image(model.ProfileImagePath, 50, y, { width: 64 });
 

@@ -33,8 +33,11 @@ Prefix release should be use when developer wants to merge code in main branch
  
  PR-ci-cd (Pull Request ci-cd) can be trigger by creating a pull request to develop branch
  
- ### Jobs
+ ### JOBS
  
  #### CodeScan-ESLint
  * This job use static code analysis tool which identify problematic patterns found in JavaScript code.
+ * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
+ 
+ #### 
  

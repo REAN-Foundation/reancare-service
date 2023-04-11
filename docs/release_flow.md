@@ -49,6 +49,5 @@ These are the jobs used in PR-ci-cd workflow
  
 ### Steps To Trigger Workflow
 
-1. create a branch with the prefix of feature
-   for example ``` feature/test ```
+1. create a branch with the prefix of feature /n for example ``` feature/test ```
 

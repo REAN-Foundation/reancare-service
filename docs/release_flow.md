@@ -31,23 +31,26 @@ This is an explanation of how to use or trigger any workflow in our repository
  
 ## PR-ci-cd
  
- PR-ci-cd (Pull Request ci-cd) can be trigger by creating a pull request to develop branch
+ PR-ci-cd (Pull Request ci-cd) can be trigger by creating a pull request to merge into develop branch
  
 ### JOBS
 
-These are the jobs used in PR-ci-cd workflow
+ These are the jobs used in PR-ci-cd workflow
  
-#### CodeScan-ESLint
+ #### CodeScan-ESLint
  
- * This job use static code analysis tool which identify problematic patterns found in JavaScript code.
- * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
+  * This job use static code analysis tool which identify problematic patterns found in JavaScript code.
+  * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
  
  #### Build-Docker-Image
  
- * This job create a docker image with image tag using branch name and short SHA of commit and push into reancare/services repository.
- * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
+  * This job create a docker image with image tag using branch name and short SHA of commit and push into reancare/services repository.
+  * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
  
 ### Steps To Trigger Workflow
 
-1. create a branch with the prefix of feature /n for example ``` feature/test ```
+ 1. Create a branch with the prefix of feature, For Example ``` feature/test ``` .
+ 2. Then Create a Pull Request to merge into develop branch.
 
+### Conclusion
+ * By creating a pull request to merge into develop branch will trigger the Pr-ci-cd workflow, Then wrokflow will the check whether problematic patterns found in JavaScript code or not then it will create a docker image.

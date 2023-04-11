@@ -36,8 +36,12 @@ Prefix release should be use when developer wants to merge code in main branch
  ### JOBS
  
  #### CodeScan-ESLint
+ 
  * This job use static code analysis tool which identify problematic patterns found in JavaScript code.
  * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
  
- #### 
+ #### Build-Docker-Image
+ 
+ * This job create a docker image with image tag using branch name and short SHA of commit and push into reancare/services repository.
+ * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
  

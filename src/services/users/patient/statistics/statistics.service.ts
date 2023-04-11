@@ -100,7 +100,8 @@ export class StatisticsService {
 
     public getReportModel = (
         patient: PatientDetailsDto,
-        stats: any) => {
+        stats: any,
+        clientCode: string) => {
 
         Logger.instance().log(JSON.stringify(patient, null, 2));
 
@@ -140,7 +141,8 @@ export class StatisticsService {
             Ethnicity         : ethnicity,
             Tobacco           : tobacco,
             MaritalStatus     : patient.HealthProfile.MaritalStatus ?? 'Unspecified',
-            Stats             : stats
+            Stats             : stats,
+            ClientCode        : clientCode
         };
     };
 
@@ -510,7 +512,11 @@ export class StatisticsService {
         var y = addTop(document, model, null, false);
         y = addReportMetadata(document, model, y);
         y = addReportSummary(document, model, y);
-        addHealthJourney(document, model, y);
+
+        var clientList = ["HCHLSTRL", "REANPTNT"];
+        if (clientList.indexOf(model.ClientCode) >= 0) {
+            addHealthJourney(document, model, y);
+        }
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;

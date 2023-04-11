@@ -70,7 +70,9 @@ export class StatisticsController {
             await this._authorizer.authorize(request, response);
 
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
-            this.triggerReportGeneration(patientUserId);
+            const clientCode = request.currentClient.ClientCode;
+
+            this.triggerReportGeneration(patientUserId, clientCode);
             ResponseHandler.success(request, response,
                 'Your health report is getting downloaded, please check in the medical records after few minutes!', 200, {
                 ReportUrl : "",
@@ -142,10 +144,10 @@ export class StatisticsController {
     };
     //#endregion
 
-    private triggerReportGeneration = async (patientUserId: string): Promise<any> => {
+    private triggerReportGeneration = async (patientUserId: string, clientCode: string): Promise<any> => {
         const stats = await this._service.getPatientStats(patientUserId);
         const patient = await this._patientService.getByUserId(patientUserId);
-        const reportModel = this._service.getReportModel(patient, stats);
+        const reportModel = this._service.getReportModel(patient, stats, clientCode);
         if (reportModel.ImageResourceId != null) {
             const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
             reportModel.ProfileImagePath = profileImageLocation ??

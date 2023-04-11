@@ -35,5 +35,6 @@ Prefix release should be use when developer wants to merge code in main branch
  
  ### Jobs
  
- 
+ - [] CodeScan-ESLint
+ * This job use static code analysis tool which identify problematic patterns found in JavaScript code.
  

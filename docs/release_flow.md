@@ -7,11 +7,11 @@
 
 
 
-# Overview
+## Overview
 
 This is the overview of Branch naming convention 
 
-* Feature
+### Feature
 
 Prefix feature should be use when developer wants to merge code in Develop branch
  ```sh

@@ -15,5 +15,14 @@ This is the overview of Branch naming convention
 
 Prefix feature should be use when developer wants to merge code in Develop branch
  ```sh
- feature/*
+ feature/**
+ ```
+
+### Release
+
+Prefix release should be use when developer wants to merge code in main branch
+ ```sh
+ release/**
+ ```
+ 
  

@@ -155,6 +155,42 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
+    getAllBefore = async (patientUserId: uuid, date: Date): Promise<MedicationConsumptionDetailsDto[]> => {
+        try {
+            const consumptions = await MedicationConsumption.findAll({
+                where : {
+                    PatientUserId   : patientUserId,
+                    TimeScheduleEnd : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            return consumptions.map(x => MedicationConsumptionMapper.toDetailsDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllBetween = async (patientUserId: uuid, from: Date, to: Date)
+        : Promise<MedicationConsumptionDetailsDto[]> => {
+        try {
+            const consumptions = await MedicationConsumption.findAll({
+                where : {
+                    PatientUserId   : patientUserId,
+                    TimeScheduleEnd : {
+                        [Op.gte] : from,
+                        [Op.lte] : to,
+                    }
+                }
+            });
+            return consumptions.map(x => MedicationConsumptionMapper.toDetailsDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults> => {
         try {
             const search = { where: {} };

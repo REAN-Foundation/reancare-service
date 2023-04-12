@@ -13,7 +13,7 @@ import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical
 import { MedicationConsumptionDetailsDto, MedicationConsumptionDto, MedicationConsumptionStatsDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
 import { MedicationDto } from "../../../domain.types/clinical/medication/medication/medication.dto";
-import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
+import { MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
@@ -25,6 +25,7 @@ import { MedicationConsumptionStore } from "../../../modules/ehr/services/medica
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
+import { MedicationConsumptionSearchFilters } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -288,8 +289,17 @@ export class MedicationConsumptionService implements IUserActionService {
         return await this._medicationConsumptionRepo.getById(id);
     };
 
-    search = async (filters: MedicationSearchFilters): Promise<MedicationSearchResults> => {
+    search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationSearchResults> => {
         return await this._medicationConsumptionRepo.search(filters);
+    };
+
+    getAllBefore = async (patientUserId: uuid, date: Date): Promise<MedicationConsumptionDetailsDto[]> => {
+        return await this._medicationConsumptionRepo.getAllBefore(patientUserId, date);
+    };
+
+    getAllBetween = async (patientUserId: uuid, dateFrom: Date, dateTo: Date)
+        : Promise<MedicationConsumptionDetailsDto[]> => {
+        return await this._medicationConsumptionRepo.getAllBetween(patientUserId, dateFrom, dateTo);
     };
 
     getScheduleForDuration = async (patientUserId: string, duration: string, when: string)

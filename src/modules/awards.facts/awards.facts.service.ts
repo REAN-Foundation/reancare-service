@@ -9,6 +9,7 @@ import * as asyncLib from 'async';
 import needle = require('needle');
 import axios from 'axios';
 import { Helper } from '../../common/helper';
+import { updateMedicationFact } from './medication.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -39,8 +40,6 @@ const headers = {
 export class AwardsFactsService {
 
     //#region Private static members
-
-    static _medfactRepository: Repository<MedicationFact> = AwardsFactsSource.getRepository(MedicationFact);
 
     static _eventTypes = [];
 
@@ -80,7 +79,7 @@ export class AwardsFactsService {
         }
 
         if (model.FactType === 'Medication') {
-            await this.updateMedicationFact(model);
+            await updateMedicationFact(model);
             const eventType = AwardsFactsService._eventTypes.find(x => x.Name === 'Medication');
             if (eventType) {
                 //Send event to awards service
@@ -136,38 +135,12 @@ export class AwardsFactsService {
         }
     }
 
-    private static async updateMedicationFact(model: AwardsFact) {
-        const existing = await this._medfactRepository.findOne({
-            where : {
-                RecordId : model.RecordId
-            }
-        });
-        if (!existing) {
-            const fact = {
-                RecordId           : model.RecordId,
-                ContextReferenceId : model.PatientUserId,
-                MedicationId       : model.Facts.MedicationId,
-                Taken              : model.Facts.Taken,
-                Missed             : model.Facts.Missed,
-                RecordDate         : model.RecordDate,
-                RecrodDateStr      : model.RecordDateStr
-            };
-            const record = await this._medfactRepository.create(fact);
-            const saved = await this._medfactRepository.save(record);
-        }
-        else {
-            existing.Taken = model.Facts.Taken ?? (await existing).Taken;
-            existing.Missed = model.Facts.Missed ?? (await existing).Missed;
-            const updated = await this._medfactRepository.save(existing);
-        }
-    }
-
     //#endregion
 
     public static addOrUpdateMedicationFact = (model: AwardsFact) => {
         try {
             model.FactType = 'Medication';
-            model.RecordDateStr = (new Date()).toISOString().split('T')[0];
+            model.RecordDateStr = (model.RecordDate).toISOString().split('T')[0];
             AwardsFactsService.enqueue(model);
         }
         catch (error) {
@@ -183,3 +156,4 @@ export class AwardsFactsService {
     }
 
 }
+

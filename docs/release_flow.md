@@ -31,7 +31,7 @@ This is an explanation of how to use or trigger any workflow in our repository
  
 ## PR-ci-cd
  
- PR-ci-cd (Pull Request ci-cd) can be trigger by creating a pull request to merge into develop branch
+ PR-ci-cd (Pull Request ci-cd) can be trigger by creating a pull request to merge into develop branch.
  
 ### JOBS
 
@@ -44,7 +44,7 @@ This is an explanation of how to use or trigger any workflow in our repository
  
  #### Build-Docker-Image
  
-  * This job create a docker image with image tag using branch name and short SHA of commit and push into reancare/services repository.
+  * This job create a docker image with image tag using branch name and short SHA of commit.
   * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
  
 ### Steps To Trigger Workflow
@@ -53,6 +53,27 @@ This is an explanation of how to use or trigger any workflow in our repository
  2. Then Create a Pull Request to merge into develop branch.
 
 ### Conclusion
- * By creating a pull request to merge into develop branch will trigger the Pr-ci-cd workflow, Then wrokflow will the check whether problematic patterns found in    JavaScript code or not then it will create a docker image and push into our repository.
+
+ * By creating a pull request to merge into develop branch will trigger the Pr-ci-cd workflow, Then wrokflow will the check whether problematic patterns found in    JavaScript code or not then it will create a docker image.
  * Example of PR-ci-cd Action ![Pr-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Pr-ci-cd_example.png?raw=true)
  
+## Dev-ci-cd 
+
+Dev-ci-cd can be use or trigger by pushing code into Develop branch.
+
+### JOBS
+
+These are the jobs used in Dev-ci-cd
+
+#### Deploy-ECS
+
+* This job will login to ECR using creds and build a new ECR docker image with image tag using branch name and short SHA of commit for example ``` /reancare-service-dev-uat:develop_5e38e33 ``` then this job will create new version of Amazon ECS task definition with new docker image then it will deploy Amazon ECS task definition using Duplo API.
+
+### Steps To Trigger Workflow
+
+1. Once the Pull Request has been merge into Develop branch Dev-ci-cd workflow will be triggered.
+
+### Conclusion
+
+* This workflow will be triggered after PR-ci-cd workflow which means whenever a Push event happens on the Develop branch will trigged Dev-ci-cd workflow.
+* Then it will create a new doker image and create a new version of task definition with that image and deploy it. 

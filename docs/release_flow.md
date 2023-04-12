@@ -112,4 +112,4 @@ For Example ``` release/test ```
 ### Conclusion
 
 * This workflow will be trigger when a pull request merge into main branch or whenever a branch with prefix of 'release' create a pull request to merge into any branch then Uat-ci-cd workflow will check whether the Pull request have one of major, minor, patch label or not, After that it will create a new docker image and create a new version of task definition with that image and deploy it.
-* Example of ![UAT-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Uat-ci-cd_example.png?raw=true)    
+* Example of UAT-ci-cd Action ![UAT-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Uat-ci-cd_example.png?raw=true)    

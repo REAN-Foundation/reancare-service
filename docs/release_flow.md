@@ -76,7 +76,7 @@ These are the jobs used in Dev-ci-cd
 ### Conclusion
 
 * This workflow will be triggered after PR-ci-cd workflow which means whenever a Push event happens on the Develop branch will trigged Dev-ci-cd workflow.
-* Then it will create a new doker image and create a new version of task definition with that image and deploy it. 
+* Then it will create a new docker image and create a new version of task definition with that image and deploy it. 
 * Example of Dev-ci-cd Action ![Dev-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Dev-ci-cd_example.png?raw=true)
 
 ## UAT-ci-cd
@@ -111,4 +111,5 @@ For Example ``` release/test ```
 
 ### Conclusion
 
-* This workflow will be trigger when a pull request merge into 
+* This workflow will be trigger when a pull request merge into main branch or whenever a branch with prefix of 'release' create a pull request to merge into any branch then Uat-ci-cd workflow will check whether the Pull request have one of major, minor, patch label or not, After that it will create a new docker image and create a new version of task definition with that image and deploy it.
+* Example of ![UAT-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Uat-ci-cd_example.png?raw=true)    

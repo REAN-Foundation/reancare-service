@@ -78,3 +78,23 @@ These are the jobs used in Dev-ci-cd
 * This workflow will be triggered after PR-ci-cd workflow which means whenever a Push event happens on the Develop branch will trigged Dev-ci-cd workflow.
 * Then it will create a new doker image and create a new version of task definition with that image and deploy it. 
 * Example of Dev-ci-cd Action ![Dev-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Dev-ci-cd_example.png?raw=true)
+
+## UAT-ci-cd
+
+There are two ways to use or trigger UAT-ci-cd workflow
+1. By creating a Pull Request to merge into MAIN branch
+2. Whenever a Branch with prefix of 'release' create a pull request
+
+### JOBS
+
+These are the jobs used in UAT-ci-cd
+
+#### CodeScan-ESLint
+
+* This job use static code analysis tool which identify problematic patterns found in JavaScript code.
+* This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job.
+
+#### Label_Checks
+
+* On event Pull Request this job will check wheter the Pull Request has one of major,minor,patch label or not
+* This job uses [pull-request-label-checker](https://github.com/marketplace/actions/label-checker-for-pull-requests)    

@@ -142,4 +142,4 @@ These are the jobs used in UAT-ci-cd
 
 * This workflow will be triggered after UAT-ci-cd workflow which means whenever a Push event happens on the main branch will trigger Prod-ci-cd workflow
 * Then it will create a new docker image and create a new version of task definition with that image and deploy it.
-* Example of PROD-ci-cd Action
+* Example of PROD-ci-cd Action ![prod-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/prod-ci-cd_example.png?raw=true)

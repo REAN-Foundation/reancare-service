@@ -108,3 +108,7 @@ These are the jobs used in UAT-ci-cd
 1. Create a pull request to merge into Main branch
 2. Create a branch with prefix `release` then create a pull request to any branch.
 For Example ``` release/test ```
+
+### Conclusion
+
+* This workflow will be trigger when a pull request merge into 

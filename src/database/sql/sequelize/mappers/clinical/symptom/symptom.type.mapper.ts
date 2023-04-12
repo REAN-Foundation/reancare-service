@@ -11,12 +11,17 @@ export class SymptomTypeMapper {
             return null;
         }
 
+        var tags = [];
+        if (symptomType.Tags !== null && symptomType.Tags !== undefined) {
+            tags = JSON.parse(symptomType.Tags);
+        }
+
         const dto: SymptomTypeDto = {
             id              : symptomType.id,
             EhrId           : symptomType.EhrId,
             Symptom         : symptomType.Symptom,
             Description     : symptomType.Description,
-            Tags            : symptomType.Tags ? JSON.parse(symptomType.Tags) : [],
+            Tags            : tags,
             Language        : symptomType.Language,
             ImageResourceId : symptomType.ImageResourceId,
             CreatedAt       : symptomType.CreatedAt,

@@ -96,5 +96,15 @@ These are the jobs used in UAT-ci-cd
 
 #### Label_Checks
 
-* On event Pull Request this job will check wheter the Pull Request has one of major,minor,patch label or not
-* This job uses [pull-request-label-checker](https://github.com/marketplace/actions/label-checker-for-pull-requests)    
+* On event Pull Request this job will check wheter the Pull Request have one of major,minor,patch label or not
+* This job uses [pull-request-label-checker](https://github.com/marketplace/actions/label-checker-for-pull-requests) 
+
+#### Deploy-ECS
+
+* This job will login to ECR using creds and build a new ECR docker image with image tag using branch name and short SHA of commit for example ``` /reancare-service-dev-uat:develop_5e38e33 ```, Then this job will create new version of Amazon ECS task definition with new docker image then it will deploy Amazon ECS task definition using Duplo API.
+
+### Steps To Trigger Workflow
+
+1. Create a pull request to merge into Main branch
+2. Create a branch with prefix `release` then create a pull request to any branch.
+for example ``` release/test ```

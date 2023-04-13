@@ -4,6 +4,7 @@ import { AwardsFact } from './awards.facts.service';
 import { MedicationFact } from './models/medication.fact.model';
 import { MedicationConsumptionService } from '../../services/clinical/medication/medication.consumption.service';
 import { Loader } from '../../startup/loader';
+import { Logger } from '../../common/logger';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -71,11 +72,12 @@ async function addOrUpdateRecord(model: AwardsFact) {
         };
         const record = await medfactRepository.create(fact);
         const saved = await medfactRepository.save(record);
+        Logger.instance().log(`${JSON.stringify(saved, null, 2)}`);
     }
     else {
         existing.Taken = model.Facts.Taken ?? (await existing).Taken;
         existing.Missed = model.Facts.Missed ?? (await existing).Missed;
-        const updated = await medfactRepository.save(existing);
+        const saved = await medfactRepository.save(existing);
+        Logger.instance().log(`${JSON.stringify(saved, null, 2)}`);
     }
 }
-

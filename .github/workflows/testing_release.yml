@@ -18,9 +18,13 @@ jobs:
       - name:  ECR Image Tag Check
         id: image_tag
         run: |
-          image=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='97777323'].imageTag" --output text) >> $GITHUB_OUTPUT
-        
+          echo "image=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='97777323'].imageTag" --output text)" >> $GITHUB_OUTPUT
         shell: bash
        
       - name: testing image
-        run: echo ${{ steps.image_tag.outputs.image }}
+        run: echo ${#${{ steps.image_tag.outputs.image }}}
+        
+        
+#       - name: ECR Image Tag Check
+#         run: |
+#           if [ ${{ steps.image_tag.outputs.image }} ==  ]; then exit 1; fi

@@ -1,0 +1,25 @@
+name: test new release
+
+on:
+  pull_request:
+    branches: develop
+
+jobs:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Configure AWS credentials
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name:  ECR Image Tag Check
+        id: image_tag
+        run: |
+          aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='${{ steps.result_release.outputs.id }}'].imageTag" --output text
+        shell: bash
+       
+      - name: testing image
+        run: ${steps.image_tag.outputs}

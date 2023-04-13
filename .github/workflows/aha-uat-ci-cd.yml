@@ -113,7 +113,7 @@ jobs:
 
       - name: Pulling Image
         run: |
-          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_tag_name }}_${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
+          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_name }}_${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
 
 #       - name: Download task definition
 #         run: |

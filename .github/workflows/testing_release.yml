@@ -20,6 +20,8 @@ jobs:
         run: |
           tag=v33.0.1
           id=97362866
+          tag_image=`$tag_$id`
+          echo $tag_image
           echo "image_tag=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$tag_$id'].imageTag" --output text)" >> $GITHUB_OUTPUT
           echo $image_tag
 #       - name: ECR Image Tag Check

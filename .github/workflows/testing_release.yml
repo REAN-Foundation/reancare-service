@@ -22,7 +22,7 @@ jobs:
         shell: bash
        
       - name: testing image
-        run: echo ${#${{ steps.image_tag.outputs.image }}}
+        run: echo ${#'${{ steps.image_tag.outputs.image }}'}
         
         
 #       - name: ECR Image Tag Check

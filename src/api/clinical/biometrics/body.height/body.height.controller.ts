@@ -158,7 +158,7 @@ export class BodyHeightController {
                 BodyHeight : model.BodyHeight
             });
         }
-    }
+    };
 
     //#endregion
 

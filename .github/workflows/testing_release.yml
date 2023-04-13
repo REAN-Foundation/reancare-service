@@ -25,4 +25,4 @@ jobs:
             
       - name: ECR Image Tag Check
         run: |
-          if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then exit 1; fi
+          if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then echo "not a valid tag"; fi

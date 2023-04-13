@@ -49,13 +49,13 @@ export class BodyHeightValidator {
 
     static search = async (request: express.Request): Promise<BodyHeightSearchFilters> => {
 
-        await query('MaxValue').optional()
+        await query('maxValue').optional()
             .trim()
             .escape()
             .isDecimal()
             .run(request);
 
-        await query('MinValue').optional()
+        await query('minValue').optional()
             .trim()
             .escape()
             .isDecimal()

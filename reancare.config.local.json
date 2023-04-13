@@ -44,17 +44,17 @@
             "Plans": [
                 {
                     "Provider" : "AHA",
-                    "Name": "Heart Failure",
-                    "Code": "HeartFailure",
-                    "DisplayName": "AHA-Heart Failure",
+                    "Name": "Heart Failure Motivator",
+                    "Code": "HFMotivator",
+                    "DisplayName": "Heart Failure Motivator",
                     "DefaultDurationDays": 84,
-                    "Description": "Heart Failure is a chronic condition in which the heart doesn't pump blood as well as it should. Heart failure can occur if the heart cannot pump (systolic) or fill (diastolic) adequately. Symptoms include shortness of breath, fatigue, swollen legs and rapid heartbeat.\nHeart Failure care plan helps in managing the condition."
+                    "Description": "Heart Failure is a chronic condition in which the heart doesn't pump blood as well as it should. Heart failure can occur if the heart cannot pump (systolic) or fill (diastolic) adequately. Symptoms include shortness of breath, fatigue, swollen legs and rapid heartbeat.\nHeart Failure care plan helps in managing the condition.\n\nThe American Heart Association's National HeartFailure Initiative, IMPLEMENT-HF, is made possible with funding by founding sponsor, Novartis, and national sponsor, Boehringer Ingelheim and Eli Lilly and Company."
                 },
                 {
                     "Provider" : "AHA",
                     "Name": "Cholesterol",
                     "Code": "Cholesterol",
-                    "DisplayName": "AHA-Cholesterol",
+                    "DisplayName": "Cholesterol",
                     "DefaultDurationDays": 91,
                     "Description": "Start your health journey to better manage your high cholesterol and reduce your risk of heart disease and stroke.\nYou'll learn about healthy lifestyle habits, goal planning, shared decision-making with your care team, cholesterol medications, self-management tips, and health behavior maintenance.\nNovartis is a proud supporter of the American Heart Association’s Integrated ASCVD Management Initiative."
                 },
@@ -77,6 +77,12 @@
         {
             "Provider": "GoogleForms",
             "Code": "GoogleForms"
+        }
+    ],
+    "WebhookControllerProviders" : [
+        {
+            "Provider": "Terra",
+            "Code": "Terra"
         }
     ],
     "MaxUploadFileSize": 104857600,

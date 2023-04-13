@@ -12,6 +12,8 @@ export interface ISleepRepo {
 
     getById(id: uuid): Promise<SleepDto>;
 
+    getByRecordDate(date: Date): Promise<SleepDto>;
+
     search(filters: SleepSearchFilters): Promise<SleepSearchResults>;
 
     update(id: uuid, sleepDomainModel: SleepDomainModel): Promise<SleepDto>;
@@ -19,5 +21,7 @@ export interface ISleepRepo {
     delete(id: uuid): Promise<boolean>;
 
     getStats(patientUserId: string, numMonths: number): Promise<any>;
+
+    getByRecordDateAndPatientUserId(recordDate: Date, patientUserId: string): Promise<SleepDto>;
 
 }

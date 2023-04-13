@@ -26,6 +26,10 @@ export class UserDeviceDetailsService {
         return await this._userDeviceDetailsRepo.getByUserId(userId);
     };
 
+    getExistingRecord = async (deviceDetails: any): Promise<UserDeviceDetailsDto> => {
+        return await this._userDeviceDetailsRepo.getExistingRecord(deviceDetails);
+    };
+
     search = async (filters: UserDeviceDetailsSearchFilters): Promise<UserDeviceDetailsSearchResults> => {
         return await this._userDeviceDetailsRepo.search(filters);
     };

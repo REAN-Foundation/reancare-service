@@ -13,7 +13,6 @@ import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -35,9 +34,9 @@ export class BloodPressureService {
     create = async (bloodPressureDomainModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
 
-        if (this._ehrBloodPressureStore) { 
+        if (this._ehrBloodPressureStore) {
             const ehrId = await this._ehrBloodPressureStore.add(bloodPressureDomainModel);
-            bloodPressureDomainModel.EhrId = ehrId;            
+            bloodPressureDomainModel.EhrId = ehrId;
         }
 
         var dto = await this._bloodPressureRepo.create(bloodPressureDomainModel);
@@ -55,7 +54,7 @@ export class BloodPressureService {
     update = async (id: uuid, bloodPressureDomainModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
         var dto = await this._bloodPressureRepo.update(id, bloodPressureDomainModel);
-        if (this._ehrBloodPressureStore) { 
+        if (this._ehrBloodPressureStore) {
             await this._ehrBloodPressureStore.update(dto.EhrId, dto);
         }
         return dto;
@@ -73,7 +72,6 @@ export class BloodPressureService {
         var deviceListsStr = JSON.stringify(deviceList, null, 2);
         Logger.instance().log(`Sent blood pressure notifications to following devices - ${deviceListsStr}`);
 
-
         var title = MessageTemplates['BPNotification'].Title;
         title = title.replace("{{PatientName}}", person.FirstName ?? "there");
         var body = MessageTemplates['BPNotification'].Body;
@@ -89,5 +87,6 @@ export class BloodPressureService {
         for await (var device of deviceList) {
             await Loader.notificationService.sendNotificationToDevice(device.Token, message);
         }
-    }
+    };
+
 }

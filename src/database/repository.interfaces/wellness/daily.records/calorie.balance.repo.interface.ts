@@ -14,4 +14,6 @@ export interface ICalorieBalanceRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getByRecordDate(recordDate: Date, patientUserId : string): Promise<CalorieBalanceDto>;
+
 }

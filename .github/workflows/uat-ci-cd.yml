@@ -10,6 +10,10 @@ name: UAT-CI-CD
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push events but only for the develop branch
+  
+  pull_request:
+    branches: main
+  
   push:
     branches:
       - 'release/**'
@@ -20,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -33,14 +37,30 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
+          
+  Label_Checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Check labels
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: docker://agilepathway/pull-request-label-checker:latest
+        with:
+          one_of: major,minor,patch
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
   Deploy-ECS:
+    if: ${{ github.event_name == 'push' }}
     environment: uat
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -53,9 +73,9 @@ jobs:
         id: vars
         shell: bash
         run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")"
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-          echo "::set-output name=repo_name::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')"
+          echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "repo_name=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Another step
         run: |
@@ -65,14 +85,14 @@ jobs:
 
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -81,7 +101,7 @@ jobs:
 
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./
           file: ./Dockerfile
@@ -117,7 +137,8 @@ jobs:
         id: taskdefintionvar
         shell: bash
         run: |
-          echo "::set-output name=task_definition_arn::$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')"
+          # echo "::set-output name=task_definition_arn::$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')"
+          echo "task_definition_arn=$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')" >> $GITHUB_OUTPUT
 
       - name: Task Defintion ARN
         run: |

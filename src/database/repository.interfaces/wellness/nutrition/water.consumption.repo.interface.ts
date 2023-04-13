@@ -15,4 +15,6 @@ export interface IWaterConsumptionRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getByRecordDate(recordDate: Date, patientUserId : string): Promise<WaterConsumptionDto>;
+
 }

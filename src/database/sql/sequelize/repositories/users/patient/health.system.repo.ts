@@ -7,7 +7,7 @@ import { HealthSystemDomainModel } from
 import { HealthSystemDto } from '../../../../../../domain.types/users/patient/health.system/health.system.dto';
 import { HealthSystemMapper } from '../../../mappers/users/patient/health.system.mapper';
 import HealthSystem from '../../../models/users/patient/health.system.model';
-import { HealthSystemHospitalDomainModel } from 
+import { HealthSystemHospitalDomainModel } from
     '../../../../../../domain.types/users/patient/health.system/health.system.hospital.domain.model';
 import { HealthSystemHospitalDto } from
     '../../../../../../domain.types/users/patient/health.system/health.system.hospital.dto';
@@ -22,7 +22,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
     Promise<HealthSystemDto> => {
         try {
             const entity = {
-                Name: createModel.Name,
+                Name : createModel.Name,
             };
 
             const nutrition = await HealthSystem.create(entity);
@@ -80,8 +80,8 @@ export class HealthSystemRepo implements IHealthSystemRepo {
 
     getHealthSystemHospitals = async (healthSystemId: uuid): Promise<HealthSystemHospitalDto[]> => {
         try {
-            const filter = { where: {
-                HealthSystemId : healthSystemId       
+            const filter = { where : {
+                HealthSystemId : healthSystemId
             } };
             
             const healthSystemHospitals = await HealthSystemHospital.findAll(filter);

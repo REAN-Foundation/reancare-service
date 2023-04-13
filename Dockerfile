@@ -1,4 +1,4 @@
-FROM node:gallium-alpine3.15 AS builder
+FROM node:18.12.0-alpine3.15 AS builder
 ADD . /app
 RUN apk add bash
 RUN apk add --no-cache \
@@ -19,9 +19,9 @@ COPY tsconfig.json ./
 RUN npm install
 RUN npm run build
 
-# RUN npm run build
+##RUN npm run build
 
-FROM node:gallium-alpine3.15
+FROM node:18.12.0-alpine3.15
 RUN apk add bash
 RUN apk add --no-cache \
         python3 \

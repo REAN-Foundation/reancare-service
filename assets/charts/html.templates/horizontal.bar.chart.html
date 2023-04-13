@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html  lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=320" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<title>Horizontal Bar Chart</title>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-array@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-format@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-interpolate@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-time@3"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-time-format@4"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/d3-scale@4"></script>
+	<style>
+		body {
+			font-family: Helvetica, Arial, sans-serif;
+			margin: 32px;
+		}
+		h1 {
+			  margin: 0;
+			  padding: 0.1rem 0.4rem;
+			  font-size: 1rem;
+			  font-weight: 500;
+			  text-align: right;
+			}
+
+			.widget {
+			  display: inline-block;
+			  border: 1px solid #AAA;
+			  background: white;
+			}
+
+			svg {
+			  shape-rendering: crispEdges;
+			}
+
+			.bar {
+			  fill: steelblue;
+			}
+
+			.value {
+			  font-size: 16px;
+			  font-weight: 300;
+			  fill: #fbfbfb;
+			}
+
+			.label {
+			  font-size: 15px;
+			  fill: #333;
+			}
+
+		.axis path,
+        .axis line {
+            fill: none;
+            display: none;
+        }
+
+	</style>
+</head>
+
+<body>
+
+	<div id="chart">
+	</div>
+
+	<script>
+
+		// customization
+
+		const data = [
+			[ "Sunday      ................................", .10 ],
+			[ "Monday", .15 ],
+			[ "Tuesday", .23 ],
+			[ "Wednesday", .26 ],
+			[ "Thursday", .05 ],
+			[ "Friday", .15 ],
+			[ "Saturday", .05 ],
+		];
+
+		const HEIGHT = 400;
+		const WIDTH = 700;
+		const fontSize  = "13px";
+		const showXAxis = true;
+
+		// customization
+
+		function barChart(container, data) {
+
+			// Compute values.
+			const axisMargin = 20;
+		    const margin = 20;
+		    const valueMargin = 10;
+		    const width = WIDTH;
+		    const height = HEIGHT;
+		    const barHeight = (height-margin*2)* 0.8/data.length;
+		    const barPadding = (height-margin*2)*0.2/data.length;
+		    var bar, xAxis, labelWidth = 0;
+
+			var max = d3.max(data.map(function(i){
+			  return i[1];
+			}));
+
+			const svg = d3.select(container)
+				.append("svg")
+				.attr("width", width)
+				.attr("height", HEIGHT)
+				.attr("viewBox", [0, 0, width, height])
+				.attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+
+				bar = svg.selectAll("g")
+				  .data(data)
+				  .enter()
+				  .append("g");
+
+				bar.attr("class", "bar")
+				  .attr("cx",0)
+				  .attr("transform", function(d, i) {
+				     return "translate(" + margin + "," + (i * (barHeight + barPadding) + barPadding) + ")";
+				  });
+
+				//Bar headers
+				bar.append("text")
+				  .attr("class", "label")
+				  .attr("y", barHeight / 2)
+				  .attr("dy", ".35em") //vertical align middle
+				  .text(function(d){
+				    return d[0];
+				  }).each(function() {
+				    labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width)) + 5;
+				  });
+
+				var scale = d3.scaleLinear()
+				  .domain([0, max])
+				  .range([0, width - margin*2 - labelWidth]);
+
+				//Bars
+				bar.append("rect")
+				  .attr("transform", "translate("+labelWidth+", 0)")
+				  .attr("height", barHeight)
+				  .attr("width", function(d){
+				    return scale(d[1]);
+				  });
+
+				//Value text on the bar
+				bar.append("text")
+				  .attr("class", "value")
+				  .attr("y", barHeight / 2)
+				  .attr("dx", -valueMargin + labelWidth) //margin right
+				  .attr("dy", ".35em") //vertical align middle
+				  .attr("text-anchor", "end")
+				  .text(function(d){
+				    return d[1];
+				  })
+				 .attr("x", function(d){
+				    var width = this.getBBox().width;
+				    return Math.max(width + valueMargin, scale(d[1]));
+				  });
+
+			  if (showXAxis) {
+				xAxis = d3.axisBottom(scale)
+				  .tickSizeOuter(-height + 2*margin + axisMargin);
+
+				svg.insert("g",":first-child")
+				 .attr("class", "axis")
+				 .style("font-size", fontSize)
+				 .attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin)+")")
+				 .call(xAxis);
+			  }
+
+			return svg.node();
+		}
+
+		barChart('#chart', data);
+
+	</script>
+
+</body>
+
+</html>

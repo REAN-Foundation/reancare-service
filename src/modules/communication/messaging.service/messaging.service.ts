@@ -29,13 +29,11 @@ export class MessagingService {
         const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
         let templateName = null;
 
-        if (provider === "REAN_BW") {
-            const countryCode = toPhone.split("-")[0];
-            const num = toPhone.split("-")[1];
-            const code =  countryCode.substring(1);
-            toPhone = code.concat(num);
-            message = JSON.parse(message);
-        }
+        const countryCode = toPhone.split("-")[0];
+        const num = toPhone.split("-")[1];
+        const code =  countryCode.substring(1);
+        toPhone = code.concat(num);
+        message = JSON.parse(message);
         if (message.Variables) {
             templateName = type;
             type = "template";
@@ -44,8 +42,6 @@ export class MessagingService {
 
         }
         const client = provider === "REAN_BW" ? "BLOOD_WARRIORS" : "MATERNAL_BOT";
-        const channel = provider === "REAN_BW" ? "whatsappMeta" : "telegram";
-        
         const headers = {
             'authentication' : process.env.REANBOT_WEBHOOK_CLIENT_HEADER_TOKEN,
         };
@@ -53,18 +49,19 @@ export class MessagingService {
             headers : headers
         };
         
-        const url = `${reanBotBaseUrl}${client}/${channel}/${urlToken}/send`;
+        const url = `${reanBotBaseUrl}${client}/whatsappMeta/${urlToken}/send`;
         Logger.instance().log(`URL: ${url}`);
         Logger.instance().log(`Phone: ${toPhone}`);
         const obj = {
             userId       : toPhone,
             agentName    : "ReanCare",
+            provider     : provider,
             type         : type,
             templateName : templateName,
             message      : message,
             payload      : buttonIds
         };
-        
+        Logger.instance().log(`Body of request: ${JSON.stringify(obj)}`);
         const resp1 = await needle('post', url, obj, options);
         if (resp1.statusCode !== 200) {
             Logger.instance().log(`Failed to send message to phone number: ${toPhone}`);

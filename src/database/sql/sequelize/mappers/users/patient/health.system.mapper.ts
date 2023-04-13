@@ -33,6 +33,4 @@ export class HealthSystemMapper {
         return dto;
     };
 
-    
-
 }

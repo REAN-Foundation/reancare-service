@@ -9,7 +9,7 @@ export class SQLInjector
 {
 
     static registerInjections(container: DependencyContainer) {
-        
+
         const databaseORM = ConfigurationManager.DatabaseORM();
         if (databaseORM === 'Sequelize') {
             SequelizeInjector.registerInjections(container);

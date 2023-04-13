@@ -13,7 +13,7 @@ export const addLabeledText = (
     document: PDFKit.PDFDocument, label: string, value: string, y: any, fontSize = 11, rowYOffset = 23) => {
 
     const labelX = 135;
-    const valueX = 325;
+    const valueX = 360;
 
     document
         .fontSize(fontSize)
@@ -26,6 +26,47 @@ export const addLabeledText = (
         .text(label, labelX, y, { align: "left" })
         .font('Helvetica')
         .text(value, valueX, y, { align: "left" })
+        .moveDown();
+
+    return y;
+};
+
+export interface TableColumnProperties {
+    XOffset: number;
+    Text   : string;
+}
+
+export interface TableRowProperties {
+    IsHeaderRow: boolean;
+    FontSize   : number;                   //11
+    RowOffset  : number;                   //23
+    Columns    : TableColumnProperties[];
+}
+
+export const addTableRow = (
+    document: PDFKit.PDFDocument, y: any, tableProperties: TableRowProperties) => {
+
+    // const labelX = 135;
+    // const valueX = 360;
+
+    document
+        .fontSize(tableProperties.FontSize)
+        .fillColor("#444444");
+
+    y = y + tableProperties.RowOffset;
+
+    if (tableProperties.IsHeaderRow) {
+        document
+            .font('Helvetica-Bold');
+    }
+    else {
+        document.font('Helvetica');
+    }
+
+    for (var c of tableProperties.Columns) {
+        document.text(c.Text, c.XOffset, y, { align: "left" });
+    }
+    document
         .moveDown();
 
     return y;

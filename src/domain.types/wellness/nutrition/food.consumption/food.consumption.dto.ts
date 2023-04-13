@@ -5,6 +5,8 @@ export interface FoodConsumptionDto {
     id?                : string;
     EhrId?             : string;
     PatientUserId?     : string;
+    TerraSummaryId?    : string;
+    Provider?          : string;
     Food?              : string;
     FoodTypes?         : string[];
     Servings?          : number;

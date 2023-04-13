@@ -7,32 +7,65 @@ export const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: n
 
     y = y + 5;
 
-    document
-        .font('Helvetica-Bold')
-        .fontSize(12)
-        .text('Heart & Stroke Helper™', 35, y, { align: "center" })
-        .moveDown();
+    var clientList = ["HCHLSTRL", "REANPTNT"];
+    if (clientList.indexOf(model.ClientCode) >= 0) {
 
-    y = y + 20;
+        document
+            .font('Helvetica-Bold')
+            .fontSize(12)
+            .text('Heart & Stroke Helper™', 35, y, { align: "center" })
+            .moveDown();
 
-    const text = `Heart & Stroke Helper™ supports individuals to better manage their health condition by providing education from a trusted source and keeping track of healthy habits, health numbers, symptoms, and medications - all in one place.`;
-    document
-        .font('Helvetica')
-        .fontSize(9)
-        .text(text, 50, y, { align: "left" })
-        .moveDown();
+        y = y + 20;
 
-    y = y + 30;
+        const text = `Heart & Stroke Helper™ supports individuals to better manage their health condition by providing education from a trusted source and keeping track of healthy habits, health numbers, symptoms, and medications - all in one place.`;
+        document
+            .font('Helvetica')
+            .fontSize(9)
+            .text(text, 50, y, { align: "left" })
+            .moveDown();
 
-    const text2 = `This summary of your app activity and data can be printed and brought along to appointments with your care team and shared with them by uploading it to your patient portal.The summary is meant to give your care team understanding about your condition management between visits.`;
-    document
-        .font('Times-Italic')
-        .fontSize(9)
-        .text(text2, 50, y, { align: "left" })
-        .moveDown();
+        y = y + 30;
 
-    y = y + 43;
+        const text2 = `This summary of your app activity and data can be printed and brought along to appointments with your care team and shared with them by uploading it to your patient portal.The summary is meant to give your care team understanding about your condition management between visits.`;
+        document
+            .font('Times-Italic')
+            .fontSize(9)
+            .text(text2, 50, y, { align: "left" })
+            .moveDown();
 
+        y = y + 43;
+        
+    } else {
+
+        document
+            .font('Helvetica-Bold')
+            .fontSize(12)
+            .text('HF Helper', 35, y, { align: "center" })
+            .moveDown();
+
+        y = y + 20;
+
+        const text = `The HF Helper app can help heart failure patients stay healthy between office visits by tracking their symptoms, managing medication, and sharing health information with their doctor - all in one place.`;
+        document
+            .font('Helvetica')
+            .fontSize(9)
+            .text(text, 50, y, { align: "left" })
+            .moveDown();
+
+        y = y + 30;
+
+        const text2 = `This summary of your app activity and data can be printed and brought along to appointments with your care team and shared with them by uploading it to your patient portal.The summary is meant to give your care team understanding about your condition management between visits.`;
+        document
+            .font('Times-Italic')
+            .fontSize(9)
+            .text(text2, 50, y, { align: "left" })
+            .moveDown();
+
+        y = y + 43;
+
+    }
+    
     document
         .image(model.ProfileImagePath, 50, y, { width: 64 });
 
@@ -95,7 +128,7 @@ export const addReportSummary = (document: PDFKit.PDFDocument, model: any, y: nu
 
     document
         .font('Helvetica-Bold')
-        .text('Gender', labelX, y, { align: "left" })
+        .text('Sex', labelX, y, { align: "left" })
         .font('Helvetica')
         .text(model.Gender, valueX, y, { align: "left" })
         .moveDown();
@@ -119,9 +152,9 @@ export const addReportSummary = (document: PDFKit.PDFDocument, model: any, y: nu
 
     document
         .font('Helvetica-Bold')
-        .text('Mariatal Status', labelX, y, { align: "left" })
+        .text('Marital Status', labelX, y, { align: "left" })
         .font('Helvetica')
-        .text(model.MariatalStatus, valueX, y, { align: "left" })
+        .text(model.MaritalStatus, valueX, y, { align: "left" })
         .moveDown();
     y = y + rowYOffset;
 
@@ -174,14 +207,14 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
         return y;
     }
     const planName = journey.PlanName;
-    const enrollmentId = journey.EnrollmentId ? journey.EnrollmentId.toString() : journey.EnrollmentStringId;
+    // const enrollmentId = journey.EnrollmentId ? journey.EnrollmentId.toString() : journey.EnrollmentStringId;
     const startDate = journey.StartAt?.toLocaleDateString();
     const endDate = journey.EndAt?.toLocaleDateString();
     const icon = Helper.getIconsPath('health-journey.png');
     y = addSectionTitle(document, y, 'Health Journey', icon);
 
     y = y + 18;
-    const text = `Health Journey helps you to better manage your high cholesterol and reduce your risk of heart disease and stroke.  You'll learn about healthy lifestyle habits, goal planning, shared decision-making with your care team, cholesterol medications, self-management tips, and health behavior maintenance.`;
+    const text = `The Health Journey helps you to better manage your condition and reduce your risk of heart disease and stroke. You'll learn about healthy lifestyle habits, goal planning, shared decision-making with your care team, medications, self-management tips, and health behavior maintenance.`;
     document
         .font('Helvetica')
         .fontSize(9)
@@ -206,13 +239,13 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
         .moveDown();
     y = y + rowYOffset;
 
-    document
+    /*document
         .font('Helvetica-Bold')
         .text('Enrollment Id', labelX, y, { align: "left" })
         .font('Helvetica')
         .text(enrollmentId, valueX, y, { align: "left" })
         .moveDown();
-    y = y + rowYOffset;
+    y = y + rowYOffset;*/
 
     document
         .font('Helvetica-Bold')

@@ -10,10 +10,14 @@ export interface IStepCountRepo {
 
     getById(id: string): Promise<StepCountDto>;
 
+    getByRecordDate(recordDate: Date): Promise<StepCountDto>;
+
     search(filters: StepCountSearchFilters): Promise<StepCountSearchResults>;
 
     update(id: string, stepCountDomainModel: StepCountDomainModel): Promise<StepCountDto>;
 
     delete(id: string): Promise<boolean>;
+
+    getByRecordDateAndPatientUserId(recordDate: Date, patientUserId: string): Promise<StepCountDto>;
 
 }

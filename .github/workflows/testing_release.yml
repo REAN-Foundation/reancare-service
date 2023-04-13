@@ -22,6 +22,7 @@ jobs:
           id=97362866
           image_tag+=$tag && image_tag+=_ && image_tag+=$id
           echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
+          echo $imagetag_value
 
       - name: check tag
         run: echo ${{ steps.imageidvar.outputs.imagetag_value }}

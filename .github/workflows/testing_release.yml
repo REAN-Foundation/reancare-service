@@ -15,11 +15,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
           
-      - name:  ECR Image Tag Check
+      - name:  Get ECR Image Tag
         id: image_tag
         run: |
-          echo "image=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='97777323'].imageTag" --output text)" >> $GITHUB_OUTPUT
-        shell: bash
+          echo "image=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='131241214'].imageTag" --output text)" >> $GITHUB_OUTPUT
        
 #       - name: testing image
 #         run: echo ${#'${{ steps.image_tag.outputs.image }}'}

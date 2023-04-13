@@ -23,4 +23,4 @@ jobs:
         shell: bash
        
       - name: testing image
-        run: echo ${{ steps.image_tag.outputs.image_tag }}
+        run: echo ${{ steps.image_tag.outputs.image }}

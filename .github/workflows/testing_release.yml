@@ -21,14 +21,8 @@ jobs:
           tag=v33.0.1
           id=97362866
           image_tag+=$tag && image_tag+=_ && image_tag+=$id
-          echo $image_tag
-          echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='v33.0.1_97362866'].imageTag" --output text)" >> $GITHUB_OUTPUT
-        
-
-      - name: check tag
-        run: echo ${{ steps.imageidvar.outputs.imagetag_value }}
-          
-          
+          echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
+            
       - name: ECR Image Tag Check
         run: |
-          if [[ -z "${{ steps.image_id.outputs.image_tag }}" ]]; then echo "not a valid tag"; fi
+          if [[ -z "${{ steps.image_id.outputs.image_tag }}" ]]; then exit 1; fi

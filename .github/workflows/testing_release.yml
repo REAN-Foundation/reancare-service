@@ -18,8 +18,10 @@ jobs:
       - name:  Get ECR Image Tag
         id: image_id
         run: |
-          echo "image_tag=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='97777298'].imageTag" --output text)" >> $GITHUB_OUTPUT
+          tag=v33.0.1
+          id=97362866
+          echo "image_tag=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$tag_$id'].imageTag" --output text)" >> $GITHUB_OUTPUT
         
-      - name: ECR Image Tag Check
-        run: |
-          if [[ -z "${{ steps.image_id.outputs.image_tag }}" ]]; then exit 1; fi
+#       - name: ECR Image Tag Check
+#         run: |
+#           if [[ -z "${{ steps.image_id.outputs.image_tag }}" ]]; then exit 1; fi

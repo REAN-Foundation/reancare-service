@@ -1,14 +1,34 @@
 name: test new release
 
 on:
-  pull_request:
-    branches: develop
+  workflow_dispatch:
+    inputs:
+      Tag_name:
+        description: Tag name of your release(please include "v" if needed)
+        required: true
 
 jobs:
   testing_release:
     runs-on: ubuntu-latest
     steps:
+      - name: check tag
+        uses: mukunku/tag-exists-action@v1.2.0
+        id: checkTag
+        with: 
+          tag: ${{ github.event.inputs.Tag_name }}
+      
+      - name: Get release
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        id: result_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+           tag: ${{ github.event.inputs.Tag_name }}
+           repo: REAN-Foundation/reancare-service
+           
       - name: Configure AWS credentials
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -16,13 +36,13 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           
       - name:  Get ECR Image Tag
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
         id: imageidvar
         run: |
-          tag=v33.0.1
-          id=973628
-          image_tag+=$tag && image_tag+=_ && image_tag+=$id
+          image_tag+=${{ steps.result_release.outputs.id }} && image_tag+=_ && image_tag+=${{ steps.result_release.outputs.tag_name }}
           echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
             
       - name: ECR Image Tag Check
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
         run: |
-          if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then echo "not a valid tag"; fi
+          if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then exit 1; fi

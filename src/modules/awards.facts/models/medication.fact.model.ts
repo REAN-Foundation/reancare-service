@@ -19,8 +19,8 @@ export class MedicationFact {
     @Column({ type: 'uuid', nullable: true })
     RecordId : string;
 
-    @Column({ type: 'uuid', nullable: true })
-    MedicationId : string;
+    @Column({ type: 'varchar', length: 256, nullable: true })
+    DrugName : string;
 
     @Column({ nullable: true, default: false })
     Taken: boolean;
@@ -29,9 +29,9 @@ export class MedicationFact {
     Missed: boolean;
 
     @Column({ nullable: true })
-    RecrodDate : Date;
+    RecordDate : Date;
 
     @Column({ nullable: true })
-    RecrodDateStr : string;
+    RecordDateStr : string;
 
 }

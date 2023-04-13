@@ -11,18 +11,20 @@ export const updateMedicationFact = async (model: AwardsFact) => {
 
     const medfactRepository: Repository<MedicationFact> = AwardsFactsSource.getRepository(MedicationFact);
     const medConsumptionService = Loader.container.resolve(MedicationConsumptionService);
-    await addOrUpdateRecord(model);
 
-    const lastRecord = await medfactRepository.findOne({
+    const lastRecords = await medfactRepository.find({
         where : {
             ContextReferenceId : model.PatientUserId,
-            RecrodDate         : LessThanOrEqual(new Date())
+            RecordDate         : LessThanOrEqual(new Date())
         },
         order : {
-            RecrodDate : 'DESC'
+            RecordDate : 'DESC'
         }
     });
 
+    await addOrUpdateRecord(model);
+
+    const lastRecord = lastRecords.length > 0 ? lastRecords[0] : null;
     var unpopulatedRecords = [];
     if (lastRecord == null) {
         unpopulatedRecords = await medConsumptionService.getAllBefore(
@@ -30,7 +32,7 @@ export const updateMedicationFact = async (model: AwardsFact) => {
     }
     else {
         unpopulatedRecords = await medConsumptionService.getAllBetween(
-            model.PatientUserId, lastRecord.RecrodDate, new Date());
+            model.PatientUserId, lastRecord.RecordDate, new Date());
     }
     for await (var mc of unpopulatedRecords) {
         const model_: AwardsFact = {
@@ -40,8 +42,9 @@ export const updateMedicationFact = async (model: AwardsFact) => {
             FactType      : 'Medication',
             RecordDateStr : (mc.TimeScheduleEnd).toISOString().split('T')[0],
             Facts         : {
-                Taken  : mc.IsTaken,
-                Missed : mc.IsMissed,
+                DrugName : mc.DrugName,
+                Taken    : mc.IsTaken,
+                Missed   : mc.IsMissed,
             }
         };
         await addOrUpdateRecord(model_);
@@ -60,11 +63,11 @@ async function addOrUpdateRecord(model: AwardsFact) {
         const fact = {
             RecordId           : model.RecordId,
             ContextReferenceId : model.PatientUserId,
-            MedicationId       : model.Facts.MedicationId,
+            DrugName           : model.Facts.DrugName,
             Taken              : model.Facts.Taken,
             Missed             : model.Facts.Missed,
             RecordDate         : model.RecordDate,
-            RecrodDateStr      : model.RecordDateStr
+            RecordDateStr      : model.RecordDateStr
         };
         const record = await medfactRepository.create(fact);
         const saved = await medfactRepository.save(record);

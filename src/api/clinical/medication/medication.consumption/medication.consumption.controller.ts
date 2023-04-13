@@ -64,8 +64,9 @@ export class MedicationConsumptionController {
                 AwardsFactsService.addOrUpdateMedicationFact({
                     PatientUserId : dto.PatientUserId,
                     Facts         : {
-                        Taken  : true,
-                        Missed : false,
+                        DrugName : dto.DrugName,
+                        Taken    : true,
+                        Missed   : false,
                     },
                     RecordId   : dto.id,
                     RecordDate : dto.TimeScheduleEnd,
@@ -96,8 +97,9 @@ export class MedicationConsumptionController {
                 AwardsFactsService.addOrUpdateMedicationFact({
                     PatientUserId : dto.PatientUserId,
                     Facts         : {
-                        Taken  : false,
-                        Missed : true,
+                        DrugName : dto.DrugName,
+                        Taken    : false,
+                        Missed   : true,
                     },
                     RecordId   : dto.id,
                     RecordDate : dto.TimeScheduleEnd,
@@ -126,8 +128,9 @@ export class MedicationConsumptionController {
             AwardsFactsService.addOrUpdateMedicationFact({
                 PatientUserId : dto.PatientUserId,
                 Facts         : {
-                    Taken  : true,
-                    Missed : false,
+                    DrugName : dto.DrugName,
+                    Taken    : true,
+                    Missed   : false,
                 },
                 RecordId   : dto.id,
                 RecordDate : dto.TimeScheduleEnd,
@@ -154,8 +157,9 @@ export class MedicationConsumptionController {
             AwardsFactsService.addOrUpdateMedicationFact({
                 PatientUserId : dto.PatientUserId,
                 Facts         : {
-                    Taken  : false,
-                    Missed : true,
+                    DrugName : dto.DrugName,
+                    Taken    : false,
+                    Missed   : true,
                 },
                 RecordId   : dto.id,
                 RecordDate : dto.TimeScheduleEnd,

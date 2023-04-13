@@ -21,8 +21,8 @@ jobs:
           tag=v33.0.1
           id=97362866
           image_tag+=$tag && image_tag+=_ && image_tag+=$id
-          echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
-          echo $imagetag_value
+          echo aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text
+        
 
       - name: check tag
         run: echo ${{ steps.imageidvar.outputs.imagetag_value }}
@@ -30,6 +30,6 @@ jobs:
           
 #       - name: ECR Image Tag Check
 # #         run: |
-#             echo "image_tag=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$tag_$id'].imageTag" --output text)" >> $GITHUB_OUTPUT
+#             echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
 
 # #           if [[ -z "${{ steps.image_id.outputs.image_tag }}" ]]; then exit 1; fi

@@ -5,9 +5,10 @@ on:
     branches: develop
 
 jobs:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Configure AWS credentials
+  testing_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
         if: ${{ steps.checkTag.outputs.exists == 'true' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:

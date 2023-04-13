@@ -18,10 +18,8 @@ jobs:
       - name:  Get ECR Image Tag
         id: imageidvar
         run: |
-          tag=v33.0.1
-          id=97362866
           image_tag+=$tag && image_tag+=_ && image_tag+=$id
-          echo aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text
+          echo aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='v33.0.1_97362866'].imageTag" --output text
         
 
       - name: check tag

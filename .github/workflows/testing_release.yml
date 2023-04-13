@@ -28,8 +28,6 @@ jobs:
         run: echo ${{ steps.imageidvar.outputs.imagetag_value }}
           
           
-#       - name: ECR Image Tag Check
-# #         run: |
-#             echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
-
-# #           if [[ -z "${{ steps.image_id.outputs.image_tag }}" ]]; then exit 1; fi
+      - name: ECR Image Tag Check
+        run: |
+          if [[ -z "${{ steps.image_id.outputs.image_tag }}" ]]; then echo "not a valid tag"; fi

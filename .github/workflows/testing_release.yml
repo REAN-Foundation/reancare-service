@@ -22,7 +22,7 @@ jobs:
           echo $tag
           id=97362866
           echo $id
-          tag_image=$tag_$id
+          tag_image= $tag_$id
           echo $tag_image
           
           

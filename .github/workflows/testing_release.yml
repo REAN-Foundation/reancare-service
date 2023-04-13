@@ -18,7 +18,7 @@ jobs:
       - name:  ECR Image Tag Check
         id: image_tag
         run: |
-          echo aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='123458'].imageTag" --output text
+          echo $(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='123458'].imageTag" --output text)
         
         shell: bash
        

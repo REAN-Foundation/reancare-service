@@ -130,7 +130,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
         if (flavour === 'MySQL') {
             dialect = 'mysql';
         }
-        if (flavour === 'PostGreSQL') {
+        if (flavour === 'PostgreSQL') {
             dialect = 'postgres';
         }
 
@@ -144,7 +144,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
         if (flavour === 'MySQL') {
             return MysqlClient;
         }
-        if (flavour === 'PostGreSQL') {
+        if (flavour === 'PostgreSQL') {
             return PostgresqlClient;
         }
         return PostgresqlClient;

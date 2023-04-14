@@ -1,7 +1,7 @@
 
 export type DatabaseType = 'SQL' | 'NoSQL';
 export type DatabaseORM = 'Sequelize' | 'Knex' | 'Mongoose';
-export type DatabaseFlavour = 'MySQL' | 'PostGreSQL' | 'MongoDB';
+export type DatabaseFlavour = 'MySQL' | 'PostgreSQL' | 'MongoDB';
 export type EHRSpecification = 'FHIR'| 'OpenEHR' | 'Mock';
 export type FHIRProvider = 'GCP-FHIR' | 'Azure-FHIR' | 'AWS-HealthLake' | 'Hapi-FHIR';
 export type OpenEHRProvider = 'OpenEHRBase';

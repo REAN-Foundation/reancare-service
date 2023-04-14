@@ -182,7 +182,7 @@ export class ConfigurationManager {
             if (orm !== 'Sequelize' && orm !== 'Knex') {
                 throw new Error('Database configuration error! - Unspported/non-matching ORM');
             }
-            if (flavour !== 'MySQL' && flavour !== 'PostGreSQL') {
+            if (flavour !== 'MySQL' && flavour !== 'PostgreSQL') {
                 throw new Error('Database configuration error! - Unspported/non-matching databse flavour');
             }
         }

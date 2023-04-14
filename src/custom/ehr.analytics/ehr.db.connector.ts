@@ -1,7 +1,6 @@
 import { Dialect } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Logger } from '../../common/logger';
-import mysql from 'mysql2';
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { MysqlClient } from '../../database/sql/sequelize/dialect.clients/mysql.client';
 import { PostgresqlClient } from '../../database/sql/sequelize/dialect.clients/postgresql.client';
@@ -74,40 +73,15 @@ export class EHRDbConnector {
         }
     };
 
-    public static executeQuery = (query): Promise<boolean> => {
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        return new Promise((resolve, reject) => {
-            try {
-                const config = EHRDbConnector.config();
-                const connection = mysql.createConnection({
-                    host     : config.host,
-                    user     : config.username,
-                    password : config.password,
-                });
-                connection.connect(function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                    //Logger.instance().log('Connected!');
-                    connection.query(query, function (err, result) {
-                        if (err) {
-                            Logger.instance().log(err.message);
-                            var str = (result !== undefined && result !== null) ? result.toString() : null;
-                            if (str != null){
-                                Logger.instance().log(str);
-                            }
-                            else {
-                                Logger.instance().log(`Query: ${query}`);
-                            }
-                        }
-                        resolve(true);
-                    });
-                });
-            } catch (error) {
-                Logger.instance().log(error.message);
-            }
-        });
+    public static executeQuery = async (query: string) => {
+        try {
+            const client = EHRDbConnector.getClient();
+            await client.executeQuery(query);
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+        return false;
     };
 
     public static createDatabase = async () => {

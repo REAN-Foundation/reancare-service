@@ -40,7 +40,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
             this._sequelize = sequelize;
 
             Logger.instance().log(`Connecting to database '${config.database}' ...`);
-            Logger.instance().log(`Database flavour: ${config.dialect}`);
+            Logger.instance().log(`Database flavour: ${dialect}`);
             Logger.instance().log(`Database host: ${config.host}`);
 
             await this.createDatabase();

@@ -53,10 +53,9 @@ export class CourseRepo implements ICourseRepo {
 
                 include : [
                     {
-                        model    : CourseModule,
-                        as       : "CourseModules",
-                        required : true,
-                        include  : [
+                        model   : CourseModule,
+                        as      : "CourseModules",
+                        include : [
                             {
                                 model : CourseContent,
                                 as    : "CourseContents",

@@ -18,6 +18,8 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
                 EhrId            : createModel.EhrId,
+                TerraSummaryId   : createModel.TerraSummaryId,
+                Provider         : createModel.Provider,
                 BodyTemperature  : createModel.BodyTemperature,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate,
@@ -150,6 +152,12 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             }
             if (updateModel.RecordedByUserId != null) {
                 bodyTemperature.RecordedByUserId = updateModel.RecordedByUserId;
+            }
+            if (updateModel.TerraSummaryId != null) {
+                bodyTemperature.TerraSummaryId = updateModel.TerraSummaryId;
+            }
+            if (updateModel.Provider != null) {
+                bodyTemperature.Provider = updateModel.Provider;
             }
     
             await bodyTemperature.save();

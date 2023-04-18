@@ -207,7 +207,7 @@ export class ApiClientValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        
+
         return request.params.id;
     };
 
@@ -215,17 +215,22 @@ export class ApiClientValidator {
         request: express.Request
     ): Promise<ApiClientDomainModel> => {
 
-        await body('ClientName').exists()
+        await body('ClientName').optional()
             .isLength({ min: 1 })
             .trim()
             .escape()
             .run(request);
-        await body('Phone').exists()
+        await body('Phone').optional()
             .trim()
             .escape()
             .isLength({ min: 10 })
             .run(request);
-        await body('Email').exists()
+        await body('Password').optional()
+            .trim()
+            .escape()
+            .isLength({ min: 6 })
+            .run(request);
+        await body('Email').optional()
             .trim()
             .escape()
             .isEmail()

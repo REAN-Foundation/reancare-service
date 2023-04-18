@@ -77,6 +77,25 @@ export default class Patient extends Model {
     })
     MedicalProfileId: string;
 
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TerraUserId: string;
+
+    @Column({
+        type      : DataType.STRING(32),
+        allowNull : true,
+    })
+    TerraProvider: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    TerraScopes: string;
+
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
@@ -102,6 +121,13 @@ export default class Patient extends Model {
         defaultValue : DonorAcceptance.NotSend
     })
     DonorAcceptance: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    IsRemindersLoaded: boolean;
 
     @BelongsTo(() => User)
     User: User;

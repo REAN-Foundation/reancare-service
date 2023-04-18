@@ -13,6 +13,8 @@ export class CalorieBalanceMapper {
         const dto: CalorieBalanceDto = {
             id               : calorieBalance.id,
             PatientUserId    : calorieBalance.PatientUserId,
+            TerraSummaryId   : calorieBalance.TerraSummaryId,
+            Provider         : calorieBalance.Provider,
             CaloriesBurned   : calorieBalance.CaloriesBurned,
             CaloriesConsumed : calorieBalance.CaloriesConsumed,
             Unit             : calorieBalance.Unit,

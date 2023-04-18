@@ -9,18 +9,20 @@ from random import seed
 from random import randint
 
 mock_data_file = 'patient_stat_records.json'
-patient_user_id = 'd05c1954-771c-408a-8c53-39d311c4d69f'
-medication_id = '9fe39017-f45f-48fb-8bd5-ac9c33b0783a'
+patient_user_id = 'bcb20e2a-ad0a-4fcd-9c43-8f7e90526903'
+medication_id = 'fea6e114-f834-4de8-a792-7d986967ed0b'
 drug_name = 'Generic Tamiflu'
-drug_id = '2239ca05-7c4a-41df-af72-fb86d8d942be'
+drug_id = '550aa8e3-1dfa-49f0-b27b-c00cfff26455'
 dose = 1
 medication_details = 'Generic Tamiflu: 1.0 Tablet, Afternoon'
 
-lab_record_type_LDL = '712bb004-8174-4c3e-9d8b-da56033bb17a'
-lab_record_type_tri = '7e5ecc39-8e68-4b8c-b04c-dba156b93dc9'
-lab_record_type_HDL = '04c5f67b-4d91-43fb-90a9-77da5ccd2b77'
-lab_record_type_Total = '2321342e-1a8f-4efa-bd7d-84f113474c12'
-lab_record_type_a1c = '6f9fc248-6886-4062-9f4b-226e1c9263ca'
+lab_record_type_LDL = '597d44a9-64ec-481b-9875-35f255a36c54'
+lab_record_type_tri = '2323f8ef-bdad-4c28-b8d1-7e5f0a42bcc8'
+lab_record_type_HDL = '499b3674-a752-4ba7-a5e2-0fe49641c5e2'
+lab_record_type_Total = 'e0d38347-94d0-4fd7-92a0-865e956ae284'
+lab_record_type_a1c = 'd90c4064-5d2b-4c96-9ea2-f5b6a2ef1e28'
+lab_record_type_lipoprotein = 'ee944a43-9f53-43c3-9d5f-356c42360882'
+lab_record_type_cholRatio = 'Cholesterol Ratio'
 
 out_file = open('out_test_data.sql', mode='w', encoding='utf-8')
 

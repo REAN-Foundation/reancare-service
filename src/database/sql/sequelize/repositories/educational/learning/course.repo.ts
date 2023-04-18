@@ -26,7 +26,6 @@ export class CourseRepo implements ICourseRepo {
                 ImageUrl       : createModel.ImageUrl,
                 DurationInDays : createModel.DurationInDays,
             };
-
             const course = await Course.create(entity);
             await this.addLearningPaths(course.id, createModel.LearningPathIds);
             return await CourseMapper.toDto(course);
@@ -180,10 +179,10 @@ export class CourseRepo implements ICourseRepo {
         }
     };
 
-    private addLearningPaths = async (courseId,learningPathIds) => {
+    private addLearningPaths = async (courseId: string, learningPathIds: string[]) => {
         if (learningPathIds !== null && learningPathIds.length > 0) {
             for await (var learningPathId of learningPathIds) {
-                await this.addLearningPath(courseId,learningPathId);
+                await this.addLearningPath(courseId, learningPathId);
             }
         }
     };
@@ -209,5 +208,5 @@ export class CourseRepo implements ICourseRepo {
             throw new ApiError(500, error.message);
         }
     };
-
+    
 }

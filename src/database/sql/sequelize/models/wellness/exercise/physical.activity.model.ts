@@ -79,6 +79,20 @@ export default class PhysicalActivity extends Model {
 
     @Length({ max: 128 })
     @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    TerraSummaryId: string;
+
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Provider: string;
+
+    @Length({ max: 128 })
+    @Column({
         type         : DataType.STRING(128),
         allowNull    : false,
         values       : PhysicalActivityCategoriesList,

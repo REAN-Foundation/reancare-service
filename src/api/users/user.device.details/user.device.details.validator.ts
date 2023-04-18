@@ -19,7 +19,6 @@ export class UserDeviceDetailsValidator {
             OSVersion  : request.body.OSVersion,
             AppName    : request.body.AppName,
             AppVersion : request.body.AppVersion,
-
         };
 
         return UserDeviceDetailsModel;

@@ -18,6 +18,8 @@ export class PulseRepo implements IPulseRepo {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
                 EhrId            : createModel.EhrId,
+                TerraSummaryId   : createModel.TerraSummaryId,
+                Provider         : createModel.Provider,
                 Pulse            : createModel.Pulse,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate,
@@ -148,6 +150,12 @@ export class PulseRepo implements IPulseRepo {
             }
             if (updateModel.RecordedByUserId != null) {
                 pulse.RecordedByUserId = updateModel.RecordedByUserId;
+            }
+            if (updateModel.TerraSummaryId != null) {
+                pulse.TerraSummaryId = updateModel.TerraSummaryId;
+            }
+            if (updateModel.Provider != null) {
+                pulse.Provider = updateModel.Provider;
             }
     
             await pulse.save();

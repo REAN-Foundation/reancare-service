@@ -24,8 +24,8 @@ export default class HealthSystem extends Model {
     id: string;
 
     @Column({
-        type         : DataType.STRING(256),
-        allowNull    : true,
+        type      : DataType.STRING(256),
+        allowNull : true,
     })
     Name: string;
 

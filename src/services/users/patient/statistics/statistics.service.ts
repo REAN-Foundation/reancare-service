@@ -33,9 +33,11 @@ import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/cl
 import { ICareplanRepo } from "../../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { BodyHeightRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/body.height.repo";
 import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
+import { PatientRepo } from "../../../../database/sql/sequelize/repositories/users/patient/patient.repo";
+import { IPatientRepo } from "../../../../database/repository.interfaces/users/patient/patient.repo.interface";
 import { addBottom, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
-import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
+import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
 import { createCalorieBalanceChart } from "./calorie.balance.stats";
 import { createCareplanCharts } from "./careplan.stats";
 import { addDailyAssessmentsStats, createDailyAssessentCharts } from "./daily.assessments.stats";
@@ -45,6 +47,12 @@ import { addNutritionQuestionnaire, addNutritionServingsStats, createNutritionCh
 import { addSleepStats, createSleepTrendCharts } from "./sleep.stats";
 import { addUserTasksStats, createUserTaskCharts } from "./user.tasks.stats";
 import { addHealthJourney, addReportMetadata, addReportSummary } from "./main.page";
+import { PersonRepo } from "../../../../database/sql/sequelize/repositories/person/person.repo";
+import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
+import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.repo";
+import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
+import { addLabValuesTable, addSummaryGraphs, createSummaryCharts } from "./summary.page";
+import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,6 +73,9 @@ export class StatisticsService {
         @inject('IDailyAssessmentRepo') private _dailyAssessmentRepo: IDailyAssessmentRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
+        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IPersonRepo') private _personRepo: IPersonRepo,
+        @inject('IUserRepo') private _userRepo: IUserRepo,
     ) {
         this._foodConsumptionRepo = Loader.container.resolve(FoodConsumptionRepo);
         this._medicationConsumptionRepo = Loader.container.resolve(MedicationConsumptionRepo);
@@ -79,13 +90,18 @@ export class StatisticsService {
         this._dailyAssessmentRepo = Loader.container.resolve(DailyAssessmentRepo);
         this._userTaskRepo = Loader.container.resolve(UserTaskRepo);
         this._careplanRepo = Loader.container.resolve(CareplanRepo);
+        this._patientRepo = Loader.container.resolve(PatientRepo);
+        this._personRepo = Loader.container.resolve(PersonRepo);
+        this._userRepo = Loader.container.resolve(UserRepo);
+
     }
 
     //#region Publics
 
     public getReportModel = (
         patient: PatientDetailsDto,
-        stats: any) => {
+        stats: any,
+        clientCode: string) => {
 
         Logger.instance().log(JSON.stringify(patient, null, 2));
 
@@ -93,9 +109,17 @@ export class StatisticsService {
         const date = new Date();
         const patientName = patient.User.Person.DisplayName;
         const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
-        const assessmentDate = TimeHelper.getDateWithTimezone(date.toISOString(), timezone);
-        const reportDateStr = assessmentDate.toLocaleDateString();
-
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
+        const dateObj = new Date(assessmentDate);
+        const options: Intl.DateTimeFormatOptions = {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+        };
+        const reportDateStr = new Intl.DateTimeFormat('en-US', options).format(dateObj);
+        Logger.instance().log(`Report Date:: ${reportDateStr}`);
+        
         const race = patient.HealthProfile.Race ? patient.HealthProfile.Race : 'Unspecified';
         const ethnicity = patient.HealthProfile.Ethnicity ? patient.HealthProfile.Ethnicity : 'Unspecified';
         const tobacco = patient.HealthProfile.TobaccoQuestionAns === true ? 'Yes' : 'No';
@@ -116,8 +140,9 @@ export class StatisticsService {
             Race              : race,
             Ethnicity         : ethnicity,
             Tobacco           : tobacco,
-            MariatalStatus    : patient.HealthProfile.MaritalStatus ?? 'Unspecified',
-            Stats             : stats
+            MaritalStatus     : patient.HealthProfile.MaritalStatus ?? 'Unspecified',
+            Stats             : stats,
+            ClientCode        : clientCode
         };
     };
 
@@ -137,64 +162,65 @@ export class StatisticsService {
 
         //Body weight, Lab values
 
-        const bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, 6);
-        const currentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
-        const sum = bodyWeightStats.reduce((acc, x) => acc + x.BodyWeight, 0);
-        const averageBodyWeight = bodyWeightStats.length === 0 ? null : sum / bodyWeightStats.length;
+        const patient = await this._patientRepo.getByUserId(patientUserId);
+        const user = await this._userRepo.getById(patient.UserId);
+        const person = await this._personRepo.getById(user.PersonId);
+        var countryCode = person.Phone.split("-")[0];
+
+        /*if (countryCode === '+1' || countryCode === '+44'){
+            const weight = weightStr.split("-")[1];
+            weightStr = weight;
+            weightUnits = 'lbs';
+        } else {
+            const weight = weightStr.split("-")[0];
+            weightStr = weight;
+            var weightUnits = 'Kg';
+        }*/
+        var currentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
+
+        const last6MonthsLabStats = await this.getLabValueStats(patientUserId, countryCode, 6);
+        const lastMonthLabStats = await this.getLabValueStats(patientUserId, countryCode, 1);
+
+        const biometrics = {
+            Last6Months : last6MonthsLabStats,
+            LastMonth   : lastMonthLabStats,
+        };
+
+        //BMI calculation
 
         let currentHeight = null;
         let heightUnits = 'cm';
-        const weightUnits = 'Kg';
+        var weightUnits = 'Kg';
+
         const currentWeight = currentBodyWeight ? currentBodyWeight.BodyWeight : null;
         const heightDto = await this._bodyHeightRepo.getRecent(patientUserId);
         if (heightDto) {
             currentHeight = heightDto.BodyHeight;
             heightUnits = heightDto.Unit;
         }
-        const { bmi, weightStr, heightStr } =
+        var { bmi, weightStr, heightStr } =
             Helper.calculateBMI(currentHeight, heightUnits, currentWeight, weightUnits);
 
-        const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, 6);
-        const currentBloodPressure = await this._bloodPressureRepo.getRecent(patientUserId);
-
-        const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, 6);
-        const currentBloodGlucose = await this._bloodGlucoseRepo.getRecent(patientUserId);
-
-        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, 6);
-
-        const biometrics = {
-            Last6Months : {
-                BloodPressure : {
-                    History                       : bloodPressureStats,
-                    CurrentBloodPressureDiastolic : currentBloodPressure ? currentBloodPressure.Diastolic : null,
-                    CurrentBloodPressureSystolic  : currentBloodPressure ? currentBloodPressure.Systolic : null,
-                    LastMeasuredDate              : currentBloodPressure ? currentBloodPressure.RecordDate : null,
-                },
-                BodyWeight : {
-                    History           : bodyWeightStats,
-                    AverageBodyWeight : averageBodyWeight,
-                    CurrentBodyWeight : currentBodyWeight ? currentBodyWeight.BodyWeight : null,
-                    LastMeasuredDate  : currentBodyWeight ? currentBodyWeight.RecordDate : null,
-                },
-                BloodGlucose : {
-                    History             : bloodGlucoseStats,
-                    CurrentBloodGlucose : currentBloodGlucose ? currentBloodGlucose.BloodGlucose : null,
-                    LastMeasuredDate    : currentBloodGlucose ? currentBloodGlucose.RecordDate : null,
-                },
-                Cholesterol : cholesterolStats,
-            }
-        };
-
         //Daily assessments
-        const dailyAssessments = await this._dailyAssessmentRepo.getStats(patientUserId, 6);
+        const dailyAssessmentsLast6Months = await this._dailyAssessmentRepo.getStats(patientUserId, 6);
+        const dailyAssessmentsLastMonth = await this._dailyAssessmentRepo.getStats(patientUserId, 1);
         const dailyAssessmentTrend = {
-            Last6Months : dailyAssessments
+            Last6Months : dailyAssessmentsLast6Months,
+            LastMonth   : dailyAssessmentsLastMonth,
         };
 
         //Sleep trend
         const sleepStats = await this._sleepRepo.getStats(patientUserId, 1);
         const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
-        const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / sleepStats.length;
+        var i = 0;
+        if (sleepStats.length > 0) {
+            for await (var s of sleepStats) {
+                if (s.SleepDuration !== 0) {
+                    i = i + 1;
+                }
+            }
+        }
+        const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / i;
         const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
         const sleepTrend = {
             LastMonth           : sleepStats,
@@ -243,6 +269,7 @@ export class StatisticsService {
 
         const stats = {
             WeightStr        : weightStr,
+            CountryCode      : countryCode,
             HeightStr        : heightStr,
             BodyMassIndex    : bmi,
             Nutrition        : nutrition,
@@ -256,15 +283,152 @@ export class StatisticsService {
         };
 
         return stats;
-    }
+    };
 
     public generateReport = async (reportModel: any) => {
         return await this.generateReportPDF(reportModel);
-    }
+    };
 
     //#endregion
 
     //#region Report
+
+    private getLabValueStats = async (patientUserId: uuid, countryCode: string, numberOfMonths = 1) => {
+
+        const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, numberOfMonths);
+        const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, numberOfMonths);
+        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, numberOfMonths);
+        var bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, numberOfMonths);
+
+        //Body weight
+        const startingBodyWeight = bodyWeightStats.length > 0 ?
+            bodyWeightStats[bodyWeightStats.length - 1].BodyWeight : 0;
+        const recentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
+        const currentBodyWeight = recentBodyWeight ? recentBodyWeight.BodyWeight : 0;
+        var totalBodyWeightChange = currentBodyWeight - startingBodyWeight;
+        const sum = bodyWeightStats.reduce((acc, x) => acc + x.BodyWeight, 0);
+        const averageBodyWeight = bodyWeightStats.length === 0 ? null : sum / bodyWeightStats.length;
+
+        //Blood pressure
+        var startingSystolic = bloodPressureStats.length > 0 ?
+            bloodPressureStats[bloodPressureStats.length - 1].Systolic : 0;
+        var startingDiastolic = bloodPressureStats.length > 0 ?
+            bloodPressureStats[bloodPressureStats.length - 1].Diastolic : 0;
+        const recentBloodPressure = await this._bloodPressureRepo.getRecent(patientUserId);
+        const currentSystolic = recentBloodPressure ? recentBloodPressure.Systolic : 0;
+        const currentDiastolic = recentBloodPressure ? recentBloodPressure.Diastolic : 0;
+        var totalChangeSystolic = currentSystolic - startingSystolic;
+        var totalChangeDiastolic = currentDiastolic - startingDiastolic;
+
+        //Blood glucose
+        var startingBloodGlucose = bloodGlucoseStats.length > 0 ?
+            bloodGlucoseStats[bloodGlucoseStats.length - 1].BloodGlucose : 0;
+        const recentBloodGlucose = await this._bloodGlucoseRepo.getRecent(patientUserId);
+        const currentBloodGlucose = recentBloodGlucose ? recentBloodGlucose.BloodGlucose : 0;
+        var totalBloodGlucoseChange = currentBloodGlucose - startingBloodGlucose;
+
+        //Total cholesterol
+        const recentChol = await this._labRecordsRepo.getRecent(patientUserId, 'Total Cholesterol');
+        var startingTotalCholesterol = cholesterolStats.TotalCholesterol.length > 0 ?
+            cholesterolStats.TotalCholesterol[cholesterolStats.TotalCholesterol.length - 1].PrimaryValue : 0;
+        const currentTotalCholesterol = recentChol ? recentChol.PrimaryValue : 0;
+        var lastMeasuredChol = recentChol ? recentChol.RecordedAt : null;
+        var totalCholesterolChange = currentTotalCholesterol - startingTotalCholesterol;
+
+        //HDL
+        const startingHDL = cholesterolStats.HDL.length > 0 ?
+            cholesterolStats.HDL[cholesterolStats.HDL.length - 1].PrimaryValue : 0;
+        const recentHDL = await this._labRecordsRepo.getRecent(patientUserId, 'HDL');
+        const currentHDL = recentHDL ? recentHDL.PrimaryValue : 0;
+        const lastMeasuredHDL = recentHDL ? recentHDL.RecordedAt : null;
+        var totalHDLChange = currentHDL - startingHDL;
+
+        //LDL
+        var startingLDL = cholesterolStats.LDL.length > 0 ?
+            cholesterolStats.LDL[cholesterolStats.LDL.length - 1].PrimaryValue : 0;
+        const recentLDL = await this._labRecordsRepo.getRecent(patientUserId, 'LDL');
+        const currentLDL = recentLDL ? recentLDL.PrimaryValue : 0;
+        const lastMeasuredLDL = recentLDL ? recentLDL.RecordedAt : null;
+        const totalLDLChange = currentLDL - startingLDL;
+
+        //Triglyceride
+        var startingTriglycerideLevel = cholesterolStats.TriglycerideLevel.length > 0 ?
+            cholesterolStats.TriglycerideLevel[cholesterolStats.TriglycerideLevel.length - 1].PrimaryValue : 0;
+        const recentTrigy = await this._labRecordsRepo.getRecent(patientUserId, 'Triglyceride Level');
+        const currentTriglycerideLevel = recentTrigy ? recentTrigy.PrimaryValue : 0;
+        const lastMeasuredTrigly = recentTrigy ? recentTrigy.RecordedAt : null;
+        const totalTriglycerideLevelChange = currentTriglycerideLevel - startingTriglycerideLevel;
+
+        //A1CLevel
+        var startingA1CLevel = cholesterolStats.A1CLevel.length > 0 ?
+            cholesterolStats.A1CLevel[cholesterolStats.A1CLevel.length - 1].PrimaryValue : 0;
+        const recentA1C = await this._labRecordsRepo.getRecent(patientUserId, 'A1C Level');
+        const currentA1CLevel = recentA1C ? recentA1C.PrimaryValue : 0;
+        const lastMeasuredA1C = recentA1C ? recentA1C.RecordedAt : null;
+        const totalA1CLevelChange = currentA1CLevel - startingA1CLevel;
+
+        return {
+            BodyWeight : {
+                History            : bodyWeightStats,
+                CountryCode        : countryCode,
+                AverageBodyWeight  : averageBodyWeight,
+                StartingBodyWeight : startingBodyWeight,
+                CurrentBodyWeight  : currentBodyWeight,
+                TotalChange        : totalBodyWeightChange,
+                LastMeasuredDate   : recentBodyWeight?.RecordDate ?? null,
+            },
+            BloodPressure : {
+                History                        : bloodPressureStats,
+                StartingSystolicBloodPressure  : startingSystolic,
+                StartingDiastolicBloodPressure : startingDiastolic,
+                CurrentBloodPressureDiastolic  : currentDiastolic,
+                CurrentBloodPressureSystolic   : currentSystolic,
+                TotalChangeSystolic            : totalChangeSystolic,
+                TotalChangeDiastolic           : totalChangeDiastolic,
+                LastMeasuredDate               : recentBloodPressure?.RecordDate ?? null,
+            },
+            BloodGlucose : {
+                History              : bloodGlucoseStats,
+                StartingBloodGlucose : startingBloodGlucose,
+                CurrentBloodGlucose  : recentBloodGlucose ? recentBloodGlucose.BloodGlucose : null,
+                TotalChange          : totalBloodGlucoseChange,
+                LastMeasuredDate     : recentBloodGlucose?.RecordDate ?? null,
+            },
+            Lipids : {
+                History          : cholesterolStats,
+                TotalCholesterol : {
+                    StartingTotalCholesterol : startingTotalCholesterol,
+                    CurrentTotalCholesterol  : currentTotalCholesterol,
+                    TotalCholesterolChange   : totalCholesterolChange,
+                    LastMeasuredChol         : lastMeasuredChol,
+                },
+                HDL : {
+                    StartingHDL     : startingHDL,
+                    CurrentHDL      : currentHDL,
+                    TotalHDLChange  : totalHDLChange,
+                    LastMeasuredHDL : lastMeasuredHDL,
+                },
+                LDL : {
+                    StartingLDL     : startingLDL,
+                    CurrentLDL      : currentLDL,
+                    TotalLDLChange  : totalLDLChange,
+                    LastMeasuredLDL : lastMeasuredLDL,
+                },
+                TriglycerideLevel : {
+                    StartingTriglycerideLevel    : startingTriglycerideLevel,
+                    CurrentTriglycerideLevel     : currentTriglycerideLevel,
+                    TotalTriglycerideLevelChange : totalTriglycerideLevelChange,
+                    LastMeasuredTrigly           : lastMeasuredTrigly,
+                },
+                A1CLevel : {
+                    StartingA1CLevel    : startingA1CLevel,
+                    CurrentA1CLevel     : currentA1CLevel,
+                    TotalA1CLevelChange : totalA1CLevelChange,
+                    LastMeasuredA1C     : lastMeasuredA1C,
+                }
+            }
+        };
+    };
 
     private generateReportPDF = async (reportModel: any) => {
         const chartImagePaths = await this.generateChartImages(reportModel);
@@ -286,11 +450,13 @@ export class StatisticsService {
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             let pageNumber = 1;
-            reportModel.TotalPages = 9;
+            reportModel.TotalPages = 11;
             pageNumber = this.addMainPage(document, reportModel, pageNumber);
+            pageNumber = this.addSummaryPage(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
             pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
+            pageNumber = this.addBiometricsPageD(document, reportModel, pageNumber);
             pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
             pageNumber = this.addExercisePage(document, reportModel, pageNumber);
             pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
@@ -314,7 +480,9 @@ export class StatisticsService {
 
         const chartImagePaths = [];
 
-        let imageLocations = await createNutritionCharts(reportModel.Stats.Nutrition);
+        let imageLocations = await createSummaryCharts(reportModel.Stats);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createNutritionCharts(reportModel.Stats.Nutrition);
         chartImagePaths.push(...imageLocations);
         imageLocations = await createPhysicalActivityCharts(reportModel.Stats.PhysicalActivity);
         chartImagePaths.push(...imageLocations);
@@ -341,10 +509,24 @@ export class StatisticsService {
     //#region Pages
 
     private addMainPage = (document, model, pageNumber) => {
-        var y = addTop(document, model, false);
+        var y = addTop(document, model, null, false);
         y = addReportMetadata(document, model, y);
         y = addReportSummary(document, model, y);
-        addHealthJourney(document, model, y);
+
+        var clientList = ["HCHLSTRL", "REANPTNT"];
+        if (clientList.indexOf(model.ClientCode) >= 0) {
+            addHealthJourney(document, model, y);
+        }
+        addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addSummaryPage = (document, model, pageNumber) => {
+        var y = addTop(document, model, 'Summary over Last 30 Days');
+        y = addLabValuesTable(model, document, y);
+        y = y + 15;
+        addSummaryGraphs(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;
@@ -373,6 +555,14 @@ export class StatisticsService {
     private addBiometricsPageC = (document, model, pageNumber) => {
         var y = addTop(document, model);
         addLipidStats(model, document, y);
+        addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addBiometricsPageD = (document, model, pageNumber) => {
+        var y = addTop(document, model);
+        addCholStats(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;
         return pageNumber;

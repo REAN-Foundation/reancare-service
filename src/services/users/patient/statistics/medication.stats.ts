@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
@@ -17,9 +18,20 @@ import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 
 export const addMedicationStats = (document, model, y) => {
 
-    let chartImage = 'MedicationsHistory_LastMonth';
-    const detailedTitle = 'Medication History for Last Month';
     const titleColor = '#505050';
+    const legend = getMedicationStatusCategoryColors();
+    let chartImage = 'MedicationsOverall_LastMonth';
+    const title = 'Medication Adherence for Last Month';
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend);
+    }
+
+    y = y + 7;
+
+    chartImage = 'MedicationsHistory_LastMonth';
+    const detailedTitle = 'Medication History for Last Month';
     const sectionTitle = 'Medication History';
     const icon = Helper.getIconsPath('medications.png');
 
@@ -31,16 +43,6 @@ export const addMedicationStats = (document, model, y) => {
         y = y + 25;
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 20;
-    }
-
-    y = y + 7;
-    const legend = getMedicationStatusCategoryColors();
-    chartImage = 'MedicationsOverall_LastMonth';
-    const title = 'Medication Adherence for Last Month';
-    if (!chartExists(model, chartImage)) {
-        y = addNoDataDisplay(document, y);
-    } else {
-        y = addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend);
     }
 
     return y;
@@ -111,8 +113,9 @@ export const createMedicationTrendCharts = async (data) => {
     return locations;
 };
 
-const createMedicationConsumption_DonutChart = async (stats: any, filename: string) => {
-    if (stats.length === 0) {
+export const createMedicationConsumption_DonutChart = async (stats: any, filename: string) => {
+    //console.log(JSON.stringify(stats, null, 2));
+    if (!stats || stats.length === 0) {
         return null;
     }
     const missedCount = stats.reduce((acc, x) => acc + x.MissedCount, 0);
@@ -172,7 +175,7 @@ const createMedication_BarChart = async (stats: any, filename: string) => {
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 
-const getMedicationStatusCategoryColors = () => {
+export const getMedicationStatusCategoryColors = () => {
     const items = [
         {
             Key   : 'Taken',

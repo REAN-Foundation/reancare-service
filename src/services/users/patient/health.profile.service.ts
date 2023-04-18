@@ -4,6 +4,7 @@ import { IHealthProfileRepo } from "../../../database/repository.interfaces/user
 import { HealthProfileDomainModel } from '../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../domain.types/users/patient/health.profile/health.profile.dto';
 import { IPatientDonorsRepo } from "../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
+import { IPatientRepo } from "../../../database/repository.interfaces/users/patient/patient.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +14,7 @@ export class HealthProfileService {
     constructor(
         @inject('IHealthProfileRepo') private _patientHealthProfileRepo: IHealthProfileRepo,
         @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 
     create = async (healthProfileDomainModel: HealthProfileDomainModel): Promise<HealthProfileDto> => {
@@ -28,10 +30,11 @@ export class HealthProfileService {
         const patientHealthProfile =
             await this._patientHealthProfileRepo.updateByPatientUserId(patientUserId, healthProfileDomainModel);
         const patientDonorsBridges = await this._patientDonorsRepo.search( { "PatientUserId": patientUserId });
-        if (healthProfileDomainModel.BloodTransfusionDate !== null) {
+        if (healthProfileDomainModel.BloodTransfusionDate) {
             for (const patientBridge of patientDonorsBridges.Items) {
                 await this._patientDonorsRepo.update( patientBridge.id, { "NextDonationDate": healthProfileDomainModel.BloodTransfusionDate });
             }
+            await this._patientRepo.updateByUserId( patientUserId, { "IsRemindersLoaded": false });
         }
         return patientHealthProfile;
     };

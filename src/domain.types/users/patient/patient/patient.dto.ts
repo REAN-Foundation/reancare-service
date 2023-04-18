@@ -12,6 +12,8 @@ export interface PatientDto {
     DisplayId        : string;
     EhrId            : string;
     DonorAcceptance  : string;
+    IsRemindersLoaded: boolean;
+    TerraUserId      : string;
     FirstName        : string;
     LastName         : string;
     DisplayName      : string;
@@ -34,7 +36,11 @@ export interface PatientDetailsDto {
     HealthSystem?       : string;
     AssociatedHospital? : string;
     DonorAcceptance?    : string;
-    FirstName?    : string;
+    IsRemindersLoaded?  : boolean;
+    TerraUserId?        : string;
+    TerraProvider?      : string;
+    TerraScopes?        : string;
+    FirstName?          : string;
     HealthProfile?      : HealthProfileDto;
     Insurances?         : PatientInsuranceDto[];
     EmergencyContacts?  : EmergencyContactDto[];

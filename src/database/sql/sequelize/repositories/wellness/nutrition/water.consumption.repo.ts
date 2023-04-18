@@ -16,9 +16,11 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
     Promise<WaterConsumptionDto> => {
         try {
             const entity = {
-                PatientUserId : waterConsumptionDomainModel.PatientUserId,
-                Volume        : waterConsumptionDomainModel.Volume,
-                Time          : waterConsumptionDomainModel.Time,
+                PatientUserId  : waterConsumptionDomainModel.PatientUserId,
+                TerraSummaryId : waterConsumptionDomainModel.TerraSummaryId,
+                Provider       : waterConsumptionDomainModel.Provider,
+                Volume         : waterConsumptionDomainModel.Volume,
+                Time           : waterConsumptionDomainModel.Time,
             };
 
             const waterConsumption = await WaterConsumptionModel.create(entity);
@@ -124,6 +126,12 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
             if (updateModel.Time != null) {
                 waterConsumption.Time = updateModel.Time;
             }
+            if (updateModel.TerraSummaryId != null) {
+                waterConsumption.TerraSummaryId = updateModel.TerraSummaryId;
+            }
+            if (updateModel.Provider != null) {
+                waterConsumption.Provider = updateModel.Provider;
+            }
 
             await waterConsumption.save();
 
@@ -141,6 +149,23 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
 
             const result = await WaterConsumptionModel.destroy({ where: { id: id } });
             return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByRecordDate = async (date: Date, patientUserId : string): Promise<WaterConsumptionDto> => {
+        try {
+            const new_date = new Date(date);
+            const waterConsumption =  await WaterConsumptionModel.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                    Time          : new_date
+                }
+            });
+            return await WaterConsumptionMapper.toDto(waterConsumption);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

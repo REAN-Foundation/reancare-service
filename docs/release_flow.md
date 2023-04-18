@@ -8,7 +8,7 @@
 
 ## Contents
 
-- [Branching Strategy](#Branching Strategy)
+- [Branching Strategy](##Branching Strategy)
  - [Feature](#Feature) 
 
 

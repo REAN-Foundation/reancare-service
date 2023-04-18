@@ -8,8 +8,8 @@
 
 ## Contents
 
-- [Branching Strategy](##Branching Strategy)
- - [Feature](#Feature) 
+- [Official Resources](#Branching Strategy)
+  - [Workflow Examples](#Feature)
 
 
 

@@ -12,7 +12,8 @@
 This is the overview of our Branch Strategy, How we are using workflows based on branch naming convention.
 
 ### Feature
-Whenever a developer create a branch with the prefix of 'feature' then the Pull request should be raise on develop branch, It will trigger our PR-ci-cd workflow, After the merging of pull request into develop branch it will trigger our Dev-ci-cd Workflow. 
+
+Whenever a developer create a branch with the prefix of 'feature' then the Pull request should be raise on develop branch, It will trigger our PR-ci-cd workflow, After the merging of pull request into develop branch it will trigger our Dev-ci-cd workflow. 
  
  ```sh
  feature/**
@@ -20,7 +21,8 @@ Whenever a developer create a branch with the prefix of 'feature' then the Pull 
 
 ### Release
 
-Prefix release should be use when developer wants to merge code in main branch
+Whenever a developer create a branch with the prefix of 'release' then the Pull Request should be raise on main branch, After that whenever developer push code on 'release' branch it will trigger our UAT-ci-cd workflow.
+
  ```sh
  release/**
  ```

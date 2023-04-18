@@ -12,6 +12,13 @@
 - [Workflow Explained](#Workflow-Explained)
   - [PR-ci-cd](#PR-ci-cd)
   - [Dev-ci-cd](#Dev-ci-cd)
+  - [UAT-ci-cd](#UAT-ci-cd)
+  - [PROD-ci-cd](#PROD-ci-cd)
+  - [AHA-UAT-ci-cd](#AHA-UAT-ci-cd)
+  - [AHA-PROD-ci-cd](#AHA-PROD-ci-cd)
+- [Developer and Main branch Workflow](#Developer-and-Main-branch-Workflow)
+  - [Develop Branch Workflow Explained](#Develop-Branch-Workflow-Explained)
+  - [Main branch Workflow Explained](#Main-branch-Workflow-Explained)
 
 
 ## Branching Strategy
@@ -73,7 +80,7 @@ This is an explanation of how to use or trigger any workflow in our repository
 * This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, Without having to push or create a pull request.
 * You can refer to full documentation of [AHA-Prod workflow](release_docs/AHA-Prod_ReleaseFlow.md)
 
-## Developer to Main branch Workflow
+## Developer and Main branch Workflow
 
 This is the Explanation of entire worflow
 ![workflow_diagram](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/workflow_diagram.png?raw=true)
@@ -88,10 +95,3 @@ This is the Explanation of entire worflow
 1. Developer will create a Release branch, Create a Pull Request to main branch which will trigger UAT-ci-cd workflow.
 2. After the Pull request merge into main branch which will trigger PROD-ci-cd workflow.
 
-### AHA-Uat Workflow Explained
-
-1. Developer manually Trigger AHA-UAT-ci-cd workflow with Github Tag_name as input parameter.
-
-### AHA-PROD Workflow Explained
-
-1. Developer manually Trigger AHA-PROD-ci-cd workflow with Github Tag_name as input parameter.

@@ -1,7 +1,7 @@
 ## PROD-ci-cd
 
 Prod-ci-cd workflow can be use or trigger by Pushing code into main branch.
-
+[prod-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/PROD-ci-cd_workflow.png?raw=true)
 ### JOBS
 
 These are the jobs used in UAT-ci-cd

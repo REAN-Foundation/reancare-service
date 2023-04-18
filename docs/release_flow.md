@@ -52,7 +52,8 @@ This is an explanation of how to use or trigger any workflow in our repository
 
 ## PROD-ci-cd
 
-*Prod-ci-cd workflow can be use or trigger by Pushing code into main branch.
+* Prod-ci-cd workflow can be use or trigger by Pushing code into main branch.
+* You can refer to full documentaion of [PROD-ci-cd](release_docs/Prod-ci-cd_ReleaseFlow.md)
 
 
 ## AHA-UAT-ci-cd

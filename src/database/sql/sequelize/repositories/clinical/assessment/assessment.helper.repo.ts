@@ -28,6 +28,8 @@ import {
     DateQueryAnswer,
     AssessmentType,
     CScoringCondition,
+    ConditionOperatorType,
+    ConditionCompositionType,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -993,17 +995,17 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 TemplateId            : model.TemplateId,
                 ParentConditionId     : model.ParentConditionId,
                 IsCompositeCondition  : model.IsCompositeCondition,
-                CompositionType       : model.CompositionType,
-                OperatorType          : model.OperatorType,
-                FirstOperandName      : model.FirstOperand.Name,
-                FirstOperandValue     : model.FirstOperand.Value.toString(),
-                FirstOperandDataType  : model.FirstOperand.DataType,
-                SecondOperandName     : model.SecondOperand.Name,
-                SecondOperandValue    : model.SecondOperand.Value.toString(),
-                SecondOperandDataType : model.SecondOperand.DataType,
-                ThirdOperandName      : model.ThirdOperand.Name,
-                ThirdOperandValue     : model.ThirdOperand.Value.toString(),
-                ThirdOperandDataType  : model.ThirdOperand.DataType,
+                CompositionType       : model.CompositionType ?? ConditionCompositionType.And,
+                OperatorType          : model.OperatorType ?? ConditionOperatorType.EqualTo ,
+                FirstOperandName      : model.FirstOperand?.Name ?? null,
+                FirstOperandValue     : model.FirstOperand?.Value.toString() ?? null,
+                FirstOperandDataType  : model.FirstOperand?.DataType ?? null ,
+                SecondOperandName     : model.SecondOperand?.Name ?? null ,
+                SecondOperandValue    : model.SecondOperand?.Value.toString() ?? null,
+                SecondOperandDataType : model.SecondOperand?.DataType ?? null,
+                ThirdOperandName      : model.ThirdOperand?.Name ?? null ,
+                ThirdOperandValue     : model.ThirdOperand?.Value.toString() ?? null,
+                ThirdOperandDataType  : model.ThirdOperand?.DataType ?? null,
                 ResolutionScore       : model.ResolutionScore
             };
 

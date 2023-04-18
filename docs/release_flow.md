@@ -7,14 +7,18 @@
 
 ## Content
 - [Branching Strategy](#Branching-Strategy)
-  - [Feature](Feature)
+  - [Feature](#Feature-Branch)
+  - [Release](#Release-Branch)
+- [Workflow Explained](#Workflow-Explained)
+  - [PR-ci-cd](#PR-ci-cd)
+  - [Dev-ci-cd](#Dev-ci-cd)
 
 
 ## Branching Strategy
 
 This is the overview of our Branch Strategy, How we are using workflows based on branch naming convention.
 
-### Feature
+### Feature Branch
 
 Whenever a developer create a branch with the prefix of 'feature' then the Pull request should be raise on develop branch, It will trigger the PR-ci-cd workflow, After the merging of pull request into develop branch it will trigger the Dev-ci-cd workflow. 
  
@@ -22,7 +26,7 @@ Whenever a developer create a branch with the prefix of 'feature' then the Pull 
  feature/**
  ```
 
-### Release
+### Release Branch
 
 Whenever a developer create a branch with the prefix of 'release' then the Pull Request should be raise on main branch, After that whenever developer push code on 'release' branch it will trigger the UAT-ci-cd workflow.
 
@@ -30,7 +34,7 @@ Whenever a developer create a branch with the prefix of 'release' then the Pull 
  release/**
  ```
  
-# Getting started 
+# Workflow Explained 
  
 This is an explanation of how to use or trigger any workflow in our repository
  

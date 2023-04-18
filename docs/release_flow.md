@@ -7,13 +7,13 @@
 
 
 
-## Overview
+## Branching Strategy
 
-This is the overview of Branch naming convention 
+This is the overview of our Branch Strategy, How we are using workflows based on branch naming convention.
 
 ### Feature
-
-Prefix feature should be use when developer wants to merge code in Develop branch
+Whenever a developer create a branch with the prefix of 'feature' then the Pull request should be raise on develop branch, It will trigger our PR-ci-cd workflow, After the merging of pull request into develop branch it will trigger our Dev-ci-cd Workflow. 
+ 
  ```sh
  feature/**
  ```

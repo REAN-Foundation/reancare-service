@@ -35,6 +35,7 @@ export class DrugValidator extends BaseValidator{
     search = async (request: express.Request): Promise<DrugSearchFilters> => {
 
         await this.validateString(request, 'name', Where.Query, false, false);
+        await this.validateString(request, 'GenericName', Where.Body, false, false);
 
         await this.validateBaseSearchFilters(request);
 
@@ -81,6 +82,7 @@ export class DrugValidator extends BaseValidator{
 
         var filters: DrugSearchFilters = {
             Name : request.query.name ?? null,
+            genericName : request.query.genericName ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

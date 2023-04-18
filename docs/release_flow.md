@@ -6,6 +6,12 @@
 4. Every worklfow file name should end with ``` *.yml ``` extention
 
 
+## Contents
+
+- [Branching Strategy](#Branching Strategy)
+  - [Feature](#Feature) 
+
+
 
 ## Branching Strategy
 

@@ -149,7 +149,7 @@ These are the jobs used in UAT-ci-cd
 ## AHA-UAT-ci-cd
 
 * This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, Without having to push or create a pull request.
-* You can refer to full documentation of [AHA-Uat workflow](docs/release_docs/AHA_ReleaseFlow.md)
+* You can refer to full documentation of [AHA-Uat workflow](release_docs/AHA_ReleaseFlow.md)
  
 ## AHA-PROD-ci-cd
 

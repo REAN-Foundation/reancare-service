@@ -1,5 +1,6 @@
 # AHA-UAT Workflow
 Explaination of AHA-UAT workflow.
+[AHA-uat](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-UAT_wrokflow.png?raw=true)
 
 ## AHA-UAT-ci-cd
 

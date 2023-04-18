@@ -16,7 +16,7 @@
   - [PROD-ci-cd](#PROD-ci-cd)
   - [AHA-UAT-ci-cd](#AHA-UAT-ci-cd)
   - [AHA-PROD-ci-cd](#AHA-PROD-ci-cd)
-- [Developer and Main branch Workflow](#Developer-and-Main-branch-Workflow)
+- [Developer to Main branch Workflow](#Developer-to-Main-branch-Workflow)
   - [Develop Branch Workflow Explained](#Develop-Branch-Workflow-Explained)
   - [Main branch Workflow Explained](#Main-branch-Workflow-Explained)
 
@@ -80,7 +80,7 @@ This is an explanation of how to use or trigger any workflow in our repository
 * This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, Without having to push or create a pull request.
 * You can refer to full documentation of [AHA-Prod workflow](release_docs/AHA-Prod_ReleaseFlow.md)
 
-## Developer and Main branch Workflow
+## Developer to Main branch Workflow
 
 This is the Explanation of entire worflow
 ![workflow_diagram](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/workflow_diagram.png?raw=true)

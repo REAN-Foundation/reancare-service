@@ -33,31 +33,8 @@ This is an explanation of how to use or trigger any workflow in our repository
  
 ## PR-ci-cd
  
- PR-ci-cd (Pull Request ci-cd) can be trigger by creating a pull request to merge into develop branch.
- 
-### JOBS
-
- These are the jobs used in PR-ci-cd workflow
- 
- #### CodeScan-ESLint
- 
-  * This job use static code analysis tool which identify problematic patterns found in JavaScript code.
-  * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
- 
- #### Build-Docker-Image
- 
-  * This job create a docker image with image tag using branch name and short SHA of commit.
-  * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
- 
-### Steps To Trigger Workflow
-
- 1. Create a branch with the prefix of feature, For Example ``` feature/test ``` .
- 2. Then Create a Pull Request to merge into develop branch.
-
-### Conclusion
-
- * By creating a pull request to merge into develop branch will trigger the Pr-ci-cd workflow, Then wrokflow will the check whether problematic patterns found in    JavaScript code or not then it will create a docker image.
- * Example of PR-ci-cd Action ![Pr-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Pr-ci-cd_example.png?raw=true)
+* PR-ci-cd (Pull Request ci-cd) can be trigger by raising a pull request to develop branch.
+* You can refer to full documentation of [PR-ci-cd](release_docs/Pr-ci-cd_ReleaseFlow.md).
  
 ## Dev-ci-cd 
 

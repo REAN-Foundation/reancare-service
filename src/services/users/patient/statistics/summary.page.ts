@@ -59,7 +59,7 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
     for (var r of vals) {
         const row: TableRowProperties = {
             IsHeaderRow : r[0],
-            FontSize    : 9,
+            FontSize    : 11,
             RowOffset   : 16,
             Columns     : [
                 {
@@ -301,7 +301,7 @@ function addBodyWeightSummary(y: any, document: PDFKit.PDFDocument, model: any) 
 
 function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'NutritionQuestionSummary_LastMonth';
-    const sectionTitle = 'Nutrition Questions';
+    const sectionTitle = 'Daily Nutrition Intake';
     const icon = Helper.getIconsPath('nutrition.png');
 
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
@@ -338,7 +338,7 @@ function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model
 
 function addDailyMovementQuestionSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'Exercise_Questionnaire_Overall_LastMonth';
-    const sectionTitle = 'Daily Movement Questions';
+    const sectionTitle = 'Daily Movement';
     const icon = Helper.getIconsPath('exercise.png');
 
     y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);

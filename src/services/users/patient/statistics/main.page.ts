@@ -233,7 +233,7 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
 
     document
         .font('Helvetica-Bold')
-        .text('Plan Name', labelX, y, { align: "left" })
+        .text('Journey', labelX, y, { align: "left" })
         .font('Helvetica')
         .text(planName, valueX, y, { align: "left" })
         .moveDown();

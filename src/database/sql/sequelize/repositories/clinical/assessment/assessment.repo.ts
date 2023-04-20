@@ -50,7 +50,6 @@ export class AssessmentRepo implements IAssessmentRepo {
         try {
             const assessment = await Assessment.findByPk(id);
             return AssessmentMapper.toDto(assessment);
-
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

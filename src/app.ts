@@ -7,8 +7,11 @@ import { Router } from './api/router';
 import { Helper } from './common/helper';
 import { Logger } from './common/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
-import { EHRDbConnector } from './custom/ehr.analytics/ehr.db.connector';
+import { EHRDbConnector } from './modules/ehr.analytics/ehr.db.connector';
+import { AwardsFactsDBConnector } from './modules/awards.facts/awards.facts.db.connector';
+
 import { Loader } from './startup/loader';
+import { AwardsFactsService } from './modules/awards.facts/awards.facts.service';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -51,6 +54,10 @@ export default class Application {
 
             //Connect with EHR insights database
             await EHRDbConnector.connect();
+
+            //Connect with Awards facts database
+            await AwardsFactsDBConnector.connect();
+            await AwardsFactsService.initialize();
 
             //Set-up middlewares
             await this.setupMiddlewares();

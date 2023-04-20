@@ -8,8 +8,8 @@ import { BloodPressureValidator } from './blood.pressure.validator';
 import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 import { PersonService } from '../../../../services/person/person.service';
@@ -187,7 +187,7 @@ export class BloodPressureController extends BaseController {
     };
 
     private sendBPMessage = async (patientUserId: uuid, model: BloodPressureDomainModel) => {
-        
+
         const patient  = await this._patientService.getByUserId(patientUserId);
         const phoneNumber = patient.User.Person.Phone;
         const person = await this._personService.getById(patient.User.PersonId);

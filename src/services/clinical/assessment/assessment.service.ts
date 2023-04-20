@@ -96,7 +96,8 @@ export class AssessmentService {
 
     public startAssessment = async (id: uuid): Promise<AssessmentQueryDto | AssessmentQueryListDto> => {
         var assessment = await this._assessmentRepo.getById(id);
-        if (assessment.Status === ProgressStatus.InProgress && assessment.StartedAt !== null) {
+        if (assessment.Status === ProgressStatus.InProgress &&
+            assessment.StartedAt !== null) {
             throw new Error('Assessment is already in progress.');
         }
         if (assessment.Status === ProgressStatus.Cancelled) {

@@ -3,29 +3,31 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { MedicationFact } from './models/medication.fact.model';
 import { Logger } from "../../common/logger";
-import mysql from 'mysql2';
+import { MysqlClient } from '../../database/sql/sequelize/dialect.clients/mysql.client';
+import { PostgresqlClient } from '../../database/sql/sequelize/dialect.clients/postgresql.client';
+import { DatabaseDialect } from '../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 Logger.instance().log(`environment : ${process.env.NODE_ENV}`);
-Logger.instance().log(`db name     : awards_facts`);
+Logger.instance().log(`db name     : ${process.env.DB_NAME_AWARDS_FACTS}`);
 Logger.instance().log(`db username : ${process.env.DB_USER_NAME}`);
 Logger.instance().log(`db host     : ${process.env.DB_HOST}`);
-
-const DATABASE_NAME = `awards_facts`;
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 class AwardsFactsDatabaseConnector {
 
+    static dialect = process.env.DB_DIALECT as DatabaseDialect;
+
     static _source = new DataSource({
-        name        : 'mysql',
-        type        : 'mysql',
+        name        : process.env.DB_NAME_AWARDS_FACTS,
+        type        : AwardsFactsDatabaseConnector.dialect,
         host        : process.env.DB_HOST,
-        port        : 3306,
+        port        : parseInt(process.env.DB_PORT),
         username    : process.env.DB_USER_NAME,
         password    : process.env.DB_USER_PASSWORD,
-        database    : DATABASE_NAME,
+        database    : process.env.DB_NAME_AWARDS_FACTS,
         synchronize : true,
         //entities    : [this._basePath + '/**/**{.model.ts}'],
         entities    : [
@@ -58,44 +60,20 @@ class AwardsFactsDatabaseConnector {
 
     };
 
-    public static executeQuery = (query): Promise<boolean> => {
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        return new Promise((resolve, reject) => {
-            try {
-                const connection = mysql.createConnection({
-                    host     : process.env.DB_HOST,
-                    user     : process.env.DB_USER_NAME,
-                    password : process.env.DB_USER_PASSWORD,
-                });
-                connection.connect(function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                    //Logger.instance().log('Connected!');
-                    connection.query(query, function (err, result) {
-                        if (err) {
-                            Logger.instance().log(err.message);
-                            var str = (result !== undefined && result !== null) ? result.toString() : null;
-                            if (str != null){
-                                Logger.instance().log(str);
-                            }
-                            else {
-                                Logger.instance().log(`Query: ${query}`);
-                            }
-                        }
-                        resolve(true);
-                    });
-                });
-            } catch (error) {
-                Logger.instance().log(error.message);
-            }
-        });
+    public static executeQuery = async (query: string) => {
+        try {
+            const client = AwardsFactsDatabaseConnector.getClient();
+            await client.executeQuery(query);
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+        return false;
     };
 
     public static createDatabase = async () => {
         try {
-            const query = `CREATE DATABASE ${DATABASE_NAME}`;
+            const query = `CREATE DATABASE ${process.env.DB_NAME_AWARDS_FACTS}`;
             await this.executeQuery(query);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -105,7 +83,7 @@ class AwardsFactsDatabaseConnector {
     //Drops DB if exists
     public static dropDatabase = async () => {
         try {
-            const query = `DROP DATABASE IF EXISTS ${DATABASE_NAME}`;
+            const query = `DROP DATABASE IF EXISTS ${process.env.DB_NAME_AWARDS_FACTS}`;
             await this.executeQuery(query);
             return true;
         } catch (error) {
@@ -113,6 +91,19 @@ class AwardsFactsDatabaseConnector {
         }
         return false;
     };
+
+    private static getClient() {
+
+        const dialect = process.env.DB_DIALECT as DatabaseDialect;
+
+        if (dialect === 'mysql') {
+            return MysqlClient;
+        }
+        if (dialect === 'postgres') {
+            return PostgresqlClient;
+        }
+        return PostgresqlClient;
+    }
 
 }
 

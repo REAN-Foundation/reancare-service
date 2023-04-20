@@ -1,24 +1,26 @@
 import { Dialect } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Logger } from '../../common/logger';
-import { ConfigurationManager } from '../../config/configuration.manager';
 import { MysqlClient } from '../../database/sql/sequelize/dialect.clients/mysql.client';
 import { PostgresqlClient } from '../../database/sql/sequelize/dialect.clients/postgresql.client';
+import { DatabaseDialect } from '../../domain.types/miscellaneous/system.types';
 
 //////////////////////////////////////////////////////////////
 
 export class EHRDbConnector {
 
-    private static _sequelize: Sequelize = null;
+    private static _sequelize: Sequelize;
 
     static config = () => {
+
+        const dialect = process.env.DB_DIALECT as DatabaseDialect;
 
         return {
             username : process.env.DB_USER_NAME,
             password : process.env.DB_USER_PASSWORD,
-            database : `ehr_insights`,
+            database : process.env.DB_NAME_EHR_INSIGHTS,
             host     : process.env.DB_HOST,
-            dialect  : EHRDbConnector.getDialect(),
+            dialect  : dialect,
             pool     : {
                 max     : 20,
                 min     : 0,
@@ -30,14 +32,14 @@ export class EHRDbConnector {
 
     public static connect = async (): Promise<boolean> => {
         try {
-            const dialect: Dialect = EHRDbConnector.getDialect();
+            const dialect: DatabaseDialect = process.env.DB_DIALECT as DatabaseDialect;
             const modelsPath = [
                 __dirname + '/models',
             ];
             const config = EHRDbConnector.config();
             const options = {
                 host    : config.host,
-                dialect : dialect,
+                dialect : dialect as Dialect,
                 models  : modelsPath,
                 pool    : {
                     max     : config.pool.max,
@@ -56,7 +58,7 @@ export class EHRDbConnector {
             EHRDbConnector._sequelize = sequelize;
 
             Logger.instance().log(`Connecting to EHR Insights database '${config.database}' ...`);
-            Logger.instance().log(`EHR Insights Database flavour: ${config.dialect}`);
+            Logger.instance().log(`EHR Insights Database dialect: ${config.dialect}`);
             Logger.instance().log(`EHR Insights Database host: ${config.host}`);
 
             await EHRDbConnector.createDatabase();
@@ -94,29 +96,14 @@ export class EHRDbConnector {
         }
     };
 
-    private static getDialect(): Dialect {
-
-        let dialect: Dialect = 'postgres';
-        const flavour = ConfigurationManager.DatabaseFlavour();
-
-        if (flavour === 'MySQL') {
-            dialect = 'mysql';
-        }
-        if (flavour === 'PostgreSQL') {
-            dialect = 'postgres';
-        }
-
-        return dialect;
-    }
-
     private static getClient() {
 
-        const flavour = ConfigurationManager.DatabaseFlavour();
+        const dialect = process.env.DB_DIALECT as DatabaseDialect;
 
-        if (flavour === 'MySQL') {
+        if (dialect === 'mysql') {
             return MysqlClient;
         }
-        if (flavour === 'PostgreSQL') {
+        if (dialect === 'postgres') {
             return PostgresqlClient;
         }
         return PostgresqlClient;

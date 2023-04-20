@@ -2,13 +2,13 @@ import { execSync } from 'child_process';
 import { Dialect } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Logger } from '../../../common/logger';
-import { ConfigurationManager } from '../../../config/configuration.manager';
 import { IDatabaseConnector } from '../../database.connector.interface';
 import { DbConfig } from './database.config';
 import { MysqlClient } from './dialect.clients/mysql.client';
 import { PostgresqlClient } from './dialect.clients/postgresql.client';
 import * as fs from 'fs';
 import * as path from 'path';
+import { DatabaseDialect } from '../../../domain.types/miscellaneous/system.types';
 
 //////////////////////////////////////////////////////////////
 
@@ -19,13 +19,15 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
     public connect = async (): Promise<boolean> => {
 
         try {
+
+            const dialect = process.env.DB_DIALECT as DatabaseDialect;
+
             const config = DbConfig.config;
-            const dialect: Dialect = this.getDialect();
             const modelsFolder = path.join(__dirname, '/models');
             const modelsPath = getFoldersRecursively(modelsFolder);
             const options = {
                 host    : config.host,
-                dialect : dialect,
+                dialect : dialect as Dialect,
                 models  : modelsPath,
                 pool    : {
                     max     : config.pool.max,
@@ -40,7 +42,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
             this._sequelize = sequelize;
 
             Logger.instance().log(`Connecting to database '${config.database}' ...`);
-            Logger.instance().log(`Database flavour: ${dialect}`);
+            Logger.instance().log(`Database dialect: ${dialect}`);
             Logger.instance().log(`Database host: ${config.host}`);
 
             await this.createDatabase();
@@ -122,29 +124,14 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
 
     //Private methods
 
-    private getDialect(): Dialect {
-
-        let dialect: Dialect = 'postgres';
-        const flavour = ConfigurationManager.DatabaseFlavour();
-
-        if (flavour === 'MySQL') {
-            dialect = 'mysql';
-        }
-        if (flavour === 'PostgreSQL') {
-            dialect = 'postgres';
-        }
-
-        return dialect;
-    }
-
     private getClient() {
 
-        const flavour = ConfigurationManager.DatabaseFlavour();
+        const dialect = process.env.DB_DIALECT as DatabaseDialect;
 
-        if (flavour === 'MySQL') {
+        if (dialect === 'mysql') {
             return MysqlClient;
         }
-        if (flavour === 'PostgreSQL') {
+        if (dialect === 'postgres') {
             return PostgresqlClient;
         }
         return PostgresqlClient;

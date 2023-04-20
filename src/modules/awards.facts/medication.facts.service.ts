@@ -23,7 +23,7 @@ export const updateMedicationFact = async (model: AwardsFact) => {
         }
     });
 
-    await addOrUpdateRecord(model);
+    await addOrUpdateMedicationRecord(model);
 
     const lastRecord = lastRecords.length > 0 ? lastRecords[0] : null;
     var unpopulatedRecords = [];
@@ -48,12 +48,12 @@ export const updateMedicationFact = async (model: AwardsFact) => {
                 Missed   : mc.IsMissed,
             }
         };
-        await addOrUpdateRecord(model_);
+        await addOrUpdateMedicationRecord(model_);
     }
 
 };
 
-async function addOrUpdateRecord(model: AwardsFact) {
+async function addOrUpdateMedicationRecord(model: AwardsFact) {
     const medfactRepository: Repository<MedicationFact> = AwardsFactsSource.getRepository(MedicationFact);
     const existing = await medfactRepository.findOne({
         where : {

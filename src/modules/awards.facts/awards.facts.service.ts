@@ -1,15 +1,13 @@
 /* eslint-disable newline-per-chained-call */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Logger } from '../../common/logger';
-import { AwardsFactsSource } from '../awards.facts/awards.facts.db.connector';
-import { MedicationFact } from './models/medication.fact.model';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
-import { Repository } from 'typeorm';
 import * as asyncLib from 'async';
 import needle = require('needle');
 import axios from 'axios';
 import { Helper } from '../../common/helper';
 import { updateMedicationFact } from './medication.facts.service';
+import { updateNutritionFact } from './nutrition.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +32,16 @@ const headers = {
     Connection        : 'keep-alive',
     'x-api-key'       : process.env.AWARDS_SERVICE_API_KEY,
 };
+
+const enum FactType {
+    Medication       = 'Medication',
+    Nutrition        = 'Nutrition',
+    PhysicalActivity = 'Physical-Activity',
+    Vitals           = 'Vitals',
+    Symptoms         = 'Symptoms',
+    MentalHealth     = 'Mental-Health',
+    Mindfulness      = 'Mindfullness'
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -78,9 +86,17 @@ export class AwardsFactsService {
             await this.initialize();
         }
 
-        if (model.FactType === 'Medication') {
+        if (model.FactType === FactType.Medication) {
             await updateMedicationFact(model);
             const eventType = AwardsFactsService._eventTypes.find(x => x.Name === 'Medication');
+            if (eventType) {
+                //Send event to awards service
+                await this.notifyAwardsService(eventType.id, model);
+            }
+        }
+        else if (model.FactType === FactType.Nutrition) {
+            await updateNutritionFact(model);
+            const eventType = AwardsFactsService._eventTypes.find(x => x.Name === 'Nutrition');
             if (eventType) {
                 //Send event to awards service
                 await this.notifyAwardsService(eventType.id, model);
@@ -140,6 +156,17 @@ export class AwardsFactsService {
     public static addOrUpdateMedicationFact = (model: AwardsFact) => {
         try {
             model.FactType = 'Medication';
+            model.RecordDateStr = (model.RecordDate).toISOString().split('T')[0];
+            AwardsFactsService.enqueue(model);
+        }
+        catch (error) {
+            Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);
+        }
+    };
+
+    public static addOrUpdateNutritionResponseFact = (model: AwardsFact) => {
+        try {
+            model.FactType = 'Nutrition';
             model.RecordDateStr = (model.RecordDate).toISOString().split('T')[0];
             AwardsFactsService.enqueue(model);
         }

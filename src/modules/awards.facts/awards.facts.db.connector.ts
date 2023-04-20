@@ -6,6 +6,7 @@ import { Logger } from "../../common/logger";
 import { MysqlClient } from '../../database/sql/sequelize/dialect.clients/mysql.client';
 import { PostgresqlClient } from '../../database/sql/sequelize/dialect.clients/postgresql.client';
 import { DatabaseDialect } from '../../domain.types/miscellaneous/system.types';
+import { NutritionChoiceFact } from "./models/nutrition.choice.fact.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +33,7 @@ class AwardsFactsDatabaseConnector {
         //entities    : [this._basePath + '/**/**{.model.ts}'],
         entities    : [
             MedicationFact,
+            NutritionChoiceFact,
         ],
         migrations  : [],
         subscribers : [],

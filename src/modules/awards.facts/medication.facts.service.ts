@@ -28,24 +28,23 @@ export const updateMedicationFact = async (model: AwardsFact) => {
     const lastRecord = lastRecords.length > 0 ? lastRecords[0] : null;
     var unpopulatedRecords = [];
     if (lastRecord == null) {
-        unpopulatedRecords = await medConsumptionService.getAllBefore(
+        unpopulatedRecords = await medConsumptionService.getAllTakenBefore(
             model.PatientUserId, new Date());
     }
     else {
-        unpopulatedRecords = await medConsumptionService.getAllBetween(
+        unpopulatedRecords = await medConsumptionService.getAllTakenBetween(
             model.PatientUserId, lastRecord.RecordDate, new Date());
     }
-    for await (var mc of unpopulatedRecords) {
+    for await (var r of unpopulatedRecords) {
         const model_: AwardsFact = {
             PatientUserId : model.PatientUserId,
-            RecordId      : mc.id,
-            RecordDate    : mc.TimeScheduleEnd,
+            RecordId      : r.RecordId,
+            RecordDate    : r.RecordDate,
             FactType      : 'Medication',
-            RecordDateStr : (mc.TimeScheduleEnd).toISOString().split('T')[0],
+            RecordDateStr : (r.RecordDate).toISOString().split('T')[0],
             Facts         : {
-                DrugName : mc.DrugName,
-                Taken    : mc.IsTaken,
-                Missed   : mc.IsMissed,
+                DrugName : r.DrugName,
+                Taken    : r.IsTaken,
             }
         };
         await addOrUpdateMedicationRecord(model_);

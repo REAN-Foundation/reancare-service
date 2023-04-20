@@ -11,6 +11,9 @@ import { FoodConsumptionDomainModel }
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,18 +47,24 @@ export class FoodConsumptionController extends BaseController {
 
             this.addEHRRecord(model.PatientUserId, foodConsumption.id, model);
 
-            if (model.UserResponse) {
+            if (foodConsumption.UserResponse) {
                 var timestamp = foodConsumption.EndTime ?? foodConsumption.StartTime;
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(foodConsumption.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
                 AwardsFactsService.addOrUpdateNutritionResponseFact({
                     PatientUserId : foodConsumption.PatientUserId,
                     Facts         : {
                         UserResponse : foodConsumption.UserResponse,
                     },
-                    RecordId   : foodConsumption.id,
-                    RecordDate : timestamp,
+                    RecordId      : foodConsumption.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
                 });
             }
 
@@ -184,18 +193,23 @@ export class FoodConsumptionController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update nutrition record!');
             }
-            if (model.UserResponse) {
+            if (updated.UserResponse) {
                 var timestamp = updated.EndTime ?? updated.StartTime;
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
                 AwardsFactsService.addOrUpdateNutritionResponseFact({
                     PatientUserId : updated.PatientUserId,
                     Facts         : {
                         UserResponse : updated.UserResponse,
                     },
-                    RecordId   : updated.id,
-                    RecordDate : timestamp,
+                    RecordId      : updated.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr
                 });
             }
             ResponseHandler.success(request, response, 'Nutrition record updated successfully!', 200, {

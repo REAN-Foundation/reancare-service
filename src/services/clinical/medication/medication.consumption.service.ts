@@ -293,13 +293,12 @@ export class MedicationConsumptionService implements IUserActionService {
         return await this._medicationConsumptionRepo.search(filters);
     };
 
-    getAllBefore = async (patientUserId: uuid, date: Date): Promise<MedicationConsumptionDetailsDto[]> => {
-        return await this._medicationConsumptionRepo.getAllBefore(patientUserId, date);
+    getAllTakenBefore = async (patientUserId: uuid, date: Date): Promise<any[]> => {
+        return await this._medicationConsumptionRepo.getAllTakenBefore(patientUserId, date);
     };
 
-    getAllBetween = async (patientUserId: uuid, dateFrom: Date, dateTo: Date)
-        : Promise<MedicationConsumptionDetailsDto[]> => {
-        return await this._medicationConsumptionRepo.getAllBetween(patientUserId, dateFrom, dateTo);
+    getAllTakenBetween = async (patientUserId: uuid, dateFrom: Date, dateTo: Date) : Promise<any[]> => {
+        return await this._medicationConsumptionRepo.getAllTakenBetween(patientUserId, dateFrom, dateTo);
     };
 
     getScheduleForDuration = async (patientUserId: string, duration: string, when: string)

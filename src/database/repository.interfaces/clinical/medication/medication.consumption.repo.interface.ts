@@ -32,9 +32,9 @@ export interface IMedicationConsumptionRepo {
 
     search(filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults>;
 
-    getAllBefore(patientUserId: uuid, date: Date): Promise<MedicationConsumptionDetailsDto[]>;
+    getAllTakenBefore(patientUserId: uuid, date: Date): Promise<any[]>;
 
-    getAllBetween(patientUserId: uuid, from: Date, to: Date): Promise<MedicationConsumptionDetailsDto[]>;
+    getAllTakenBetween(patientUserId: uuid, from: Date, to: Date): Promise<any[]>;
 
     getSchedulesForPatientForDuration(patientUserId: string, from: Date, to: Date): Promise<MedicationConsumptionDto[]>;
 

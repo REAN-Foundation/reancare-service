@@ -14,6 +14,7 @@ import Medication from '../../../models/clinical/medication/medication.model';
 import UserTask from '../../../models/users/user/user.task.model';
 import Patient from '../../../models/users/patient/patient.model';
 import User from '../../../models/users/user/user.model';
+import { HelperRepo } from '../../common/helper.repo';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -155,9 +156,11 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getAllBefore = async (patientUserId: uuid, date: Date): Promise<MedicationConsumptionDetailsDto[]> => {
+    getAllTakenBefore = async (patientUserId: uuid, date: Date): Promise<any[]> => {
         try {
-            const consumptions = await MedicationConsumption.findAll({
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await MedicationConsumption.findAll({
                 where : {
                     PatientUserId   : patientUserId,
                     TimeScheduleEnd : {
@@ -165,17 +168,35 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     }
                 }
             });
-            return consumptions.map(x => MedicationConsumptionMapper.toDetailsDto(x));
+
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId      : x.id,
+                    PatientUserId : x.PatientUserId,
+                    Taken         : x.IsTaken,
+                    DrugName      : x.DrugName,
+                    RecordDateStr : dayStr,
+                    RecordDate    : tempDate,
+                };
+            });
+
+            return records_;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getAllBetween = async (patientUserId: uuid, from: Date, to: Date)
-        : Promise<MedicationConsumptionDetailsDto[]> => {
+    getAllTakenBetween = async (patientUserId: uuid, from: Date, to: Date)
+        : Promise<any[]> => {
         try {
-            const consumptions = await MedicationConsumption.findAll({
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await MedicationConsumption.findAll({
                 where : {
                     PatientUserId   : patientUserId,
                     TimeScheduleEnd : {
@@ -184,7 +205,23 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     }
                 }
             });
-            return consumptions.map(x => MedicationConsumptionMapper.toDetailsDto(x));
+
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId      : x.id,
+                    PatientUserId : x.PatientUserId,
+                    Taken         : x.IsTaken,
+                    DrugName      : x.DrugName,
+                    RecordDateStr : dayStr,
+                    RecordDate    : tempDate,
+                };
+            });
+
+            return records_;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

@@ -193,8 +193,8 @@ export class FoodConsumptionController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update nutrition record!');
             }
-            if (updated.UserResponse) {
-                var timestamp = updated.EndTime ?? updated.StartTime;
+            if (updated.UserResponse !== null) {
+                var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
                 if (!timestamp) {
                     timestamp = new Date();
                 }

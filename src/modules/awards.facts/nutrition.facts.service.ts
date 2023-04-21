@@ -36,15 +36,11 @@ export const updateNutritionFact = async (model: AwardsFact) => {
             model.PatientUserId, lastRecord.RecordDate, new Date());
     }
     for await (var r of unpopulatedRecords) {
-        var timestamp = r.StartTime ?? r.EndTime;
-        if (!timestamp) {
-            timestamp = r.CreatedAt;
-        }
         const model_: AwardsFact = {
             PatientUserId : model.PatientUserId,
             RecordId      : r.RecordId,
             RecordDate    : r.RecordDate,
-            RecordDateStr : (timestamp).toISOString().split('T')[0],
+            RecordDateStr : r.RecordDateStr,
             FactType      : 'Nutrition',
             Facts         : {
                 UserResponse : r.UserResponse,

@@ -300,6 +300,9 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             if (updateModel.EndTime != null) {
                 foodConsumption.EndTime = updateModel.EndTime;
             }
+            if (updateModel.UserResponse != null) {
+                foodConsumption.UserResponse = updateModel.UserResponse;
+            }
 
             await foodConsumption.save();
 

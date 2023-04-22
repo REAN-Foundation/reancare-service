@@ -3,17 +3,13 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { MedicationFact } from './models/medication.fact.model';
 import { Logger } from "../../common/logger";
-import { MysqlClient } from '../../database/sql/sequelize/dialect.clients/mysql.client';
-import { PostgresqlClient } from '../../database/sql/sequelize/dialect.clients/postgresql.client';
+import { MysqlClient } from '../../common/database.utils/dialect.clients/mysql.client';
+import { PostgresqlClient } from '../../common/database.utils/dialect.clients/postgresql.client';
 import { DatabaseDialect } from '../../domain.types/miscellaneous/system.types';
 import { NutritionChoiceFact } from "./models/nutrition.choice.fact.model";
-
-///////////////////////////////////////////////////////////////////////////////////
-
-Logger.instance().log(`environment : ${process.env.NODE_ENV}`);
-Logger.instance().log(`db name     : ${process.env.DB_NAME_AWARDS_FACTS}`);
-Logger.instance().log(`db username : ${process.env.DB_USER_NAME}`);
-Logger.instance().log(`db host     : ${process.env.DB_HOST}`);
+import { Loader } from "../../startup/loader";
+import { DatabaseClient } from "../../common/database.utils/dialect.clients/database.client";
+import { DatabaseSchemaType } from "../../common/database.utils/database.config";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -45,13 +41,14 @@ class AwardsFactsDatabaseConnector {
 
     static connect = async (): Promise<boolean> => {
 
-        await this.createDatabase();
+        const databaseClient = Loader.container.resolve(DatabaseClient);
+        await databaseClient.createDb(DatabaseSchemaType.AwardsFacts);
 
         return new Promise((resolve, reject) => {
             this._source
                 .initialize()
                 .then(() => {
-                    Logger.instance().log('Database connection to awards_facts has been established successfully.');
+                    Logger.instance().log(`Connected to database '${process.env.DB_NAME_AWARDS_FACTS}'.`);
                     resolve(true);
                 })
                 .catch(error => {
@@ -61,51 +58,6 @@ class AwardsFactsDatabaseConnector {
         });
 
     };
-
-    public static executeQuery = async (query: string) => {
-        try {
-            const client = AwardsFactsDatabaseConnector.getClient();
-            await client.executeQuery(query);
-            return true;
-        } catch (error) {
-            Logger.instance().log(error.message);
-        }
-        return false;
-    };
-
-    public static createDatabase = async () => {
-        try {
-            const query = `CREATE DATABASE ${process.env.DB_NAME_AWARDS_FACTS}`;
-            await this.executeQuery(query);
-        } catch (error) {
-            Logger.instance().log(error.message);
-        }
-    };
-
-    //Drops DB if exists
-    public static dropDatabase = async () => {
-        try {
-            const query = `DROP DATABASE IF EXISTS ${process.env.DB_NAME_AWARDS_FACTS}`;
-            await this.executeQuery(query);
-            return true;
-        } catch (error) {
-            Logger.instance().log(error.message);
-        }
-        return false;
-    };
-
-    private static getClient() {
-
-        const dialect = process.env.DB_DIALECT as DatabaseDialect;
-
-        if (dialect === 'mysql') {
-            return MysqlClient;
-        }
-        if (dialect === 'postgres') {
-            return PostgresqlClient;
-        }
-        return PostgresqlClient;
-    }
 
 }
 

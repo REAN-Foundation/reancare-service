@@ -1,7 +1,7 @@
 # About Release FLow
 
 1. For general Workflow using Github actions guidance, you can refer to [Github Actions Guide](https://docs.github.com/en/actions/guides). 
-2. We have different naming convention prefix of branch name depending on, In which branch devloper want to merge the branch
+2. We have different naming convention prefix of branch name depending on, in which branch devloper want to merge the branch
 3. We have 7 active workflows, You can see all the workflow files here [Workflows](https://github.com/REAN-Foundation/reancare-service/tree/develop/.github/workflows).
 4. Every worklfow file name should end with ``` *.yml ``` extention
 
@@ -23,11 +23,11 @@
 
 ## Branching Strategy
 
-This is the overview of our Branch Strategy, How we are using workflows based on branch naming convention.
+This is the overview of our Branch Strategy, how we are using workflows based on branch naming convention.
 
 ### Feature Branch
 
-Whenever a developer create a branch with the prefix of 'feature' then the Pull request should be raise on develop branch, It will trigger the PR-ci-cd workflow, After the merging of pull request into develop branch it will trigger the Dev-ci-cd workflow. 
+Whenever a developer create a branch with the prefix of 'feature' then the Pull request should be raise on develop branch, it will trigger the PR-ci-cd workflow, after the merging of pull request into develop branch it will trigger the Dev-ci-cd workflow. 
  
  ```sh
  feature/**
@@ -35,7 +35,7 @@ Whenever a developer create a branch with the prefix of 'feature' then the Pull 
 
 ### Release Branch
 
-Whenever a developer create a branch with the prefix of 'release' then the Pull Request should be raise on main branch, After that whenever developer push code on 'release' branch it will trigger the UAT-ci-cd workflow.
+Whenever a developer create a branch with the prefix of 'release' then the Pull Request should be raise on main branch, after that whenever developer push code on 'release' branch it will trigger the UAT-ci-cd workflow.
 
  ```sh
  release/**
@@ -72,7 +72,7 @@ This is an explanation of how to use or trigger any workflow in our repository
 
 ## AHA-UAT-ci-cd
 
-* This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, Without having to push or create a pull request.
+* This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, wthout having to push or create a pull request.
 * You can refer to full documentation of [AHA-Uat workflow](release_docs/AHA-UAT_ReleaseFlow.md)
  
 ## AHA-PROD-ci-cd

@@ -8,7 +8,8 @@
  These are the jobs used in PR-ci-cd workflow
  
  #### CodeScan-ESLint
- ![codescan-job](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/codescan.png?raw=true)
+  This is the How CodeScan-ESLint job looks like
+  ![codescan-job](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/codescan.png?raw=true)
  
   * This job use static code analysis tool which identify problematic patterns found in JavaScript code.
   * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 

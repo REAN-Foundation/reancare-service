@@ -4,7 +4,7 @@ Explaination of AHA-PROD workflow.
 
 ## AHA-PROD-ci-cd
 
-This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, Without having to push or create a pull request
+This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, without having to push or create a pull request
 
 ### JOBS
 

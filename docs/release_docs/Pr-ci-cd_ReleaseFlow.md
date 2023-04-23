@@ -8,7 +8,7 @@
  These are the jobs used in PR-ci-cd workflow
  
  #### CodeScan-ESLint
-  This is the How CodeScan-ESLint job looks like
+  This is the how CodeScan-ESLint job looks like
  
   ![codescan-job](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/codescan.png?raw=true)
  
@@ -16,13 +16,16 @@
   * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
  
  #### Build-Docker-Image
+ This is how Build-Docker-Image job looks like
+ 
+ ![build-docker-job](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/docker-build.png?raw=true)
  
   * This job create a docker image with image tag using branch name and short SHA of commit.
   * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
  
 ### Steps To Trigger Workflow
 
- 1. Create a branch with the prefix of feature, For Example ``` feature/test ``` .
+ 1. Create a branch with the prefix of feature, for Example ``` feature/test ``` .
  2. Then Create a Pull Request to merge into develop branch.
 
 ### Conclusion

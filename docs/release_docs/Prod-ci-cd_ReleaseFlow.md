@@ -15,6 +15,9 @@ This is how Publish-Release job looks like
 * This job uses [release-drafter](https://github.com/release-drafter/release-drafter).
 
 #### Deploy-ECS
+This is how Deploy-ECS job looks like
+
+![deploy-ecs](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/docker-build.png?raw=true)
 
 * This job uses 'PROD' environment and login to ECR using creds and build a new ECR docker image with image tag using ID of release whcih Publish-Release job created for example ``` reancare:97777323 ```, then this job will create new version of Amazon ECS task definition with new docker image then it will deploy Amazon ECS task definition using Duplo API.
 * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).

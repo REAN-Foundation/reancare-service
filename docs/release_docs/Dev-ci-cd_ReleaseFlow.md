@@ -8,7 +8,7 @@ Dev-ci-cd can be use or trigger by pushing code into Develop branch.
 These are the jobs used in Dev-ci-cd
 
 #### Deploy-ECS
-This is how this job looks like
+This is how Deploy-ECS job looks like
 
 ![deploy-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/docker-build.png?raw=true)
 

@@ -347,6 +347,12 @@ export class TeraWebhookValidator extends BaseValidator {
             if (body.insulin_data) {
                 glucoseSamples = body.insulin_data.blood_glucose_samples ?? [];
             }
+            if (request.body.user.provider === "CRONOMETER") {
+                if (body.ketone_data) {
+                    glucoseSamples = body.ketone_data.blood_glucose_samples ?? [];
+                }
+            }
+            
             glucoseSamples.forEach( glucose => {
                 const glucoseDomainModel = {
                     BloodGlucoseMgPerDL : glucose.blood_glucose_mg_per_dL,

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { ReAuthDomainModel } from '../../../../../domain.types/webhook/reauth.domain.model';
+import { DeAuthDomainModel, ReAuthDomainModel } from '../../../../../domain.types/webhook/reauth.domain.model';
 import { AuthDomainModel } from '../../../../../domain.types/webhook/auth.domain.model';
 import { BaseValidator } from '../../../../base.validator';
 import { Activity, ActivityDomainModel } from '../../../../../domain.types/webhook/activity.domain.model';
@@ -66,6 +66,29 @@ export class TeraWebhookValidator extends BaseValidator {
                 ReferenceId       : request.body.new_user.reference_id,
                 Scopes            : request.body.new_user.scopes ?? null,
                 LastWebhookUpdate : request.body.new_user.last_webhook_update ?? null
+            },
+            Message : request.body.message ?? null,
+            Version : version ?? null
+        };
+
+        return authDomainModel;
+    };
+
+    static deAuth = async (request: express.Request): Promise<DeAuthDomainModel> => {
+
+        const version = request.body.version != null && typeof request.body.version !== undefined
+            ? new Date(Date.parse(request.body.version))
+            : null;
+
+        const authDomainModel: DeAuthDomainModel = {
+            Status : request.body.status ?? null,
+            Type   : request.body.type ?? null,
+            User   : {
+                UserId            : request.body.user.user_id,
+                Provider          : request.body.user.provider,
+                ReferenceId       : request.body.user.reference_id,
+                Scopes            : request.body.user.scopes ?? null,
+                LastWebhookUpdate : request.body.user.last_webhook_update ?? null
             },
             Message : request.body.message ?? null,
             Version : version ?? null

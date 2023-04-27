@@ -22,5 +22,5 @@ jobs:
           echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)"
       - name: print
         run: |
-          echo $imagetag_value
+          echo ${{ steps.imageidvar.outputs.imagetag_value }}
     

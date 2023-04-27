@@ -1,0 +1,20 @@
+name: testing
+
+on:
+  push:
+    branches: [feature/aha_fix]
+  
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name:  Get ECR Image Tag
+        id: imageidvar
+        run: |
+          image_tag+=${{ steps.result_release.outputs.tag_name }} && image_tag+=_ && image_tag+=${{ steps.result_release.outputs.id }}
+          echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)"
+      
+      - name: print
+        run: |
+          eco "imagetag_value"
+    

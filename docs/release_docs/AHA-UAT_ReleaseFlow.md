@@ -4,7 +4,7 @@ Explaination of AHA-UAT workflow.
 
 ## AHA-UAT-ci-cd
 
-This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, Without having to push or create a pull request
+This workflow allows you to deploy an existing release of ```reancare-service``` to AHA Production environment using the release tag as an input.
 
 ### JOBS
 

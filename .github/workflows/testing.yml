@@ -23,5 +23,5 @@ jobs:
           echo this is image tag = $imagetag_value
       - name: print
         run: |
-          echo image tag = $imagetag_value}
+          echo this is image tag = $imagetag_value
     

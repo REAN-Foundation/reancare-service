@@ -71,8 +71,8 @@ jobs:
           echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
             
       - name: ECR Image Tag Check
-        if: ${{ steps.checkTag.outputs.exists == 'true' }}
         run: |
+          if [[ ${{ steps.checkTag.outputs.exists }} == 'false' ]]; then exit 1; fi
           if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then exit 1; fi
     
     outputs:
@@ -110,10 +110,6 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-
-      - name: Pulling Image
-        run: |
-          docker pull public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_name }}_${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
 
       - name: Download task definition
         run: |

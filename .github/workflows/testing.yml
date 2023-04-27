@@ -23,5 +23,5 @@ jobs:
       
       - name: print
         run: |
-          echo ${{ steps.imageidvar.outputs.imagetag_value }}
+          echo $imagetag_value
     

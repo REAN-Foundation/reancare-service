@@ -14,10 +14,12 @@ export class StepCountValidator extends BaseValidator {
     getDomainModel = (request: express.Request): StepCountDomainModel => {
 
         const stepCountModel: StepCountDomainModel = {
-            PatientUserId : request.body.PatientUserId,
-            StepCount     : request.body.StepCount,
-            Unit          : request.body.Unit ?? 'steps',
-            RecordDate    : request.body.RecordDate ?? null,
+            PatientUserId  : request.body.PatientUserId,
+            StepCount      : request.body.StepCount,
+            Unit           : request.body.Unit ?? 'steps',
+            RecordDate     : request.body.RecordDate ?? null,
+            Provider       : request.body.Provider ?? null,
+            TerraSummaryId : request.body.TerraSummaryId ?? null,
         };
 
         return stepCountModel;

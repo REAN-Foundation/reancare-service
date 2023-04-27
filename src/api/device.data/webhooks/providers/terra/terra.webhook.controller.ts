@@ -6,7 +6,6 @@ import { BaseUserController } from '../../../../users/base.user.controller';
 import { TeraWebhookValidator } from './terra.webhook.validator';
 import { TeraWebhookService } from '../../../../../services/webhook/wearable.webhook.service';
 import { Loader } from '../../../../../startup/loader';
-import { WebhookRawDataService } from '../../../../../services/webhook/webhook.rawdata.service';
 import { TeraWebhookActivityService } from '../../../../../services/webhook/wearable.webhook.activity.service';
 import { IWebhooksService } from '../../interfaces/webhooks.service.interface';
 //import Terra from 'terra-api';
@@ -17,13 +16,10 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
 
     _service: TeraWebhookService = null;
 
-    _rawDataService: WebhookRawDataService = null;
-
     constructor() {
         
         super();
         this._service = Loader.container.resolve(TeraWebhookService);
-        this._rawDataService = Loader.container.resolve(WebhookRawDataService);
     }
 
     //#endregion
@@ -37,13 +33,7 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
 
             const terraPayload : TerraPayload = request.body;
             Logger.instance().log(`Tera webhook information ${JSON.stringify(terraPayload)}`);
-            // const entity = {
-            //     Provider : "Terra",
-            //     Type     : terraPayload.type,
-            //     RawData  : JSON.stringify(terraPayload)
-            // };
-            //await this._rawDataService.create(entity);
-
+           
             switch (terraPayload.type) {
                 // case 'athlete': {
                 //     const athleteDomainModel = await TeraWebhookValidator.athlete(request);
@@ -110,8 +100,11 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                 case 'access_revoked':
                     // code for access_revoked case
                     break;
-                case 'deauth':
-                    // code for deauth case
+                case 'deauth': {
+                    const deAuthDomainModel = await TeraWebhookValidator.deAuth(request);
+                    await this._service.deAuth(deAuthDomainModel);
+                    Logger.instance().log(`Tera user reauthentication request ${JSON.stringify(deAuthDomainModel)}`);
+                }
                     break;
                 case 'internal_server_error':
                     // code for internal_server_error case

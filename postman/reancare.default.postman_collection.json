@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5020399b-ec11-4007-9b74-973c24926ec0",
+		"_postman_id": "9607d829-4f68-4dab-a24c-71bd01463d5c",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -56500,6 +56500,486 @@
 							]
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "Wearable Device Details",
+			"item": [
+				{
+					"name": "Add wearable device details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"WEARABLE_DEVICE_DETAILS_ID\", jsonRes.Data.WearableDeviceDetail.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"New wearable device details is created\", function () {\r",
+									"\r",
+									"    var expectedValue = \"FITBIT\";\r",
+									"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('WearableDeviceDetail');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('TerraUserId');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('PatientUserId');\r",
+									"    \r",
+									"\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail.Provider).equals(expectedValue);\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail.PatientUserId).equals(expectedPatientUserId);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+									"pm.environment.set(\"RECORDED_BY_USER_ID\", userId);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"TerraUserId\": \"520ca5ff-d032-4ae0-8bca-a61a91d270e9\",\r\n    \"Provider\": \"FITBIT\",\r\n    \"Scopes\": \"user.metrics,user.activity\",\r\n    \"AuthenticatedAt\": \"2021-09-02\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/wearable-device-details",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"wearable-device-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get wearable device details by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Wearable device details record is returned\", function () {\r",
+									"\r",
+									"    var expectedValue = \"FITBIT\";\r",
+									"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('WearableDeviceDetail');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('TerraUserId');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('PatientUserId');\r",
+									"    \r",
+									"\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail.Provider).equals(expectedValue);\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail.PatientUserId).equals(expectedPatientUserId);\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/wearable-device-details/{{WEARABLE_DEVICE_DETAILS_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"wearable-device-details",
+								"{{WEARABLE_DEVICE_DETAILS_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all health app status for patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/wearable-device-details/patients/{{PATIENT_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"wearable-device-details",
+								"patients",
+								"{{PATIENT_USER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update wearable device details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Updated wearable device details is returned\", function () {\r",
+									"\r",
+									"    var expectedValue = \"APPLE\";\r",
+									"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('WearableDeviceDetail');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('TerraUserId');\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail).to.have.property('PatientUserId');\r",
+									"    \r",
+									"\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail.Provider).equals(expectedValue);\r",
+									"    pm.expect(jsonRes.Data.WearableDeviceDetail.PatientUserId).equals(expectedPatientUserId);\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"TerraUserId\": \"470ca5ff-d032-4ae0-8bca-a61a91d270e9\",\r\n    \"Provider\": \"APPLE\",\r\n    \"Scopes\": \"user.metrics,user.activity\",\r\n    \"AuthenticatedAt\": \"2021-09-02\",\r\n    \"DeauthenticatedAt\": \"2021-09-02\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/wearable-device-details/{{WEARABLE_DEVICE_DETAILS_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"wearable-device-details",
+								"{{WEARABLE_DEVICE_DETAILS_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search wearable device details",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Record of blood glucose is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('BloodGlucoseRecords');\r",
+									"    pm.expect(jsonRes.Data.BloodGlucoseRecords.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/wearable-device-details/search",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"wearable-device-details",
+								"search"
+							],
+							"query": [
+								{
+									"key": "createdDateFrom",
+									"value": "2021-09-01",
+									"disabled": true
+								},
+								{
+									"key": "createdDateTo",
+									"value": "2021-10-14",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "Provider",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "ascending",
+									"disabled": true
+								},
+								{
+									"key": "pageIndex",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25",
+									"disabled": true
+								},
+								{
+									"key": "patientUserId",
+									"value": "{{PATIENT_USER_ID}}",
+									"disabled": true
+								},
+								{
+									"key": "terraUserId",
+									"value": "{{TERRA_USER_ID}}",
+									"disabled": true
+								},
+								{
+									"key": "provider",
+									"value": "FITBIT",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete wearable device details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Wearable device detail record is deleted\", function () {\r",
+									"\r",
+									"    var expectedValue = true;\r",
+									"    var jsonRes = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/wearable-device-details/{{WEARABLE_DEVICE_DETAILS_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"wearable-device-details",
+								"{{WEARABLE_DEVICE_DETAILS_ID}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

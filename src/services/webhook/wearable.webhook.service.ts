@@ -321,7 +321,7 @@ export class TeraWebhookService {
 
             // Adding step count data in daily records
             var existingStepRecord = await this._stepCountRepo.getByRecordDateAndPatientUserId(new Date(recordDate),
-                dailyDomainModel.User.ReferenceId);
+                dailyDomainModel.User.ReferenceId, dailyDomainModel.User.Provider);
             if (existingStepRecord !== null) {
                 const domainModel = {
                     Provider   : dailyDomainModel.User.Provider,

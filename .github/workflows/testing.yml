@@ -16,5 +16,5 @@ jobs:
       
       - name: print
         run: |
-          eco "imagetag_value"
+          echo "imagetag_value"
     

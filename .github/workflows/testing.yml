@@ -27,4 +27,4 @@ jobs:
           image_tag+=v34.0.0 && image_tag+=_ && image_tag+=99459262
           imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)
           if [[ ${{ steps.checkTag.outputs.exists }} == 'false' ]]; then exit 1; fi
-          if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then exit 1; fi
+          if [[ -z "$imagetag_value" ]]; then exit 1; fi

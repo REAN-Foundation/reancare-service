@@ -12,7 +12,7 @@ jobs:
         uses: mukunku/tag-exists-action@v1.2.0
         id: checkTag
         with: 
-          tag: v34.0.0
+          tag: v32.1.0
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -24,7 +24,7 @@ jobs:
       - name:  Check ECR Iamge And Github tag 
         id: imageidvar
         run: |
-          image_tag+=v34.0.0 && image_tag+=_ && image_tag+=99459262
+          image_tag+=v32.1.0 && image_tag+=_ && image_tag+=99457633
           imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)
           if [[ ${{ steps.checkTag.outputs.exists }} == 'false' ]]; then exit 1; fi
           if [[ -z "$imagetag_value" ]]; then exit 1; fi

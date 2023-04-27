@@ -8,6 +8,12 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     steps:
+      - name: check tag
+        uses: mukunku/tag-exists-action@v1.2.0
+        id: checkTag
+        with: 
+          tag: v34.0.0
+      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -15,13 +21,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
           
-      - name:  Get ECR Image Tag
+      - name:  Check ECR Iamge And Github tag 
         id: imageidvar
         run: |
           image_tag+=v34.0.0 && image_tag+=_ && image_tag+=99459262
           imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)
-          echo this is image tag = $imagetag_value
-      - name: print
-        run: |
-          echo this is image tag = $imagetag_value
-    
+          if [[ ${{ steps.checkTag.outputs.exists }} == 'false' ]]; then exit 1; fi
+          if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then exit 1; fi

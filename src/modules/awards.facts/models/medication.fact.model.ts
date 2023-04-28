@@ -11,16 +11,16 @@ import {
 export class MedicationFact {
 
     @PrimaryGeneratedColumn('uuid')
-    id : string;
+    id: string;
 
     @Column({ type: 'uuid', nullable: false })
-    ContextReferenceId : string;
+    ContextReferenceId: string;
 
     @Column({ type: 'uuid', nullable: true })
-    RecordId : string;
+    RecordId: string;
 
     @Column({ type: 'varchar', length: 256, nullable: true })
-    DrugName : string;
+    DrugName: string;
 
     @Column({ nullable: true, default: false })
     Taken: boolean;
@@ -29,9 +29,9 @@ export class MedicationFact {
     Missed: boolean;
 
     @Column({ nullable: true })
-    RecordDate : Date;
+    RecordDate: Date;
 
     @Column({ nullable: true })
-    RecordDateStr : string;
+    RecordDateStr: string;
 
 }

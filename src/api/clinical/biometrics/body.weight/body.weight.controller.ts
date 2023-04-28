@@ -145,7 +145,7 @@ export class BodyWeightController extends BaseController {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit);
         }
-    }
+    };
 
     //#endregion
 

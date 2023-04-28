@@ -151,7 +151,7 @@ export class BloodGlucoseController extends BaseController {
                 model.BloodGlucose,
                 model.Unit);
         }
-    }
+    };
 
     //#endregion
 

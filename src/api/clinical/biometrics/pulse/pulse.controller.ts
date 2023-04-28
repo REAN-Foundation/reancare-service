@@ -148,7 +148,7 @@ export class PulseController extends BaseController{
             EHRAnalyticsHandler.addIntegerRecord(
                 patientUserId, recordId, EHRRecordTypes.Pulse, model.Pulse, model.Unit);
         }
-    }
+    };
 
     //#endregion
 

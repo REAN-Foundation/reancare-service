@@ -153,7 +153,7 @@ export class BloodOxygenSaturationController extends BaseController {
                 model.BloodOxygenSaturation,
                 model.Unit);
         }
-    }
+    };
 
     //#endregion
 

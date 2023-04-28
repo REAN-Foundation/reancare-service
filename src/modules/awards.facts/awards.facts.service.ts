@@ -102,7 +102,7 @@ export class AwardsFactsService {
                 await this.notifyAwardsService(eventType.id, model);
             }
         }
-    }
+    };
 
     private static getEventTypes = async () => {
         try {
@@ -123,7 +123,7 @@ export class AwardsFactsService {
         catch (error) {
             Logger.instance().log(`${error.message}`);
         }
-    }
+    };
 
     private static notifyAwardsService = async (eventTypeId: uuid, model: AwardsFact) => {
         try {
@@ -149,7 +149,7 @@ export class AwardsFactsService {
         catch (error) {
             Logger.instance().log(`${error.message}`);
         }
-    }
+    };
 
     //#endregion
 
@@ -180,7 +180,6 @@ export class AwardsFactsService {
             return true;
         }
         return await this.getEventTypes();
-    }
+    };
 
 }
-

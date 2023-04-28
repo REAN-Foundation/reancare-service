@@ -348,7 +348,7 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     //#endregion
 

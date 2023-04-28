@@ -206,7 +206,7 @@ export class AssessmentService {
             Next         : next,
         };
         return response;
-    }
+    };
 
     public getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto | string> => {
         const questionNode = await this._assessmentHelperRepo.getNodeById(questionId);
@@ -227,7 +227,7 @@ export class AssessmentService {
     public getNodeById = async (nodeId: uuid):
         Promise<CAssessmentListNode | CAssessmentMessageNode | CAssessmentQuestionNode> => {
         return this._assessmentHelperRepo.getNodeById(nodeId);
-    }
+    };
 
     public getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto | AssessmentQueryListDto> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
@@ -264,7 +264,7 @@ export class AssessmentService {
             }
         }
         return true;
-    }
+    };
 
     //#region Privates
 
@@ -565,7 +565,7 @@ export class AssessmentService {
             }
         }
         return queryDtos;
-    }
+    };
 
     private async returnAsCurrentMessageNode(
         assessment: AssessmentDto,

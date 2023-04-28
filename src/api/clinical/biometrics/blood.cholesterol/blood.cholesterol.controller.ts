@@ -167,7 +167,7 @@ export class BloodCholesterolController extends BaseController {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, EHRRecordTypes.Cholesterol_TriglycerideLevel, model.TriglycerideLevel);
         }
-    }
+    };
 
     //#endregion
 

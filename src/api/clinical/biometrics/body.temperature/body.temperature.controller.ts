@@ -147,7 +147,7 @@ export class BodyTemperatureController extends BaseController {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit);
         }
-    }
+    };
 
     //#endregion
 

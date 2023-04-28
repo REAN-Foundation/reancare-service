@@ -32,7 +32,7 @@ import { MedicationConsumptionSearchFilters } from "../../../domain.types/clinic
 @injectable()
 export class MedicationConsumptionService implements IUserActionService {
 
-    _ehrMedicationConsumptionStore: MedicationConsumptionStore = null
+    _ehrMedicationConsumptionStore: MedicationConsumptionStore = null;
 
     constructor(
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,

@@ -41,7 +41,7 @@
     "express-rate-limit": "^6.7.0",
     "express-validator": "^6.15.0",
     "feed": "^4.2.2",
-    "firebase-admin": "^11.4.1",
+    "firebase-admin": "^11.6.0",
     "generate-password": "^1.6.0",
     "googleapis": "^95.0.0",
     "helmet": "^5.1.1",

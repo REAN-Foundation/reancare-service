@@ -4,8 +4,6 @@ import { Helper } from "../../../common/helper";
 import { Logger } from "../../../common/logger";
 import { TimeHelper } from "../../../common/time.helper";
 import { IMedicationConsumptionRepo } from "../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
-import { IMedicationRepo } from "../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
-import { IPatientRepo } from "../../../database/repository.interfaces/users/patient/patient.repo.interface";
 import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
@@ -35,9 +33,7 @@ export class MedicationConsumptionService implements IUserActionService {
     _ehrMedicationConsumptionStore: MedicationConsumptionStore = null;
 
     constructor(
-        @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
-        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
@@ -481,7 +477,7 @@ export class MedicationConsumptionService implements IUserActionService {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    completeAction = async (actionId: uuid, completionTime?: Date, success?: boolean, actionDetails?: any)
+    completeAction = async (actionId: uuid, completionTime?: Date, success?: boolean)
         : Promise<boolean> => {
 
         if (success === undefined || success === false) {
@@ -511,7 +507,7 @@ export class MedicationConsumptionService implements IUserActionService {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cancelAction = async(actionId: string, cancellationTime?: Date, cancellationReason?: string): Promise<boolean> => {
+    cancelAction = async(actionId: string): Promise<boolean> => {
         return await this._medicationConsumptionRepo.cancelSchedule(actionId);
     };
 
@@ -520,7 +516,7 @@ export class MedicationConsumptionService implements IUserActionService {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateAction = async(actionId: string, updates: any): Promise<any> => {
+    updateAction = async(actionId: string): Promise<any> => {
         return await this.getById(actionId);
     };
 
@@ -539,18 +535,6 @@ export class MedicationConsumptionService implements IUserActionService {
         }
     }
 
-    private async cancelAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
-
-        var task = await this._userTaskRepo.getTaskForUserWithAction(
-            medConsumption.PatientUserId, medConsumption.id);
-        if (task === null) {
-            return;
-        }
-        var updatedTask = await this._userTaskRepo.cancelTask(task.id);
-        if (updatedTask === null) {
-            Logger.instance().log("Unabled to update task assocaited with consumption!");
-        }
-    }
 
     private parseDurationInHours = (duration: string): number => {
 

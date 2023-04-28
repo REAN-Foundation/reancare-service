@@ -1,6 +1,7 @@
 import express from 'express';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { MedicationConsumptionDomainModel }
     from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -15,6 +16,9 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { MedicationConsumptionValidator } from './medication.consumption.validator';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { TimeHelper } from '../../../../common/time.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,6 +64,23 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
             }
 
+            const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            for (var dto of dtos) {
+                const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+                AwardsFactsService.addOrUpdateMedicationFact({
+                    PatientUserId : dto.PatientUserId,
+                    Facts         : {
+                        DrugName : dto.DrugName,
+                        Taken    : true,
+                        Missed   : false,
+                    },
+                    RecordId      : dto.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDate.toISOString().split('T')[0]
+                });
+            }
+
             ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
                 MedicationConsumptions : dtos,
             });
@@ -82,6 +103,23 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
             }
 
+            const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            for (var dto of dtos) {
+                const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+                AwardsFactsService.addOrUpdateMedicationFact({
+                    PatientUserId : dto.PatientUserId,
+                    Facts         : {
+                        DrugName : dto.DrugName,
+                        Taken    : false,
+                        Missed   : true,
+                    },
+                    RecordId      : dto.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDate.toISOString().split('T')[0]
+                });
+            }
+
             ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {
                 MedicationConsumptions : dtos,
             });
@@ -102,6 +140,22 @@ export class MedicationConsumptionController {
             }
 
             await this.addEHRRecord(dto.PatientUserId, dto.id, dto);
+
+            const patientUserId = dto.PatientUserId;
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+            AwardsFactsService.addOrUpdateMedicationFact({
+                PatientUserId : dto.PatientUserId,
+                Facts         : {
+                    DrugName : dto.DrugName,
+                    Taken    : true,
+                    Missed   : false,
+                },
+                RecordId      : dto.id,
+                RecordDate    : tempDate,
+                RecordDateStr : tempDate.toISOString().split('T')[0]
+            });
+
             ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
                 MedicationConsumption : dto,
             });
@@ -120,6 +174,21 @@ export class MedicationConsumptionController {
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
+
+            const patientUserId = dto.PatientUserId;
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+            AwardsFactsService.addOrUpdateMedicationFact({
+                PatientUserId : dto.PatientUserId,
+                Facts         : {
+                    DrugName : dto.DrugName,
+                    Taken    : false,
+                    Missed   : true,
+                },
+                RecordId      : dto.id,
+                RecordDate    : tempDate,
+                RecordDateStr : tempDate.toISOString().split('T')[0]
+            });
 
             ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {
                 MedicationConsumption : dto,

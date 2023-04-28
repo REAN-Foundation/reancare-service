@@ -90,7 +90,7 @@ export class SequelizeInjector {
 
     static registerInjections(container: DependencyContainer) {
 
-        container.register('IDatabaseConnector', DatabaseConnector_Sequelize);
+        container.register('IPrimaryDatabaseConnector', DatabaseConnector_Sequelize);
 
         container.register('IPersonRepo', PersonRepo);
         container.register('IUserRepo', UserRepo);

@@ -20,6 +20,8 @@ export interface FoodConsumptionDto {
     ImageResourceId?   : string;
     StartTime?         : Date;
     EndTime?           : Date;
+    CreatedAt?         : Date;
+    UpdatedAt?         : Date;
 }
 
 export interface FoodConsumptionEventDto {

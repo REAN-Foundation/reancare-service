@@ -6,9 +6,9 @@ import sys
 ########################################################################################
 
 cwd = "./"
-defaultDatabaseUrl = "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
-fromUrl = "mysql://root:root@localhost:3306/reancare_dev"
-toUrl = "mysql://root:root@localhost:3306/reancare_uat"
+PRISMA_DEFAULT_DB_URL = "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public" #Please do not modify this
+fromUrl = "mysql://root:root@localhost:3306/reancare_local"
+toUrl = "mysql://root:root@localhost:3306/reancare_devx"
 localUrl = "mysql://root:root@localhost:3306/temp"
 cwd = "D:/current_projects/rean/db-migration"
 ########################################################################################
@@ -166,7 +166,7 @@ def createProjectSetup(dbInfo):
     try:
         createProjectDirectory(dbInfo)
         createPrismaProjectSetup(dbInfo)
-        setupEnv(dbInfo, defaultDatabaseUrl, dbInfo['DatabaseUrl'])
+        setupEnv(dbInfo, PRISMA_DEFAULT_DB_URL, dbInfo['DatabaseUrl'])
         converDbSchemaToPrsimaSchema(dbInfo)
         applyMigration(dbInfo)
     except Exception as e:

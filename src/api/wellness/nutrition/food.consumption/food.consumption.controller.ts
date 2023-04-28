@@ -8,8 +8,12 @@ import { FoodConsumptionValidator } from './food.consumption.validator';
 import { BaseController } from '../../../base.controller';
 import { FoodConsumptionDomainModel }
     from '../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.domain.model';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +46,28 @@ export class FoodConsumptionController extends BaseController {
             }
 
             this.addEHRRecord(model.PatientUserId, foodConsumption.id, model);
+
+            if (foodConsumption.UserResponse) {
+                var timestamp = foodConsumption.EndTime ?? foodConsumption.StartTime;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(foodConsumption.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateNutritionResponseFact({
+                    PatientUserId : foodConsumption.PatientUserId,
+                    Facts         : {
+                        UserResponse : foodConsumption.UserResponse,
+                    },
+                    RecordId      : foodConsumption.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
+
             ResponseHandler.success(request, response, 'Nutrition record created successfully!', 201, {
                 FoodConsumption : foodConsumption,
             });
@@ -157,17 +183,35 @@ export class FoodConsumptionController extends BaseController {
 
             await this.setContext('Nutrition.FoodConsumption.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Nutrition record not found.');
             }
-            const updated = await this._service.update(id, domainModel);
+            const updated = await this._service.update(id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update nutrition record!');
             }
-
+            if (updated.UserResponse !== null) {
+                var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+                AwardsFactsService.addOrUpdateNutritionResponseFact({
+                    PatientUserId : updated.PatientUserId,
+                    Facts         : {
+                        UserResponse : updated.UserResponse,
+                    },
+                    RecordId      : updated.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr
+                });
+            }
             ResponseHandler.success(request, response, 'Nutrition record updated successfully!', 200, {
                 FoodConsumption : updated,
             });

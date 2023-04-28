@@ -535,7 +535,6 @@ export class MedicationConsumptionService implements IUserActionService {
         }
     }
 
-
     private parseDurationInHours = (duration: string): number => {
 
         var durationInHours = 0;

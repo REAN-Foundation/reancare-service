@@ -8,7 +8,7 @@ import { HealthProfileService } from '../../../../services/users/patient/health.
 import { Loader } from '../../../../startup/loader';
 import { HealthProfileValidator } from './health.profile.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -7,8 +7,8 @@ import { Loader } from '../../../../startup/loader';
 import { BodyTemperatureValidator } from './body.temperature.validator';
 import { BaseController } from '../../../base.controller';
 import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -147,7 +147,7 @@ export class BodyTemperatureController extends BaseController {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit);
         }
-    }
+    };
 
     //#endregion
 

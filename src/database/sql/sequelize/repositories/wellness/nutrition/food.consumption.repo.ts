@@ -30,8 +30,6 @@ import { HelperRepo } from '../../common/helper.repo';
 
 export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
-    //#region Public
-
     public create = async (createModel: FoodConsumptionDomainModel):
     Promise<FoodConsumptionDto> => {
         try {
@@ -55,6 +53,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             };
 
             const foodConsumption = await FoodConsumption.create(entity);
+
             return await FoodConsumptionMapper.toDto(foodConsumption);
 
         } catch (error) {
@@ -300,6 +299,9 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             }
             if (updateModel.EndTime != null) {
                 foodConsumption.EndTime = updateModel.EndTime;
+            }
+            if (updateModel.UserResponse != null) {
+                foodConsumption.UserResponse = updateModel.UserResponse;
             }
 
             await foodConsumption.save();
@@ -669,6 +671,78 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         return stats;
     }
 
-    //#endregion
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await FoodConsumption.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    UserResponse  : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId      : x.id,
+                    PatientUserId : x.PatientUserId,
+                    UserResponse  : x.UserResponse,
+                    RecordDateStr : dayStr,
+                    RecordDate    : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await FoodConsumption.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    UserResponse  : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId      : x.id,
+                    PatientUserId : x.PatientUserId,
+                    UserResponse  : x.UserResponse,
+                    RecordDateStr : dayStr,
+                    RecordDate    : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
 }

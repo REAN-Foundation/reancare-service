@@ -37,7 +37,6 @@ jobs:
           
   Github-ECR-Tag-Check:
     runs-on: ubuntu-latest
-    
     steps:
       - name: check tag
         uses: mukunku/tag-exists-action@v1.2.0

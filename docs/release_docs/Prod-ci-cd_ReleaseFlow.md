@@ -2,7 +2,7 @@
 
 Prod-CI-CD workflow can be use or trigger by Pushing code into main branch.
 [prod-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/PROD-ci-cd_workflow.png?raw=true)
-[prod](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/prod-ci-cd_example.png?raw=true)
+![prod](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/prod-ci-cd_example.png?raw=true)
 ### JOBS
 
 #### Publish-Release

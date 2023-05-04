@@ -11,8 +11,6 @@ There are two ways to use or trigger uat-CI-CD workflow
 #### CodeScan-ESLint
 The CodeScan ESLint will be performing the following steps.
 
-![codescan-eslint](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/codescan.png?raw=true)
-
 * This job use static code analysis tool which identify problematic patterns found in application source code.
 * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job.
 

@@ -14,6 +14,7 @@ import Medication from '../../../models/clinical/medication/medication.model';
 import UserTask from '../../../models/users/user/user.task.model';
 import Patient from '../../../models/users/patient/patient.model';
 import User from '../../../models/users/user/user.model';
+import { HelperRepo } from '../../common/helper.repo';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -155,6 +156,78 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
+    getAllTakenBefore = async (patientUserId: uuid, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await MedicationConsumption.findAll({
+                where : {
+                    PatientUserId   : patientUserId,
+                    TimeScheduleEnd : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId      : x.id,
+                    PatientUserId : x.PatientUserId,
+                    Taken         : x.IsTaken,
+                    DrugName      : x.DrugName,
+                    RecordDateStr : dayStr,
+                    RecordDate    : tempDate,
+                };
+            });
+
+            return records_;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllTakenBetween = async (patientUserId: uuid, from: Date, to: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await MedicationConsumption.findAll({
+                where : {
+                    PatientUserId   : patientUserId,
+                    TimeScheduleEnd : {
+                        [Op.gte] : from,
+                        [Op.lte] : to,
+                    }
+                }
+            });
+
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId      : x.id,
+                    PatientUserId : x.PatientUserId,
+                    Taken         : x.IsTaken,
+                    DrugName      : x.DrugName,
+                    RecordDateStr : dayStr,
+                    RecordDate    : tempDate,
+                };
+            });
+
+            return records_;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults> => {
         try {
             const search = { where: {} };
@@ -174,9 +247,13 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     [Op.gte] : filters.DateFrom,
                     [Op.lte] : filters.DateTo,
                 };
-            } else {
-                search.where['TimeScheduleEnd'] = {
-                    [Op.gte] : new Date(),
+            } else if (filters.DateFrom != null && filters.DateTo == null) {
+                search.where['TimeScheduleStart'] = {
+                    [Op.gte] : filters.DateFrom,
+                };
+            } else if (filters.DateFrom == null && filters.DateTo != null) {
+                search.where['TimeScheduleStart'] = {
+                    [Op.lte] : filters.DateTo,
                 };
             }
 

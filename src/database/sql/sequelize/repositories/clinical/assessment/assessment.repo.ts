@@ -9,6 +9,7 @@ import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneo
 import { IAssessmentRepo } from '../../../../../repository.interfaces/clinical/assessment/assessment.repo.interface';
 import { AssessmentMapper } from '../../../mappers/clinical/assessment/assessment.mapper';
 import Assessment from '../../../models/clinical/assessment/assessment.model';
+import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -48,9 +49,19 @@ export class AssessmentRepo implements IAssessmentRepo {
 
     public getById = async (id: uuid): Promise<AssessmentDto> => {
         try {
-            const assessment = await Assessment.findByPk(id);
+            const assessment = await Assessment.findOne({
+                where : {
+                    id : id
+                },
+                include : [
+                    {
+                        model    : AssessmentTemplate,
+                        as       : 'AssessmentTemplate',
+                        required : true,
+                    }
+                ]
+            });
             return AssessmentMapper.toDto(assessment);
-
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -59,7 +70,16 @@ export class AssessmentRepo implements IAssessmentRepo {
 
     public getForPatient = async (patientUserId: uuid): Promise<AssessmentDto[]> => {
         try {
-            const search = { where: {} };
+            const search = {
+                where   : {},
+                include : [
+                    {
+                        model    : AssessmentTemplate,
+                        as       : 'AssessmentTemplate',
+                        required : true,
+                    }
+                ]
+            };
             search.where['PatientUserId'] = { [Op.eq]: patientUserId };
             const foundResults = await Assessment.findAll(search);
             const dtos: AssessmentDto[] = [];
@@ -117,7 +137,7 @@ export class AssessmentRepo implements IAssessmentRepo {
 
             await assessment.save();
 
-            return AssessmentMapper.toDto(assessment);
+            return await this.getById(id);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -128,7 +148,16 @@ export class AssessmentRepo implements IAssessmentRepo {
     public search = async (filters: AssessmentSearchFilters): Promise<AssessmentSearchResults> => {
 
         try {
-            const search = { where: {} };
+            const search = {
+                where   : {},
+                include : [
+                    {
+                        model    : AssessmentTemplate,
+                        as       : 'AssessmentTemplate',
+                        required : true,
+                    }
+                ]
+            };
 
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = filters.PatientUserId;
@@ -210,6 +239,13 @@ export class AssessmentRepo implements IAssessmentRepo {
                     Sequence            : sequence,
                     ScheduledDateString : scheduledDate
                 },
+                include : [
+                    {
+                        model    : AssessmentTemplate,
+                        as       : 'AssessmentTemplate',
+                        required : true,
+                    }
+                ]
             });
             return AssessmentMapper.toDto(assessment);
         } catch (error) {
@@ -224,6 +260,13 @@ export class AssessmentRepo implements IAssessmentRepo {
                 where : {
                     ParentActivityId : activityId,
                 },
+                include : [
+                    {
+                        model    : AssessmentTemplate,
+                        as       : 'AssessmentTemplate',
+                        required : true,
+                    }
+                ]
             });
             return AssessmentMapper.toDto(assessment);
         } catch (error) {
@@ -238,6 +281,13 @@ export class AssessmentRepo implements IAssessmentRepo {
                 where : {
                     UserTaskId : taskId,
                 },
+                include : [
+                    {
+                        model    : AssessmentTemplate,
+                        as       : 'AssessmentTemplate',
+                        required : true,
+                    }
+                ]
             });
             return AssessmentMapper.toDto(assessment);
         } catch (error) {
@@ -298,7 +348,7 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     //#endregion
 

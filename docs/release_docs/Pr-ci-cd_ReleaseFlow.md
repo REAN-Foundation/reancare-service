@@ -1,6 +1,6 @@
 ## PR-ci-cd
  
- PR-ci-cd (Pull Request ci-cd) can be trigger by creating a pull request to merge into develop branch.
+ PR-ci-cd can be trigger by creating a pull request from ``` Feature/* ``` to merge into develop branch.
  ![PR-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/pr-ci-cd_workflow.png?raw=true)
  
 ### JOBS

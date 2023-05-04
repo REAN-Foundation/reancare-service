@@ -1,7 +1,7 @@
 # AHA Prod Release Workflow
 Explaination of AHA Prod Release Workflow.
 ![AHA-PROD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-PROD_Workflow.png?raw=true)
-[aha-prod-ci-cd](https://github.com/REAN-Foundation/reancare-service/blob/feature/aha_fix/.github/workflows/aha-prod-ci-cd.yml)
+![AHA-PROD-JOB](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/aha_workflow.png?raw=true)
 
 ## AHA-PROD-ci-cd
 

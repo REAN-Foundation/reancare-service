@@ -6,8 +6,7 @@
     },
     "Database" : {
         "Type": "SQL",
-        "ORM": "Sequelize",
-        "Flavour": "MySQL"
+        "ORM": "Sequelize"
     },
     "Ehr" : {
         "Enabled": false,
@@ -38,7 +37,7 @@
     },
     "Careplans" : [
         {
-            "Enabled" : true,
+            "Enabled" : false,
             "Provider": "AHA",
             "Service": "AhaCarePlanService",
             "Plans": [

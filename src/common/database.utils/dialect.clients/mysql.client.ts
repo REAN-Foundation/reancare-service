@@ -1,48 +1,48 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mysql = require('mysql2');
-import { Logger } from '../../../../common/logger';
-import { DbConfig } from '../database.config';
+import { Logger } from '../../logger';
+import { DatabaseSchemaType, databaseConfig } from '../database.config';
+import { IDatabaseClient } from './database.client.interface';
 
-////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
-export class MysqlClient {
-    
-    public static createDb = async () => {
+export class MysqlClient implements IDatabaseClient {
+
+    public createDb = async (schemaType: DatabaseSchemaType): Promise<boolean> => {
         try {
-            const config = DbConfig.config;
-
+            const config = databaseConfig(schemaType);
             //var query = `CREATE DATABASE ${config.database} CHARACTER SET utf8 COLLATE utf8_general_ci;`;
-            const query = `CREATE DATABASE ${config.database}`;
-            await MysqlClient.executeQuery(query);
+            const query = `CREATE DATABASE ${config.DatabaseName}`;
+            return await this.executeQuery(schemaType, query);
         } catch (error) {
             Logger.instance().log(error.message);
         }
     };
 
-    public static dropDb = async () => {
+    public dropDb = async (schemaType: DatabaseSchemaType): Promise<boolean> => {
         try {
-            const config = DbConfig.config;
-            const query = `DROP DATABASE IF EXISTS ${config.database}`;
-            await MysqlClient.executeQuery(query);
+            const config = databaseConfig(schemaType);
+            const query = `DROP DATABASE IF EXISTS ${config.DatabaseName}`;
+            return await this.executeQuery(schemaType, query);
         } catch (error) {
             Logger.instance().log(error.message);
         }
     };
 
-    public static executeQuery = (query): Promise<boolean> => {
+    public executeQuery = (schemaType: DatabaseSchemaType, query: string): Promise<boolean> => {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise((resolve, reject) => {
             try {
-                const config = DbConfig.config;
-    
+                const config = databaseConfig(schemaType);
+
                 const connection = mysql.createConnection({
-                    host     : config.host,
-                    user     : config.username,
-                    password : config.password,
+                    host     : config.Host,
+                    user     : config.Username,
+                    password : config.Password,
                 });
-    
+
                 connection.connect(function (err) {
                     if (err) {
                         throw err;
@@ -69,7 +69,7 @@ export class MysqlClient {
                 Logger.instance().log(error.message);
             }
         });
-        
+
     };
 
 }

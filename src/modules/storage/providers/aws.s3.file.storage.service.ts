@@ -179,7 +179,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         const url = await getSignedUrl(s3, command, { expiresIn: durationInMinutes * 60 });
 
         return url;
-    }
+    };
 
     //#endregion
 

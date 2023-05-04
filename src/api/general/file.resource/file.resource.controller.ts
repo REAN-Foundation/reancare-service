@@ -17,6 +17,7 @@ import { FileResourceValidator } from './file.resource.validator';
 import AdmZip = require ('adm-zip');
 import { Helper } from '../../../common/helper';
 import { FileResourceUploadDomainModel } from '../../../domain.types/general/file.resource/file.resource.domain.model';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -198,6 +199,8 @@ export class FileResourceController {
                 await this._authorizer.authorize(request, response);
             }
 
+            Logger.instance().log(`Download request for Resource Id:: ${metadata.ResourceId}
+                and Version:: ${metadata.Version}`);
             const localDestination = await this._service.downloadByVersionName(
                 metadata.ResourceId,
                 metadata.Version);

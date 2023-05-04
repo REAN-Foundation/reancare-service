@@ -18,6 +18,9 @@
   "author": "Kiran Kharade",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.325.0",
+    "@aws-sdk/lib-storage": "^3.315.0",
+    "@aws-sdk/s3-request-presigner": "^3.316.0",
     "@types/adm-zip": "^0.5.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.17",
@@ -28,7 +31,6 @@
     "adm-zip": "^0.5.10",
     "ansi-regex": "^6.0.1",
     "approx-string-match": "^1.1.0",
-    "aws-sdk": "^2.1341.0",
     "async": "^3.2.4",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",

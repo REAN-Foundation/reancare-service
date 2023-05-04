@@ -2,6 +2,8 @@
 export type NotThere    = null | undefined | '';
 export type Optional<T> = T | NotThere;
 
+export type DatabaseDialect = 'postgres' | 'mysql' | 'mongodb';
+
 export type BloodGroup    = 'A+'| 'B+' | 'O+' | 'AB+' | 'A-' | 'B-' |'O-' | 'AB-' | null;
 export type RaceType    = 'American Indian/Alaskan Native' | 'Black/African American' | 'Native Hawaiian or Other Pacific Islander' | 'White' | null;
 export type EthnicityType    = 'Hispanic/Latino'| 'Not Hispanic/Latino' | 'Prefer not to say' | null;

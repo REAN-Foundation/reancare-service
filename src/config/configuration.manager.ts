@@ -6,7 +6,6 @@ import {
     AuthorizationType,
     CareplanConfig,
     Configurations,
-    DatabaseFlavour,
     DatabaseORM,
     DatabaseType,
     EHRProvider,
@@ -36,9 +35,8 @@ export class ConfigurationManager {
                 Authorization  : configuration.Auth.Authorization as AuthorizationType,
             },
             Database : {
-                Type    : configuration.Database.Type as DatabaseType,
-                ORM     : configuration.Database.ORM as DatabaseORM,
-                Flavour : configuration.Database.Flavour as DatabaseFlavour,
+                Type : configuration.Database.Type as DatabaseType,
+                ORM  : configuration.Database.ORM as DatabaseORM,
             },
             Ehr : {
                 Enabled       : configuration.Ehr.Enabled,
@@ -95,10 +93,6 @@ export class ConfigurationManager {
 
     public static DatabaseORM = (): DatabaseORM => {
         return ConfigurationManager._config.Database.ORM;
-    };
-
-    public static DatabaseFlavour = (): DatabaseFlavour => {
-        return ConfigurationManager._config.Database.Flavour;
     };
 
     public static EhrEnabled = (): boolean => {
@@ -178,18 +172,14 @@ export class ConfigurationManager {
 
         if (ConfigurationManager._config.Database.Type === 'SQL') {
             var orm = ConfigurationManager._config.Database.ORM;
-            var flavour = ConfigurationManager._config.Database.Flavour;
-            if (orm !== 'Sequelize' && orm !== 'Knex') {
+            if (orm !== 'Sequelize' && orm !== 'TypeORM') {
                 throw new Error('Database configuration error! - Unspported/non-matching ORM');
-            }
-            if (flavour !== 'MySQL' && flavour !== 'PostGreSQL') {
-                throw new Error('Database configuration error! - Unspported/non-matching databse flavour');
             }
         }
         if (ConfigurationManager._config.Database.Type === 'NoSQL') {
             var orm = ConfigurationManager._config.Database.ORM;
-            var flavour = ConfigurationManager._config.Database.Flavour;
-            if (flavour === 'MongoDB') {
+            const dialect = process.env.DB_DIALECT;
+            if (dialect === 'MongoDB') {
                 if (orm !== 'Mongoose') {
                     throw new Error('Database configuration error! - Unspported/non-matching ORM');
                 }

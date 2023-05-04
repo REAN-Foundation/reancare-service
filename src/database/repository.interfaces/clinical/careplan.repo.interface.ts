@@ -64,6 +64,6 @@ export interface ICareplanRepo {
 
     getAllReanActivities(): Promise<CareplanActivityDto[]>;
 
-    deleteFutureCareplanTask(enrollment: EnrollmentDto): Promise<number>;
+    deleteFutureCareplanTask(enrollment): Promise<number>;
 
 }

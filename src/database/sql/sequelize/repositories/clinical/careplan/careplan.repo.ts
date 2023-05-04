@@ -482,12 +482,10 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public deleteFutureCareplanTask = async (enrollment: EnrollmentDomainModel): Promise<number> => {
+    public deleteFutureCareplanTask = async (enrollment ): Promise<number> => {
         try {
             var selector = {
                 where : {
-                    Provider      : enrollment.Provider,
-                    PlanCode      : enrollment.PlanCode,
                     PatientUserId : enrollment.PatientUserId,
                     ScheduledAt   : { [Op.gte]: new Date() }
                 }

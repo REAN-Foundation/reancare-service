@@ -81,4 +81,12 @@ export class UserTaskService {
         return summaryDto;
     };
 
+    getFutureTaskByUserId = async (userId: string): Promise<number> => {
+        const careplanActivity = {
+            PatientUserId : userId
+        };
+        var dto = await this._careplanRepo.deleteFutureCareplanTask(careplanActivity);
+        return dto;
+    };
+
 }

@@ -9,8 +9,7 @@ import { IBloodPressureRepo } from "../../database/repository.interfaces/clinica
 import { IBloodOxygenSaturationRepo } from "../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface";
 import { IBloodGlucoseRepo } from "../../database/repository.interfaces/clinical/biometrics/blood.glucose.repo.interface";
 import { AuthDomainModel } from "../../domain.types/webhook/auth.domain.model";
-import { IPatientRepo } from "../../database/repository.interfaces/users/patient/patient.repo.interface";
-import { ReAuthDomainModel } from "../../domain.types/webhook/reauth.domain.model";
+import { DeAuthDomainModel, ReAuthDomainModel } from "../../domain.types/webhook/reauth.domain.model";
 import { NutritionDomainModel } from "../../domain.types/webhook/nutrition.domain.model";
 import { FoodConsumptionEvents } from "../../domain.types/wellness/nutrition/food.consumption/food.consumption.types";
 import { IFoodConsumptionRepo } from "../../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
@@ -23,6 +22,8 @@ import { IStepCountRepo } from "../../database/repository.interfaces/wellness/da
 import { DailyDomainModel } from "../../domain.types/webhook/daily.domain.model";
 import { IBodyWeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { IBodyHeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
+import { Logger } from "../../common/logger";
+import { IWearableDeviceDetailsRepo } from "../..//database/repository.interfaces/webhook/webhook.wearable.device.details.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,13 +38,13 @@ export class TeraWebhookService {
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
         @inject('IBloodOxygenSaturationRepo') private _bloodOxygenSaturationRepo: IBloodOxygenSaturationRepo,
         @inject('IBloodGlucoseRepo') private _bloodGlucoseRepo: IBloodGlucoseRepo,
-        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
         @inject('ICalorieBalanceRepo') private _calorieBalanceRepo: ICalorieBalanceRepo,
         @inject('IWaterConsumptionRepo') private _waterConsumptionRepo: IWaterConsumptionRepo,
         @inject('IStepCountRepo') private _stepCountRepo: IStepCountRepo,
         @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
         @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
+        @inject('IWearableDeviceDetailsRepo') private _webhookWearableDeviceDetailsRepo: IWearableDeviceDetailsRepo
     ) {
         if (ConfigurationManager.EhrEnabled()) {
             this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
@@ -57,14 +58,50 @@ export class TeraWebhookService {
 
     auth = async (authDomainModel: AuthDomainModel) => {
 
-        await this._patientRepo.terraAuth( authDomainModel.User.ReferenceId, authDomainModel);
-
+        if (authDomainModel.User.ReferenceId) {
+            const entity = {
+                PatientUserId     : authDomainModel.User.ReferenceId,
+                Provider          : authDomainModel.User.Provider,
+                TerraUserId       : authDomainModel.User.UserId,
+                Scopes            : authDomainModel.User.Scopes,
+                AuthenticatedAt   : new Date(),
+                DeauthenticatedAt : null
+            };
+            await this._webhookWearableDeviceDetailsRepo.create(entity);
+        } else {
+            Logger.instance().log(`Reference id is null for ${authDomainModel.User.UserId} terra user id`);
+        }
     };
 
     reAuth = async (reAuthDomainModel: ReAuthDomainModel) => {
+        if (reAuthDomainModel.NewUser.ReferenceId) {
+            const currentUser = await this._webhookWearableDeviceDetailsRepo.getWearableDeviceDetails(
+                reAuthDomainModel.OldUser.UserId, reAuthDomainModel.OldUser.Provider );
+            const entityToUpdate = {
+                PatientUserId     : reAuthDomainModel.NewUser.ReferenceId,
+                Provider          : reAuthDomainModel.NewUser.Provider,
+                TerraUserId       : reAuthDomainModel.NewUser.UserId,
+                Scopes            : reAuthDomainModel.NewUser.Scopes,
+                AuthenticatedAt   : new Date(),
+                DeauthenticatedAt : null
+            };
+            await this._webhookWearableDeviceDetailsRepo.update(currentUser.id, entityToUpdate);
+        } else {
+            Logger.instance().log(`Reference id is null for ${reAuthDomainModel.NewUser.UserId} terra user id`);
+        }
+    };
 
-        await this._patientRepo.terraReAuth( reAuthDomainModel.NewUser.ReferenceId, reAuthDomainModel);
-
+    deAuth = async (deAuthDomainModel: DeAuthDomainModel) => {
+        if (deAuthDomainModel) {
+            const currentUser = await this._webhookWearableDeviceDetailsRepo.getWearableDeviceDetails(
+                deAuthDomainModel.User.UserId, deAuthDomainModel.User.Provider );
+            const entityToUpdate = {
+                DeauthenticatedAt : new Date()
+            };
+            await this._webhookWearableDeviceDetailsRepo.update(currentUser.id, entityToUpdate);
+        } else {
+            Logger.instance().log(`Reference id is null for ${deAuthDomainModel.User.UserId} terra user id`);
+        }
     };
 
     nutrition = async (nutritionDomainModel: NutritionDomainModel) => {
@@ -205,29 +242,27 @@ export class TeraWebhookService {
 
             const measurementSamples = body.MeasurementsData.Measurements;
             measurementSamples.forEach(async measurement => {
-                const bodyHeightDomainModel = {
-                    PatientUserId : bodyDomainModel.User.ReferenceId,
-                    BodyHeight    : measurement.HeightCm,
-                    Unit          : "cm",
-                    RecordDate    : new Date(measurement.MeasurementTime)
-                };
-                await this._bodyHeightRepo.create(bodyHeightDomainModel);
+                if (measurement.HeightCm) {
+                    const bodyHeightDomainModel = {
+                        PatientUserId : bodyDomainModel.User.ReferenceId,
+                        BodyHeight    : measurement.HeightCm,
+                        Unit          : "cm",
+                        RecordDate    : new Date(measurement.MeasurementTime)
+                    };
+                    await this._bodyHeightRepo.create(bodyHeightDomainModel);
+                }
 
-                const bodyWeightDomainModel = {
-                    PatientUserId : bodyDomainModel.User.ReferenceId,
-                    BodyWeight    : measurement.WeightKg,
-                    Unit          : "Kg",
-                    RecordDate    : new Date(measurement.MeasurementTime)
-                };
-                await this._bodyWeightRepo.create(bodyWeightDomainModel);
+                if (measurement.WeightKg) {
+                    const bodyWeightDomainModel = {
+                        PatientUserId : bodyDomainModel.User.ReferenceId,
+                        BodyWeight    : measurement.WeightKg,
+                        Unit          : "Kg",
+                        RecordDate    : new Date(measurement.MeasurementTime)
+                    };
+                    await this._bodyWeightRepo.create(bodyWeightDomainModel);
+                }
             });
         });
-    };
-
-    sleep = async (reAuthDomainModel: ReAuthDomainModel) => {
-
-        await this._patientRepo.terraReAuth( reAuthDomainModel.NewUser.ReferenceId, reAuthDomainModel);
-
     };
 
     daily = async (dailyDomainModel: DailyDomainModel) => {
@@ -286,7 +321,7 @@ export class TeraWebhookService {
 
             // Adding step count data in daily records
             var existingStepRecord = await this._stepCountRepo.getByRecordDateAndPatientUserId(new Date(recordDate),
-                dailyDomainModel.User.ReferenceId);
+                dailyDomainModel.User.ReferenceId, dailyDomainModel.User.Provider);
             if (existingStepRecord !== null) {
                 const domainModel = {
                     Provider   : dailyDomainModel.User.Provider,

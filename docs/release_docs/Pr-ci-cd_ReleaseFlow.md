@@ -8,14 +8,12 @@
  These are the jobs used in PR-ci-cd workflow
  
  #### CodeScan-ESLint
-  This is the how CodeScan-ESLint job looks like
   In this job we are analyzes the code developer wrote against some rules for stylistic or programmatic errors.
  
   * This job use static code analysis tool which identify problematic patterns found in application source code.
   * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
  
  #### Build-Docker-Image
- This is how Build-Docker-Image job looks like
  In this job we are validating whether ECR image building properly or not.
  
   * This job create a docker image with image tag using branch name and short SHA of commit.

@@ -11,7 +11,7 @@ This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and d
 
 #### CodeScan-ESLint
 
-* This job use static code analysis tool which identify problematic patterns found in JavaScript code.
+* This job use static code analysis tool which identify problematic patterns found in application source code.
 * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job.
 
 #### GitHub-ECR-Tag-Check

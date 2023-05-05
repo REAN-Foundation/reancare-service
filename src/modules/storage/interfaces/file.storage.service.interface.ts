@@ -12,7 +12,7 @@ export interface IFileStorageService {
 
     rename(existingStorageKey: string, newFileName: string): Promise<boolean>;
 
-    getShareableLink(storageKey: string, durationInMinutes: number): string;
+    getShareableLink(storageKey: string, durationInMinutes: number): Promise<string>;
 
     delete(storageKey: string): Promise<boolean>;
 }

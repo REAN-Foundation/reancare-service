@@ -64,7 +64,7 @@
     "sleep": "^6.3.0",
     "timezone-support": "^3.1.0",
     "tsyringe": "^4.7.0",
-    "twilio": "^3.84.1",
+    "twilio": "^4.0.0",
     "typeorm": "^0.3.12",
     "uuid": "^8.3.2",
     "uuid-apikey": "^1.5.3"

@@ -387,7 +387,7 @@ export class AssessmentController extends BaseController{
             ResponseHandler.handleError(request, response, error);
         }
 
-    }
+    };
 
     //#endregion
 

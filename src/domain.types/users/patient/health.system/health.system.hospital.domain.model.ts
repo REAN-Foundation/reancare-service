@@ -4,4 +4,6 @@ export interface HealthSystemHospitalDomainModel {
     id?             : uuid,
     HealthSystemId? : uuid;
     Name?           : string;
+    Tags?           : string[];
+
 }

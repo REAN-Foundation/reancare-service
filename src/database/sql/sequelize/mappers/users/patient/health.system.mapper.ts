@@ -1,8 +1,8 @@
 import HealthSystem from '../../../models/users/patient/health.system.model';
 import { HealthSystemDto } from '../../../../../../domain.types/users/patient/health.system/health.system.dto';
 import HealthSystemHospital from '../../../models/users/patient/health.system.hospital.model';
-import { HealthSystemHospitalDto } from
-    '../../../../../../domain.types/users/patient/health.system/health.system.hospital.dto';
+import { HealthSystemHospitalDto }
+    from '../../../../../../domain.types/users/patient/health.system/health.system.hospital.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +16,7 @@ export class HealthSystemMapper {
         const dto: HealthSystemDto = {
             id   : model.id,
             Name : model.Name,
+            Tags : model.Tags ? JSON.parse(model.Tags) : [],
         };
         return dto;
     };
@@ -29,6 +30,8 @@ export class HealthSystemMapper {
             id             : model.id,
             HealthSystemId : model.HealthSystemId,
             Name           : model.Name,
+            Tags           : model.Tags ? JSON.parse(model.Tags) : [],
+
         };
         return dto;
     };

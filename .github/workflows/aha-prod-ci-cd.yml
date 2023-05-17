@@ -11,37 +11,84 @@ name: AHA-PROD-CI-CD
 on:
   # Triggers the workflow on push events but only for the develop branch
   workflow_dispatch:
+    inputs:
+      Tag_name:
+        description: Tag name of your release(please include "v" if needed)
+        required: true
 
 jobs:
+
+
+  Github-ECR-Tag-Check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: check tag
+        uses: mukunku/tag-exists-action@v1.2.0
+        id: checkTag
+        with: 
+          tag: ${{ github.event.inputs.Tag_name }}
+      
+      - name: Get release
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        id: result_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+           tag: ${{ github.event.inputs.Tag_name }}
+           repo: REAN-Foundation/reancare-service
+           
+      - name: Configure AWS credentials
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name:  Get ECR Image Tag
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        id: imageidvar
+        run: |
+          image_tag+=${{ steps.result_release.outputs.tag_name }} && image_tag+=_ && image_tag+=${{ steps.result_release.outputs.id }}
+          echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
+            
+      - name: ECR Image and Github Tag Check
+        run: |
+          if [[ ${{ steps.checkTag.outputs.exists }} == 'false' ]]; then exit 1; fi
+          if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then exit 1; fi
+    
+    outputs:
+      release_name: ${{ steps.result_release.outputs.tag_name }}
+      release_id: ${{ steps.result_release.outputs.id }}
+
+
+
   Deploy-ECS:
+    needs: Github-ECR-Tag-Check
     environment: aha-prod
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+        
+      - name: Get release
+        id: result_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+           tag: ${{ github.event.inputs.Tag_name }}
+           repo: REAN-Foundation/reancare-service
+      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Declare some variables
-        id: vars
-        shell: bash
-        run: |
-          echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")" >> $GITHUB_OUTPUT
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "repo_name=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')" >> $GITHUB_OUTPUT
-
-      - name: Another step
-        run: |
-          echo "Branch: ${{ steps.vars.outputs.branch }}"
-          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
-          echo "Repo: ${{ steps.vars.outputs.repo_name }}"
-
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -58,21 +105,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v3
-        with:
-          context: ./
-          file: ./Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: public.ecr.aws/i9y2d4u3/reancare:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
-
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} \
@@ -84,7 +116,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: default
-          image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          image: public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_name }}_${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

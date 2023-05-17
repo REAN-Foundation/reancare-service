@@ -642,29 +642,42 @@ export class Seeder {
     };
 
     public seedHealthSystemsAndHospitals = async () => {
+        
 
-        const count = await this._healthSystemRepo.totalCount();
-        if (count > 0) {
-            Logger.instance().log("Health systems and associated hospitals have already been seeded!");
-            return;
-        }
+        const arr = seededHealthSystemsAndHospitals['default'];
 
         Logger.instance().log('Seeding health systems and associated hospitals...');
 
-        const arr = seededHealthSystemsAndHospitals['default'];
 
         for (let i = 0; i < arr.length; i++) {
 
             var t = arr[i];
-            const model: HealthSystemDomainModel = {
+
+            const filters = {
                 Name : t['HealthSystem']
             };
+
+            const existingRecord = await this._healthSystemService.searchType(filters);
+            //console.log(JSON.stringify(existingRecord, null, 2));
+            if (existingRecord.Items.length > 0) {
+                Logger.instance().log(`Health system record has already been exist ${t['HealthSystem']}!`);
+                continue;
+            }
+
+            const tokens = t['Tags'];
+            var tags: string[] = tokens.map(x => x);
+
+            const model: HealthSystemDomainModel = {
+                Name : t['HealthSystem'],
+                Tags : tags
+                };
             var healthSystem = await this._healthSystemService.createHealthSystem(model);
 
             for (let j = 0; j < t['AssociatedHospitals'].length; j++) {
 
                 const entity: HealthSystemHospitalDomainModel = {
                     HealthSystemId : healthSystem.id,
+                    Tags           : healthSystem.Tags,
                     Name           : t['AssociatedHospitals'][j]
                 };
                 await this._healthSystemService.createHealthSystemHospital(entity);

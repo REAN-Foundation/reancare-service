@@ -22,4 +22,6 @@ export interface ISleepRepo {
 
     getStats(patientUserId: string, numMonths: number): Promise<any>;
 
+    getByRecordDateAndPatientUserId(recordDate: Date, patientUserId: string): Promise<SleepDto>;
+
 }

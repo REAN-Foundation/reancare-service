@@ -82,7 +82,7 @@ import { RssfeedRepo } from './repositories/general/rss.feed/rss.feed.repo';
 import { RssfeedItemRepo } from './repositories/general/rss.feed/rss.feed.item.repo';
 import { PatientDonorsRepo } from './repositories/clinical/donation/patient.donors.repo';
 import { DonationRecordRepo } from './repositories/clinical/donation/donation.record.repo';
-import { WebhookRawDataRepo } from './repositories/webhook/webhook.rawdata.repo';
+import { WearableDeviceDetailsRepo } from './repositories/webhook/webhook.wearable.device.details.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -90,7 +90,7 @@ export class SequelizeInjector {
 
     static registerInjections(container: DependencyContainer) {
 
-        container.register('IDatabaseConnector', DatabaseConnector_Sequelize);
+        container.register('IPrimaryDatabaseConnector', DatabaseConnector_Sequelize);
 
         container.register('IPersonRepo', PersonRepo);
         container.register('IUserRepo', UserRepo);
@@ -174,7 +174,7 @@ export class SequelizeInjector {
         container.register('IRssfeedItemRepo', RssfeedItemRepo);
         container.register('IPatientDonorsRepo', PatientDonorsRepo);
         container.register('IDonationRecordRepo', DonationRecordRepo);
-        container.register('IWebhookRawDataRepo', WebhookRawDataRepo);
+        container.register('IWearableDeviceDetailsRepo', WearableDeviceDetailsRepo);
 
     }
 

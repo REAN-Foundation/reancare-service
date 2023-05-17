@@ -10,3 +10,11 @@ export interface ReAuthDomainModel {
     Message           : string;
     Version           : Date;
 }
+
+export interface DeAuthDomainModel {
+    Status            : EventStatus;
+    Type              : EventType;
+    User              : TerraUser;
+    Message           : string;
+    Version           : Date;
+}

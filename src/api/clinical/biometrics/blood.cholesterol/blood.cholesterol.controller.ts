@@ -6,9 +6,9 @@ import { BloodCholesterolService } from '../../../../services/clinical/biometric
 import { Loader } from '../../../../startup/loader';
 import { BloodCholesterolValidator } from './blood.cholesterol.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
 import { BloodCholesterolDomainModel } from '../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.domain.model';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -167,7 +167,7 @@ export class BloodCholesterolController extends BaseController {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, EHRRecordTypes.Cholesterol_TriglycerideLevel, model.TriglycerideLevel);
         }
-    }
+    };
 
     //#endregion
 

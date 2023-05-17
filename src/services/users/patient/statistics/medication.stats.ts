@@ -115,7 +115,7 @@ export const createMedicationTrendCharts = async (data) => {
 
 export const createMedicationConsumption_DonutChart = async (stats: any, filename: string) => {
     //console.log(JSON.stringify(stats, null, 2));
-    if (stats.length === 0) {
+    if (!stats || stats.length === 0) {
         return null;
     }
     const missedCount = stats.reduce((acc, x) => acc + x.MissedCount, 0);

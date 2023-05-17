@@ -103,7 +103,7 @@ export const createDailyAssessentCharts = async (data) => {
 };
 
 export const createFeelings_DonutChart = async (stats: any, filename: string) => {
-    if (stats.length === 0) {
+    if (!stats || stats.length === 0) {
         return null;
     }
     const feelings_ = stats.map(x => x.Feeling);

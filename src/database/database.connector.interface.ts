@@ -1,15 +1,9 @@
 
-export interface IDatabaseConnector {
+export interface IPrimaryDatabaseConnector {
 
     connect(): Promise<boolean>;
 
     sync(): Promise<boolean>;
 
-    createDatabase(): Promise<boolean>;
-
-    dropDatabase(): Promise<boolean>;
-
-    executeQuery(query: string): Promise<boolean>;
-    
     migrate(): Promise<boolean>;
 }

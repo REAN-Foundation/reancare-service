@@ -36,4 +36,8 @@ export interface IFoodConsumptionRepo {
 
     getStats(patientUserId: string, numMonths: number): Promise<any>;
 
+    getAllUserResponsesBetween(patientUserId: string, dateFrom: Date, dateTo: Date): Promise<any[]>;
+
+    getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
+
 }

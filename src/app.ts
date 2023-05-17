@@ -7,8 +7,13 @@ import { Router } from './api/router';
 import { Helper } from './common/helper';
 import { Logger } from './common/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
-import { EHRDbConnector } from './custom/ehr.analytics/ehr.db.connector';
+import { EHRDbConnector } from './modules/ehr.analytics/ehr.db.connector';
+import { AwardsFactsDBConnector } from './modules/awards.facts/awards.facts.db.connector';
+import { PrimaryDatabaseConnector } from './database/database.connector';
 import { Loader } from './startup/loader';
+import { AwardsFactsService } from './modules/awards.facts/awards.facts.service';
+import { DatabaseClient } from './common/database.utils/dialect.clients/database.client';
+import { DatabaseSchemaType } from './common/database.utils/database.config';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -42,15 +47,10 @@ export default class Application {
             //Load the modules
             await Loader.init();
 
-            if (process.env.NODE_ENV === 'test') {
-                await Loader.databaseConnector.dropDatabase();
-            }
-
-            //Connect with database
-            await Loader.databaseConnector.init();
-
-            //Connect with EHR insights database
-            await EHRDbConnector.connect();
+            //Connect databases
+            await connectDatabase_Primary();
+            await connectDatabase_EHRInsights();
+            await connectDatabase_AwardsFacts();
 
             //Set-up middlewares
             await this.setupMiddlewares();
@@ -124,4 +124,25 @@ export default class Application {
         });
     };
 
+}
+
+async function connectDatabase_Primary() {
+    if (process.env.NODE_ENV === 'test') {
+        const databaseClient = Loader.container.resolve(DatabaseClient);
+        await databaseClient.dropDb(DatabaseSchemaType.Primary);
+    }
+    const primaryDatabaseConnector = Loader.container.resolve(PrimaryDatabaseConnector);
+    await primaryDatabaseConnector.init();
+}
+
+async function connectDatabase_EHRInsights() {
+    //Connect with EHR insights database
+    await EHRDbConnector.connect();
+}
+
+async function connectDatabase_AwardsFacts() {
+    //Connect with Awards facts database
+    await AwardsFactsDBConnector.connect();
+    //Fetch the event types from awards service
+    await AwardsFactsService.initialize();
 }

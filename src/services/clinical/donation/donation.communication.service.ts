@@ -62,6 +62,11 @@ export class DonationCommunicationService {
         return await this._DonationCommunicationRepo.delete(id);
     };
 
+    public getByPatientUserId = async (patientUserId: string): Promise<DonationCommunicationDto> => {
+        var dto = await this._DonationCommunicationRepo.getByPatientUserId(patientUserId);
+        return dto;
+    };
+
     //#endregion
 
 }

@@ -14,4 +14,6 @@ export interface IDonationCommunicationRepo {
     
     delete(userId: string): Promise<boolean>;
 
+    getByPatientUserId(patientUserId: string): Promise<DonationCommunicationDto>;
+
 }

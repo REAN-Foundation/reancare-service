@@ -11,24 +11,30 @@ import { DonationCommunicationMapper } from "../../../mappers/clinical/donation/
 
 export class DonationCommunicationRepo implements IDonationCommunicationRepo {
 
-    create = async (DonationCommunicationDomainModel: DonationCommunicationDomainModel) :
+    create = async (donationCommunicationDomainModel: DonationCommunicationDomainModel) :
         Promise<DonationCommunicationDto> => {
 
         try {
             const entity = {
-                PatientUserId             : DonationCommunicationDomainModel.PatientUserId,
-                DonorUserId               : DonationCommunicationDomainModel.DonorUserId,
-                VolunteerUserId           : DonationCommunicationDomainModel.VolunteerUserId,
-                FifthDayReminderFlag      : DonationCommunicationDomainModel.FifthDayReminderFlag,
-                DonorNoResponseFirstFlag  : DonationCommunicationDomainModel.DonorNoResponseFirstFlag,
-                DonorNoResponseSecondFlag : DonationCommunicationDomainModel.DonorNoResponseSecondFlag,
-                DonorAcceptance           : DonationCommunicationDomainModel.DonorAcceptance,
-                IsRemindersLoaded         : DonationCommunicationDomainModel.IsRemindersLoaded,
+                PatientUserId             : donationCommunicationDomainModel.PatientUserId,
+                DonorUserId               : donationCommunicationDomainModel.DonorUserId,
+                VolunteerUserId           : donationCommunicationDomainModel.VolunteerUserId,
+                FifthDayReminderFlag      : donationCommunicationDomainModel.FifthDayReminderFlag,
+                DonorNoResponseFirstFlag  : donationCommunicationDomainModel.DonorNoResponseFirstFlag,
+                DonorNoResponseSecondFlag : donationCommunicationDomainModel.DonorNoResponseSecondFlag,
+                DonorAcceptance           : donationCommunicationDomainModel.DonorAcceptance,
+                IsRemindersLoaded         : donationCommunicationDomainModel.IsRemindersLoaded,
             };
 
-            const donationCommunication = await DonationCommunication.create(entity);
-            const dto = await DonationCommunicationMapper.toDetailsDto(donationCommunication);
+            let donationCommunication = null;
+            var existingRecord = await this.getByPatientUserId(entity.PatientUserId);
+            if (existingRecord !== null) {
+                donationCommunication = await this.update(existingRecord.id, entity);
+            } else {
+                donationCommunication = await DonationCommunication.create(entity);
+            }
 
+            const dto = await DonationCommunicationMapper.toDetailsDto(donationCommunication);
             return dto;
 
         } catch (error) {
@@ -185,6 +191,17 @@ export class DonationCommunicationRepo implements IDonationCommunicationRepo {
                 }
             });
             return count === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByPatientUserId = async (patientUserId: string): Promise<DonationCommunicationDto> => {
+        try {
+            const donationCommunication = await DonationCommunication.findOne({ where: { PatientUserId: patientUserId } });
+            const dto = await DonationCommunicationMapper.toDetailsDto(donationCommunication);
+            return dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

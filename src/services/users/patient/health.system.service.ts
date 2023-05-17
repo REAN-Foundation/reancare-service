@@ -3,9 +3,11 @@ import { inject, injectable } from "tsyringe";
 import { HealthSystemDomainModel } from "../../../domain.types/users/patient/health.system/health.system.domain.model";
 import { HealthSystemDto } from "../../../domain.types/users/patient/health.system/health.system.dto";
 import { HealthSystemHospitalDto } from "../../../domain.types/users/patient/health.system/health.system.hospital.dto";
-import { HealthSystemHospitalDomainModel } from
-    "../../../domain.types/users/patient/health.system/health.system.hospital.domain.model";
+import { HealthSystemHospitalDomainModel }
+    from "../../../domain.types/users/patient/health.system/health.system.hospital.domain.model";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { HealthSystemSearchFilters, HealthSystemSearchResults }
+    from "../../../domain.types/users/patient/health.system/health.system.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,8 +23,8 @@ export class HealthSystemService {
         return await this._healthSystemRepo.createHealthSystem(healthSystemDomainModel);
     };
 
-    getHealthSystems = async (): Promise<HealthSystemDto[]> => {
-        return await this._healthSystemRepo.getHealthSystems();
+    getHealthSystems = async (planName?: string): Promise<HealthSystemDto[]> => {
+        return await this._healthSystemRepo.getHealthSystems(planName);
     };
 
     createHealthSystemHospital = async (model: HealthSystemHospitalDomainModel):
@@ -32,6 +34,10 @@ export class HealthSystemService {
 
     getHealthSystemHospitals = async (healthSystemId: uuid): Promise<HealthSystemHospitalDto[]> => {
         return await this._healthSystemRepo.getHealthSystemHospitals(healthSystemId);
+    };
+
+    searchType = async (filters: HealthSystemSearchFilters): Promise<HealthSystemSearchResults> => {
+        return await this._healthSystemRepo.searchType(filters);
     };
 
 }

@@ -4,4 +4,6 @@ export interface HealthSystemHospitalDto {
     id?             : uuid,
     HealthSystemId? : uuid;
     Name?           : string;
+    Tags?           : string[];
+
 }

@@ -87,6 +87,12 @@ export default class UserDeviceDetails extends Model {
     })
     AppVersion: string;
 
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    ChangeCount: number;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

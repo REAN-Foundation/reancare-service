@@ -41,27 +41,11 @@ export class UserDeviceDetailsController {
         try {
             request.context = 'UserDeviceDetails.Create';
 
-            const userDeviceDetailsDomainModel = await UserDeviceDetailsValidator.create(request);
+            this.addUserDeviceDetails(request);
 
-            const deviceDetails = {
-                Token   : request.body.Token,
-                UserId  : request.body.UserId,
-                AppName : request.body.AppName
-            };
-
-            var existingRecord = await this._service.getExistingRecord(deviceDetails);
-            if (existingRecord !== null) {
-                var UserDeviceDetails = await this._service.update(existingRecord.id, userDeviceDetailsDomainModel);
-            } else {
-                var UserDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
-            }
-
-            if (UserDeviceDetails == null) {
-                throw new ApiError(400, 'Cannot create record for user device details!');
-            }
-
+            // TODO - whole of this bussiness logic should get executed in queue.
             ResponseHandler.success(request, response, 'User device details record created successfully!', 201, {
-                UserDeviceDetails : UserDeviceDetails,
+                UserDeviceDetails : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -223,6 +207,28 @@ export class UserDeviceDetailsController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    private addUserDeviceDetails = async (request): Promise<any> => {
+
+        const userDeviceDetailsDomainModel = await UserDeviceDetailsValidator.create(request);
+
+        const deviceDetails = {
+            Token   : request.body.Token,
+            UserId  : request.body.UserId,
+            AppName : request.body.AppName
+        };
+
+        var existingRecord = await this._service.getExistingRecord(deviceDetails);
+        var userDeviceDetails = null;
+        if (existingRecord !== null) {
+            existingRecord.ChangeCount = existingRecord.ChangeCount + 1;
+            userDeviceDetailsDomainModel.ChangeCount = existingRecord.ChangeCount;
+            userDeviceDetails = await this._service.update(existingRecord.id, userDeviceDetailsDomainModel);
+        } else {
+            userDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
+        }
+    
     };
 
     //#endregion

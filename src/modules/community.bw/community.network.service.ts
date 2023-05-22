@@ -23,6 +23,7 @@ import { IPatientDonorsRepo } from "../../database/repository.interfaces/clinica
 import { VolunteerService } from "../../services/users/volunteer.service";
 import { IDonationRecordRepo } from "../../database/repository.interfaces/clinical/donation/donation.record.repo.interface";
 import { PatientService } from "../../services/users/patient/patient.service";
+import { IDonationCommunicationRepo } from "../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +49,7 @@ export class CommunityNetworkService {
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
         @inject('IDonationRecordRepo') private _donationRecordRepo: IDonationRecordRepo,
+        @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
     ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
         this._volunteerService = Loader.container.resolve(VolunteerService);
         this._patientService = Loader.container.resolve(PatientService); }
@@ -264,6 +266,54 @@ export class CommunityNetworkService {
             }
         } catch (error) {
             Logger.instance().log(`No action to donation request error ${error.message}`);
+        }
+
+    };
+
+    public reminderOnNoActionToFifthDayReminder = async (): Promise<void> => {
+        try {
+            const donationCommunications = await this._donationCommunicationRepo.search({});
+
+            if (donationCommunications.Items.length !== 0) {
+                for (const donationCommunication of donationCommunications.Items) {
+                    if (donationCommunication.FifthDayReminderFlag === true) {
+
+                        const patient = await this._patientService.getByUserId( donationCommunication.PatientUserId );
+
+                        const bloodBridge = await this._patientDonorsRepo.search({ "PatientUserId": patient.UserId });
+                        const volunteerUserId = bloodBridge.Items[0].VolunteerUserId;
+                        const volunteer = await this._volunteerService.getByUserId( volunteerUserId );
+                        const phoneNumber = volunteer.User.Person.Phone;
+                        const message = {
+                            Variables : [{
+                                "type" : "text",
+                                "text" : volunteer.User.Person.DisplayName
+                            },
+                            {
+                                "type" : "text",
+                                "text" : patient.HealthProfile.BloodTransfusionDate.toDateString(),
+                            },
+                            {
+                                "type" : "text",
+                                "text" : patient.User.Person.DisplayName
+                            }]
+                        };
+                        let response = null;
+                        response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber,JSON.stringify(message),
+                            "REAN_BW", "patient_fifthday_ignored_volunteer", "Volunteer-Reminders");
+
+                        if (response === true) {
+                            await this._donationCommunicationRepo.update( donationCommunication.id ,{ "FifthDayReminderFlag": false });
+                            Logger.instance().log(`Successfully whatsapp message send to patient ${phoneNumber}`);
+                        }
+                    }
+                }
+                
+            } else {
+                Logger.instance().log(`Fifth day reminder not found or Patient has responded to reminder.`);
+            }
+        } catch (error) {
+            Logger.instance().log(`No action to fifth day reminder error ${error.message}`);
         }
 
     };

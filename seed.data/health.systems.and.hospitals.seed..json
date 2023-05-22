@@ -1,6 +1,7 @@
 [
     {
         "HealthSystem": "Wellstar Health System",
+        "Tags":["Cholesterol"],
         "AssociatedHospitals": [
             "Wellstar Kennestone - Stroke, CAD",
             "Wellstar Paulding Hospital - CAD",
@@ -12,6 +13,7 @@
     },
     {
         "HealthSystem": "UC San Diego Health",
+        "Tags":["Cholesterol"],
         "AssociatedHospitals": [
             "UC San Diego Health Hillcrest - Stroke",
             "UC San DiegoHealth  La Jolla - Stroke",
@@ -21,6 +23,7 @@
     },
     {
         "HealthSystem": "M Health Fairview",
+        "Tags":["Cholesterol"],
         "AssociatedHospitals": [
             "Ridges - Stroke", 
             "Southdale - Stroke", 
@@ -32,6 +35,7 @@
     },
     {
         "HealthSystem": "Atrium Health",
+        "Tags":["Cholesterol"],
         "AssociatedHospitals": [
             "Atrium Health Wake Forest Baptist - Stroke", 
             "Atrium Health Wake Forest Highpoint", 
@@ -42,6 +46,7 @@
     },
     {
         "HealthSystem": "Kaiser Permanente",
+        "Tags":["Cholesterol"],
         "AssociatedHospitals": [
             "Kaiser San Francisco - CAD", 
             "Kaiser Freemont - CAD", 
@@ -53,11 +58,24 @@
     },
     {
         "HealthSystem": "Nebraska Health System",
+        "Tags":["Cholesterol"],
         "AssociatedHospitals": [
             "Nebraska Medical Center - Stroke, CAD", 
             "Bellevue Hospital -  Stroke, CAD", 
             "Heart and Vascular Center at Bellevue Health Center",
             "Grand Island Health Center"
+        ]
+    },
+    {
+        "HealthSystem": "HCA Healthcare",
+        "Tags":["Stroke"],
+        "AssociatedHospitals": [
+            "The Medical Center of Aurora", 
+            "HCA Florida JFK Hospital", 
+            "HCA Florida North Florida Hospital",
+            "Parkridge Medical Center",
+            "Sky Ridge Medical Center",
+            "Sunrise Hospital and Medical Center"
         ]
     }
 ]

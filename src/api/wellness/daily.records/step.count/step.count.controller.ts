@@ -36,12 +36,18 @@ export class StepCountController extends BaseController {
 
             const domainModel = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
+            const provider = request.body.Provider;
         
-            var existingRecord = await this._service.getByRecordDate(recordDate);
-            if (existingRecord !== null) {
-                var stepCount = await this._service.update(existingRecord.id, domainModel);
+            if (provider) {
+                var existingRecord =
+                    await this._service.getByRecordDateAndPatientUserId(recordDate, request.body.PatientUserId, provider);
+                if (existingRecord !== null) {
+                    var stepCount = await this._service.update(existingRecord.id, domainModel);
+                } else {
+                    var stepCount = await this._service.create(domainModel);
+                }
             } else {
-                var stepCount = await this._service.create(domainModel);
+                stepCount = await this._service.create(domainModel);
             }
 
             if (stepCount == null) {

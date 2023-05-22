@@ -15,10 +15,6 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import {
-    AssessmentType,
-    AssessmentTypeList,
-} from '../../../../../../domain.types/clinical/assessment/assessment.types';
-import {
     ProgressStatus, ProgressStatusList
 } from '../../../../../../domain.types/miscellaneous/system.types';
 import User from '../../users/user/user.model';
@@ -84,14 +80,6 @@ export default class Assessment extends Model {
 
     @BelongsTo(() => AssessmentTemplate)
     AssessmentTemplate: AssessmentTemplate;
-
-    @Column({
-        type         : DataType.ENUM,
-        values       : AssessmentTypeList,
-        defaultValue : AssessmentType.Careplan,
-        allowNull    : false,
-    })
-    Type: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)

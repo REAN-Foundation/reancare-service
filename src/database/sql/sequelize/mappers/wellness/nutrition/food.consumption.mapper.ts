@@ -36,7 +36,8 @@ export class FoodConsumptionMapper {
             ImageResourceId : foodConsumption.ImageResourceId,
             StartTime       : foodConsumption.StartTime,
             EndTime         : foodConsumption.EndTime,
-
+            CreatedAt       : foodConsumption.CreatedAt,
+            UpdatedAt       : foodConsumption.UpdatedAt,
         };
         return dto;
     };

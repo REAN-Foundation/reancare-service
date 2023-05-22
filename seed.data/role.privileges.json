@@ -224,8 +224,12 @@
             "GoalType.GetById",
             "GoalType.GetGoalTypes",
             "GoalType.Update",
-            "GoalType.Delete"
-
+            "GoalType.Delete",
+            "DonationCommunication.Create",
+            "DonationCommunication.GetById",
+            "DonationCommunication.Search",
+            "DonationCommunication.Update",
+            "DonationCommunication.Delete"
         ]
     },
     {
@@ -628,7 +632,12 @@
             "Rssfeed.Search",
             "Rssfeed.GetRssFeed",
             "Rssfeed.GetAtomFeed",
-            "Rssfeed.GetJsonFeed"
+            "Rssfeed.GetJsonFeed",
+            "DonationCommunication.Create",
+            "DonationCommunication.GetById",
+            "DonationCommunication.Search",
+            "DonationCommunication.Update",
+            "DonationCommunication.Delete"
         ]
     },
     {
@@ -986,7 +995,12 @@
             "Rssfeed.Search",
             "Rssfeed.GetRssFeed",
             "Rssfeed.GetAtomFeed",
-            "Rssfeed.GetJsonFeed"
+            "Rssfeed.GetJsonFeed",
+            "DonationCommunication.Create",
+            "DonationCommunication.GetById",
+            "DonationCommunication.Search",
+            "DonationCommunication.Update",
+            "DonationCommunication.Delete"
         ]
     },
     {

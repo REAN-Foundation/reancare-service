@@ -72,6 +72,7 @@ export default class LabRecord extends Model {
     })
     DisplayName: string;
 
+    @Length({ min: 0, max: 6 })
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,

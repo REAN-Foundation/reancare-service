@@ -10,7 +10,7 @@ import PatientDonors from './patient.donors.model';
 @Table({
     timestamps      : true,
     modelName       : 'DonationRecord',
-    tableName       : 'donation',
+    tableName       : 'blood_donations',
     paranoid        : true,
     freezeTableName : true,
 })

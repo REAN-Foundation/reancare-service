@@ -23,7 +23,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
 
     getRandom = async(): Promise<KnowledgeNuggetDto> => {
 
-        //NOTE: The following literal is for MySQL, for PostGreSQL, please use `var literal = 'random()';`
+        //NOTE: The following literal is for MySQL, for PostgreSQL, please use `var literal = 'random()';`
         var literal = new Utils.Literal('rand()');
 
         const topic = await KnowledgeNugget.findOne(

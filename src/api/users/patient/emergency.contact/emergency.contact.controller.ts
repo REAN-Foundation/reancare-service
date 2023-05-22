@@ -14,7 +14,7 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { EmergencyContactValidator } from './emergency.contact.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthSystemService } from '../../../../services/users/patient/health.system.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ export class EmergencyContactController extends BaseController {
         try {
             await this.setContext('Emergency.Contact.GetHealthSystems', request, response);
 
-            const healthSystems = await this._healthSystemService.getHealthSystems();
+            const healthSystems = await this._healthSystemService.getHealthSystems(request.query.planName as string);
             if (healthSystems.length === 0) {
                 throw new ApiError(400, 'Cannot fetch health systems!');
             }

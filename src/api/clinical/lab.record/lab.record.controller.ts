@@ -7,9 +7,9 @@ import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import { LabRecordValidator } from './lab.record.validator';
-import { EHRAnalyticsHandler } from '../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
-import { EHRRecordTypes } from '../../../custom/ehr.analytics/ehr.record.types';
+import { EHRRecordTypes } from '../../../modules/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

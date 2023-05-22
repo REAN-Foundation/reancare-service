@@ -14,7 +14,25 @@ on:
     branches: [main]
 
 jobs:
+  
+  Publish-Release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: New Release Publish
+        id: new_publish
+        uses: release-drafter/release-drafter@v5
+        with:
+          publish : true
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+           
+    outputs:
+      release_id: ${{ steps.new_publish.outputs.id }}
+      release_name: ${{ steps.new_publish.outputs.tag_name }}
+    
+
   Deploy-ECS:
+    needs: Publish-Release
     environment: prod
     runs-on: ubuntu-latest
 
@@ -28,21 +46,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Declare some variables
-        id: vars
-        shell: bash
-        run: |
-          echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")" >> $GITHUB_OUTPUT
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "repo_name=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')" >> $GITHUB_OUTPUT
-
-      - name: Another step
-        run: |
-          echo "Branch: ${{ steps.vars.outputs.branch }}"
-          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
-          echo "Repo: ${{ steps.vars.outputs.repo_name }}"
-
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -67,7 +70,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: public.ecr.aws/i9y2d4u3/reancare:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          tags: public.ecr.aws/i9y2d4u3/reancare:${{ needs.Publish-Release.outputs.release_name }}_${{ needs.Publish-Release.outputs.release_id }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
@@ -85,7 +88,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: default
-          image: public.ecr.aws/i9y2d4u3/reancare:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          image: public.ecr.aws/i9y2d4u3/reancare:${{ needs.Publish-Release.outputs.release_name }}_${{ needs.Publish-Release.outputs.release_id }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -110,10 +113,3 @@ jobs:
           method: 'POST'
           data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200}'
           bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}
-
-      - name: New Release Publish
-        uses: release-drafter/release-drafter@v5
-        with:
-          publish : true
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}

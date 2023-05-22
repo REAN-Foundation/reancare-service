@@ -7,8 +7,8 @@ import { Loader } from '../../../../startup/loader';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
 import { BaseController } from '../../../base.controller';
 import { BloodOxygenSaturationDomainModel } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -153,7 +153,7 @@ export class BloodOxygenSaturationController extends BaseController {
                 model.BloodOxygenSaturation,
                 model.Unit);
         }
-    }
+    };
 
     //#endregion
 

@@ -30,6 +30,7 @@ import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment
 import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
 import { IDonorRepo } from "./../../database/repository.interfaces/users/donor.repo.interface";
+import { IDonationCommunicationRepo } from "../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +49,7 @@ export class CareplanService implements IUserActionService {
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
+        @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
     ) {}
 
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
@@ -153,11 +155,13 @@ export class CareplanService implements IUserActionService {
                     patient = await this.getPatient(activity.PatientUserId);
                 }
                 const phoneNumber = patient.User.Person.Phone;
-                // if (activity.Provider === "REAN") {
-                //     phoneNumber = patient.User.Person.TelegramChatId;
-                //     message = `${activity.Title}:\n${activity.Description}`;
-                // }
                 
+                //Set fifth day reminder flag true for patient
+                if (activity.Type === "reminder_three") {
+                    await this._donationCommunicationRepo.create(
+                        { PatientUserId: activity.PatientUserId ,FifthDayReminderFlag: true });
+                }
+
                 let response = null;
                 response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
                     activity.Provider, activity.Type, activity.PlanCode);

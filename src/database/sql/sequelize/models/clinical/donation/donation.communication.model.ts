@@ -3,18 +3,18 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
-import PatientDonors from './patient.donors.model';
+import { DonorAcceptance, DonorAcceptanceList } from '../../../../../../domain.types/miscellaneous/clinical.types';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'DonationRecord',
-    tableName       : 'blood_donations',
+    modelName       : 'DonationCommunication',
+    tableName       : 'blood_donation_communications',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class DonationRecord extends Model {
+export default class DonationCommunication extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -36,74 +36,59 @@ export default class DonationRecord extends Model {
     PatientUserId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => PatientDonors)
+    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    NetworkId: string;
+    DonorUserId: string;
 
     @IsUUID(4)
+    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    EmergencyDonor: string;
-
-    @IsUUID(4)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    VolunteerOfEmergencyDonor: string;
+    VolunteerUserId: string;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : false,
+        type         : DataType.ENUM,
+        allowNull    : false,
+        values       : DonorAcceptanceList,
+        defaultValue : DonorAcceptance.NotSend
     })
-    RequestedQuantity: number;
+    DonorAcceptance: string;
 
     @Column({
-        type      : DataType.DATE,
-        allowNull : false,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
     })
-    RequestedDate?   : Date;
+    IsRemindersLoaded: boolean;
 
     @Column({
-        type      : DataType.DATE,
-        allowNull : true,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
     })
-    DonorAcceptedDate?  : Date;
+    FifthDayReminderFlag: boolean;
 
     @Column({
-        type      : DataType.DATE,
-        allowNull : true,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
     })
-    DonorRejectedDate?  : Date;
+    DonorNoResponseFirstFlag: boolean;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
     })
-    DonatedQuantity: number;
-
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    DonationDate?  : Date;
-
-    @Column({
-        type      : DataType.STRING(32),
-        allowNull : true,
-    })
-    DonationType: string;
+    DonorNoResponseSecondFlag: boolean;
 
     @BelongsTo(() => User)
     User: User;
-
-    @BelongsTo(() => PatientDonors)
-    PatientDonors: PatientDonors;
 
     @Column
     @CreatedAt

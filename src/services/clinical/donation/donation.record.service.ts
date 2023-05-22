@@ -58,6 +58,9 @@ export class DonationRecordService {
         if (updateModel.DonorAcceptedDate !== null) {
             await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Accepted });
         }
+        if (updateModel.DonorRejectedDate !== null) {
+            await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.NotSend });
+        }
         dto = await this.updateDetailsDto(dto);
         return dto;
     };

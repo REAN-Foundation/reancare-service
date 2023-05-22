@@ -10,7 +10,7 @@ import User from '../../users/user/user.model';
 @Table({
     timestamps      : true,
     modelName       : 'PatientDonors',
-    tableName       : 'blood_donors_patients_volunteers',
+    tableName       : 'donation_patient_donors',
     paranoid        : true,
     freezeTableName : true,
 })

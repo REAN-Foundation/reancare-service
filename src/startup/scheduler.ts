@@ -139,6 +139,7 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Reminder On No Action To Donation Requests...');
                 var communityNetworkService = Loader.container.resolve(CommunityNetworkService);
                 await communityNetworkService.reminderOnNoActionToDonationRequest();
+                await communityNetworkService.reminderOnNoActionToFifthDayReminder();
             })();
         });
     };

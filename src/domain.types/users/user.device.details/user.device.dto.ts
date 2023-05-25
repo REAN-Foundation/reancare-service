@@ -9,4 +9,5 @@ export interface UserDeviceDetailsDto {
     OSVersion?        : string;
     AppName?          : string;
     AppVersion?       : string;
+    ChangeCount?      : number;
 }

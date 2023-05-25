@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Helper } from '../../common/helper';
 import { updateMedicationFact } from './medication.facts.service';
 import { updateNutritionFact } from './nutrition.facts.service';
+import { updatePhysicalActivityFact } from './exercise.physical.activity.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -102,6 +103,14 @@ export class AwardsFactsService {
                 await this.notifyAwardsService(eventType.id, model);
             }
         }
+        else if (model.FactType === FactType.PhysicalActivity) {
+            await updatePhysicalActivityFact(model);
+            const eventType = AwardsFactsService._eventTypes.find(x => x.Name === 'Exercise');
+            if (eventType) {
+                //Send event to awards service
+                await this.notifyAwardsService(eventType.id, model);
+            }
+        }
     };
 
     private static getEventTypes = async () => {
@@ -167,6 +176,17 @@ export class AwardsFactsService {
     public static addOrUpdateNutritionResponseFact = (model: AwardsFact) => {
         try {
             model.FactType = 'Nutrition';
+            model.RecordDateStr = (model.RecordDate).toISOString().split('T')[0];
+            AwardsFactsService.enqueue(model);
+        }
+        catch (error) {
+            Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);
+        }
+    };
+
+    public static addOrUpdatePhysicalActivityResponseFact = (model: AwardsFact) => {
+        try {
+            model.FactType = 'Physical-Activity';
             model.RecordDateStr = (model.RecordDate).toISOString().split('T')[0];
             AwardsFactsService.enqueue(model);
         }

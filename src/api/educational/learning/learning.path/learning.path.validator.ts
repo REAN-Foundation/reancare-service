@@ -19,6 +19,7 @@ export class LearningPathValidator extends BaseValidator {
             DurationInDays   : request.body.DurationInDays,
             PreferenceWeight : request.body.PreferenceWeight,
             Enabled          : request.body.Enabled,
+            CourseIds        : request.body.CourseIds ?? [],
         };
         return model;
     };
@@ -30,6 +31,7 @@ export class LearningPathValidator extends BaseValidator {
 
     search = async (request: express.Request): Promise<LearningPathSearchFilters> => {
         await this.validateString(request, 'name', Where.Query, false, false);
+        await this.validateDecimal(request, 'PreferenceWeight', Where.Body, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getFilter(request);
@@ -49,6 +51,7 @@ export class LearningPathValidator extends BaseValidator {
         await this.validateDecimal(request, 'DurationInDays', Where.Body, false, true);
         await this.validateDecimal(request, 'PreferenceWeight', Where.Body, false, true);
         await this.validateBoolean(request, 'Enabled', Where.Body, false, true);
+        await this.validateArray(request, 'CourseIds', Where.Body, false, true);
         this.validateRequest(request);
     }
 
@@ -59,12 +62,14 @@ export class LearningPathValidator extends BaseValidator {
         await this.validateDecimal(request, 'DurationInDays', Where.Body, false, false);
         await this.validateDecimal(request, 'PreferenceWeight', Where.Body, false, false);
         await this.validateBoolean(request, 'Enabled', Where.Body, false, false);
+        await this.validateArray(request, 'CourseIds', Where.Body, false, false);
         this.validateRequest(request);
     }
 
     private getFilter(request): LearningPathSearchFilters {
         var filters: LearningPathSearchFilters = {
             Name : request.query.name ?? null,
+            PreferenceWeight : request.query.preferenceWeight ?? null,
         };
         return this.updateBaseSearchFilters(request, filters);
     }

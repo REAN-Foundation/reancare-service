@@ -242,4 +242,50 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         }
     };
 
+    getPriorityTypeById = async (id: string): Promise<HealthPriorityTypeDto> => {
+        try {
+            const priorityType = await HealthPriorityType.findByPk(id);
+            return HealthPriorityMapper.toTypeDto(priorityType);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    updatePriorityType = async (id: string, updateModel: HealthPriorityTypeDomainModel): Promise<HealthPriorityTypeDto> => {
+        try {
+            const healthPriorityType = await HealthPriorityType.findByPk(id);
+
+            if (updateModel.Type != null) {
+                healthPriorityType.Type = updateModel.Type;
+            }
+            if (updateModel.Tags != null && updateModel.Tags.length > 0) {
+
+                var tags = updateModel.Tags.length > 0 ?
+                    JSON.stringify(updateModel.Tags) : '[]';
+
+                healthPriorityType.Tags = tags;
+            }
+            
+            await healthPriorityType.save();
+
+            return await HealthPriorityMapper.toTypeDto(healthPriorityType);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    deletePriorityType = async (id: string): Promise<boolean> => {
+        try {
+
+            const result = await HealthPriorityType.destroy({ where: { id: id } });
+            return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

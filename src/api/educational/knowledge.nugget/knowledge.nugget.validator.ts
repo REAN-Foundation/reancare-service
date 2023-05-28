@@ -55,8 +55,8 @@ export class KnowledgeNuggetValidator extends BaseValidator {
         await this.validateString(request, 'TopicName', Where.Body, false, false);
         await this.validateString(request, 'BriefInformation', Where.Body, false, false);
         await this.validateString(request, 'DetailedInformation', Where.Body, false, false);
-        await this.validateString(request, 'AdditionalResources', Where.Body, false, false);
-        await this.validateString(request, 'Tags', Where.Body, false, false);
+        await this.validateArray(request, 'AdditionalResources', Where.Body, false, false);
+        await this.validateArray(request, 'Tags', Where.Body, false, false);
 
         this.validateRequest(request);
     }
@@ -66,8 +66,8 @@ export class KnowledgeNuggetValidator extends BaseValidator {
         await this.validateString(request, 'TopicName', Where.Body, false, false);
         await this.validateString(request, 'BriefInformation', Where.Body, false, false);
         await this.validateString(request, 'DetailedInformation', Where.Body, false, false);
-        await this.validateString(request, 'AdditionalResources', Where.Body, false, false);
-        await this.validateString(request, 'Tags', Where.Body, false, false);
+        await this.validateArray(request, 'AdditionalResources', Where.Body, false, false);
+        await this.validateArray(request, 'Tags', Where.Body, false, false);
 
         this.validateRequest(request);
     }

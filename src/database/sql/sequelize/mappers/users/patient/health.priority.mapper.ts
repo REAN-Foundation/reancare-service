@@ -40,9 +40,10 @@ export class HealthPriorityMapper {
         }
 
         const typeDto: HealthPriorityTypeDto = {
-            id   : healthPriorityType.id,
-            Type : healthPriorityType.Type,
-            Tags : healthPriorityType.Tags ? JSON.parse(healthPriorityType.Tags) : [],
+            id        : healthPriorityType.id,
+            Type      : healthPriorityType.Type,
+            Tags      : healthPriorityType.Tags ? JSON.parse(healthPriorityType.Tags) : [],
+            CreatedAt : healthPriorityType.CreatedAt,
         };
 
         return typeDto;

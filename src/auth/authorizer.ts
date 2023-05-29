@@ -22,10 +22,6 @@ export class Authorizer {
         }
     };
 
-    public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
-        return await this._authorizer.generateUserSessionToken(user);
-    };
-
 }
 
 ////////////////////////////////////////////////////////////////////////

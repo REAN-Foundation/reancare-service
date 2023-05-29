@@ -1,17 +1,19 @@
 import 'reflect-metadata';
 import express from 'express';
 import { IAuthenticator } from './authenticator.interface';
-import { injectable, inject } from "tsyringe";
-
+import { injectable, inject } from 'tsyringe';
 import { ResponseHandler } from '../common/response.handler';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
+import { uuid } from '../domain.types/miscellaneous/system.types';
+import { CurrentUser } from '../domain.types/miscellaneous/current.user';
+import { refreshToken } from 'firebase-admin/app';
 
 ////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class Authenticator {
-    
+
     constructor(
         @inject('IAuthenticator') private _authenticator: IAuthenticator
     ) {}
@@ -62,6 +64,18 @@ export class Authenticator {
             throw new ApiError(401, 'Unauthorized access');
         }
         return true;
+    };
+
+    public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
+        return await this._authenticator.generateUserSessionToken(user);
+    };
+
+    public generateRefreshToken = async (userId: uuid, sessionId: uuid): Promise<string> => {
+        return await this._authenticator.generateRefreshToken(userId, sessionId);
+    };
+
+    public rotateUserSessionToken = async (refreshToken: string): Promise<string> => {
+        return await this._authenticator.rotateUserSessionToken(refreshToken);
     };
 
 }

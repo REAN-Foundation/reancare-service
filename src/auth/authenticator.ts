@@ -7,7 +7,6 @@ import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
 import { uuid } from '../domain.types/miscellaneous/system.types';
 import { CurrentUser } from '../domain.types/miscellaneous/current.user';
-import { refreshToken } from 'firebase-admin/app';
 
 ////////////////////////////////////////////////////////////////////////
 

@@ -29,44 +29,16 @@ We are using GitFlow Branching [here](https://www.atlassian.com/git/tutorials/co
 * release/* : The release branch is a branch used for allowing isolated testing and preparation of the release before merging it into the main branch.
 * hotfix/* : The hotfix branch, hotfixes for critical issues are handled separately by creating dedicated branches and merging them directly into the main branch.
  
-# Workflow Explained 
+# Release Workflows 
  
-This is an explanation of how to use or trigger any workflow in our repository
+There are different types of workflows designed for the type of source branch used based on the GitFlow workflow and the deployment targets as explained below
  
-## PR-ci-cd
- 
-* PR-ci-cd (Pull Request ci-cd) can be trigger by raising a pull request to develop branch.
-* You can refer to full documentation of [PR-ci-cd](release_docs/Pr-ci-cd_ReleaseFlow.md).
- 
-## Dev-ci-cd 
-
-* Dev-ci-cd can be use or trigger by pushing code into Develop branch.
-* You can refer to full documentation of [DEV-ci-cd](release_docs/Dev-ci-cd_ReleaseFlow.md).
-
-
-## UAT-ci-cd
-
-* There are two ways to use or trigger UAT-ci-cd workflow
-1. By creating a Pull Request to merge into MAIN branch
-2. Whenever a Branch with prefix of 'release' create a pull request
-* You can refer to full documentation of [UAT-ci-cd](release_docs/Uat-ci-cd_ReleaseFlow.md).
-
-
-## PROD-ci-cd
-
-* Prod-ci-cd workflow can be use or trigger by Pushing code into main branch.
-* You can refer to full documentaion of [PROD-ci-cd](release_docs/Prod-ci-cd_ReleaseFlow.md)
-
-
-## AHA-UAT-ci-cd
-
-* This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, without having to push or create a pull request.
-* You can refer to full documentation of [AHA-Uat workflow](release_docs/AHA-UAT_ReleaseFlow.md)
- 
-## AHA-PROD-ci-cd
-
-* This workflow allows you to manually trigger a GitHub Action with a input Github ``` Tag_name ```, without having to push or create a pull request.
-* You can refer to full documentation of [AHA-Prod workflow](release_docs/AHA-Prod_ReleaseFlow.md)
+* [PR-ci-cd](release_docs/Pr-ci-cd_ReleaseFlow.md)
+* [DEV-ci-cd](release_docs/Dev-ci-cd_ReleaseFlow.md).
+* [UAT-ci-cd](release_docs/Uat-ci-cd_ReleaseFlow.md).
+* [PROD-ci-cd](release_docs/Prod-ci-cd_ReleaseFlow.md).
+* [AHA-Uat workflow](release_docs/AHA-UAT_ReleaseFlow.md).
+* [AHA-Prod workflow](release_docs/AHA-Prod_ReleaseFlow.md).
 
 ## Developer to Main branch Workflow
 

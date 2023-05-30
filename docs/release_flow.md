@@ -3,7 +3,7 @@
 1. For general guidance about using GitHub actions, you can take a look at [Github Actions Guide](https://docs.github.com/en/actions/guides). 
 2. We have a total of 7 active release workflows. These are located under [Workflows](https://github.com/REAN-Foundation/reancare-service/tree/develop/.github/workflows).
 
-## Content
+## Table Of Contents
 - [Branching Strategy](#Branching-Strategy)
   - [Feature](#Feature-Branch)
   - [Release](#Release-Branch)
@@ -22,22 +22,13 @@
 ## Branching Strategy
 
 This is the overview of our Branch Strategy, how we are using workflows based on branch naming convention.
+We are using GitFlow Branching here (Ref: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
 
-### Feature Branch
-
-Whenever a developer create a branch with the prefix of 'feature' then the Pull request should be raise on develop branch, it will trigger the PR-ci-cd workflow, after the merging of pull request into develop branch it will trigger the Dev-ci-cd workflow. 
- 
- ```sh
- feature/**
- ```
-
-### Release Branch
-
-Whenever a developer create a branch with the prefix of 'release' then the Pull Request should be raise on main branch, after that whenever developer push code on 'release' branch it will trigger the UAT-ci-cd workflow.
-
- ```sh
- release/**
- ```
+main : the main branch serves as the stable and production-ready branch, where all the changes from release branches are merged and tested before deployment.
+develop : the develop branch, where all the changes from feature branches are merged 
+feature/* : the feature branch, individual features or enhancements are developed on separate branches, allowing for isolated development and easy collaboration before merging.
+release/* : the release branch is a branch used for allowing isolated testing and preparation of the release before merging it into the main branch.
+hotfix/* : the hotfix branch, hotfixes for critical issues are handled separately by creating dedicated branches and merging them directly into the main branch.
  
 # Workflow Explained 
  

@@ -33,12 +33,12 @@ We are using GitFlow Branching [here](https://www.atlassian.com/git/tutorials/co
  
 There are different types of workflows designed for the type of source branch used based on the GitFlow workflow and the deployment targets as explained below
  
-* [PR-ci-cd](release_docs/Pr-ci-cd_ReleaseFlow.md)
-* [DEV-ci-cd](release_docs/Dev-ci-cd_ReleaseFlow.md).
-* [UAT-ci-cd](release_docs/Uat-ci-cd_ReleaseFlow.md).
-* [PROD-ci-cd](release_docs/Prod-ci-cd_ReleaseFlow.md).
-* [AHA-Uat workflow](release_docs/AHA-UAT_ReleaseFlow.md).
-* [AHA-Prod workflow](release_docs/AHA-Prod_ReleaseFlow.md).
+* [PR-CI-CD](release_docs/Pr-ci-cd_ReleaseFlow.md)
+* [Dev-CI-CD](release_docs/Dev-ci-cd_ReleaseFlow.md).
+* [UAT-CI-CD](release_docs/Uat-ci-cd_ReleaseFlow.md).
+* [PROD-CI-CD](release_docs/Prod-ci-cd_ReleaseFlow.md).
+* [AHA-UAT-CI-CD](release_docs/AHA-UAT_ReleaseFlow.md).
+* [AHA-PROD-CI-CD](release_docs/AHA-Prod_ReleaseFlow.md).
 
 ## Developer to Main branch Workflow
 

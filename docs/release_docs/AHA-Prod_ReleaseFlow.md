@@ -5,8 +5,7 @@ Explaination of AHA Prod Release Workflow.
 
 ## AHA-PROD-CI-CD
 
-This workflow allows you to manually trigger a GitHub Action with a input GitHub ``` Tag_name ```, without having to push or create a pull request
-This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy reancare-service release to aha-prod environment
+This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy ``` reancare-service``` release to ```aha-prod``` environment
 
 ### JOBS
 

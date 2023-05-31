@@ -1,3 +1,4 @@
+mode of trigger: ```On-Demand```
 # AHA Prod Release Workflow
 Explaination of AHA Prod Release Workflow.
 ![AHA-PROD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-PROD_Workflow.png?raw=true)

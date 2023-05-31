@@ -1,12 +1,6 @@
 mode of trigger: ```On-Demand```
 # AHA Prod Release Workflow
 
-Release Process Workflow Diagram.
-![AHA-PROD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-PROD_Workflow.png?raw=true)
-
-GitHub Action Workflow run
-![AHA-PROD-JOB](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/aha_workflow.png?raw=true)
-
 ## AHA-PROD-CI-CD
 
 This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy ```reancare-service``` release to ```aha-prod``` environment
@@ -27,3 +21,10 @@ The Deploy ECS will be performing the following steps
 * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
 * This job uses 'aha-prod' environment and login to ECR using creds and pull the ECR image which was created in PROD-CI-CD with the GitHub release ID.
 * Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
+
+Release Process Workflow Diagram.
+![AHA-PROD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-PROD_Workflow.png?raw=true)
+
+GitHub Action Workflow run
+![AHA-PROD-JOB](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/aha_workflow.png?raw=true)
+

@@ -1,3 +1,4 @@
+mode of trigger: ```On-Demand```
 # AHA UAT Release Workflow
 Explaination of AHA UAT Release Workflow.
 ![AHA-uat](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-UAT_wrokflow.png?raw=true)

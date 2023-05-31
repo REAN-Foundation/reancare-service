@@ -49,11 +49,16 @@ The diagram below explains the end-to-end process and stages for promoting the c
 # Release Workflows 
  
 There are different types of workflows designed for the type of source branch used based on the GitFlow workflow and the deployment targets as explained below
- 
+
+### REAN Foundation Platform Workflows
+
 * [PR-CI-CD](release_docs/Pr-ci-cd_ReleaseFlow.md)
 * [Dev-CI-CD](release_docs/Dev-ci-cd_ReleaseFlow.md).
 * [UAT-CI-CD](release_docs/Uat-ci-cd_ReleaseFlow.md).
 * [PROD-CI-CD](release_docs/Prod-ci-cd_ReleaseFlow.md).
+
+### Customer Workflows
+
 * [AHA-UAT-CI-CD](release_docs/AHA-UAT_ReleaseFlow.md).
 * [AHA-PROD-CI-CD](release_docs/AHA-Prod_ReleaseFlow.md).
 

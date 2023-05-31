@@ -1,3 +1,4 @@
+mode of trigger: ```Automated```
 ## Dev-CI-CD
 
 Dev-CI-CD can be use or trigger by pushing code into Develop branch.

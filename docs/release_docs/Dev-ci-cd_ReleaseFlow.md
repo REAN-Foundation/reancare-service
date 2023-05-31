@@ -10,7 +10,8 @@ Dev-CI-CD can be use or trigger by pushing code into Develop branch.
 #### Deploy-ECS
 The Deploy ECS will be performing the following steps
 
-* This job uses 'dev' environment and login to ECR using creds and build a new ECR docker image with image tag using branch name and short SHA of commit for example ``` /reancare-service-dev-uat:develop_5e38e33 ```, then this job will create new version of Amazon ECS task definition with new docker image then it will deploy Amazon ECS task definition using Duplo API.
+* This job uses 'dev' environment and login to ECR using creds and build a new ECR docker image with image tag using branch name and short SHA of commit for example ``` /reancare-service-dev-uat:develop_5e38e33 ```
+* Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
 * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
 
 ### Steps To Trigger Workflow

@@ -32,14 +32,10 @@ GitHub Action Workflow run
 ![AHA-PROD-JOB](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/aha_github_workflow.png?raw=true)
 
 mode of trigger: ```On-Demand```
-# AHA UAT Release Workflow
-Explaination of AHA UAT Release Workflow.
-![AHA-uat](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-UAT_wrokflow.png?raw=true)
-![aha-uat-workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/aha_uat_workflow.png?raw=true)
 
 ## AHA-UAT-CI-CD
 
-This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy reancare-service release to aha-uat environment
+This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy ```reancare-service``` release to ```aha-uat``` environment
 
 ### JOBS
 
@@ -63,4 +59,13 @@ The Deploy ECS will be performing the following steps.
 * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
 * This job uses 'aha-uat' environment and login to ECR using creds and pull the ECR image which was created in PROD-CI-CD with the GitHub release ID.
 * Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
+
+## AHA UAT Release Workflow
+
+Release Process Workflow Diagram..
+![AHA-uat](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-UAT_wrokflow.png?raw=true)
+
+GitHub Action Workflow run
+![aha-uat-workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/aha_uat_workflow.png?raw=true)
+
 

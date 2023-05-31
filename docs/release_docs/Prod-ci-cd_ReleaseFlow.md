@@ -1,3 +1,4 @@
+mode of trigger: ```Automated```
 ## PROD-CI-CD
 
 Prod-CI-CD workflow can be use or trigger by Pushing code into main branch.

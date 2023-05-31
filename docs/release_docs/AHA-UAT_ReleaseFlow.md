@@ -12,8 +12,8 @@ This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and d
 
 #### CodeScan-ESLint
 
-* This job use static code analysis tool which identify problematic patterns found in application source code.
 * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job.
+* This job use static code analysis tool which identify problematic patterns found in application source code.
 
 #### GitHub-ECR-Tag-Check
 The GitHub ECR Tag Check will be performing the following steps.
@@ -25,11 +25,6 @@ The GitHub ECR Tag Check will be performing the following steps.
 #### Deploy-ECS
 The Deploy ECS will be performing the following steps.
 
+* This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
 * This job uses 'aha-uat' environment and login to ECR using creds and pull the ECR image which was created in PROD-CI-CD with the GitHub release ID.
 * Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
-* This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
-
-### Steps To Trigger Workflow
-
-1. Developer can run this workflow manually with a GitHub Tag_name as input parameter.
-

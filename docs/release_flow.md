@@ -52,8 +52,8 @@ There are different types of workflows designed for the type of source branch us
 
 ### REAN Foundation Platform Workflows
 
-* [PR-CI-CD](release_docs/Pr-ci-cd_ReleaseFlow.md)
-* [Dev-CI-CD](release_docs/Dev-ci-cd_ReleaseFlow.md).
+* [PR-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/docs/release_docs/REAN_Platform_Deployment_Workflows.md#pr-ci-cd)
+* [Dev-CI-CD]([release_docs/Dev-ci-cd_ReleaseFlow.md](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/docs/release_docs/REAN_Platform_Deployment_Workflows.md#dev-ci-cd)).
 * [UAT-CI-CD](release_docs/Uat-ci-cd_ReleaseFlow.md).
 * [PROD-CI-CD](release_docs/Prod-ci-cd_ReleaseFlow.md).
 

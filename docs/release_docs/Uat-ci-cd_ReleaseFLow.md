@@ -3,7 +3,7 @@ mode of trigger: ```On-Demand``` ```Automated```
 
 There are two ways to use or trigger uat-CI-CD workflow
 1. By creating a Pull Request to merge into MAIN branch
-2. Whenever a Branch with prefix of 'release' create a pull request
+2. Whenever a Branch with prefix of 'release/' create a pull request
 ![uat-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/uat-ci-cd_workflow.png?raw=true)
 ![uat](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Uat-ci-cd_example.png?raw=true)
 

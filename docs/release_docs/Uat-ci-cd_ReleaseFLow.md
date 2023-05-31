@@ -1,3 +1,4 @@
+mode of trigger: ```On-Demand``` ```Automated```
 ## UAT-CI-CD
 
 There are two ways to use or trigger uat-CI-CD workflow

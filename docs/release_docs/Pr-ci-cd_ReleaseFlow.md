@@ -1,3 +1,4 @@
+mode of trigger: ```Automated```
 ## PR-CI-CD
  
  PR-CI-CD can be trigger by creating a pull request from ``` Feature/* ``` branch to merge into develop branch.

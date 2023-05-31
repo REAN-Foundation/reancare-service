@@ -26,5 +26,5 @@ Release Process Workflow Diagram.
 ![AHA-PROD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/AHA-PROD_Workflow.png?raw=true)
 
 GitHub Action Workflow run
-![AHA-PROD-JOB](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/aha_workflow.png?raw=true)
+![AHA-PROD-JOB](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/aha_github_workflow.png?raw=true)
 

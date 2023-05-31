@@ -12,16 +12,11 @@ mode of trigger: ```Automated```
  #### CodeScan-ESLint
   In this job we are analyzes the code developer wrote against some rules for stylistic or programmatic errors.
  
-  * This job use static code analysis tool which identify problematic patterns found in application source code.
   * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
+  * This job use static code analysis tool which identify problematic patterns found in application source code.
  
  #### Build-Docker-Image
  In this job we are validating whether ECR image building properly or not.
  
-  * This job create a docker image with image tag using branch name and short SHA of commit.
-  * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
- 
-### Steps To Trigger Workflow
-
- 1. Create a branch with the prefix of feature, for Example ``` feature/test ``` .
- 2. Then Create a Pull Request to merge into develop branch.
+ * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
+ * This job create a docker image with image tag using branch name and short SHA of commit.

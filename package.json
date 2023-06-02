@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "NODE_OPTIONS=--max_old_space_size=5120 tsc",
     "start": "tsc && ts-node --files ./src/index.ts",
     "lint": "eslint ./src/**",
     "lint:fix": "eslint ./src/** --fix",
@@ -65,7 +64,7 @@
     "timezone-support": "^3.1.0",
     "tsyringe": "^4.7.0",
     "twilio": "^3.84.1",
-    "typeorm": "^0.3.16",
+    "typeorm": "^0.3.15",
     "uuid": "^8.3.2",
     "uuid-apikey": "^1.5.3"
   },

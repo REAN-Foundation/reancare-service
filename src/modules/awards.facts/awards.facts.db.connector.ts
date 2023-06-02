@@ -11,6 +11,7 @@ import { Loader } from "../../startup/loader";
 import { DatabaseClient } from "../../common/database.utils/dialect.clients/database.client";
 import { DatabaseSchemaType } from "../../common/database.utils/database.config";
 import { ExercisePhysicalActivityFact } from "./models/exercise.physical.activity.fact.model";
+import { VitalFact } from "./models/vital.fact.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +33,7 @@ class AwardsFactsDatabaseConnector {
             MedicationFact,
             NutritionChoiceFact,
             ExercisePhysicalActivityFact,
+            VitalFact
         ],
         migrations  : [],
         subscribers : [],

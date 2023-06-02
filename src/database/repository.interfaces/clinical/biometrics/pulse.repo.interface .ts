@@ -15,4 +15,8 @@ export interface IPulseRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getAllUserResponsesBetween(patientUserId: string, dateFrom: Date, dateTo: Date): Promise<any[]>;
+
+    getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
+
 }

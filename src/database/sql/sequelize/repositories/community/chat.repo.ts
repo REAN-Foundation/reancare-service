@@ -1,12 +1,12 @@
 import { Op } from 'sequelize';
-import { ChatMessageDomainModel } from '../../../../../domain.types/general/chat/chat.message.domain.model';
-import { ChatMessageDto } from '../../../../../domain.types/general/chat/chat.message.dto';
-import { ConversationDomainModel } from '../../../../../domain.types/general/chat/conversation.domain.model';
-import { ConversationDto } from '../../../../../domain.types/general/chat/conversation.dto';
-import { ConversationSearchFilters, ConversationSearchResults } from '../../../../../domain.types/general/chat/conversation.search.types';
+import { ChatMessageDomainModel } from '../../../../../domain.types/community/chat/chat.message.domain.model';
+import { ChatMessageDto } from '../../../../../domain.types/community/chat/chat.message.dto';
+import { ConversationDomainModel } from '../../../../../domain.types/community/chat/conversation.domain.model';
+import { ConversationDto } from '../../../../../domain.types/community/chat/conversation.dto';
+import { ConversationSearchFilters, ConversationSearchResults } from '../../../../../domain.types/community/chat/conversation.search.types';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
-import { IChatRepo } from '../../../../repository.interfaces/general/chat.repo.interface';
+import { IChatRepo } from '../../../../repository.interfaces/community/chat.repo.interface';
 import Conversation from '../../models/general/chat/conversation.model';
 import ChatMessage from '../../models/general/chat/chat.message.model';
 import ConversationParticipant from '../../models/general/chat/conversation.participant.model';

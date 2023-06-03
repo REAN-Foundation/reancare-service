@@ -1,5 +1,5 @@
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
-import { ConversationDto } from '../../../../../domain.types/general/chat/conversation.dto';
+import { ConversationDto } from '../../../../../domain.types/community/chat/conversation.dto';
 import Conversation from '../../models/general/chat/conversation.model';
 
 ///////////////////////////////////////////////////////////////////////////////////

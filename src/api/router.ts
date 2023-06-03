@@ -69,7 +69,7 @@ import { register as registerTestRoutes } from './general/test/test.routes';
 import { register as registerDonorRoutes } from './users/donor/donor.routes';
 import { register as registerNotificationRoutes } from './general/notification/notification.routes';
 import { register as registerVolunteerRoutes } from './users/volunteer/volunteer.routes';
-import { register as registerChatRoutes } from './general/chat/chat.routes';
+import { register as registerChatRoutes } from './community/chat/chat.routes';
 import { register as registerPatientStatisticsRoutes } from './users/patient/statistics/statistics.routes';
 import { register as registerRssfeedRoutes } from './general/rss.feed/rss.feed.routes';
 import { register as registerPatientDonorsRoutes } from './clinical/donation/patient.donors.routes';

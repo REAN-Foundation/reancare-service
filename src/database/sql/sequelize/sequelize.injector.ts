@@ -77,7 +77,7 @@ import { DonorRepo } from './repositories/users/donor.repo';
 import { HealthSystemRepo } from './repositories/users/patient/health.system.repo';
 import { NotificationRepo } from './repositories/general/notification.repo';
 import { VolunteerRepo } from './repositories/users/volunteer.repo';
-import { ChatRepo } from './repositories/general/chat.repo';
+import { ChatRepo } from './repositories/community/chat.repo';
 import { RssfeedRepo } from './repositories/general/rss.feed/rss.feed.repo';
 import { RssfeedItemRepo } from './repositories/general/rss.feed/rss.feed.item.repo';
 import { PatientDonorsRepo } from './repositories/clinical/donation/patient.donors.repo';

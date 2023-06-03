@@ -27,26 +27,25 @@ export class UserGroupValidator extends BaseValidator {
 
     public update = async (request: express.Request): Promise<UserGroupUpdateDomainModel> => {
         await this.validateUpdate(request);
-        const filters = this.getUpdateModel(request, request.currentUser.UserId);
+        const filters = this.getUpdateModel(request.body);
         return filters;
     };
 
     private getCreateModel = (requestBody: any, currentUserId: uuid): UserGroupCreateDomainModel => {
 
         const model: UserGroupCreateDomainModel = {
-            Name            : requestBody.Name ?? null,
-            Description     : requestBody.Description ?? null,
-            CreatedByUserId : currentUserId,
+            Name        : requestBody.Name ?? null,
+            Description : requestBody.Description ?? null,
+            OwnerUserId : currentUserId,
         };
         return model;
     };
 
-    private getUpdateModel = (requestBody: any, currentUserId: uuid): UserGroupUpdateDomainModel => {
+    private getUpdateModel = (requestBody: any): UserGroupUpdateDomainModel => {
 
         const model: UserGroupUpdateDomainModel = {
-            Name            : requestBody.Name ?? null,
-            Description     : requestBody.Description ?? null,
-            UpdatedByUserId : currentUserId,
+            Name        : requestBody.Name ?? null,
+            Description : requestBody.Description ?? null,
         };
 
         return model;

@@ -7,10 +7,10 @@ import { ConversationSearchFilters, ConversationSearchResults } from '../../../.
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { IChatRepo } from '../../../../repository.interfaces/community/chat.repo.interface';
-import Conversation from '../../models/general/chat/conversation.model';
-import ChatMessage from '../../models/general/chat/chat.message.model';
-import ConversationParticipant from '../../models/general/chat/conversation.participant.model';
-import { ChatMapper } from '../../mappers/general/chat.mapper';
+import Conversation from '../../models/community/chat/conversation.model';
+import ChatMessage from '../../models/community/chat/chat.message.model';
+import ConversationParticipant from '../../models/community/chat/conversation.participant.model';
+import { ChatMapper } from '../../mappers/community/chat.mapper';
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import User from '../../models/users/user/user.model';
 import Person from '../../models/person/person.model';

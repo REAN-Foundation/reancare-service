@@ -77,6 +77,8 @@ import { register as registerDonationRecordRoutes } from './clinical/donation.re
 import { register as registerWearableWebhookTerraRoutes } from './device.data/webhooks/providers/terra/terra.webhook.routes';
 import { register as registerWearableDeviceDetailsRoutes } from './device.data/device.details/wearable.device.details.routes';
 import { register as registerDonationCommunicationRoutes } from './clinical/donation.communication/donation.communication.routes';
+import { register as registerUserGroupRoutes } from './community/user.groups/user.group.routes';
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
@@ -177,6 +179,7 @@ export class Router {
                 registerWearableWebhookTerraRoutes(this._app);
                 registerWearableDeviceDetailsRoutes(this._app);
                 registerDonationCommunicationRoutes(this._app);
+                registerUserGroupRoutes(this._app);
 
                 resolve(true);
 

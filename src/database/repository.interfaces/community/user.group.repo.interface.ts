@@ -25,12 +25,12 @@ export interface IUserGroupRepo {
 
     removeUserFromGroup(groupId: uuid, userId: uuid): Promise<boolean>;
 
-    getGroupUsers(groupId: uuid): Promise<UserGroupDto[]>;
+    getGroupUsers(groupId: uuid): Promise<any[]>;
 
     makeUserAdmin(groupId: uuid, userId: uuid): Promise<boolean>;
 
     removeUserAdmin(groupId: uuid, userId: uuid): Promise<boolean>;
 
-    getGroupAdmins(groupId: uuid): Promise<UserGroupDto[]>;
+    getGroupAdmins(groupId: uuid): Promise<any[]>;
 
 }

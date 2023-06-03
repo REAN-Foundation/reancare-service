@@ -2,15 +2,14 @@ import { BaseSearchFilters, BaseSearchResults } from "../../../domain.types/misc
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 export interface UserGroupCreateDomainModel {
-    Name: string;
+    Name        : string;
     Description?: string;
-    CreatedByUserId: uuid;
+    OwnerUserId : uuid;
 }
 
 export interface UserGroupUpdateDomainModel {
-    Name?: string;
+    Name       ?: string;
     Description?: string;
-    UpdatedByUserId: uuid;
 }
 
 export interface UserGroupSearchFilters extends BaseSearchFilters {
@@ -19,15 +18,14 @@ export interface UserGroupSearchFilters extends BaseSearchFilters {
 }
 
 export interface UserGroupDto {
-    id              : uuid;
-    Name            : string;
-    Description    ?: string;
-    CreatedByUserId : uuid;
-    CreatedByUser  ?: any;
-    CreatedAt       : Date;
-    UpdatedByUserId : uuid;
-    UpdatedByUser  ?: any;
-    UpdatedAt       : Date;
+    id          : uuid;
+    Name        : string;
+    Description?: string;
+    OwnerUserId : uuid;
+    Owner      ?: any;
+    CreatedAt   : Date;
+    UpdatedAt   : Date;
+    Users      ?: any[];
 }
 
 export interface UserGroupSearchResults extends BaseSearchResults {

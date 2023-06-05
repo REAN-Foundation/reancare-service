@@ -34,4 +34,14 @@ export class PhysicalActivityService {
         return await this._physicalActivityRepo.delete(id);
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._physicalActivityRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._physicalActivityRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

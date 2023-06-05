@@ -923,7 +923,7 @@ export class AhaCareplanService implements ICareplanService {
         if (type === 'Challenge') {
             return UserTaskCategory.Challenge;
         }
-        if ((type === 'Professional' && title === 'Weekely review') ||
+        if ((type === 'Professional' && title === 'Weekly review') ||
             (type === 'Professional' && title === 'Week televisit')) {
             return UserTaskCategory.Consultation;
         }

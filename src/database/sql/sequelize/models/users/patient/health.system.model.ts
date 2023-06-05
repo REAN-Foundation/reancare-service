@@ -29,6 +29,12 @@ export default class HealthSystem extends Model {
     })
     Name: string;
 
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Tags: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

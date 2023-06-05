@@ -5,18 +5,17 @@
 
 ## Table Of Contents
 - [Branching Strategy](#Branching-Strategy)
-  - [Feature](#Feature-Branch)
-  - [Release](#Release-Branch)
 - [Develop to Main Branch Workflow](#Develop-to-Main-branch-Workflow)
   - [Develop Branch Workflow](#Develop-Branch-Workflow)
   - [Main branch Workflow](#Main-branch-Workflow)
 - [Release Workflows](#Release-Workflows)
-  - [PR-ci-cd](#PR-CI-CD)
-  - [Dev-ci-cd](#Dev-ci-cd)
-  - [UAT-ci-cd](#UAT-ci-cd)
-  - [PROD-ci-cd](#PROD-ci-cd)
-  - [AHA-UAT-ci-cd](#AHA-UAT-ci-cd)
-  - [AHA-PROD-ci-cd](#AHA-PROD-ci-cd)
+  - [REAN Foundation Platform Workflows](#REAN-Foundation-Platform-Workflows)
+     - [Dev-ci-cd](#Dev-ci-cd)
+     - [UAT-ci-cd](#UAT-ci-cd)
+     - [PROD-ci-cd](#PROD-ci-cd)
+  - [Customer Workflows](#Customer-Workflows)
+     - [AHA-UAT-ci-cd](#AHA-UAT-ci-cd)
+     - [AHA-PROD-ci-cd](#AHA-PROD-ci-cd)
 
 
 

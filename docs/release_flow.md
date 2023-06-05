@@ -10,7 +10,7 @@
 - [Develop to Main Branch Workflow](#Develop-to-Main-branch-Workflow)
   - [Develop Branch Workflow](#Develop-Branch-Workflow)
   - [Main branch Workflow](#Main-branch-Workflow)
-- [Release Workflows](#Workflow-Explained)
+- [Release Workflows](#Release-Workflows)
   - [PR-ci-cd](#PR-ci-cd)
   - [Dev-ci-cd](#Dev-ci-cd)
   - [UAT-ci-cd](#UAT-ci-cd)

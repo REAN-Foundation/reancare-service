@@ -6,6 +6,10 @@ import { SleepService } from '../../../../services/wellness/daily.records/sleep.
 import { Loader } from '../../../../startup/loader';
 import { SleepValidator } from './sleep.validator';
 import { BaseController } from '../../../base.controller';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +46,29 @@ export class SleepController extends BaseController{
             }
             if (sleep == null) {
                 throw new ApiError(400, 'Cannot create record for sleep!');
+            }
+
+            if (sleep.SleepDuration) {
+                var timestamp = sleep.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(sleep.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateMentalHealthResponseFact({
+                    PatientUserId : sleep.PatientUserId,
+                    Facts         : {
+                        Name      :  'Sleep',
+                        Duration  : sleep.SleepDuration,
+                        Unit      : sleep.Unit,
+                    },
+                    RecordId      : sleep.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
             }
 
             ResponseHandler.success(request, response, 'Sleep record created successfully!', 201, {

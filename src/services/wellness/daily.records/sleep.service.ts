@@ -38,4 +38,14 @@ export class SleepService {
         return await this._sleepRepo.delete(id);
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._sleepRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._sleepRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

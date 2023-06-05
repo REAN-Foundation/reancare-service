@@ -1,10 +1,14 @@
 # REAN Platform Deployment workflows
 
 ## PR-CI-CD
-mode of trigger: ```Automated```
+Mode of trigger: ```Automated```
 
  PR Workflow is triggered automatically whenever a PR with source branch as a feature/* branch is created against the target branch as develop branch.
+ 
+ Release Process Workflow Diagram.
  ![PR-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/pr-ci-cd_workflow.png?raw=true)
+ 
+ GitHub Action Workflow run.
  ![pr](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Pr-ci-cd_example.png?raw=true)
  
 ### JOBS
@@ -26,10 +30,14 @@ mode of trigger: ```Automated```
 
 
 ## Dev-CI-CD
-mode of trigger: ```Automated```
+Mode of trigger: ```Automated```
 
 Dev Workflow is triggered automatically whenever any PR is merged into the develop branch. The workflow builds the applications and deploys the changes to the RF Platform Development environment.
+
+Release Process Workflow Diagram.
 ![Dev-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/dev-ci-cd_workflow.png?raw=true)
+
+GitHub Action Workflow run.
 ![dev](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Dev-ci-cd_example.png?raw=true)
 
 ### JOBS
@@ -43,12 +51,16 @@ The Deploy ECS will be performing the following steps
 
 
 ## UAT-CI-CD
-mode of trigger: ```On-Demand``` ```Automated```
+Mode of trigger: ```On-Demand``` ```Automated```
 
 There are two ways to use or trigger uat-CI-CD workflow
 1. By creating a Pull Request to merge into MAIN branch
 2. Whenever a Branch with prefix of 'release/' create a pull request
+
+Release Process Workflow Diagram.
 ![uat-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/uat-ci-cd_workflow.png?raw=true)
+
+GitHub Action Workflow run.
 ![uat](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Uat-ci-cd_example.png?raw=true)
 
 ### JOBS
@@ -74,11 +86,14 @@ The Deploy ECS will be performing the following steps.
 
 
 ## PROD-CI-CD
-mode of trigger: ```Automated```
+Mode of trigger: ```Automated```
 
 Prod Workflow is triggered automatically whenever any PR is merged into the main branch. The workflow builds the applications and deploys the changes to the RF Platform Production environment.
+
+Release Process Workflow Diagram.
 ![prod-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/PROD-ci-cd_workflow.png?raw=true)
 
+GitHub Action Workflow run.
 ![prod](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/prod-ci-cd_example.png?raw=true)
 
 ### JOBS

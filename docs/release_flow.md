@@ -11,7 +11,7 @@
   - [Develop Branch Workflow](#Develop-Branch-Workflow)
   - [Main branch Workflow](#Main-branch-Workflow)
 - [Release Workflows](#Release-Workflows)
-  - [PR-ci-cd](#PR-ci-cd)
+  - [PR-ci-cd](#PR-CI-CD)
   - [Dev-ci-cd](#Dev-ci-cd)
   - [UAT-ci-cd](#UAT-ci-cd)
   - [PROD-ci-cd](#PROD-ci-cd)

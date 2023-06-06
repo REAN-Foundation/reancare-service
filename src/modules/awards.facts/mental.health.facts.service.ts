@@ -89,4 +89,4 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
         return service[Name];
     };
 
-}
+};

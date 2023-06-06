@@ -13,8 +13,7 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
 
     const mentalHealthfactRepository: Repository<MentalHealthFact> = AwardsFactsSource.getRepository(MentalHealthFact);
     
-    const mentalHealthService = await getService(model.Facts.Name)
-
+    const mentalHealthService = await getService(model.Facts.Name);
 
     const lastRecords = await mentalHealthfactRepository.find({
         where : {
@@ -46,48 +45,48 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
             RecordDateStr : r.RecordDateStr,
             FactType      : 'Mental-Health',
             Facts         : {
-                Name      : r.Name,
-                Duration  : r.Duration,
-                Unit      : r.Unit
+                Name     : r.Name,
+                Duration : r.Duration,
+                Unit     : r.Unit
             }
         };
         await addOrUpdateMentalHealthRecord(model_);
     }
 
-async function addOrUpdateMentalHealthRecord(model: AwardsFact) {
-    const mentalHealthfactRepository: Repository<MentalHealthFact> = AwardsFactsSource.getRepository(MentalHealthFact);
-    const existing = await mentalHealthfactRepository.findOne({
-        where : {
-            RecordId : model.RecordId
+    async function addOrUpdateMentalHealthRecord(model: AwardsFact) {
+        const mentalHealthfactRepository: Repository<MentalHealthFact> = AwardsFactsSource.getRepository(MentalHealthFact);
+        const existing = await mentalHealthfactRepository.findOne({
+            where : {
+                RecordId : model.RecordId
+            }
+        });
+        if (!existing) {
+            const fact = {
+                RecordId           : model.RecordId,
+                ContextReferenceId : model.PatientUserId,
+                Name               : model.Facts.Name,
+                Duration           : model.Facts.Duration,
+                Unit               : model.Facts.Unit,
+                RecordDate         : model.RecordDate,
+                RecordDateStr      : model.RecordDateStr
+            };
+            const record = await mentalHealthfactRepository.create(fact);
+            const saved = await mentalHealthfactRepository.save(record);
+            Logger.instance().log(`${JSON.stringify(saved, null, 2)}`);
         }
-    });
-    if (!existing) {
-        const fact = {
-            RecordId           : model.RecordId,
-            ContextReferenceId : model.PatientUserId,
-            Name               : model.Facts.Name,
-            Duration           : model.Facts.Duration,
-            Unit               : model.Facts.Unit,
-            RecordDate         : model.RecordDate,
-            RecordDateStr      : model.RecordDateStr
-        };
-        const record = await mentalHealthfactRepository.create(fact);
-        const saved = await mentalHealthfactRepository.save(record);
-        Logger.instance().log(`${JSON.stringify(saved, null, 2)}`);
-    }
-    else {
-        existing.Duration = model.Facts.Duration ?? (await existing).Duration;
-        const saved = await mentalHealthfactRepository.save(existing);
-        Logger.instance().log(`${JSON.stringify(saved, null, 2)}`);
-    }
-};
-
-async function getService(Name) {
-    const service = {
-        "Sleep"          : Loader.container.resolve(SleepService),
-        "Meditation"     : Loader.container.resolve(MeditationService)
+        else {
+            existing.Duration = model.Facts.Duration ?? (await existing).Duration;
+            const saved = await mentalHealthfactRepository.save(existing);
+            Logger.instance().log(`${JSON.stringify(saved, null, 2)}`);
+        }
     };
-    return service[Name];
-}
+
+    async function getService(Name) {
+        const service = {
+            "Sleep"      : Loader.container.resolve(SleepService),
+            "Meditation" : Loader.container.resolve(MeditationService)
+        };
+        return service[Name];
+    };
 
 }

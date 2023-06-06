@@ -87,6 +87,6 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
             "Meditation" : Loader.container.resolve(MeditationService)
         };
         return service[Name];
-    };
+    }
 
 };

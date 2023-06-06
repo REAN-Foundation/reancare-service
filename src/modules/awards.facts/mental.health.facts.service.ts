@@ -79,7 +79,7 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
             const saved = await mentalHealthfactRepository.save(existing);
             Logger.instance().log(`${JSON.stringify(saved, null, 2)}`);
         }
-    };
+    }
 
     async function getService(Name) {
         const service = {

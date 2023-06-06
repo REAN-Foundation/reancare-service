@@ -36,4 +36,14 @@ export class MeditationService {
         return await this._meditationRepo.delete(id);
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._meditationRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._meditationRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

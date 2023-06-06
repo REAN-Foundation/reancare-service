@@ -12,6 +12,7 @@ import { DatabaseClient } from "../../common/database.utils/dialect.clients/data
 import { DatabaseSchemaType } from "../../common/database.utils/database.config";
 import { ExercisePhysicalActivityFact } from "./models/exercise.physical.activity.fact.model";
 import { VitalFact } from "./models/vital.fact.model";
+import { BadgeFact } from "./models/badge.fact.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +32,7 @@ class AwardsFactsDatabaseConnector {
         //entities    : [this._basePath + '/**/**{.model.ts}'],
         entities    : [
             MedicationFact,
+            BadgeFact,
             NutritionChoiceFact,
             ExercisePhysicalActivityFact,
             VitalFact

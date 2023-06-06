@@ -24,4 +24,8 @@ export interface ISleepRepo {
 
     getByRecordDateAndPatientUserId(recordDate: Date, patientUserId: string): Promise<SleepDto>;
 
+    getAllUserResponsesBetween(patientUserId: string, dateFrom: Date, dateTo: Date): Promise<any[]>;
+
+    getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
+
 }

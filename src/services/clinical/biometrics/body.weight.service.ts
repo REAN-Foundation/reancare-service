@@ -54,4 +54,14 @@ export class BodyWeightService {
         return await this._bodyWeightRepo.delete(id);
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._bodyWeightRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._bodyWeightRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

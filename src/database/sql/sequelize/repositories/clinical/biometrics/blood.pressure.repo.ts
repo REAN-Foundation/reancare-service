@@ -10,6 +10,7 @@ import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../..
 import { IBloodPressureRepo } from '../../../../../repository.interfaces/clinical/biometrics/blood.pressure.repo.interface';
 import { BloodPressureMapper } from '../../../mappers/clinical/biometrics/blood.pressure.mapper';
 import BloodPressure from '../../../models/clinical/biometrics/blood.pressure.model';
+import { HelperRepo } from '../../common/helper.repo';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -252,6 +253,92 @@ export class BloodPressureRepo implements IBloodPressureRepo {
             });
             return await BloodPressureMapper.toDto(record);
         } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BloodPressure.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    Systolic      : {
+                        [Op.not] : null,
+                    },
+                    Diastolic : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId            : x.id,
+                    PatientUserId       : x.PatientUserId,
+                    VitalName           : "BloodPressure",
+                    VitalPrimaryValue   : x.Systolic,
+                    VitalSecondaryValue : x.Diastolic,
+                    Unit                : x.Unit,
+                    RecordDateStr       : dayStr,
+                    RecordDate          : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BloodPressure.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    Systolic      : {
+                        [Op.not] : null,
+                    },
+                    Diastolic : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId            : x.id,
+                    PatientUserId       : x.PatientUserId,
+                    VitalName           : "BloodPressure",
+                    VitalPrimaryValue   : x.Systolic,
+                    VitalSecondaryValue : x.Diastolic,
+                    Unit                : x.Unit,
+                    RecordDateStr       : dayStr,
+                    RecordDate          : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

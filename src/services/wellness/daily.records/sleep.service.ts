@@ -22,8 +22,8 @@ export class SleepService {
         return await this._sleepRepo.getById(id);
     };
 
-    getByRecordDate = async (recordDate: Date): Promise<SleepDto> => {
-        return await this._sleepRepo.getByRecordDate(recordDate);
+    getByRecordDate = async (recordDate: Date, patientUserId: uuid): Promise<SleepDto> => {
+        return await this._sleepRepo.getByRecordDate(recordDate, patientUserId);
     };
 
     search = async (filters: SleepSearchFilters): Promise<SleepSearchResults> => {

@@ -37,8 +37,9 @@ export class SleepController extends BaseController{
 
             const model = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
+            const patientUserId = request.body.PatientUserId;
         
-            var existingRecord = await this._service.getByRecordDate(recordDate);
+            var existingRecord = await this._service.getByRecordDate(recordDate, patientUserId);
             if (existingRecord !== null) {
                 var sleep = await this._service.update(existingRecord.id, model);
             } else {

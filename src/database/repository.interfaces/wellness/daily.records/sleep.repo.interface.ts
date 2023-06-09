@@ -12,7 +12,7 @@ export interface ISleepRepo {
 
     getById(id: uuid): Promise<SleepDto>;
 
-    getByRecordDate(date: Date): Promise<SleepDto>;
+    getByRecordDate(date: Date, patientUserId: uuid): Promise<SleepDto>;
 
     search(filters: SleepSearchFilters): Promise<SleepSearchResults>;
 

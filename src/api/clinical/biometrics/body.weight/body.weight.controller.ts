@@ -9,6 +9,10 @@ import { BodyWeightService } from '../../../../services/clinical/biometrics/body
 import { Loader } from '../../../../startup/loader';
 import { BodyWeightValidator } from './body.weight.validator';
 import { BaseController } from '../../../base.controller';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +43,30 @@ export class BodyWeightController extends BaseController {
                 throw new ApiError(400, 'Cannot create weight record!');
             }
             this.addEHRRecord(model.PatientUserId, bodyWeight.id, model);
+
+            // Adding record to award service
+            if (bodyWeight.BodyWeight) {
+                var timestamp = bodyWeight.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bodyWeight.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : bodyWeight.PatientUserId,
+                    Facts         : {
+                        VitalName         : "BodyWeight",
+                        VitalPrimaryValue : bodyWeight.BodyWeight,
+                        Unit              : bodyWeight.Unit,
+                    },
+                    RecordId      : bodyWeight.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
             ResponseHandler.success(request, response, 'Weight record created successfully!', 201, {
                 BodyWeight : bodyWeight,
             });
@@ -104,6 +132,29 @@ export class BodyWeightController extends BaseController {
                 throw new ApiError(400, 'Unable to update weight record!');
             }
             this.addEHRRecord(model.PatientUserId, id, model);
+
+            if (updated.BodyWeight) {
+                var timestamp = updated.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : updated.PatientUserId,
+                    Facts         : {
+                        VitalName         : "BodyWeight",
+                        VitalPrimaryValue : updated.BodyWeight,
+                        Unit              : updated.Unit,
+                    },
+                    RecordId      : updated.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
             ResponseHandler.success(request, response, 'Weight record updated successfully!', 200, {
                 BodyWeight : updated,
             });

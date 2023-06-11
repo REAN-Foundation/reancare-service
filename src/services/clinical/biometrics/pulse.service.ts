@@ -56,4 +56,14 @@ export class PulseService {
         return await this._pulseRepo.delete(id);
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._pulseRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._pulseRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

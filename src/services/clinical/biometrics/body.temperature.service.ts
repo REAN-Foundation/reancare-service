@@ -56,4 +56,14 @@ export class BodyTemperatureService {
         return await this._bodyTemperatureRepo.delete(id);
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._bodyTemperatureRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._bodyTemperatureRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

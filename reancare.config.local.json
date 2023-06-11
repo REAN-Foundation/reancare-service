@@ -2,7 +2,10 @@
     "SystemIdentifier": "REAN HealthGuru",
     "Auth" : {
         "Authentication": "Custom",
-        "Authorization": "Custom"
+        "Authorization": "Custom",
+        "UseRefreshToken": true,
+        "AccessTokenExpiresInSeconds": 600,
+        "RefreshTokenExpiresInSeconds": 2592000
     },
     "Database" : {
         "Type": "SQL",

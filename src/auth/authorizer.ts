@@ -2,7 +2,6 @@ import express from 'express';
 import 'reflect-metadata';
 import { inject, injectable } from "tsyringe";
 import { ApiError } from '../common/api.error';
-import { CurrentUser } from '../domain.types/miscellaneous/current.user';
 import { IAuthorizer } from './authorizer.interface';
 
 ////////////////////////////////////////////////////////////////////////

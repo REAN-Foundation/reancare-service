@@ -1,3 +1,6 @@
+import { Op } from 'sequelize';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { MeditationDomainModel } from "../../../../../../domain.types/wellness/exercise/meditation/meditation.domain.model";
@@ -6,6 +9,7 @@ import { MeditationSearchFilters, MeditationSearchResults } from "../../../../..
 import { IMeditationRepo } from '../../../../../repository.interfaces/wellness/exercise/meditation.repo.interface';
 import { MeditationMapper } from '../../../mappers/wellness/exercise/meditation.mapper';
 import MeditationModel from '../../../models/wellness/exercise/meditation.model';
+import { HelperRepo } from '../../common/helper.repo';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -148,6 +152,84 @@ export class MeditationRepo implements IMeditationRepo {
             const result = await MeditationModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await MeditationModel.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    DurationInMins  : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId      : x.id,
+                    PatientUserId : x.PatientUserId,
+                    Name          : 'Meditation',
+                    Duration      : x.DurationInMins,
+                    Unit          : 'mins',
+                    RecordDateStr : dayStr,
+                    RecordDate    : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await MeditationModel.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    DurationInMins  : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId      : x.id,
+                    PatientUserId : x.PatientUserId,
+                    Name          : 'Meditaion',
+                    Duration      : x.DurationInMins,
+                    Unit          : 'mins',
+                    RecordDateStr : dayStr,
+                    RecordDate    : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

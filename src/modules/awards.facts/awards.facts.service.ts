@@ -139,12 +139,12 @@ export class AwardsFactsService {
             var url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/types/event-types';
             var response = await needle('get', url, options);
             if (response.statusCode === 200) {
-                Logger.instance().log('Successfully triggered award event!');
+                Logger.instance().log('Successfully retrieved award event types!');
                 AwardsFactsService._eventTypes = response.body.Data.Types;
                 AwardsFactsService._initialized = true;
                 return true;
             } else {
-                Logger.instance().error('Unable to trigger award event!', response.statusCode, response.Data);
+                Logger.instance().error('Unable to retrieve award event types!', response.statusCode, response.Data);
                 AwardsFactsService._initialized = true;
                 return false;
             }
@@ -156,10 +156,6 @@ export class AwardsFactsService {
 
     private static notifyAwardsService = async (eventTypeId: uuid, model: AwardsFact) => {
         try {
-            const options = {
-                headers : headers,
-                json    : true,
-            };
             var url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/engine/events';
             var body = {
                 TypeId      : eventTypeId,

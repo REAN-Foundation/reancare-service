@@ -4,11 +4,13 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 export interface UserGroupCreateDomainModel {
     Name        : string;
     Description?: string;
+    ImageUrl   ?: string;
     OwnerUserId : uuid;
 }
 
 export interface UserGroupUpdateDomainModel {
     Name       ?: string;
+    ImageUrl   ?: string;
     Description?: string;
 }
 
@@ -18,14 +20,16 @@ export interface UserGroupSearchFilters extends BaseSearchFilters {
 }
 
 export interface UserGroupDto {
-    id          : uuid;
-    Name        : string;
-    Description?: string;
-    OwnerUserId : uuid;
-    Owner      ?: any;
-    CreatedAt   : Date;
-    UpdatedAt   : Date;
-    Users      ?: any[];
+    id                     : uuid;
+    Name                   : string;
+    Description           ?: string;
+    ImageUrl              ?: string;
+    OwnerUserId            : uuid;
+    Owner                 ?: any;
+    AwardsParticipantGroup?: any;
+    CreatedAt              : Date;
+    UpdatedAt              : Date;
+    Users                 ?: any[];
 }
 
 export interface UserGroupSearchResults extends BaseSearchResults {

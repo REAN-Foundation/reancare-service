@@ -14,6 +14,7 @@ export class UserGroupMapper {
             id          : group.id,
             Name        : group.Name,
             Description : group.Description,
+            ImageUrl    : group.ImageUrl,
             OwnerUserId : group.OwnerUserId,
             CreatedAt   : group.createdAt,
             UpdatedAt   : group.updatedAt,

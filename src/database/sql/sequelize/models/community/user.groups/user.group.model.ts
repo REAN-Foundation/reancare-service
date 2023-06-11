@@ -1,10 +1,9 @@
 import {
-    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey,
-    IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
-} from 'sequelize-typescript';
+    BelongsTo, Column, CreatedAt, DataType, DeletedAt,
+    ForeignKey, IsUUID, Length, Model,
+    PrimaryKey, Table, UpdatedAt } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
-import FileResource from '../../general/file.resource/file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -27,7 +26,7 @@ export default class UserGroup extends Model {
         allowNull : false,
     })
     id: string;
-    
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.TEXT,
@@ -42,13 +41,12 @@ export default class UserGroup extends Model {
     })
     Description: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => FileResource)
+    @Length({ max: 1024 })
     @Column({
-        type      : DataType.UUID,
+        type      : DataType.TEXT,
         allowNull : true,
     })
-    ImageResourceId: string;
+    ImageUrl: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)

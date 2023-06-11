@@ -36,6 +36,7 @@ export class UserGroupValidator extends BaseValidator {
         const model: UserGroupCreateDomainModel = {
             Name        : requestBody.Name ?? null,
             Description : requestBody.Description ?? null,
+            ImageUrl    : requestBody.ImageUrl ?? null,
             OwnerUserId : currentUserId,
         };
         return model;
@@ -46,6 +47,7 @@ export class UserGroupValidator extends BaseValidator {
         const model: UserGroupUpdateDomainModel = {
             Name        : requestBody.Name ?? null,
             Description : requestBody.Description ?? null,
+            ImageUrl    : requestBody.ImageUrl ?? null,
         };
 
         return model;
@@ -64,15 +66,17 @@ export class UserGroupValidator extends BaseValidator {
     private async validateCreate(request) {
         await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'ImageUrl', Where.Body, false, false);
         await this.validateRequest(request);
     }
 
     private async validateUpdate(request) {
         await this.validateString(request, 'Name', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'ImageUrl', Where.Body, false, false);
         await this.validateRequest(request);
     }
-    
+
     private async validateSearch(request) {
         await this.validateString(request, 'name', Where.Query, false, false);
         await this.validateUuid(request, 'userId', Where.Query, false, false);

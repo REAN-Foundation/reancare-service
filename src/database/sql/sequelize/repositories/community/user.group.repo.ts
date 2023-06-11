@@ -22,6 +22,7 @@ export class UserGroupRepo implements IUserGroupRepo {
             const entity = {
                 Name        : model.Name,
                 Description : model.Description,
+                ImageUrl    : model.ImageUrl,
                 OwnerId     : model.OwnerUserId,
             };
             const group = await UserGroup.create(entity);
@@ -144,6 +145,7 @@ export class UserGroupRepo implements IUserGroupRepo {
             const entity = {
                 Name        : model.Name ?? group.Name,
                 Description : model.Description ?? group.Description,
+                ImageUrl    : model.ImageUrl ?? group.ImageUrl,
             };
             await group.update(entity);
             const dto = await UserGroupMapper.toDto(group, null);
@@ -169,7 +171,7 @@ export class UserGroupRepo implements IUserGroupRepo {
             throw new Error(`Failed to delete user group: ${error.message}`);
         }
     };
-    
+
     public addUserToGroup = async (groupId: uuid, userId: uuid): Promise<boolean> => {
         try {
             const group = await UserGroup.findByPk(groupId);

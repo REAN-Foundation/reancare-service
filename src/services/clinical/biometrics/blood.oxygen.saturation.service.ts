@@ -57,4 +57,14 @@ export class BloodOxygenSaturationService {
         return await this._bloodOxygenSaturationRepo.delete(id);
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._bloodOxygenSaturationRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._bloodOxygenSaturationRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

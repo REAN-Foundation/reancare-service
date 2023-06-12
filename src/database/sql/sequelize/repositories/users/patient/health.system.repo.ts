@@ -13,6 +13,8 @@ import { HealthSystemHospitalDto } from
     '../../../../../../domain.types/users/patient/health.system/health.system.hospital.dto';
 import HealthSystemHospital from '../../../models/users/patient/health.system.hospital.model';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { HealthSystemSearchFilters, HealthSystemSearchResults }
+    from '../../../../../../domain.types/users/patient/health.system/health.system.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -23,6 +25,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
         try {
             const entity = {
                 Name : createModel.Name,
+                Tags : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
             };
 
             const nutrition = await HealthSystem.create(entity);
@@ -40,10 +43,12 @@ export class HealthSystemRepo implements IHealthSystemRepo {
             const entity = {
                 HealthSystemId : createModel.HealthSystemId,
                 Name           : createModel.Name,
+                Tags           : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
+
             };
 
-            const nutrition = await HealthSystemHospital.create(entity);
-            return await HealthSystemMapper.toDetailsDto(nutrition);
+            const healthSystemHospital = await HealthSystemHospital.create(entity);
+            return await HealthSystemMapper.toDetailsDto(healthSystemHospital);
             
         } catch (error) {
             Logger.instance().log(error.message);
@@ -60,9 +65,12 @@ export class HealthSystemRepo implements IHealthSystemRepo {
         }
     };
 
-    getHealthSystems = async (): Promise<HealthSystemDto[]> => {
+    getHealthSystems = async (planName?: string): Promise<HealthSystemDto[]> => {
         try {
-            const filter = { where: {} };
+            const filter = { where: {
+                Tags : JSON.stringify(planName.split(','))
+
+            } };
             
             const healthSystems = await HealthSystem.findAll(filter);
             const dtos: HealthSystemDto[] = [];
@@ -92,6 +100,62 @@ export class HealthSystemRepo implements IHealthSystemRepo {
             }
 
             return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    searchType = async (filters: HealthSystemSearchFilters): Promise<HealthSystemSearchResults> => {
+        try {
+            const search = { where: {} };
+
+            if (filters.Name != null) {
+                search.where['Name'] = filters.Name;
+            }
+    
+            let orderByColum = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await HealthSystem.findAndCountAll(search);
+            const dtos: HealthSystemDto[] = [];
+            for (const h of foundResults.rows) {
+                const dto = await HealthSystemMapper.toDto(h);
+                dtos.push(dto);
+            }
+
+            const searchResults: HealthSystemSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

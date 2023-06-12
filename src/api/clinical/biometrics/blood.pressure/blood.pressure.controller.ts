@@ -8,11 +8,15 @@ import { BloodPressureValidator } from './blood.pressure.validator';
 import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 import { PersonService } from '../../../../services/person/person.service';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,6 +60,31 @@ export class BloodPressureController extends BaseController {
             if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
                 await this._service.sendBPNotification(model.PatientUserId, model);
+            }
+
+            // Adding record to award service
+            if (bloodPressure.Systolic || bloodPressure.Diastolic) {
+                var timestamp = bloodPressure.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodPressure.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : bloodPressure.PatientUserId,
+                    Facts         : {
+                        VitalName           : "BloodPressure",
+                        VitalPrimaryValue   : bloodPressure.Systolic,
+                        VitalSecondaryValue : bloodPressure.Diastolic,
+                        Unit                : bloodPressure.Unit,
+                    },
+                    RecordId      : bloodPressure.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
             }
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
@@ -127,6 +156,31 @@ export class BloodPressureController extends BaseController {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
             }
             this.addEHRRecord(model.PatientUserId, id, model);
+
+            // Adding record to award service
+            if (updated.Systolic || updated.Diastolic) {
+                var timestamp = updated.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : updated.PatientUserId,
+                    Facts         : {
+                        VitalName           : "BloodPressure",
+                        VitalPrimaryValue   : updated.Systolic,
+                        VitalSecondaryValue : updated.Diastolic,
+                        Unit                : updated.Unit,
+                    },
+                    RecordId      : updated.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
             ResponseHandler.success(request, response, 'Blood pressure record updated successfully!', 200, {
                 BloodPressure : updated,
             });
@@ -187,7 +241,7 @@ export class BloodPressureController extends BaseController {
     };
 
     private sendBPMessage = async (patientUserId: uuid, model: BloodPressureDomainModel) => {
-        
+
         const patient  = await this._patientService.getByUserId(patientUserId);
         const phoneNumber = patient.User.Person.Phone;
         const person = await this._personService.getById(patient.User.PersonId);

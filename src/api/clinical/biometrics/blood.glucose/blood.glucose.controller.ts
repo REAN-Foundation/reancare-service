@@ -7,8 +7,12 @@ import { BloodGlucoseService } from '../../../../services/clinical/biometrics/bl
 import { Loader } from '../../../../startup/loader';
 import { BloodGlucoseValidator } from './blood.glucose.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +44,30 @@ export class BloodGlucoseController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
             this.addEHRRecord(model.PatientUserId, bloodGlucose.id, model);
+
+            // Adding record to award service
+            if (bloodGlucose.BloodGlucose) {
+                var timestamp = bloodGlucose.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodGlucose.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : bloodGlucose.PatientUserId,
+                    Facts         : {
+                        VitalName         : "BloodGlucose",
+                        VitalPrimaryValue : bloodGlucose.BloodGlucose,
+                        Unit              : bloodGlucose.Unit,
+                    },
+                    RecordId      : bloodGlucose.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
             ResponseHandler.success(request, response, 'Blood glucose record created successfully!', 201, {
                 BloodGlucose : bloodGlucose,
             });
@@ -107,6 +135,28 @@ export class BloodGlucoseController extends BaseController {
                 throw new ApiError(400, 'Unable to update blood glucose record!');
             }
             this.addEHRRecord(model.PatientUserId, id, model);
+
+            if (updated.BloodGlucose) {
+                var timestamp = updated.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : updated.PatientUserId,
+                    Facts         : {
+                        BloodGlucose : updated.BloodGlucose,
+                        Unit         : updated.Unit,
+                    },
+                    RecordId      : updated.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
             ResponseHandler.success(request, response, 'Blood glucose record updated successfully!', 200, {
                 BloodGlucose : updated,
             });
@@ -151,7 +201,7 @@ export class BloodGlucoseController extends BaseController {
                 model.BloodGlucose,
                 model.Unit);
         }
-    }
+    };
 
     //#endregion
 

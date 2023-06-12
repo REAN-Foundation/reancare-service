@@ -7,6 +7,9 @@ import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from "../.
 import { IBodyTemperatureRepo } from '../../../../../repository.interfaces/clinical/biometrics/body.temperature.repo.interface';
 import { BodyTemperatureMapper } from '../../../mappers/clinical/biometrics/body.temperature.mapper';
 import BodyTemperatureModel from '../../../models/clinical/biometrics/body.temperature.model';
+import { HelperRepo } from '../../common/helper.repo';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -176,6 +179,84 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             const result = await BodyTemperatureModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BodyTemperatureModel.findAll({
+                where : {
+                    PatientUserId   : patientUserId,
+                    BodyTemperature : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "BodyTemperature",
+                    VitalPrimaryValue : x.BodyTemperature,
+                    Unit              : x.Unit,
+                    RecordDateStr     : dayStr,
+                    RecordDate        : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BodyTemperatureModel.findAll({
+                where : {
+                    PatientUserId   : patientUserId,
+                    BodyTemperature : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "BodyTemperature",
+                    VitalPrimaryValue : x.BodyTemperature,
+                    Unit              : x.Unit,
+                    RecordDateStr     : dayStr,
+                    RecordDate        : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

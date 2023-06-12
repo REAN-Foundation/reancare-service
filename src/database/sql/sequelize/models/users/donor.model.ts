@@ -11,7 +11,7 @@ import User from './user/user.model';
 @Table({
     timestamps      : true,
     modelName       : 'Donor',
-    tableName       : 'donors',
+    tableName       : 'blood_donors',
     paranoid        : true,
     freezeTableName : true,
 })

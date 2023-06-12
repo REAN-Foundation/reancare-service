@@ -7,8 +7,12 @@ import { Loader } from '../../../../startup/loader';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
 import { BaseController } from '../../../base.controller';
 import { BloodOxygenSaturationDomainModel } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
-import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
-import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +44,30 @@ export class BloodOxygenSaturationController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
             }
             this.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, model);
+
+            // Adding record to award service
+            if (bloodOxygenSaturation.BloodOxygenSaturation) {
+                var timestamp = bloodOxygenSaturation.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodOxygenSaturation.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : bloodOxygenSaturation.PatientUserId,
+                    Facts         : {
+                        VitalName         : "BloodOxygenSaturation",
+                        VitalPrimaryValue : bloodOxygenSaturation.BloodOxygenSaturation,
+                        Unit              : bloodOxygenSaturation.Unit,
+                    },
+                    RecordId      : bloodOxygenSaturation.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
             ResponseHandler.success(request, response, 'Blood oxygen saturation record created successfully!', 201, {
                 BloodOxygenSaturation : bloodOxygenSaturation,
             });
@@ -108,6 +136,30 @@ export class BloodOxygenSaturationController extends BaseController {
                 throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
             this.addEHRRecord(model.PatientUserId, id, model);
+
+            // Adding record to award service
+            if (updated.BloodOxygenSaturation) {
+                var timestamp = updated.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : updated.PatientUserId,
+                    Facts         : {
+                        VitalName         : "BloodOxygenSaturation",
+                        VitalPrimaryValue : updated.BloodOxygenSaturation,
+                        Unit              : updated.Unit,
+                    },
+                    RecordId      : updated.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
             ResponseHandler.success(request, response, 'Blood oxygen saturation record updated successfully!', 200, {
                 BloodOxygenSaturation : updated,
             });
@@ -153,7 +205,7 @@ export class BloodOxygenSaturationController extends BaseController {
                 model.BloodOxygenSaturation,
                 model.Unit);
         }
-    }
+    };
 
     //#endregion
 

@@ -15,13 +15,14 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
     Promise<UserDeviceDetailsDto> => {
         try {
             const entity = {
-                UserId     : userDeviceDetailsDomainModel.UserId,
-                Token      : userDeviceDetailsDomainModel.Token,
-                DeviceName : userDeviceDetailsDomainModel.DeviceName,
-                OSType     : userDeviceDetailsDomainModel.OSType,
-                OSVersion  : userDeviceDetailsDomainModel.OSVersion,
-                AppName    : userDeviceDetailsDomainModel.AppName,
-                AppVersion : userDeviceDetailsDomainModel.AppVersion
+                UserId      : userDeviceDetailsDomainModel.UserId,
+                Token       : userDeviceDetailsDomainModel.Token,
+                DeviceName  : userDeviceDetailsDomainModel.DeviceName,
+                OSType      : userDeviceDetailsDomainModel.OSType,
+                OSVersion   : userDeviceDetailsDomainModel.OSVersion,
+                AppName     : userDeviceDetailsDomainModel.AppName,
+                AppVersion  : userDeviceDetailsDomainModel.AppVersion,
+                ChangeCount : userDeviceDetailsDomainModel.ChangeCount
             };
 
             const userDeviceDetails = await UserDeviceDetailsModel.create(entity);
@@ -176,6 +177,10 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (userDeviceDetailsDomainModel.AppVersion != null) {
                 userDeviceDetails.AppVersion = userDeviceDetailsDomainModel.AppVersion;
             }
+            if (userDeviceDetailsDomainModel.ChangeCount != null) {
+                userDeviceDetails.ChangeCount = userDeviceDetailsDomainModel.ChangeCount;
+            }
+            
             await userDeviceDetails.save();
 
             const dto = UserDeviceDetailsMapper.toDto(userDeviceDetails);

@@ -19,4 +19,8 @@ export interface IBloodPressureRepo {
     getStats(patientUserId: string, numMonths: number): Promise<any>;
 
     getRecent(patientUserId: string): Promise<BloodPressureDto>;
+
+    getAllUserResponsesBetween(patientUserId: string, dateFrom: Date, dateTo: Date): Promise<any[]>;
+
+    getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 }

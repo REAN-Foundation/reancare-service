@@ -9,4 +9,5 @@ export interface UserDeviceDetailsDomainModel {
     OSVersion?        : string;
     AppName?          : string;
     AppVersion?       : string;
+    ChangeCount?      : number;
 }

@@ -58,4 +58,14 @@ export class FoodConsumptionService {
         return await this._foodConsumptionRepo.delete(id);
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._foodConsumptionRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._foodConsumptionRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

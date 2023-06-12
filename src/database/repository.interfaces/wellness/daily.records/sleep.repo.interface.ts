@@ -12,7 +12,7 @@ export interface ISleepRepo {
 
     getById(id: uuid): Promise<SleepDto>;
 
-    getByRecordDate(date: Date): Promise<SleepDto>;
+    getByRecordDate(date: Date, patientUserId: uuid): Promise<SleepDto>;
 
     search(filters: SleepSearchFilters): Promise<SleepSearchResults>;
 
@@ -23,5 +23,9 @@ export interface ISleepRepo {
     getStats(patientUserId: string, numMonths: number): Promise<any>;
 
     getByRecordDateAndPatientUserId(recordDate: Date, patientUserId: string): Promise<SleepDto>;
+
+    getAllUserResponsesBetween(patientUserId: string, dateFrom: Date, dateTo: Date): Promise<any[]>;
+
+    getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
 }

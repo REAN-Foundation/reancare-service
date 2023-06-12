@@ -1,4 +1,3 @@
-import { uuid } from 'aws-sdk/clients/customerprofiles';
 import { Op } from 'sequelize';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
@@ -10,6 +9,7 @@ import { HowDoYouFeelSearchFilters, HowDoYouFeelSearchResults } from '../../../.
 import { IHowDoYouFeelRepo } from '../../../../../repository.interfaces/clinical/symptom/how.do.you.feel.repo.interface';
 import { HowDoYouFeelMapper } from '../../../mappers/clinical/symptom/how.do.you.feel.mapper';
 import HowDoYouFeel from '../../../models/clinical/symptom/how.do.you.feel.model';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 

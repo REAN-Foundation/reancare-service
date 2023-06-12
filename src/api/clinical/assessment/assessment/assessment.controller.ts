@@ -387,7 +387,7 @@ export class AssessmentController extends BaseController{
             ResponseHandler.handleError(request, response, error);
         }
 
-    }
+    };
 
     //#endregion
 
@@ -396,22 +396,21 @@ export class AssessmentController extends BaseController{
     private async completeAssessmentTask(assessmentId: uuid) {
         var assessment = await this._service.completeAssessment(assessmentId);
         var parentActivityId = assessment.ParentActivityId;
-        if (assessment.Type === AssessmentType.Careplan) {
-            if (parentActivityId !== null) {
-                var activity = await this._careplanService.getAction(parentActivityId);
-                if (activity !== null) {
-                    var userTaskId = activity.UserTaskId;
-                    await this._userTaskService.finishTask(userTaskId);
-                }
-                await this._careplanService.completeAction(parentActivityId, new Date(), true, assessment);
+        if (parentActivityId !== null) {
+            var activity = await this._careplanService.getAction(parentActivityId);
+            if (activity !== null) {
+                var userTaskId = activity.UserTaskId;
+                await this._userTaskService.finishTask(userTaskId);
             }
-            else {
-                var task = await this._userTaskService.getByActionId(assessmentId);
-                if (task) {
-                    await this._userTaskService.finishTask(task.id);
-                }
+            await this._careplanService.completeAction(parentActivityId, new Date(), true, assessment);
+        }
+        else {
+            var task = await this._userTaskService.getByActionId(assessmentId);
+            if (task) {
+                await this._userTaskService.finishTask(task.id);
             }
         }
+        
     }
 
     private async generateScoreReport(assessment: AssessmentDto) {

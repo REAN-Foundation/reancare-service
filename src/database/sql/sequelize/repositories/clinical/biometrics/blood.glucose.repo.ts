@@ -10,6 +10,7 @@ import { BloodGlucoseMapper } from "../../../mappers/clinical/biometrics/blood.g
 import BloodGlucose from "../../../models/clinical/biometrics/blood.glucose.model";
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import { HelperRepo } from '../../common/helper.repo';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,7 +29,6 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                 RecordDate       : createModel.RecordDate,
                 RecordedByUserId : createModel.RecordedByUserId,
             };
-
             const bloodGlucose = await BloodGlucose.create(entity);
             return await BloodGlucoseMapper.toDto(bloodGlucose);
         } catch (error) {
@@ -233,6 +233,84 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
             });
             return await BloodGlucoseMapper.toDto(record);
         } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BloodGlucose.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    BloodGlucose  : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "BloodGlucose",
+                    VitalPrimaryValue : x.BloodGlucose,
+                    Unit              : x.Unit,
+                    RecordDateStr     : dayStr,
+                    RecordDate        : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BloodGlucose.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    BloodGlucose  : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "BloodGlucose",
+                    VitalPrimaryValue : x.BloodGlucose,
+                    Unit              : x.Unit,
+                    RecordDateStr     : dayStr,
+                    RecordDate        : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

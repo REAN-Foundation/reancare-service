@@ -5,6 +5,8 @@ import {
     UserGroupSearchFilters } from '../../../domain.types/community/user.groups/user.group.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { body } from 'express-validator';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +32,20 @@ export class UserGroupValidator extends BaseValidator {
         const filters = this.getUpdateModel(request.body);
         return filters;
     };
+
+    validateGroupActivityTypes = async (request: express.Request): Promise<string[]> => {
+
+        request.body = request.body ?? [];
+
+        const result = await body()
+            .isArray()
+            .run(request);
+
+        Logger.instance().log(JSON.stringify(result));
+        this.validateRequest(request);
+
+        return request.body;
+    }
 
     private getCreateModel = (requestBody: any, currentUserId: uuid): UserGroupCreateDomainModel => {
 

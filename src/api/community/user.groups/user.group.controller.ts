@@ -110,7 +110,7 @@ export class UserGroupController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.Update', request, response);
+            await this.setContext('UserGroup.Delete', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -261,6 +261,46 @@ export class UserGroupController extends BaseController {
             const admins = await this._service.getGroupAdmins(groupId);
             ResponseHandler.success(request, response, 'User group admins retrieved successfully!', 200, {
                 Admins : admins,
+            });
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    setGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('UserGroup.SetGroupActivityTypes', request, response);
+            const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            const group = await this._service.getById(groupId);
+            if (group == null) {
+                throw new ApiError(404, 'User group record not found.');
+            }
+            const types = await this._validator.validateGroupActivityTypes(request);
+            const set = await this._service.setGroupActivityTypes(groupId, types);
+            if (!set) {
+                throw new ApiError(400, 'Group activity types cannot be set.');
+            }
+            ResponseHandler.success(request, response, 'Group activity types set successfully!', 200, {
+                Set : true,
+            });
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('UserGroup.GetGroupActivityTypes', request, response);
+            const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            const group = await this._service.getById(groupId);
+            if (group == null) {
+                throw new ApiError(404, 'User group record not found.');
+            }
+            const types = await this._service.getGroupActivityTypes(groupId);
+            ResponseHandler.success(request, response, 'Group activity types retrieved successfully!', 200, {
+                Types : types,
             });
         }
         catch (error) {

@@ -120,6 +120,14 @@ export class UserGroupService {
         return await this._userGroupRepo.getGroupAdmins(groupId);
     };
 
+    setGroupActivityTypes = async (groupId: string, activityTypes: string[]): Promise<boolean> => {
+        return await this.setAwardsGroupActivityTypes(groupId, activityTypes);
+    };
+
+    getGroupActivityTypes = async (groupId: string): Promise<string[]> => {
+        return await this.getAwardsGroupActivityTypes(groupId);
+    };
+
     //#region Private Methods
 
     createAwardsParticipantGroup = async (model: UserGroupDto): Promise<any> => {
@@ -312,6 +320,47 @@ export class UserGroupService {
             Logger.instance().log(`${error.message}`);
         }
         return removed;
+    };
+
+    setAwardsGroupActivityTypes = async (userGroupId: uuid, activityTypes: string[]): Promise<boolean> => {
+        var updated = false;
+        try {
+            var participantGroup = await this.getAwardsParticipantGroup(userGroupId);
+            var url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/participant-groups/' + participantGroup.id + '/activity-types';
+            var body = {
+                ActivityTypes : activityTypes,
+            };
+            var response = await axios.post(url, body, { headers });
+            if (response.status === 200) {
+                Logger.instance().log('Successfully set group activity types!');
+                updated = true;
+            } else {
+                Logger.instance().error('Unable to set group activity types!', response.status, response.data);
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`${error.message}`);
+        }
+        return updated;
+    };
+
+    getAwardsGroupActivityTypes = async (userGroupId: uuid): Promise<string[]> => {
+        var activityTypes: string[] = [];
+        try {
+            var participantGroup = await this.getAwardsParticipantGroup(userGroupId);
+            var url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/participant-groups/' + participantGroup.id + '/activity-types';
+            var response = await axios.get(url, { headers });
+            if (response.status === 200) {
+                Logger.instance().log('Successfully retrieved group activity types!');
+                activityTypes = response.data.Data;
+            } else {
+                Logger.instance().error('Unable to retrieve group activity types!', response.status, response.data);
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`${error.message}`);
+        }
+        return activityTypes;
     };
 
     //#endregion

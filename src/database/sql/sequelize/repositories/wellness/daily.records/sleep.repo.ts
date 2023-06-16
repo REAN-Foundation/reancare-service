@@ -185,7 +185,7 @@ export class SleepRepo implements ISleepRepo {
         try {
             const numDays = 30 * numMonths;
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
-            const records = await this.getSleepRecords(patientUserId, 1, DurationType.Month);
+            const records = await this.getSleepRecords(patientUserId, numMonths, DurationType.Month);
             if (records.length === 0) {
                 return [];
             }

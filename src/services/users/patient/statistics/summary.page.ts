@@ -356,21 +356,13 @@ function addCurrentMedications(document, medications, y) {
         const position = tableTop + (i * ITEM_HEIGHT);
         y = position;
 
-        const schedule = medication.TimeSchedules ? medication.TimeSchedules.join(', ') : '';
-
         generateMedicationTableRow(
             document,
             position,
             (i + 1).toString(),
             medication.DrugName,
-            medication.Dose.toString(),
-            medication.DosageUnit,
             medication.Frequency,
-            medication.FrequencyUnit,
-            schedule,
-            medication.Route,
-            medication.Duration.toString(),
-            medication.DurationUnit
+            medication.FrequencyUnit
         );
     }
 
@@ -383,14 +375,8 @@ const generateMedicationTableRow = (
     y,
     index,
     drug,
-    dose,
-    dosageUnit,
     frequency,
-    frequencyUnit,
-    timeSchedule,
-    route,
-    duration,
-    durationUnit,
+    frequencyUnit
 ) => {
     var schedule = (frequency ? frequency + ' ' : '') + frequencyUnit;
     const d = schedule;

@@ -19,9 +19,9 @@ import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 export const addUserTasksStats = (document, model, y) => {
 
     let chartImage = 'UserTasks_LastMonth';
-    let detailedTitle = 'User Tasks Status for Last Month';
+    let detailedTitle = 'Daily Tasks Status for Last Month';
     const titleColor = '#505050';
-    let sectionTitle = 'User Tasks Status History';
+    let sectionTitle = 'Daily Task Status History';
     let icon = Helper.getIconsPath('user-tasks.png');
 
     y = addSectionTitle(document, y, sectionTitle, icon);

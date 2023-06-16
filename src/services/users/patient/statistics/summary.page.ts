@@ -27,9 +27,9 @@ import {
 
 export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
-    const sectionTitle = 'Changes in Lab Values and Body Weight';
+    const sectionTitle = 'Lab Values and Body Weight';
     const icon = Helper.getIconsPath('blood-lipids.png');
-    y = addSectionTitle(document, y, sectionTitle, icon);
+    y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 
     var useBodyWeightKg = false;
     var startingWeight = model.Stats.Biometrics.LastMonth.BodyWeight.StartingBodyWeight;
@@ -59,23 +59,23 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
     for (var r of vals) {
         const row: TableRowProperties = {
             IsHeaderRow : r[0],
-            FontSize    : 11,
+            FontSize    : 9,
             RowOffset   : 16,
             Columns     : [
                 {
-                    XOffset : 120,
+                    XOffset : 50,
                     Text    : r[1]
                 },
                 {
-                    XOffset : 280,
+                    XOffset : 170,
                     Text    : r[2]
                 },
                 {
-                    XOffset : 360,
+                    XOffset : 210,
                     Text    : r[3]
                 },
                 {
-                    XOffset : 440,
+                    XOffset : 250,
                     Text    : r[4]
                 }
             ]
@@ -88,8 +88,15 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
 export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: any) => {
     const rowShift = 143;
     var yFrozen = y;
+    y = addLabValuesTable(model, document, y);
+    var yOfLabValues = y + 20;
+    y = yFrozen;
+    y = addSleepSummary(y, document, model);
+    yFrozen = yOfLabValues;
+    y = yFrozen;
     y = addMedicationSummary(y, document, model);
     y = yFrozen;
+    // y = addCurrentMedications(document, model.Stats.Medication.CurrentMedications, y);
     y = addBodyWeightSummary(y, document, model);
     yFrozen += rowShift;
     y = yFrozen;
@@ -108,6 +115,14 @@ export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: an
 
 export const createSummaryCharts = async (data) => {
     var locations = [];
+
+    location = await createSleep_BarChart(data?.Sleep?.LastMonth, 'SleepSummary_LastMonth');
+    if (location) {
+        locations.push({
+            key : 'SleepSummary_LastMonth',
+            location
+        });
+    }
 
     var location = await createMedicationConsumption_DonutChart(data?.Medication?.LastMonth?.Daily, 'MedicationsSummary_LastMonth');
     if (location) {
@@ -184,6 +199,25 @@ const createBodyWeight_LineChart = async (stats: any, filename: string, countryC
     return await ChartGenerator.createLineChart(temp, options, filename);
 };
 
+const createSleep_BarChart = async (stats: any, filename: string) => {
+    if (stats.length === 0) {
+        return null;
+    }
+    const sleepStats = stats.map(c => {
+        return {
+            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            y : c.SleepDuration
+        };
+    });
+    const options: BarChartOptions = DefaultChartOptions.barChart();
+    options.Width  = RECTANGULAR_CHART_WIDTH;
+    options.Height = RECTANGULAR_CHART_HEIGHT;
+    options.YLabel = 'Per 24-hour period';
+    options.Color  = ChartColors.GrayDarker;
+
+    return await ChartGenerator.createBarChart(sleepStats, options, filename);
+};
+
 const createNutritionQueryForMonth_GroupedBarChart = async (stats: any, filename: string) => {
 
     if (!stats) {
@@ -246,6 +280,25 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
 
 //#region Add to PDF
 
+function addSleepSummary(y: any, document: PDFKit.PDFDocument, model: any) {
+    const chartImage = 'SleepSummary_LastMonth';
+    const sectionTitle = 'Sleep';
+    const icon = Helper.getIconsPath('Sleep.png');
+    y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplaySecondColumn(document, y);
+    } else {
+        y = y + 20;
+        const imageWidth = 200;
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        document.image(chart.location, SECOND_COLUMN_START + 5, y, { width: imageWidth, align: 'center' });
+        document.moveDown();
+        y = y + 135;
+    }
+    return y;
+}
+
 function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'MedicationsSummary_LastMonth';
     const sectionTitle = 'Medication Adherence';
@@ -266,19 +319,90 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
         document.moveDown();
 
         const yFrozen = y;
-        const legendY = 30;
-        y = yFrozen + legendY;
-        const legendFontSize = 9;
-        const legendStartX = startX + 135;
-        const colorStripWidth = 20;
-        const legendRowOffset = 10;
-        y = addLegend(document, y, legend, legendStartX, legendFontSize, colorStripWidth, 6, 5, legendRowOffset);
+        const legendY = 10;
+        //y = yFrozen + legendY;
+        //const legendFontSize = 9;
+        //const legendStartX = startX + 135;
+        //const colorStripWidth = 20;
+        //const legendRowOffset = 10;
+        // y = addLegend(document, y, legend, legendStartX, legendFontSize, colorStripWidth, 6, 5, legendRowOffset);
+        y = addCurrentMedications(document, model.Stats.Medication.CurrentMedications, y);
         y = yFrozen + imageWidth + 25;
 
         y = y + 2;
     }
     return y;
 }
+
+function addCurrentMedications(document, medications, y) {
+    const icon = Helper.getIconsPath('current-medications.png');
+    //y = addSectionTitle(document, y, "Current Medications", icon);
+
+    if (medications.length === 0) {
+        return null;
+    }
+
+    const tableTop = y + 21;
+    const ITEM_HEIGHT = 15;
+    let medicationsCount = medications.length;
+
+    if (medicationsCount > 5) {
+        medicationsCount = 5;
+    }
+
+    for (let i = 0; i < medicationsCount; i++) {
+
+        const medication = medications[i];
+        const position = tableTop + (i * ITEM_HEIGHT);
+        y = position;
+
+        const schedule = medication.TimeSchedules ? medication.TimeSchedules.join(', ') : '';
+
+        generateMedicationTableRow(
+            document,
+            position,
+            (i + 1).toString(),
+            medication.DrugName,
+            medication.Dose.toString(),
+            medication.DosageUnit,
+            medication.Frequency,
+            medication.FrequencyUnit,
+            schedule,
+            medication.Route,
+            medication.Duration.toString(),
+            medication.DurationUnit
+        );
+    }
+
+    y = y + ITEM_HEIGHT + 5;
+    return y;
+};
+
+const generateMedicationTableRow = (
+    document: PDFKit.PDFDocument,
+    y,
+    index,
+    drug,
+    dose,
+    dosageUnit,
+    frequency,
+    frequencyUnit,
+    timeSchedule,
+    route,
+    duration,
+    durationUnit,
+) => {
+    var schedule = (frequency ? frequency + ' ' : '') + frequencyUnit;
+    const d = schedule;
+    const medication = drug.slice(0,15) + ', ' + d;
+    document
+        .fontSize(9)
+        .font('Helvetica')
+        .text(index, 160, y)
+        .text(medication, 175, y, { align: "left" })
+        //.text(dose + ' ' + dosageUnit, 330, y, { align: "right" })
+        .moveDown();
+};
 
 function addBodyWeightSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'BodyWeightSummary_LastMonth';

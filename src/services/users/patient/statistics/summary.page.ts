@@ -283,7 +283,7 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
 function addSleepSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'SleepSummary_LastMonth';
     const sectionTitle = 'Sleep';
-    const icon = Helper.getIconsPath('Sleep.png');
+    const icon = Helper.getIconsPath('sleep.png');
     y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);
 
     if (!chartExists(model, chartImage)) {

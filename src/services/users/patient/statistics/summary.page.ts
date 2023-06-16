@@ -376,7 +376,7 @@ function addCurrentMedications(document, medications, y) {
 
     y = y + ITEM_HEIGHT + 5;
     return y;
-};
+}
 
 const generateMedicationTableRow = (
     document: PDFKit.PDFDocument,

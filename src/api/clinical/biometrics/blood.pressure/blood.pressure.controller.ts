@@ -57,10 +57,11 @@ export class BloodPressureController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
             this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
-            if (model.Systolic > 120 || model.Diastolic > 80) {
+            
+            /* if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
                 await this._service.sendBPNotification(model.PatientUserId, model);
-            }
+            } */
 
             // Adding record to award service
             if (bloodPressure.Systolic || bloodPressure.Diastolic) {
@@ -86,6 +87,7 @@ export class BloodPressureController extends BaseController {
                     RecordDateStr : tempDateStr,
                 });
             }
+            
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
             });

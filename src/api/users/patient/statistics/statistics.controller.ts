@@ -15,6 +15,7 @@ import { TimeHelper } from '../../../../common/time.helper';
 import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.types';
 import * as path from 'path';
 import { PersonService } from '../../../../services/person/person.service';
+import { ConfigurationManager } from '../../../../config/configuration.manager';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -123,6 +124,8 @@ export class StatisticsController {
         const patient  = await this._patientService.getByUserId(reportModel.PatientUserId);
         const phoneNumber = patient.User.Person.Phone;
         const person = await this._personService.getById(patient.User.PersonId);
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+        
         var userFirstName = 'user';
         if (person && person.FirstName) {
             userFirstName = person.FirstName;
@@ -130,7 +133,7 @@ export class StatisticsController {
         var sendStatus = false;
         Logger.instance().log(`Report URL for Patient ${reportModel.PatientUserId} : ${url}`);
         if (url) {
-            const message = `Hi ${userFirstName}, This message is from Heart & Stroke Helper App. Your health report has been generated successfully, please check in the medical records.`;
+            const message = `Hi ${userFirstName}, This message is from ${systemIdentifier} App. Your health report has been generated successfully, please check in the medical records.`;
             sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
         } else {
             const message = `Hi ${userFirstName}, This message is from Heart & Stroke Helper App. There was some issue while generating your health report, please try again!`;

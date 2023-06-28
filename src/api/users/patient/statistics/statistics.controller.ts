@@ -136,7 +136,7 @@ export class StatisticsController {
             const message = `Hi ${userFirstName}, This message is from ${systemIdentifier} App. Your health report has been generated successfully, please check in the medical records.`;
             sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
         } else {
-            const message = `Hi ${userFirstName}, This message is from Heart & Stroke Helper App. There was some issue while generating your health report, please try again!`;
+            const message = `Hi ${userFirstName}, This message is from ${systemIdentifier} App. There was some issue while generating your health report, please try again!`;
             sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
         }
         if (sendStatus) {

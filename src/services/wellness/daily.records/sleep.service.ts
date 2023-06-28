@@ -22,8 +22,8 @@ export class SleepService {
         return await this._sleepRepo.getById(id);
     };
 
-    getByRecordDate = async (recordDate: Date): Promise<SleepDto> => {
-        return await this._sleepRepo.getByRecordDate(recordDate);
+    getByRecordDate = async (recordDate: Date, patientUserId: uuid): Promise<SleepDto> => {
+        return await this._sleepRepo.getByRecordDate(recordDate, patientUserId);
     };
 
     search = async (filters: SleepSearchFilters): Promise<SleepSearchResults> => {
@@ -36,6 +36,16 @@ export class SleepService {
 
     delete = async (id: uuid): Promise<boolean> => {
         return await this._sleepRepo.delete(id);
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._sleepRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._sleepRepo.getAllUserResponsesBefore(patientUserId, date);
     };
 
 }

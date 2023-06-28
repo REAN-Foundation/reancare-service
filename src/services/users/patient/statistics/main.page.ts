@@ -70,7 +70,7 @@ export const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: n
         .image(model.ProfileImagePath, 50, y, { width: 64 });
 
     document
-        .roundedRect(135, y, 400, 65, 1)
+        .roundedRect(135, y, 400, 95, 1)
         .lineWidth(0.1)
         .fillOpacity(0.8)
         .fill("#e8ecef");
@@ -102,6 +102,17 @@ export const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: n
         .font('Helvetica')
         .text(model.DisplayId, 290, y, { align: "left" })
         .moveDown();
+
+    y = y + 23;
+
+    document
+        .font('Helvetica-Bold')
+        .text('BirthDate', 190, y, { align: "left" })
+        .font('Helvetica')
+        .text(model.BirthDate, 290, y, { align: "left" })
+        .moveDown();
+
+    y = y + 23;
 
     return y;
 };
@@ -211,6 +222,7 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
     const startDate = journey.StartAt?.toLocaleDateString();
     const endDate = journey.EndAt?.toLocaleDateString();
     const icon = Helper.getIconsPath('health-journey.png');
+    y = y + 20;
     y = addSectionTitle(document, y, 'Health Journey', icon);
 
     y = y + 18;
@@ -233,7 +245,7 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
 
     document
         .font('Helvetica-Bold')
-        .text('Plan Name', labelX, y, { align: "left" })
+        .text('Journey', labelX, y, { align: "left" })
         .font('Helvetica')
         .text(planName, valueX, y, { align: "left" })
         .moveDown();

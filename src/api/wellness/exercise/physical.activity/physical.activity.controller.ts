@@ -11,6 +11,10 @@ import { PhysicalActivityDomainModel } from
     '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +56,28 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
             this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, domainModel);
+
+            // Adding record to award service
+            if (physicalActivity.PhysicalActivityQuestionAns) {
+                var timestamp = physicalActivity.EndTime ?? physicalActivity.StartTime;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(physicalActivity.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+
+                AwardsFactsService.addOrUpdatePhysicalActivityResponseFact({
+                    PatientUserId : physicalActivity.PatientUserId,
+                    Facts         : {
+                        PhysicalActivityQuestionAns : physicalActivity.PhysicalActivityQuestionAns,
+                    },
+                    RecordId      : physicalActivity.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr,
+                });
+            }
             ResponseHandler.success(request, response, 'Physical activity record created successfully!', 201, {
                 PhysicalActivity : physicalActivity,
             });
@@ -115,6 +141,26 @@ export class PhysicalActivityController extends BaseController {
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update physical activity record!');
+            }
+
+            if (updated.PhysicalActivityQuestionAns !== null) {
+                var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const tempDateStr = tempDate.toISOString()
+                    .split('T')[0];
+                AwardsFactsService.addOrUpdatePhysicalActivityResponseFact({
+                    PatientUserId : updated.PatientUserId,
+                    Facts         : {
+                        PhysicalActivityQuestionAns : updated.PhysicalActivityQuestionAns,
+                    },
+                    RecordId      : updated.id,
+                    RecordDate    : tempDate,
+                    RecordDateStr : tempDateStr
+                });
             }
 
             ResponseHandler.success(request, response, 'Physical activity record updated successfully!', 200, {

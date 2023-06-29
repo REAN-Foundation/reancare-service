@@ -8,7 +8,7 @@ export class MockBodyWeightStore implements IBodyWeightStore {
 
     add = async (model: BodyWeightDomainModel): Promise<any> => {
         return null;
-    }
+    };
 
     getById = async (resourceId: string): Promise<any> => {
         return null;

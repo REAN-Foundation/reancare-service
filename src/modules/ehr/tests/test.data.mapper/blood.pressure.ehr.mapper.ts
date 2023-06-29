@@ -28,6 +28,6 @@ export class BloodPressureMapper {
         };
 
         return model;
-    }
+    };
 
 }

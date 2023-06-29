@@ -26,6 +26,8 @@ export class PhysicalActivityMapper {
             DurationInMin               : physicalActivity.DurationInMin,
             PhysicalActivityQuestion    : physicalActivity.PhysicalActivityQuestion,
             PhysicalActivityQuestionAns : physicalActivity.PhysicalActivityQuestionAns,
+            CreatedAt                   : physicalActivity.CreatedAt,
+            UpdatedAt                   : physicalActivity.UpdatedAt,
         };
         return dto;
     };

@@ -130,6 +130,7 @@ export class StatisticsService {
             DisplayId         : patient.DisplayId,
             Age               : patientAge,
             Gender            : patient.User.Person.Gender,
+            BirthDate         : patient.User.Person.BirthDate.toLocaleDateString(),
             ImageResourceId   : patient.User.Person.ImageResourceId,
             ProfileImagePath  : null,
             ReportDate        : date,
@@ -210,20 +211,22 @@ export class StatisticsService {
         };
 
         //Sleep trend
-        const sleepStats = await this._sleepRepo.getStats(patientUserId, 1);
-        const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
+        const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
+        const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 6);
+        const sumSleepHours = sleepStatsForLast6Months.reduce((acc, x) => acc + x.SleepDuration, 0);
         var i = 0;
-        if (sleepStats.length > 0) {
-            for await (var s of sleepStats) {
+        if (sleepStatsForLast6Months.length > 0) {
+            for await (var s of sleepStatsForLast6Months) {
                 if (s.SleepDuration !== 0) {
                     i = i + 1;
                 }
             }
         }
-        const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / i;
+        const averageSleepHours = sleepStatsForLast6Months.length === 0 ? null : sumSleepHours / i;
         const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
         const sleepTrend = {
-            LastMonth           : sleepStats,
+            LastMonth           : sleepStatsForLastMonth,
+            Last6Months         : sleepStatsForLast6Months,
             AverageForLastMonth : averageSleepHoursStr,
         };
 
@@ -511,7 +514,7 @@ export class StatisticsService {
     private addMainPage = (document, model, pageNumber) => {
         var y = addTop(document, model, null, false);
         y = addReportMetadata(document, model, y);
-        y = addReportSummary(document, model, y);
+        // y = addReportSummary(document, model, y);
 
         var clientList = ["HCHLSTRL", "REANPTNT"];
         if (clientList.indexOf(model.ClientCode) >= 0) {
@@ -524,8 +527,8 @@ export class StatisticsService {
 
     private addSummaryPage = (document, model, pageNumber) => {
         var y = addTop(document, model, 'Summary over Last 30 Days');
-        y = addLabValuesTable(model, document, y);
-        y = y + 15;
+        //y = addLabValuesTable(model, document, y);
+        //y = y + 15;
         addSummaryGraphs(model, document, y);
         addBottom(document, pageNumber, model);
         pageNumber += 1;

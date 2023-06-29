@@ -9,6 +9,7 @@ import { IBodyWeightRepo } from '../../../../../repository.interfaces/clinical/b
 import { BodyWeightMapper } from '../../../mappers/clinical/biometrics/body.weight.mapper';
 import BodyWeight from '../../../models/clinical/biometrics/body.weight.model';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import { HelperRepo } from '../../common/helper.repo';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -193,6 +194,84 @@ export class BodyWeightRepo implements IBodyWeightRepo {
             });
             return await BodyWeightMapper.toDto(bodyWeight);
         } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BodyWeight.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    BodyWeight    : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "BodyWeight",
+                    VitalPrimaryValue : x.BodyWeight,
+                    Unit              : x.Unit,
+                    RecordDateStr     : dayStr,
+                    RecordDate        : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BodyWeight.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    BodyWeight    : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "BodyWeight",
+                    VitalPrimaryValue : x.BodyWeight,
+                    Unit              : x.Unit,
+                    RecordDateStr     : dayStr,
+                    RecordDate        : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

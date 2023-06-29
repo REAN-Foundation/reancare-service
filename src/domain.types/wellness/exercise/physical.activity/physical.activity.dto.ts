@@ -18,6 +18,8 @@ export interface PhysicalActivityDto {
     DurationInMin?               : number;
     PhysicalActivityQuestion?    : string;
     PhysicalActivityQuestionAns? : boolean;
+    CreatedAt?                   : Date;
+    UpdatedAt?                   : Date;
 }
 
 export interface PhysicalActivityForDayDto {

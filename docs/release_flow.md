@@ -10,6 +10,7 @@
   - [Main branch Workflow](#Main-branch-Workflow)
 - [Release Workflows](#Release-Workflows)
   - [REAN Foundation Platform Workflows](#REAN-Foundation-Platform-Workflows)
+     - [PR-ci-cd](#PR-CI-CD)
      - [Dev-ci-cd](#Dev-ci-cd)
      - [UAT-ci-cd](#UAT-ci-cd)
      - [PROD-ci-cd](#PROD-ci-cd)

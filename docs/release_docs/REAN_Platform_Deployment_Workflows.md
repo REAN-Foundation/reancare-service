@@ -51,7 +51,7 @@ The Deploy ECS will be performing the following steps
 
 
 ## UAT-CI-CD
-Mode of trigger: ```On-Demand``` ```Automated```
+Mode of trigger: ```Automated```
 
 There are two ways to use or trigger uat-CI-CD workflow
 1. By creating a Pull Request to merge into MAIN branch

@@ -3,7 +3,7 @@
 ## AHA-PROD-CI-CD
 Mode of trigger: ```On-Demand```
 
-Parameters: ```Tag_name```: Github Tag name. 
+Parameter: ```Tag_name```: Please provide the GitHub tag name that the user wishes to use for deployment. 
 
 This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy ```reancare-service``` release to ```aha-prod``` environment
 
@@ -39,7 +39,7 @@ The Deploy ECS will be performing the following steps
 ## AHA-UAT-CI-CD
 Mode of trigger: ```On-Demand```
 
-Parameters: ```Tag_name```: Github Tag name.
+Parameter: ```Tag_name```: Please provide the GitHub tag name that the user wishes to use for deployment.
 
 This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy ```reancare-service``` release to ```aha-uat``` environment
 

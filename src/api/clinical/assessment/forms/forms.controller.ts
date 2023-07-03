@@ -279,6 +279,6 @@ export class FormsController extends BaseController{
         }
 
         return patient;
-    }
+    };
 
 }

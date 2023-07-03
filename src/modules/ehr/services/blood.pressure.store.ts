@@ -12,18 +12,18 @@ export class BloodPressureStore {
 
     add = async (model: BloodPressureDomainModel): Promise<any> => {
         return await this._service.add(model);
-    }
+    };
 
     getById = async (id: string): Promise<any> => {
         return await this._service.getById(id);
-    }
+    };
 
     update = async (id: string, updates: BloodPressureDomainModel): Promise<any> => {
         return await this._service.update(id, updates);
-    }
+    };
 
     delete = async (id: string): Promise<any> => {
         return await this._service.delete(id);
-    }
+    };
 
 }

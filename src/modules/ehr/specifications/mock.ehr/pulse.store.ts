@@ -8,7 +8,7 @@ export class MockPulse implements IPulseStore {
 
     add = async (model: PulseDomainModel): Promise<any> => {
         return null;
-    }
+    };
     
     getById = async (resourceId: string): Promise<any> => {
         return null;

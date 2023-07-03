@@ -26,6 +26,6 @@ export class PulseMapper {
         };
 
         return model;
-    }
+    };
 
 }

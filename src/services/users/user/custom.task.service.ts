@@ -16,12 +16,12 @@ export class CustomTaskService implements IUserActionService {
 
     getAction = async (actionId: uuid): Promise<any> => {
         return await this._customTaskRepo.getById(actionId);
-    }
+    };
 
     startAction = async (actionId: uuid): Promise<boolean> => {
         const task = await this._customTaskRepo.startTask(actionId);
         return task != null;
-    }
+    };
 
     completeAction = async (
         actionId: uuid,
@@ -30,7 +30,7 @@ export class CustomTaskService implements IUserActionService {
         actionDetails?: any): Promise<boolean> => {
         const task = await this._customTaskRepo.finishTask(actionId, completionTime, success, actionDetails);
         return task != null;
-    }
+    };
 
     cancelAction = async (
         actionId: string,
@@ -38,13 +38,13 @@ export class CustomTaskService implements IUserActionService {
         cancellationReason?: string): Promise<boolean> => {
         const task = await this._customTaskRepo.cancelTask(actionId, cancellationTime, cancellationReason);
         return task != null;
-    }
+    };
 
     updateAction = async (actionId: uuid, updates: any): Promise<any> => {
         const updateModel: CustomTaskDomainModel = updates as CustomTaskDomainModel;
         const task = await this._customTaskRepo.update(actionId, updateModel);
         return task != null;
-    }
+    };
 
     create = async (model: CustomTaskDomainModel): Promise<CustomTaskDto> => {
         return await this._customTaskRepo.create(model);

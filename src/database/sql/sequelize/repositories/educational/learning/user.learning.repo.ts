@@ -81,7 +81,7 @@ export class UserLearningRepo implements IUserLearningRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     searchUserLearnings = async (userId: string, filters?: any): Promise<any[]> => {
         try {
@@ -106,7 +106,7 @@ export class UserLearningRepo implements IUserLearningRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     searchUserLearningsForLearningPath = async (userId: string, learningPathId: string): Promise<UserLearningDto[]> => {
         try {
@@ -121,7 +121,7 @@ export class UserLearningRepo implements IUserLearningRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     searchUserLearningsForCourse = async (userId: string, courseId: string): Promise<UserLearningDto[]> => {
         try {
@@ -136,7 +136,7 @@ export class UserLearningRepo implements IUserLearningRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     searchUserLearningsForModule = async (userId: string, moduleId: string): Promise<UserLearningDto[]> => {
         try {
@@ -151,6 +151,6 @@ export class UserLearningRepo implements IUserLearningRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

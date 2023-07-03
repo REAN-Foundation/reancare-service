@@ -10,7 +10,7 @@ import { DonationCommunicationMapper } from "../../../mappers/clinical/donation/
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class DonationCommunicationRepo implements IDonationCommunicationRepo {
-
+    
     create = async (donationCommunicationDomainModel: DonationCommunicationDomainModel) :
         Promise<DonationCommunicationDto> => {
 

@@ -22,6 +22,6 @@ export class BloodGlucoseMapper {
         };
 
         return model;
-    }
+    };
 
 }

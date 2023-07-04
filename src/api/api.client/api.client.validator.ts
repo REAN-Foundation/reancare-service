@@ -236,7 +236,11 @@ export class ApiClientValidator {
             .isEmail()
             .isLength({ min: 3 })
             .run(request);
-
+        await body('Password').optional()
+            .trim()
+            .escape()
+            .isLength({ min: 6 })
+            .run(request);
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);

@@ -590,7 +590,7 @@ export class Seeder {
 
             const model: LabRecordTypeDomainModel = {
                 TypeName       : c['TypeName'],
-                DisplayName    : c['DisplayName'] as LabRecordType,
+                DisplayName    : c['DisplayName'],
                 SnowmedCode    : c['SnowmedCode'],
                 LoincCode      : c['LoincCode'],
                 NormalRangeMin : c['NormalRangeMin'],

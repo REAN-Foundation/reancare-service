@@ -34,9 +34,8 @@ export default class LabRecordType extends Model {
     TypeName: string;
 
     @Column({
-        type      : DataType.ENUM,
+        type      : DataType.STRING(128),
         allowNull : true,
-        values    : LabRecordTypeList,
     })
     DisplayName: string;
 

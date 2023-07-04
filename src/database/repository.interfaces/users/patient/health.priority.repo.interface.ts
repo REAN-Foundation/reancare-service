@@ -22,6 +22,13 @@ export interface IHealthPriorityRepo {
 
     createType(healthPriorityTypeDomainModel: HealthPriorityTypeDomainModel): Promise<HealthPriorityTypeDto>;
 
+    getPriorityTypeById(id: string): Promise<HealthPriorityTypeDto>;
+
+    updatePriorityType(id: string, healthPriorityTypeDomainModel: HealthPriorityTypeDomainModel):
+     Promise<HealthPriorityTypeDto>;
+
     delete(id: string): Promise<boolean>;
+
+    deletePriorityType(id: string): Promise<boolean>;
 
 }

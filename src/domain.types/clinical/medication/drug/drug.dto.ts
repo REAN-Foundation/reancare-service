@@ -9,4 +9,5 @@ export interface DrugDto {
     OtherCommercialNames?: string;
     Manufacturer?        : string;
     OtherInformation?    : string;
+    CreatedAt?          : Date;
 }

@@ -416,6 +416,29 @@ export class AssessmentTemplateController extends BaseController{
         }
     };
 
+    searchNode = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('AssessmentTemplate.SearchNode', request, response);
+
+            const filters = await this._validator.searchNode(request);
+            const searchResults = await this._service.searchNode(filters);
+
+            const count = searchResults.Items.length;
+
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} assessment node records retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, {
+                AssessmentNodeRecords : searchResults });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

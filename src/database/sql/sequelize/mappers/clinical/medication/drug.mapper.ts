@@ -19,7 +19,8 @@ export class DrugMapper {
             Strength             : drug.Strength,
             OtherCommercialNames : drug.OtherCommercialNames,
             Manufacturer         : drug.Manufacturer,
-            OtherInformation     : drug.OtherInformation
+            OtherInformation     : drug.OtherInformation,
+            CreatedAt            : drug.CreatedAt,
         };
         return dto;
     };

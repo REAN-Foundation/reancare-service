@@ -30,9 +30,10 @@ export class OrganizationService {
     };
 
     getById = async (id: string): Promise<OrganizationDto> => {
-        var dto = await this._organizationRepo.getById(id);
-        dto = await this.updateDto(dto);
-        return dto;
+        var organization = await this._organizationRepo.getById(id);
+        const addresses = await this._addressRepo.getAddressesForOrganization(organization.id);
+        organization['Addresses'] = addresses;
+        return organization;
     };
 
     getByContactUserId = async (contactUserId: string): Promise<OrganizationDto[]> => {

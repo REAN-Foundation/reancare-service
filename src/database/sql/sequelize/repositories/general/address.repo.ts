@@ -7,6 +7,7 @@ import { AddressSearchFilters, AddressSearchResults } from '../../../../../domai
 import { IAddressRepo } from '../../../../repository.interfaces/general/address.repo.interface';
 import { AddressMapper } from '../../mappers/general/address.mapper';
 import Address from '../../models/general/address.model';
+import OrganizationAddresses from '../../models/general/organization/organization.addresses.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -202,6 +203,23 @@ export class AddressRepo implements IAddressRepo {
         try {
             await Address.destroy({ where: { id: id } });
             return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAddressesForOrganization = async (organizationId: string): Promise<AddressDto[]> => {
+        try {
+            const organizationAddresses = await OrganizationAddresses.findAll({ where   : { OrganizationId: organizationId },
+                include : [
+                    {
+                        model : Address
+                    }
+                ]
+            });
+            var list = organizationAddresses.map(x => x.Address);
+            return list.map(y => AddressMapper.toDto(y));
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

@@ -14,6 +14,7 @@ export enum OrganizationTypes {
     NursingHome                       = 'Nursing Home',
     SpecializedCareCentre             = 'Specialized Care Centre',
     AmbulatoryProcedureCentre         = 'Ambulatory Procedure Centre',
+    SocialHealth                      = 'Social Health',
     Unknown                           = 'Unknown'
 }
 
@@ -33,5 +34,6 @@ export const OrganizationTypeList: OrganizationTypes [] = [
     OrganizationTypes.NursingHome,
     OrganizationTypes.SpecializedCareCentre,
     OrganizationTypes.AmbulatoryProcedureCentre,
+    OrganizationTypes.SocialHealth,
     OrganizationTypes.Unknown,
 ];

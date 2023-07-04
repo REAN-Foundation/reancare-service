@@ -25,7 +25,7 @@ export interface ILabRecordRepo {
 
     totalTypesCount(): Promise<number>;
 
-    createType(healthPriorityTypeDomainModel: LabRecordTypeDomainModel): Promise<LabRecordTypeDto>;
+    createType(labRecordTypeDomainModel: LabRecordTypeDomainModel): Promise<LabRecordTypeDto>;
 
     getTypeByDisplayName(displayName: string): Promise<any>;
 
@@ -34,5 +34,11 @@ export interface ILabRecordRepo {
     getRecords(patientUserId: string, numMonths: number): Promise<any>;
 
     getRecent(patientUserId: string, displayName: string): Promise<LabRecordDto>;
+    
+    getLabRecordTypeById(id: string): Promise<LabRecordTypeDto>;
+
+    updateLabRecordType(id: string, labRecordTypeDomainModel: LabRecordTypeDomainModel): Promise<LabRecordTypeDto>;
+
+    deleteLabRecordType(id: string): Promise<boolean>;
 
 }

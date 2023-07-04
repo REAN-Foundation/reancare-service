@@ -1,5 +1,5 @@
 export interface PersonRoleDto {
-    id      : string,
+    id      : string;
     PersonId: string;
     RoleId  : number;
     RoleName: string;

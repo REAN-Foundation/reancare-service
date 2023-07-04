@@ -14,4 +14,6 @@ export interface IAddressRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getAddressesForOrganization(organizationId: string): Promise<any>;
+
 }

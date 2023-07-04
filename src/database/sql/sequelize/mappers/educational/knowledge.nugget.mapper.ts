@@ -29,6 +29,7 @@ export class KnowledgeNuggetMapper {
             DetailedInformation : knowledgeNugget.DetailedInformation,
             AdditionalResources : additionalResources,
             Tags                : tags,
+            CreatedAt           : knowledgeNugget.CreatedAt,
         };
         return dto;
     };

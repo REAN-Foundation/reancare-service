@@ -18,5 +18,6 @@ __We encourage forking and welcome contributions to this code base.__
 * [Code of conduct](./CODE_OF_CONDUCT.md)
 * [Coding style and guidelines](docs/coding-style-and-guidelines.md)
 * [Checklist to add/update API](docs/checklist-to-add-api.md)
+* [Release Flow](docs/release_flow.md)
 
 Please check our [release roadmap](docs/roadmap.md).

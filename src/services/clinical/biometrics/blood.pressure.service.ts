@@ -89,4 +89,14 @@ export class BloodPressureService {
         }
     };
 
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        return await this._bloodPressureRepo.getAllUserResponsesBetween(patientUserId, dateFrom, dateTo);
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date)
+        : Promise<any[]> => {
+        return await this._bloodPressureRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
 }

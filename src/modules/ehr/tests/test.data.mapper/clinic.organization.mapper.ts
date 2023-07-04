@@ -26,7 +26,7 @@ export class ClinicOrganizationMapper {
         };
 
         return model;
-    }
+    };
 
     // static toDetailsDto = async (pharmacist: pharmacist): Promise<pharmacistDetailsDto> => {
 

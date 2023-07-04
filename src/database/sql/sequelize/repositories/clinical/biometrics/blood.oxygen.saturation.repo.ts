@@ -7,6 +7,9 @@ import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults 
 import { IBloodOxygenSaturationRepo } from '../../../../../repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface';
 import { BloodOxygenSaturationMapper } from '../../../mappers/clinical/biometrics/blood.oxygen.saturation.mapper';
 import BloodOxygenSaturationModel from '../../../models/clinical/biometrics/blood.oxygen.saturation.model';
+import { HelperRepo } from '../../common/helper.repo';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -180,6 +183,84 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
             const result = await BloodOxygenSaturationModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BloodOxygenSaturationModel.findAll({
+                where : {
+                    PatientUserId         : patientUserId,
+                    BloodOxygenSaturation : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "BloodOxygenSaturation",
+                    VitalPrimaryValue : x.BloodOxygenSaturation,
+                    Unit              : x.Unit,
+                    RecordDateStr     : dayStr,
+                    RecordDate        : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+
+            let records = await BloodOxygenSaturationModel.findAll({
+                where : {
+                    PatientUserId         : patientUserId,
+                    BloodOxygenSaturation : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(x => {
+                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const dayStr = tempDate.toISOString()
+                    .split('T')[0];
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "BloodOxygenSaturation",
+                    VitalPrimaryValue : x.BloodOxygenSaturation,
+                    Unit              : x.Unit,
+                    RecordDateStr     : dayStr,
+                    RecordDate        : tempDate,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

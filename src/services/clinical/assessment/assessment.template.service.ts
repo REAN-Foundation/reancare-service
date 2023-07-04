@@ -50,13 +50,13 @@ export class AssessmentTemplateService {
     public getByProviderAssessmentCode = async (provider: string, providerId: string) => {
         return await this._assessmentTemplateRepo.getByProviderAssessmentCode(
             provider, providerId);
-    }
+    };
 
     public readTemplateObjToExport = async (templateId: uuid): Promise<CAssessmentTemplate> => {
         var template = await this._assessmentHelperRepo.readTemplateAsObj(templateId);
         template = this.sanitizeTemplateForExport(template);
         return template;
-    }
+    };
 
     public import = async (model: any): Promise<AssessmentTemplateDto> => {
         var template: CAssessmentTemplate = model as CAssessmentTemplate;
@@ -84,7 +84,7 @@ export class AssessmentTemplateService {
 
     updateNode = async(nodeId: uuid, updates: any) => {
         return await this._assessmentHelperRepo.updateNode(nodeId, updates);
-    }
+    };
 
     sanitizeTemplateForExport = (template: CAssessmentTemplate): CAssessmentTemplate => {
 
@@ -121,18 +121,18 @@ export class AssessmentTemplateService {
 
     addScoringCondition = async(model: CScoringCondition): Promise<CScoringCondition> => {
         return await this._assessmentHelperRepo.addScoringCondition(model);
-    }
+    };
 
     getScoringCondition = async(conditionId: uuid): Promise<CScoringCondition> => {
         return await this._assessmentHelperRepo.getScoringCondition(conditionId);
-    }
+    };
 
     updateScoringCondition = async(conditionId: uuid, updates: any): Promise<CScoringCondition> => {
         return await this._assessmentHelperRepo.updateScoringCondition(conditionId, updates);
-    }
+    };
 
     deleteScoringCondition = async(conditionId: uuid): Promise<boolean> => {
         return await this._assessmentHelperRepo.deleteScoringCondition(conditionId);
-    }
+    };
 
 }

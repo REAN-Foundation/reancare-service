@@ -22,6 +22,6 @@ export class BiometricsHeightMapper {
         };
 
         return model;
-    }
+    };
 
 }

@@ -140,7 +140,7 @@ export class UserLearningService {
             };
         });
         return userCourseContents;
-    }
+    };
 
     getUserLearningPaths = async (userId: string): Promise<any[]> => {
         const userLearnings = await this._userLearningRepo.searchUserLearnings(userId, null);
@@ -154,6 +154,6 @@ export class UserLearningService {
             userLearningPaths.push(learningPath);
         }
         return userLearningPaths;
-    }
+    };
 
 }

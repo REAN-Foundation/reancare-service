@@ -28,6 +28,6 @@ export class LabVisitMapper {
         };
 
         return model;
-    }
+    };
 
 }

@@ -7,22 +7,22 @@ export class MockBodyTemperatureStore implements ITemperatureStore {
 
     add = async (model: BodyTemperatureDomainModel): Promise<any> => {
         return null;
-    }
+    };
 
     getById = async (id: string): Promise<any> => {
         return null;
-    }
+    };
 
     search = async (filter:any): Promise<any> => {
         return null;
-    }
+    };
 
     update = async (id: string, updates: BodyTemperatureDomainModel): Promise<any> => {
         return null;
-    }
+    };
 
     delete = async (id: string): Promise<any> => {
         return true;
-    }
+    };
 
 }

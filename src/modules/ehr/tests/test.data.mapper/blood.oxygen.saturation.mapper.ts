@@ -22,6 +22,6 @@ export class BloodOxygenSaturationMapper {
         };
 
         return model;
-    }
+    };
 
 }

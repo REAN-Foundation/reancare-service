@@ -206,7 +206,7 @@ export class UserRepo implements IUserRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getUserHashedPassword = async (id: string): Promise<string> => {
         const user = await User.findByPk(id);

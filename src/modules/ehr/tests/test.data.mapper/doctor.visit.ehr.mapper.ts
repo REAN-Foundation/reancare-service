@@ -25,6 +25,6 @@ export class DoctorVisitMapper {
         };
 
         return model;
-    }
+    };
 
 }

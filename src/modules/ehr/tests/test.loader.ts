@@ -72,9 +72,9 @@ export class TestLoader {
   
     private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
   
-    private static _laborganizationStore: LabOrganizationStore = container.resolve(LabOrganizationStore)
+    private static _laborganizationStore: LabOrganizationStore = container.resolve(LabOrganizationStore);
 
-    private static _bloodoxygensaturationStore: BloodOxygenSaturationStore = container.resolve(BloodOxygenSaturationStore)
+    private static _bloodoxygensaturationStore: BloodOxygenSaturationStore = container.resolve(BloodOxygenSaturationStore);
 
     private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
 
@@ -88,9 +88,9 @@ export class TestLoader {
 
     private static _bloodGlucoseStore: BloodGlucoseStore = container.resolve(BloodGlucoseStore);
 
-    private static _pulseStore: PulseStore = container.resolve(PulseStore)
+    private static _pulseStore: PulseStore = container.resolve(PulseStore);
 
-    private static _temperatureStore: TemperatureStore = container.resolve(TemperatureStore)
+    private static _temperatureStore: TemperatureStore = container.resolve(TemperatureStore);
   
     //#endregion
 

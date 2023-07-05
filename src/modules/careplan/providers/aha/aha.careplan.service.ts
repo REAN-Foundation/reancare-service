@@ -273,7 +273,8 @@ export class AhaCareplanService implements ICareplanService {
                 activity.type, activity.title, activity.contentTypeCode);
             const status = this.getActivityStatus(activity.status);
             const description = this.getActivityDescription(activity.text, activity.description);
-            var activityUrl = this.extractUrl(activity.url, activity);
+            const languagePreference = 'en-US';
+            var activityUrl = this.extractUrl(activity.url, activity, languagePreference);
 
             var entity: CareplanActivity = {
                 EnrollmentId     : enrollmentId,
@@ -328,7 +329,8 @@ export class AhaCareplanService implements ICareplanService {
         const description = this.getActivityDescription(activity.text, activity.description);
         // const transcription = this.getActivityTranscription(activity);
 
-        var activityUrl = this.extractUrl(activity.url, activity);
+        const languagePreference = 'en-US';
+        var activityUrl = this.extractUrl(activity.url, activity, languagePreference);
 
         var entity: CareplanActivity = {
             ProviderActionId : activity.code,
@@ -677,28 +679,24 @@ export class AhaCareplanService implements ICareplanService {
 
     //#region Privates
 
-    private extractUrl(url: string, activity: any) {
-        var activityUrl = url ?? null;
-        if (activityUrl && Helper.isUrl(activityUrl)) {
-            return activityUrl;
-        } else {
-            var locale = activity.locale;
-            if (locale && locale.length > 0)  {
-                var obj = locale[0];
-                if (obj) {
-                    var x = obj['en-US'];
-                    if (x) {
-                        var xUrl = x['url'];
-                        if (Helper.isUrl(xUrl)) {
-                            activityUrl = xUrl;
-                            return activityUrl;
-                        }
+    private extractUrl(url: string, activity: any, languagePreference: string) {
+
+        var activityUrl = url && Helper.isUrl(url) ? url : null;
+        var locale = activity.locale;
+        if (locale && locale.length > 0)  {
+            var obj = locale[0];
+            if (obj) {
+                var x = obj[languagePreference];
+                if (x) {
+                    var xUrl = x['url'];
+                    if (Helper.isUrl(xUrl)) {
+                        activityUrl = xUrl;
                     }
                 }
-            } else {
-                return activityUrl;
             }
         }
+
+        return activityUrl;
     }
 
     private async getAssessmentUpdateModel(activity: any): Promise<any> {

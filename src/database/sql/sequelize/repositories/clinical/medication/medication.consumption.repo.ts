@@ -171,16 +171,14 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId      : x.id,
                     PatientUserId : x.PatientUserId,
                     Taken         : x.IsTaken,
                     DrugName      : x.DrugName,
-                    RecordDateStr : dayStr,
-                    RecordDate    : tempDate,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDate    : x.TimeScheduleEnd,
                 };
             });
 
@@ -208,16 +206,14 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId      : x.id,
                     PatientUserId : x.PatientUserId,
                     Taken         : x.IsTaken,
                     DrugName      : x.DrugName,
-                    RecordDateStr : dayStr,
-                    RecordDate    : tempDate,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDate    : x.TimeScheduleEnd,
                 };
             });
 

@@ -51,10 +51,8 @@ export class PulseController extends BaseController{
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(pulse.PatientUserId);
-                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(pulse.PatientUserId);
+                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : pulse.PatientUserId,
@@ -64,8 +62,8 @@ export class PulseController extends BaseController{
                         Unit              : pulse.Unit,
                     },
                     RecordId      : pulse.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordDate    : timestamp,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
                 });
             }
             ResponseHandler.success(request, response, 'Pulse rate record created successfully!', 201, {

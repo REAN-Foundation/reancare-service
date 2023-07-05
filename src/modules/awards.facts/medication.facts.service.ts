@@ -41,7 +41,7 @@ export const updateMedicationFact = async (model: AwardsFact) => {
             RecordId      : r.RecordId,
             RecordDate    : r.RecordDate,
             FactType      : 'Medication',
-            RecordDateStr : (r.RecordDate).toISOString().split('T')[0],
+            RecordDateStr : r.RecordDateStr,
             Facts         : {
                 DrugName : r.DrugName,
                 Taken    : r.IsTaken,

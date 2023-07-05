@@ -52,10 +52,8 @@ export class FoodConsumptionController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(foodConsumption.PatientUserId);
-                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(foodConsumption.PatientUserId);
+                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
 
                 AwardsFactsService.addOrUpdateNutritionResponseFact({
                     PatientUserId : foodConsumption.PatientUserId,
@@ -63,8 +61,8 @@ export class FoodConsumptionController extends BaseController {
                         UserResponse : foodConsumption.UserResponse,
                     },
                     RecordId      : foodConsumption.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordDate    : timestamp,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
                 });
             }
 
@@ -198,18 +196,17 @@ export class FoodConsumptionController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
-                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                
                 AwardsFactsService.addOrUpdateNutritionResponseFact({
                     PatientUserId : updated.PatientUserId,
                     Facts         : {
                         UserResponse : updated.UserResponse,
                     },
                     RecordId      : updated.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr
+                    RecordDate    : timestamp,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
                 });
             }
             ResponseHandler.success(request, response, 'Nutrition record updated successfully!', 200, {

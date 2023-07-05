@@ -68,10 +68,8 @@ export class BloodPressureController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodPressure.PatientUserId);
-                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodPressure.PatientUserId);
+                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : bloodPressure.PatientUserId,
@@ -82,8 +80,8 @@ export class BloodPressureController extends BaseController {
                         Unit                : bloodPressure.Unit,
                     },
                     RecordId      : bloodPressure.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordDate    : timestamp,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
                 });
             }
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
@@ -163,10 +161,8 @@ export class BloodPressureController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
-                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : updated.PatientUserId,
@@ -177,8 +173,8 @@ export class BloodPressureController extends BaseController {
                         Unit                : updated.Unit,
                     },
                     RecordId      : updated.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordDate    : timestamp,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
                 });
             }
             ResponseHandler.success(request, response, 'Blood pressure record updated successfully!', 200, {

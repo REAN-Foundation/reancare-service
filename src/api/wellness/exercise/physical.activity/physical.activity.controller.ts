@@ -63,10 +63,8 @@ export class PhysicalActivityController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(physicalActivity.PatientUserId);
-                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(physicalActivity.PatientUserId);
+                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
 
                 AwardsFactsService.addOrUpdatePhysicalActivityResponseFact({
                     PatientUserId : physicalActivity.PatientUserId,
@@ -74,8 +72,8 @@ export class PhysicalActivityController extends BaseController {
                         PhysicalActivityQuestionAns : physicalActivity.PhysicalActivityQuestionAns,
                     },
                     RecordId      : physicalActivity.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordDate    : timestamp,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                 });
             }
             ResponseHandler.success(request, response, 'Physical activity record created successfully!', 201, {
@@ -148,18 +146,16 @@ export class PhysicalActivityController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
-                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
                 AwardsFactsService.addOrUpdatePhysicalActivityResponseFact({
                     PatientUserId : updated.PatientUserId,
                     Facts         : {
                         PhysicalActivityQuestionAns : updated.PhysicalActivityQuestionAns,
                     },
                     RecordId      : updated.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr
+                    RecordDate    : timestamp,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                 });
             }
 

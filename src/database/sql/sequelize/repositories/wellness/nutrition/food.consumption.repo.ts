@@ -674,7 +674,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
         : Promise<any[]> => {
         try {
-            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
 
             let records = await FoodConsumption.findAll({
                 where : {
@@ -690,15 +690,13 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId      : x.id,
                     PatientUserId : x.PatientUserId,
                     UserResponse  : x.UserResponse,
-                    RecordDateStr : dayStr,
-                    RecordDate    : tempDate,
+                    RecordDate    : x.CreatedAt,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.CreatedAt)
                 };
             });
             return records_;
@@ -711,7 +709,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
         try {
-            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
 
             let records = await FoodConsumption.findAll({
                 where : {
@@ -726,15 +724,13 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+                //const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId      : x.id,
                     PatientUserId : x.PatientUserId,
                     UserResponse  : x.UserResponse,
-                    RecordDateStr : dayStr,
-                    RecordDate    : tempDate,
+                    RecordDate    : x.CreatedAt,
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.CreatedAt)
                 };
             });
             return records_;

@@ -208,15 +208,13 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
                 const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
                 return {
                     RecordId          : x.id,
                     PatientUserId     : x.PatientUserId,
                     VitalName         : "BloodOxygenSaturation",
                     VitalPrimaryValue : x.BloodOxygenSaturation,
                     Unit              : x.Unit,
-                    RecordDateStr     : dayStr,
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate),
                     RecordDate        : tempDate,
                 };
             });
@@ -246,15 +244,13 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
                 const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
                 return {
                     RecordId          : x.id,
                     PatientUserId     : x.PatientUserId,
                     VitalName         : "BloodOxygenSaturation",
                     VitalPrimaryValue : x.BloodOxygenSaturation,
                     Unit              : x.Unit,
-                    RecordDateStr     : dayStr,
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate),
                     RecordDate        : tempDate,
                 };
             });

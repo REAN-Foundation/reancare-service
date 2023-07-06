@@ -11,9 +11,9 @@ export const SECOND_COLUMN_START = 310;
 
 export function addBottom(document: any, pageNumber: any, model: any) {
     PDFGenerator.addOrderPageNumber(document, pageNumber, model.TotalPages);
-    addFooter(document, "https://www.heart.org/", model.FooterImagePath);
+    //addFooter(document, "https://www.heart.org/", model.FooterImagePath);
 }
-
+  
 export function addTop(document: any, model: any, title: string = null, addToNewPage = true) {
     var y = 17;
     if (addToNewPage) {

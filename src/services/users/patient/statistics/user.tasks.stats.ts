@@ -12,7 +12,7 @@ import {
     RECTANGULAR_CHART_WIDTH,
     SQUARE_CHART_HEIGHT,
     SQUARE_CHART_WIDTH } from "./report.helper";
-import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
+import { addSectionTitle, addNoDataDisplay, addLegend, addText } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +21,7 @@ export const addUserTasksStats = (document, model, y) => {
     let chartImage = 'UserTasks_LastMonth';
     let detailedTitle = 'Daily Tasks Status for Last Month';
     const titleColor = '#505050';
+    const title = 'Days of the month';
     let sectionTitle = 'Daily Task Status History';
     let icon = Helper.getIconsPath('user-tasks.png');
 
@@ -30,8 +31,17 @@ export const addUserTasksStats = (document, model, y) => {
         y = addNoDataDisplay(document, y);
     } else {
         y = y + 25;
+        addText(document, title, 80, 295, 6, titleColor, 'center');
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 23;
+        const colors = getUserTaskStatusColors();
+        const legend = colors.map(x => {
+            return {
+                Key   : x.Key,
+                Color : x.Color,
+            };
+        });
+        y = addLegend(document, y, legend, 200, 11, 50, 10, 15);
     }
 
     sectionTitle = 'User Engagement';
@@ -48,14 +58,14 @@ export const addUserTasksStats = (document, model, y) => {
         y = addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor, 165, 225);
         y = y + 23;
         let value = model.Stats.UserEngagement.Last6Months.Finished.toFixed();
-        y = addLabeledText(document, 'Completed Tasks', value, y);
+        y = addLabeledText(document, 'Finished Tasks', value, y);
         value = model.Stats.UserEngagement.Last6Months.Unfinished.toFixed();
         y = addLabeledText(document, 'Unfinished Tasks', value, y);
     }
 
     y = y + 50;
 
-    const text = `User Engagement Ratio = (Completed Tasks/(Completed Tasks + Unfinished Tasks)) * 100`;
+    const text = `User Engagement Ratio = (Finished Tasks/(Finished Tasks + Unfinished Tasks)) * 100`;
     document
         .font('Helvetica')
         .fontSize(10)
@@ -162,11 +172,11 @@ const createUserTasks_StackedBarChart = async (stats: any, filename: string) => 
 const getUserTaskStatusColors = () => {
     const items = [
         {
-            Key   : 'Finished',
+            Key   : 'Finished Tasks',
             Color : ChartColors.MediumSeaGreen,
         },
         {
-            Key   : 'Unfinished',
+            Key   : 'Unfinished Tasks',
             Color : ChartColors.Coral,
         },
     ];

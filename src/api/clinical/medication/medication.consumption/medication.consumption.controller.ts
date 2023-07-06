@@ -64,7 +64,11 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
             }
 
+            const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
             for (var dto of dtos) {
+                const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 AwardsFactsService.addOrUpdateMedicationFact({
                     PatientUserId : dto.PatientUserId,
                     Facts         : {
@@ -72,9 +76,10 @@ export class MedicationConsumptionController {
                         Taken    : true,
                         Missed   : false,
                     },
-                    RecordId      : dto.id,
-                    RecordDate    : dto.TimeScheduleEnd,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd)
+                    RecordId       : dto.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
 
@@ -100,7 +105,11 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
             }
 
+            const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
             for (var dto of dtos) {
+                const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 AwardsFactsService.addOrUpdateMedicationFact({
                     PatientUserId : dto.PatientUserId,
                     Facts         : {
@@ -108,9 +117,10 @@ export class MedicationConsumptionController {
                         Taken    : false,
                         Missed   : true,
                     },
-                    RecordId      : dto.id,
-                    RecordDate    : dto.TimeScheduleEnd,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd)
+                    RecordId       : dto.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
 
@@ -135,9 +145,11 @@ export class MedicationConsumptionController {
 
             await this.addEHRRecord(dto.PatientUserId, dto.id, dto);
 
-            //const patientUserId = dto.PatientUserId;
-            //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
-            //const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+            const patientUserId = dto.PatientUserId;
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd);
+            const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
             AwardsFactsService.addOrUpdateMedicationFact({
                 PatientUserId : dto.PatientUserId,
                 Facts         : {
@@ -145,9 +157,10 @@ export class MedicationConsumptionController {
                     Taken    : true,
                     Missed   : false,
                 },
-                RecordId      : dto.id,
-                RecordDate    : dto.TimeScheduleEnd,
-                RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd)
+                RecordId       : dto.id,
+                RecordDate     : tempDate,
+                RecordDateStr  : tempDateStr,
+                RecordTimeZone : currentTimeZone,
             });
 
             ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
@@ -169,6 +182,10 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
 
+            const patientUserId = dto.PatientUserId;
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
             AwardsFactsService.addOrUpdateMedicationFact({
                 PatientUserId : dto.PatientUserId,
                 Facts         : {
@@ -176,9 +193,10 @@ export class MedicationConsumptionController {
                     Taken    : false,
                     Missed   : true,
                 },
-                RecordId      : dto.id,
-                RecordDate    : dto.TimeScheduleEnd,
-                RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd)
+                RecordId       : dto.id,
+                RecordDate     : tempDate,
+                RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                RecordTimeZone : currentTimeZone,
             });
 
             ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {

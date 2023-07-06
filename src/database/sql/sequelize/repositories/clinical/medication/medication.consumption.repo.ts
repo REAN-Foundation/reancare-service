@@ -159,6 +159,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     getAllTakenBefore = async (patientUserId: uuid, date: Date): Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await MedicationConsumption.findAll({
                 where : {
@@ -171,14 +172,15 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                //const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+                const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 return {
-                    RecordId      : x.id,
-                    PatientUserId : x.PatientUserId,
-                    Taken         : x.IsTaken,
-                    DrugName      : x.DrugName,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
-                    RecordDate    : x.TimeScheduleEnd,
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    Taken          : x.IsTaken,
+                    DrugName       : x.DrugName,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDate     : tempDate,
+                    RecordTimeZone : currentTimeZone,
                 };
             });
 
@@ -193,6 +195,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         : Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await MedicationConsumption.findAll({
                 where : {
@@ -206,14 +209,15 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                //const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
+                const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 return {
-                    RecordId      : x.id,
-                    PatientUserId : x.PatientUserId,
-                    Taken         : x.IsTaken,
-                    DrugName      : x.DrugName,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
-                    RecordDate    : x.TimeScheduleEnd,
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    Taken          : x.IsTaken,
+                    DrugName       : x.DrugName,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDate     : tempDate,
+                    RecordTimeZone : currentTimeZone,
                 };
             });
 

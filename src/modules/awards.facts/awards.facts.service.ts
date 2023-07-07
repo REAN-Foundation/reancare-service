@@ -21,6 +21,7 @@ export interface AwardsFact {
     Facts         : any;
     RecordDate    : Date;
     RecordDateStr?: string;
+    RecordTimeZone?: string;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

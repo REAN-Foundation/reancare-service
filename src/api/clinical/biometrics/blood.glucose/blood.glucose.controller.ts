@@ -51,10 +51,9 @@ export class BloodGlucoseController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(bloodGlucose.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodGlucose.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : bloodGlucose.PatientUserId,
@@ -63,9 +62,10 @@ export class BloodGlucoseController extends BaseController {
                         VitalPrimaryValue : bloodGlucose.BloodGlucose,
                         Unit              : bloodGlucose.Unit,
                     },
-                    RecordId      : bloodGlucose.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : bloodGlucose.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Blood glucose record created successfully!', 201, {
@@ -141,10 +141,9 @@ export class BloodGlucoseController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(updated.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : updated.PatientUserId,
@@ -152,9 +151,10 @@ export class BloodGlucoseController extends BaseController {
                         BloodGlucose : updated.BloodGlucose,
                         Unit         : updated.Unit,
                     },
-                    RecordId      : updated.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : updated.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Blood glucose record updated successfully!', 200, {

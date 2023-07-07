@@ -203,6 +203,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         : Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await BodyWeight.findAll({
                 where : {
@@ -218,17 +219,16 @@ export class BodyWeightRepo implements IBodyWeightRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId          : x.id,
                     PatientUserId     : x.PatientUserId,
                     VitalName         : "BodyWeight",
                     VitalPrimaryValue : x.BodyWeight,
                     Unit              : x.Unit,
-                    RecordDateStr     : dayStr,
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
+                    RecordTimeZone    : currentTimeZone,
                 };
             });
             return records_;
@@ -242,6 +242,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await BodyWeight.findAll({
                 where : {
@@ -256,17 +257,16 @@ export class BodyWeightRepo implements IBodyWeightRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId          : x.id,
                     PatientUserId     : x.PatientUserId,
                     VitalName         : "BodyWeight",
                     VitalPrimaryValue : x.BodyWeight,
                     Unit              : x.Unit,
-                    RecordDateStr     : dayStr,
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
+                    RecordTimeZone    : currentTimeZone,
                 };
             });
             return records_;

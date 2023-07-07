@@ -52,10 +52,9 @@ export class BodyTemperatureController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(bodyTemperature.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bodyTemperature.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : bodyTemperature.PatientUserId,
@@ -64,9 +63,10 @@ export class BodyTemperatureController extends BaseController {
                         VitalPrimaryValue : bodyTemperature.BodyTemperature,
                         Unit              : bodyTemperature.Unit,
                     },
-                    RecordId      : bodyTemperature.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : bodyTemperature.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Body temperature record created successfully!', 201, {
@@ -141,10 +141,9 @@ export class BodyTemperatureController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(updated.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : updated.PatientUserId,
@@ -153,9 +152,10 @@ export class BodyTemperatureController extends BaseController {
                         VitalPrimaryValue : updated.BodyTemperature,
                         Unit              : updated.Unit,
                     },
-                    RecordId      : updated.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : updated.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Body temperature record updated successfully!', 200, {

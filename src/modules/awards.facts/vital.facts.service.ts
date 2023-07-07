@@ -10,6 +10,9 @@ import { BodyTemperatureService } from '../../services/clinical/biometrics/body.
 import { BloodPressureService } from '../../services/clinical/biometrics/blood.pressure.service';
 import { BloodOxygenSaturationService } from '../../services/clinical/biometrics/blood.oxygen.saturation.service';
 import { PulseService } from '../../services/clinical/biometrics/pulse.service';
+import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../common/time.helper';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +31,10 @@ export const updateVitalFact = async (model: AwardsFact) => {
             RecordDate : 'DESC'
         }
     });
+    const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(model.PatientUserId);
+    const tempDate = TimeHelper.subtractDuration(model.RecordDate, offsetMinutes, DurationType.Minute);
+    const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
+    model.RecordDateStr = tempDateStr;
 
     await addOrUpdateVitalRecord(model);
 
@@ -43,12 +50,13 @@ export const updateVitalFact = async (model: AwardsFact) => {
     }
     for await (var r of unpopulatedRecords) {
         const model_: AwardsFact = {
-            PatientUserId : model.PatientUserId,
-            RecordId      : r.RecordId,
-            RecordDate    : r.RecordDate,
-            RecordDateStr : r.RecordDateStr,
-            FactType      : 'Vitals',
-            Facts         : {
+            PatientUserId  : model.PatientUserId,
+            RecordId       : r.RecordId,
+            RecordDate     : r.RecordDate,
+            RecordDateStr  : r.RecordDateStr,
+            FactType       : 'Vitals',
+            RecordTimeZone : r.RecordTimeZone,
+            Facts          : {
                 VitalName           : r.VitalName,
                 VitalPrimaryValue   : r.VitalPrimaryValue,
                 VitalSecondaryValue : r.VitalSecondaryValue ?? null,
@@ -77,7 +85,8 @@ async function addOrUpdateVitalRecord(model: AwardsFact) {
             VitalSecondaryValue : model.Facts.VitalSecondaryValue ?? null,
             Unit                : model.Facts.Unit,
             RecordDate          : model.RecordDate,
-            RecordDateStr       : model.RecordDateStr
+            RecordDateStr       : model.RecordDateStr,
+            RecordTimeZone      : model.RecordTimeZone
         };
         const record = await vitalFactRepository.create(fact);
         const saved = await vitalFactRepository.save(record);

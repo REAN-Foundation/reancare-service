@@ -161,11 +161,12 @@ export class MeditationRepo implements IMeditationRepo {
         : Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await MeditationModel.findAll({
                 where : {
-                    PatientUserId : patientUserId,
-                    DurationInMins  : {
+                    PatientUserId  : patientUserId,
+                    DurationInMins : {
                         [Op.not] : null,
                     },
                     CreatedAt : {
@@ -176,17 +177,17 @@ export class MeditationRepo implements IMeditationRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+                const recordDate = x.EndTime ?? x.StartTime;
+                const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
-                    RecordId      : x.id,
-                    PatientUserId : x.PatientUserId,
-                    Name          : 'Meditation',
-                    Duration      : x.DurationInMins,
-                    Unit          : 'mins',
-                    RecordDateStr : dayStr,
-                    RecordDate    : tempDate,
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    Name           : 'Meditation',
+                    Duration       : x.DurationInMins,
+                    Unit           : 'mins',
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordTimeZone : currentTimeZone,
                 };
             });
             return records_;
@@ -200,11 +201,12 @@ export class MeditationRepo implements IMeditationRepo {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await MeditationModel.findAll({
                 where : {
-                    PatientUserId : patientUserId,
-                    DurationInMins  : {
+                    PatientUserId  : patientUserId,
+                    DurationInMins : {
                         [Op.not] : null,
                     },
                     CreatedAt : {
@@ -214,17 +216,17 @@ export class MeditationRepo implements IMeditationRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+                const recordDate = x.EndTime ?? x.StartTime;
+                const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
-                    RecordId      : x.id,
-                    PatientUserId : x.PatientUserId,
-                    Name          : 'Meditaion',
-                    Duration      : x.DurationInMins,
-                    Unit          : 'mins',
-                    RecordDateStr : dayStr,
-                    RecordDate    : tempDate,
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    Name           : 'Meditaion',
+                    Duration       : x.DurationInMins,
+                    Unit           : 'mins',
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordTimeZone : currentTimeZone,
                 };
             });
             return records_;

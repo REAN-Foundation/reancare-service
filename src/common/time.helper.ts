@@ -49,7 +49,7 @@ export class TimeHelper {
             .split('T')[0];
         const reference = new Date(todayStr);
         return reference;
-    }
+    };
 
     static getDayOfMonth = (date: Date): string => {
         var tokens = date.toISOString().split('T')[0];
@@ -66,7 +66,7 @@ export class TimeHelper {
         var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         var month = months[ date.getMonth() ];
         return month;
-    }
+    };
 
     static getDateString = (date: Date, format: DateStringFormat): string => {
 
@@ -388,6 +388,12 @@ export class TimeHelper {
         const diff = first.getTime() - second.getTime();
         var dayDiff = diff / (1000 * 60 * 60 * 24);
         return dayDiff;
-    }
+    };
+
+    static formatDateToLocal_YYYY_MM_DD = (date : Date) => {
+        const mnth = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return [date.getFullYear(), mnth, day].join("-");
+    };
 
 }

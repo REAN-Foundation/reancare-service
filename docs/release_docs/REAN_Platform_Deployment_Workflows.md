@@ -6,7 +6,7 @@ Mode of trigger: ```Automated```
  PR Workflow is triggered automatically whenever a PR with source branch as a feature/* branch is created against the target branch as develop branch.
  
  Release Process Workflow Diagram.
- ![PR-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/pr-ci-cd_workflow.png?raw=true)
+ ![PR-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/pr-ci-cd_workflow.png?raw=true)
  
  GitHub Action Workflow run.
  ![pr](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Pr-ci-cd_example.png?raw=true)

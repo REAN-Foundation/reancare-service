@@ -262,7 +262,7 @@ export class ChartGenerator {
         dataStr += `\tconst width           = ${options.Width};\n`;
         dataStr += `\tconst height          = ${options.Height};\n`;
         dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
-        dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ?? `20px`}";\n`;
         return dataStr;
     }
 

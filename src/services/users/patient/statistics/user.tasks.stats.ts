@@ -31,7 +31,7 @@ export const addUserTasksStats = (document, model, y) => {
         y = addNoDataDisplay(document, y);
     } else {
         y = y + 25;
-        addText(document, title, 80, 295, 6, titleColor, 'center');
+        addText(document, title, 80, 294, 6, titleColor, 'center');
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 23;
         const colors = getUserTaskStatusColors();

@@ -6,10 +6,10 @@ Mode of trigger: ```Automated```
  PR Workflow is triggered automatically whenever a PR with source branch as a feature/* branch is created against the target branch as develop branch.
  
  Release Process Workflow Diagram.
- ![PR-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/pr-ci-cd_workflow.png?raw=true)
+ ![PR-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/pr-ci-cd_workflow.png?raw=true)
  
  GitHub Action Workflow run.
- ![pr](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Pr-ci-cd_example.png?raw=true)
+ ![pr](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Pr-ci-cd_example.png?raw=true)
  
 ### JOBS
 
@@ -35,10 +35,10 @@ Mode of trigger: ```Automated```
 Dev Workflow is triggered automatically whenever any PR is merged into the develop branch. The workflow builds the applications and deploys the changes to the RF Platform Development environment.
 
 Release Process Workflow Diagram.
-![Dev-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/dev-ci-cd_workflow.png?raw=true)
+![Dev-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/dev-ci-cd_workflow.png?raw=true)
 
 GitHub Action Workflow run.
-![dev](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Dev-ci-cd_example.png?raw=true)
+![dev](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Dev-ci-cd_example.png?raw=true)
 
 ### JOBS
 
@@ -58,10 +58,10 @@ There are two ways to use or trigger uat-CI-CD workflow
 2. Whenever a Branch with prefix of 'release/' create a pull request
 
 Release Process Workflow Diagram.
-![uat-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/uat-ci-cd_workflow.png?raw=true)
+![uat-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/uat-ci-cd_workflow.png?raw=true)
 
 GitHub Action Workflow run.
-![uat](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/Uat-ci-cd_example.png?raw=true)
+![uat](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Uat-ci-cd_example.png?raw=true)
 
 ### JOBS
 
@@ -91,10 +91,10 @@ Mode of trigger: ```Automated```
 Prod Workflow is triggered automatically whenever any PR is merged into the main branch. The workflow builds the applications and deploys the changes to the RF Platform Production environment.
 
 Release Process Workflow Diagram.
-![prod-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/PROD-ci-cd_workflow.png?raw=true)
+![prod-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/PROD-ci-cd_workflow.png?raw=true)
 
 GitHub Action Workflow run.
-![prod](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/prod-ci-cd_example.png?raw=true)
+![prod](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/prod-ci-cd_example.png?raw=true)
 
 ### JOBS
 

@@ -433,7 +433,7 @@ function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model
         document.image(chart.location, startX, y, { width: imageWidth, align: 'center', height: 80 });
         document.fontSize(7);
         document.moveDown();
-        addText(document, title, startX - 350, y + 85, 6, titleColor, 'center');
+        addText(document, title, startX - 350, y + 82, 6, titleColor, 'center');
 
         const legendY = 25;
         y = yFrozen + legendY;

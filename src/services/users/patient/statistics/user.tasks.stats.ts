@@ -12,7 +12,7 @@ import {
     RECTANGULAR_CHART_WIDTH,
     SQUARE_CHART_HEIGHT,
     SQUARE_CHART_WIDTH } from "./report.helper";
-import { addSectionTitle, addNoDataDisplay, addLegend, addText } from "./stat.report.commons";
+import { addSectionTitle, addNoDataDisplay, addText, addLegend } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -31,7 +31,7 @@ export const addUserTasksStats = (document, model, y) => {
         y = addNoDataDisplay(document, y);
     } else {
         y = y + 25;
-        addText(document, title, 80, 295, 6, titleColor, 'center');
+        addText(document, title, 80, 294, 6, titleColor, 'center');
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 23;
         const colors = getUserTaskStatusColors();
@@ -172,11 +172,11 @@ const createUserTasks_StackedBarChart = async (stats: any, filename: string) => 
 const getUserTaskStatusColors = () => {
     const items = [
         {
-            Key   : 'Finished Tasks',
+            Key   : 'Finished',
             Color : ChartColors.MediumSeaGreen,
         },
         {
-            Key   : 'Unfinished Tasks',
+            Key   : 'Unfinished',
             Color : ChartColors.Coral,
         },
     ];

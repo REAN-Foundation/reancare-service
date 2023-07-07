@@ -46,8 +46,9 @@ export class MeditationController extends BaseController{
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(meditation.PatientUserId);
-                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const currentTimeZone = await HelperRepo.getPatientTimezone(meditation.PatientUserId);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(meditation.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
 
                 AwardsFactsService.addOrUpdateMentalHealthResponseFact({
                     PatientUserId : meditation.PatientUserId,
@@ -56,9 +57,10 @@ export class MeditationController extends BaseController{
                         Duration : meditation.DurationInMins,
                         Unit     : 'mins'
                     },
-                    RecordId      : meditation.id,
-                    RecordDate    : timestamp,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordId       : meditation.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
 

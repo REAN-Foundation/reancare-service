@@ -52,17 +52,19 @@ export class FoodConsumptionController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(foodConsumption.PatientUserId);
-                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(foodConsumption.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const currentTimeZone = await HelperRepo.getPatientTimezone(foodConsumption.PatientUserId);
 
                 AwardsFactsService.addOrUpdateNutritionResponseFact({
                     PatientUserId : foodConsumption.PatientUserId,
                     Facts         : {
                         UserResponse : foodConsumption.UserResponse,
                     },
-                    RecordId      : foodConsumption.id,
-                    RecordDate    : timestamp,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
+                    RecordId       : foodConsumption.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
 

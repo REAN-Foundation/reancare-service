@@ -54,8 +54,9 @@ export class SleepController extends BaseController{
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(sleep.PatientUserId);
-                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const currentTimeZone = await HelperRepo.getPatientTimezone(sleep.PatientUserId);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(sleep.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
 
                 AwardsFactsService.addOrUpdateMentalHealthResponseFact({
                     PatientUserId : sleep.PatientUserId,
@@ -64,9 +65,10 @@ export class SleepController extends BaseController{
                         Duration : sleep.SleepDuration,
                         Unit     : sleep.Unit,
                     },
-                    RecordId      : sleep.id,
-                    RecordDate    : timestamp,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordId       : sleep.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
 

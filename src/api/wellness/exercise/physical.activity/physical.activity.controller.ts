@@ -63,17 +63,19 @@ export class PhysicalActivityController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(physicalActivity.PatientUserId);
-                //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(physicalActivity.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+                const currentTimeZone = await HelperRepo.getPatientTimezone(physicalActivity.PatientUserId);
 
                 AwardsFactsService.addOrUpdatePhysicalActivityResponseFact({
                     PatientUserId : physicalActivity.PatientUserId,
                     Facts         : {
                         PhysicalActivityQuestionAns : physicalActivity.PhysicalActivityQuestionAns,
                     },
-                    RecordId      : physicalActivity.id,
-                    RecordDate    : timestamp,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordId       : physicalActivity.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Physical activity record created successfully!', 201, {

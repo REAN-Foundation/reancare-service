@@ -327,7 +327,8 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
     getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
         : Promise<any[]> => {
         try {
-            //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await PhysicalActivity.findAll({
                 where : {
@@ -343,13 +344,15 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                //const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const recordDate = x.EndTime ?? x.StartTime;
+                const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId                    : x.id,
                     PatientUserId               : x.PatientUserId,
                     PhysicalActivityQuestionAns : x.PhysicalActivityQuestionAns,
-                    RecordDate                  : x.CreatedAt,
-                    RecordDateStr               : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.CreatedAt)
+                    RecordDate                  : tempDate,
+                    RecordDateStr               : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordTimeZone              : currentTimeZone,
                 };
             });
             return records_;
@@ -362,7 +365,8 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
 
     getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
         try {
-            //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await PhysicalActivity.findAll({
                 where : {
@@ -377,13 +381,15 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                //const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const recordDate = x.EndTime ?? x.StartTime;
+                const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId                    : x.id,
                     PatientUserId               : x.PatientUserId,
                     PhysicalActivityQuestionAns : x.PhysicalActivityQuestionAns,
-                    RecordDate                  : x.CreatedAt,
-                    RecordDateStr               : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.CreatedAt)
+                    RecordDate                  : tempDate,
+                    RecordDateStr               : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordTimeZone              : currentTimeZone,
                 };
             });
             return records_;

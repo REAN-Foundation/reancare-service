@@ -188,6 +188,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
         : Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await BodyTemperatureModel.findAll({
                 where : {
@@ -203,15 +204,16 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId          : x.id,
                     PatientUserId     : x.PatientUserId,
                     VitalName         : "BodyTemperature",
                     VitalPrimaryValue : x.BodyTemperature,
                     Unit              : x.Unit,
-                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
+                    RecordTimeZone    : currentTimeZone,
                 };
             });
             return records_;
@@ -225,6 +227,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await BodyTemperatureModel.findAll({
                 where : {
@@ -239,15 +242,16 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId          : x.id,
                     PatientUserId     : x.PatientUserId,
                     VitalName         : "BodyTemperature",
                     VitalPrimaryValue : x.BodyTemperature,
                     Unit              : x.Unit,
-                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
+                    RecordTimeZone    : currentTimeZone,
                 };
             });
             return records_;

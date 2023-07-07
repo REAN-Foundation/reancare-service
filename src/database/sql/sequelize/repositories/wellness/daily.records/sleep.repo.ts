@@ -252,7 +252,8 @@ export class SleepRepo implements ISleepRepo {
     getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
         : Promise<any[]> => {
         try {
-            //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await Sleep.findAll({
                 where : {
@@ -268,15 +269,16 @@ export class SleepRepo implements ISleepRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                //const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
-                    RecordId      : x.id,
-                    PatientUserId : x.PatientUserId,
-                    Name          : 'Sleep',
-                    Duration      : x.SleepDuration,
-                    Unit          : x.Unit,
-                    RecordDate    : x.CreatedAt,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.CreatedAt)
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    Name           : 'Sleep',
+                    Duration       : x.SleepDuration,
+                    Unit           : x.Unit,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordTimeZone : currentTimeZone,
                 };
             });
             return records_;
@@ -289,7 +291,8 @@ export class SleepRepo implements ISleepRepo {
 
     getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
         try {
-            //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await Sleep.findAll({
                 where : {
@@ -304,15 +307,16 @@ export class SleepRepo implements ISleepRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(x => {
-                //const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
-                    RecordId      : x.id,
-                    PatientUserId : x.PatientUserId,
-                    Name          : 'Sleep',
-                    Duration      : x.SleepDuration,
-                    Unit          : x.Unit,
-                    RecordDate    : x.CreatedAt,
-                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.CreatedAt)
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    Name           : 'Sleep',
+                    Duration       : x.SleepDuration,
+                    Unit           : x.Unit,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordTimeZone : currentTimeZone,
                 };
             });
             return records_;

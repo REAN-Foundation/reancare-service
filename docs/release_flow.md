@@ -52,14 +52,14 @@ There are different types of workflows designed for the type of source branch us
 
 ### REAN Foundation Platform Workflows
 
-* [PR-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/docs/release_docs/REAN_Platform_Deployment_Workflows.md#pr-ci-cd)
-* [Dev-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/docs/release_docs/REAN_Platform_Deployment_Workflows.md#dev-ci-cd).
-* [UAT-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/docs/release_docs/REAN_Platform_Deployment_Workflows.md#uat-ci-cd).
-* [PROD-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/docs/release_docs/REAN_Platform_Deployment_Workflows.md#prod-ci-cd).
+* [PR-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/develop/docs/release_docs/REAN_Platform_Deployment_Workflows.md#pr-ci-cd)
+* [Dev-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/develop/docs/release_docs/REAN_Platform_Deployment_Workflows.md#dev-ci-cd).
+* [UAT-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/develop/docs/release_docs/REAN_Platform_Deployment_Workflows.md#uat-ci-cd).
+* [PROD-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/develop/docs/release_docs/REAN_Platform_Deployment_Workflows.md#prod-ci-cd).
 
 ### Customer Workflows
 
-* [AHA-UAT-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/docs/release_docs/AHA_Platform_Deployment_Workflows.md#aha-uat-ci-cd).
-* [AHA-PROD-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/docs/release_docs/AHA_Platform_Deployment_Workflows.md#aha-prod-ci-cd).
+* [AHA-UAT-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/develop/docs/release_docs/AHA_Platform_Deployment_Workflows.md#aha-uat-ci-cd).
+* [AHA-PROD-CI-CD](https://github.com/REAN-Foundation/reancare-service/blob/develop/docs/release_docs/AHA_Platform_Deployment_Workflows.md#aha-prod-ci-cd).
 
 

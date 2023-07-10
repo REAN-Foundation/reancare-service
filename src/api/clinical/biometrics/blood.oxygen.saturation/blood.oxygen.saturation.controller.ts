@@ -51,10 +51,9 @@ export class BloodOxygenSaturationController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(bloodOxygenSaturation.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodOxygenSaturation.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : bloodOxygenSaturation.PatientUserId,
@@ -63,9 +62,10 @@ export class BloodOxygenSaturationController extends BaseController {
                         VitalPrimaryValue : bloodOxygenSaturation.BloodOxygenSaturation,
                         Unit              : bloodOxygenSaturation.Unit,
                     },
-                    RecordId      : bloodOxygenSaturation.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : bloodOxygenSaturation.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Blood oxygen saturation record created successfully!', 201, {
@@ -143,10 +143,9 @@ export class BloodOxygenSaturationController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(updated.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : updated.PatientUserId,
@@ -155,9 +154,10 @@ export class BloodOxygenSaturationController extends BaseController {
                         VitalPrimaryValue : updated.BloodOxygenSaturation,
                         Unit              : updated.Unit,
                     },
-                    RecordId      : updated.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : updated.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Blood oxygen saturation record updated successfully!', 200, {

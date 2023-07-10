@@ -5,6 +5,9 @@ import { MedicationFact } from './models/medication.fact.model';
 import { MedicationConsumptionService } from '../../services/clinical/medication/medication.consumption.service';
 import { Loader } from '../../startup/loader';
 import { Logger } from '../../common/logger';
+import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../common/time.helper';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +25,10 @@ export const updateMedicationFact = async (model: AwardsFact) => {
             RecordDate : 'DESC'
         }
     });
+    const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(model.PatientUserId);
+    const tempDate = TimeHelper.subtractDuration(model.RecordDate, offsetMinutes, DurationType.Minute);
+    const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
+    model.RecordDateStr = tempDateStr;
 
     await addOrUpdateMedicationRecord(model);
 
@@ -37,12 +44,13 @@ export const updateMedicationFact = async (model: AwardsFact) => {
     }
     for await (var r of unpopulatedRecords) {
         const model_: AwardsFact = {
-            PatientUserId : model.PatientUserId,
-            RecordId      : r.RecordId,
-            RecordDate    : r.RecordDate,
-            FactType      : 'Medication',
-            RecordDateStr : (r.RecordDate).toISOString().split('T')[0],
-            Facts         : {
+            PatientUserId  : model.PatientUserId,
+            RecordId       : r.RecordId,
+            RecordDate     : r.RecordDate,
+            FactType       : 'Medication',
+            RecordDateStr  : r.RecordDateStr,
+            RecordTimeZone : r.RecordTimeZone,
+            Facts          : {
                 DrugName : r.DrugName,
                 Taken    : r.IsTaken,
             }
@@ -67,7 +75,8 @@ async function addOrUpdateMedicationRecord(model: AwardsFact) {
             Taken              : model.Facts.Taken,
             Missed             : model.Facts.Missed,
             RecordDate         : model.RecordDate,
-            RecordDateStr      : model.RecordDateStr
+            RecordDateStr      : model.RecordDateStr,
+            RecordTimeZone     : model.RecordTimeZone
         };
         const record = await medfactRepository.create(fact);
         const saved = await medfactRepository.save(record);

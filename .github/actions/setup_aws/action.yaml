@@ -16,6 +16,8 @@ inputs:
     required: true
   duplo_id:
     required: true
+  tenant:
+    required: true
     
 runs:
   using: "composite"
@@ -25,7 +27,7 @@ runs:
       with:
         duplo_host: https://reanfoundation.duplocloud.net/
         duplo_token: ${{ inputs.duplo_token }}
-        tenant: dev
+        tenant: ${{ inputs.tenant }}
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
     - name: Login to Amazon ECR

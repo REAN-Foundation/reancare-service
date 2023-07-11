@@ -64,10 +64,11 @@
     "sleep": "^6.3.0",
     "timezone-support": "^3.1.0",
     "tsyringe": "^4.7.0",
-    "twilio": "^3.84.1",
+    "twilio": "^4.13.0",
     "typeorm": "^0.3.15",
     "uuid": "^8.3.2",
-    "uuid-apikey": "^1.5.3"
+    "uuid-apikey": "^1.5.3",
+    "xmlbuilder": "^15.1.1"
   },
   "devDependencies": {
     "@jest/types": "^27.0.6",

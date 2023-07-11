@@ -182,7 +182,7 @@ export class BaseValidator {
         }
 
         await chain.run(request);
-    }
+    };
 
     validateEmail = async(
         request: express.Request,

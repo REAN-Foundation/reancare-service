@@ -135,7 +135,7 @@ export class CourseContentController extends BaseController {
         }
     };
 
-    getContentsForCourse= async (request: express.Request, response: express.Response): Promise<void> => {
+    getContentsForCourse = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('CourseContent.GetContentsForCourse', request, response);
             const courseId: uuid = await this._validator.getParamUuid(request, 'courseId');
@@ -149,9 +149,9 @@ export class CourseContentController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
-    getContentsForLearningPath= async (request: express.Request, response: express.Response): Promise<void> => {
+    getContentsForLearningPath = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('CourseContent.GetContentsForLearningPath', request, response);
             const learningPathId: uuid = await this._validator.getParamUuid(request, 'learningPathId');
@@ -165,7 +165,7 @@ export class CourseContentController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     //#endregion
 

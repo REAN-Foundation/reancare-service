@@ -488,7 +488,7 @@ export class UserService {
             isInternalTestUser = true;
         }
         return isInternalTestUser;
-    }
+    };
 
     //#endregion
 

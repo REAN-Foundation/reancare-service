@@ -12,18 +12,18 @@ export class TemperatureStore {
 
     add = async (model: BodyTemperatureDomainModel): Promise<any> => {
         return await this._service.add(model);
-    }
+    };
 
     getById = async (id: string): Promise<any> => {
         return await this._service.getById(id);
-    }
+    };
 
     update = async (id: string, updates: BodyTemperatureDomainModel): Promise<any> => {
         return await this._service.update(id, updates);
-    }
+    };
 
     delete = async (id: string): Promise<any> => {
         return await this._service.delete(id);
-    }
+    };
 
 }

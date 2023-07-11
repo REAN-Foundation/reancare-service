@@ -17,11 +17,11 @@ export class DonationCommunicationValidator extends BaseValidator {
             PatientUserId             : request.body.PatientUserId ?? null,
             DonorUserId               : request.body.DonorUserId ?? null,
             VolunteerUserId           : request.body.VolunteerUserId ?? null,
-            FifthDayReminderFlag      : request.body.FifthDayReminderFlag ?? null,
-            DonorNoResponseFirstFlag  : request.body.DonorNoResponseFirstFlag ?? null,
-            DonorNoResponseSecondFlag : request.body.DonorNoResponseSecondFlag ?? null,
-            DonorAcceptance           : request.body.DonorAcceptance ?? null,
-            IsRemindersLoaded         : request.body.IsRemindersLoaded ?? null,
+            FifthDayReminderFlag      : request.body.FifthDayReminderFlag ?? false,
+            DonorNoResponseFirstFlag  : request.body.DonorNoResponseFirstFlag ?? false,
+            DonorNoResponseSecondFlag : request.body.DonorNoResponseSecondFlag ?? false,
+            DonorAcceptance           : request.body.DonorAcceptance ?? "NotSend",
+            IsRemindersLoaded         : request.body.IsRemindersLoaded ?? false,
         };
 
         return doctorNoteModel;

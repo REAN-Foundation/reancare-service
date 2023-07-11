@@ -34,6 +34,6 @@ export class DiagnosticConditionMapper {
             Interpretation        : obj.Interpretation
         };
         return model;
-    }
+    };
 
 }

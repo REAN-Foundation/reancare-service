@@ -16,7 +16,7 @@ import { DefaultChartOptions } from "../../../../modules/charts/default.chart.op
 export const addSleepStats = (model, document, y) => {
 
     const chartImage = 'SleepHours_LastMonth';
-    const detailedTitle = 'Sleep in Hours for Last Month';
+    const detailedTitle = 'Sleep in Hours Over 6 Months';
     const titleColor = '#505050';
     const sectionTitle = 'Sleep History';
     const icon = Helper.getIconsPath('sleep.png');
@@ -37,7 +37,7 @@ export const addSleepStats = (model, document, y) => {
 
 export const createSleepTrendCharts = async (data) => {
     var locations = [];
-    const location = await createSleepTrend_BarChart(data.LastMonth, 'SleepHours_LastMonth');
+    const location = await createSleepTrend_BarChart(data.Last6Months, 'SleepHours_LastMonth');
     locations.push({
         key : 'SleepHours_LastMonth',
         location

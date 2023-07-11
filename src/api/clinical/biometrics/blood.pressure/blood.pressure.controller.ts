@@ -57,10 +57,11 @@ export class BloodPressureController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
             this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
-            if (model.Systolic > 120 || model.Diastolic > 80) {
+
+            /*if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
                 await this._service.sendBPNotification(model.PatientUserId, model);
-            }
+            }*/
 
             // Adding record to award service
             if (bloodPressure.Systolic || bloodPressure.Diastolic) {
@@ -68,10 +69,9 @@ export class BloodPressureController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(bloodPressure.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodPressure.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : bloodPressure.PatientUserId,
@@ -81,9 +81,10 @@ export class BloodPressureController extends BaseController {
                         VitalSecondaryValue : bloodPressure.Diastolic,
                         Unit                : bloodPressure.Unit,
                     },
-                    RecordId      : bloodPressure.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : bloodPressure.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
@@ -163,10 +164,9 @@ export class BloodPressureController extends BaseController {
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(updated.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : updated.PatientUserId,
@@ -176,9 +176,10 @@ export class BloodPressureController extends BaseController {
                         VitalSecondaryValue : updated.Diastolic,
                         Unit                : updated.Unit,
                     },
-                    RecordId      : updated.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : updated.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Blood pressure record updated successfully!', 200, {

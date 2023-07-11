@@ -51,13 +51,13 @@ export class FormsHandler {
         connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<any[]> => {
         var service = FormsHandler.getService(connectionModel);
         return await service.importFormSubmissions(connectionModel, providerFormId);
-    }
+    };
     
     public static processQueryResponse = (provider: string, responseType: QueryResponseType, value: any) => {
         FormsHandler._services = ProviderResolver.resolve();
         var service = FormsHandler._services.getItem(provider);
         return service.processQueryResponse(responseType, value);
-    }
+    };
 
     private static getService(connectionModel: ThirdpartyApiCredentialsDomainModel) {
         const provider = connectionModel.Provider;

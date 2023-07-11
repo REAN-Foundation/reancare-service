@@ -12,18 +12,18 @@ export class BloodGlucoseStore {
 
     add = async (model: BloodGlucoseDomainModel): Promise<any> => {
         return await this._service.add(model);
-    }
+    };
 
     getById = async (id: string): Promise<any> => {
         return await this._service.getById(id);
-    }
+    };
 
     update = async (id: string, updates: BloodGlucoseDomainModel): Promise<any> => {
         return await this._service.update(id, updates);
-    }
+    };
 
     delete = async (id: string): Promise<any> => {
         return await this._service.delete(id);
-    }
+    };
 
 }

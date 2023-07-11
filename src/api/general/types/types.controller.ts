@@ -5,6 +5,7 @@ import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, Sev
 import { TypesService } from '../../../services/general/types.service';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
+import { AwardsFactsService } from '../../../modules/awards.facts/awards.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,6 +183,19 @@ export class TypesController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    getGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.GroupActivityTypes', request, response, false);
+            const groupActivityTypes = AwardsFactsService._groupActivityTypes;
+            ResponseHandler.success(request, response, 'Group activity types successfully!', 200, {
+                GroupActivityTypes : groupActivityTypes,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

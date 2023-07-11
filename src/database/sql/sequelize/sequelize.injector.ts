@@ -77,13 +77,14 @@ import { DonorRepo } from './repositories/users/donor.repo';
 import { HealthSystemRepo } from './repositories/users/patient/health.system.repo';
 import { NotificationRepo } from './repositories/general/notification.repo';
 import { VolunteerRepo } from './repositories/users/volunteer.repo';
-import { ChatRepo } from './repositories/general/chat.repo';
+import { ChatRepo } from './repositories/community/chat.repo';
 import { RssfeedRepo } from './repositories/general/rss.feed/rss.feed.repo';
 import { RssfeedItemRepo } from './repositories/general/rss.feed/rss.feed.item.repo';
 import { PatientDonorsRepo } from './repositories/clinical/donation/patient.donors.repo';
 import { DonationRecordRepo } from './repositories/clinical/donation/donation.record.repo';
 import { WearableDeviceDetailsRepo } from './repositories/webhook/webhook.wearable.device.details.repo';
 import { DonationCommunicationRepo } from './repositories/clinical/donation/donation.communication.repo';
+import { UserGroupRepo } from './repositories/community/user.group.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -177,7 +178,8 @@ export class SequelizeInjector {
         container.register('IDonationRecordRepo', DonationRecordRepo);
         container.register('IWearableDeviceDetailsRepo', WearableDeviceDetailsRepo);
         container.register('IDonationCommunicationRepo', DonationCommunicationRepo);
-
+        container.register('IUserGroupRepo', UserGroupRepo);
+        
     }
 
 }

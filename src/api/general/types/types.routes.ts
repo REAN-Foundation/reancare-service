@@ -20,6 +20,7 @@ export const register = (app: express.Application): void => {
     router.get('/severities', authenticator.authenticateClient, controller.getSeverities);
     router.get('/priorities', authenticator.authenticateClient, controller.getPriorityTypes);
     router.get('/lab-records', authenticator.authenticateClient, controller.getLabRecordTypes);
+    router.get('/group-activity-types', authenticator.authenticateClient, controller.getGroupActivityTypes);
 
     app.use('/api/v1/types', router);
 };

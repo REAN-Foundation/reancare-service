@@ -188,7 +188,20 @@
             "DonationCommunication.GetById",
             "DonationCommunication.Search",
             "DonationCommunication.Update",
-            "DonationCommunication.Delete"
+            "DonationCommunication.Delete",
+            "UserGroup.Create",
+            "UserGroup.GetById",
+            "UserGroup.Search",
+            "UserGroup.Update",
+            "UserGroup.Delete",
+            "UserGroup.AddUserToGroup",
+            "UserGroup.RemoveUserFromGroup",
+            "UserGroup.GetGroupUsers",
+            "UserGroup.MakeUserAdmin",
+            "UserGroup.RemoveUserAdmin",
+            "UserGroup.GetGroupAdmins",
+            "UserGroup.SetGroupActivityTypes",
+            "UserGroup.GetGroupActivityTypes"
         ]
     },
     {
@@ -593,7 +606,20 @@
             "DonationCommunication.GetById",
             "DonationCommunication.Search",
             "DonationCommunication.Update",
-            "DonationCommunication.Delete"
+            "DonationCommunication.Delete",
+            "UserGroup.Create",
+            "UserGroup.GetById",
+            "UserGroup.Search",
+            "UserGroup.Update",
+            "UserGroup.Delete",
+            "UserGroup.AddUserToGroup",
+            "UserGroup.RemoveUserFromGroup",
+            "UserGroup.GetGroupUsers",
+            "UserGroup.MakeUserAdmin",
+            "UserGroup.RemoveUserAdmin",
+            "UserGroup.GetGroupAdmins",
+            "UserGroup.SetGroupActivityTypes",
+            "UserGroup.GetGroupActivityTypes"
         ]
     },
     {

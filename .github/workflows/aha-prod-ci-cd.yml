@@ -44,7 +44,7 @@ jobs:
          with:
            duplo_host: https://reanfoundation.duplocloud.net/
            duplo_token: ${{ secrets.DUPLOCLOUD_TOKEN }}
-           tenant: prod
+           tenant: ahaprod
           
       - name:  Get ECR Image Tag
         if: ${{ steps.checkTag.outputs.exists == 'true' }}
@@ -87,7 +87,7 @@ jobs:
         with:
           duplo_host: https://reanfoundation.duplocloud.net/
           duplo_token: ${{ secrets.DUPLOCLOUD_TOKEN }}
-          tenant: prod
+          tenant: ahaprod
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2

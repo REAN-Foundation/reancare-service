@@ -34,7 +34,7 @@ We are using GitFlow Branching [here](https://www.atlassian.com/git/tutorials/co
 
 The diagram below explains the end-to-end process and stages for promoting the code from the develop branch to the master branch.
 
-![workflow_diagram](https://github.com/REAN-Foundation/reancare-service/blob/feature/flow_documentation/assets/images/workflow_diagram.png?raw=true)
+![workflow_diagram](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/workflow_diagram.png?raw=true)
 
 ### Develop Branch Workflow
 

@@ -85,6 +85,7 @@ import { DonationRecordRepo } from './repositories/clinical/donation/donation.re
 import { WearableDeviceDetailsRepo } from './repositories/webhook/webhook.wearable.device.details.repo';
 import { DonationCommunicationRepo } from './repositories/clinical/donation/donation.communication.repo';
 import { UserGroupRepo } from './repositories/community/user.group.repo';
+import { ReminderRepo } from './repositories/general/reminder.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -179,7 +180,8 @@ export class SequelizeInjector {
         container.register('IWearableDeviceDetailsRepo', WearableDeviceDetailsRepo);
         container.register('IDonationCommunicationRepo', DonationCommunicationRepo);
         container.register('IUserGroupRepo', UserGroupRepo);
-        
+        container.register('IReminderRepo', ReminderRepo);
+
     }
 
 }

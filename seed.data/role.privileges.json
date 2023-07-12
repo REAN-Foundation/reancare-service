@@ -619,7 +619,12 @@
             "UserGroup.RemoveUserAdmin",
             "UserGroup.GetGroupAdmins",
             "UserGroup.SetGroupActivityTypes",
-            "UserGroup.GetGroupActivityTypes"
+            "UserGroup.GetGroupActivityTypes",
+            "Reminder.Create",
+            "Reminder.GetById",
+            "Reminder.Search",
+            "Reminder.Update",
+            "Reminder.Delete"
         ]
     },
     {
@@ -982,7 +987,12 @@
             "DonationCommunication.GetById",
             "DonationCommunication.Search",
             "DonationCommunication.Update",
-            "DonationCommunication.Delete"
+            "DonationCommunication.Delete",
+            "Reminder.Create",
+            "Reminder.GetById",
+            "Reminder.Search",
+            "Reminder.Update",
+            "Reminder.Delete"
         ]
     },
     {

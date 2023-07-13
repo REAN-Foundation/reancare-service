@@ -171,14 +171,14 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             });
 
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,
                     PatientUserId  : x.PatientUserId,
                     Taken          : x.IsTaken,
                     DrugName       : x.DrugName,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
                     RecordDate     : tempDate,
                     RecordTimeZone : currentTimeZone,
                 };
@@ -208,14 +208,14 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             });
 
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,
                     PatientUserId  : x.PatientUserId,
                     Taken          : x.IsTaken,
                     DrugName       : x.DrugName,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
                     RecordDate     : tempDate,
                     RecordTimeZone : currentTimeZone,
                 };

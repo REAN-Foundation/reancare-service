@@ -390,7 +390,7 @@ export class TimeHelper {
         return dayDiff;
     };
 
-    static formatDateToLocal_YYYY_MM_DD = (date : Date) => {
+    static formatDateToLocal_YYYY_MM_DD = async (date : Date) => {
         const mnth = ("0" + (date.getMonth() + 1)).slice(-2);
         const day = ("0" + date.getDate()).slice(-2);
         return [date.getFullYear(), mnth, day].join("-");

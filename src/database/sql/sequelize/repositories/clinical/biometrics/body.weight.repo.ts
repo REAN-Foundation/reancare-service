@@ -218,7 +218,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId          : x.id,
@@ -226,7 +226,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                     VitalName         : "BodyWeight",
                     VitalPrimaryValue : x.BodyWeight,
                     Unit              : x.Unit,
-                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };
@@ -256,7 +256,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId          : x.id,
@@ -264,7 +264,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                     VitalName         : "BodyWeight",
                     VitalPrimaryValue : x.BodyWeight,
                     Unit              : x.Unit,
-                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };

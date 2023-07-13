@@ -78,7 +78,7 @@ export class MedicationConsumptionController {
                     },
                     RecordId       : dto.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -119,7 +119,7 @@ export class MedicationConsumptionController {
                     },
                     RecordId       : dto.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -195,7 +195,7 @@ export class MedicationConsumptionController {
                 },
                 RecordId       : dto.id,
                 RecordDate     : tempDate,
-                RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                 RecordTimeZone : currentTimeZone,
             });
 

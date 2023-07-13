@@ -690,7 +690,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const recordDate = x.EndTime ?? x.StartTime;
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
@@ -698,7 +698,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                     PatientUserId  : x.PatientUserId,
                     UserResponse   : x.UserResponse,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });
@@ -727,7 +727,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const recordDate = x.EndTime ?? x.StartTime;
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
@@ -735,7 +735,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                     PatientUserId  : x.PatientUserId,
                     UserResponse   : x.UserResponse,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });

@@ -347,7 +347,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 const recordDate = x.EndTime ?? x.StartTime;
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
-                Logger.instance().log(`RecordDate: ${tempDate} RecordDateStr: ${recordDateStr}`)
+                Logger.instance().log(`RecordDate: ${tempDate} RecordDateStr: ${recordDateStr}`);
                 return {
                     RecordId                    : x.id,
                     PatientUserId               : x.PatientUserId,

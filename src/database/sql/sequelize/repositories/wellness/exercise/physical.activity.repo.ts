@@ -346,12 +346,14 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             const records_ = records.map(async x => {
                 const recordDate = x.EndTime ?? x.StartTime;
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
+                const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
+                Logger.instance().log(`RecordDate: ${tempDate} RecordDateStr: ${recordDateStr}`);
                 return {
                     RecordId                    : x.id,
                     PatientUserId               : x.PatientUserId,
                     PhysicalActivityQuestionAns : x.PhysicalActivityQuestionAns,
                     RecordDate                  : tempDate,
-                    RecordDateStr               : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr               : recordDateStr,
                     RecordTimeZone              : currentTimeZone,
                 };
             });

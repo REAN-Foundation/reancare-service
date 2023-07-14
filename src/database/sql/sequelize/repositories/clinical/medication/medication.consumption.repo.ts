@@ -169,7 +169,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     }
                 }
             });
-
+            Logger.instance().log(`All records taken before - repo :: ${JSON.stringify(records)}`);
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
@@ -183,6 +183,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     RecordTimeZone : currentTimeZone,
                 };
             });
+            Logger.instance().log(`All records_ taken before - repo :: ${JSON.stringify(records_)}`);
 
             return records_;
         } catch (error) {
@@ -206,7 +207,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     }
                 }
             });
-
+            Logger.instance().log(`All records taken between - repo :: ${JSON.stringify(records)}`);
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
@@ -220,6 +221,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     RecordTimeZone : currentTimeZone,
                 };
             });
+            Logger.instance().log(`All records_ taken between - repo :: ${JSON.stringify(records_)}`);
 
             return records_;
         } catch (error) {

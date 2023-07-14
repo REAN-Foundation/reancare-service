@@ -25,6 +25,7 @@ export const updateMedicationFact = async (model: AwardsFact) => {
             RecordDate : 'DESC'
         }
     });
+    Logger.instance().log(`Last records :: ${JSON.stringify(lastRecords)}`);
     const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(model.PatientUserId);
     const tempDate = TimeHelper.subtractDuration(model.RecordDate, offsetMinutes, DurationType.Minute);
     const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
@@ -33,14 +34,19 @@ export const updateMedicationFact = async (model: AwardsFact) => {
     await addOrUpdateMedicationRecord(model);
 
     const lastRecord = lastRecords.length > 0 ? lastRecords[0] : null;
+    Logger.instance().log(`Last record :: ${JSON.stringify(lastRecord)}`);
     var unpopulatedRecords = [];
     if (lastRecord == null) {
         unpopulatedRecords = await medConsumptionService.getAllTakenBefore(
             model.PatientUserId, new Date());
+        Logger.instance().log(`Unpopulated records - taken before :: ${JSON.stringify(unpopulatedRecords)}`);
+
     }
     else {
         unpopulatedRecords = await medConsumptionService.getAllTakenBetween(
             model.PatientUserId, lastRecord.RecordDate, new Date());
+        Logger.instance().log(`Unpopulated records - taken between :: ${JSON.stringify(unpopulatedRecords)}`);
+
     }
     for await (var r of unpopulatedRecords) {
         const model_: AwardsFact = {
@@ -55,6 +61,8 @@ export const updateMedicationFact = async (model: AwardsFact) => {
                 Taken    : r.IsTaken,
             }
         };
+        Logger.instance().log(`Medication model for unpopulated records:: ${JSON.stringify(model_)}`);
+
         await addOrUpdateMedicationRecord(model_);
     }
 
@@ -67,6 +75,7 @@ async function addOrUpdateMedicationRecord(model: AwardsFact) {
             RecordId : model.RecordId
         }
     });
+    Logger.instance().log(`Existing medication record :: ${JSON.stringify(existing)}`);
     if (!existing) {
         const fact = {
             RecordId           : model.RecordId,

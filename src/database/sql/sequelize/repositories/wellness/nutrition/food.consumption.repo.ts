@@ -729,7 +729,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(async x => {
-                const recordDate = x.EndTime ?? x.StartTime;
+                const recordDate = x.CreatedAt;
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,

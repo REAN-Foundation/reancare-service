@@ -691,14 +691,15 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(async x => {
-                const recordDate = x.EndTime ?? x.StartTime;
+                const recordDate = x.CreatedAt;
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
+                const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
                 return {
                     RecordId       : x.id,
                     PatientUserId  : x.PatientUserId,
                     UserResponse   : x.UserResponse,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr  : recordDateStr,
                     RecordTimeZone : currentTimeZone,
                 };
             });

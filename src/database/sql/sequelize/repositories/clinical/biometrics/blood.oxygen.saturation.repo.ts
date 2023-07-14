@@ -266,4 +266,19 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
         }
     };
 
+    getRecent = async (patientUserId: string): Promise<BloodOxygenSaturationDto> => {
+        try {
+            const record = await BloodOxygenSaturationModel.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['RecordDate', 'DESC']]
+            });
+            return await BloodOxygenSaturationMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

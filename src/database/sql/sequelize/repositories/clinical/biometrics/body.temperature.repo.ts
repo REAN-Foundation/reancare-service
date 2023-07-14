@@ -184,6 +184,21 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
         }
     };
 
+    getRecent = async (patientUserId: string): Promise<BodyTemperatureDto> => {
+        try {
+            const record = await BodyTemperatureModel.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['RecordDate', 'DESC']]
+            });
+            return await BodyTemperatureMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
         : Promise<any[]> => {
         try {

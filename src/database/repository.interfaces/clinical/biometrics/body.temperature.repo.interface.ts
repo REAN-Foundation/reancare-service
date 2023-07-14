@@ -19,4 +19,6 @@ export interface IBodyTemperatureRepo {
 
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
+    getRecent(patientUserId: string): Promise<BodyTemperatureDto>;
+
 }

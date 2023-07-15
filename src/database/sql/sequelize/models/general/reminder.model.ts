@@ -17,8 +17,7 @@ import {
 import { v4 } from 'uuid';
 import User from '../users/user/user.model';
 import {
-    ReminderTypeList,
-    FrequencyTypeList
+    ReminderTypeList, RepeatAfterEveryUnitList,
 } from '../../../../../domain.types/general/reminder/reminder.domain.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -67,26 +66,20 @@ export default class Reminder extends Model {
     })
     ReminderType: string;
 
+    @Length({ min: 1, max: 32 })
     @Column({
-        type      : DataType.ENUM,
-        allowNull : true,
-        values    : FrequencyTypeList,
+        type         : DataType.STRING(32),
+        allowNull    : true,
     })
-    FrequencyType: string;
+    WhenDate: string;
 
+    @Length({ min: 1, max: 32 })
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : false,
-        defaultValue : 0,
+        type         : DataType.STRING(32),
+        allowNull    : true,
+        defaultValue : '00:00'
     })
-    FrequencyCount: number;
-
-    @IsDate
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true
-    })
-    DateAndTime: Date;
+    WhenTime: string;
 
     @IsDate
     @Column({
@@ -111,11 +104,26 @@ export default class Reminder extends Model {
     EndAfterNRepetitions: number;
 
     @Column({
-        type      : DataType.STRING(1024),
+        type      : DataType.STRING(2048),
         allowNull : false,
         defaultValue : '[]',
     })
     RepeatList: string;
+
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : false,
+        defaultValue : 1,
+    })
+    RepeatAfterEvery: number;
+
+    @Column({
+        type      : DataType.ENUM,
+        allowNull : false,
+        values    : RepeatAfterEveryUnitList,
+        defaultValue : 'Day',
+    })
+    RepeatAfterEveryNUnit: string;
 
     @Length({ max: 512 })
     @IsUrl

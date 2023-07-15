@@ -28,10 +28,6 @@ export class ReminderService {
         return await this._reminderRepo.search(filters);
     };
 
-    update = async (id: string, reminderDomainModel: ReminderDomainModel): Promise<ReminderDto> => {
-        return await this._reminderRepo.update(id, reminderDomainModel);
-    };
-
     delete = async (id: string): Promise<boolean> => {
         return await this._reminderRepo.delete(id);
     };

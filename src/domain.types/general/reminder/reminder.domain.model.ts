@@ -3,77 +3,106 @@ import { BaseSearchFilters, BaseSearchResults } from "../../miscellaneous/base.s
 
 export enum ReminderType {
     OneTime = 'OneTime',
-    Recurring = 'Recurring',
-    Custom = 'Custom',
-}
-
-export enum FrequencyType {
-    DoesNotRepeat = 'DoesNotRepeat',
-    Hourly        = 'Hourly',
-    Daily         = 'Daily',
-    Weekly        = 'Weekly',
-    AllWeekDays   = 'AllWeekDays',
-    Monthly       = 'Monthly',
-    Quarterly     = 'Quarterly',
-    Yearly        = 'Yearly',
-    Custom        = 'Custom',
+    RepeatAfterEveryN = 'Repeat-After-Every-N',
+    RepeatEveryWeekday = 'Repeat-Every-Weekday',
+    RepeatEveryWeekOnDays = 'Repeat-Every-Week-On-Days',
+    RepeatEveryMonthOn = 'Repeat-Every-Month-On',
+    RepeatEveryQuarterOn = 'Repeat-Every-Quarter-On',
+    RepeatEveryHour = 'Repeat-Every-Hour',
+    RepeatEveryDay = 'Repeat-Every-Day',
+    CustomFrequency = 'CustomFrequency',
 }
 
 export const ReminderTypeList: ReminderType [] = [
     ReminderType.OneTime,
-    ReminderType.Recurring,
-    ReminderType.Custom,
+    ReminderType.RepeatAfterEveryN,
+    ReminderType.RepeatEveryWeekday,
+    ReminderType.RepeatEveryWeekOnDays,
+    ReminderType.RepeatEveryMonthOn,
+    ReminderType.RepeatEveryQuarterOn,
+    ReminderType.RepeatEveryHour,
+    ReminderType.RepeatEveryDay,
+    ReminderType.CustomFrequency,
 ];
 
-export const FrequencyTypeList: FrequencyType [] = [
-    FrequencyType.DoesNotRepeat,
-    FrequencyType.Hourly,
-    FrequencyType.Daily,
-    FrequencyType.Weekly,
-    FrequencyType.AllWeekDays,
-    FrequencyType.Monthly,
-    FrequencyType.Quarterly,
-    FrequencyType.Yearly,
-    FrequencyType.Custom,
+export enum ReminderCustomFrequencyType {
+    Hourly        = 'Hourly',
+    Daily         = 'Daily',
+    Weekly        = 'Weekly',
+    Monthly       = 'Monthly',
+    Yearly        = 'Yearly',
+}
+
+export const ReminderCustomFrequencyTypeList: ReminderCustomFrequencyType [] = [
+    ReminderCustomFrequencyType.Hourly,
+    ReminderCustomFrequencyType.Daily,
+    ReminderCustomFrequencyType.Weekly,
+    ReminderCustomFrequencyType.Monthly,
+    ReminderCustomFrequencyType.Yearly,
+];
+
+export enum RepeatAfterEveryNUnit {
+    Minute  = 'Minute',
+    Hour    = 'Hour',
+    Day     = 'Day',
+    Week    = 'Week',
+    Month   = 'Month',
+    Quarter = 'Quarter',
+    Year    = 'Year',
+}
+
+export const RepeatAfterEveryUnitList: RepeatAfterEveryNUnit [] = [
+    RepeatAfterEveryNUnit.Minute,
+    RepeatAfterEveryNUnit.Hour,
+    RepeatAfterEveryNUnit.Day,
+    RepeatAfterEveryNUnit.Week,
+    RepeatAfterEveryNUnit.Month,
+    RepeatAfterEveryNUnit.Quarter,
+    RepeatAfterEveryNUnit.Year,
 ];
 
 export interface ReminderDomainModel {
-    id                   ?: string;
+    id                   ?: uuid;
     UserId                : uuid;
     Name                  : string;
     ReminderType          : ReminderType;
-    FrequencyType        ?: FrequencyType;
-    FrequencyCount       ?: number;
-    DateAndTime          ?: Date;
+    WhenDate             ?: string;
+    WhenTime              : string;
     StartDate            ?: Date;
     EndDate              ?: Date;
     EndAfterNRepetitions ?: number;
     RepeatList           ?: string[];
+    // CustomFrequencyType  ?: ReminderCustomFrequencyType;
+    // FrequencyCount       ?: number;
+    RepeatAfterEvery     ?: number;
+    RepeatAfterEveryNUnit?: RepeatAfterEveryNUnit;
     HookUrl              ?: string;
 }
 
 export interface ReminderDto {
-    id                   : string;
-    UserId               : uuid;
-    Name                 : string;
-    ReminderType         : ReminderType;
-    FrequencyType       ?: FrequencyType;
-    FrequencyCount      ?: number;
-    DateAndTime         ?: Date;
-    StartDate            : Date;
-    EndDate             ?: Date;
-    EndAfterNRepetitions?: number;
-    RepeatList          ?: string[];
-    HookUrl              : string;
-    CreatedAt            : Date;
-    UpdatedAt            : Date;
+    id                    : uuid;
+    UserId                : uuid;
+    Name                  : string;
+    ReminderType          : ReminderType;
+    WhenDate             ?: string;
+    WhenTime              : string;
+    StartDate             : Date;
+    EndDate              ?: Date;
+    EndAfterNRepetitions ?: number;
+    RepeatList           ?: string[];
+    // CustomFrequencyType  ?: ReminderCustomFrequencyType;
+    // FrequencyCount       ?: number;
+    RepeatAfterEvery     ?: number;
+    RepeatAfterEveryNUnit?: RepeatAfterEveryNUnit;
+    HookUrl               : string;
+    CreatedAt             : Date;
+    UpdatedAt             : Date;
 }
 
 export interface ReminderSearchFilters extends BaseSearchFilters {
     UserId        ?: uuid;
     Name?          : string;
     ReminderType?  : string;
-    FrequencyType? : string;
 }
 
 export interface ReminderSearchResults extends BaseSearchResults {

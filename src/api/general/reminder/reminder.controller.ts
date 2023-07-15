@@ -38,12 +38,153 @@ export class ReminderController extends BaseController {
 
     //#region Action methods
 
-    create = async (request: express.Request, response: express.Response): Promise<void> => {
+    createOneTimeReminder = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Reminder.Create', request, response);
+            await this.setContext('Reminder.CreateOneTimeReminder', request, response);
 
-            const domainModel = await this._validator.create(request);
+            const domainModel = await this._validator.createOneTimeReminder(request);
+            const reminder = await this._service.create(domainModel);
+            if (reminder == null) {
+                throw new ApiError(400, 'Cannot create reminder!');
+            }
+
+            ResponseHandler.success(request, response, 'Reminder created successfully!', 201, {
+                Reminder : reminder,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createReminderWithRepeatAfterEveryN = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Reminder.CreateOneTimeReminder', request, response);
+
+            const domainModel = await this._validator.createReminderWithRepeatAfterEveryN(request);
+            const reminder = await this._service.create(domainModel);
+            if (reminder == null) {
+                throw new ApiError(400, 'Cannot create reminder!');
+            }
+
+            ResponseHandler.success(request, response, 'Reminder created successfully!', 201, {
+                Reminder : reminder,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createReminderWithRepeatEveryWeekday = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Reminder.CreateOneTimeReminder', request, response);
+
+            const domainModel = await this._validator.createReminderWithRepeatEveryWeekday(request);
+            const reminder = await this._service.create(domainModel);
+            if (reminder == null) {
+                throw new ApiError(400, 'Cannot create reminder!');
+            }
+
+            ResponseHandler.success(request, response, 'Reminder created successfully!', 201, {
+                Reminder : reminder,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createReminderWithRepeatEveryWeekOnDays = async (
+        request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Reminder.CreateOneTimeReminder', request, response);
+
+            const domainModel = await this._validator.createReminderWithRepeatEveryWeekOnDays(request);
+            const reminder = await this._service.create(domainModel);
+            if (reminder == null) {
+                throw new ApiError(400, 'Cannot create reminder!');
+            }
+
+            ResponseHandler.success(request, response, 'Reminder created successfully!', 201, {
+                Reminder : reminder,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createReminderWithEveryMonthOn = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Reminder.CreateOneTimeReminder', request, response);
+
+            const domainModel = await this._validator.createReminderWithEveryMonthOn(request);
+            const reminder = await this._service.create(domainModel);
+            if (reminder == null) {
+                throw new ApiError(400, 'Cannot create reminder!');
+            }
+
+            ResponseHandler.success(request, response, 'Reminder created successfully!', 201, {
+                Reminder : reminder,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createReminderWithEveryQuarterOn = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Reminder.CreateOneTimeReminder', request, response);
+
+            const domainModel = await this._validator.createReminderWithEveryQuarterOn(request);
+            const reminder = await this._service.create(domainModel);
+            if (reminder == null) {
+                throw new ApiError(400, 'Cannot create reminder!');
+            }
+
+            ResponseHandler.success(request, response, 'Reminder created successfully!', 201, {
+                Reminder : reminder,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createReminderWithRepeatEveryHour = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Reminder.CreateOneTimeReminder', request, response);
+
+            const domainModel = await this._validator.createReminderWithRepeatEveryHour(request);
+            const reminder = await this._service.create(domainModel);
+            if (reminder == null) {
+                throw new ApiError(400, 'Cannot create reminder!');
+            }
+
+            ResponseHandler.success(request, response, 'Reminder created successfully!', 201, {
+                Reminder : reminder,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createReminderWithRepeatEveryDay = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Reminder.CreateOneTimeReminder', request, response);
+
+            const domainModel = await this._validator.createReminderWithRepeatEveryDay(request);
             const reminder = await this._service.create(domainModel);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
@@ -92,31 +233,6 @@ export class ReminderController extends BaseController {
                     : `Total ${count} reminder records retrieved successfully!`;
 
             ResponseHandler.success(request, response, message, 200, { Reminderes: searchResults });
-
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    update = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-
-            await this.setContext('Reminder.Update', request, response);
-
-            const domainModel = await this._validator.update(request);
-            const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingReminder = await this._service.getById(id);
-            if (existingReminder == null) {
-                throw new ApiError(404, 'Reminder not found.');
-            }
-            const updated = await this._service.update(domainModel.id, domainModel);
-            if (updated == null) {
-                throw new ApiError(400, 'Unable to update reminder record!');
-            }
-
-            ResponseHandler.success(request, response, 'Reminder record updated successfully!', 200, {
-                Reminder : updated,
-            });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

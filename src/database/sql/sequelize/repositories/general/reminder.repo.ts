@@ -3,11 +3,11 @@ import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import {
     ReminderType,
-    FrequencyType,
     ReminderDomainModel,
     ReminderDto,
     ReminderSearchFilters,
-    ReminderSearchResults }
+    ReminderSearchResults,
+    RepeatAfterEveryNUnit }
     from '../../../../../domain.types/general/reminder/reminder.domain.model';
 import { IReminderRepo } from '../../../../repository.interfaces/general/reminder.repo.interface';
 import { ReminderMapper } from '../../mappers/general/reminder.mapper';
@@ -20,17 +20,18 @@ export class ReminderRepo implements IReminderRepo {
     create = async (model: ReminderDomainModel): Promise<ReminderDto> => {
         try {
             const entity = {
-                Name                 : model.Name,
-                UserId               : model.UserId,
-                ReminderType         : model.ReminderType ?? ReminderType.OneTime,
-                FrequencyType        : model.FrequencyType ?? FrequencyType.DoesNotRepeat,
-                FrequencyCount       : model.FrequencyCount ?? 0,
-                DateAndTime          : model.DateAndTime ?? null,
-                StartDate            : model.StartDate ?? new Date(),
-                EndDate              : model.EndDate ?? null,
-                EndAfterNRepetitions : model.EndAfterNRepetitions ?? 10,
-                RepeatList           : model.RepeatList ? JSON.stringify(model.RepeatList) : '[]',
-                HookUrl              : model.HookUrl ?? null,
+                Name                  : model.Name,
+                UserId                : model.UserId,
+                ReminderType          : model.ReminderType ?? ReminderType.OneTime,
+                WhenDate              : model.WhenDate ?? null,
+                WhenTime              : model.WhenTime ?? null,
+                StartDate             : model.StartDate ?? new Date(),
+                EndDate               : model.EndDate ?? null,
+                EndAfterNRepetitions  : model.EndAfterNRepetitions ?? 10,
+                RepeatList            : model.RepeatList ? JSON.stringify(model.RepeatList) : '[]',
+                RepeatAfterEvery      : model.RepeatAfterEvery ?? 1,
+                RepeatAfterEveryNUnit : model.RepeatAfterEveryNUnit ?? RepeatAfterEveryNUnit,
+                HookUrl               : model.HookUrl ?? null,
             };
             const reminder = await Reminder.create(entity);
             const dto = await ReminderMapper.toDto(reminder);
@@ -61,9 +62,6 @@ export class ReminderRepo implements IReminderRepo {
             }
             if (filters.ReminderType != null) {
                 search.where['ReminderType'] = { [Op.like]: '%' + filters.ReminderType + '%' };
-            }
-            if (filters.FrequencyType != null) {
-                search.where['FrequencyType'] = { [Op.like]: '%' + filters.FrequencyType + '%' };
             }
             if (filters.UserId != null) {
                 search.where['UserId'] = filters.UserId;
@@ -111,50 +109,6 @@ export class ReminderRepo implements IReminderRepo {
             };
 
             return searchResults;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    update = async (id: string, model: ReminderDomainModel): Promise<ReminderDto> => {
-        try {
-            const reminder = await Reminder.findByPk(id);
-
-            if (model.ReminderType !== undefined) {
-                reminder.ReminderType = model.ReminderType;
-            }
-            if (model.FrequencyType !== undefined) {
-                reminder.FrequencyType = model.FrequencyType;
-            }
-            if (model.Name) {
-                reminder.Name = model.Name;
-            }
-            if (model.FrequencyCount) {
-                reminder.FrequencyCount = model.FrequencyCount;
-            }
-            if (model.DateAndTime) {
-                reminder.DateAndTime = model.DateAndTime;
-            }
-            if (model.EndAfterNRepetitions) {
-                reminder.EndAfterNRepetitions = model.EndAfterNRepetitions;
-            }
-            if (model.RepeatList && model.RepeatList.length > 0) {
-                reminder.RepeatList = JSON.stringify(model.RepeatList);
-            }
-            if (model.StartDate) {
-                reminder.StartDate = model.StartDate;
-            }
-            if (model.EndDate) {
-                reminder.EndDate = model.EndDate;
-            }
-            if (model.HookUrl !== undefined) {
-                reminder.HookUrl = model.HookUrl;
-            }
-            await reminder.save();
-
-            const dto = await ReminderMapper.toDto(reminder);
-            return dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

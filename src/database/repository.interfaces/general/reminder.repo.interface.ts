@@ -13,8 +13,6 @@ export interface IReminderRepo {
 
     search(filters: ReminderSearchFilters): Promise<ReminderSearchResults>;
 
-    update(id: string, reminderDomainModel: ReminderDomainModel): Promise<ReminderDto>;
-
     delete(id: string): Promise<boolean>;
 
 }

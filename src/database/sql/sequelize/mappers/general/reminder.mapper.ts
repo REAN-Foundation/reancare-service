@@ -1,6 +1,5 @@
 import Reminder from '../../models/general/reminder.model';
 import {
-    FrequencyType,
     ReminderDto,
     ReminderType
 } from '../../../../../domain.types/general/reminder/reminder.domain.model';
@@ -19,9 +18,8 @@ export class ReminderMapper {
             UserId               : reminder.UserId,
             Name                 : reminder.Name,
             ReminderType         : reminder.ReminderType as ReminderType,
-            FrequencyType        : reminder.FrequencyType as FrequencyType,
-            FrequencyCount       : reminder.FrequencyCount,
-            DateAndTime          : reminder.DateAndTime,
+            WhenDate             : reminder.WhenDate,
+            WhenTime             : reminder.WhenTime,
             StartDate            : reminder.StartDate,
             EndDate              : reminder.EndDate,
             EndAfterNRepetitions : reminder.EndAfterNRepetitions,

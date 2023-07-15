@@ -21,6 +21,8 @@ export const register = (app: express.Application): void => {
     router.get('/priorities', authenticator.authenticateClient, controller.getPriorityTypes);
     router.get('/lab-records', authenticator.authenticateClient, controller.getLabRecordTypes);
     router.get('/group-activity-types', authenticator.authenticateClient, controller.getGroupActivityTypes);
+    router.get('/reminder-types', authenticator.authenticateClient, controller.getReminderTypes);
+    router.get('/reminder-repeat-after-every-units', authenticator.authenticateClient, controller.getReminderRepeatAfterEveryTypes);
 
     app.use('/api/v1/types', router);
 };

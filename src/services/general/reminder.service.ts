@@ -1,5 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IReminderRepo } from "../../database/repository.interfaces/general/reminder.repo.interface";
+import { IReminderScheduleRepo } from "../../database/repository.interfaces/general/reminder.schedule.repo.interface";
 import {
     ReminderDomainModel,
     ReminderDto,
@@ -14,10 +15,13 @@ export class ReminderService {
 
     constructor(
         @inject('IReminderRepo') private _reminderRepo: IReminderRepo,
+        @inject('IReminderScheduleRepo') private _reminderScheduleRepo: IReminderScheduleRepo,
     ) {}
 
     create = async (reminderDomainModel: ReminderDomainModel): Promise<ReminderDto> => {
-        return await this._reminderRepo.create(reminderDomainModel);
+        const reminder = await this._reminderRepo.create(reminderDomainModel);
+
+        return reminder;
     };
 
     getById = async (id: string): Promise<ReminderDto> => {

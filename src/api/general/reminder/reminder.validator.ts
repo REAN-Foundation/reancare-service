@@ -36,6 +36,9 @@ export class ReminderValidator extends BaseValidator {
         if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
             throw new InputValidationError(["Invalid When-Time value!"]);
         }
+        if (whenTimeParts.length === 2) {
+            request.body.WhenTime = whenTime + ':00';
+        }
     };
 
     validateWhenDate = (request: express.Request): void => {

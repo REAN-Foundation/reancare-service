@@ -4,13 +4,15 @@ import { Logger } from '../../../../../common/logger';
 import {
     ReminderType,
     ReminderDomainModel,
-    ReminderDto,
-    RepeatAfterEveryNUnit }
-    from '../../../../../domain.types/general/reminder/reminder.domain.model';
+    RepeatAfterEveryNUnit
+} from '../../../../../domain.types/general/reminder/reminder.domain.model';
 import { IReminderScheduleRepo } from '../../../../repository.interfaces/general/reminder.schedule.repo.interface';
-import { ReminderMapper } from '../../mappers/general/reminder.mapper';
 import Reminder from '../../models/general/reminder.model';
 import ReminderSchedule from '../../models/general/reminder.schedule.model';
+import User from '../../models/users/user/user.model';
+import { TimeHelper } from '../../../../../common/time.helper';
+import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
+import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -114,31 +116,6 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         }
     };
 
-    create = async (model: ReminderDomainModel): Promise<ReminderDto> => {
-        try {
-            const entity = {
-                Name                  : model.Name,
-                UserId                : model.UserId,
-                ReminderType          : model.ReminderType ?? ReminderType.OneTime,
-                WhenDate              : model.WhenDate ?? null,
-                WhenTime              : model.WhenTime ?? null,
-                StartDate             : model.StartDate ?? new Date(),
-                EndDate               : model.EndDate ?? null,
-                EndAfterNRepetitions  : model.EndAfterNRepetitions ?? 10,
-                RepeatList            : model.RepeatList ? JSON.stringify(model.RepeatList) : '[]',
-                RepeatAfterEvery      : model.RepeatAfterEvery ?? 1,
-                RepeatAfterEveryNUnit : model.RepeatAfterEveryNUnit ?? RepeatAfterEveryNUnit,
-                HookUrl               : model.HookUrl ?? null,
-            };
-            const reminder = await Reminder.create(entity);
-            const dto = await ReminderMapper.toDto(reminder);
-            return dto;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
     getById = async (id: string): Promise<any> => {
         try {
             const schedule = await ReminderSchedule.findByPk(id);
@@ -173,36 +150,162 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         }
     };
 
-    createOneTimeSchedule = async (model: ReminderDomainModel): Promise<any[]> => {
+    createOneTimeSchedule = async (reminder: ReminderDomainModel): Promise<any[]> => {
+        const userId = reminder.UserId;
+        const offset = await this.getUserTimeZone(userId);
+
+        const dateParts = reminder.WhenDate.split('-');
+        const timeParts = reminder.WhenTime.split(':');
+        const utcDate = Date.UTC(
+            parseInt(dateParts[0]),
+            parseInt(dateParts[1]) - 1,
+            parseInt(dateParts[2]),
+            parseInt(timeParts[0]),
+            parseInt(timeParts[1])
+        );
+
+        const scheduleDateTime = TimeHelper.subtractDuration(new Date(utcDate), offset, DurationType.Minute);
+
+        const m = {
+            UserId     : userId,
+            ReminderId : reminder.id,
+            Schedule   : scheduleDateTime,
+        };
+
+        const schedule = await ReminderSchedule.create(m);
+        return [schedule];
+    };
+    
+    createRepeatAfterEveryNSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+        const userId = reminder.UserId;
+        const offset = await this.getUserTimeZone(userId);
+
+        const dateParts = reminder.WhenDate.split('-');
+        const timeParts = reminder.WhenTime.split(':');
+        const utcDate = Date.UTC(
+            parseInt(dateParts[0]),
+            parseInt(dateParts[1]) - 1,
+            parseInt(dateParts[2]),
+            parseInt(timeParts[0]),
+            parseInt(timeParts[1])
+        );
+
+        const referenceDate = TimeHelper.subtractDuration(new Date(utcDate), offset, DurationType.Minute);
+        const { repeatEveryNUnit, repeatEveryN, endAfterRepeatations } = this.getRepeatations(reminder, referenceDate);
+        const schedules = [];
+
+        const durationType = repeatEveryNUnit as string;
+        for (let i = 0; i < endAfterRepeatations; i++) {
+            const schedule = await this.createRepeatAfterEverySchedule(
+                referenceDate, repeatEveryN, userId, reminder.id, durationType as DurationType);
+            schedules.push(schedule);
+        }
+
+        return schedules;
+    };
+
+    createRepeatEveryWeekdaySchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+        // const userId = reminder.UserId;
+        // const offset = await this.getUserTimeZone(userId);
+
+        // const dateParts = reminder.WhenDate.split('-');
+        // const timeParts = reminder.WhenTime.split(':');
+
+        // const utcDate = Date.UTC(
+        //     parseInt(dateParts[0]),
+        //     parseInt(dateParts[1]) - 1,
+        //     parseInt(dateParts[2]),
+        //     parseInt(timeParts[0]),
+        //     parseInt(timeParts[1])
+        // );
+        Logger.instance().log(JSON.stringify(reminder));
+        throw new Error('Method not implemented.');
+    };
+
+    createRepeatEveryWeekOnDaysSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+        Logger.instance().log(JSON.stringify(reminder));
+        throw new Error('Method not implemented.');
+    };
+
+    createRepeatEveryQuarterSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+        Logger.instance().log(JSON.stringify(reminder));
+        throw new Error('Method not implemented.');
+    };
+
+    createRepeatEveryMonthSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+        Logger.instance().log(JSON.stringify(reminder));
+        throw new Error('Method not implemented.');
+    };
+
+    createRepeatEveryHourSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+        Logger.instance().log(JSON.stringify(reminder));
+        throw new Error('Method not implemented.');
+    };
+
+    createRepeatEveryDaySchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+        Logger.instance().log(JSON.stringify(reminder));
         throw new Error('Method not implemented.');
     };
     
-    createRepeatAfterEveryNSchedules = async (model: ReminderDomainModel): Promise<any[]> => {
-        throw new Error('Method not implemented.');
-    };
+    private async createRepeatAfterEverySchedule(
+        referenceDate: Date,
+        repeatEveryN: number,
+        userId: uuid,
+        reminderId: uuid,
+        durationType: DurationType) {
+        const scheduleDateTime = TimeHelper.addDuration(referenceDate, repeatEveryN, durationType);
+        const m = {
+            UserId     : userId,
+            ReminderId : reminderId,
+            Schedule   : scheduleDateTime,
+        };
+        const schedule = await ReminderSchedule.create(m);
+        return schedule;
+    }
 
-    createRepeatEveryWeekdaySchedules = async (model: ReminderDomainModel): Promise<any[]> => {
-        throw new Error('Method not implemented.');
-    };
+    private getRepeatations(reminder: ReminderDomainModel, referenceDate: Date) {
+        const repeatEveryN = reminder.RepeatAfterEvery;
+        const repeatEveryNUnit = reminder.RepeatAfterEveryNUnit;
+        const endDate = reminder.EndDate;
+        let endAfterRepeatations = reminder.EndAfterNRepetitions;
+        if (endDate !== null && endDate !== undefined) {
+            const duration = TimeHelper.minuteDiff(endDate, referenceDate);
+            if (repeatEveryNUnit === RepeatAfterEveryNUnit.Minute) {
+                endAfterRepeatations = Math.floor(duration / repeatEveryN);
+            }
+            else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Hour) {
+                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60));
+            }
+            else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Day) {
+                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24));
+            }
+            else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Week) {
+                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24 * 7));
+            }
+            else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Month) {
+                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24 * 30));
+            }
+            else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Quarter) {
+                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24 * 30 * 3));
+            }
+            else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Year) {
+                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24 * 365));
+            }
+            else {
+                endAfterRepeatations = endAfterRepeatations ?? 10;
+            }
+        }
+        return { repeatEveryNUnit, repeatEveryN, endAfterRepeatations };
+    }
 
-    createRepeatEveryWeekOnDaysSchedules = async (model: ReminderDomainModel): Promise<any[]> => {
-        throw new Error('Method not implemented.');
-    };
+    private async getUserTimeZone(userId: string) {
+        const user = await User.findByPk(userId);
+        if (user === null) {
+            throw new ApiError(404, 'User not found.');
+        }
+        const timezone = user.CurrentTimeZone;
+        const offset = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        return offset;
+    }
 
-    createRepeatEveryQuarterSchedules = async (model: ReminderDomainModel): Promise<any[]> => {
-        throw new Error('Method not implemented.');
-    };
-
-    createRepeatEveryMonthSchedules = async (model: ReminderDomainModel): Promise<any[]> => {
-        throw new Error('Method not implemented.');
-    };
-
-    createRepeatEveryHourSchedules = async (model: ReminderDomainModel): Promise<any[]> => {
-        throw new Error('Method not implemented.');
-    };
-
-    createRepeatEveryDaySchedules = async (model: ReminderDomainModel): Promise<any[]> => {
-        throw new Error('Method not implemented.');
-    };
-    
 }

@@ -690,15 +690,19 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
-                const recordDate = x.EndTime ?? x.StartTime;
+            const records_ = records.map(async x => {
+                var recordDate = x.StartTime ?? x.EndTime;
+                if (!recordDate) {
+                    recordDate = x.CreatedAt;
+                }
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
+                const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
                 return {
                     RecordId       : x.id,
                     PatientUserId  : x.PatientUserId,
                     UserResponse   : x.UserResponse,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr  : recordDateStr,
                     RecordTimeZone : currentTimeZone,
                 };
             });
@@ -727,15 +731,18 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
-                const recordDate = x.EndTime ?? x.StartTime;
+            const records_ = records.map(async x => {
+                var recordDate = x.StartTime ?? x.EndTime;
+                if (!recordDate) {
+                    recordDate = x.CreatedAt;
+                }                
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,
                     PatientUserId  : x.PatientUserId,
                     UserResponse   : x.UserResponse,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });

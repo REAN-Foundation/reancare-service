@@ -64,7 +64,7 @@ export class BloodGlucoseController extends BaseController {
                     },
                     RecordId       : bloodGlucose.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -153,7 +153,7 @@ export class BloodGlucoseController extends BaseController {
                     },
                     RecordId       : updated.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }

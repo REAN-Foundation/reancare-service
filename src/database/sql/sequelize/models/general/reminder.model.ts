@@ -68,8 +68,8 @@ export default class Reminder extends Model {
 
     @Length({ min: 1, max: 32 })
     @Column({
-        type         : DataType.STRING(32),
-        allowNull    : true,
+        type      : DataType.STRING(32),
+        allowNull : true,
     })
     WhenDate: string;
 
@@ -83,8 +83,8 @@ export default class Reminder extends Model {
 
     @IsDate
     @Column({
-        type      : DataType.DATE,
-        allowNull : false,
+        type         : DataType.DATE,
+        allowNull    : false,
         defaultValue : new Date(),
     })
     StartDate: Date;
@@ -97,30 +97,30 @@ export default class Reminder extends Model {
     EndDate: Date;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : false,
+        type         : DataType.INTEGER,
+        allowNull    : false,
         defaultValue : 10,
     })
     EndAfterNRepetitions: number;
 
     @Column({
-        type      : DataType.STRING(2048),
-        allowNull : false,
+        type         : DataType.STRING(2048),
+        allowNull    : false,
         defaultValue : '[]',
     })
     RepeatList: string;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : false,
+        type         : DataType.INTEGER,
+        allowNull    : false,
         defaultValue : 1,
     })
     RepeatAfterEvery: number;
 
     @Column({
-        type      : DataType.ENUM,
-        allowNull : false,
-        values    : RepeatAfterEveryUnitList,
+        type         : DataType.ENUM,
+        allowNull    : false,
+        values       : RepeatAfterEveryUnitList,
         defaultValue : 'Day',
     })
     RepeatAfterEveryNUnit: string;

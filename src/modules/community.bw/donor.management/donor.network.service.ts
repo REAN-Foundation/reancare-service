@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { IBloodWarriorService } from "../interface/community.network.interface";
 import * as DonorMessages from '../donor.management/donor.messages.json';

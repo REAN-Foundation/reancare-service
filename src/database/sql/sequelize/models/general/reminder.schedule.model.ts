@@ -7,8 +7,6 @@ import {
     ForeignKey,
     IsDate,
     IsUUID,
-    IsUrl,
-    Length,
     Model,
     PrimaryKey,
     Table,
@@ -62,29 +60,29 @@ export default class ReminderSchedule extends Model {
 
     @IsDate
     @Column({
-        type      : DataType.DATE,
-        allowNull : false,
+        type         : DataType.DATE,
+        allowNull    : false,
         defaultValue : new Date(),
     })
     Schedule: Date;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : false,
+        type         : DataType.INTEGER,
+        allowNull    : false,
         defaultValue : 0,
     })
     DeliveryAttemptCount: number;
 
     @Column({
-        type      : DataType.BOOLEAN,
-        allowNull : false,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
         defaultValue : false,
     })
     IsDelivered: boolean;
 
     @Column({
-        type      : DataType.DATE,
-        allowNull : false,
+        type         : DataType.DATE,
+        allowNull    : false,
         defaultValue : null,
     })
     DeliveredAt: Date;

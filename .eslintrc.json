@@ -75,7 +75,7 @@
                 }
             }
         ],
-        "indent": ["warn", 4, { "SwitchCase": 1 }],
+        "indent": ["warn", 4, { "SwitchCase": 1, "ignoredNodes": ["PropertyDefinition"] }],
         "func-call-spacing": [
             "warn",
             "never"

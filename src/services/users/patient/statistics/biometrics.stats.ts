@@ -479,7 +479,7 @@ const getLipidColors = () => {
     const items = [
         {
             Key   : 'Total Cholesterol',
-            Color : ChartColors.Coral,
+            Color : ChartColors.DodgerBlue,
         },
         {
             Key   : 'HDL',
@@ -487,7 +487,7 @@ const getLipidColors = () => {
         },
         {
             Key   : 'LDL',
-            Color : ChartColors.Purple,
+            Color : ChartColors.OrangeRed,
         },
         {
             Key   : 'Triglyceride Level',

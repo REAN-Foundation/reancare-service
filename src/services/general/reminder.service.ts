@@ -5,7 +5,7 @@ import {
     ReminderDto,
     ReminderSearchResults,
     ReminderSearchFilters
- } from '../../domain.types/general/reminder/reminder.domain.model';
+} from '../../domain.types/general/reminder/reminder.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +30,14 @@ export class ReminderService {
 
     delete = async (id: string): Promise<boolean> => {
         return await this._reminderRepo.delete(id);
+    };
+
+    getRemindersForUser = async (userId: string): Promise<ReminderDto[]> => {
+        return await this._reminderRepo.getRemindersForUser(userId);
+    };
+
+    deleteRemindersForUser = async (userId: string): Promise<boolean> => {
+        return await this._reminderRepo.deleteRemindersForUser(userId);
     };
 
 }

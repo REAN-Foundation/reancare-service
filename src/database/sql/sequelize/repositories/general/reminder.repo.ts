@@ -53,6 +53,21 @@ export class ReminderRepo implements IReminderRepo {
         }
     };
 
+    getRemindersForUser = async (userId: string): Promise<ReminderDto[]> => {
+        try {
+            const reminders = await Reminder.findAll({
+                where : {
+                    UserId : userId
+                }
+            });
+            const dtos = reminders.map(x => ReminderMapper.toDto(x));
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: ReminderSearchFilters): Promise<ReminderSearchResults> => {
         try {
             const search = { where: {} };
@@ -119,6 +134,20 @@ export class ReminderRepo implements IReminderRepo {
         try {
             await Reminder.destroy({ where: { id: id } });
             return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    deleteRemindersForUser = async (userId: string): Promise<boolean> => {
+        try {
+            const deletedCount = await Reminder.destroy({
+                where : {
+                    UserId : userId
+                }
+            });
+            return deletedCount > 0;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

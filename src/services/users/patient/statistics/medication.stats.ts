@@ -169,7 +169,7 @@ const createMedication_BarChart = async (stats: any, filename: string) => {
     options.YLabel          = 'Medication History';
     options.CategoriesCount = 2;
     options.Categories      = [ "Missed", "Taken" ];
-    options.Colors          = [ ChartColors.Coral, ChartColors.MediumSeaGreen ];
+    options.Colors          = [ ChartColors.OrangeRed, ChartColors.MediumSeaGreen ];
     options.FontSize        = '9px';
 
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
@@ -183,7 +183,7 @@ export const getMedicationStatusCategoryColors = () => {
         },
         {
             Key   : 'Missed',
-            Color : ChartColors.Coral,
+            Color : ChartColors.OrangeRed,
         },
         {
             Key   : 'Unmarked',

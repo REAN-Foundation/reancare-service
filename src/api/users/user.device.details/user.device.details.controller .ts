@@ -8,6 +8,7 @@ import { Loader } from '../../../startup/loader';
 import { UserDeviceDetailsValidator } from './user.device.details.validator';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -228,6 +229,8 @@ export class UserDeviceDetailsController {
         } else {
             userDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
         }
+
+        Logger.instance().log(JSON.stringify(userDeviceDetails));
     
     };
 

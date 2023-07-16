@@ -300,7 +300,7 @@ export const getNutritionQuestionCategoryColors = () => {
         },
         {
             Key      : 'Low Salt',
-            Color    : ChartColors.Coral,
+            Color    : ChartColors.OrangeRed,
             Question : 'Did you choose or prepare foods with little or no salt today?',
         },
     ];
@@ -331,7 +331,7 @@ const getNutritionServingsCategoryColors = () => {
         },
         {
             Key      : 'Sugar',
-            Color    : ChartColors.Coral,
+            Color    : ChartColors.OrangeRed,
             Question : 'How many servings of sugary drinks did you drink today?',
         },
     ];

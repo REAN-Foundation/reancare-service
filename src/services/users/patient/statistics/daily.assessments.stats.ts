@@ -178,7 +178,7 @@ export const getFeelingsColors = () => {
         },
         {
             Key   : 'Worse',
-            Color : ChartColors.Coral,
+            Color : ChartColors.OrangeRed,
         }
     ];
     return items;
@@ -188,7 +188,7 @@ export const getMoodsColors = () => {
     const items = [
         {
             Key   : 'Angry',
-            Color : ChartColors.Coral,
+            Color : ChartColors.OrangeRed,
         },
         {
             Key   : 'Anxious',
@@ -208,7 +208,7 @@ export const getMoodsColors = () => {
         },
         {
             Key   : 'Hopeful',
-            Color : ChartColors.Orange,
+            Color : ChartColors.OrangeRed,
         },
         {
             Key   : 'Lonely',
@@ -220,7 +220,7 @@ export const getMoodsColors = () => {
         },
         {
             Key   : 'Status Quo',
-            Color : ChartColors.SaddleBrown,
+            Color : ChartColors.Brown,
         },
         {
             Key   : 'Stressed',

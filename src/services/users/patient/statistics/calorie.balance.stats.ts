@@ -86,7 +86,7 @@ const getCalorieBalanceColors = () => {
         },
         {
             Key   : 'Burned',
-            Color : ChartColors.Coral,
+            Color : ChartColors.OrangeRed,
         },
     ];
     return items;

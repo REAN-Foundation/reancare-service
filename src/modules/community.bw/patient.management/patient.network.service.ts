@@ -13,8 +13,14 @@ export class PatientNetworkService implements IBloodWarriorService {
         return "REAN_BW";
     }
 
-    public fetchActivities = async (careplanCode: string, enrollmentId: string,participantId?: string,
-        startDate?: Date, bloodTransfusionDate?: Date, toDate?: Date): Promise<CareplanActivity[]> => {
+    public fetchActivities = async (
+        careplanCode: string,
+        enrollmentId: string,
+        participantId?: string,
+        startDate?: Date,
+        bloodTransfusionDate?: Date,
+        toDate?: Date)
+            : Promise<CareplanActivity[]> => {
         const activities = PatientMessages['default'];
         var activityEntities: CareplanActivity[] = [];
 

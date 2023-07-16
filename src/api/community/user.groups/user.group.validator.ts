@@ -45,7 +45,7 @@ export class UserGroupValidator extends BaseValidator {
         this.validateRequest(request);
 
         return request.body;
-    }
+    };
 
     private getCreateModel = (requestBody: any, currentUserId: uuid): UserGroupCreateDomainModel => {
 

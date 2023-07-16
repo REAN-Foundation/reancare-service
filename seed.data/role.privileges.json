@@ -620,11 +620,20 @@
             "UserGroup.GetGroupAdmins",
             "UserGroup.SetGroupActivityTypes",
             "UserGroup.GetGroupActivityTypes",
-            "Reminder.Create",
+            "Reminder.CreateOneTimeReminder",
+            "Reminder.CreateReminderWithRepeatAfterEveryN",
+            "Reminder.CreateReminderWithRepeatEveryWeekday",
+            "Reminder.CreateReminderWithRepeatEveryWeekOnDays",
+            "Reminder.CreateReminderWithEveryMonthOn",
+            "Reminder.CreateReminderWithEveryQuarterOn",
+            "Reminder.CreateReminderWithRepeatEveryHour",
+            "Reminder.CreateReminderWithRepeatEveryDay",
             "Reminder.GetById",
             "Reminder.Search",
             "Reminder.Update",
-            "Reminder.Delete"
+            "Reminder.Delete",
+            "Reminder.GetRemindersForUser",
+            "Reminder.DeleteRemindersForUser"
         ]
     },
     {

@@ -297,7 +297,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     deleteConversation = async (conversationId: string): Promise<boolean> => {
         try {

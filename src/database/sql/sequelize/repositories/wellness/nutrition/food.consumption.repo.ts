@@ -735,7 +735,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 var recordDate = x.StartTime ?? x.EndTime;
                 if (!recordDate) {
                     recordDate = x.CreatedAt;
-                }                
+                }
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,

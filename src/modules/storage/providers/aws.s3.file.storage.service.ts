@@ -3,7 +3,7 @@ import * as aws from "@aws-sdk/client-s3";
 import fs from 'fs';
 import { Logger } from '../../../common/logger';
 import { IFileStorageService } from '../interfaces/file.storage.service.interface';
-import { GetObjectCommand, GetObjectCommandOutput } from "@aws-sdk/client-s3";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable, Stream } from "stream";
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -108,13 +108,14 @@ export class AWSS3FileStorageService implements IFileStorageService {
                 while (stats.size === 0 && count < 5) {
                     setTimeout(() => {
                         stats = fs.statSync(localFilePath);
-                            }, 3000);
-                        count++;
+                    }, 3000);
+                    count++;
                 }
                 return resolve(localFilePath);
             }).on('error', (error) => {
                 return reject(error);
-            }).pipe(file);
+            })
+                .pipe(file);
         });
     };
 
@@ -187,11 +188,11 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
     getS3Client = (): aws.S3 => {
         return new aws.S3({
-            credentials: {
+            credentials : {
                 accessKeyId     : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
                 secretAccessKey : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET
             },
-            region: process.env.STORAGE_CLOUD_REGION
+            region : process.env.STORAGE_CLOUD_REGION
         });
     };
 

@@ -115,7 +115,7 @@ const createExerciseCalorieForMonth_BarChart = async (stats: any, filename: stri
     options.Width  = RECTANGULAR_CHART_WIDTH;
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.YLabel = 'Calories Burned';
-    options.Color  = ChartColors.Coral;
+    options.Color  = ChartColors.OrangeRed;
 
     return await ChartGenerator.createBarChart(calorieStats, options, filename);
 };
@@ -134,7 +134,7 @@ const createExerciseMoveMinutesForMonth_BarChart = async (stats: any, filename: 
     options.Width  = RECTANGULAR_CHART_WIDTH;
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.YLabel = 'Minutes/day';
-    options.Color  = ChartColors.Coral;
+    options.Color  = ChartColors.OrangeRed;
 
     return await ChartGenerator.createBarChart(calorieStats, options, filename);
 };
@@ -170,7 +170,7 @@ const createExerciseQuestions_DonutChart = async (stats: any, filename: string) 
         Height : SQUARE_CHART_HEIGHT,
         Colors : [
             ChartColors.MediumSeaGreen,
-            ChartColors.Coral,
+            ChartColors.OrangeRed,
             ChartColors.DodgerBlue,
         ],
     };

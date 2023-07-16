@@ -140,7 +140,7 @@ export class ReminderValidator extends BaseValidator {
                 throw new InputValidationError(['Invalid monthly reminder list!']);
             }
         }
-    }
+    };
 
     validateQuarterlyReminderList = (request: express.Request): void => {
         const quarterlyReminderList = request.body.RepeatList as string[];
@@ -152,7 +152,7 @@ export class ReminderValidator extends BaseValidator {
                 throw new InputValidationError(['Invalid quarterly reminder list!']);
             }
         }
-    }
+    };
 
     createOneTimeReminder = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
@@ -180,7 +180,7 @@ export class ReminderValidator extends BaseValidator {
         };
 
         return createModel;
-    }
+    };
 
     createReminderWithRepeatAfterEveryN = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
@@ -227,7 +227,7 @@ export class ReminderValidator extends BaseValidator {
         };
 
         return createModel;
-    }
+    };
 
     createReminderWithRepeatEveryWeekday = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
@@ -266,7 +266,7 @@ export class ReminderValidator extends BaseValidator {
         };
 
         return createModel;
-    }
+    };
 
     createReminderWithRepeatEveryWeekOnDays = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
@@ -307,7 +307,7 @@ export class ReminderValidator extends BaseValidator {
         };
 
         return createModel;
-    }
+    };
 
     createReminderWithEveryMonthOn = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
@@ -348,7 +348,7 @@ export class ReminderValidator extends BaseValidator {
         };
 
         return createModel;
-    }
+    };
 
     createReminderWithEveryQuarterOn = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
@@ -389,7 +389,7 @@ export class ReminderValidator extends BaseValidator {
         };
 
         return createModel;
-    }
+    };
 
     createReminderWithRepeatEveryHour = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
@@ -428,7 +428,7 @@ export class ReminderValidator extends BaseValidator {
         };
 
         return createModel;
-    }
+    };
 
     createReminderWithRepeatEveryDay = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
@@ -467,7 +467,7 @@ export class ReminderValidator extends BaseValidator {
         };
 
         return createModel;
-    }
+    };
 
     search = async (request: express.Request): Promise<ReminderSearchFilters> => {
 

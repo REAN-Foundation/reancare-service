@@ -4,7 +4,7 @@ import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { BarChartOptions, ChartColors, LineChartOptions, MultiBarChartOptions } from "../../../../modules/charts/chart.options";
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { createFeelings_DonutChart, getFeelingsColors } from "./daily.assessments.stats";
-import { createMedicationConsumption_DonutChart, getMedicationStatusCategoryColors } from "./medication.stats";
+import { createMedicationConsumption_DonutChart } from "./medication.stats";
 import { getNutritionQuestionCategoryColors } from "./nutrition.stats";
 import {
     addTableRow,
@@ -14,7 +14,6 @@ import {
     RECTANGULAR_CHART_WIDTH,
     TableRowProperties } from "./report.helper";
 import {
-    addSectionTitle,
     addLegend,
     SECOND_COLUMN_START,
     addFirstColumnSectionTitle,
@@ -307,7 +306,6 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
     const chartImage = 'MedicationsSummary_LastMonth';
     const sectionTitle = 'Medication Adherence';
     const icon = Helper.getIconsPath('medications.png');
-    const legend = getMedicationStatusCategoryColors();
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 
     if (!chartExists(model, chartImage)) {
@@ -323,7 +321,7 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
         document.moveDown();
 
         const yFrozen = y;
-        const legendY = 10;
+        //const legendY = 10;
         //y = yFrozen + legendY;
         //const legendFontSize = 9;
         //const legendStartX = startX + 135;
@@ -339,7 +337,7 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
 }
 
 function addCurrentMedications(document, medications, y) {
-    const icon = Helper.getIconsPath('current-medications.png');
+    //const icon = Helper.getIconsPath('current-medications.png');
     //y = addSectionTitle(document, y, "Current Medications", icon);
 
     if (medications.length === 0) {
@@ -485,7 +483,7 @@ function addDailyMovementQuestionSummary(y: any, document: PDFKit.PDFDocument, m
             },
             {
                 Key   : 'No',
-                Color : ChartColors.Coral,
+                Color : ChartColors.OrangeRed,
             }
         ];
         y = addLegend(document, y, legend, legendStartX, legendFontSize, 25, 8, 5);

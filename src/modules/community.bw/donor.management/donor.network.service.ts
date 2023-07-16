@@ -8,8 +8,13 @@ import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 @injectable()
 export class DonorNetworkService implements IBloodWarriorService {
 
-    public fetchActivities = async (careplanCode: string, enrollmentId: string,participantId?: string,
-        startDate?: Date, endDate?: Date): Promise<CareplanActivity[]> => {
+    public fetchActivities = async (
+        careplanCode: string,
+        enrollmentId: string,
+        participantId?: string,
+        startDate?: Date,
+        endDate?: Date): Promise<CareplanActivity[]> => {
+            
         const activities = DonorMessages['default'];
         var activityEntities: CareplanActivity[] = [];
 

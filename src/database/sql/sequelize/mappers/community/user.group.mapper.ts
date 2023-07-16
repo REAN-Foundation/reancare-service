@@ -21,7 +21,7 @@ export class UserGroupMapper {
             Users       : members,
         };
         return dto;
-    }
+    };
 
 }
 

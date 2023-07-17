@@ -8,6 +8,7 @@ import { TeraWebhookService } from '../../../../../services/webhook/wearable.web
 import { Loader } from '../../../../../startup/loader';
 import { TeraWebhookActivityService } from '../../../../../services/webhook/wearable.webhook.activity.service';
 import { IWebhooksService } from '../../interfaces/webhooks.service.interface';
+import { TerraCache } from './terra.webhook.cache';
 //import Terra from 'terra-api';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -49,9 +50,14 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                 }
                     break;
                 case 'body': {
-                    const activityDomainModel = await TeraWebhookValidator.body(request);
-                    await this._service.body(activityDomainModel);
-                    Logger.instance().log(`Tera user body request ${JSON.stringify(activityDomainModel)}`);
+                    const bodyDomainModel = await TeraWebhookValidator.body(request);
+                    const filteredBody = await TerraCache.GetFilteredRequest(bodyDomainModel);
+                    if (filteredBody != null) {
+                        await this._service.body(filteredBody);
+                        Logger.instance().log(`Tera user body request ${JSON.stringify(bodyDomainModel)}`);
+                    } else {
+                        Logger.instance().log(`Tera user body request got dublicate request for userId: ${bodyDomainModel.User.ReferenceId}`);
+                    }
                 }
                     break;
                 case 'daily': {
@@ -69,8 +75,13 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                     break;
                 case 'nutrition': {
                     const nutritionDomainModel = await TeraWebhookValidator.nutrition(request);
-                    await this._service.nutrition(nutritionDomainModel);
-                    Logger.instance().log(`Tera user nutrition request ${JSON.stringify(nutritionDomainModel)}`);
+                    const filteredNutrition = await TerraCache.GetFilteredRequest(nutritionDomainModel);
+                    if (filteredNutrition != null) {
+                        await this._service.nutrition(nutritionDomainModel);
+                        Logger.instance().log(`Tera user nutrition request ${JSON.stringify(nutritionDomainModel)}`);
+                    } else {
+                        Logger.instance().log(`Tera user body request got dublicate request for userId: ${nutritionDomainModel.User.ReferenceId}`);
+                    }
                 }
                     break;
                 case 'auth': {

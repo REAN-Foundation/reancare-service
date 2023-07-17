@@ -58,7 +58,7 @@ export const updateMedicationFact = async (model: AwardsFact) => {
             RecordTimeZone : r.RecordTimeZone,
             Facts          : {
                 DrugName : r.DrugName,
-                Taken    : r.IsTaken,
+                Taken    : r.Taken,
             }
         };
         Logger.instance().log(`Medication model for unpopulated records:: ${JSON.stringify(model_)}`);

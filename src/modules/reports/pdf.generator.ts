@@ -81,7 +81,7 @@ export class PDFGenerator {
                     return reject(error);
                 });
         });
-    }
+    };
 
     static addHeader = (document, model, y: number, headerImagePath) => {
 

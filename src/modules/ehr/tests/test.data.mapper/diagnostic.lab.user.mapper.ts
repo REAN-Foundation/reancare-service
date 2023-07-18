@@ -38,7 +38,7 @@ export class DiagnosticLabUserMapper {
         };
 
         return model;
-    }
+    };
 
     // static toDetailsDto = async (patient: Patient): Promise<PatientDetailsDto> => {
 

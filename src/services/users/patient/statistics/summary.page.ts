@@ -20,7 +20,8 @@ import {
     addFirstColumnSectionTitle,
     addNoDataDisplayFirstColumn,
     addNoDataDisplaySecondColumn,
-    addSecondColumnSectionTitle
+    addSecondColumnSectionTitle,
+    addText
 } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -283,6 +284,8 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
 function addSleepSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'SleepSummary_LastMonth';
     const sectionTitle = 'Sleep';
+    const title = 'Days of the month';
+    const titleColor = '#505050';
     const icon = Helper.getIconsPath('sleep.png');
     y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);
 
@@ -294,6 +297,7 @@ function addSleepSummary(y: any, document: PDFKit.PDFDocument, model: any) {
         const chart = model.ChartImagePaths.find(x => x.key === chartImage);
         document.image(chart.location, SECOND_COLUMN_START + 5, y, { width: imageWidth, align: 'center' });
         document.moveDown();
+        addText(document, title, 300, y + 80, 6, titleColor, 'center');
         y = y + 135;
     }
     return y;
@@ -413,6 +417,8 @@ function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model
     const chartImage = 'NutritionQuestionSummary_LastMonth';
     const sectionTitle = 'Daily Nutrition Intake';
     const icon = Helper.getIconsPath('nutrition.png');
+    const title = 'Days of the month';
+    const titleColor = '#505050';
 
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 
@@ -427,6 +433,7 @@ function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model
         document.image(chart.location, startX, y, { width: imageWidth, align: 'center', height: 80 });
         document.fontSize(7);
         document.moveDown();
+        addText(document, title, startX - 350, y + 82, 6, titleColor, 'center');
 
         const legendY = 25;
         y = yFrozen + legendY;

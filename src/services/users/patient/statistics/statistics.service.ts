@@ -35,7 +35,7 @@ import { BodyHeightRepo } from "../../../../database/sql/sequelize/repositories/
 import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { PatientRepo } from "../../../../database/sql/sequelize/repositories/users/patient/patient.repo";
 import { IPatientRepo } from "../../../../database/repository.interfaces/users/patient/patient.repo.interface";
-import { addBottom, addTop } from "./stat.report.commons";
+import { addBottom, addFooter, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
 import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
 import { createCalorieBalanceChart } from "./calorie.balance.stats";
@@ -521,6 +521,7 @@ export class StatisticsService {
             addHealthJourney(document, model, y);
         }
         addBottom(document, pageNumber, model);
+        addFooter(document, "https://www.heart.org/", model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -531,6 +532,7 @@ export class StatisticsService {
         //y = y + 15;
         addSummaryGraphs(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -541,6 +543,7 @@ export class StatisticsService {
         y = y + 15;
         addBloodGlucoseStats(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -551,6 +554,7 @@ export class StatisticsService {
         y = y + 15;
         addSleepStats(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -559,6 +563,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addLipidStats(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -567,6 +572,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addCholStats(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -577,6 +583,7 @@ export class StatisticsService {
         const currentMedications = model.Stats.Medication.CurrentMedications;
         addCurrentMedications(document, currentMedications, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -586,6 +593,7 @@ export class StatisticsService {
         y = addNutritionQuestionnaire(document, model, y);
         addNutritionServingsStats(document, model, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -611,6 +619,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addExerciseStats(document, model, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -619,6 +628,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addUserTasksStats(document, model, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -627,6 +637,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addDailyAssessmentsStats(document, model, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };

@@ -278,6 +278,6 @@ export class NoticeRepo implements INoticeRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

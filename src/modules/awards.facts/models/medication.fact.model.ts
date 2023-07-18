@@ -34,4 +34,12 @@ export class MedicationFact {
     @Column({ nullable: true })
     RecordDateStr: string;
 
+    @Column({
+        type: 'varchar',
+        length: 16,
+        nullable    : false,
+        default : '+05:30',
+    })
+    RecordTimeZone: string;
+
 }

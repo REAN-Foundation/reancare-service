@@ -30,6 +30,6 @@ export class MedicationConsumptionMapper {
         };
 
         return model;
-    }
+    };
 
 }

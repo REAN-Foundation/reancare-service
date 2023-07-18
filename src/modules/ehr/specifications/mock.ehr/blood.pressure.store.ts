@@ -8,7 +8,7 @@ export class MockBloodPressureStore implements IBloodPressureStore {
 
     add = async (model: BloodPressureDomainModel): Promise<any> => {
         return null;
-    }
+    };
 
     getById = async (resourceId: string): Promise<any> => {
         return null;

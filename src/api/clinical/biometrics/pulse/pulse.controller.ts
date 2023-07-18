@@ -51,10 +51,9 @@ export class PulseController extends BaseController{
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(pulse.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(pulse.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : pulse.PatientUserId,
@@ -63,9 +62,10 @@ export class PulseController extends BaseController{
                         VitalPrimaryValue : pulse.Pulse,
                         Unit              : pulse.Unit,
                     },
-                    RecordId      : pulse.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : pulse.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Pulse rate record created successfully!', 201, {
@@ -141,10 +141,9 @@ export class PulseController extends BaseController{
                 if (!timestamp) {
                     timestamp = new Date();
                 }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(updated.PatientUserId);
                 const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                const tempDateStr = tempDate.toISOString()
-                    .split('T')[0];
 
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : updated.PatientUserId,
@@ -153,9 +152,10 @@ export class PulseController extends BaseController{
                         VitalPrimaryValue : updated.Pulse,
                         Unit              : updated.Unit,
                     },
-                    RecordId      : updated.id,
-                    RecordDate    : tempDate,
-                    RecordDateStr : tempDateStr,
+                    RecordId       : updated.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Pulse rate record updated successfully!', 200, {

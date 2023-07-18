@@ -10,6 +10,7 @@ import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
+import { Logger } from './logger';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -388,6 +389,13 @@ export class TimeHelper {
         const diff = first.getTime() - second.getTime();
         var dayDiff = diff / (1000 * 60 * 60 * 24);
         return dayDiff;
+    };
+
+    static formatDateToLocal_YYYY_MM_DD = async (date : Date) => {
+        Logger.instance().log(`Date :: ${date}`);
+        const mnth = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return [date.getFullYear(), mnth, day].join("-");
     };
 
 }

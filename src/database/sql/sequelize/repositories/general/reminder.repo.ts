@@ -30,7 +30,7 @@ export class ReminderRepo implements IReminderRepo {
                 EndAfterNRepetitions  : model.EndAfterNRepetitions ?? 10,
                 RepeatList            : model.RepeatList ? JSON.stringify(model.RepeatList) : '[]',
                 RepeatAfterEvery      : model.RepeatAfterEvery ?? 1,
-                RepeatAfterEveryNUnit : model.RepeatAfterEveryNUnit ?? RepeatAfterEveryNUnit,
+                RepeatAfterEveryNUnit : model.RepeatAfterEveryNUnit ?? RepeatAfterEveryNUnit.Day,
                 HookUrl               : model.HookUrl ?? null,
             };
             const reminder = await Reminder.create(entity);

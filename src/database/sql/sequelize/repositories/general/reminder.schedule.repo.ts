@@ -171,7 +171,9 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             parseInt(timeParts[1])
         );
 
-        const scheduleDateTime = TimeHelper.subtractDuration(new Date(utcDate), offset, DurationType.Minute);
+        const dt = new Date(utcDate);
+        Logger.instance().log(`UTC Date: ${dt}`);
+        const scheduleDateTime = TimeHelper.addDuration(new Date(utcDate), offset, DurationType.Minute);
 
         const m = {
             UserId     : userId,

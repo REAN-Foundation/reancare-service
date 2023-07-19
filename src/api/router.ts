@@ -78,6 +78,7 @@ import { register as registerWearableWebhookTerraRoutes } from './device.data/we
 import { register as registerWearableDeviceDetailsRoutes } from './device.data/device.details/wearable.device.details.routes';
 import { register as registerDonationCommunicationRoutes } from './clinical/donation.communication/donation.communication.routes';
 import { register as registerUserGroupRoutes } from './community/user.groups/user.group.routes';
+import { register as registerReminderRoutes } from './general/reminder/reminder.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -180,6 +181,7 @@ export class Router {
                 registerWearableDeviceDetailsRoutes(this._app);
                 registerDonationCommunicationRoutes(this._app);
                 registerUserGroupRoutes(this._app);
+                registerReminderRoutes(this._app);
 
                 resolve(true);
 

@@ -90,9 +90,10 @@ export class CustomAuthenticator implements IAuthenticator {
             return res;
         } catch (err) {
             Logger.instance().log(JSON.stringify(err, null, 2));
+            Logger.instance().log(err.message);
             res = {
                 Result        : false,
-                Message       : 'Forbidden user access',
+                Message       : 'Forbidden user access: ' + err.message,
                 HttpErrorCode : 403,
             };
             return res;

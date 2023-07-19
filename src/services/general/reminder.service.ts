@@ -20,7 +20,8 @@ export class ReminderService {
 
     create = async (reminderDomainModel: ReminderDomainModel): Promise<ReminderDto> => {
         const reminder = await this._reminderRepo.create(reminderDomainModel);
-
+        const schedules = await this._reminderScheduleRepo.createSchedules(reminderDomainModel);
+        reminder.Schedules = schedules;
         return reminder;
     };
 

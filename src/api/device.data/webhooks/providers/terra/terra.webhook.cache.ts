@@ -17,7 +17,7 @@ export class TerraCache {
             const newTimeStamp: any = new Date(body.User.LastWebhookUpdate);
             const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
             await this.CacheCurrentRequest(body);
-            if (timeDiffrence > 10 ) {
+            if (timeDiffrence > 60 ) {
                 return body;
             } else {
                 return null;

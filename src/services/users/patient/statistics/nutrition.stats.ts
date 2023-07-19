@@ -165,7 +165,7 @@ const createNutritionCalorie_BarChart = async (stats: any, filename: string) => 
     }
     const calorieStats = stats.map(c => {
         return {
-            x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
+            x : `"${TimeHelper.getWeekday(new Date(c.DayStr), true)}"`,
             y : c.Calories
         };
     });
@@ -184,7 +184,7 @@ const createNutritionQueryForWeek_BarChart = async (stats: any, filename: string
     }
     const temp = stats.map(c => {
         return {
-            x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
+            x : `"${TimeHelper.getWeekday(new Date(c.DayStr), true)}"`,
             y : c.Response,
             z : c.Type,
         };
@@ -240,7 +240,7 @@ const createNutritionServingsForWeek_BarChart = async (stats: any, filename: str
     }
     const temp = stats.map(c => {
         return {
-            x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
+            x : `"${TimeHelper.getWeekday(new Date(c.DayStr), true)}"`,
             y : c.Servings,
             z : c.Type,
         };

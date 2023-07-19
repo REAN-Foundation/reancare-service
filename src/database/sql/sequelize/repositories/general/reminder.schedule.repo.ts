@@ -4,15 +4,22 @@ import { Logger } from '../../../../../common/logger';
 import {
     ReminderType,
     ReminderDomainModel,
-    RepeatAfterEveryNUnit
+    RepeatAfterEveryNUnit,
+    MAX_END_AFTER_N_REPETITIONS,
+    MAX_END_AFTER_QUARTERS,
+    MAX_END_AFTER_MONTHS,
+    MAX_END_AFTER_YEARS,
+    MAX_END_AFTER_WEEKS,
+    MAX_END_AFTER_DAYS
 } from '../../../../../domain.types/general/reminder/reminder.domain.model';
 import { IReminderScheduleRepo } from '../../../../repository.interfaces/general/reminder.schedule.repo.interface';
 import Reminder from '../../models/general/reminder.model';
 import ReminderSchedule from '../../models/general/reminder.schedule.model';
 import User from '../../models/users/user/user.model';
-import { TimeHelper } from '../../../../../common/time.helper';
+import { MINUTES_IN_DAY, MINUTES_IN_HOUR, MINUTES_IN_MONTH, MINUTES_IN_QUARTER, MINUTES_IN_WEEK, MINUTES_IN_YEAR, TimeHelper } from '../../../../../common/time.helper';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
+import dayjs from 'dayjs';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -175,7 +182,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         const schedule = await ReminderSchedule.create(m);
         return [schedule];
     };
-    
+
     createRepeatAfterEveryNSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
         const userId = reminder.UserId;
         const offset = await this.getUserTimeZone(userId);
@@ -191,13 +198,17 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         );
 
         const referenceDate = TimeHelper.subtractDuration(new Date(utcDate), offset, DurationType.Minute);
-        const { repeatEveryNUnit, repeatEveryN, endAfterRepeatations } = this.getRepeatations(reminder, referenceDate);
+        const { repeatEveryNUnit, repeatEveryN, endAfterRepeatations } =
+            this.getRepeatations_afterEvery(reminder, referenceDate);
         const schedules = [];
 
         const durationType = repeatEveryNUnit as string;
-        for (let i = 0; i < endAfterRepeatations; i++) {
+
+        const arr = this.getIterableArray(endAfterRepeatations);
+        for await (const i of arr) {
+            const skipEvery = i * repeatEveryN;
             const schedule = await this.createRepeatAfterEverySchedule(
-                referenceDate, repeatEveryN, userId, reminder.id, durationType as DurationType);
+                referenceDate, skipEvery, userId, reminder.id, durationType as DurationType);
             schedules.push(schedule);
         }
 
@@ -205,48 +216,237 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
     };
 
     createRepeatEveryWeekdaySchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
-        // const userId = reminder.UserId;
-        // const offset = await this.getUserTimeZone(userId);
-
-        // const dateParts = reminder.WhenDate.split('-');
-        // const timeParts = reminder.WhenTime.split(':');
-
-        // const utcDate = Date.UTC(
-        //     parseInt(dateParts[0]),
-        //     parseInt(dateParts[1]) - 1,
-        //     parseInt(dateParts[2]),
-        //     parseInt(timeParts[0]),
-        //     parseInt(timeParts[1])
-        // );
-        Logger.instance().log(JSON.stringify(reminder));
-        throw new Error('Method not implemented.');
+        const weekdayList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        return await this.createWeeklySchedules(reminder, weekdayList);
     };
 
     createRepeatEveryWeekOnDaysSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
-        Logger.instance().log(JSON.stringify(reminder));
-        throw new Error('Method not implemented.');
+        const weekdayList = reminder.RepeatList;
+        return await this.createWeeklySchedules(reminder, weekdayList);
     };
 
     createRepeatEveryQuarterSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
-        Logger.instance().log(JSON.stringify(reminder));
-        throw new Error('Method not implemented.');
+
+        const schedules = [];
+
+        const userId = reminder.UserId;
+        const offset = await this.getUserTimeZone(userId);
+        const startDate = this.sanitizeStartForSchedules(reminder);
+        const { hours, minutes, seconds } = this.getTimeParts(reminder);
+
+        const endAfterNRepetitions = this.getRepeatations(
+            reminder, startDate, MINUTES_IN_QUARTER, MAX_END_AFTER_QUARTERS);
+        const arr = this.getIterableArray(endAfterNRepetitions);
+
+        let referenceDate = TimeHelper.getStartOfDay(startDate, offset);
+        referenceDate = this.addTimeToSchedule(referenceDate, hours, minutes, seconds);
+
+        for await (const i of arr) {
+            const quarter  = i * 3;
+            const schedule = await this.createRepeatAfterEverySchedule(
+                referenceDate, quarter, userId, reminder.id, DurationType.Month);
+            if (schedule !== null) {
+                schedules.push(schedule);
+            }
+        }
+        return schedules;
     };
 
     createRepeatEveryMonthSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
-        Logger.instance().log(JSON.stringify(reminder));
-        throw new Error('Method not implemented.');
+
+        const schedules = [];
+        const monthlyReminderList = reminder.RepeatList;
+        const userId = reminder.UserId;
+        const offset = await this.getUserTimeZone(userId);
+        const startDate = this.sanitizeStartForSchedules(reminder);
+        const { hours, minutes, seconds } = this.getTimeParts(reminder);
+
+        const endAfterNRepetitions = this.getRepeatations(
+            reminder, startDate, MINUTES_IN_MONTH, MAX_END_AFTER_MONTHS);
+        const arr = this.getIterableArray(endAfterNRepetitions);
+
+        if (!monthlyReminderList || monthlyReminderList.length < 1) {
+            let referenceDate = TimeHelper.getStartOfDay(startDate, offset);
+            referenceDate = this.addTimeToSchedule(referenceDate, hours, minutes, seconds);
+            for await (const i of arr) {
+                const month  = i;
+                const schedule = await this.createRepeatAfterEverySchedule(
+                    referenceDate, month, userId, reminder.id, DurationType.Month);
+                if (schedule !== null) {
+                    schedules.push(schedule);
+                }
+            }
+        }
+        else {
+            const startDate = dayjs(reminder.StartDate);
+            var count = 0;
+            while (count < endAfterNRepetitions) {
+
+                var year = startDate.year();
+                var month = startDate.month();
+
+                for await (const reminderOn of monthlyReminderList) {
+                    const reminderOnParts = reminderOn.split('-');
+                    const seq = reminderOnParts[0];
+                    const weekday = reminderOnParts[1];
+                    const dayForSchedule = this.getDayOfMonth(year, month, seq, weekday);
+                    const referenceDate = TimeHelper.getStartOfDay(dayForSchedule.toDate(), offset);
+                    var scheduleDateTime = this.addTimeToSchedule(referenceDate, hours, minutes, seconds);
+                    if (scheduleDateTime < new Date()) {
+                        continue;
+                    }
+                    const m = {
+                        UserId     : userId,
+                        ReminderId : reminder.id,
+                        Schedule   : scheduleDateTime,
+                    };
+                    const schedule_ = await ReminderSchedule.create(m);
+                    if (schedule_ !== null) {
+                        schedules.push(schedule_);
+                    }
+                }
+                month++;
+                if (month > 11) {
+                    month = 0;
+                    year++;
+                }
+                count++;
+            }
+        }
+
+        return schedules;
     };
 
     createRepeatEveryHourSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
-        Logger.instance().log(JSON.stringify(reminder));
-        throw new Error('Method not implemented.');
+
+        const schedules = [];
+        const userId = reminder.UserId;
+        const offset = await this.getUserTimeZone(userId);
+        const startDate = this.sanitizeStartForSchedules(reminder);
+        const { hours, minutes, seconds } = this.getTimeParts(reminder);
+
+        const endAfterNRepetitions = this.getRepeatations(
+            reminder, startDate, MINUTES_IN_HOUR, MAX_END_AFTER_N_REPETITIONS);
+        const arr = this.getIterableArray(endAfterNRepetitions);
+
+        let referenceDate = TimeHelper.getStartOfDay(startDate, offset);
+        referenceDate = this.addTimeToSchedule(referenceDate, hours, minutes, seconds);
+        for await (const i of arr) {
+            const hour  = i;
+            const schedule = await this.createRepeatAfterEverySchedule(
+                referenceDate, hour, userId, reminder.id, DurationType.Hour);
+            if (schedule !== null) {
+                schedules.push(schedule);
+            }
+        }
+
+        return schedules;
     };
 
     createRepeatEveryDaySchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
-        Logger.instance().log(JSON.stringify(reminder));
-        throw new Error('Method not implemented.');
+
+        const schedules = [];
+        const userId = reminder.UserId;
+        const offset = await this.getUserTimeZone(userId);
+        const startDate = this.sanitizeStartForSchedules(reminder);
+        const { hours, minutes, seconds } = this.getTimeParts(reminder);
+
+        const endAfterNRepetitions = this.getRepeatations(
+            reminder, startDate, MINUTES_IN_DAY, MAX_END_AFTER_DAYS);
+        const arr = this.getIterableArray(endAfterNRepetitions);
+
+        let referenceDate = TimeHelper.getStartOfDay(startDate, offset);
+        referenceDate = this.addTimeToSchedule(referenceDate, hours, minutes, seconds);
+        for await (const i of arr) {
+            const day  = i;
+            const schedule = await this.createRepeatAfterEverySchedule(
+                referenceDate, day, userId, reminder.id, DurationType.Day);
+            if (schedule !== null) {
+                schedules.push(schedule);
+            }
+        }
+
+        return schedules;
     };
-    
+
+    private addTimeToSchedule(referenceDate: Date, hours: number, minutes: number, seconds: number) {
+        referenceDate = TimeHelper.addDuration(referenceDate, hours, DurationType.Hour);
+        referenceDate = TimeHelper.addDuration(referenceDate, minutes, DurationType.Minute);
+        referenceDate = TimeHelper.addDuration(referenceDate, seconds, DurationType.Second);
+        return referenceDate;
+    }
+
+    private sanitizeStartForSchedules(reminder: ReminderDomainModel) {
+        let startDate = reminder.StartDate;
+        if (!startDate) {
+            startDate = new Date();
+        }
+        return startDate;
+    }
+
+    private getTimeParts(reminder: ReminderDomainModel) {
+        const timeParts = reminder.WhenTime.split(':');
+        const hours = parseInt(timeParts[0]);
+        const minutes = parseInt(timeParts[1]);
+        const seconds = timeParts.length > 2 ? parseInt(timeParts[2]) : 0;
+        return { hours, minutes, seconds };
+    }
+
+    private getDayOfMonth(year: number, month: number, seq: string, weekday: string): dayjs.Dayjs {
+        const firstDayOfMonth = dayjs()
+            .year(year)
+            .month(month)
+            .date(1); //First day of the month
+
+        const weekdayIndex = TimeHelper.getWeekdayIndex(weekday);
+        const firstDayOfType = firstDayOfMonth.day(weekdayIndex);
+
+        if (seq === 'First') {
+            return firstDayOfType;
+        }
+        else if (seq === 'Second') {
+            return firstDayOfType.add(1, 'week');
+        }
+        else if (seq === 'Third') {
+            return firstDayOfType.add(2, 'week');
+        }
+        else if (seq === 'Last') {
+            const lastDayOfMonth = firstDayOfMonth.endOf('month');
+            const lastDayOfWeek = lastDayOfMonth.day(weekdayIndex);
+            if (lastDayOfWeek.month() === month) {
+                return lastDayOfWeek;
+            }
+            return lastDayOfWeek.subtract(1, 'week');
+        }
+    }
+
+    private async createWeeklySchedules(reminder: ReminderDomainModel, weekdayList: string[]) {
+
+        const schedules = [];
+        const userId = reminder.UserId;
+        const offset = await this.getUserTimeZone(userId);
+        const startDate = this.sanitizeStartForSchedules(reminder);
+        const { hours, minutes, seconds } = this.getTimeParts(reminder);
+
+        const endAfterNRepetitions = this.getRepeatations(
+            reminder, startDate, MINUTES_IN_WEEK, MAX_END_AFTER_WEEKS);
+        const arr = this.getIterableArray(endAfterNRepetitions);
+
+        for await (const day of weekdayList) {
+            const startOfDay = TimeHelper.startOfDayThisWeekUtc(day);
+            let referenceDate = TimeHelper.addDuration(new Date(startOfDay), -offset, DurationType.Minute);
+            referenceDate = this.addTimeToSchedule(referenceDate, hours, minutes, seconds);
+            for await (const i of arr) {
+                const weekIndex = i;
+                const schedule = await this.createRepeatAfterEverySchedule(
+                    referenceDate, weekIndex, userId, reminder.id, DurationType.Week);
+                schedules.push(schedule);
+            }
+        }
+
+        return schedules;
+    }
+
     private async createRepeatAfterEverySchedule(
         referenceDate: Date,
         repeatEveryN: number,
@@ -254,6 +454,9 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         reminderId: uuid,
         durationType: DurationType) {
         const scheduleDateTime = TimeHelper.addDuration(referenceDate, repeatEveryN, durationType);
+        if (scheduleDateTime < new Date()) {
+            return null;
+        }
         const m = {
             UserId     : userId,
             ReminderId : reminderId,
@@ -263,39 +466,76 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return schedule;
     }
 
-    private getRepeatations(reminder: ReminderDomainModel, referenceDate: Date) {
+    private getRepeatations_afterEvery(reminder: ReminderDomainModel, referenceDate: Date) {
+
         const repeatEveryN = reminder.RepeatAfterEvery;
         const repeatEveryNUnit = reminder.RepeatAfterEveryNUnit;
         const endDate = reminder.EndDate;
-        let endAfterRepeatations = reminder.EndAfterNRepetitions;
+        let repetitions = 10;
+
         if (endDate !== null && endDate !== undefined) {
+
             const duration = TimeHelper.minuteDiff(endDate, referenceDate);
+
             if (repeatEveryNUnit === RepeatAfterEveryNUnit.Minute) {
-                endAfterRepeatations = Math.floor(duration / repeatEveryN);
+                repetitions = Math.floor(duration / repeatEveryN);
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Hour) {
-                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60));
+                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_HOUR));
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Day) {
-                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24));
+                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_DAY));
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Week) {
-                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24 * 7));
+                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_WEEK));
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Month) {
-                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24 * 30));
+                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_MONTH));
+                if (repetitions > MAX_END_AFTER_MONTHS) {
+                    repetitions = MAX_END_AFTER_MONTHS;
+                }
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Quarter) {
-                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24 * 30 * 3));
+                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_QUARTER));
+                if (repetitions > MAX_END_AFTER_QUARTERS) {
+                    repetitions = MAX_END_AFTER_QUARTERS;
+                }
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Year) {
-                endAfterRepeatations = Math.floor(duration / (repeatEveryN * 60 * 24 * 365));
-            }
-            else {
-                endAfterRepeatations = endAfterRepeatations ?? 10;
+                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_YEAR));
+                if (repetitions > MAX_END_AFTER_YEARS) {
+                    repetitions = MAX_END_AFTER_YEARS;
+                }
             }
         }
+
+        if (repetitions < 1) {
+            repetitions = 1;
+        }
+
+        const endAfterRepeatations = Math.min(repetitions, MAX_END_AFTER_N_REPETITIONS);
+
         return { repeatEveryNUnit, repeatEveryN, endAfterRepeatations };
+    }
+
+    private getRepeatations(
+        reminder: ReminderDomainModel,
+        referenceDate: Date,
+        durationMin: number,
+        maxCount: number) {
+
+        const endDate = reminder.EndDate;
+        let repetitions = reminder.EndAfterNRepetitions;
+
+        if (endDate !== null && endDate !== undefined) {
+            const duration = TimeHelper.minuteDiff(endDate, referenceDate);
+            repetitions = Math.floor(duration / durationMin);
+        }
+        if (repetitions < 1) {
+            repetitions = 1;
+        }
+        repetitions = Math.min(repetitions, maxCount);
+        return repetitions;
     }
 
     private async getUserTimeZone(userId: string) {
@@ -306,6 +546,14 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         const timezone = user.CurrentTimeZone;
         const offset = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
         return offset;
+    }
+
+    private getIterableArray = (n: number): number[] => {
+        const arr = [];
+        for (var i = 0; i < n; i++) {
+            arr.push(i);
+        }
+        return arr;
     }
 
 }

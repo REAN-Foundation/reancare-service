@@ -1,5 +1,8 @@
 import express from 'express';
 import {
+    DEFAULT_END_AFTER_N_REPETITIONS,
+    MAX_END_AFTER_N_REPETITIONS,
+    MAX_REPEAT_AFTER_EVERY_N,
     ReminderDomainModel,
     ReminderSearchFilters,
     ReminderType,
@@ -8,11 +11,6 @@ import { BaseValidator, Where } from '../../base.validator';
 import { InputValidationError } from '../../../common/input.validation.error';
 import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
-
-///////////////////////////////////////////////////////////////////////////////////////
-
-const MAX_REPEAT_AFTER_EVERY_N = 100;
-const DEFAULT_END_AFTER_N_REPETITIONS = 10;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -89,6 +87,15 @@ export class ReminderValidator extends BaseValidator {
         }
     };
 
+    validateEndAfterNRepetitions = (request: express.Request): void => {
+        const endAfterNRepetitions = request.body.EndAfterNRepetitions as number;
+        if (endAfterNRepetitions != null) {
+            if (endAfterNRepetitions < 1 || endAfterNRepetitions > MAX_END_AFTER_N_REPETITIONS) {
+                throw new InputValidationError(["Invalid End-After-N-Repetitions value!"]);
+            }
+        }
+    };
+
     validateStartAndEndDate = (request: express.Request): void => {
         const startDate = request.body.StartDate as Date;
         const endDate = request.body.EndDate as Date;
@@ -125,34 +132,21 @@ export class ReminderValidator extends BaseValidator {
 
     validateMonthlyReminderList = (request: express.Request): void => {
         const monthlyReminderList = request.body.RepeatList as string[];
-        if (monthlyReminderList == null || monthlyReminderList.length < 1) {
-            throw new InputValidationError(['Invalid monthly reminder list!']);
-        }
-        for (const reminderOn of monthlyReminderList) {
-            const reminderOnParts = reminderOn.split('-');
-            if (reminderOnParts.length < 2) {
-                throw new InputValidationError(['Invalid monthly reminder list!']);
-            }
-            const seq = reminderOnParts[0];
-            if (seq !== 'First' && seq !== 'Second' && seq !== 'Third' && seq !== 'Fourth' && seq !== 'Last') {
-                throw new InputValidationError(['Invalid monthly reminder list!']);
-            }
-            const weekday = reminderOnParts[1];
-            if (weekday !== 'Sunday' && weekday !== 'Monday' && weekday !== 'Tuesday' && weekday !== 'Wednesday' &&
+        if (monthlyReminderList != null && monthlyReminderList.length > 0) {
+            for (const reminderOn of monthlyReminderList) {
+                const reminderOnParts = reminderOn.split('-');
+                if (reminderOnParts.length < 2) {
+                    throw new InputValidationError(['Invalid monthly reminder list!']);
+                }
+                const seq = reminderOnParts[0];
+                if (seq !== 'First' && seq !== 'Second' && seq !== 'Third' && seq !== 'Fourth' && seq !== 'Last') {
+                    throw new InputValidationError(['Invalid monthly reminder list!']);
+                }
+                const weekday = reminderOnParts[1];
+                if (weekday !== 'Sunday' && weekday !== 'Monday' && weekday !== 'Tuesday' && weekday !== 'Wednesday' &&
                 weekday !== 'Thursday' && weekday !== 'Friday' && weekday !== 'Saturday') {
-                throw new InputValidationError(['Invalid monthly reminder list!']);
-            }
-        }
-    };
-
-    validateQuarterlyReminderList = (request: express.Request): void => {
-        const quarterlyReminderList = request.body.RepeatList as string[];
-        if (quarterlyReminderList == null || quarterlyReminderList.length < 1) {
-            throw new InputValidationError(['Invalid quarterly reminder list!']);
-        }
-        for (const reminderOn of quarterlyReminderList) {
-            if (reminderOn !== 'Start' && reminderOn !== 'Middle' && reminderOn !== 'End') {
-                throw new InputValidationError(['Invalid quarterly reminder list!']);
+                    throw new InputValidationError(['Invalid monthly reminder list!']);
+                }
             }
         }
     };
@@ -206,6 +200,7 @@ export class ReminderValidator extends BaseValidator {
         this.validateRepeatAfterEveryNUnit(request);
         this.validateRepeatAfterEveryN(request);
         this.validateStartAndEndDate(request);
+        this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
         const endAfterNRepetitions = request.body.EndAfterNRepetitions as number;
@@ -247,6 +242,7 @@ export class ReminderValidator extends BaseValidator {
 
         this.validateWhenTime(request);
         this.validateStartAndEndDate(request);
+        this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
         const endAfterNRepetitions = request.body.EndAfterNRepetitions as number;
@@ -288,6 +284,7 @@ export class ReminderValidator extends BaseValidator {
         this.validateWhenTime(request);
         this.validateStartAndEndDate(request);
         this.validateWeekdayList(request);
+        this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
         const endAfterNRepetitions = request.body.EndAfterNRepetitions as number;
@@ -329,6 +326,7 @@ export class ReminderValidator extends BaseValidator {
         this.validateWhenTime(request);
         this.validateStartAndEndDate(request);
         this.validateMonthlyReminderList(request);
+        this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
         const endAfterNRepetitions = request.body.EndAfterNRepetitions as number;
@@ -360,7 +358,6 @@ export class ReminderValidator extends BaseValidator {
         await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateString(request, 'WhenTime', Where.Body, true, false);
         await this.validateString(request, 'HookUrl', Where.Body, false, true);
-        await this.validateArray(request, 'RepeatList', Where.Body, true, false);
         await this.validateDate(request, 'StartDate', Where.Body, false, true);
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
@@ -369,7 +366,7 @@ export class ReminderValidator extends BaseValidator {
 
         this.validateWhenTime(request);
         this.validateStartAndEndDate(request);
-        this.validateQuarterlyReminderList(request);
+        this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
         const endAfterNRepetitions = request.body.EndAfterNRepetitions as number;
@@ -409,6 +406,7 @@ export class ReminderValidator extends BaseValidator {
 
         this.validateWhenTime(request);
         this.validateStartAndEndDate(request);
+        this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
         const endAfterNRepetitions = request.body.EndAfterNRepetitions as number;
@@ -448,6 +446,7 @@ export class ReminderValidator extends BaseValidator {
 
         this.validateWhenTime(request);
         this.validateStartAndEndDate(request);
+        this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
         const endAfterNRepetitions = request.body.EndAfterNRepetitions as number;

@@ -268,7 +268,7 @@ export class SleepRepo implements ISleepRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,
@@ -277,7 +277,7 @@ export class SleepRepo implements ISleepRepo {
                     Duration       : x.SleepDuration,
                     Unit           : x.Unit,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });
@@ -306,7 +306,7 @@ export class SleepRepo implements ISleepRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,
@@ -315,7 +315,7 @@ export class SleepRepo implements ISleepRepo {
                     Duration       : x.SleepDuration,
                     Unit           : x.Unit,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });

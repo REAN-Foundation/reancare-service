@@ -92,4 +92,6 @@ export interface Configurations {
     MaxUploadFileSize   : number;
     FormServiceProviders: FormServiceProvider[];
     WebhookControllerProviders: WebhookControllerProvider[];
+    Gamification        : boolean;
+    EHRAnalytics        : boolean;
 }

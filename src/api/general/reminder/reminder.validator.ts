@@ -2,6 +2,7 @@ import express from 'express';
 import {
     DEFAULT_END_AFTER_N_REPETITIONS,
     MAX_END_AFTER_N_REPETITIONS,
+    MAX_END_AFTER_YEARS,
     MAX_REPEAT_AFTER_EVERY_N,
     ReminderDomainModel,
     ReminderSearchFilters,
@@ -11,6 +12,7 @@ import { BaseValidator, Where } from '../../base.validator';
 import { InputValidationError } from '../../../common/input.validation.error';
 import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
+import dayjs from 'dayjs';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,11 +42,12 @@ export class ReminderValidator extends BaseValidator {
     };
 
     validateWhenDate = (request: express.Request): void => {
-        const whenDate = request.body.WhenDate as string;
+        const whenDate = dayjs(request.body.WhenDate).format();
         if (whenDate == null) {
             throw new InputValidationError(["Invalid When-Date value!"]);
         }
-        const whenDateParts = whenDate.split('-');
+        const dateParts = whenDate.split('T');
+        const whenDateParts = dateParts[0].split('-');
         if (whenDateParts.length < 3) {
             throw new InputValidationError(["Invalid When-Date value!"]);
         }
@@ -106,7 +109,7 @@ export class ReminderValidator extends BaseValidator {
             if (endDate < startDate) {
                 throw new InputValidationError(['End date cannot be before start date!']);
             }
-            if (endDate > new Date(new Date().setFullYear(new Date().getFullYear() + 1))) {
+            if (endDate > new Date(new Date().setFullYear(new Date().getFullYear() + MAX_END_AFTER_YEARS))) {
                 throw new InputValidationError(['End date cannot be more than 1 year from now!']);
             }
         }
@@ -210,11 +213,17 @@ export class ReminderValidator extends BaseValidator {
 
         const requestBody = request.body;
 
+        const whenDate = requestBody.WhenDate ?
+            dayjs(requestBody.WhenDate)
+                .format()
+                .split('T')[0]
+            : null;
+
         const createModel: ReminderDomainModel = {
             UserId                : requestBody.UserId ?? null,
             Name                  : requestBody.Name ?? null,
             ReminderType          : ReminderType.RepeatAfterEveryN,
-            WhenDate              : requestBody.WhenDate ?? null,
+            WhenDate              : whenDate ?? null,
             WhenTime              : requestBody.WhenTime ?? null,
             HookUrl               : requestBody.HookUrl ?? null,
             RepeatAfterEvery      : requestBody.RepeatAfterEvery ?? null,
@@ -226,7 +235,7 @@ export class ReminderValidator extends BaseValidator {
 
         return createModel;
     };
-
+ 
     createReminderWithRepeatEveryWeekday = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
 

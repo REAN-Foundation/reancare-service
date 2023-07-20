@@ -67,6 +67,8 @@ export class ConfigurationManager {
             FormServiceProviders       : configuration.FormServiceProviders,
             WebhookControllerProviders : configuration.WebhookControllerProviders,
             MaxUploadFileSize          : configuration.MaxUploadFileSize,
+            EHRAnalytics               : configuration.EHRAnalytics,
+            Gamification               : configuration.Gamification,
         };
 
         ConfigurationManager.checkConfigSanity();
@@ -169,6 +171,14 @@ export class ConfigurationManager {
 
     public static webhookControllerProviders = (): { Provider: string; Code: string; } [] => {
         return ConfigurationManager._config.WebhookControllerProviders;
+    };
+
+    public static EHRAnalyticsEnabled = (): boolean => {
+        return ConfigurationManager._config?.EHRAnalytics;
+    };
+
+    public static GamificationEnabled = (): boolean => {
+        return ConfigurationManager._config?.Gamification;
     };
 
     private static checkConfigSanity() {

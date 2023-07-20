@@ -3,7 +3,7 @@ import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import {
     ReminderType,
-    ReminderDomainModel,
+    ReminderDto,
     RepeatAfterEveryNUnit,
     MAX_END_AFTER_N_REPETITIONS,
     MAX_END_AFTER_QUARTERS,
@@ -16,7 +16,15 @@ import { IReminderScheduleRepo } from '../../../../repository.interfaces/general
 import Reminder from '../../models/general/reminder.model';
 import ReminderSchedule from '../../models/general/reminder.schedule.model';
 import User from '../../models/users/user/user.model';
-import { MINUTES_IN_DAY, MINUTES_IN_HOUR, MINUTES_IN_MONTH, MINUTES_IN_QUARTER, MINUTES_IN_WEEK, MINUTES_IN_YEAR, TimeHelper } from '../../../../../common/time.helper';
+import {
+    MINUTES_IN_DAY,
+    MINUTES_IN_HOUR,
+    MINUTES_IN_MONTH,
+    MINUTES_IN_QUARTER,
+    MINUTES_IN_WEEK,
+    MINUTES_IN_YEAR,
+    TimeHelper
+} from '../../../../../common/time.helper';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import dayjs from 'dayjs';
@@ -25,7 +33,7 @@ import dayjs from 'dayjs';
 
 export class ReminderScheduleRepo implements IReminderScheduleRepo {
 
-    createSchedules = async (model: ReminderDomainModel): Promise<any[]> => {
+    createSchedules = async (model: ReminderDto): Promise<any[]> => {
         try {
 
             if (model.ReminderType === ReminderType.OneTime) {
@@ -78,21 +86,21 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         }
     };
 
-    deleteSchedulesForReminder = async (reminderId: string): Promise<boolean> => {
+    deleteSchedulesForReminder = async (reminderId: string): Promise<number> => {
         try {
             const schedulesDeleted = await ReminderSchedule.destroy({
                 where : {
                     ReminderId : reminderId,
                 },
             });
-            return schedulesDeleted > 0;
+            return schedulesDeleted;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    deleteFutureSchedulesForReminder = async (reminderId: string): Promise<boolean> => {
+    deleteFutureSchedulesForReminder = async (reminderId: string): Promise<number> => {
         try {
             const schedulesDeleted = await ReminderSchedule.destroy({
                 where : {
@@ -102,21 +110,21 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
                     }
                 },
             });
-            return schedulesDeleted > 0;
+            return schedulesDeleted;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    deleteAllSchedulesForUser = async (userId: string): Promise<boolean> => {
+    deleteAllSchedulesForUser = async (userId: string): Promise<number> => {
         try {
             const schedulesDeleted = await ReminderSchedule.destroy({
                 where : {
                     UserId : userId,
                 },
             });
-            return schedulesDeleted > 0;
+            return schedulesDeleted;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -157,7 +165,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         }
     };
 
-    createOneTimeSchedule = async (reminder: ReminderDomainModel): Promise<any[]> => {
+    createOneTimeSchedule = async (reminder: ReminderDto): Promise<any[]> => {
         const userId = reminder.UserId;
         const offset = await this.getUserTimeZone(userId);
 
@@ -185,7 +193,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return [schedule];
     };
 
-    createRepeatAfterEveryNSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+    createRepeatAfterEveryNSchedules = async (reminder: ReminderDto): Promise<any[]> => {
         const userId = reminder.UserId;
         const offset = await this.getUserTimeZone(userId);
 
@@ -199,7 +207,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             parseInt(timeParts[1])
         );
 
-        const referenceDate = TimeHelper.subtractDuration(new Date(utcDate), offset, DurationType.Minute);
+        const referenceDate = TimeHelper.addDuration(new Date(utcDate), offset, DurationType.Minute);
         const { repeatEveryNUnit, repeatEveryN, endAfterRepeatations } =
             this.getRepeatations_afterEvery(reminder, referenceDate);
         const schedules = [];
@@ -217,17 +225,17 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return schedules;
     };
 
-    createRepeatEveryWeekdaySchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+    createRepeatEveryWeekdaySchedules = async (reminder: ReminderDto): Promise<any[]> => {
         const weekdayList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
         return await this.createWeeklySchedules(reminder, weekdayList);
     };
 
-    createRepeatEveryWeekOnDaysSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+    createRepeatEveryWeekOnDaysSchedules = async (reminder: ReminderDto): Promise<any[]> => {
         const weekdayList = reminder.RepeatList;
         return await this.createWeeklySchedules(reminder, weekdayList);
     };
 
-    createRepeatEveryQuarterSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+    createRepeatEveryQuarterSchedules = async (reminder: ReminderDto): Promise<any[]> => {
 
         const schedules = [];
 
@@ -254,7 +262,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return schedules;
     };
 
-    createRepeatEveryMonthSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+    createRepeatEveryMonthSchedules = async (reminder: ReminderDto): Promise<any[]> => {
 
         const schedules = [];
         const monthlyReminderList = reminder.RepeatList;
@@ -319,7 +327,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return schedules;
     };
 
-    createRepeatEveryHourSchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+    createRepeatEveryHourSchedules = async (reminder: ReminderDto): Promise<any[]> => {
 
         const schedules = [];
         const userId = reminder.UserId;
@@ -345,7 +353,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return schedules;
     };
 
-    createRepeatEveryDaySchedules = async (reminder: ReminderDomainModel): Promise<any[]> => {
+    createRepeatEveryDaySchedules = async (reminder: ReminderDto): Promise<any[]> => {
 
         const schedules = [];
         const userId = reminder.UserId;
@@ -378,7 +386,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return referenceDate;
     }
 
-    private sanitizeStartForSchedules(reminder: ReminderDomainModel) {
+    private sanitizeStartForSchedules(reminder: ReminderDto) {
         let startDate = reminder.StartDate;
         if (!startDate) {
             startDate = new Date();
@@ -386,7 +394,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return startDate;
     }
 
-    private getTimeParts(reminder: ReminderDomainModel) {
+    private getTimeParts(reminder: ReminderDto) {
         const timeParts = reminder.WhenTime.split(':');
         const hours = parseInt(timeParts[0]);
         const minutes = parseInt(timeParts[1]);
@@ -422,7 +430,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         }
     }
 
-    private async createWeeklySchedules(reminder: ReminderDomainModel, weekdayList: string[]) {
+    private async createWeeklySchedules(reminder: ReminderDto, weekdayList: string[]) {
 
         const schedules = [];
         const userId = reminder.UserId;
@@ -468,7 +476,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return schedule;
     }
 
-    private getRepeatations_afterEvery(reminder: ReminderDomainModel, referenceDate: Date) {
+    private getRepeatations_afterEvery(reminder: ReminderDto, referenceDate: Date) {
 
         const repeatEveryN = reminder.RepeatAfterEvery;
         const repeatEveryNUnit = reminder.RepeatAfterEveryNUnit;
@@ -515,13 +523,14 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             repetitions = 1;
         }
 
-        const endAfterRepeatations = Math.min(repetitions, MAX_END_AFTER_N_REPETITIONS);
+        var endAfterRepeatations = Math.min(repetitions, MAX_END_AFTER_N_REPETITIONS);
+        endAfterRepeatations = Math.min(endAfterRepeatations, reminder.EndAfterNRepetitions);
 
         return { repeatEveryNUnit, repeatEveryN, endAfterRepeatations };
     }
 
     private getRepeatations(
-        reminder: ReminderDomainModel,
+        reminder: ReminderDto,
         referenceDate: Date,
         durationMin: number,
         maxCount: number) {
@@ -556,6 +565,6 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             arr.push(i);
         }
         return arr;
-    }
+    };
 
 }

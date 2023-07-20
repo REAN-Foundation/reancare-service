@@ -7,6 +7,7 @@ import {
     ReminderSearchResults,
     ReminderSearchFilters
 } from '../../domain.types/general/reminder/reminder.domain.model';
+import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,8 +21,14 @@ export class ReminderService {
 
     create = async (reminderDomainModel: ReminderDomainModel): Promise<ReminderDto> => {
         const reminder = await this._reminderRepo.create(reminderDomainModel);
-        const schedules = await this._reminderScheduleRepo.createSchedules(reminderDomainModel);
-        reminder.Schedules = schedules;
+        const schedules = await this._reminderScheduleRepo.createSchedules(reminder);
+        reminder.Schedules = schedules?.map(x => {
+            return {
+                id       : x.id,
+                Schedule : x.Schedule,
+                //IsDelivered : x.IsDelivered,
+            };
+        });
         return reminder;
     };
 
@@ -34,7 +41,10 @@ export class ReminderService {
     };
 
     delete = async (id: string): Promise<boolean> => {
-        return await this._reminderRepo.delete(id);
+        const deletedScedules = await this._reminderScheduleRepo.deleteSchedulesForReminder(id);
+        Logger.instance().log(`Deleted ${deletedScedules} schedules for reminder ${id}`);
+        const deleted = await this._reminderRepo.delete(id);
+        return deleted;
     };
 
     getRemindersForUser = async (userId: string): Promise<ReminderDto[]> => {

@@ -12,10 +12,10 @@ export interface IReminderScheduleRepo {
 
     getSchedulesForUser(userId: string, from: Date, to: Date): Promise<any[]>;
 
-    deleteSchedulesForReminder(reminderId: string): Promise<boolean>;
+    deleteSchedulesForReminder(reminderId: string): Promise<number>;
 
-    deleteFutureSchedulesForReminder(reminderId: string): Promise<boolean>;
+    deleteFutureSchedulesForReminder(reminderId: string): Promise<number>;
 
-    deleteAllSchedulesForUser(userId: string): Promise<boolean>;
+    deleteAllSchedulesForUser(userId: string): Promise<number>;
 
 }

@@ -11,6 +11,7 @@ import { updateNutritionFact } from './nutrition.facts.service';
 import { updatePhysicalActivityFact } from './exercise.physical.activity.facts.service';
 import { updateVitalFact } from './vital.facts.service';
 import { updateMentalHealthFact } from './mental.health.facts.service';
+import { ConfigurationManager } from "../../config/configuration.manager";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +65,12 @@ export class AwardsFactsService {
     //#region Task queue
 
     static _q = asyncLib.queue((model: AwardsFact, onCompleted) => {
+                        
+        //Only if gamification is enabled
+        if (ConfigurationManager.GamificationEnabled() === false) {
+            return;
+        }
+
         (async () => {
             await AwardsFactsService.record(model);
             onCompleted(model);
@@ -253,6 +260,12 @@ export class AwardsFactsService {
     };
 
     public static initialize = async () => {
+
+        //Only if gamification is enabled
+        if (ConfigurationManager.GamificationEnabled() === false) {
+            return true;
+        }
+
         if (this._initialized) {
             return true;
         }

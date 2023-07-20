@@ -34,7 +34,7 @@ export class ReminderRepo implements IReminderRepo {
                 HookUrl               : model.HookUrl ?? null,
             };
             const reminder = await Reminder.create(entity);
-            const dto = await ReminderMapper.toDto(reminder);
+            const dto = ReminderMapper.toDto(reminder);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);

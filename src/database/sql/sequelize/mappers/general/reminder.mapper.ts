@@ -1,7 +1,8 @@
 import Reminder from '../../models/general/reminder.model';
 import {
     ReminderDto,
-    ReminderType
+    ReminderType,
+    RepeatAfterEveryNUnit
 } from '../../../../../domain.types/general/reminder/reminder.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -14,19 +15,21 @@ export class ReminderMapper {
         }
 
         const dto: ReminderDto = {
-            id                   : reminder.id,
-            UserId               : reminder.UserId,
-            Name                 : reminder.Name,
-            ReminderType         : reminder.ReminderType as ReminderType,
-            WhenDate             : reminder.WhenDate,
-            WhenTime             : reminder.WhenTime,
-            StartDate            : reminder.StartDate,
-            EndDate              : reminder.EndDate,
-            EndAfterNRepetitions : reminder.EndAfterNRepetitions,
-            RepeatList           : JSON.parse(reminder.RepeatList),
-            HookUrl              : reminder.HookUrl,
-            CreatedAt            : reminder.createdAt,
-            UpdatedAt            : reminder.updatedAt,
+            id                    : reminder.id,
+            UserId                : reminder.UserId,
+            Name                  : reminder.Name,
+            ReminderType          : reminder.ReminderType as ReminderType,
+            WhenDate              : reminder.WhenDate,
+            WhenTime              : reminder.WhenTime,
+            StartDate             : reminder.StartDate,
+            EndDate               : reminder.EndDate,
+            EndAfterNRepetitions  : reminder.EndAfterNRepetitions,
+            RepeatList            : JSON.parse(reminder.RepeatList),
+            RepeatAfterEvery      : reminder.RepeatAfterEvery,
+            RepeatAfterEveryNUnit : reminder.RepeatAfterEveryNUnit as RepeatAfterEveryNUnit,
+            HookUrl               : reminder.HookUrl,
+            CreatedAt             : reminder.createdAt,
+            UpdatedAt             : reminder.updatedAt,
         };
         return dto;
     };

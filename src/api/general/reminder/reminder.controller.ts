@@ -248,7 +248,7 @@ export class ReminderController extends BaseController {
                     ? 'No records found!'
                     : `Total ${count} reminder records retrieved successfully!`;
 
-            ResponseHandler.success(request, response, message, 200, { Reminderes: searchResults });
+            ResponseHandler.success(request, response, message, 200, { Reminders: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

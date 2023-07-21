@@ -475,7 +475,7 @@ export class ReminderValidator extends BaseValidator {
         return this.getFilter(request);
     };
 
-    private validateStartandEnd(endDate: Date, startDate: Date) {
+    private validateStartandEnd(startDate: Date, endDate: Date) {
         if (endDate != null) {
             if (endDate < new Date()) {
                 throw new InputValidationError(['End date cannot be in the past!']);

@@ -21,9 +21,10 @@ export class ReminderService {
 
     create = async (reminderDomainModel: ReminderDomainModel): Promise<ReminderDto> => {
         const reminder = await this._reminderRepo.create(reminderDomainModel);
-        const schedules = await this._reminderScheduleRepo.createSchedules(reminder);
-        const delivered = schedules?.filter(x => x.IsDelivered === true);
-        const pending = schedules?.filter(x => x.IsDelivered === false);
+        var schedules = await this._reminderScheduleRepo.createSchedules(reminder);
+        schedules = schedules.filter(x => x !== null);
+        const delivered = schedules?.filter(x => x?.IsDelivered === true);
+        const pending = schedules?.filter(x => x?.IsDelivered === false);
         reminder.DeliveredSchedules = delivered?.length;
         reminder.PendingSchedules = pending?.length;
         reminder.Schedules = schedules?.map(x => {

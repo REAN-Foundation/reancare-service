@@ -437,7 +437,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
 
     private async createWeeklySchedules(reminder: ReminderDto, weekdayList: string[]) {
 
-        const schedules = [];
+        var schedules = [];
         const userId = reminder.UserId;
         const offset = await this.getUserTimeZone(userId);
         const startDate = this.sanitizeStartForSchedules(reminder);
@@ -449,16 +449,34 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
 
         for await (const day of weekdayList) {
             const startOfDay = TimeHelper.startOfDayThisWeekUtc(day);
-            let referenceDate = TimeHelper.addDuration(new Date(startOfDay), -offset, DurationType.Minute);
+            Logger.instance().log(`Start of day: ${startOfDay}`);
+            let referenceDate = TimeHelper.addDuration(new Date(startOfDay), offset, DurationType.Minute);
             referenceDate = this.addTimeToSchedule(referenceDate, hours, minutes, seconds);
             for await (const i of arr) {
                 const weekIndex = i;
                 const schedule = await this.createRepeatAfterEverySchedule(
                     referenceDate, weekIndex, userId, reminder.id, DurationType.Week);
-                schedules.push(schedule);
+                if (schedule !== null) {
+                    schedules.push(schedule);
+                }
             }
         }
 
+        schedules = this.sortSchedules(schedules);
+
+        return schedules;
+    }
+
+    private sortSchedules(schedules: ReminderSchedule[]) {
+        schedules.sort((a, b) => {
+            if (a.Schedule < b.Schedule) {
+                return -1;
+            }
+            if (a.Schedule > b.Schedule) {
+                return 1;
+            }
+            return 0;
+        });
         return schedules;
     }
 
@@ -551,6 +569,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             repetitions = 1;
         }
         repetitions = Math.min(repetitions, maxCount);
+        repetitions = Math.min(repetitions, reminder.EndAfterNRepetitions);
         return repetitions;
     }
 

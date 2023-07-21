@@ -105,12 +105,20 @@ export class TimeHelper {
         if (idx === -1) {
             throw new Error(`Invalid day: ${day}`);
         }
-        return dayjs
+        const weekday = dayjs
             .utc()
             .weekday(idx)
-            .utc()
-            .startOf('day')
-            .toDate();
+            .startOf('day');
+
+        const weekdayStr = weekday.format()
+            .split('T')[0];
+
+        const year = parseInt(weekdayStr.split('-')[0]);
+        const month = parseInt(weekdayStr.split('-')[1]);
+        const dt = parseInt(weekdayStr.split('-')[2]);
+
+        const date = Date.UTC(year, month - 1, dt);
+        return new Date(date);
     }
 
     static startOfThisMonthUtc(): Date {

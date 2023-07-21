@@ -27,7 +27,7 @@ import {
 } from '../../../../../common/time.helper';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
-import dayjs, { duration } from 'dayjs';
+import dayjs from 'dayjs';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -76,10 +76,45 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
                         model    : Reminder,
                         as       : 'Reminder',
                         required : true,
+                    },
+                    {
+                        model    : User,
+                        as       : 'User',
+                        required : true,
                     }
                 ]
             });
             return schedules;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    markAsDelivered = async (id: string): Promise<boolean> => {
+        try {
+            const schedule = await ReminderSchedule.findByPk(id);
+            if (schedule === null) {
+                return false;
+            }
+            schedule.IsDelivered = true;
+            await schedule.save();
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    markAsAcknowledged = async (id: string): Promise<boolean> => {
+        try {
+            const schedule = await ReminderSchedule.findByPk(id);
+            if (schedule === null) {
+                return false;
+            }
+            schedule.IsDelivered = true;
+            await schedule.save();
+            return true;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -164,6 +199,37 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getRemindersForNextNMinutes = async (timePeriod: number): Promise<any[]> => {
+        try {
+            const from = new Date();
+            const to = TimeHelper.addDuration(from, timePeriod, DurationType.Minute);
+
+            const schedules = await ReminderSchedule.findAll({
+                where : {
+                    Schedule : {
+                        [Op.between] : [from, to]
+                    }
+                },
+                include : [
+                    {
+                        model    : Reminder,
+                        as       : 'Reminder',
+                        required : true,
+                    },
+                    {
+                        model    : User,
+                        as       : 'User',
+                        required : true,
+                    }
+                ]
+            });
+            return schedules;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     createOneTimeSchedule = async (reminder: ReminderDto): Promise<any[]> => {
         const userId = reminder.UserId;

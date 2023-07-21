@@ -76,6 +76,29 @@ export const RepeatAfterEveryUnitList: RepeatAfterEveryNUnit [] = [
     RepeatAfterEveryNUnit.Year,
 ];
 
+export enum NotificationType {
+    Email          = 'Email',
+    SMS            = 'SMS',
+    WebPush        = 'WebPush',
+    MobilePush     = 'MobilePush',
+    Webhook        = 'Webhook',
+    WhatsApp       = 'WhatsApp',
+    Telegram       = 'Telegram',
+    Slack          = 'Slack',
+    MicrosoftTeams = 'MicrosoftTeams'
+}
+
+export const NotificationTypeList: NotificationType [] = [
+    NotificationType.Email,
+    NotificationType.SMS,
+    NotificationType.WebPush,
+    NotificationType.MobilePush,
+    NotificationType.Webhook,
+    NotificationType.WhatsApp,
+    NotificationType.Telegram,
+    NotificationType.Slack,
+];
+
 export interface ReminderDomainModel {
     id                   ?: uuid;
     UserId                : uuid;
@@ -92,6 +115,7 @@ export interface ReminderDomainModel {
     RepeatAfterEvery     ?: number;
     RepeatAfterEveryNUnit?: RepeatAfterEveryNUnit;
     HookUrl              ?: string;
+    NotificationType     ?: NotificationType;
 }
 
 export interface ReminderDto {
@@ -105,22 +129,23 @@ export interface ReminderDto {
     EndDate              ?: Date;
     EndAfterNRepetitions ?: number;
     RepeatList           ?: string[];
-    // CustomFrequencyType  ?: ReminderCustomFrequencyType;
-    // FrequencyCount       ?: number;
     RepeatAfterEvery     ?: number;
     RepeatAfterEveryNUnit?: RepeatAfterEveryNUnit;
     HookUrl               : string;
     Schedules            ?: any[];
     DeliveredSchedules   ?: number;
     PendingSchedules     ?: number;
+    AcknowledgedSchedules?: number;
+    NotificationType     ?: NotificationType;
     CreatedAt             : Date;
     UpdatedAt             : Date;
 }
 
 export interface ReminderSearchFilters extends BaseSearchFilters {
-    UserId        ?: uuid;
-    Name?          : string;
-    ReminderType?  : string;
+    UserId          ?: uuid;
+    Name?            : string;
+    ReminderType?    : string;
+    NotificationType?: string;
 }
 
 export interface ReminderSearchResults extends BaseSearchResults {

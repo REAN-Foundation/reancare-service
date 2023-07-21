@@ -18,4 +18,6 @@ export interface IReminderScheduleRepo {
 
     deleteAllSchedulesForUser(userId: string): Promise<number>;
 
+    getRemindersForNextNMinutes(timePeriod: number): Promise<any[]>;
+
 }

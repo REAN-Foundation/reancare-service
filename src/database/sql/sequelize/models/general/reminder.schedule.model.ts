@@ -87,6 +87,13 @@ export default class ReminderSchedule extends Model {
     })
     DeliveredAt: Date;
 
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    IsAcknowledged: boolean;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

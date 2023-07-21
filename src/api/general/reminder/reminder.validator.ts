@@ -119,7 +119,9 @@ export class ReminderValidator extends BaseValidator {
     };
 
     validateMonthlyReminderList = (request: express.Request): void => {
+
         const monthlyReminderList = request.body.RepeatList as string[];
+
         if (monthlyReminderList != null && monthlyReminderList.length > 0) {
             for (const reminderOn of monthlyReminderList) {
                 const reminderOnParts = reminderOn.split('-');
@@ -308,7 +310,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateString(request, 'WhenTime', Where.Body, true, false);
         await this.validateString(request, 'HookUrl', Where.Body, false, true);
-        await this.validateArray(request, 'RepeatList', Where.Body, true, false);
+        await this.validateArray(request, 'RepeatList', Where.Body, false, false);
         await this.validateDate(request, 'StartDate', Where.Body, false, true);
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);

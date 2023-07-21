@@ -295,11 +295,9 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         else {
             const startDate = dayjs(reminder.StartDate);
             var count = 0;
+            var year = startDate.year();
+            var month = startDate.month();
             while (count < endAfterNRepetitions) {
-
-                var year = startDate.year();
-                var month = startDate.month();
-
                 for await (const reminderOn of monthlyReminderList) {
                     const reminderOnParts = reminderOn.split('-');
                     const seq = reminderOnParts[0];
@@ -408,13 +406,17 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
     }
 
     private getDayOfMonth(year: number, month: number, seq: string, weekday: string): dayjs.Dayjs {
+
         const firstDayOfMonth = dayjs()
             .year(year)
             .month(month)
             .date(1); //First day of the month
 
         const weekdayIndex = TimeHelper.getWeekdayIndex(weekday);
-        const firstDayOfType = firstDayOfMonth.day(weekdayIndex);
+        var firstDayOfType = firstDayOfMonth.day(weekdayIndex);
+        if (firstDayOfType.month() !== month) {
+            firstDayOfType = firstDayOfType.add(1, 'week');
+        }
 
         if (seq === 'First') {
             return firstDayOfType;

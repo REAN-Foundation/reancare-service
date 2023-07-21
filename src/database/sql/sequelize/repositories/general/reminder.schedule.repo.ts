@@ -565,7 +565,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
 
         if (endDate !== null && endDate !== undefined) {
             const duration = TimeHelper.minuteDiff(endDate, referenceDate);
-            repetitions = Math.floor(duration / durationMin);
+            repetitions = Math.ceil(duration / durationMin);
         }
         if (repetitions < 1) {
             repetitions = 1;

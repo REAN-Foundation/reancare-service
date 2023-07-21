@@ -99,25 +99,10 @@ export class ReminderValidator extends BaseValidator {
         }
     };
 
-    validateStartAndEndDate = (request: express.Request): void => {
+    validateFirstAndLastDate = (request: express.Request): void => {
         const startDate = request.body.StartDate as Date;
         const endDate = request.body.EndDate as Date;
-        if (endDate != null) {
-            if (endDate < new Date()) {
-                throw new InputValidationError(['End date cannot be in the past!']);
-            }
-            if (endDate < startDate) {
-                throw new InputValidationError(['End date cannot be before start date!']);
-            }
-            if (endDate > new Date(new Date().setFullYear(new Date().getFullYear() + MAX_END_AFTER_YEARS))) {
-                throw new InputValidationError(['End date cannot be more than 1 year from now!']);
-            }
-        }
-        if (startDate != null) {
-            if (startDate < TimeHelper.subtractDuration(new Date(), 1, DurationType.Hour)) {
-                throw new InputValidationError(['Start date cannot be in the past!']);
-            }
-        }
+        this.validateStartandEnd(startDate, endDate);
     };
 
     validateWeekdayList = (request: express.Request): void => {
@@ -187,12 +172,10 @@ export class ReminderValidator extends BaseValidator {
 
         await this.validateString(request, 'UserId', Where.Body, true, false);
         await this.validateString(request, 'Name', Where.Body, true, false);
-        await this.validateDate(request, 'WhenDate', Where.Body, true, false);
         await this.validateString(request, 'WhenTime', Where.Body, true, false);
         await this.validateString(request, 'HookUrl', Where.Body, false, true);
         await this.validateInt(request, 'RepeatAfterEvery', Where.Body, true, false);
         await this.validateString(request, 'RepeatAfterEveryNUnit', Where.Body, true, false);
-        await this.validateDate(request, 'StartDate', Where.Body, false, true);
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
 
@@ -202,7 +185,7 @@ export class ReminderValidator extends BaseValidator {
         this.validateWhenTime(request);
         this.validateRepeatAfterEveryNUnit(request);
         this.validateRepeatAfterEveryN(request);
-        this.validateStartAndEndDate(request);
+        this.validateFirstAndLastDate(request);
         this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
@@ -213,8 +196,8 @@ export class ReminderValidator extends BaseValidator {
 
         const requestBody = request.body;
 
-        const whenDate = requestBody.WhenDate ?
-            dayjs(requestBody.WhenDate)
+        const startDate = requestBody.StartDate ?
+            dayjs(requestBody.StartDate)
                 .format()
                 .split('T')[0]
             : null;
@@ -223,7 +206,7 @@ export class ReminderValidator extends BaseValidator {
             UserId                : requestBody.UserId ?? null,
             Name                  : requestBody.Name ?? null,
             ReminderType          : ReminderType.RepeatAfterEveryN,
-            WhenDate              : whenDate ?? null,
+            WhenDate              : startDate ?? null, //WhenDate is start date for RepeatAfterEveryN
             WhenTime              : requestBody.WhenTime ?? null,
             HookUrl               : requestBody.HookUrl ?? null,
             RepeatAfterEvery      : requestBody.RepeatAfterEvery ?? null,
@@ -235,7 +218,7 @@ export class ReminderValidator extends BaseValidator {
 
         return createModel;
     };
- 
+
     createReminderWithRepeatEveryWeekday = async (request: express.Request)
         : Promise<ReminderDomainModel> => {
 
@@ -250,7 +233,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateRequest(request);
 
         this.validateWhenTime(request);
-        this.validateStartAndEndDate(request);
+        this.validateFirstAndLastDate(request);
         this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
@@ -291,7 +274,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateRequest(request);
 
         this.validateWhenTime(request);
-        this.validateStartAndEndDate(request);
+        this.validateFirstAndLastDate(request);
         this.validateWeekdayList(request);
         this.validateEndAfterNRepetitions(request);
 
@@ -333,7 +316,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateRequest(request);
 
         this.validateWhenTime(request);
-        this.validateStartAndEndDate(request);
+        this.validateFirstAndLastDate(request);
         this.validateMonthlyReminderList(request);
         this.validateEndAfterNRepetitions(request);
 
@@ -374,7 +357,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateRequest(request);
 
         this.validateWhenTime(request);
-        this.validateStartAndEndDate(request);
+        this.validateFirstAndLastDate(request);
         this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
@@ -414,7 +397,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateRequest(request);
 
         this.validateWhenTime(request);
-        this.validateStartAndEndDate(request);
+        this.validateFirstAndLastDate(request);
         this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
@@ -454,7 +437,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateRequest(request);
 
         this.validateWhenTime(request);
-        this.validateStartAndEndDate(request);
+        this.validateFirstAndLastDate(request);
         this.validateEndAfterNRepetitions(request);
 
         const endDate = request.body.EndDate;
@@ -491,6 +474,26 @@ export class ReminderValidator extends BaseValidator {
 
         return this.getFilter(request);
     };
+
+    private validateStartandEnd(endDate: Date, startDate: Date) {
+        if (endDate != null) {
+            if (endDate < new Date()) {
+                throw new InputValidationError(['End date cannot be in the past!']);
+            }
+            if (endDate < startDate) {
+                throw new InputValidationError(['End date cannot be before start date!']);
+            }
+            if (endDate > new Date(new Date().setFullYear(new Date().getFullYear() + MAX_END_AFTER_YEARS))) {
+                throw new InputValidationError(['End date cannot be more than 1 year from now!']);
+            }
+        }
+        if (startDate != null) {
+            //Don't allow start date to be in the past more than 2 minutes
+            if (startDate < TimeHelper.subtractDuration(new Date(), 2, DurationType.Minute)) {
+                throw new InputValidationError(['Start date cannot be in the past!']);
+            }
+        }
+    }
 
     private getFilter(request): ReminderSearchFilters {
 

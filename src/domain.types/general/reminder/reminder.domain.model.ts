@@ -111,6 +111,8 @@ export interface ReminderDto {
     RepeatAfterEveryNUnit?: RepeatAfterEveryNUnit;
     HookUrl               : string;
     Schedules            ?: any[];
+    DeliveredSchedules   ?: number;
+    PendingSchedules     ?: number;
     CreatedAt             : Date;
     UpdatedAt             : Date;
 }

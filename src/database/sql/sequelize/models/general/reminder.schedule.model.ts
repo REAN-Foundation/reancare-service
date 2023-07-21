@@ -22,7 +22,7 @@ import Reminder from './reminder.model';
     timestamps      : true,
     modelName       : 'ReminderSchedule',
     tableName       : 'reminder_schedules',
-    paranoid        : true,
+    paranoid        : false,
     freezeTableName : true
 })
 export default class ReminderSchedule extends Model {

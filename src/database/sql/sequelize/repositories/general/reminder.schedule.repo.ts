@@ -27,7 +27,7 @@ import {
 } from '../../../../../common/time.helper';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
-import dayjs from 'dayjs';
+import dayjs, { duration } from 'dayjs';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -212,11 +212,16 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             this.getRepeatations_afterEvery(reminder, referenceDate);
         const schedules = [];
 
-        const durationType = repeatEveryNUnit as string;
+        var multiplier = 1;
+        var durationType = repeatEveryNUnit as string;
+        if (durationType === RepeatAfterEveryNUnit.Quarter) {
+            durationType = DurationType.Month;
+            multiplier = 3;
+        }
 
         const arr = this.getIterableArray(endAfterRepeatations);
         for await (const i of arr) {
-            const skipEvery = i * repeatEveryN;
+            const skipEvery = i * repeatEveryN * multiplier;
             const schedule = await this.createRepeatAfterEverySchedule(
                 referenceDate, skipEvery, userId, reminder.id, durationType as DurationType);
             schedules.push(schedule);
@@ -488,31 +493,31 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             const duration = TimeHelper.minuteDiff(endDate, referenceDate);
 
             if (repeatEveryNUnit === RepeatAfterEveryNUnit.Minute) {
-                repetitions = Math.floor(duration / repeatEveryN);
+                repetitions = Math.ceil(duration / repeatEveryN);
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Hour) {
-                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_HOUR));
+                repetitions = Math.ceil(duration / (repeatEveryN * MINUTES_IN_HOUR));
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Day) {
-                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_DAY));
+                repetitions = Math.ceil(duration / (repeatEveryN * MINUTES_IN_DAY));
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Week) {
-                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_WEEK));
+                repetitions = Math.ceil(duration / (repeatEveryN * MINUTES_IN_WEEK));
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Month) {
-                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_MONTH));
+                repetitions = Math.ceil(duration / (repeatEveryN * MINUTES_IN_MONTH));
                 if (repetitions > MAX_END_AFTER_MONTHS) {
                     repetitions = MAX_END_AFTER_MONTHS;
                 }
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Quarter) {
-                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_QUARTER));
+                repetitions = Math.ceil(duration / (repeatEveryN * MINUTES_IN_QUARTER));
                 if (repetitions > MAX_END_AFTER_QUARTERS) {
                     repetitions = MAX_END_AFTER_QUARTERS;
                 }
             }
             else if (repeatEveryNUnit === RepeatAfterEveryNUnit.Year) {
-                repetitions = Math.floor(duration / (repeatEveryN * MINUTES_IN_YEAR));
+                repetitions = Math.ceil(duration / (repeatEveryN * MINUTES_IN_YEAR));
                 if (repetitions > MAX_END_AFTER_YEARS) {
                     repetitions = MAX_END_AFTER_YEARS;
                 }

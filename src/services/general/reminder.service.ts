@@ -22,18 +22,27 @@ export class ReminderService {
     create = async (reminderDomainModel: ReminderDomainModel): Promise<ReminderDto> => {
         const reminder = await this._reminderRepo.create(reminderDomainModel);
         const schedules = await this._reminderScheduleRepo.createSchedules(reminder);
+        const delivered = schedules?.filter(x => x.IsDelivered === true);
+        const pending = schedules?.filter(x => x.IsDelivered === false);
+        reminder.DeliveredSchedules = delivered?.length;
+        reminder.PendingSchedules = pending?.length;
         reminder.Schedules = schedules?.map(x => {
             return {
                 id       : x.id,
                 Schedule : x.Schedule,
-                //IsDelivered : x.IsDelivered,
             };
         });
         return reminder;
     };
 
     getById = async (id: string): Promise<ReminderDto> => {
-        return await this._reminderRepo.getById(id);
+        const reminder = await this._reminderRepo.getById(id);
+        const schedules = await this._reminderScheduleRepo.createSchedules(reminder);
+        const delivered = schedules?.filter(x => x.IsDelivered === true);
+        const pending = schedules?.filter(x => x.IsDelivered === false);
+        reminder.DeliveredSchedules = delivered?.length;
+        reminder.PendingSchedules = pending?.length;
+        return reminder;
     };
 
     search = async (filters: ReminderSearchFilters): Promise<ReminderSearchResults> => {

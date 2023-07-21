@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "NODE_OPTIONS=--max_old_space_size=5120 tsc",
-    "start": "tsc && ts-node --files ./src/index.ts",
+    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css dist/",
+    "build": "npm run copy-files && NODE_OPTIONS=--max_old_space_size=5120 tsc",
+    "start": "npm run copy-files && tsc && ts-node --files ./src/index.ts",
     "lint": "eslint ./src/**",
     "lint:fix": "eslint ./src/** --fix",
     "test": ""
@@ -19,6 +20,8 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.325.0",
+    "@aws-sdk/client-ses": "^3.370.0",
+    "@aws-sdk/credential-provider-node": "^3.370.0",
     "@aws-sdk/lib-storage": "^3.315.0",
     "@aws-sdk/s3-request-presigner": "^3.370.0",
     "@types/adm-zip": "^0.5.0",
@@ -54,6 +57,7 @@
     "node-cron": "^3.0.0",
     "node-html-to-image": "^3.3.0",
     "node-xlsx": "^0.4.0",
+    "nodemailer": "^6.9.4",
     "pdfkit": "^0.13.0",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.3",

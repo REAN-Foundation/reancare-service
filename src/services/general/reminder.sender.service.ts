@@ -7,6 +7,14 @@ import * as asyncLib from 'async';
 import needle = require('needle');
 import axios from 'axios';
 import { Loader } from "../../startup/loader";
+import { IPersonRepo } from "../../database/repository.interfaces/person/person.repo.interface";
+import { MessagingService } from "../../modules/communication/messaging.service/messaging.service";
+import dayjs = require("dayjs");
+import { SMTPEmailService } from "../../modules/communication/email/providers/smtp.email.service";
+import * as path from "path";
+import * as fs from "fs";
+import { EmailService } from "../../modules/communication/email/email.service";
+import { EmailDetails } from "../../modules/communication/email/email.details";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,18 +62,18 @@ export class ReminderSenderService {
                 const reminder = schedule.Reminder;
                 const notificationType = reminder.NotificationType;
 
-                if (notificationType === NotificationType.Email) {
-                    await this.sendReminderByEmail(user, reminder, schedule);
-                }
-                else if (notificationType === NotificationType.SMS) {
+                if (notificationType === NotificationType.SMS) {
                     await this.sendReminderBySMS(user, reminder, schedule);
                 }
                 else if (notificationType === NotificationType.WhatsApp) {
                     await this.sendReminderByWhatsApp(user, reminder, schedule);
                 }
-                else if (notificationType === NotificationType.Webhook) {
-                    await this.sendReminderByWebhook(user, reminder, schedule);
+                else if (notificationType === NotificationType.Email) {
+                    await this.sendReminderByEmail(user, reminder, schedule);
                 }
+                // else if (notificationType === NotificationType.Webhook) {
+                //     await this.sendReminderByWebhook(user, reminder, schedule);
+                // }
                 else {
                     continue;
                 }
@@ -80,19 +88,60 @@ export class ReminderSenderService {
     };
 
     static sendReminderBySMS = async (user, reminder, schedule): Promise<boolean> => {
-        throw new Error('Method not implemented.');
+        const { messagingService, phone, message } =
+            await ReminderSenderService.getUserMessageDetails(user, reminder, schedule);
+        const sent = await messagingService.sendSMS(phone, message);
+        Logger.instance().log(sent ? `SMS sent to ${phone}` : `Message could not be sent to ${phone}`);
+        return true;
     };
 
     static sendReminderByWhatsApp = async (user, reminder, schedule): Promise<boolean> => {
-        throw new Error('Method not implemented.');
+        const { messagingService, phone, message } =
+            await ReminderSenderService.getUserMessageDetails(user, reminder, schedule);
+        const sent = await messagingService.sendWhatsappMessage(phone, message);
+        Logger.instance().log(sent ? `WhatsApp message sent to ${phone}` : `WhatsApp message could not be sent to ${phone}`);
+        return true;
     };
 
     static sendReminderByEmail = async (user, reminder, schedule): Promise<boolean> => {
-        throw new Error('Method not implemented.');
+        const { emailService, emailDetails }
+            = await ReminderSenderService.getUserEmailDetails(user, reminder, schedule);
+        const sent = await emailService.sendEmail(emailDetails, false);
+        Logger.instance().log(sent ? `Email sent to ${emailDetails.EmailTo}` : `Email could not be sent to ${emailDetails.EmailTo}`);
+        return true;
     };
 
-    static sendReminderByWebhook = async (user, reminder, schedule): Promise<boolean> => {
-        throw new Error('Method not implemented.');
-    };
+    // static sendReminderByWebhook = async (user, reminder, schedule): Promise<boolean> => {
+    //     try {
+    //         const Webhook = reminder.Webhook;
+    //     }
+    // };
+
+    private static async getUserMessageDetails(user: any, reminder: any, schedule: any) {
+        const scheduleRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const messagingService = Loader.container.resolve<MessagingService>('MessagingService');
+        const person = await scheduleRepo.getById(user.PersonId);
+        const phone = person.Phone;
+        const message = `You have a reminder: ${reminder.Title} set at ${dayjs(schedule.Schedule).format(`L LT`)}. Thank you.`;
+        return { messagingService, phone, message };
+    }
+
+    private static async getUserEmailDetails(user: any, reminder: any, schedule: any) {
+        const scheduleRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const emailService = new EmailService();
+        const person = await scheduleRepo.getById(user.PersonId);
+        if (!person.Email) {
+            throw new Error(`Email address not found for user ${user.PersonId}`);
+        }
+        var body = await emailService.getTemplate('reminder.template.html');
+        body.replace('{{Title}}', reminder.Title);
+        body.replace('{{SCHEDULE_TIME}}', dayjs(schedule.Schedule).format(`L LT`));
+        const emailDetails: EmailDetails = {
+            EmailTo : person.Email,
+            Subject : `Reminder for ${reminder.Title}`,
+            Body    : body,
+        };
+        return { emailService, emailDetails };
+    }
 
 }

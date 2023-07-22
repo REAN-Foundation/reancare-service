@@ -9,7 +9,7 @@
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleHsSurvey": "0 11 * * *",
         "ReminderOnNoActionToDonationRequest": "30 12 * * *",
-        "Reminders": "*/15 * * * *"
+        "Reminders": "*/10 * * * *"
     },
     "development": {
         "FileCleanup": "*/55 * * * *",

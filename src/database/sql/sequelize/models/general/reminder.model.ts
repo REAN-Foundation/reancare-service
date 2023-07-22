@@ -135,9 +135,9 @@ export default class Reminder extends Model {
     HookUrl: string;
 
     @Column({
-        type : DataType.ENUM,
-        allowNull : false,
-        values: NotificationTypeList,
+        type         : DataType.ENUM,
+        allowNull    : false,
+        values       : NotificationTypeList,
         defaultValue : 'SMS',
     })
     NotificationType: string;

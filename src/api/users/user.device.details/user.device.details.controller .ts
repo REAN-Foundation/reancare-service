@@ -231,7 +231,7 @@ export class UserDeviceDetailsController {
         }
 
         Logger.instance().log(JSON.stringify(userDeviceDetails));
-    
+
     };
 
     //#endregion

@@ -5,13 +5,15 @@ import {
 import { Logger } from "../../common/logger";
 import { Loader } from "../../startup/loader";
 import { IPersonRepo } from "../../database/repository.interfaces/person/person.repo.interface";
-import { MessagingService } from "../../modules/communication/messaging.service/messaging.service";
+import { IMessagingService } from "../../modules/communication/messaging.service/messaging.service.interface";
 import { EmailService } from "../../modules/communication/email/email.service";
 import { EmailDetails } from "../../modules/communication/email/email.details";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import dayjs = require("dayjs");
 import * as asyncLib from 'async';
 import axios from 'axios';
+import { IUserDeviceDetailsRepo } from "../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
+import { INotificationService } from "../../modules/communication/notification.service/notification.service.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,14 +37,16 @@ export class ReminderSenderService {
         }
     };
 
+    //#region Privates
+
     private static enqueue = (timePeriod: number) => {
-        this._q.push(timePeriod, (model, error) => {
+        this._q.push(timePeriod, (timePeriod, error) => {
             if (error) {
                 Logger.instance().log(`Error sending reminders: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error sending reminders: ${JSON.stringify(error.stack, null, 2)}`);
             }
             else {
-                Logger.instance().log(`Recorded Awards Facts: ${JSON.stringify(model, null, 2)}`);
+                Logger.instance().log(`Sent reminders: ${JSON.stringify(timePeriod, null, 2)}`);
             }
         });
     };
@@ -68,39 +72,39 @@ export class ReminderSenderService {
                 else if (notificationType === NotificationType.Email) {
                     await this.sendReminderByEmail(user, reminder, schedule);
                 }
-                // else if (notificationType === NotificationType.Webhook) {
-                //     await this.sendReminderByWebhook(user, reminder, schedule);
-                // }
+                else if (notificationType === NotificationType.Webhook) {
+                    await this.sendReminderByWebhook(user, reminder, schedule);
+                }
+                else if (notificationType === NotificationType.MobilePush) {
+                    await this.sendReminderByMobilePush(user, reminder, schedule);
+                }
                 else {
                     continue;
                 }
             }
-            // const url = `http://localhost:3000/api/v1/reminder/sender/${timePeriod}`;
-            // const response = await axios.get(url);
-            // Logger.instance().log(JSON.stringify(response.data, null, 2));
         }
         catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);
         }
     };
 
-    static sendReminderBySMS = async (user, reminder, schedule): Promise<boolean> => {
+    private static sendReminderBySMS = async (user, reminder, schedule): Promise<boolean> => {
         const { messagingService, phone, message } =
-            await ReminderSenderService.getUserMessageDetails(user, reminder, schedule);
+            await ReminderSenderService.getUserSMSDetails(user, reminder, schedule);
         const sent = await messagingService.sendSMS(phone, message);
         await ReminderSenderService.markAsDelivered(sent, schedule.id);
         return true;
     };
 
-    static sendReminderByWhatsApp = async (user, reminder, schedule): Promise<boolean> => {
+    private static sendReminderByWhatsApp = async (user, reminder, schedule): Promise<boolean> => {
         const { messagingService, phone, message } =
-            await ReminderSenderService.getUserMessageDetails(user, reminder, schedule);
+            await ReminderSenderService.getUserSMSDetails(user, reminder, schedule);
         const sent = await messagingService.sendWhatsappMessage(phone, message);
         await ReminderSenderService.markAsDelivered(sent, schedule.id);
         return true;
     };
 
-    static sendReminderByEmail = async (user, reminder, schedule): Promise<boolean> => {
+    private static sendReminderByEmail = async (user, reminder, schedule): Promise<boolean> => {
         const { emailService, emailDetails }
             = await ReminderSenderService.getUserEmailDetails(user, reminder, schedule);
         const sent = await emailService.sendEmail(emailDetails, false);
@@ -108,7 +112,7 @@ export class ReminderSenderService {
         return true;
     };
 
-    static sendReminderByWebhook = async (user, reminder, schedule): Promise<boolean> => {
+    private static sendReminderByWebhook = async (user, reminder, schedule): Promise<boolean> => {
         try {
             const { payload, headers, url } = await ReminderSenderService.getWebhookDetails(user, reminder, schedule);
             const response = await axios.post(url, payload, { headers });
@@ -125,6 +129,16 @@ export class ReminderSenderService {
         return true;
     };
 
+    private static sendReminderByMobilePush = async (user, reminder, schedule): Promise<boolean> => {
+        const { notificationService, deviceTokens, message } =
+            await ReminderSenderService.getUserMobilePushDetails(user, reminder, schedule);
+        for await (const deviceToken of deviceTokens) {
+            await notificationService.sendNotificationToDevice(deviceToken, message);
+        }
+        await ReminderSenderService.markAsDelivered(true, schedule.id);
+        return true;
+    };
+
     private static async markAsDelivered(sent: boolean, scheduleId: uuid) {
         if (sent) {
             const scheduleRepo = Loader.container.resolve<IReminderScheduleRepo>('IReminderScheduleRepo');
@@ -133,39 +147,60 @@ export class ReminderSenderService {
         }
     }
 
-    private static async getUserMessageDetails(user: any, reminder: any, schedule: any) {
-        const scheduleRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
-        const messagingService = Loader.container.resolve<MessagingService>('MessagingService');
-        const person = await scheduleRepo.getById(user.PersonId);
+    private static async getUserSMSDetails(user: any, reminder: any, schedule: any) {
+        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const messagingService = Loader.messagingService;
+        const person = await personRepo.getById(user.PersonId);
         const phone = person.Phone;
-        const message = `You have a reminder: ${reminder.Title} set at ${dayjs(schedule.Schedule).format(`L LT`)}. Thank you.`;
+        const message = ReminderSenderService.constructMessage(schedule, reminder);
         return { messagingService, phone, message };
     }
 
+    private static constructMessage(schedule: any, reminder: any) {
+        const duration = dayjs.duration(dayjs(schedule.Schedule).diff(dayjs()));
+        const minutes = Math.ceil(duration.asMinutes());
+        Logger.instance().log(`Sending reminder for ${dayjs(schedule.Schedule).format('hh:mm:ss')}`);
+        const message = `You have a reminder: '${reminder.Name}' in ${minutes} minutes at ${dayjs(schedule.Schedule).format('hh:mm:ss')}. Thank you.`;
+        return message;
+    }
+
+    private static async getUserMobilePushDetails(user: any, reminder: any, schedule: any) {
+        const userDeviceDetailsRepo = Loader.container.resolve<IUserDeviceDetailsRepo>('IUserDeviceDetailsRepo');
+        const notificationService = Loader.container.resolve<INotificationService>('INotificationService');
+        const deviceDetails = await userDeviceDetailsRepo.getByUserId(user.id);
+        if (!deviceDetails || deviceDetails.length === 0) {
+            throw new Error(`Device details not found for user ${user.id}`);
+        }
+        const deviceTokens = deviceDetails.map(x => x.Token);
+        const message = ReminderSenderService.constructMessage(schedule, reminder);
+        return { notificationService, deviceTokens, message };
+    }
+
     private static async getUserEmailDetails(user: any, reminder: any, schedule: any) {
-        const scheduleRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
         const emailService = new EmailService();
-        const person = await scheduleRepo.getById(user.PersonId);
+        const person = await personRepo.getById(user.PersonId);
         if (!person.Email) {
             throw new Error(`Email address not found for user ${user.PersonId}`);
         }
         var body = await emailService.getTemplate('reminder.template.html');
-        body.replace('{{TITLE}}', reminder.Title);
+        body.replace('{{TITLE}}', reminder.Name);
         body.replace('{{SCHEDULE_TIME}}', dayjs(schedule.Schedule).format(`L LT`));
         const emailDetails: EmailDetails = {
             EmailTo : person.Email,
-            Subject : `Reminder for ${reminder.Title}`,
+            Subject : `Reminder for ${reminder.Name}`,
             Body    : body,
         };
         return { emailService, emailDetails };
     }
 
     private static async getWebhookDetails(user: any, reminder: any, schedule: any) {
-        const scheduleRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
-        const person = await scheduleRepo.getById(user.PersonId);
+        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const person = await personRepo.getById(user.PersonId);
+        const message = ReminderSenderService.constructMessage(schedule, reminder);
         const payload = {
-            title   : reminder.Title,
-            message : `You have a reminder: ${reminder.Title} set at ${dayjs(schedule.Schedule).format(`L LT`)}. Thank you.`,
+            title   : reminder.Name,
+            message : message,
             UserId  : user.id,
             Phone   : person.Phone,
         };

@@ -24,7 +24,7 @@
     },
     "Communication" : {
         "SMS": {
-            "Provider": "Mock"
+            "Provider": "Twilio"
         },
         "Email": {
             "Provider": "Mock"

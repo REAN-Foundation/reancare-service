@@ -173,6 +173,7 @@ export class TeraWebhookService {
         bodyData.forEach(async body => {
            
             const bloodPressureSamples = body.BloodPressureData.BloodPressureSamples;
+            Logger.instance().log(`Incoming BP samples ${JSON.stringify(bloodPressureSamples, null, 2)}`);
             const recentBP = await this._bloodPressureRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredBPSamples = [];
             if (recentBP != null) {
@@ -180,6 +181,7 @@ export class TeraWebhookService {
             } else {
                 filteredBPSamples = bloodPressureSamples;
             }
+            Logger.instance().log(`Filterred BP samples ${JSON.stringify(filteredBPSamples, null, 2)}`);
             filteredBPSamples.forEach(async bp => {
                 const bpDomainModel = {
                     PatientUserId : bodyDomainModel.User.ReferenceId,
@@ -194,6 +196,7 @@ export class TeraWebhookService {
             });
 
             const bloodGlucoseSamples = body.GlucoseData.BloodGlucoseSamples;
+            Logger.instance().log(`Incoming glucose samples ${JSON.stringify(bloodGlucoseSamples, null, 2)}`);
             const recentGlucose = await this._bloodGlucoseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredGlucoseSamples = [];
             if (recentGlucose != null) {
@@ -202,6 +205,7 @@ export class TeraWebhookService {
             } else {
                 filteredGlucoseSamples = bloodGlucoseSamples;
             }
+            Logger.instance().log(`Filterred glucose samples ${JSON.stringify(filteredGlucoseSamples, null, 2)}`);
             filteredGlucoseSamples.forEach(async bloodGluocse => {
                 const bloodGlucoseDomainModel = {
                     PatientUserId : bodyDomainModel.User.ReferenceId,
@@ -215,6 +219,7 @@ export class TeraWebhookService {
             });
 
             const oxygenSamples = body.OxygenData.SaturationSamples;
+            Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
             const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredOxygenSamples = [];
             if (recentOxygen != null) {
@@ -223,6 +228,7 @@ export class TeraWebhookService {
             } else {
                 filteredOxygenSamples = oxygenSamples;
             }
+            Logger.instance().log(`Filterred oxygen samples ${JSON.stringify(filteredOxygenSamples, null, 2)}`);
             filteredOxygenSamples.forEach(async bloodOxygen => {
                 const bloodOxygenDomainModel = {
                     PatientUserId         : bodyDomainModel.User.ReferenceId,
@@ -236,6 +242,7 @@ export class TeraWebhookService {
             });
 
             const heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
+            Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
             const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredPulseSamples = [];
             if (recentPulse != null) {
@@ -244,6 +251,7 @@ export class TeraWebhookService {
             } else {
                 filteredPulseSamples = heartRateSamples;
             }
+            Logger.instance().log(`Filterred pulse samples ${JSON.stringify(filteredPulseSamples, null, 2)}`);
             filteredPulseSamples.forEach(async heartRate => {
                 const heartRateDomainModel = {
                     PatientUserId : bodyDomainModel.User.ReferenceId,
@@ -257,6 +265,7 @@ export class TeraWebhookService {
             });
 
             const tempSamples = body.TemperatureData.BodyTemperatureSamples;
+            Logger.instance().log(`Incoming Temp samples ${JSON.stringify(tempSamples, null, 2)}`);
             const recentTemp = await this._bodyTemperatureRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredTempSamples = [];
             if (recentTemp != null) {
@@ -264,6 +273,7 @@ export class TeraWebhookService {
             } else {
                 filteredTempSamples = tempSamples;
             }
+            Logger.instance().log(`Filterred Temp samples ${JSON.stringify(filteredTempSamples, null, 2)}`);
             filteredTempSamples.forEach(async bodyTemp => {
                 const bodyTempDomainModel = {
                     PatientUserId   : bodyDomainModel.User.ReferenceId,

@@ -20,4 +20,8 @@ export interface IReminderScheduleRepo {
 
     getRemindersForNextNMinutes(timePeriod: number): Promise<any[]>;
 
+    markAsDelivered(id: string): Promise<boolean>;
+
+    markAsAcknowledged(id: string): Promise<boolean>;
+
 }

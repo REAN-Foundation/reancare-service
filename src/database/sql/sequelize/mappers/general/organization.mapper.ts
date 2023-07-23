@@ -1,4 +1,4 @@
-import Organization from '../../models/general/organization/organization.model';
+import Organization from '../../models/organization/organization.model';
 import { OrganizationDto } from '../../../../../domain.types/general/organization/organization.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////

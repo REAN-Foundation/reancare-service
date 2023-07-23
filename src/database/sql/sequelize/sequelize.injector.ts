@@ -87,6 +87,7 @@ import { DonationCommunicationRepo } from './repositories/clinical/donation/dona
 import { UserGroupRepo } from './repositories/community/user.group.repo';
 import { ReminderRepo } from './repositories/general/reminder.repo';
 import { ReminderScheduleRepo } from './repositories/general/reminder.schedule.repo';
+import { TenantRepo } from './repositories/tenant/tenant.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -183,6 +184,7 @@ export class SequelizeInjector {
         container.register('IUserGroupRepo', UserGroupRepo);
         container.register('IReminderRepo', ReminderRepo);
         container.register('IReminderScheduleRepo', ReminderScheduleRepo);
+        container.register('ITenantRepo', TenantRepo);
 
     }
 

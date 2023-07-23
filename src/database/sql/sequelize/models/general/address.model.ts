@@ -5,7 +5,7 @@ import {
     IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import Organization from './organization/organization.model';
+import Organization from '../organization/organization.model';
 import Person from '../person/person.model';
 
 ///////////////////////////////////////////////////////////////////////

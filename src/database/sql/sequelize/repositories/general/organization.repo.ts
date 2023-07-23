@@ -11,9 +11,9 @@ import { AddressMapper } from '../../mappers/general/address.mapper';
 import { OrganizationMapper } from '../../mappers/general/organization.mapper';
 import { PersonMapper } from '../../mappers/person/person.mapper';
 import Address from '../../models/general/address.model';
-import OrganizationAddresses from '../../models/general/organization/organization.addresses.model';
-import Organization from '../../models/general/organization/organization.model';
-import OrganizationPersons from '../../models/general/organization/organization.persons.model';
+import OrganizationAddresses from '../../models/organization/organization.addresses.model';
+import Organization from '../../models/organization/organization.model';
+import OrganizationPersons from '../../models/organization/organization.persons.model';
 import Person from '../../models/person/person.model';
 
 ///////////////////////////////////////////////////////////////////////

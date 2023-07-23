@@ -4,7 +4,7 @@ import {
 import { v4 } from 'uuid';
 import { VisitType, VisitTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
 import { ProgressStatus, ProgressStatusList } from '../../../../../domain.types/miscellaneous/system.types';
-import Organization from '../general/organization/organization.model';
+import Organization from '../organization/organization.model';
 import User from '../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////

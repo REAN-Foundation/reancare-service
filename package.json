@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css dist/",
-    "build": "npm run copy-files && NODE_OPTIONS=--max_old_space_size=5120 tsc",
-    "start": "npm run copy-files && tsc && ts-node --files ./src/index.ts",
+    "build": "NODE_OPTIONS=--max_old_space_size=5120 tsc",
+    "start": "tsc && ts-node --files ./src/index.ts",
     "lint": "eslint ./src/**",
     "lint:fix": "eslint ./src/** --fix",
     "test": ""
@@ -79,6 +78,7 @@
     "@types/body-parser": "^1.19.0",
     "@types/fs-extra": "^9.0.11",
     "@types/node": "^18.15.3",
+    "@types/nodemailer": "^6.4.8",
     "@types/pdfkit": "^0.12.10",
     "@types/shelljs": "^0.8.8",
     "@types/uuid": "^9.0.2",

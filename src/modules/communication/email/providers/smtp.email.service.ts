@@ -1,7 +1,7 @@
 import { IEmailService } from "../email.service.interface";
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import nodemailer from 'nodemailer';
 import { EmailDetails } from "../email.details";
-import nodemailer from 'nodemailer/lib/nodemailer';
 import { Logger } from "../../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////

@@ -17,7 +17,8 @@ export class EmailService {
     };
 
     getTemplate = async (templateName: string): Promise<string> => {
-        const filePath = path.join(__dirname, 'templates', templateName);
+        const cwd = process.cwd();
+        const filePath = path.join(cwd, 'assets/email.templates/', templateName);
         if (!fs.existsSync(filePath)) {
             throw new Error(`Template ${templateName} does not exist`);
         }

@@ -265,7 +265,7 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 53;
-        y = addLegend(document, y, lipidColors, 175, 11, 100, 6, 10);
+        //y = addLegend(document, y, lipidColors, 175, 11, 100, 6, 10);
     }
     return y;
 };

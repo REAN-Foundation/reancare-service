@@ -16,7 +16,7 @@ import { DefaultChartOptions } from "../../../../modules/charts/default.chart.op
 export const addSleepStats = (model, document, y) => {
 
     const chartImage = 'SleepHours_LastMonth';
-    const detailedTitle = 'Sleep in Hours Over 6 Months';
+    const detailedTitle = 'Sleep in Hours per Day';
     const titleColor = '#505050';
     const sectionTitle = 'Sleep History';
     const icon = Helper.getIconsPath('sleep.png');

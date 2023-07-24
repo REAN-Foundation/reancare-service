@@ -138,7 +138,7 @@ export class RssfeedValidator extends BaseValidator {
         };
 
         return model;
-    }
+    };
 
     addFeedItem = async (request: express.Request): Promise<RssfeedItemDomainModel> => {
 
@@ -171,6 +171,6 @@ export class RssfeedValidator extends BaseValidator {
         };
 
         return model;
-    }
+    };
 
 }

@@ -4,12 +4,15 @@ import { TenantDto } from "../../../domain.types/tenant/tenant.dto";
 import { TenantSearchFilters,
     TenantSearchResults
 } from "../../../domain.types/tenant/tenant.search.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+
+///////////////////////////////////////////////////////////////////////////////////
 
 export interface ITenantRepo {
 
     create(model: TenantDomainModel): Promise<TenantDto>;
 
-    getById(id: string): Promise<TenantDto>;
+    getById(id: uuid): Promise<TenantDto>;
 
     getTenantWithPhone(phone: string): Promise<TenantDto>;
 
@@ -17,12 +20,26 @@ export interface ITenantRepo {
 
     getTenantWithCode(code: string): Promise<TenantDto>;
 
-    exists(id: string): Promise<boolean>;
+    exists(id: uuid): Promise<boolean>;
 
     search(filters: TenantSearchFilters): Promise<TenantSearchResults>;
 
-    update(id: string, model: TenantDomainModel): Promise<TenantDto>;
+    update(id: uuid, model: TenantDomainModel): Promise<TenantDto>;
 
-    delete(id: string): Promise<boolean>;
+    delete(id: uuid): Promise<boolean>;
+
+    addUserAsAdminToTenant(id: uuid, userId: uuid): Promise<boolean>;
+
+    removeUserAsAdminFromTenant(id: uuid, userId: uuid): Promise<boolean>;
+
+    addUserAsModeratorToTenant(id: uuid, userId: uuid): Promise<boolean>;
+
+    removeUserAsModeratorFromTenant(id: uuid, userId: uuid): Promise<boolean>;
+
+    getTenantStats(id: uuid): Promise<any>;
+
+    getTenantAdmins(id: uuid): Promise<any[]>;
+
+    getTenantModerators(id: uuid): Promise<any[]>;
 
 }

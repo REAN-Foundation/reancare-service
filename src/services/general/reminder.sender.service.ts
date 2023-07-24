@@ -5,7 +5,6 @@ import {
 import { Logger } from "../../common/logger";
 import { Loader } from "../../startup/loader";
 import { IPersonRepo } from "../../database/repository.interfaces/person/person.repo.interface";
-import { IMessagingService } from "../../modules/communication/messaging.service/messaging.service.interface";
 import { EmailService } from "../../modules/communication/email/email.service";
 import { EmailDetails } from "../../modules/communication/email/email.details";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
@@ -46,7 +45,7 @@ export class ReminderSenderService {
                 Logger.instance().log(`Error sending reminders: ${JSON.stringify(error.stack, null, 2)}`);
             }
             else {
-                Logger.instance().log(`Sent reminders: ${JSON.stringify(timePeriod, null, 2)}`);
+                Logger.instance().log(`Sent reminders!`);
             }
         });
     };

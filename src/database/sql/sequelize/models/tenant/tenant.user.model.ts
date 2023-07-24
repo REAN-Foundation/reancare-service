@@ -72,7 +72,7 @@ export default class TenantUser extends Model {
         defaultValue : false,
         allowNull    : false,
     })
-    ContentModerator: boolean;
+    Moderator: boolean;
 
     @Column
     @CreatedAt

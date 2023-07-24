@@ -88,6 +88,7 @@ import { UserGroupRepo } from './repositories/community/user.group.repo';
 import { ReminderRepo } from './repositories/general/reminder.repo';
 import { ReminderScheduleRepo } from './repositories/general/reminder.schedule.repo';
 import { TenantRepo } from './repositories/tenant/tenant.repo';
+import { CohortRepo } from './repositories/community/cohort.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -185,6 +186,7 @@ export class SequelizeInjector {
         container.register('IReminderRepo', ReminderRepo);
         container.register('IReminderScheduleRepo', ReminderScheduleRepo);
         container.register('ITenantRepo', TenantRepo);
+        container.register('ICohortRepo', CohortRepo);
 
     }
 

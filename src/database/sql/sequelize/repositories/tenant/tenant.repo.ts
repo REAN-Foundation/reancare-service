@@ -1,10 +1,16 @@
 import Tenant from '../../models/tenant/tenant.model';
+import TenantUser from '../../models/tenant/tenant.user.model';
 import { TenantDto } from '../../../../../domain.types/tenant/tenant.dto';
 import { TenantSearchFilters, TenantSearchResults } from '../../../../../domain.types/tenant/tenant.search.types';
 import { TenantDomainModel } from '../../../../../domain.types/tenant/tenant.domain.model';
 import { ITenantRepo } from '../../../../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { TenantMapper } from '../../mappers/tenant/tenant.mapper';
 import { Op } from 'sequelize';
+import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
+import Cohort from '../../models/community/cohorts/cohort.model';
+import User from '../../models/users/user/user.model';
+import Person from '../../models/person/person.model';
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class TenantRepo implements ITenantRepo {
@@ -26,7 +32,7 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
-    getById = async (id: string): Promise<TenantDto> => {
+    getById = async (id: uuid): Promise<TenantDto> => {
         try {
             const tenant = await Tenant.findByPk(id);
             return TenantMapper.toDto(tenant);
@@ -66,7 +72,7 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
-    exists = async (id: string): Promise<boolean> => {
+    exists = async (id: uuid): Promise<boolean> => {
         try {
             const tenant = await Tenant.findByPk(id);
             return tenant != null;
@@ -137,7 +143,7 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
-    update = async (id: string, model: TenantDomainModel): Promise<TenantDto> => {
+    update = async (id: uuid, model: TenantDomainModel): Promise<TenantDto> => {
         try {
             const tenant = await Tenant.findByPk(id);
 
@@ -173,6 +179,206 @@ export class TenantRepo implements ITenantRepo {
         }
         catch (error) {
             throw new Error(`Failed to delete tenant: ${error.message}`);
+        }
+    };
+
+    addUserAsAdminToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+        try {
+            var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
+            if (tenantUser == null) {
+                const entity = {
+                    TenantId : id,
+                    UserId   : userId,
+                    Admin    : true,
+                };
+                tenantUser = await TenantUser.create(entity);
+                return tenantUser != null;
+            }
+            else {
+                tenantUser.Admin = true;
+                await tenantUser.save();
+                return true;
+            }
+        }
+        catch (error) {
+            throw new Error(`Failed to add user as admin to tenant: ${error.message}`);
+        }
+    };
+
+    removeUserAsAdminFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+        try {
+            var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
+            if (tenantUser == null) {
+                throw new Error(`User is not associated with this tenant!`);
+            }
+            else {
+                tenantUser.Admin = false;
+                await tenantUser.save();
+                return true;
+            }
+        }
+        catch (error) {
+            throw new Error(`Failed to remove user as admin from tenant: ${error.message}`);
+        }
+    };
+
+    addUserAsModeratorToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+        try {
+            var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
+            if (tenantUser == null) {
+                const entity = {
+                    TenantId  : id,
+                    UserId    : userId,
+                    Moderator : true,
+                };
+                tenantUser = await TenantUser.create(entity);
+                return tenantUser != null;
+            }
+            else {
+                tenantUser.Moderator = true;
+                await tenantUser.save();
+                return true;
+            }
+        }
+        catch (error) {
+            throw new Error(`Failed to add user as moderator to tenant: ${error.message}`);
+        }
+    };
+
+    removeUserAsModeratorFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+        try {
+            var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
+            if (tenantUser == null) {
+                throw new Error(`User is not associated with this tenant!`);
+            }
+            else {
+                tenantUser.Moderator = false;
+                await tenantUser.save();
+                return true;
+            }
+        }
+        catch (error) {
+            throw new Error(`Failed to remove user as moderator from tenant: ${error.message}`);
+        }
+    };
+
+    getTenantStats = async (id: uuid): Promise<any> => {
+        try {
+            const tenant = await Tenant.findByPk(id);
+            if (tenant == null) {
+                throw new Error(`Tenant not found!`);
+            }
+            const tenantUsersCount = await TenantUser.count({ where: { TenantId: id } });
+            const adminUsersCount = await TenantUser.count({ where: { TenantId: id, Admin: true } });
+            const modUsersCount = await TenantUser.count({ where: { TenantId: id, Moderator: true } });
+            const cohortCount = await Cohort.count({ where: { TenantId: id } });
+
+            const stats = {
+                TotalUsers   : tenantUsersCount,
+                TotalAdmins  : adminUsersCount,
+                TotalMods    : modUsersCount,
+                TotalCohorts : cohortCount,
+            };
+            return stats;
+        }
+        catch (error) {
+            throw new Error(`Failed to get tenant stats: ${error.message}`);
+        }
+    };
+
+    getTenantAdmins = async (id: uuid): Promise<any[]> => {
+        try {
+            const tenantUsers = await TenantUser.findAll({
+                where : {
+                    TenantId : id,
+                    Admin    : true
+                },
+                include : [
+                    {
+                        model    : User,
+                        as       : 'User',
+                        required : true,
+                        include  : [
+                            {
+                                model    : Person,
+                                as       : 'Person',
+                                required : true,
+                            }
+                        ]
+                    }
+                ]
+            });
+            const dtos = tenantUsers.map((u) => {
+                return {
+                    UserId : u.UserId,
+                    User   : {
+                        id       : u.User.id,
+                        UserName : u.User.UserName,
+                        Person   : {
+                            id                : u.User.Person.id,
+                            FirstName         : u.User.Person.FirstName,
+                            LastName          : u.User.Person.LastName,
+                            Phone             : u.User.Person.Phone,
+                            Email             : u.User.Person.Email,
+                            ProfilePictureUrl : u.User.Person.ImageResourceId,
+                        }
+                    },
+                    CreatedAt : u.createdAt,
+                    UpdatedAt : u.updatedAt,
+                };
+            });
+            return dtos;
+        }
+        catch (error) {
+            throw new Error(`Failed to get tenant admins: ${error.message}`);
+        }
+    };
+
+    getTenantModerators = async (id: uuid): Promise<any[]> => {
+        try {
+            const tenantUsers = await TenantUser.findAll({
+                where : {
+                    TenantId  : id,
+                    Moderator : true
+                },
+                include : [
+                    {
+                        model    : User,
+                        as       : 'User',
+                        required : true,
+                        include  : [
+                            {
+                                model    : Person,
+                                as       : 'Person',
+                                required : true,
+                            }
+                        ]
+                    }
+                ]
+            });
+            const dtos = tenantUsers.map((u) => {
+                return {
+                    UserId : u.UserId,
+                    User   : {
+                        id       : u.User.id,
+                        UserName : u.User.UserName,
+                        Person   : {
+                            id                : u.User.Person.id,
+                            FirstName         : u.User.Person.FirstName,
+                            LastName          : u.User.Person.LastName,
+                            Phone             : u.User.Person.Phone,
+                            Email             : u.User.Person.Email,
+                            ProfilePictureUrl : u.User.Person.ImageResourceId,
+                        }
+                    },
+                    CreatedAt : u.createdAt,
+                    UpdatedAt : u.updatedAt,
+                };
+            });
+            return dtos;
+        }
+        catch (error) {
+            throw new Error(`Failed to get tenant moderators: ${error.message}`);
         }
     };
 

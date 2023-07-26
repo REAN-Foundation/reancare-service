@@ -34,6 +34,7 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
 
             const terraPayload : TerraPayload = request.body;
             Logger.instance().log(`Tera webhook information ${JSON.stringify(terraPayload)}`);
+            ResponseHandler.success(request, response, 'Message received successfully!', 200 );
            
             switch (terraPayload.type) {
                 // case 'athlete': {
@@ -126,7 +127,6 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                 default:
                     Logger.instance().log(`Tera method ${terraPayload.type} not implemented. Terra payload information has: ${JSON.stringify(terraPayload)}`);
             }
-            ResponseHandler.success(request, response, 'Message received successfully!', 200 );
             
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

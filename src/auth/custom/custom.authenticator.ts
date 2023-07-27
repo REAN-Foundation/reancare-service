@@ -154,10 +154,10 @@ export class CustomAuthenticator implements IAuthenticator {
                 };
                 return res;
             }
-            const terra = new Terra(process.env.TERRA_DEV_ID, process.env.TERRA_API_KEY, process.env.TERRA_SIGNING_SECRET);
-            const terraSiganture = request.headers['terra-signature'];
-            const verified = terra.checkTerraSignature(terraSiganture.toString() , request.body);
-            if (!verified) {
+            //const terra = new Terra(process.env.TERRA_DEV_ID, process.env.TERRA_API_KEY, process.env.TERRA_SIGNING_SECRET);
+            const devId = request.headers['dev-id'];
+            //const verified = terra.checkTerraSignature(terraSiganture.toString() , request.body);
+            if (!(devId.toString() === process.env.TERRA_DEV_ID)) {
                 res = {
                     Result        : false,
                     Message       : 'Invalid Signing Secret: Forbidden access',

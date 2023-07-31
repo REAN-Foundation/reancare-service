@@ -197,16 +197,26 @@ export class ChartGenerator {
 
     private static createSimpleBarChartTextBlock(data: any[], options: BarChartOptions) {
         let dataStr = `\n\tconst data = [\n`;
-        for (var d of data) {
-            const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()} },\n`;
-            dataStr += str;
+        if (options.XAxisTimeScaled) {
+            for (var d of data) {
+                const str = `\t\t{ x: new Date("${d.x?.toISOString()}"), y: ${d.y?.toString()} },\n`;
+                dataStr += str;
+            }
         }
+        else {
+            for (var d of data) {
+                const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()} },\n`;
+                dataStr += str;
+            }
+        }
+       
         dataStr += `\t];\n\n`;
         dataStr += `\tconst width           = ${options.Width};\n`;
         dataStr += `\tconst height          = ${options.Height};\n`;
         dataStr += `\tconst color           = "${options.Color}"\n`;
         dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
+        dataStr += `\tconst xAxisTimeScaled = ${options.XAxisTimeScaled ? 'true' : 'false'};\n`;
         dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
         dataStr += `\tconst showYAxis       = ${options.ShowYAxis === false ? `false` : `true`};\n`;
         return dataStr;

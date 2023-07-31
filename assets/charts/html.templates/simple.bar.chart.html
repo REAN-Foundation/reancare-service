@@ -33,13 +33,13 @@
 		// customization
 
 		const data = [
-			{ x: "Sunday", y: 93.24 },
-			{ x: "Monday", y: 125.35 },
-			{ x: "Tuesday", y: 8.84 },
-			{ x: "Wednesday", y: 99.92 },
-			{ x: "Thursday", y: 25.8 },
-			{ x: "Friday", y: 78.47 },
-			{ x: "Saturday", y: 34.39 },
+			{ x: new Date ("2021-04-23"), y: 93.24 },
+			{ x: new Date ("2021-04-24"), y: 125.35 },
+			{ x: new Date ("2021-04-25"), y: 8.84 },
+			{ x: new Date ("2021-04-26"), y: 99.92 },
+			{ x: new Date ("2021-04-27"), y: 25.8 },
+			{ x: new Date ("2021-04-28"), y: 78.47 },
+			{ x: new Date ("2021-04-29"), y: 34.39 },
 		];
 
 		const width     = 650;
@@ -49,6 +49,7 @@
 		const color     = "steelblue";
 		const showXAxis = true;
 		const showYAxis = true;
+		const xAxisTimeScaled = false;
 
 		// customization
 
@@ -63,11 +64,12 @@
 			width        = 640,   	// the outer width of the chart, in pixels
 			height       = 400,   	// the outer height of the chart, in pixels
 			xDomain,
+			xType        = xAxisTimeScaled ? d3.scaleUtc : d3.scaleLinear,   // the x-scale type
 			xRange = [marginLeft, width - marginRight],   	// [left, right]
 			yType  = d3.scaleLinear,                      	// y-scale type
 			yDomain, 				// [ymin, ymax]
 			yRange   = [height - marginBottom, marginTop],  // [bottom, top]
-			xPadding = 0.1,                                 // amount of x-range to reserve to separate bars
+			xPadding = 0.2,                                 // amount of x-range to reserve to separate bars
 			yFormat, 				// a format specifier string for the y-axis
 			yLabel, 				// a label for the y-axis
 			color = "currentColor",  // bar fill color
@@ -89,7 +91,10 @@
 			// Construct scales, axes, and formats.
 			const xScale = d3.scaleBand(xDomain, xRange).padding(xPadding);
 			const yScale = yType(yDomain, yRange);
-			const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+			var xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+			if (xAxisTimeScaled) {
+				xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b %d")).ticks(width / 80).tickSizeOuter(0);
+			}
 			const yAxis = d3.axisLeft(yScale).ticks(height / 40, yFormat);
 
 			// Compute titles.

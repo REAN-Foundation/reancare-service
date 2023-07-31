@@ -191,9 +191,10 @@ export interface MultiLineChartOptions extends ChartOptions {
 }
 
 export interface BarChartOptions extends ChartOptions {
-    YLabel?  : string;
-    ShowXAxis: boolean;
-    ShowYAxis: boolean;
+    YLabel?          : string;
+    XAxisTimeScaled? : boolean;   // true;
+    ShowXAxis        : boolean;
+    ShowYAxis        : boolean;
 }
 
 export interface MultiBarChartOptions extends ChartOptions {

@@ -212,7 +212,7 @@ export class StatisticsService {
 
         //Sleep trend
         const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
-        const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 6);
+        const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 3);
         const sumSleepHours = sleepStatsForLast6Months.reduce((acc, x) => acc + x.SleepDuration, 0);
         var i = 0;
         if (sleepStatsForLast6Months.length > 0) {
@@ -375,7 +375,7 @@ export class StatisticsService {
             cholesterolStats.Lipoprotein[cholesterolStats.Lipoprotein.length - 1].PrimaryValue : 0;
         const recentLpa = await this._labRecordsRepo.getRecent(patientUserId, 'Lipoprotein');
         const currentLpa = recentLpa ? recentLpa.PrimaryValue : 0;
-        const unit = recentLpa.Unit ? recentLpa.Unit : 'mg/dl'
+        const unit = recentLpa ? recentLpa.Unit : 'mg/dl'
         const lastMeasuredLpa = recentLpa ? recentLpa.RecordedAt : null;
         const totalLpaChange = currentLpa - startingLpa;
 

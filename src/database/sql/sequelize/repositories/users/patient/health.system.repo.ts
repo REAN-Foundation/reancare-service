@@ -15,6 +15,7 @@ import HealthSystemHospital from '../../../models/users/patient/health.system.ho
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { HealthSystemSearchFilters, HealthSystemSearchResults }
     from '../../../../../../domain.types/users/patient/health.system/health.system.search.types';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -68,8 +69,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
     getHealthSystems = async (planName?: string): Promise<HealthSystemDto[]> => {
         try {
             const filter = { where: {
-                Tags : JSON.stringify(planName.split(','))
-
+                Tags : { [Op.like]: '%' + planName + '%' }
             } };
             
             const healthSystems = await HealthSystem.findAll(filter);

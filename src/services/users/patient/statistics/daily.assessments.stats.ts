@@ -17,7 +17,7 @@ export const addDailyAssessmentsStats = (document, model, y) => {
 
     let chartImage = 'DailyAssessments_Feelings_Last6Months';
     const titleColor = '#505050';
-    const sectionTitle = 'Daily Assessments';
+    const sectionTitle = 'Moods and Symptoms';
     const icon = Helper.getIconsPath('feelings.png');
 
     y = addSectionTitle(document, y, sectionTitle, icon);

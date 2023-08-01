@@ -9,6 +9,10 @@ import { BaseController } from '../../../base.controller';
 import { PulseDomainModel } from '../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +44,30 @@ export class PulseController extends BaseController{
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
             this.addEHRRecord(model.PatientUserId, pulse.id, model);
+
+            // Adding record to award service
+            if (pulse.Pulse) {
+                var timestamp = pulse.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(pulse.PatientUserId);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(pulse.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : pulse.PatientUserId,
+                    Facts         : {
+                        VitalName         : "Pulse",
+                        VitalPrimaryValue : pulse.Pulse,
+                        Unit              : pulse.Unit,
+                    },
+                    RecordId       : pulse.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
+                });
+            }
             ResponseHandler.success(request, response, 'Pulse rate record created successfully!', 201, {
                 Pulse : pulse,
             });
@@ -107,6 +135,29 @@ export class PulseController extends BaseController{
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
             this.addEHRRecord(model.PatientUserId, id, model);
+
+            if (updated.Pulse) {
+                var timestamp = updated.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(updated.PatientUserId);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : updated.PatientUserId,
+                    Facts         : {
+                        VitalName         : "Pulse",
+                        VitalPrimaryValue : updated.Pulse,
+                        Unit              : updated.Unit,
+                    },
+                    RecordId       : updated.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
+                });
+            }
             ResponseHandler.success(request, response, 'Pulse rate record updated successfully!', 200, {
                 Pulse : updated,
             });

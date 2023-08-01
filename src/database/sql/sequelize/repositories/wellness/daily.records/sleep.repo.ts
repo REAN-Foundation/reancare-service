@@ -44,12 +44,13 @@ export class SleepRepo implements ISleepRepo {
         }
     };
 
-    getByRecordDate = async (date: Date): Promise<SleepDto> => {
+    getByRecordDate = async (date: Date, patientUserId: uuid): Promise<SleepDto> => {
         try {
             const new_date = new Date(date);
             const sleep =  await Sleep.findOne({
                 where : {
-                    RecordDate : new_date
+                    RecordDate    : new_date,
+                    PatientUserId : patientUserId,
                 }
             });
             return await SleepMapper.toDto(sleep);
@@ -184,7 +185,7 @@ export class SleepRepo implements ISleepRepo {
         try {
             const numDays = 30 * numMonths;
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
-            const records = await this.getSleepRecords(patientUserId, 1, DurationType.Month);
+            const records = await this.getSleepRecords(patientUserId, numMonths, DurationType.Month);
             if (records.length === 0) {
                 return [];
             }
@@ -243,6 +244,84 @@ export class SleepRepo implements ISleepRepo {
             return await SleepMapper.toDto(sleep);
 
         } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
+
+            let records = await Sleep.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    SleepDuration : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(async x => {
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
+                return {
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    Name           : 'Sleep',
+                    Duration       : x.SleepDuration,
+                    Unit           : x.Unit,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordTimeZone : currentTimeZone,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
+
+            let records = await Sleep.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    SleepDuration : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(async x => {
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
+                return {
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    Name           : 'Sleep',
+                    Duration       : x.SleepDuration,
+                    Unit           : x.Unit,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordTimeZone : currentTimeZone,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

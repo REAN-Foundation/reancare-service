@@ -8,7 +8,8 @@
             "Wellstar Douglas Hospital - CAD",
             "Wellstar CVM Clinic Marietta",
             "Wellstar CVM Clinic Hiram",
-            "Wellstar CVM Clinic Douglasville"
+            "Wellstar CVM Clinic Douglasville",
+            "Wellstar East Cobb Cardiac & Pulmonary Rehabilitation"
         ]
     },
     {
@@ -75,7 +76,15 @@
             "HCA Florida North Florida Hospital",
             "Parkridge Medical Center",
             "Sky Ridge Medical Center",
-            "Sunrise Hospital and Medical Center"
+            "Sunrise Hospital and Medical Center",
+            "Parkridge East Hospital"
+        ]
+    },
+    {
+        "HealthSystem": "None of the Above",
+        "Tags":["Cholesterol", "Stroke"],
+        "AssociatedHospitals": [
+            "None of the Above"
         ]
     }
 ]

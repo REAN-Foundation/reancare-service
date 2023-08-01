@@ -675,6 +675,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         : Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await FoodConsumption.findAll({
                 where : {
@@ -689,16 +690,20 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+            const records_ = records.map(async x => {
+                var recordDate = x.StartTime ?? x.EndTime;
+                if (!recordDate) {
+                    recordDate = x.CreatedAt;
+                }
+                const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
+                const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
                 return {
-                    RecordId      : x.id,
-                    PatientUserId : x.PatientUserId,
-                    UserResponse  : x.UserResponse,
-                    RecordDateStr : dayStr,
-                    RecordDate    : tempDate,
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    UserResponse   : x.UserResponse,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : recordDateStr,
+                    RecordTimeZone : currentTimeZone,
                 };
             });
             return records_;
@@ -712,6 +717,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
 
             let records = await FoodConsumption.findAll({
                 where : {
@@ -725,16 +731,19 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
-                const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
-                const dayStr = tempDate.toISOString()
-                    .split('T')[0];
+            const records_ = records.map(async x => {
+                var recordDate = x.StartTime ?? x.EndTime;
+                if (!recordDate) {
+                    recordDate = x.CreatedAt;
+                }                
+                const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
-                    RecordId      : x.id,
-                    PatientUserId : x.PatientUserId,
-                    UserResponse  : x.UserResponse,
-                    RecordDateStr : dayStr,
-                    RecordDate    : tempDate,
+                    RecordId       : x.id,
+                    PatientUserId  : x.PatientUserId,
+                    UserResponse   : x.UserResponse,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordTimeZone : currentTimeZone,
                 };
             });
             return records_;

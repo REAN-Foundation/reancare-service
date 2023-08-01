@@ -6,6 +6,10 @@ import { MeditationService } from '../../../../services/wellness/exercise/medita
 import { Loader } from '../../../../startup/loader';
 import { MeditationValidator } from './meditation.validator';
 import { BaseController } from '../../../base.controller';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,6 +39,29 @@ export class MeditationController extends BaseController{
             const meditation = await this._service.create(model);
             if (meditation == null) {
                 throw new ApiError(400, 'Cannot create record for meditation!');
+            }
+
+            if (meditation.DurationInMins) {
+                var timestamp = meditation.EndTime ?? meditation.StartTime;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(meditation.PatientUserId);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(meditation.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+
+                AwardsFactsService.addOrUpdateMentalHealthResponseFact({
+                    PatientUserId : meditation.PatientUserId,
+                    Facts         : {
+                        Name     : 'Meditation',
+                        Duration : meditation.DurationInMins,
+                        Unit     : 'mins'
+                    },
+                    RecordId       : meditation.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
+                });
             }
 
             ResponseHandler.success(request, response, 'Meditation record created successfully!', 201, {

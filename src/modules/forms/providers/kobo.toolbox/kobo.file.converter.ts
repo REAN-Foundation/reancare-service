@@ -138,7 +138,7 @@ export class KoboFileConverter {
             }
             count++;
         }
-    }
+    };
 
     private getHeaderIndices(surveyData: unknown[]) {
         const tmpheaders: string[] = surveyData[0] as string[];

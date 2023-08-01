@@ -255,7 +255,7 @@ export class AssessmentTemplateController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     updateNode = async (request: express.Request, response: express.Response) => {
         try {
@@ -282,7 +282,7 @@ export class AssessmentTemplateController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     deleteNode = async (request: express.Request, response: express.Response) => {
         try {
@@ -302,7 +302,7 @@ export class AssessmentTemplateController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     getNode = async (request: express.Request, response: express.Response) => {
         try {
@@ -322,7 +322,7 @@ export class AssessmentTemplateController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     addScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
@@ -344,7 +344,7 @@ export class AssessmentTemplateController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     updateScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
@@ -374,7 +374,7 @@ export class AssessmentTemplateController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     deleteScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
@@ -394,7 +394,7 @@ export class AssessmentTemplateController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     getScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
@@ -414,7 +414,7 @@ export class AssessmentTemplateController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     searchNode = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

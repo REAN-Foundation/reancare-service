@@ -9,6 +9,10 @@ import { BaseController } from '../../../base.controller';
 import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,6 +45,30 @@ export class BodyTemperatureController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
             this.addEHRRecord(model.PatientUserId, bodyTemperature.id, model);
+
+            // Adding record to award service
+            if (bodyTemperature.BodyTemperature) {
+                var timestamp = bodyTemperature.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(bodyTemperature.PatientUserId);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bodyTemperature.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : bodyTemperature.PatientUserId,
+                    Facts         : {
+                        VitalName         : "BodyTemperature",
+                        VitalPrimaryValue : bodyTemperature.BodyTemperature,
+                        Unit              : bodyTemperature.Unit,
+                    },
+                    RecordId       : bodyTemperature.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
+                });
+            }
             ResponseHandler.success(request, response, 'Body temperature record created successfully!', 201, {
                 BodyTemperature : bodyTemperature,
             });
@@ -106,6 +134,30 @@ export class BodyTemperatureController extends BaseController {
                 throw new ApiError(400, 'Unable to update body temperature record!');
             }
             this.addEHRRecord(model.PatientUserId, id, model);
+
+            // Adding record to award service
+            if (updated.BodyTemperature) {
+                var timestamp = updated.RecordDate;
+                if (!timestamp) {
+                    timestamp = new Date();
+                }
+                const currentTimeZone = await HelperRepo.getPatientTimezone(updated.PatientUserId);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
+                const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
+
+                AwardsFactsService.addOrUpdateVitalFact({
+                    PatientUserId : updated.PatientUserId,
+                    Facts         : {
+                        VitalName         : "BodyTemperature",
+                        VitalPrimaryValue : updated.BodyTemperature,
+                        Unit              : updated.Unit,
+                    },
+                    RecordId       : updated.id,
+                    RecordDate     : tempDate,
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordTimeZone : currentTimeZone,
+                });
+            }
             ResponseHandler.success(request, response, 'Body temperature record updated successfully!', 200, {
                 BodyTemperature : updated,
             });

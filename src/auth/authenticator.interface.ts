@@ -7,4 +7,6 @@ export interface IAuthenticator {
 
     authenticateClient(request: express.Request) : Promise<AuthenticationResult>;
 
+    authenticateTerra(request: express.Request) : Promise<AuthenticationResult>;
+
 }

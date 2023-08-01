@@ -26,7 +26,7 @@ export class ThirdpartyApiRepo implements IThirdpartyApiRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getThirdpartyCredentials = async (userId: string, provider: string, baseUrl: string)
         : Promise<ThirdpartyApiCredentialsDto> => {
@@ -43,7 +43,7 @@ export class ThirdpartyApiRepo implements IThirdpartyApiRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getThirdpartyCredentialsForUser = async (userId: string, provider: string)
         : Promise<ThirdpartyApiCredentialsDto[]> => {
@@ -59,6 +59,6 @@ export class ThirdpartyApiRepo implements IThirdpartyApiRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

@@ -1,0 +1,143 @@
+# This workflow will trigger pull requests and apply a label based on the
+# paths that are modified in the pull request.
+#
+# To use this workflow, you will need to set up a .github/labeler.yml
+# file with configuration.  For more information, see:
+# https://github.com/actions/labeler
+
+name: sneha-raahi-backend-ci-cd
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the develop branch
+  workflow_dispatch:
+    inputs:
+      Tag_name:
+        description: Tag name of your release(please include "v" if needed)
+        required: true
+
+jobs:
+
+
+  Github-ECR-Tag-Check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: check tag
+        uses: mukunku/tag-exists-action@v1.2.0
+        id: checkTag
+        with: 
+          tag: ${{ github.event.inputs.Tag_name }}
+      
+      - name: Get release
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        id: result_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+           tag: ${{ github.event.inputs.Tag_name }}
+           repo: REAN-Foundation/reancare-service
+           
+      - name: Configure AWS credentials
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name:  Get ECR Image Tag
+        if: ${{ steps.checkTag.outputs.exists == 'true' }}
+        id: imageidvar
+        run: |
+          image_tag+=${{ steps.result_release.outputs.tag_name }} && image_tag+=_ && image_tag+=${{ steps.result_release.outputs.id }}
+          echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
+            
+      - name: ECR Image and Github Tag Check
+        run: |
+          if [[ ${{ steps.checkTag.outputs.exists }} == 'false' ]]; then exit 1; fi
+          if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then exit 1; fi
+    
+    outputs:
+      release_name: ${{ steps.result_release.outputs.tag_name }}
+      release_id: ${{ steps.result_release.outputs.id }}
+
+
+
+  Deploy-ECS:
+    needs: Github-ECR-Tag-Check
+    environment: sneha-prod-backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Get release
+        id: result_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+           tag: ${{ github.event.inputs.Tag_name }}
+           repo: REAN-Foundation/reancare-service
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} \
+          --query taskDefinition > task-definition.json
+
+      - name: New image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: default
+          image: public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_name }}_${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          wait-for-service-stability: true
+
+      - name: Task Definition Variable
+        id: taskdefintionvar
+        shell: bash
+        run: |
+          echo "task_definition_arn=$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')" >> $GITHUB_OUTPUT
+
+      - name: Task Defintion ARN
+        run: |
+          echo "Task Defintion: ${{ steps.taskdefintionvar.outputs.task_definition_arn }}"
+
+      - name: Deploy Amazon ECS task definition using Duplo API
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ secrets.DUPLO_ID }}/UpdateEcsService'
+          method: 'POST'
+          data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200, "DnsPrfx": ""}'
+          bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}

@@ -172,7 +172,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     update = async (id: string, updateModel: HealthPriorityDomainModel): Promise<HealthPriorityDto> => {
         try {

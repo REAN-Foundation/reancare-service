@@ -22,6 +22,6 @@ export class BodyTemperatureMapper {
         };
 
         return model;
-    }
+    };
 
 }

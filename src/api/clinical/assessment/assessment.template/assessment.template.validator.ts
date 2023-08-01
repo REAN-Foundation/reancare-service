@@ -221,7 +221,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             ThirdOperand         : request.body.ThirdOperand,
         };
         return condition;
-    }
+    };
 
     updateScoringCondition = async (request: express.Request): Promise<CScoringCondition> => {
 
@@ -238,7 +238,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         return request.body;
-    }
+    };
 
     searchNode = async (
         request: express.Request

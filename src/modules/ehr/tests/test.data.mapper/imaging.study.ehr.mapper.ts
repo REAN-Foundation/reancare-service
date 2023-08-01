@@ -35,6 +35,6 @@ export class ImagingStudyMapper {
         };
 
         return model;
-    }
+    };
 
 }

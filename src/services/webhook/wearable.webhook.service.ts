@@ -175,7 +175,16 @@ export class TeraWebhookService {
         bodyData.forEach(async body => {
            
             const bloodPressureSamples = body.BloodPressureData.BloodPressureSamples;
-            bloodPressureSamples.forEach(async bp => {
+            Logger.instance().log(`Incoming BP samples ${JSON.stringify(bloodPressureSamples, null, 2)}`);
+            const recentBP = await this._bloodPressureRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            let filteredBPSamples = [];
+            if (recentBP != null) {
+                filteredBPSamples = bloodPressureSamples.filter((bp) => new Date(bp.TimeStamp) > recentBP.RecordDate);
+            } else {
+                filteredBPSamples = bloodPressureSamples;
+            }
+            Logger.instance().log(`Filterred BP samples ${JSON.stringify(filteredBPSamples, null, 2)}`);
+            filteredBPSamples.forEach(async bp => {
                 const bpDomainModel = {
                     PatientUserId : bodyDomainModel.User.ReferenceId,
                     Provider      : bodyDomainModel.User.Provider,
@@ -189,7 +198,16 @@ export class TeraWebhookService {
             });
 
             const bloodGlucoseSamples = body.GlucoseData.BloodGlucoseSamples;
-            bloodGlucoseSamples.forEach(async bloodGluocse => {
+            Logger.instance().log(`Incoming glucose samples ${JSON.stringify(bloodGlucoseSamples, null, 2)}`);
+            const recentGlucose = await this._bloodGlucoseRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            let filteredGlucoseSamples = [];
+            if (recentGlucose != null) {
+                filteredGlucoseSamples = bloodGlucoseSamples.filter((bloodGluocse) => new Date(bloodGluocse.TimeStamp) > recentGlucose.RecordDate);
+            } else {
+                filteredGlucoseSamples = bloodGlucoseSamples;
+            }
+            Logger.instance().log(`Filterred glucose samples ${JSON.stringify(filteredGlucoseSamples, null, 2)}`);
+            filteredGlucoseSamples.forEach(async bloodGluocse => {
                 const bloodGlucoseDomainModel = {
                     PatientUserId : bodyDomainModel.User.ReferenceId,
                     Provider      : bodyDomainModel.User.Provider,
@@ -202,7 +220,16 @@ export class TeraWebhookService {
             });
 
             const oxygenSamples = body.OxygenData.SaturationSamples;
-            oxygenSamples.forEach(async bloodOxygen => {
+            Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
+            const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            let filteredOxygenSamples = [];
+            if (recentOxygen != null) {
+                filteredOxygenSamples = oxygenSamples.filter((oxygen) => new Date(oxygen.TimeStamp) > recentOxygen.RecordDate);
+            } else {
+                filteredOxygenSamples = oxygenSamples;
+            }
+            Logger.instance().log(`Filterred oxygen samples ${JSON.stringify(filteredOxygenSamples, null, 2)}`);
+            filteredOxygenSamples.forEach(async bloodOxygen => {
                 const bloodOxygenDomainModel = {
                     PatientUserId         : bodyDomainModel.User.ReferenceId,
                     Provider              : bodyDomainModel.User.Provider,
@@ -215,7 +242,16 @@ export class TeraWebhookService {
             });
 
             const heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
-            heartRateSamples.forEach(async heartRate => {
+            Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
+            const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            let filteredPulseSamples = [];
+            if (recentPulse != null) {
+                filteredPulseSamples = heartRateSamples.filter((pulse) => new Date(pulse.TimeStamp) > recentPulse.RecordDate);
+            } else {
+                filteredPulseSamples = heartRateSamples;
+            }
+            Logger.instance().log(`Filterred pulse samples ${JSON.stringify(filteredPulseSamples, null, 2)}`);
+            filteredPulseSamples.forEach(async heartRate => {
                 const heartRateDomainModel = {
                     PatientUserId : bodyDomainModel.User.ReferenceId,
                     Provider      : bodyDomainModel.User.Provider,
@@ -228,7 +264,16 @@ export class TeraWebhookService {
             });
 
             const tempSamples = body.TemperatureData.BodyTemperatureSamples;
-            tempSamples.forEach(async bodyTemp => {
+            Logger.instance().log(`Incoming Temp samples ${JSON.stringify(tempSamples, null, 2)}`);
+            const recentTemp = await this._bodyTemperatureRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            let filteredTempSamples = [];
+            if (recentTemp != null) {
+                filteredTempSamples = tempSamples.filter((temp) => new Date(temp.TimeStamp) > recentTemp.RecordDate);
+            } else {
+                filteredTempSamples = tempSamples;
+            }
+            Logger.instance().log(`Filterred Temp samples ${JSON.stringify(filteredTempSamples, null, 2)}`);
+            filteredTempSamples.forEach(async bodyTemp => {
                 const bodyTempDomainModel = {
                     PatientUserId   : bodyDomainModel.User.ReferenceId,
                     Provider        : bodyDomainModel.User.Provider,
@@ -241,15 +286,27 @@ export class TeraWebhookService {
             });
 
             const measurementSamples = body.MeasurementsData.Measurements;
-            measurementSamples.forEach(async measurement => {
+            const recentHeight = await this._bodyHeightRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            const recentWeight = await this._bodyWeightRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            let filteredMeasurementSamples = [];
+            if (recentWeight != null) {
+                filteredMeasurementSamples = measurementSamples.filter((weight) => new Date(weight.MeasurementTime) > recentWeight.RecordDate);
+            } else {
+                filteredMeasurementSamples = measurementSamples;
+            }
+            filteredMeasurementSamples.forEach(async measurement => {
                 if (measurement.HeightCm) {
-                    const bodyHeightDomainModel = {
-                        PatientUserId : bodyDomainModel.User.ReferenceId,
-                        BodyHeight    : measurement.HeightCm,
-                        Unit          : "cm",
-                        RecordDate    : new Date(measurement.MeasurementTime)
-                    };
-                    await this._bodyHeightRepo.create(bodyHeightDomainModel);
+                    if (recentHeight != null) {
+                        if (new Date(measurement.MeasurementTime) > recentHeight.RecordDate) {
+                            const bodyHeightDomainModel = {
+                                PatientUserId : bodyDomainModel.User.ReferenceId,
+                                BodyHeight    : measurement.HeightCm,
+                                Unit          : "cm",
+                                RecordDate    : new Date(measurement.MeasurementTime)
+                            };
+                            await this._bodyHeightRepo.create(bodyHeightDomainModel);
+                        }
+                    }
                 }
 
                 if (measurement.WeightKg) {

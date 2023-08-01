@@ -7,6 +7,9 @@ import { PulseSearchFilters, PulseSearchResults } from "../../../../../../domain
 import { IPulseRepo } from '../../../../../repository.interfaces/clinical/biometrics/pulse.repo.interface ';
 import { PulseMapper } from '../../../mappers/clinical/biometrics/pulse.mapper';
 import PulseModel from '../../../models/clinical/biometrics/pulse.model';
+import { HelperRepo } from '../../common/helper.repo';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -175,6 +178,99 @@ export class PulseRepo implements IPulseRepo {
             const result = await PulseModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getRecent = async (patientUserId: string): Promise<PulseDto> => {
+        try {
+            const record = await PulseModel.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['RecordDate', 'DESC']]
+            });
+            return await PulseMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
+        : Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
+
+            let records = await PulseModel.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    Pulse         : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.gte] : dateFrom,
+                        [Op.lte] : dateTo,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(async x => {
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "Pulse",
+                    VitalPrimaryValue : x.Pulse,
+                    Unit              : x.Unit,
+                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDate        : tempDate,
+                    RecordTimeZone    : currentTimeZone,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUserResponsesBefore = async (patientUserId: string, date: Date): Promise<any[]> => {
+        try {
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
+
+            let records = await PulseModel.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    Pulse         : {
+                        [Op.not] : null,
+                    },
+                    CreatedAt : {
+                        [Op.lte] : date,
+                    }
+                }
+            });
+            records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+            const records_ = records.map(async x => {
+                const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
+                return {
+                    RecordId          : x.id,
+                    PatientUserId     : x.PatientUserId,
+                    VitalName         : "Pulse",
+                    VitalPrimaryValue : x.Pulse,
+                    Unit              : x.Unit,
+                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDate        : tempDate,
+                    RecordTimeZone    : currentTimeZone,
+                };
+            });
+            return records_;
+        }
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

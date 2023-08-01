@@ -11,18 +11,18 @@ export class BiometricsHeightStore {
 
     add = async (model: BodyHeightDomainModel): Promise<any> => {
         return await this._service.add(model);
-    }
+    };
 
     getById = async (id: string): Promise<any> => {
         return await this._service.getById(id);
-    }
+    };
 
     update = async (id: string, updates: BodyHeightDomainModel): Promise<any> => {
         return await this._service.update(id, updates);
-    }
+    };
 
     delete = async (id: string): Promise<any> => {
         return await this._service.delete(id);
-    }
+    };
 
 }

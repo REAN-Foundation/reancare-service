@@ -41,7 +41,7 @@ export class TestController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     createAssessmentTask = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
@@ -63,7 +63,7 @@ export class TestController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     testReportGeneration = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
@@ -85,6 +85,6 @@ export class TestController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
 }

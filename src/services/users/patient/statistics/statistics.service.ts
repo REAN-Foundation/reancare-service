@@ -35,7 +35,7 @@ import { BodyHeightRepo } from "../../../../database/sql/sequelize/repositories/
 import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { PatientRepo } from "../../../../database/sql/sequelize/repositories/users/patient/patient.repo";
 import { IPatientRepo } from "../../../../database/repository.interfaces/users/patient/patient.repo.interface";
-import { addBottom, addTop } from "./stat.report.commons";
+import { addBottom, addFooter, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
 import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
 import { createCalorieBalanceChart } from "./calorie.balance.stats";
@@ -130,6 +130,7 @@ export class StatisticsService {
             DisplayId         : patient.DisplayId,
             Age               : patientAge,
             Gender            : patient.User.Person.Gender,
+            BirthDate         : patient.User.Person.BirthDate.toLocaleDateString(),
             ImageResourceId   : patient.User.Person.ImageResourceId,
             ProfileImagePath  : null,
             ReportDate        : date,
@@ -210,20 +211,22 @@ export class StatisticsService {
         };
 
         //Sleep trend
-        const sleepStats = await this._sleepRepo.getStats(patientUserId, 1);
-        const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
+        const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
+        const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 6);
+        const sumSleepHours = sleepStatsForLast6Months.reduce((acc, x) => acc + x.SleepDuration, 0);
         var i = 0;
-        if (sleepStats.length > 0) {
-            for await (var s of sleepStats) {
+        if (sleepStatsForLast6Months.length > 0) {
+            for await (var s of sleepStatsForLast6Months) {
                 if (s.SleepDuration !== 0) {
                     i = i + 1;
                 }
             }
         }
-        const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / i;
+        const averageSleepHours = sleepStatsForLast6Months.length === 0 ? null : sumSleepHours / i;
         const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
         const sleepTrend = {
-            LastMonth           : sleepStats,
+            LastMonth           : sleepStatsForLastMonth,
+            Last6Months         : sleepStatsForLast6Months,
             AverageForLastMonth : averageSleepHoursStr,
         };
 
@@ -511,23 +514,25 @@ export class StatisticsService {
     private addMainPage = (document, model, pageNumber) => {
         var y = addTop(document, model, null, false);
         y = addReportMetadata(document, model, y);
-        y = addReportSummary(document, model, y);
+        // y = addReportSummary(document, model, y);
 
         var clientList = ["HCHLSTRL", "REANPTNT"];
         if (clientList.indexOf(model.ClientCode) >= 0) {
             addHealthJourney(document, model, y);
         }
         addBottom(document, pageNumber, model);
+        addFooter(document, "https://www.heart.org/", model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
 
     private addSummaryPage = (document, model, pageNumber) => {
         var y = addTop(document, model, 'Summary over Last 30 Days');
-        y = addLabValuesTable(model, document, y);
-        y = y + 15;
+        //y = addLabValuesTable(model, document, y);
+        //y = y + 15;
         addSummaryGraphs(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -538,6 +543,7 @@ export class StatisticsService {
         y = y + 15;
         addBloodGlucoseStats(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -548,6 +554,7 @@ export class StatisticsService {
         y = y + 15;
         addSleepStats(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -556,6 +563,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addLipidStats(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -564,6 +572,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addCholStats(model, document, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -574,6 +583,7 @@ export class StatisticsService {
         const currentMedications = model.Stats.Medication.CurrentMedications;
         addCurrentMedications(document, currentMedications, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -583,6 +593,7 @@ export class StatisticsService {
         y = addNutritionQuestionnaire(document, model, y);
         addNutritionServingsStats(document, model, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -608,6 +619,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addExerciseStats(document, model, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -616,6 +628,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addUserTasksStats(document, model, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };
@@ -624,6 +637,7 @@ export class StatisticsService {
         var y = addTop(document, model);
         addDailyAssessmentsStats(document, model, y);
         addBottom(document, pageNumber, model);
+        addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
     };

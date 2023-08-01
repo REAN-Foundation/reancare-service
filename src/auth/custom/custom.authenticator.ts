@@ -9,6 +9,7 @@ import { Loader } from '../../startup/loader';
 import { IAuthenticator } from '../authenticator.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { ConfigurationManager } from '../../config/configuration.manager';
+//import Terra  from 'terra-api';
 
 //////////////////////////////////////////////////////////////
 
@@ -197,6 +198,44 @@ export class CustomAuthenticator implements IAuthenticator {
                 reject(error);
             }
         });
+    };
+
+    public authenticateTerra = async (request: express.Request): Promise<AuthenticationResult> => {
+        try {
+            var res: AuthenticationResult = {
+                Result        : true,
+                Message       : 'Authenticated',
+                HttpErrorCode : 200,
+            };
+            if (!process.env.TERRA_DEV_ID && !process.env.TERRA_API_KEY) {
+                res = {
+                    Result        : false,
+                    Message       : 'Missing API key for the client',
+                    HttpErrorCode : 401,
+                };
+                return res;
+            }
+            //const terra = new Terra(process.env.TERRA_DEV_ID, process.env.TERRA_API_KEY, process.env.TERRA_SIGNING_SECRET);
+            const devId = request.headers['dev-id'];
+            //const verified = terra.checkTerraSignature(terraSiganture.toString() , request.body);
+            if (!(devId.toString() === process.env.TERRA_DEV_ID)) {
+                res = {
+                    Result        : false,
+                    Message       : 'Invalid Signing Secret: Forbidden access',
+                    HttpErrorCode : 403,
+                };
+                return res;
+            }
+
+        } catch (err) {
+            Logger.instance().log(JSON.stringify(err, null, 2));
+            res = {
+                Result        : false,
+                Message       : 'Error authenticating client',
+                HttpErrorCode : 401,
+            };
+        }
+        return res;
     };
 
 }

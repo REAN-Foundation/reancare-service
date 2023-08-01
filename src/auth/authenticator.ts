@@ -77,6 +77,24 @@ export class Authenticator {
         return await this._authenticator.rotateUserSessionToken(refreshToken);
     };
 
+    public authenticateTerraWebhook = async (
+        request: express.Request,
+        response: express.Response,
+        next: express.NextFunction
+    ): Promise<boolean> => {
+        try {
+            const authenticationResult = await this._authenticator.authenticateTerra(request);
+            if (authenticationResult.Result === false){
+                ResponseHandler.failure(request, response, authenticationResult.Message, authenticationResult.HttpErrorCode);
+                return false;
+            }
+            next();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            ResponseHandler.failure(request, response, 'Client authentication error: ' + error.message, 401);
+        }
+    };
+
 }
 
 ////////////////////////////////////////////////////////////////////////

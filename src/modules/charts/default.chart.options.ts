@@ -60,6 +60,7 @@ export class DefaultChartOptions {
             FontSize        : "14px",
             Color           : "steelblue",
             YLabel          : '',
+            XAxisTimeScaled : false,
             ShowXAxis       : true,
             ShowYAxis       : true,
             CategoriesCount : 0,

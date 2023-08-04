@@ -198,12 +198,14 @@ export interface BarChartOptions extends ChartOptions {
 }
 
 export interface MultiBarChartOptions extends ChartOptions {
-    YLabel?         : string;
-    CategoriesCount?: number;
-    Colors?         : string[];
-    Categories?     : string[];
-    ShowXAxis       : boolean;
-    ShowYAxis       : boolean;
+    YLabel?          : string;
+    CategoriesCount? : number;
+    Colors?          : string[];
+    Categories?      : string[];
+    ShowXAxis        : boolean;
+    ShowYAxis        : boolean;
+    XAxisTimeScaled? : boolean;   // true;
+
 }
 
 export interface PieChartOptions extends ChartOptions {

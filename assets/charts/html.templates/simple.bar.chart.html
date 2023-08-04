@@ -148,7 +148,10 @@
 				svg.append("g")
 					.style("font-size", fontSize)
 					.attr("transform", `translate(0,${height - marginBottom})`)
-					.call(xAxis);
+					.call(xAxis)
+					.selectAll("text")
+						.attr("x", -10)
+						.attr("transform", "rotate(-30)");
 			}
 
 			return svg.node();

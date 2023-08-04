@@ -596,7 +596,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                     Finished  : true
                 }
             });
-
+                
             stats.push({
                 DayStr     : dayStr,
                 Finished   : finished,
@@ -606,6 +606,7 @@ export class UserTaskRepo implements IUserTaskRepo {
             totalFinished += finished;
             totalUnfinished += unfinished;
         }
+        stats.sort((a, b) => new Date(a.DayStr).getTime() - new Date(b.DayStr).getTime());
         return { stats, totalFinished, totalUnfinished };
     }
 

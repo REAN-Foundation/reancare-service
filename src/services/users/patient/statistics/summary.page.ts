@@ -60,7 +60,7 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
     vals.push([false, 'LDL (mg/dL)', labValues.Lipids.LDL.StartingLDL, labValues.Lipids.LDL.CurrentLDL, labValues.Lipids.LDL.TotalLDLChange]);
     vals.push([false, 'Triglyceride (mg/dL)', labValues.Lipids.TriglycerideLevel.StartingTriglycerideLevel, labValues.Lipids.TriglycerideLevel.CurrentTriglycerideLevel, labValues.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange]);
     vals.push([false, 'A1C level (%)', labValues.Lipids.A1CLevel.StartingA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.CurrentA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.TotalA1CLevelChange.toFixed(1)]);
-    vals.push([false, useBodyWeightKg ? 'Body weight (Kg)' : 'Body weight (lbs)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
+    vals.push([false, useBodyWeightKg ? 'Body weight (lbs)' : 'Body weight (Kg)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
     vals.push([false, useLpaUnit ? 'Lipoprotein (nmo/L)' : 'Lipoprotein (mg/dL)', labValues.Lipids.Lpa.StartingLpa.toFixed(1), labValues.Lipids.Lpa.CurrentLpa.toFixed(1), labValues.Lipids.Lpa.TotalLpaChange.toFixed(1)]);
 
 
@@ -242,7 +242,7 @@ const createNutritionQueryForMonth_GroupedBarChart = async (stats: any, filename
     }
     const temp = qstats.map(c => {
         return {
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date(c.DayStr),
             y : c.Response,
             z : c.Type,
         };
@@ -258,10 +258,12 @@ const createNutritionQueryForMonth_GroupedBarChart = async (stats: any, filename
     options.CategoriesCount = categories.length;
     options.Categories      = categories;
     options.Colors          = colors;
-    options.FontSize        = '9px';
+    options.FontSize        = '10px';
     options.ShowYAxis       = false;
+    options.XAxisTimeScaled = true;
 
-    return await ChartGenerator.createGroupBarChart(temp, options, filename);
+
+    return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 
 const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: string) => {

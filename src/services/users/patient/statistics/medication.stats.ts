@@ -153,12 +153,12 @@ const createMedication_BarChart = async (stats: any, filename: string) => {
     const temp = [];
     stats.forEach(x => {
         temp.push({
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(x.DayStr)}"`,
+            x : new Date (x.DayStr),
             y : x.MissedCount,
             z : 'Missed',
         });
         temp.push({
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(x.DayStr)}"`,
+            x : new Date (x.DayStr),
             y : x.TakenCount,
             z : 'Taken',
         });
@@ -170,7 +170,8 @@ const createMedication_BarChart = async (stats: any, filename: string) => {
     options.CategoriesCount = 2;
     options.Categories      = [ "Missed", "Taken" ];
     options.Colors          = [ ChartColors.Coral, ChartColors.MediumSeaGreen ];
-    options.FontSize        = '9px';
+    options.FontSize        = '12px';
+    options.XAxisTimeScaled = true;
 
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };

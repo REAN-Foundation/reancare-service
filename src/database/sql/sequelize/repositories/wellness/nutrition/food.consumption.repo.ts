@@ -559,7 +559,8 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 });
             }
         }
-        return stats;
+        const stats_ = stats.sort((a, b) => new Date(a.DayStr).getTime() - new Date(b.DayStr).getTime());
+        return stats_;
     };
 
     private getServingStats = (records: any[], numDays: number, timezoneOffsetMinutes: number, key: string) => {
@@ -595,7 +596,8 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 });
             }
         }
-        return stats;
+        const stats_ = stats.sort((a, b) => new Date(a.DayStr).getTime() - new Date(b.DayStr).getTime());
+        return stats_;
     };
 
     private async getQuestionnaireRecords(patientUserId: string, count: number, unit: DurationType) {
@@ -613,7 +615,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 }
             }
         });
-        nutritionRecords = nutritionRecords.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+        nutritionRecords = nutritionRecords.sort((a, b) => a.CreatedAt.getTime() - b.CreatedAt.getTime());
         return nutritionRecords;
     }
 

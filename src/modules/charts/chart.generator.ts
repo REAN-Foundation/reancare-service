@@ -215,7 +215,7 @@ export class ChartGenerator {
         dataStr += `\tconst height          = ${options.Height};\n`;
         dataStr += `\tconst color           = "${options.Color}"\n`;
         dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
-        dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ?? `12px`}";\n`;
         dataStr += `\tconst xAxisTimeScaled = ${options.XAxisTimeScaled ? 'true' : 'false'};\n`;
         dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
         dataStr += `\tconst showYAxis       = ${options.ShowYAxis === false ? `false` : `true`};\n`;
@@ -238,10 +238,24 @@ export class ChartGenerator {
 
     private static createMultiBarChartTextBlock(data: any[], options: MultiBarChartOptions) {
         let dataStr = `\n\tconst data = [\n`;
-        for (var d of data) {
+        /*for (var d of data) {
             const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()}, z: "${d.z?.toString()}" },\n`;
             dataStr += str;
+        }*/
+
+        if (options.XAxisTimeScaled) {
+            for (var d of data) {
+                const str = `\t\t{ x: new Date("${d.x?.toISOString()}"), y: ${d.y?.toString()}, z: "${d.z?.toString()}" },\n`;
+                dataStr += str;
+            }
         }
+        else {
+            for (var d of data) {
+                const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()}, z: "${d.z?.toString()}" },\n`;
+                dataStr += str;
+            }
+        }
+
         dataStr += `\t];\n\n`;
         dataStr += `\tconst width           = ${options.Width};\n`;
         dataStr += `\tconst height          = ${options.Height};\n`;
@@ -249,6 +263,7 @@ export class ChartGenerator {
         dataStr += `\tconst categoriesCount = ${options.CategoriesCount}\n`;
         dataStr += `\tconst categories      = ${JSON.stringify(options.Categories)}\n`;
         dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
+        dataStr += `\tconst xAxisTimeScaled = ${options.XAxisTimeScaled ? 'true' : 'false'};\n`;
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
         dataStr += `\tconst showXAxis       = ${options.ShowXAxis === false ? `false` : `true`};\n`;
         dataStr += `\tconst showYAxis       = ${options.ShowYAxis === false ? `false` : `true`};\n`;
@@ -272,7 +287,7 @@ export class ChartGenerator {
         dataStr += `\tconst width           = ${options.Width};\n`;
         dataStr += `\tconst height          = ${options.Height};\n`;
         dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
-        dataStr += `\tconst fontSize        = "${options.FontSize ?? `20px`}";\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ?? `16px`}";\n`;
         return dataStr;
     }
 

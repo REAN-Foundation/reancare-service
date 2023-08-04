@@ -79,12 +79,5 @@
             "Sunrise Hospital and Medical Center",
             "Parkridge East Hospital"
         ]
-    },
-    {
-        "HealthSystem": "None of the Above",
-        "Tags":["Cholesterol", "Stroke"],
-        "AssociatedHospitals": [
-            "None of the Above"
-        ]
     }
 ]

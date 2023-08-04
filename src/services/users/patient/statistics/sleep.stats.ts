@@ -16,7 +16,7 @@ import { DefaultChartOptions } from "../../../../modules/charts/default.chart.op
 export const addSleepStats = (model, document, y) => {
 
     const chartImage = 'SleepHours_LastMonth';
-    const detailedTitle = 'Sleep in Hours Over 6 Months';
+    const detailedTitle = 'Sleep in Hours per Day';
     const titleColor = '#505050';
     const sectionTitle = 'Sleep History';
     const icon = Helper.getIconsPath('sleep.png');
@@ -51,7 +51,7 @@ const createSleepTrend_BarChart = async (stats: any, filename: string) => {
     }
     const sleepStats = stats.map(c => {
         return {
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date(c.DayStr),
             y : c.SleepDuration
         };
     });
@@ -60,6 +60,7 @@ const createSleepTrend_BarChart = async (stats: any, filename: string) => {
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.YLabel = 'Per 24-hour period';
     options.Color  = ChartColors.GrayDarker;
+    options.XAxisTimeScaled  = true;
 
     return await ChartGenerator.createBarChart(sleepStats, options, filename);
 };

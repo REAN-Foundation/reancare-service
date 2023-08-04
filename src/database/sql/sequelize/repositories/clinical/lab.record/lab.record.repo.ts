@@ -327,6 +327,7 @@ export class LabRecordRepo implements ILabRecordRepo {
                 LDL               : records_.filter(x => x.DisplayName === 'LDL'),
                 TriglycerideLevel : records_.filter(x => x.DisplayName === 'Triglyceride Level'),
                 A1CLevel          : records_.filter(x => x.DisplayName === 'A1C Level'),
+                Lipoprotein       : records_.filter(x => x.DisplayName === 'Lipoprotein'),
             };
         } catch (error) {
             Logger.instance().log(error.message);

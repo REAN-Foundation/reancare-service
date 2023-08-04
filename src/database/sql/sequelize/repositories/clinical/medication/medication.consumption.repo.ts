@@ -557,6 +557,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 MissedCount : missedCount,
             });
         }
+        const stats_ = stats.sort((a, b) => new Date(a.DayStr).getTime() - new Date(b.DayStr).getTime());
 
         const totalMissed = stats.map(x => x.MissedCount).reduce((a, b) => a + b, 0);
         const totalTaken = stats.map(x => x.TakenCount).reduce((a, b) => a + b, 0);
@@ -564,7 +565,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         return {
             TotalMissedCount : totalMissed,
             TotalTakenCount  : totalTaken,
-            Daily            : stats
+            Daily            : stats_
         };
     }
 

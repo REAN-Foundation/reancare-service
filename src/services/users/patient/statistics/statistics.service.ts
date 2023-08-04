@@ -113,9 +113,9 @@ export class StatisticsService {
         const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
         const dateObj = new Date(assessmentDate);
         const options: Intl.DateTimeFormatOptions = {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
+            day : '2-digit',
+            month : 'long',
+            year : 'numeric',
         };
         const reportDateStr = new Intl.DateTimeFormat('en-US', options).format(dateObj);
         Logger.instance().log(`Report Date:: ${reportDateStr}`);
@@ -375,7 +375,7 @@ export class StatisticsService {
             cholesterolStats.Lipoprotein[cholesterolStats.Lipoprotein.length - 1].PrimaryValue : 0;
         const recentLpa = await this._labRecordsRepo.getRecent(patientUserId, 'Lipoprotein');
         const currentLpa = recentLpa ? recentLpa.PrimaryValue : 0;
-        const unit = recentLpa ? recentLpa.Unit : 'mg/dl'
+        const unit = recentLpa ? recentLpa.Unit : 'mg/dl';
         const lastMeasuredLpa = recentLpa ? recentLpa.RecordedAt : null;
         const totalLpaChange = currentLpa - startingLpa;
 

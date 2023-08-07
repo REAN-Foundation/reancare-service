@@ -113,9 +113,9 @@ export class StatisticsService {
         const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
         const dateObj = new Date(assessmentDate);
         const options: Intl.DateTimeFormatOptions = {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
+            day : '2-digit',
+            month : 'long',
+            year : 'numeric',
         };
         const reportDateStr = new Intl.DateTimeFormat('en-US', options).format(dateObj);
         Logger.instance().log(`Report Date:: ${reportDateStr}`);
@@ -212,7 +212,7 @@ export class StatisticsService {
 
         //Sleep trend
         const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
-        const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 6);
+        const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 3);
         const sumSleepHours = sleepStatsForLast6Months.reduce((acc, x) => acc + x.SleepDuration, 0);
         var i = 0;
         if (sleepStatsForLast6Months.length > 0) {
@@ -370,6 +370,15 @@ export class StatisticsService {
         const lastMeasuredA1C = recentA1C ? recentA1C.RecordedAt : null;
         const totalA1CLevelChange = currentA1CLevel - startingA1CLevel;
 
+        //Lp(a)
+        var startingLpa = cholesterolStats.Lipoprotein.length > 0 ?
+            cholesterolStats.Lipoprotein[cholesterolStats.Lipoprotein.length - 1].PrimaryValue : 0;
+        const recentLpa = await this._labRecordsRepo.getRecent(patientUserId, 'Lipoprotein');
+        const currentLpa = recentLpa ? recentLpa.PrimaryValue : 0;
+        const unit = recentLpa ? recentLpa.Unit : 'mg/dl';
+        const lastMeasuredLpa = recentLpa ? recentLpa.RecordedAt : null;
+        const totalLpaChange = currentLpa - startingLpa;
+
         return {
             BodyWeight : {
                 History            : bodyWeightStats,
@@ -428,6 +437,13 @@ export class StatisticsService {
                     CurrentA1CLevel     : currentA1CLevel,
                     TotalA1CLevelChange : totalA1CLevelChange,
                     LastMeasuredA1C     : lastMeasuredA1C,
+                },
+                Lpa : {
+                    StartingLpa     : startingLpa,
+                    CurrentLpa      : currentLpa,
+                    TotalLpaChange  : totalLpaChange,
+                    LastMeasuredLpa : lastMeasuredLpa,
+                    Unit            : unit
                 }
             }
         };

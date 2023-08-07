@@ -126,7 +126,7 @@ const createExerciseMoveMinutesForMonth_BarChart = async (stats: any, filename: 
     }
     const calorieStats = stats.map(c => {
         return {
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date(c.DayStr),
             y : c.MoveMinutes
         };
     });
@@ -135,6 +135,8 @@ const createExerciseMoveMinutesForMonth_BarChart = async (stats: any, filename: 
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.YLabel = 'Minutes/day';
     options.Color  = ChartColors.Coral;
+    options.FontSize = '12px';
+    options.XAxisTimeScaled  = true;
 
     return await ChartGenerator.createBarChart(calorieStats, options, filename);
 };

@@ -183,27 +183,36 @@ export class SleepRepo implements ISleepRepo {
 
     getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
         try {
-            const numDays = 30 * numMonths;
-            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            // const numDays = 30 * numMonths;
+            // const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
             const records = await this.getSleepRecords(patientUserId, numMonths, DurationType.Month);
             if (records.length === 0) {
                 return [];
             }
-            const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
-            const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
-            const stats = [];
-            for (var day of dayList) {
-                var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
-                var dayEnd = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
-                const dayStr = dayStart.toISOString().split('T')[0];
-                const filtered = records.filter(x => x.RecordDate >= dayStart && x.RecordDate <= dayEnd);
-                const totalSleepHours = filtered.reduce((acc, x) => acc + x.SleepDuration, 0);
-                stats.push({
-                    SleepDuration : totalSleepHours,
-                    DayStr        : dayStr,
-                });
-            }
-            return stats;
+            return records.map(x => {
+                const dayStr = x.RecordDate.toISOString()
+                    .split('T')[0];
+                return {
+                    SleepDuration : x.SleepDuration,
+                    DayStr    : dayStr,
+                };
+            });
+            // const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+            // const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
+            // const stats = [];
+            // for (var day of dayList) {
+            //     var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            //     var dayEnd = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
+            //     const dayStr = dayStart.toISOString().split('T')[0];
+            //     const filtered = records.filter(x => x.RecordDate >= dayStart && x.RecordDate <= dayEnd);
+            //     const totalSleepHours = filtered.reduce((acc, x) => acc + x.SleepDuration, 0);
+            //     stats.push({
+            //         SleepDuration : totalSleepHours,
+            //         DayStr        : dayStr,
+            //     });
+            // }
+            // Logger.instance().log(JSON.stringify(stats));
+            // return stats;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -228,7 +237,7 @@ export class SleepRepo implements ISleepRepo {
                 RecordDate    : x.RecordDate,
             };
         });
-        sleepRecords = sleepRecords.sort((a, b) => b.RecordDate.getTime() - a.RecordDate.getTime());
+        sleepRecords = sleepRecords.sort((a, b) => a.RecordDate.getTime() - b.RecordDate.getTime());
         return sleepRecords;
     }
 

@@ -31,4 +31,6 @@ export interface ICohortRepo {
 
     getCohortsForTenant(tenantId: uuid): Promise<CohortDto[]>;
 
+    removeUserFromAllCohorts(userId: uuid): Promise<boolean>;
+
 }

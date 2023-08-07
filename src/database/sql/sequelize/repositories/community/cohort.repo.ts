@@ -277,4 +277,18 @@ export class CohortRepo implements ICohortRepo {
         }
     };
 
+    public removeUserFromAllCohorts = async (userId: string): Promise<boolean> => {
+        try {
+            const result = await CohortUser.destroy({
+                where : {
+                    UserId : userId,
+                }
+            });
+            return result > 0;
+        }
+        catch (error) {
+            throw new Error(`Failed to remove user from all cohorts: ${error.message}`);
+        }
+    };
+
 }

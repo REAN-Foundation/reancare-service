@@ -60,4 +60,8 @@ export class CohortService {
         return await this._cohortRepo.getCohortsForTenant(tenantId);
     };
 
+    removeUserFromAllCohorts = async (userId: string): Promise<boolean> => {
+        return await this._cohortRepo.removeUserFromAllCohorts(userId);
+    };
+
 }

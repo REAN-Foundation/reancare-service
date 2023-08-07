@@ -79,6 +79,8 @@ import { register as registerWearableDeviceDetailsRoutes } from './device.data/d
 import { register as registerDonationCommunicationRoutes } from './clinical/donation.communication/donation.communication.routes';
 import { register as registerUserGroupRoutes } from './community/user.groups/user.group.routes';
 import { register as registerReminderRoutes } from './general/reminder/reminder.routes';
+import { register as registerTenantRoutes } from './tenant/tenant.routes';
+import { register as registerCohortRoutes } from './community/cohorts/cohort.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,6 +184,8 @@ export class Router {
                 registerDonationCommunicationRoutes(this._app);
                 registerUserGroupRoutes(this._app);
                 registerReminderRoutes(this._app);
+                registerTenantRoutes(this._app);
+                registerCohortRoutes(this._app);
 
                 resolve(true);
 

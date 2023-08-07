@@ -46,7 +46,7 @@ export class CohortController extends BaseController {
             if (record == null) {
                 throw new ApiError(400, 'Cannot start conversation!');
             }
-            ResponseHandler.success(request, response, 'Conversation started successfully!', 201, {
+            ResponseHandler.success(request, response, 'Cohort created successfully!', 201, {
                 Cohort : record,
             });
         } catch (error) {
@@ -79,7 +79,7 @@ export class CohortController extends BaseController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} medical condition records retrieved successfully!`;
+                    : `Total ${count} cohort records retrieved successfully!`;
             ResponseHandler.success(request, response, message, 200, {
                 Cohorts : searchResults });
         } catch (error) {
@@ -98,7 +98,7 @@ export class CohortController extends BaseController {
             }
             const updated = await this._service.update(id, model);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update medical condition record!');
+                throw new ApiError(400, 'Unable to update cohort record!');
             }
             ResponseHandler.success(request, response, 'Cohort record updated successfully!', 200, {
                 Cohort : updated,

@@ -64,6 +64,7 @@
 									"try {\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.environment.set(\"ADMIN_USER_JWT\", jsonRes.Data.AccessToken);\r",
+									"    pm.environment.set(\"ADMIN_USER_ID\", jsonRes.Data.User.id);\r",
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
@@ -836,6 +837,732 @@
 			]
 		},
 		{
+			"name": "Tenants",
+			"item": [
+				{
+					"name": "Create a new tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"TENANT_ID\", jsonRes.Data.Tenant.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Doctor is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Tenant');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Name');\r",
+									"    pm.expect(jsonRes.Data.Tenant.Name).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Description');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Code');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Phone');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Email');\r",
+									"    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"Sneha\",\r\n    \"Description\": \"SNEHA is a non-profit organisation that works with women, children and families in communities; and with public health and safety systems. Our innovative work in vulnerable settlements aims to reduce maternal and neonatal mortality and morbidity, child malnutrition, reduce adolescent anaemia and gender-based violence - all key determinants of health equity for the family and the community at large.\",\r\n    \"Code\": \"SNEHAx\",\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Email\": \"mitchelle.dsouza@snehamumbai.org\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/tenants",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tenants"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				},
+				{
+					"name": "Update tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"TENANT_ID\", jsonRes.Data.Tenant.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Tenant is updated\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Tenant');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Name');\r",
+									"    pm.expect(jsonRes.Data.Tenant.Name).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Description');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Code');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Phone');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Email');\r",
+									"    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Randomly generated user details\r",
+									"\r",
+									"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+									"\r",
+									"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+									"\r",
+									"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+									"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+									"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+									"var password = \"Test@123\";\r",
+									"\r",
+									"pm.environment.set(\"FIRST_NAME\", first);\r",
+									"pm.environment.set(\"LAST_NAME\", last);\r",
+									"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+									"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
+									"pm.environment.set(\"EMAIL\", email);\r",
+									"pm.environment.set(\"PASSWORD\", password);\r",
+									"\r",
+									"//Profile images\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"Sneha-Mumbai\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/tenants/{{TENANT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tenants",
+								"{{TENANT_ID}}"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				},
+				{
+					"name": "Get tenant by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Tenant record is retrieved\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Tenant');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Name');\r",
+									"    pm.expect(jsonRes.Data.Tenant.Name).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Description');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Code');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Phone');\r",
+									"    pm.expect(jsonRes.Data.Tenant).to.have.property('Email');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Randomly generated user details\r",
+									"\r",
+									"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+									"\r",
+									"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+									"\r",
+									"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+									"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+									"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+									"var password = \"Test@123\";\r",
+									"\r",
+									"pm.environment.set(\"FIRST_NAME\", first);\r",
+									"pm.environment.set(\"LAST_NAME\", last);\r",
+									"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+									"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
+									"pm.environment.set(\"EMAIL\", email);\r",
+									"pm.environment.set(\"PASSWORD\", password);\r",
+									"\r",
+									"//Profile images\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/tenants/{{TENANT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tenants",
+								"{{TENANT_ID}}"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				},
+				{
+					"name": "Search tenants",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Tenant records are retrieved\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('TenantRecords');\r",
+									"    pm.expect(jsonRes.Data.TenantRecords).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.TenantRecords.Items).length.greaterThan(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/tenants/search",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"tenants",
+								"search"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cohorts",
+			"item": [
+				{
+					"name": "Create a new cohort",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"COHORT_ID\", jsonRes.Data.Cohort.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Doctor is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Cohort');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('TenantId');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('Name');\r",
+									"    pm.expect(jsonRes.Data.Cohort.Name).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('Description');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('ImageUrl');   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Randomly generated user details\r",
+									"\r",
+									"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+									"\r",
+									"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+									"\r",
+									"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+									"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+									"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+									"var password = \"Test@123\";\r",
+									"\r",
+									"pm.environment.set(\"FIRST_NAME\", first);\r",
+									"pm.environment.set(\"LAST_NAME\", last);\r",
+									"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+									"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
+									"pm.environment.set(\"EMAIL\", email);\r",
+									"pm.environment.set(\"PASSWORD\", password);\r",
+									"\r",
+									"//Profile images\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"Dharavi\",\r\n    \"TenantId\": \"{{TENANT_ID}}\",\r\n    \"Description\": \"SNEHA Dharavi is the location for project.\",\r\n    \"ImageUrl\": \"https://www.snehamumbai.org/wp-content/themes/sneha/img/logo.png\",\r\n    \"OwnerUserId\": \"{{ADMIN_USER_ID}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/cohorts",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cohorts"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				},
+				{
+					"name": "Update cohort",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"TENANT_ID\", jsonRes.Data.Tenant.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Cohort is updated\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Cohort');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('TenantId');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('Name');\r",
+									"    pm.expect(jsonRes.Data.Cohort.Name).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('Description');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('ImageUrl'); \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"Dharavi-Mumbai\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/cohorts/{{COHORT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cohorts",
+								"{{COHORT_ID}}"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				},
+				{
+					"name": "Get cohort by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Cohort record is retrieved\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Cohort');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('TenantId');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('Name');\r",
+									"    pm.expect(jsonRes.Data.Cohort.Name).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('Description');\r",
+									"    pm.expect(jsonRes.Data.Cohort).to.have.property('ImageUrl'); \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/cohorts/{{COHORT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cohorts",
+								"{{COHORT_ID}}"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				},
+				{
+					"name": "Search cohorts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Cohort records is retrieved\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Cohorts');\r",
+									"    pm.expect(jsonRes.Data.Cohorts).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Cohorts.Items).length.greaterThan(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/cohorts/search",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"cohorts",
+								"search"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Patients",
 			"item": [
 				{
@@ -1317,6 +2044,91 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patients",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patients"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				},
+				{
+					"name": "Register patient- with only a phone number Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+									"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+									"    pm.environment.set(\"PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+									"    pm.environment.set(\"PERSON_ID_1\", jsonRes.Data.Patient.User.Person.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Patient is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Patient');\r",
+									"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
+									"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+									"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"+91-9730359993\"\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/patients",
@@ -7617,7 +8429,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Bring milk from shop\",\n    \"WhenDate\": \"2023-07-20\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\"\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Bring milk from shop\",\n    \"WhenDate\": \"2023-07-22\",\n    \"WhenTime\": \"21:26:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -7909,7 +8721,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 3,\n    \"RepeatAfterEveryNUnit\": \"Hour\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 100\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 3,\n    \"RepeatAfterEveryNUnit\": \"Hour\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 100,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -8201,7 +9013,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 10,\n    \"RepeatAfterEveryNUnit\": \"Day\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 100\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 10,\n    \"RepeatAfterEveryNUnit\": \"Day\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 100,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -8293,7 +9105,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 3,\n    \"RepeatAfterEveryNUnit\": \"Month\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 100\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 3,\n    \"RepeatAfterEveryNUnit\": \"Month\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 100,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -8385,7 +9197,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 2,\n    \"RepeatAfterEveryNUnit\": \"Quarter\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2026-08-25\",\n    \"EndAfterNRepetitions\": 100\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 2,\n    \"RepeatAfterEveryNUnit\": \"Quarter\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2026-08-25\",\n    \"EndAfterNRepetitions\": 100,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -8477,7 +9289,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 2,\n    \"RepeatAfterEveryNUnit\": \"Year\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2026-08-25\",\n    \"EndAfterNRepetitions\": 100\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"RepeatAfterEvery\": 2,\n    \"RepeatAfterEveryNUnit\": \"Year\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2026-08-25\",\n    \"EndAfterNRepetitions\": 100,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -8574,7 +9386,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 10\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 10,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -8666,7 +9478,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 5,\n    \"RepeatList\": [\n        \"Wednesday\",\n        \"Friday\"\n    ]\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 5,\n    \"RepeatList\": [\n        \"Wednesday\",\n        \"Friday\"\n    ],\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -8828,7 +9640,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 10\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 10,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -8920,7 +9732,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 5,\n    \"RepeatList\": [\n        \"First-Wednesday\",\n        \"Last-Friday\",\n        \"Second-Saturday\"\n    ]\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 5,\n    \"RepeatList\": [\n        \"First-Wednesday\",\n        \"Last-Friday\",\n        \"Second-Saturday\"\n    ],\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -9082,7 +9894,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 10\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2024-08-25\",\n    \"EndAfterNRepetitions\": 10,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -9244,7 +10056,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2023-08-25\",\n    \"EndAfterNRepetitions\": 5\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"20:35:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-07-22\",\n    \"EndDate\": \"2023-08-25\",\n    \"EndAfterNRepetitions\": 5,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -9341,7 +10153,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2023-08-25\",\n    \"EndAfterNRepetitions\": 5\n}",
+											"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Name\": \"Drink Water\",\n    \"WhenTime\": \"13:34:12\",\n    \"HookUrl\": \"{{HOOK_URL}}\",\n    \"StartDate\": \"2023-08-12\",\n    \"EndDate\": \"2023-08-25\",\n    \"EndAfterNRepetitions\": 5,\n    \"NotificationType\": \"SMS\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"

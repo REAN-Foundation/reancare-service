@@ -17,7 +17,7 @@ import Organization from './organization.model';
     paranoid        : true,
     freezeTableName : true,
 })
-export default class OrganizationAddresses extends Model {
+export default class OrganizationAddress extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -37,6 +37,9 @@ export default class OrganizationAddresses extends Model {
         allowNull : false,
     })
     OrganizationId: string;
+
+    @BelongsTo(() => Organization)
+    Organization: Organization;
 
     @IsUUID(4)
     @ForeignKey(() => Address)

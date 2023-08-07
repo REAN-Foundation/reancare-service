@@ -161,18 +161,21 @@ export interface MultiLineChartOptions extends ChartOptions {
 }
 
 export interface BarChartOptions extends ChartOptions {
-    YLabel?  : string;
-    ShowXAxis: boolean;
-    ShowYAxis: boolean;
+    YLabel?          : string;
+    XAxisTimeScaled? : boolean;   // true;
+    ShowXAxis        : boolean;
+    ShowYAxis        : boolean;
 }
 
 export interface MultiBarChartOptions extends ChartOptions {
-    YLabel?         : string;
-    CategoriesCount?: number;
-    Colors?         : string[];
-    Categories?     : string[];
-    ShowXAxis       : boolean;
-    ShowYAxis       : boolean;
+    YLabel?          : string;
+    CategoriesCount? : number;
+    Colors?          : string[];
+    Categories?      : string[];
+    ShowXAxis        : boolean;
+    ShowYAxis        : boolean;
+    XAxisTimeScaled? : boolean;   // true;
+
 }
 
 export interface PieChartOptions extends ChartOptions {

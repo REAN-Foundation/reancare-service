@@ -44,7 +44,7 @@ export default class Role extends Model {
         allowNull : true,
     })
     Description: string;
-    
+
     @Column
     @CreatedAt
     CreatedAt: Date;

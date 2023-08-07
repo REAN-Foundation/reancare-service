@@ -54,6 +54,7 @@ export default class Tenant extends Model {
     @Column({
         type      : DataType.STRING(16),
         allowNull : false,
+        unique    : true,
     })
     Code: string;
 

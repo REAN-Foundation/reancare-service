@@ -28,7 +28,8 @@ export class TenantRepo implements ITenantRepo {
             return TenantMapper.toDto(tenant);
         }
         catch (error) {
-            throw new Error(`Failed to create tenant: ${error.message}`);
+            const msg = error.message + '. ' + error?.original?.message;
+            throw new Error(`Failed to create tenant: ${msg}`);
         }
     };
 

@@ -229,7 +229,7 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     createOneTimeSchedule = async (reminder: ReminderDto): Promise<any[]> => {
         const userId = reminder.UserId;

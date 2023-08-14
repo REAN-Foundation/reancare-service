@@ -9,7 +9,8 @@
     },
     "Database" : {
         "Type": "SQL",
-        "ORM": "Sequelize"
+        "ORM": "Sequelize",
+        "Flavour": "MySQL"
     },
     "Ehr" : {
         "Enabled": false,

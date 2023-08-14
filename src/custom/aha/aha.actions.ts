@@ -220,7 +220,6 @@ export class AHAActions {
                             } else {
                                 Logger.instance().log(`[HsCron] Failed to send SMS for ${phoneNumber}, hence skip creating task.`);
                             }
-
                         } else {
                             Logger.instance().log(`[HsCron] Health behaviors assessment is not finished. Status:${action.Status} `);
                         }

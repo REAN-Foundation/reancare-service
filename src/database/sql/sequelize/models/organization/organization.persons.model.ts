@@ -1,23 +1,34 @@
 import {
-    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Model, PrimaryKey, Table, UpdatedAt
+    Table,
+    Column,
+    Model,
+    DataType,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    IsUUID,
+    PrimaryKey,
+    ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
+
 import { v4 } from 'uuid';
-import Address from '../address.model';
 import Organization from './organization.model';
+import Person from '../person/person.model';
 
 ///////////////////////////////////////////////////////////////////////
 //This is a junction table model representing many-to-many association
-//between organization and address.
+//between person and organizations
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'OrganizationAddresses',
-    tableName       : 'organization_addresses',
+    modelName       : 'OrganizationPersons',
+    tableName       : 'organization_persons',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class OrganizationAddresses extends Model {
+export default class OrganizationPersons extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -31,6 +42,17 @@ export default class OrganizationAddresses extends Model {
     id: string;
 
     @IsUUID(4)
+    @ForeignKey(() => Person)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    PersonId: string;
+
+    @BelongsTo(() => Person)
+    Person: Person;
+
+    @IsUUID(4)
     @ForeignKey(() => Organization)
     @Column({
         type      : DataType.UUID,
@@ -38,22 +60,14 @@ export default class OrganizationAddresses extends Model {
     })
     OrganizationId: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => Address)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    AddressId: string;
-
-    @BelongsTo(() => Address)
-    Address: Address;
+    @BelongsTo(() => Organization)
+    Organization: Organization;
 
     @Column({
         type      : DataType.STRING(32),
         allowNull : true
     })
-    AddressType: string;
+    AssociationAs: string;
 
     @Column
     @CreatedAt

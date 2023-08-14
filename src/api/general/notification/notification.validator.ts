@@ -56,7 +56,7 @@ export class NotificationValidator extends BaseValidator {
         return domainModel;
     };
 
-    markAsRead= async (request: express.Request): Promise<NotificationDomainModel> => {
+    markAsRead = async (request: express.Request): Promise<NotificationDomainModel> => {
 
         await this.validateMarkAsReadBody(request);
         const domainModel = this.getDomainModel(request);

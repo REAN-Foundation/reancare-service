@@ -46,12 +46,12 @@ import { addCurrentMedications, addMedicationStats, createMedicationTrendCharts 
 import { addNutritionQuestionnaire, addNutritionServingsStats, createNutritionCharts } from "./nutrition.stats";
 import { addSleepStats, createSleepTrendCharts } from "./sleep.stats";
 import { addUserTasksStats, createUserTaskCharts } from "./user.tasks.stats";
-import { addHealthJourney, addReportMetadata, addReportSummary } from "./main.page";
+import { addHealthJourney, addReportMetadata } from "./main.page";
 import { PersonRepo } from "../../../../database/sql/sequelize/repositories/person/person.repo";
 import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
 import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.repo";
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
-import { addLabValuesTable, addSummaryGraphs, createSummaryCharts } from "./summary.page";
+import { addSummaryGraphs, createSummaryCharts } from "./summary.page";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,13 +113,13 @@ export class StatisticsService {
         const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
         const dateObj = new Date(assessmentDate);
         const options: Intl.DateTimeFormatOptions = {
-            day : '2-digit',
+            day   : '2-digit',
             month : 'long',
-            year : 'numeric',
+            year  : 'numeric',
         };
         const reportDateStr = new Intl.DateTimeFormat('en-US', options).format(dateObj);
         Logger.instance().log(`Report Date:: ${reportDateStr}`);
-        
+
         const race = patient.HealthProfile.Race ? patient.HealthProfile.Race : 'Unspecified';
         const ethnicity = patient.HealthProfile.Ethnicity ? patient.HealthProfile.Ethnicity : 'Unspecified';
         const tobacco = patient.HealthProfile.TobaccoQuestionAns === true ? 'Yes' : 'No';

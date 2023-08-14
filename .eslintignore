@@ -4,3 +4,6 @@ src/**/*.json
 src/**/*.zip
 src/assets
 src/tests
+tests/**/*.json
+tests/**/*.ts
+tests

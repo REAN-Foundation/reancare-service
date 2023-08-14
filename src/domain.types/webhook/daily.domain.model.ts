@@ -119,7 +119,6 @@ export interface StressSample {
   Level: number;
 }
 
-
 export enum ActivityLevel {
   UNKNOWN = 0,
   REST = 1,

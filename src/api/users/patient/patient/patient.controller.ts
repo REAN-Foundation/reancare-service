@@ -7,6 +7,7 @@ import { PersonDomainModel } from '../../../../domain.types/person/person.domain
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
+import { CohortService } from '../../../../services/community/cohort.service';
 import { Loader } from '../../../../startup/loader';
 import { PatientValidator } from './patient.validator';
 import { BaseUserController } from '../../base.user.controller';
@@ -38,6 +39,8 @@ export class PatientController extends BaseUserController {
 
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
+    _cohortService: CohortService = null;
+
     _validator = new PatientValidator();
 
     constructor() {
@@ -47,6 +50,7 @@ export class PatientController extends BaseUserController {
         this._personService = Loader.container.resolve(PersonService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
+        this._cohortService = Loader.container.resolve(CohortService);
     }
 
     //#endregion
@@ -59,6 +63,10 @@ export class PatientController extends BaseUserController {
 
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
+
+            if (createModel.CohortId != null) {
+                await this.addPatientToCohort(patient.UserId, createModel.CohortId);
+            }
 
             const clientCode = request.currentClient.ClientCode;
             await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
@@ -240,6 +248,7 @@ export class PatientController extends BaseUserController {
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
+            deleted = await this._cohortService.removeUserFromAllCohorts(userId);
             deleted = await this._userService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
@@ -322,6 +331,24 @@ export class PatientController extends BaseUserController {
             EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
                 Location : location
             });
+        }
+    };
+
+    private addPatientToCohort = async (patientUserId: uuid, cohortId: uuid) => {
+        try {
+            const cohort = await this._cohortService.getById(cohortId);
+            if (cohort == null) {
+                Logger.instance().log(`Cohort not found: ${cohortId}`);
+                return;
+            }
+            const added = await this._cohortService.addUserToCohort(cohortId, patientUserId);
+            if (!added) {
+                throw new ApiError(400, 'Unable to add patient to cohort!');
+            }
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw error;
         }
     };
 

@@ -1,5 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { BodyWeightDomainModel } from '../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { BodyWeightStore } from "../../modules/ehr/services/body.weight.store";
 import { Loader } from "../../startup/loader";
@@ -51,10 +50,9 @@ export class TeraWebhookService {
         }
     }
 
-    create = async (bodyWeightDomainModel: BodyWeightDomainModel) => {
-
-        // var dto = await this._bloodCholesterolRepo.create(bodyWeightDomainModel);
-    };
+    // create = async (bodyWeightDomainModel: BodyWeightDomainModel) => {
+    //     // var dto = await this._bloodCholesterolRepo.create(bodyWeightDomainModel);
+    // };
 
     auth = async (authDomainModel: AuthDomainModel) => {
 
@@ -202,7 +200,8 @@ export class TeraWebhookService {
             const recentGlucose = await this._bloodGlucoseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredGlucoseSamples = [];
             if (recentGlucose != null) {
-                filteredGlucoseSamples = bloodGlucoseSamples.filter((bloodGluocse) => new Date(bloodGluocse.TimeStamp) > recentGlucose.RecordDate);
+                filteredGlucoseSamples = bloodGlucoseSamples.filter((bloodGluocse) =>
+                    new Date(bloodGluocse.TimeStamp) > recentGlucose.RecordDate);
             } else {
                 filteredGlucoseSamples = bloodGlucoseSamples;
             }
@@ -224,7 +223,8 @@ export class TeraWebhookService {
             const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredOxygenSamples = [];
             if (recentOxygen != null) {
-                filteredOxygenSamples = oxygenSamples.filter((oxygen) => new Date(oxygen.TimeStamp) > recentOxygen.RecordDate);
+                filteredOxygenSamples = oxygenSamples.filter((oxygen) =>
+                    new Date(oxygen.TimeStamp) > recentOxygen.RecordDate);
             } else {
                 filteredOxygenSamples = oxygenSamples;
             }
@@ -246,7 +246,8 @@ export class TeraWebhookService {
             const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredPulseSamples = [];
             if (recentPulse != null) {
-                filteredPulseSamples = heartRateSamples.filter((pulse) => new Date(pulse.TimeStamp) > recentPulse.RecordDate);
+                filteredPulseSamples = heartRateSamples.filter((pulse) =>
+                    new Date(pulse.TimeStamp) > recentPulse.RecordDate);
             } else {
                 filteredPulseSamples = heartRateSamples;
             }
@@ -290,7 +291,8 @@ export class TeraWebhookService {
             const recentWeight = await this._bodyWeightRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredMeasurementSamples = [];
             if (recentWeight != null) {
-                filteredMeasurementSamples = measurementSamples.filter((weight) => new Date(weight.MeasurementTime) > recentWeight.RecordDate);
+                filteredMeasurementSamples = measurementSamples.filter((weight) =>
+                    new Date(weight.MeasurementTime) > recentWeight.RecordDate);
             } else {
                 filteredMeasurementSamples = measurementSamples;
             }

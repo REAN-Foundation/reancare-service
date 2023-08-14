@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { IBloodWarriorService } from "../interface/community.network.interface";
 import * as DonorMessages from '../donor.management/donor.messages.json';
@@ -8,8 +9,13 @@ import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 @injectable()
 export class DonorNetworkService implements IBloodWarriorService {
 
-    public fetchActivities = async (careplanCode: string, enrollmentId: string,participantId?: string,
-        startDate?: Date, endDate?: Date): Promise<CareplanActivity[]> => {
+    public fetchActivities = async (
+        careplanCode: string,
+        enrollmentId: string,
+        participantId?: string,
+        startDate?: Date,
+        endDate?: Date): Promise<CareplanActivity[]> => {
+            
         const activities = DonorMessages['default'];
         var activityEntities: CareplanActivity[] = [];
 

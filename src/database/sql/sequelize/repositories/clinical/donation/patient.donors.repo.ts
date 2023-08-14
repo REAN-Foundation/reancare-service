@@ -112,7 +112,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
             // };
 
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.like]: '%' + filters.PatientUserId + '%' };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.DonorUserId != null) {
                 search.where['DonorUserId'] = { [Op.like]: '%' + filters.DonorUserId + '%' };

@@ -42,7 +42,6 @@ export class DonationCommunicationValidator extends BaseValidator {
         await this.validateBoolean(request, 'donorNoResponseFirstFlag', Where.Query, false, false);
         await this.validateBoolean(request, 'donorNoResponseSecondFlag', Where.Query, false, false);
         await this.validateBoolean(request, 'isRemindersLoaded', Where.Query, false, false);
-       
 
         await this.validateBaseSearchFilters(request);
 

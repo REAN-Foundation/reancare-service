@@ -5,6 +5,8 @@ import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, Sev
 import { TypesService } from '../../../services/general/types.service';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
+import { AwardsFactsService } from '../../../modules/awards.facts/awards.facts.service';
+import { ReminderTypeList, RepeatAfterEveryUnitList } from '../../../domain.types/general/reminder/reminder.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,6 +184,41 @@ export class TypesController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    getGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.GroupActivityTypes', request, response, false);
+            const groupActivityTypes = AwardsFactsService._groupActivityTypes;
+            ResponseHandler.success(request, response, 'Group activity types successfully!', 200, {
+                GroupActivityTypes : groupActivityTypes,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getReminderTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.ReminderTypes', request, response, false);
+            ResponseHandler.success(request, response, 'Reminder types successfully!', 200, {
+                ReminderTypes : ReminderTypeList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getReminderRepeatAfterEveryTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.ReminderTypes', request, response, false);
+            ResponseHandler.success(request, response, 'Reminder types successfully!', 200, {
+                RepeatAfterEveryUnitTypes : RepeatAfterEveryUnitList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

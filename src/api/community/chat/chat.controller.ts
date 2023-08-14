@@ -2,13 +2,13 @@ import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { ChatService } from '../../../services/general/chat.service';
+import { ChatService } from '../../../services/community/chat.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
 import { Loader } from '../../../startup/loader';
 import { ChatValidator } from './chat.validator';
 import { BaseController } from '../../base.controller';
-import { ConversationDomainModel } from '../../../domain.types/general/chat/conversation.domain.model';
+import { ConversationDomainModel } from '../../../domain.types/community/chat/conversation.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

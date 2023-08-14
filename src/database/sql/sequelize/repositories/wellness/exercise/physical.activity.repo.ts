@@ -346,9 +346,9 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(async x => {
                 var recordDate = x.StartTime ?? x.EndTime;
-                    if (!recordDate) {
-                        recordDate = x.CreatedAt;
-                    }
+                if (!recordDate) {
+                    recordDate = x.CreatedAt;
+                }
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
                 Logger.instance().log(`RecordDate: ${tempDate} RecordDateStr: ${recordDateStr}`);
@@ -388,9 +388,9 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
             const records_ = records.map(async x => {
                 var recordDate = x.StartTime ?? x.EndTime;
-                    if (!recordDate) {
-                        recordDate = x.CreatedAt;
-                    }
+                if (!recordDate) {
+                    recordDate = x.CreatedAt;
+                }
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId                    : x.id,

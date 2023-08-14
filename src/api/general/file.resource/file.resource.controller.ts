@@ -14,7 +14,7 @@ import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { Loader } from '../../../startup/loader';
 import { FileResourceValidator } from './file.resource.validator';
-import AdmZip = require ('adm-zip');
+import AdmZip from 'adm-zip';
 import { Helper } from '../../../common/helper';
 import { FileResourceUploadDomainModel } from '../../../domain.types/general/file.resource/file.resource.domain.model';
 import { Logger } from '../../../common/logger';

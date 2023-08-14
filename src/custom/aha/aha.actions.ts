@@ -176,7 +176,7 @@ export class AHAActions {
                 Logger.instance().log(`[HsCron] Enrollment details:${JSON.stringify(careplanEnrollment)}`);
                 var patientDetails = await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
                 if (patientDetails.HealthSystem === null) {
-                    Logger.instance().log(`[HsCron] Skip sending survey for :${patientDetails.UserId} 
+                    Logger.instance().log(`[HsCron] Skip sending survey for :${patientDetails.UserId}
                                 as health system is ${patientDetails.HealthSystem}`);
                     continue;
                 }
@@ -220,7 +220,6 @@ export class AHAActions {
                             } else {
                                 Logger.instance().log(`[HsCron] Failed to send SMS for ${phoneNumber}, hence skip creating task.`);
                             }
-     
                         } else {
                             Logger.instance().log(`[HsCron] Health behaviors assessment is not finished. Status:${action.Status} `);
                         }

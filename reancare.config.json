@@ -2,7 +2,10 @@
     "SystemIdentifier": "REAN HealthGuru",
     "Auth" : {
         "Authentication": "Custom",
-        "Authorization": "Custom"
+        "Authorization": "Custom",
+        "UseRefreshToken": true,
+        "AccessTokenExpiresInSeconds": 2592000,
+        "RefreshTokenExpiresInSeconds": 2592000
     },
     "Database" : {
         "Type": "SQL",
@@ -67,7 +70,7 @@
                 }
             ]
         },
-        { 
+        {
             "Enabled": true,
             "Provider": "REAN",
             "Service": "ReanCarePlanService",
@@ -90,7 +93,7 @@
                 }
             ]
         },
-        { 
+        {
             "Enabled": true,
             "Provider": "REAN_BW",
             "Service": "ReanBWService",
@@ -130,7 +133,7 @@
             "Code": "Terra"
         }
     ],
-    "MaxUploadFileSize": 104857600,
-    "JwtExpiresIn": 2592000,
-    "SessionExpiresIn": 2592000
+    "Gamification": true,
+    "EHRAnalytics": false,
+    "MaxUploadFileSize": 104857600
 }

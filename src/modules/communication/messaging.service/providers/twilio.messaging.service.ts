@@ -42,7 +42,7 @@ export class TwilioMessagingService implements IMessagingService {
             });
 
             Logger.instance().log(`SMS sent response: ${JSON.stringify(smsResponse, null, 2)}`);
-            
+
             return true;
 
         } catch (error) {
@@ -58,7 +58,7 @@ export class TwilioMessagingService implements IMessagingService {
             var from_phone_tmp = process.env.SYSTEM_INTERNATIONAL_WHATSAPP_NUMBER;
 
             //If we are sending to US, use the US phone number to send
-            
+
             const smsResponse = await this._client.messages.create({
                 to   : `whatsapp:${toPhone}`,
                 body : message,

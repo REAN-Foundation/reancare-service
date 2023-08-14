@@ -4,7 +4,7 @@ import {
 import { v4 } from 'uuid';
 import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
 import Address from '../../general/address.model';
-import Organization from '../../general/organization/organization.model';
+import Organization from '../../organization/organization.model';
 import Person from '../../person/person.model';
 import User from '../user/user.model';
 

@@ -15,7 +15,7 @@ export class PatientValidator extends BaseValidator {
 
     getCreateDomainModel = async (request: express.Request): Promise<PatientDomainModel> => {
 
-        const birthdate = request.body.BirthDate != null && typeof request.body.BirthDate !== undefined
+        const birthdate = request.body.BirthDate != null && request.body.BirthDate !== undefined
             ? new Date(Date.parse(request.body.BirthDate))
             : null;
 
@@ -46,14 +46,16 @@ export class PatientValidator extends BaseValidator {
                 Password        : request.body.Password ?? null,
                 DefaultTimeZone : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone : request.body.CurrentTimeZone ?? null,
+                TenantId        : request.body.TenantId ?? null,
             },
             HealthProfile : {
                 BloodGroup           : request.body.BloodGroup ?? null,
                 BloodTransfusionDate : request.body.BloodTransfusionDate ?? null,
                 BloodDonationCycle   : request.body.BloodDonationCycle ?? null
             },
-            UserId  : request.params.userId ?? null,
-            Address : request.body.Address ?? null,
+            UserId   : request.params.userId ?? null,
+            Address  : request.body.Address ?? null,
+            CohortId : request.body.CohortId ?? null,
         };
 
         return entity;
@@ -88,10 +90,12 @@ export class PatientValidator extends BaseValidator {
                 Password        : body.Password ?? null,
                 DefaultTimeZone : body.DefaultTimeZone ?? null,
                 CurrentTimeZone : body.CurrentTimeZone ?? null,
+                TenantId        : body.TenantId ?? null,
             },
             Address           : body.Address ?? null,
             DonorAcceptance   : body.DonorAcceptance ?? null,
             IsRemindersLoaded : body.IsRemindersLoaded ?? false,
+            CohortId          : body.CohortId !== undefined ? body.CohortId : undefined,
         };
 
         return entity;
@@ -160,6 +164,8 @@ export class PatientValidator extends BaseValidator {
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
         await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
         await this.validateBoolean(request, 'IsRemindersLoaded', Where.Body, false, true);
+        await this.validateUuid(request, 'TenantId', Where.Body, false, true);
+        await this.validateUuid(request, 'CohortId', Where.Body, false, true);
 
         await body('AddressIds').optional()
             .isArray()

@@ -118,14 +118,14 @@ export class UserService {
 
         //Generate login session
 
-        const expiresIn: number = ConfigurationManager.SessionExpiresIn();
-        var validTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+        const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
+        var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
 
         var entity: UserLoginSessionDomainModel = {
             UserId    : user.id,
             IsActive  : true,
             StartedAt : new Date(),
-            ValidTill : validTill
+            ValidTill : sessionValidTill
         };
 
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
@@ -142,9 +142,20 @@ export class UserService {
             SessionId     : loginSessionDetails.id,
         };
 
-        const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
+        const sessionId = currentUser.SessionId;
+        const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
+        var refreshToken = null;
+        if (ConfigurationManager.UseRefreshToken()) {
+            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId);
+        }
 
-        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId, sessionValidTill: validTill };
+        return {
+            user,
+            accessToken,
+            refreshToken : refreshToken ?? null,
+            sessionId,
+            sessionValidTill
+        };
     };
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
@@ -233,14 +244,14 @@ export class UserService {
 
         //Generate login session
 
-        const expiresIn: number = ConfigurationManager.SessionExpiresIn();
-        var validTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+        const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
+        var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
 
         var entity: UserLoginSessionDomainModel = {
             UserId    : user.id,
             IsActive  : true,
             StartedAt : new Date(),
-            ValidTill : validTill
+            ValidTill : sessionValidTill
         };
 
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
@@ -257,21 +268,34 @@ export class UserService {
             SessionId     : loginSessionDetails.id
         };
 
-        const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
+        const sessionId = currentUser.SessionId;
+        const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
+        var refreshToken = null;
+        if (ConfigurationManager.UseRefreshToken()) {
+            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId);
+        }
 
-        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId, sessionValidTill: validTill };
+        return {
+            user,
+            accessToken,
+            refreshToken : refreshToken ?? null,
+            sessionId,
+            sessionValidTill
+        };
     };
 
     public invalidateSession = async (sesssionId: uuid): Promise<boolean> => {
-
         var invalidated = await this._userLoginSessionRepo.invalidateSession(sesssionId);
         return invalidated;
     };
 
     public invalidateAllSessions = async (userId: uuid): Promise<boolean> => {
-
         var invalidatedAllSessions = await this._userLoginSessionRepo.invalidateAllSessions(userId);
         return invalidatedAllSessions;
+    };
+
+    public rotateUserAccessToken = async (refreshToken: string): Promise<string> => {
+        return await Loader.authenticator.rotateUserSessionToken(refreshToken);
     };
 
     public generateUserName = async (firstName, lastName):Promise<string> => {

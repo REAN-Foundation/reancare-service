@@ -13,22 +13,19 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import Organization from './organization.model';
-import Person from '../../person/person.model';
+import User from '../users/user/user.model';
+import Tenant from './tenant.model';
 
-///////////////////////////////////////////////////////////////////////
-//This is a junction table model representing many-to-many association
-//between person and organizations
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'OrganizationPersons',
-    tableName       : 'organization_persons',
+    modelName       : 'TenantUser',
+    tableName       : 'tenant_users',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class OrganizationPersons extends Model {
+export default class TenantUser extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -42,32 +39,40 @@ export default class OrganizationPersons extends Model {
     id: string;
 
     @IsUUID(4)
-    @ForeignKey(() => Person)
+    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
-    PersonId: string;
+    UserId: string;
 
-    @BelongsTo(() => Person)
-    Person: Person;
+    @BelongsTo(() => User)
+    User: User;
 
     @IsUUID(4)
-    @ForeignKey(() => Organization)
+    @ForeignKey(() => Tenant)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
-    OrganizationId: string;
+    TenantId: string;
 
-    @BelongsTo(() => Organization)
-    Organization: Organization;
+    @BelongsTo(() => Tenant)
+    Tenant: Tenant;
 
     @Column({
-        type      : DataType.STRING(32),
-        allowNull : true
+        type         : DataType.BOOLEAN,
+        defaultValue : false,
+        allowNull    : false,
     })
-    AssociationAs: string;
+    Admin: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        defaultValue : false,
+        allowNull    : false,
+    })
+    Moderator: boolean;
 
     @Column
     @CreatedAt

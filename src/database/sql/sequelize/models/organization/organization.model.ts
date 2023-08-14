@@ -12,14 +12,12 @@ import {
     IsEmail,
     IsDate,
     Index,
-    HasMany,
     ForeignKey,
 } from 'sequelize-typescript';
 
-import { OrganizationTypeList } from '../../../../../../domain.types/general/organization/organization.types';
+import { OrganizationTypeList } from '../../../../../domain.types/general/organization/organization.types';
 import { v4 } from 'uuid';
-import Address from '../address.model';
-import User from '../../users/user/user.model';
+import User from '../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -124,9 +122,6 @@ export default class Organization extends Model {
         allowNull : true,
     })
     NationalHealthFacilityRegistryId: string;
-
-    @HasMany(() => Address)
-    Addresses: Address[];
 
     @Column
     @CreatedAt

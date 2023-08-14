@@ -14,7 +14,7 @@ export class CommunicationInjector {
         CommunicationInjector.injectSmsProvider(container);
         CommunicationInjector.injectNotificationProvider(container);
     }
-    
+
     private static injectNotificationProvider(container: DependencyContainer) {
         const notificationProvider = ConfigurationManager.InAppNotificationServiceProvider();
         if (notificationProvider === 'Firebase') {
@@ -34,5 +34,5 @@ export class CommunicationInjector {
             container.register('IMessagingService', MockMessagingService);
         }
     }
-    
+
 }

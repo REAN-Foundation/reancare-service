@@ -31,7 +31,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
 
             const nutrition = await HealthSystem.create(entity);
             return await HealthSystemMapper.toDto(nutrition);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -50,7 +50,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
 
             const healthSystemHospital = await HealthSystemHospital.create(entity);
             return await HealthSystemMapper.toDetailsDto(healthSystemHospital);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -68,10 +68,10 @@ export class HealthSystemRepo implements IHealthSystemRepo {
 
     getHealthSystems = async (planName?: string): Promise<HealthSystemDto[]> => {
         try {
-            const filter = { where: {
+            const filter = { where : {
                 Tags : { [Op.like]: '%' + planName + '%' }
             } };
-            
+
             const healthSystems = await HealthSystem.findAll(filter);
             const dtos: HealthSystemDto[] = [];
             for (const hs of healthSystems) {
@@ -91,7 +91,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
             const filter = { where : {
                 HealthSystemId : healthSystemId
             } };
-            
+
             const healthSystemHospitals = await HealthSystemHospital.findAll(filter);
             const dtos: HealthSystemHospitalDto[] = [];
             for (const hospital of healthSystemHospitals) {
@@ -113,7 +113,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
             if (filters.Name != null) {
                 search.where['Name'] = filters.Name;
             }
-    
+
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

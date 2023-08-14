@@ -11,7 +11,7 @@ export class TenantValidator extends BaseValidator {
         super();
     }
 
-    createOrUpdate = async (request: express.Request, update: boolean = false): Promise<TenantDomainModel> => {
+    createOrUpdate = async (request: express.Request, update = false): Promise<TenantDomainModel> => {
 
         const nameRequired = update ? false : true;
         await this.validateString(request, 'Name', Where.Body, nameRequired, false);

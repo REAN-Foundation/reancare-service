@@ -12,7 +12,8 @@ import {
     ForeignKey,
     IsDecimal,
     IsDate,
-    BelongsTo} from 'sequelize-typescript';
+    BelongsTo
+} from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';

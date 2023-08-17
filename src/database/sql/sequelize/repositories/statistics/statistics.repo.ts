@@ -62,7 +62,6 @@ export class StatisticsRepo implements IStatisticsRepo {
             };
 
             return usersData;
-            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -86,7 +85,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             includesObj.where['Phone'] = {
                 [Op.notBetween] : [1000000000, 1000000100],
             };
-     
+
             if (filters.Year != null)  {
                 includesObj.where['CreatedAt'] = {
                     [Op.between] : [minDate, maxDate],
@@ -98,9 +97,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                     [Op.lt] : maxCreatedDate,
                 };
             }
-            
+
             search.include.push(includesObj);
-    
+
             const allUsers = await User.findAndCountAll(search);
 
             const allRoles = await Role.findAndCountAll();
@@ -126,7 +125,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             }
 
             return userRoleDetails;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -136,13 +135,13 @@ export class StatisticsRepo implements IStatisticsRepo {
     getUsersByGender = async (filters): Promise<any> => {
         try {
             const totalUsers = await this.getTotalUsers(filters);
-        
+
             const totalUsers_ = totalUsers.rows.map(x => x.Person.Gender);
 
             const totalMaleUsers = totalUsers_.filter(x => x === "Male");
-    
+
             const maleUsersRatio = ((totalMaleUsers.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
             const maleUsers = {
                 Status : "Male",
                 Count  : totalMaleUsers.length,
@@ -151,7 +150,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
             const totalFemaleUsers = totalUsers_.filter(x => x === "Female");
             const femaleUsersRatio = ((totalFemaleUsers.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
             const femaleUsers = {
                 Status : "Female",
                 Count  : totalFemaleUsers.length,
@@ -160,7 +159,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
             const totalIntersexUsers = totalUsers_.filter(x => x === "Intersex");
             const IntersexUsersRatio = ((totalIntersexUsers.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
             const intersexUsers = {
                 Status : "Intersex",
                 Count  : totalIntersexUsers.length,
@@ -177,16 +176,16 @@ export class StatisticsRepo implements IStatisticsRepo {
                 Count  : totalGenderNotSpecifiedUsers.length,
                 Ratio  : genderNotSpecifiedUsersRatio,
             };
-    
+
             const genderWiseUsers = [
                 maleUsers,
                 femaleUsers,
                 intersexUsers,
                 genderNotSpecifiedUsers
             ];
-    
+
             return genderWiseUsers;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -203,7 +202,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             const totalAgeNotSpecifiedUsers = (totalUsers.length) - (usersWithBirthDate.length);
 
             const ageNotSpecifiedUsersRatio = ((totalAgeNotSpecifiedUsers) / (totalUsers_.count) * 100).toFixed(2);
-    
+
             const ageNotSpecifiedUsers = {
                 Status : 'Not Specified',
                 Count  : totalAgeNotSpecifiedUsers,
@@ -211,7 +210,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             };
 
             const totalUsresWithAge = [];
-            
+
             for ( const u of usersWithBirthDate ) {
                 var userAge = Helper.getAgeFromBirthDate(u, true);
                 var usrAge = userAge.split(" ");
@@ -219,23 +218,23 @@ export class StatisticsRepo implements IStatisticsRepo {
                 totalUsresWithAge.push(user);
             }
 
-            var usersBetweenTwoNumbers = {};
-            
+            // var usersBetweenTwoNumbers = {};
+
             if (filters.AgeFrom != null && filters.AgeTo != null) {
                 const totalUsersBetweenTwoNumbers =
                     totalUsresWithAge.filter(x => x > filters.AgeFrom && x < filters.AgeTo);
                 const usersBetweenTwoNumbersRatio =
                     ((totalUsersBetweenTwoNumbers.length) / (totalUsers_.count) * 100).toFixed(2);
 
-                usersBetweenTwoNumbers = {
-                    Count : totalUsersBetweenTwoNumbers.length,
-                    Ratio : usersBetweenTwoNumbersRatio,
-                };
+                // usersBetweenTwoNumbers = {
+                //     Count : totalUsersBetweenTwoNumbers.length,
+                //     Ratio : usersBetweenTwoNumbersRatio,
+                // };
             }
-       
+
             const totalUsersBelowThirtyfive = totalUsresWithAge.filter(x => x <= 35);
             const usersBelowThirtyfiveRatio = ((totalUsersBelowThirtyfive.length) / (totalUsers_.count) * 100).toFixed(2);
-    
+
             const usersBelowThirtyfive = {
                 Status : 'Below 35',
                 Count  : totalUsersBelowThirtyfive.length,
@@ -246,7 +245,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
             const usersBetweenThirtysixToSeventyRatio =
             ((totalUsersBetweenThirtysixToSeventy.length) / (totalUsers_.count) * 100).toFixed(2);
-    
+
             const usersBetweenThirtysixToSeventy = {
                 Status : '36 to 70',
                 Count  : totalUsersBetweenThirtysixToSeventy.length,
@@ -256,22 +255,22 @@ export class StatisticsRepo implements IStatisticsRepo {
             const totalUsersAboveSeventy = totalUsresWithAge.filter(x => x >= 71);
             const usersAboveSeventyRatio =
             ((totalUsersAboveSeventy.length) / (totalUsers_.count) * 100).toFixed(2);
-    
+
             const usersAboveSeventy = {
                 Status : 'Above 71',
                 Count  : totalUsersAboveSeventy.length,
                 Ratio  : usersAboveSeventyRatio,
             };
-    
+
             const ageWiseUsers = [
                 usersBelowThirtyfive,
                 usersBetweenThirtysixToSeventy,
                 usersAboveSeventy,
                 ageNotSpecifiedUsers,
             ];
-    
+
             return ageWiseUsers;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -303,7 +302,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     },
                 }]
             };
-            
+
             search.include.push(includeObj);
 
             if (filters.PastMonths != null) {
@@ -315,7 +314,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-     
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
@@ -355,7 +354,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 return usersByMaritalStatus.count;
 
             }
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -388,25 +387,25 @@ export class StatisticsRepo implements IStatisticsRepo {
                     },
                 }]
             };
-            
+
             search.include.push(includeObj);
 
             if (filters.PastMonths != null) {
- 
+
                 const userDeviceDetailsForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const usersByDeviceDetails = await UserDeviceDetails.findAndCountAll(search);
- 
+
                     var userDeviceDetailsForMonth = {
                         Month : monthName,
                         Count : usersByDeviceDetails.count
@@ -449,16 +448,16 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     getUsersByEnrollment = async (filters): Promise<any> => {
         try {
-      
-            const query = `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = "Cholesterol" 
-            AND ce.PatientUserId IN 
+
+            const query = `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = "Cholesterol"
+            AND ce.PatientUserId IN
             (
              SELECT distinct (pt.UserId) from patients as pt
                 JOIN users as u ON pt.UserId = u.id
                 JOIN persons as p ON u.PersonId = p.id
                 WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null
             )`;
- 
+
             const response = await sequelize.query(query,
                 {
                     type : QueryTypes.SELECT,
@@ -517,9 +516,9 @@ export class StatisticsRepo implements IStatisticsRepo {
             //     AndroidUsers         : androidUsersDetails,
             //     IOSUsers             : iOSUsersDetails,
             // };
-    
+
             // return enrollmentUsers;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -545,7 +544,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    getAppDownlodCount= async (): Promise<any> => {
+    getAppDownlodCount = async (): Promise<any> => {
         try {
             const appDownload = await AppDownloadsModel.findAndCountAll();
             return appDownload;
@@ -565,7 +564,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 const countryCode = phone.split("-")[0];
                 usersCountryCodes.push(countryCode);
             }
-        
+
             const countryCurrencyPhone = new CountryCurrencyPhone();
 
             const  usersCountries = [];
@@ -626,7 +625,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     },
                 }]
             };
-            
+
             search.include.push(includeObj);
 
             if (filters.PastMonths != null) {
@@ -638,7 +637,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-     
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
@@ -707,7 +706,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     },
                 }]
             };
-            
+
             search.include.push(includeObj);
 
             if (filters.PastMonths != null) {
@@ -719,7 +718,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-     
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
@@ -727,7 +726,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     const weightDetails = await BodyWeight.findAndCountAll(search);
 
                     const heightDetails = await BodyHeight.findAndCountAll(search);
-    
+
                     const heightWeightArray = [];
                     for (const x of heightDetails.rows) {
                         for (const y of weightDetails.rows) {
@@ -741,40 +740,40 @@ export class StatisticsRepo implements IStatisticsRepo {
                             }
                         }
                     }
-    
+
                     const usresBmi = [];
                     for (const u of heightWeightArray) {
                         const bmi = Helper.calculateBMI(u.bodyHeight, u.heightUnits, u.bodyWeight, u.weightUnits);
                         usresBmi.push((bmi.bmi).toFixed(2));
                     }
-        
+
                     const underWeight = usresBmi.filter(x => x < 18.5);
                     const healthy  = usresBmi.filter(x => x >= 18.5 && x <= 24.9);
                     const overWeight  = usresBmi.filter(x => x >= 25 && x <= 29.9);
                     const obese  = usresBmi.filter(x => x >= 30);
-        
+
                     const underWeightUsers = {
                         Status : "Under Weight",
                         Count  : underWeight.length
                     };
-        
+
                     const healthyUsers = {
                         Status : "Healthy",
                         Count  : healthy.length
                     };
-        
+
                     const overWeightUsers = {
                         Status : "Over Weight",
                         Count  : overWeight.length
                     };
-        
+
                     const obeseUsers = {
                         Status : "Obese",
                         Count  : obese.length
                     };
-        
+
                     const obesityUsers = [underWeightUsers, healthyUsers, overWeightUsers, obeseUsers];
-        
+
                     var majorAilmentUsersForMonth = {
                         Month        : monthName,
                         ObesityUsers : obesityUsers
@@ -827,34 +826,34 @@ export class StatisticsRepo implements IStatisticsRepo {
                     const bmi = Helper.calculateBMI(u.bodyHeight, u.heightUnits, u.bodyWeight, u.weightUnits);
                     usresBmi.push((bmi.bmi).toFixed(2));
                 }
-    
+
                 const underWeight = usresBmi.filter(x => x < 18.5);
                 const healthy  = usresBmi.filter(x => x >= 18.5 && x <= 24.9);
                 const overWeight  = usresBmi.filter(x => x >= 25 && x <= 29.9);
                 const obese  = usresBmi.filter(x => x >= 30);
-    
+
                 const underWeightUsers = {
                     Status : "Under Weight",
                     Count  : underWeight.length
                 };
-    
+
                 const healthyUsers = {
                     Status : "Healthy",
                     Count  : healthy.length
                 };
-    
+
                 const overWeightUsers = {
                     Status : "Over Weight",
                     Count  : overWeight.length
                 };
-    
+
                 const obeseUsers = {
                     Status : "Obese",
                     Count  : obese.length
                 };
-    
+
                 const obesityUsers = [underWeightUsers, healthyUsers, overWeightUsers, obeseUsers];
-    
+
                 return obesityUsers;
 
             }
@@ -890,7 +889,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     },
                 }]
             };
-            
+
             search.include.push(includeObj);
 
             const healthProfileDetails = await HealthProfile.findAndCountAll(search);
@@ -944,7 +943,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 substanceAbuseUsers,
                 nonAddictedUsers
             ];
-           
+
             return addictionDetails;
 
         } catch (error) {
@@ -984,7 +983,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     nutritionUsers,
                     vitalUsers
                 ];
-   
+
             }
             else {
                 healthPillarDistribution =
@@ -997,7 +996,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     NutritionUsers        : nutritionUsers,
                 };
             }
-           
+
             return healthPillarDistribution;
 
         } catch (error) {
@@ -1097,7 +1096,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     pulseUsers
                 ];
             }
-  
+
             return biometricUsers;
 
         } catch (error) {
@@ -1118,7 +1117,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                  where    : {},
                  paranoid : false,
              };
-      
+
             includesObj.where['Phone'] = {
                 [Op.notBetween] : [1000000000, 1000000100],
             };
@@ -1131,14 +1130,14 @@ export class StatisticsRepo implements IStatisticsRepo {
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-          
+
                     includesObj.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
                     search.include.push(includesObj);
-     
+
                     const totalUsers = await Patient.findAndCountAll(search);
-      
+
                     var usersForMonth = {
                         Month : monthName,
                         Count : totalUsers.count
@@ -1166,9 +1165,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 search.include.push(includesObj);
-     
+
                 const totalUsers = await Patient.findAndCountAll(search);
 
                 const totalUsersDetails = {
@@ -1183,14 +1182,14 @@ export class StatisticsRepo implements IStatisticsRepo {
             throw new ApiError(500, error.message);
         }
     };
- 
+
    private  getNotDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
        try {
            const totalUsers = await this.getTotalUsers(filters);
            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
            const maxCreatedDate = getMaxDate(filters);
            const search: any = { where: {}, include: [], paranoid: false };
-             
+
            const includesObj =
              {
                  model    : Person,
@@ -1198,15 +1197,15 @@ export class StatisticsRepo implements IStatisticsRepo {
                  where    : {},
                  paranoid : false
              };
-      
+
            includesObj.where['Phone'] = {
                [Op.notBetween] : [1000000000, 1000000100],
            };
-             
+
            includesObj.where['DeletedAt'] = {
                [Op.eq] : null
            };
- 
+
            if (filters.PastMonths != null)  {
                const notDeletedUsersDetails = [];
                for (var i = 0; i < filters.PastMonths; i++) {
@@ -1214,14 +1213,14 @@ export class StatisticsRepo implements IStatisticsRepo {
                    var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                    var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                    var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                    includesObj.where['CreatedAt'] = {
                        [Op.between] : [startOfMonth, endOfMonth],
                    };
                    search.include.push(includesObj);
-     
+
                    const nonDeletedUsers = await Patient.findAndCountAll(search);
-     
+
                    var usersForMonth = {
                        Month : monthName,
                        Count : nonDeletedUsers.count
@@ -1230,7 +1229,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                }
                return notDeletedUsersDetails;
            }
-            
+
            else
            {
                if (filters.Year != null)  {
@@ -1249,28 +1248,28 @@ export class StatisticsRepo implements IStatisticsRepo {
                    };
                }
                search.include.push(includesObj);
- 
+
                const nonDeletedUsers = await Patient.findAndCountAll(search);
-     
+
                const nonDeletedUsersRatio =  ((nonDeletedUsers.count) / (totalUsers.count) * 100).toFixed(2);
-         
+
                const notDeletedUsersDetails = {
                    Count : nonDeletedUsers.count,
                    Ratio : nonDeletedUsersRatio
                };
                return notDeletedUsersDetails;
            }
- 
+
        } catch (error) {
            Logger.instance().log(error.message);
            throw new ApiError(500, error.message);
        }
    };
- 
+
    private  getDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
        try {
            const search: any = { where: {}, include: [],  paranoid: false };
- 
+
            const includesObj =
              {
                  model    : Person,
@@ -1278,33 +1277,33 @@ export class StatisticsRepo implements IStatisticsRepo {
                  where    : {},
                  paranoid : false
              };
- 
+
            includesObj.where['Phone'] = {
                [Op.notBetween] : [1000000000, 1000000100],
            };
- 
+
            includesObj.where['DeletedAt'] = {
                [Op.not] : null
            };
- 
+
            if (filters.PastMonths != null) {
- 
+
                const deletedUsersDetails = [];
- 
+
                for (var i = 0; i < filters.PastMonths; i++) {
                    var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                    var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                    var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                    var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                    includesObj.where['CreatedAt'] = {
                        [Op.between] : [startOfMonth, endOfMonth],
                    };
- 
+
                    search.include.push(includesObj);
- 
+
                    const deletedUsers = await Patient.findAndCountAll(search);
-     
+
                    var deletedUsersForMonth = {
                        Month : monthName,
                        Count : deletedUsers.count
@@ -1331,68 +1330,68 @@ export class StatisticsRepo implements IStatisticsRepo {
                        [Op.between] : [filters.From, filters.To],
                    };
                }
- 
+
                search.include.push(includesObj);
- 
+
                const deletedUsers = await Patient.findAndCountAll(search);
 
                const totalUsers = await this.getTotalUsers(filters);
- 
+
                const deletedUsersRatio =  ((deletedUsers.count) / (totalUsers.count) * 100).toFixed(2);
- 
+
                const  deletedUsersDetails = {
                    Count : deletedUsers.count,
                    Ratio : deletedUsersRatio
                };
- 
+
                return deletedUsersDetails;
-                 
+
            }
        } catch (error) {
            Logger.instance().log(error.message);
            throw new ApiError(500, error.message);
        }
    };
- 
+
     private getUsersWithActiveSession = async (filters: StatisticSearchFilters): Promise<any> => {
         try {
             const search: any = { where: {}, include: [], paranoid: false };
- 
+
             const includesObj =
              {
                  model    : Person,
                  required : true,
                  where    : {},
              };
-      
+
             includesObj.where['Phone'] = {
                 [Op.notBetween] : [1000000000, 1000000100],
             };
-             
+
             includesObj.where['DeletedAt'] = {
                 [Op.eq] : null
             };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const usersWithActiveSessionForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     includesObj.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
- 
+
                     search.include.push(includesObj);
- 
+
                     const totalUsers_ = await Patient.findAndCountAll(search);
- 
+
                     const totalUsers  = totalUsers_.rows.map(x => x.UserId);
- 
+
                     const loginSessions = [];
                     for (const u of totalUsers) {
                         const loginSession = await UserLoginSession.findOne({ where : {
@@ -1403,7 +1402,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                             loginSessions.push(loginSession);
                         }
                     }
- 
+
                     var usersWithActiveSessionForMonth = {
                         Month : monthName,
                         Count : loginSessions.length
@@ -1431,13 +1430,13 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 search.include.push(includesObj);
- 
+
                 const totalUsers_ = await Patient.findAndCountAll(search);
- 
+
                 const totalUsers  = totalUsers_.rows.map(x => x.UserId);
- 
+
                 const activeLoginSessions = [];
                 for (const u of totalUsers) {
                     const loginSession = await UserLoginSession.findOne({ where : {
@@ -1448,15 +1447,15 @@ export class StatisticsRepo implements IStatisticsRepo {
                         activeLoginSessions.push(loginSession);
                     }
                 }
- 
+
                 const activeUsersRatio = ((activeLoginSessions.length) / (totalUsers_.count) * 100).toFixed(2);
-     
+
                 const  activeUsers = {
                     Count : activeLoginSessions.length,
                     Ratio : activeUsersRatio,
                 };
                 return activeUsers;
-                 
+
             }
         } catch (error) {
             Logger.instance().log(error.message);
@@ -1464,26 +1463,26 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    private getEnrolledUsers= async (filters: StatisticSearchFilters): Promise<any> => {
+    private getEnrolledUsers = async (filters: StatisticSearchFilters): Promise<any> => {
         try {
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const enrolledUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const enrolledUsers = await CareplanEnrollment.findAndCountAll(search);
- 
+
                     var enrolledUsersForMonth = {
                         Month : monthName,
                         Count : enrolledUsers.count
@@ -1511,11 +1510,11 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const enrolledUsers = await CareplanEnrollment.findAndCountAll(search);
 
                 const totalUsers = await this.getTotalUsers(filters);
-     
+
                 const enrolledUsersRatio = ((enrolledUsers.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const  enrolledUsersDetails = {
@@ -1524,20 +1523,20 @@ export class StatisticsRepo implements IStatisticsRepo {
                 };
 
                 return enrolledUsersDetails;
-                 
+
             }
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
-     
+
     private getTotalUsers = async (filters: StatisticSearchFilters): Promise<any> => {
         try {
             const { minDate, maxDate } = getMinMaxDatesForYear(filters);
             const maxCreatedDate = getMaxDate(filters);
             const search: any = { where: {}, include: [], paranoid: false };
- 
+
             const includesObj =
              {
                  model    : Person,
@@ -1545,7 +1544,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                  where    : {},
                  paranoid : false,
              };
-      
+
             includesObj.where['Phone'] = {
                 [Op.notBetween] : [1000000000, 1000000100],
             };
@@ -1565,11 +1564,11 @@ export class StatisticsRepo implements IStatisticsRepo {
                     [Op.between] : [filters.From, filters.To],
                 };
             }
- 
+
             search.include.push(includesObj);
-     
+
             const totalUsers = await Patient.findAndCountAll(search);
- 
+
             return totalUsers;
 
         } catch (error) {
@@ -1577,7 +1576,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             throw new ApiError(500, error.message);
         }
     };
- 
+
     private  getPhysicalActivityUsers = async (totalUsers, filters) => {
         try {
             const { minDate, maxDate } = getMinMaxDatesForYear(filters);
@@ -1613,13 +1612,13 @@ export class StatisticsRepo implements IStatisticsRepo {
 
                 const physicalActivityUsersRatio =
                 ((physicalActivityDetails.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
                 physicalActivityUsers = {
                     Status : "Physical Activity",
                     Count  : physicalActivityDetails.length,
                     Ratio  : physicalActivityUsersRatio
                 };
-            
+
             }
 
             return physicalActivityUsers;
@@ -1659,17 +1658,17 @@ export class StatisticsRepo implements IStatisticsRepo {
                         meditationDetails.push(meditationDetail);
                     }
                 }
-    
+
                 const meditationUsersRatio =
                 ((meditationDetails.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
                 meditationUsers = {
                     Status : "Meditation",
                     Count  : meditationDetails.length,
                     Ratio  : meditationUsersRatio
                 };
             }
-        
+
             return meditationUsers;
 
         } catch (error) {
@@ -1708,10 +1707,10 @@ export class StatisticsRepo implements IStatisticsRepo {
                         medicationDetails.push(medicationDetail);
                     }
                 }
-    
+
                 const medicationUsersRatio =
                 ((medicationDetails.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
                 medicationUsers = {
                     Status : "Medication",
                     Count  : medicationDetails.length,
@@ -1760,10 +1759,10 @@ export class StatisticsRepo implements IStatisticsRepo {
                         symptomDetails.push(symptomDetail);
                     }
                 }
-    
+
                 const symptomUsersRatio =
                 ((symptomDetails.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
                 symptomUsers = {
                     Status : "Symptoms",
                     Count  : symptomDetails.length,
@@ -1809,10 +1808,10 @@ export class StatisticsRepo implements IStatisticsRepo {
                         labRecordDetails.push(labRecordDetail);
                     }
                 }
-    
+
                 const labRecordRatio =
                 ((labRecordDetails.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
                 labRecordUsers = {
                     Status : "Lab Record",
                     Count  : labRecordDetails.length,
@@ -1846,7 +1845,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                         nutritionDetails.push(foodConsumptionDetail);
                     }
                 }
-    
+
                 for (const u of totalUsers.rows) {
                     const waterConsumptionDetail = await WaterConsumption.findOne({ where : {
                         PatientUserId : u.UserId,
@@ -1860,11 +1859,11 @@ export class StatisticsRepo implements IStatisticsRepo {
                 }
 
                 const uniqueNutritionUsers = getUniqueUsers(nutritionDetails);
-            
+
                 nutritionUsers = getMonthlyUsers(uniqueNutritionUsers,totalUsers);
 
             }
-            
+
             else {
                 for (const u of totalUsers.rows) {
                     const foodConsumptionDetail = await FoodConsumption.findOne({ where : {
@@ -1874,7 +1873,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                         nutritionDetails.push(foodConsumptionDetail);
                     }
                 }
-    
+
                 for (const u of totalUsers.rows) {
                     const waterConsumptionDetail = await WaterConsumption.findOne({ where : {
                         PatientUserId : u.UserId,
@@ -1883,12 +1882,12 @@ export class StatisticsRepo implements IStatisticsRepo {
                         nutritionDetails.push(waterConsumptionDetail);
                     }
                 }
-            
+
                 const uniqueNutrition =  Array.from(new Set(nutritionDetails.map((x) => x.PatientUserId)));
-                
+
                 const nutritionRatio =
                 ((uniqueNutrition.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
                 nutritionUsers = {
                     Status : "Nutrition",
                     Count  : uniqueNutrition.length,
@@ -1917,7 +1916,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     vitalDetails.push(cholestrolDetail);
                 }
             }
-    
+
             for (const u of totalUsers.rows) {
                 const glucoseDetail = await BloodGlucose.findOne({ where : {
                     PatientUserId : u.UserId,
@@ -1926,7 +1925,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     vitalDetails.push(glucoseDetail);
                 }
             }
-    
+
             for (const u of totalUsers.rows) {
                 const oxygenSaturationDetail = await BloodOxygenSaturation.findOne({ where : {
                     PatientUserId : u.UserId,
@@ -1935,7 +1934,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     vitalDetails.push(oxygenSaturationDetail);
                 }
             }
-    
+
             for (const u of totalUsers.rows) {
                 const bloodPressureDetail = await BloodPressure.findOne({ where : {
                     PatientUserId : u.UserId,
@@ -1944,7 +1943,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     vitalDetails.push(bloodPressureDetail);
                 }
             }
-    
+
             for (const u of totalUsers.rows) {
                 const bodyHeightDetail = await BodyHeight.findOne({ where : {
                     PatientUserId : u.UserId,
@@ -1953,7 +1952,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     vitalDetails.push(bodyHeightDetail);
                 }
             }
-    
+
             for (const u of totalUsers.rows) {
                 const bodyWeightDetail = await BodyWeight.findOne({ where : {
                     PatientUserId : u.UserId,
@@ -1962,7 +1961,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     vitalDetails.push(bodyWeightDetail);
                 }
             }
-    
+
             for (const u of totalUsers.rows) {
                 const bodyTempratureDetail = await BodyTemperature.findOne({ where : {
                     PatientUserId : u.UserId,
@@ -1971,7 +1970,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     vitalDetails.push(bodyTempratureDetail);
                 }
             }
-        
+
             for (const u of totalUsers.rows) {
                 const pulseDetail = await Pulse.findOne({ where : {
                     PatientUserId : u.UserId,
@@ -1981,10 +1980,10 @@ export class StatisticsRepo implements IStatisticsRepo {
                 }
             }
             const uniqueVitalsDetails = Array.from(new Set(vitalDetails.map((x) => x.PatientUserId)));
-    
+
             const vitalsRatio =
                 ((uniqueVitalsDetails.length) / (totalUsers.count) * 100).toFixed(2);
-    
+
             vitalsUsers = {
                 Status : "Vitals",
                 Count  : uniqueVitalsDetails.length,
@@ -2011,13 +2010,13 @@ export class StatisticsRepo implements IStatisticsRepo {
             search.where['DeletedAt'] = {
                 [Op.eq] : null
             };
-        
+
             if (filters.Year != null)  {
                 search.where['CreatedAt'] = {
                     [Op.between] : [minDate, maxDate],
                 };
             }
-    
+
             const nonDeletedPersons = await Person.findAndCountAll(search);
 
             search.where['DeletedAt'] = {
@@ -2062,15 +2061,15 @@ export class StatisticsRepo implements IStatisticsRepo {
             includesObj.where['DeletedAt'] = {
                 [Op.eq] : null
             };
-    
+
             if (filters.Year != null)  {
                 includesObj.where['CreatedAt'] = {
                     [Op.between] : [minDate, maxDate],
                 };
             }
-            
+
             search.include.push(includesObj);
-    
+
             const nonDeletedUsers = await User.findAndCountAll(search);
 
             includesObj.where['DeletedAt'] = {
@@ -2117,13 +2116,13 @@ export class StatisticsRepo implements IStatisticsRepo {
             includesObj.where['DeletedAt'] = {
                 [Op.eq] : null
             };
-    
+
             if (filters.Year != null)  {
                 includesObj.where['CreatedAt'] = {
                     [Op.between] : [minDate, maxDate],
                 };
             }
-            
+
             search.include.push(includesObj);
 
             const nonDeletedDoctors = await Doctor.findAndCountAll(search);
@@ -2176,13 +2175,13 @@ export class StatisticsRepo implements IStatisticsRepo {
             includesObj.where['DeletedAt'] = {
                 [Op.eq] : null
             };
-    
+
             if (filters.Year != null)  {
                 includesObj.where['CreatedAt'] = {
                     [Op.between] : [minDate, maxDate],
                 };
             }
-            
+
             search.include.push(includesObj);
 
             const adminUsers = await User.findAndCountAll(search);
@@ -2213,15 +2212,15 @@ export class StatisticsRepo implements IStatisticsRepo {
                 model    : Person,
                 required : true,
                 where    : {
-                    
+
                 },
                 paranoid : false
             };
-    
+
             includesObj.where['Phone'] = {
                 [Op.notBetween] : [1000000000, 1000000100],
             };
-            
+
             includesObj.where['DeletedAt'] = {
                 [Op.eq] : null
             };
@@ -2268,7 +2267,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 if (enrollmentDetail !== null){
                     deletedEnrollmentDetails.push(enrollmentDetail);
                 }
-        
+
             }
 
             const totalEnrollments = nonDeletedEnrollmentDetails.length + deletedEnrollmentDetails.length;
@@ -2329,7 +2328,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     [Op.between] : [minDate, maxDate],
                 };
             }
-    
+
             const persons = await Person.findAndCountAll(search);
 
             const emergencyContactDetails = [];
@@ -2358,7 +2357,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 TotalEmergencyContacts          : emergencyContactDetails.length,
                 EmergencyContactsWhoAreAppUsers : usersDetails.length,
                 OnlyEmergencyContacts           : onlyEmergencyContact
-            
+
             };
 
             return emergencyContacts;
@@ -2372,23 +2371,23 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getCholestrolUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const cholestrolUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const cholestrolUsers = await BloodCholesterol.findAndCountAll(search);
- 
+
                     var cholestrolUsersForMonth = {
                         Month : monthName,
                         Count : cholestrolUsers.count
@@ -2416,9 +2415,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const cholestrols = await BloodCholesterol.findAndCountAll(search);
-     
+
                 const cholestrolUsersRatio = ((cholestrols.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const  cholestrolUsers = {
@@ -2440,23 +2439,23 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getGlucoseUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const glucoseUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const glucoseUsers = await BloodGlucose.findAndCountAll(search);
- 
+
                     var glucoseUsersForMonth = {
                         Month : monthName,
                         Count : glucoseUsers.count
@@ -2486,9 +2485,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const glucoseUsers = await BloodGlucose.findAndCountAll(search);
-     
+
                 const glucoseUsersUsersRatio = ((glucoseUsers.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const glucoseUsersData = {
@@ -2496,7 +2495,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     Count      : glucoseUsers.count,
                     Ratio      : glucoseUsersUsersRatio
                 };
-        
+
                 return glucoseUsersData;
 
             }
@@ -2510,23 +2509,23 @@ export class StatisticsRepo implements IStatisticsRepo {
         try {
 
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const oxygenSaturationUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const oxygenSaturationUsers = await BloodOxygenSaturation.findAndCountAll(search);
- 
+
                     var oxygenSaturationUsersForMonth = {
                         Month : monthName,
                         Count : oxygenSaturationUsers.count
@@ -2554,9 +2553,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const oxygenSaturationUsers = await BloodOxygenSaturation.findAndCountAll(search);
-     
+
                 const oxygenSaturationUsersRatio = ((oxygenSaturationUsers.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const oxygenSaturationUsersData = {
@@ -2564,7 +2563,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     Count      : oxygenSaturationUsers.count,
                     Ratio      : oxygenSaturationUsersRatio
                 };
-    
+
                 return oxygenSaturationUsersData;
 
             }
@@ -2578,23 +2577,23 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getBloodPressureUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const bloodPressureUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const bloodPressureUsers = await BloodPressure.findAndCountAll(search);
- 
+
                     var bloodPressureUsersForMonth = {
                         Month : monthName,
                         Count : bloodPressureUsers.count
@@ -2622,9 +2621,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const bloodPressureUsers = await BloodPressure.findAndCountAll(search);
-     
+
                 const bloodPressureUsersRatio = ((bloodPressureUsers.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const bloodPressureUsersData = {
@@ -2632,7 +2631,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     Count      : bloodPressureUsers.count,
                     Ratio      : bloodPressureUsersRatio
                 };
-        
+
                 return bloodPressureUsersData;
 
             }
@@ -2645,23 +2644,23 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getBodyHeightUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const bodyHeightUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const bodyHeightUsers = await BodyHeight.findAndCountAll(search);
- 
+
                     var bodyHeightUsersForMonth = {
                         Month : monthName,
                         Count : bodyHeightUsers.count
@@ -2689,9 +2688,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const bodyHeightUsers = await BodyHeight.findAndCountAll(search);
-     
+
                 const bodyHeightUsersRatio = ((bodyHeightUsers.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const bodyHeightUsersData = {
@@ -2699,7 +2698,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     Count      : bodyHeightUsers.count,
                     Ratio      : bodyHeightUsersRatio
                 };
-        
+
                 return bodyHeightUsersData;
 
             }
@@ -2712,23 +2711,23 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getBodyWeightUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const bodyWeightUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const bodyWeightUsers = await BodyWeight.findAndCountAll(search);
- 
+
                     var bodyWeightUsersForMonth = {
                         Month : monthName,
                         Count : bodyWeightUsers.count
@@ -2756,9 +2755,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const bodyWeightUsers = await BodyWeight.findAndCountAll(search);
-     
+
                 const bodyWeightUsersRatio = ((bodyWeightUsers.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const bodyWeightUsersData = {
@@ -2766,7 +2765,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     Count      : bodyWeightUsers.count,
                     Ratio      : bodyWeightUsersRatio
                 };
-        
+
                 return bodyWeightUsersData;
 
             }
@@ -2779,23 +2778,23 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getBodyTempratureUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const bodyTempratureUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const bodyTempratureUsers = await BodyTemperature.findAndCountAll(search);
- 
+
                     var bodyTempratureUsersForMonth = {
                         Month : monthName,
                         Count : bodyTempratureUsers.count
@@ -2823,9 +2822,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const bodyTempratureUsers = await BodyTemperature.findAndCountAll(search);
-     
+
                 const bodyTempratureUsersRatio = ((bodyTempratureUsers.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const bodyTempratureUsersData = {
@@ -2833,7 +2832,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     Count      : bodyTempratureUsers.count,
                     Ratio      : bodyTempratureUsersRatio
                 };
-        
+
                 return bodyTempratureUsersData;
 
             }
@@ -2846,23 +2845,23 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getPulseUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
- 
+
             if (filters.PastMonths != null) {
- 
+
                 const pulseUsersForMonths = [];
- 
+
                 for (var i = 0; i < filters.PastMonths; i++) {
                     var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
                     var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-         
+
                     search.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
 
                     const pulseUsers = await Pulse.findAndCountAll(search);
- 
+
                     var pulseUsersForMonth = {
                         Month : monthName,
                         Count : pulseUsers.count
@@ -2890,9 +2889,9 @@ export class StatisticsRepo implements IStatisticsRepo {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
- 
+
                 const pulseUsers = await Pulse.findAndCountAll(search);
-     
+
                 const pulseUsersRatio = ((pulseUsers.count) / (totalUsers.count) * 100).toFixed(2);
 
                 const pulseUsersData = {
@@ -2900,7 +2899,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     Count      : pulseUsers.count,
                     Ratio      : pulseUsersRatio
                 };
-        
+
                 return pulseUsersData;
 
             }

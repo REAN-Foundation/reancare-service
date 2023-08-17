@@ -16,7 +16,7 @@ export class TypesController extends BaseController {
     //#region member variables and constructors
 
     _service: TypesService = null;
-    
+
     _validator = new TypesValidator();
 
     constructor() {
@@ -263,7 +263,7 @@ export class TypesController extends BaseController {
 
     getPriorityTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('HealthPriorityType.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -282,7 +282,7 @@ export class TypesController extends BaseController {
 
     updatePriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('HealthPriorityType.Update', request, response);
 
             const domainModel = await this._validator.updatePriorityType(request);
@@ -307,7 +307,7 @@ export class TypesController extends BaseController {
 
     deletePriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('HealthPriorityType.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -353,7 +353,7 @@ export class TypesController extends BaseController {
 
     getRoleTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('RoleType.GetById', request, response);
 
             const id:number = parseInt(request.params.id);
@@ -370,9 +370,9 @@ export class TypesController extends BaseController {
         }
     };
 
-    updateRoleType= async (request: express.Request, response: express.Response): Promise<void> => {
+    updateRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('RoleType.Update', request, response);
 
             const domainModel = await this._validator.updateRoleType(request);
@@ -397,7 +397,7 @@ export class TypesController extends BaseController {
 
     deleteRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('RoleType.Delete', request, response);
 
             const id:number = parseInt(request.params.id);
@@ -423,7 +423,7 @@ export class TypesController extends BaseController {
 
     createLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('LabRecordType.Create', request, response);
 
             const model = await this._validator.createLabRecordType(request);
@@ -442,7 +442,7 @@ export class TypesController extends BaseController {
 
     getLabRecordTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('LabRecordType.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -461,7 +461,7 @@ export class TypesController extends BaseController {
 
     updateLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('LabRecordType.Update', request, response);
 
             const domainModel = await this._validator.updateLabRecordType(request);
@@ -486,7 +486,7 @@ export class TypesController extends BaseController {
 
     deleteLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('LabRecordType.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -566,7 +566,7 @@ export class TypesController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     updateGoalType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 

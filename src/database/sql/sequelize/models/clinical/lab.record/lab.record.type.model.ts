@@ -2,7 +2,6 @@ import {
     Column, CreatedAt, DataType, DeletedAt, IsUUID,
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-import { LabRecordTypeList } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types';
 import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +44,7 @@ export default class LabRecordType extends Model {
         allowNull : true,
     })
     SnowmedCode: string;
-    
+
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
@@ -78,7 +77,7 @@ export default class LabRecordType extends Model {
 
     @UpdatedAt
     UpdatedAt: Date;
-    
+
     @DeletedAt
     DeletedAt: Date;
 

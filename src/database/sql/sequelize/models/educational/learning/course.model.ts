@@ -9,7 +9,6 @@ import {
     IsUUID,
     PrimaryKey,
     HasMany,
-    IsInt,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -37,7 +36,7 @@ export default class Course extends Model {
         allowNull : false,
     })
     id: string;
-    
+
     @Column({
         type      : DataType.STRING(256),
         allowNull : false,

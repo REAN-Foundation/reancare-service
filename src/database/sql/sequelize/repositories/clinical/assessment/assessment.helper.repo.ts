@@ -575,7 +575,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             search['offset'] = offset;
 
             const foundResults = await AssessmentNode.findAndCountAll(search);
- 
+
             const dtos: CAssessmentNode[] = [];
             for (const doctorNote of foundResults.rows) {
                 const dto = await this.populateNodeDetails(doctorNote);
@@ -1043,7 +1043,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     updateScoringCondition = async (conditionId: string, updates: any): Promise<CScoringCondition> => {
         try {

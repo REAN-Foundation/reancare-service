@@ -9,7 +9,6 @@ import {
     IsUUID,
     PrimaryKey,
     HasMany,
-    IsInt,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -72,7 +71,7 @@ export default class LearningPath extends Model {
         allowNull : true,
     })
     Enabled: boolean;
-    
+
     @HasMany(() =>  LearningPathCourses)
     LearningPathCourses:   LearningPathCourses[];
 

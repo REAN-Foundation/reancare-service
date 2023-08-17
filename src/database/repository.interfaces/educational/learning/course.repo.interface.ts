@@ -18,4 +18,6 @@ export interface ICourseRepo {
 
     getCoursesForLearningPath(learningPathId: string): Promise<any>;
 
+    getLearningPathsForCourse(courseId: string): Promise<any>;
+
 }

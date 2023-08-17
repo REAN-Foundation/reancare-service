@@ -13,7 +13,7 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import Organization from '../organization/organization.model';
+import Organization from '../general/organization/organization.model';
 import Tenant from './tenant.model';
 
 ///////////////////////////////////////////////////////////////////////

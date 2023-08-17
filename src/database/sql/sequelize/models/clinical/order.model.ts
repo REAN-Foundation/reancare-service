@@ -4,7 +4,7 @@ import {
 import { v4 } from 'uuid';
 import { OrderStates, OrderTypes } from '../../../../../domain.types/clinical/order/order.types';
 import FileResource from '../general/file.resource/file.resource.model';
-import Organization from '../organization/organization.model';
+import Organization from '../general/organization/organization.model';
 import User from '../users/user/user.model';
 import Visit from './visit.model';
 

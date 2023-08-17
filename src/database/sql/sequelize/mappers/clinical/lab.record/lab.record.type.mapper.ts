@@ -1,5 +1,5 @@
 import { LabRecordTypeDto } from "../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
-
+import { LabRecordType } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types";
 export class LabRecordTypeMapper {
 
     static toTypeDto = (labRecordType ): LabRecordTypeDto => {

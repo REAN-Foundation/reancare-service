@@ -34,9 +34,8 @@ export default class LabRecordType extends Model {
     TypeName: string;
 
     @Column({
-        type      : DataType.ENUM,
+        type      : DataType.STRING(128),
         allowNull : true,
-        values    : LabRecordTypeList,
     })
     DisplayName: string;
 
@@ -46,7 +45,7 @@ export default class LabRecordType extends Model {
         allowNull : true,
     })
     SnowmedCode: string;
-
+    
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
@@ -79,7 +78,7 @@ export default class LabRecordType extends Model {
 
     @UpdatedAt
     UpdatedAt: Date;
-
+    
     @DeletedAt
     DeletedAt: Date;
 

@@ -10,7 +10,7 @@ export class DoctorValidator {
 
     static getDomainModel = (request: express.Request): DoctorDomainModel => {
 
-        const birthdate = request.body.BirthDate != null && request.body.BirthDate !== undefined
+        const birthdate = request.body.BirthDate != null && typeof request.body.BirthDate !== undefined
             ? new Date(Date.parse(request.body.BirthDate))
             : null;
 

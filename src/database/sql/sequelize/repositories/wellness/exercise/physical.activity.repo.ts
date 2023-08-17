@@ -299,7 +299,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 DayStr      : dayStr,
                 Calories    : totalCaloriesForDay,
                 MoveMinutes : totalMoveMinutesForDay
-            });     
+            });
         }
         const stats_ = stats.sort((a, b) => new Date(a.DayStr).getTime() - new Date(b.DayStr).getTime());
         return stats_;

@@ -8,11 +8,13 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
-    ForeignKey,
+    HasMany,
+    IsInt,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import LearningPath from './learning.path.model';
+import CourseModule from './course.module.model';
+import LearningPathCourses from './learning.course.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -35,15 +37,7 @@ export default class Course extends Model {
         allowNull : false,
     })
     id: string;
-
-    @IsUUID(4)
-    @ForeignKey(() => LearningPath)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    LearningPathId: string;
-
+    
     @Column({
         type      : DataType.STRING(256),
         allowNull : false,
@@ -67,6 +61,12 @@ export default class Course extends Model {
         allowNull : true,
     })
     DurationInDays: number;
+
+    @HasMany(() => LearningPathCourses)
+    LearningPathCourses: LearningPathCourses[];
+
+    @HasMany(() => CourseModule)
+    CourseModules: CourseModule[];
 
     @Column
     @CreatedAt

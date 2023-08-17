@@ -8,4 +8,5 @@ export interface CourseModuleDomainModel {
     Description?    : string;
     ImageUrl?       : string;
     DurationInMins? : number;
+    Sequence?       : number;
 }

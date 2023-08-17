@@ -11,7 +11,8 @@ import {
     Length,
     ForeignKey,
     IsDecimal,
-    IsDate } from 'sequelize-typescript';
+    IsDate,
+    BelongsTo} from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
@@ -50,6 +51,9 @@ export default class BodyWeight extends Model {
         allowNull : false,
     })
     PatientUserId: string;
+
+    @BelongsTo(() => User)
+    User: User;
 
     @IsDecimal
     @Column({

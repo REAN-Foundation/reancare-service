@@ -67,7 +67,7 @@ export class NotificationValidator extends BaseValidator {
     private  async validateCreateBody(request) {
 
         await this.validateUuid(request, 'UserId', Where.Body, false, false);
-        await this.validateUuid(request, 'BroadcastToAll', Where.Body, false, false);
+        await this.validateBoolean(request, 'BroadcastToAll', Where.Body, false, true);
         await this.validateString(request, 'Title', Where.Body, true, false);
         await this.validateString(request, 'Body', Where.Body, false, true);
         await this.validateString(request, 'Payload', Where.Body, false, true);
@@ -81,13 +81,14 @@ export class NotificationValidator extends BaseValidator {
 
     private  async validateUpdateBody(request) {
 
+        await this.validateBoolean(request, 'BroadcastToAll', Where.Body, false, true);
         await this.validateString(request, 'Title', Where.Body, false, false);
-        await this.validateString(request, 'Body', Where.Body, false, false);
-        await this.validateString(request, 'Payload', Where.Body, false, false);
-        await this.validateDate(request, 'SentOn', Where.Body, false, false);
-        await this.validateDate(request, 'ReadOn', Where.Body, false, false);
-        await this.validateString(request, 'ImageUrl', Where.Body, false, false);
-        await this.validateUuid(request, 'Type', Where.Body, false, false);
+        await this.validateString(request, 'Body', Where.Body, false, true);
+        await this.validateString(request, 'Payload', Where.Body, false, true);
+        await this.validateDate(request, 'SentOn', Where.Body, false, true);
+        await this.validateDate(request, 'ReadOn', Where.Body, false, true);
+        await this.validateString(request, 'ImageUrl', Where.Body, false, true);
+        await this.validateUuid(request, 'Type', Where.Body, false, true);
 
         this.validateRequest(request);
     }

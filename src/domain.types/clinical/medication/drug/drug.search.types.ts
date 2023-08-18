@@ -5,6 +5,7 @@ import { DrugDto } from "./drug.dto";
 
 export interface DrugSearchFilters extends BaseSearchFilters {
     Name?: string;
+    GenericName?: string;
 }
 
 export interface DrugSearchResults extends BaseSearchResults {

@@ -75,6 +75,7 @@ import { register as registerRssfeedRoutes } from './general/rss.feed/rss.feed.r
 import { register as registerPatientDonorsRoutes } from './clinical/donation/patient.donors.routes';
 import { register as registerDonationRecordRoutes } from './clinical/donation.record/donation.record.routes';
 import { register as registerWearableWebhookTerraRoutes } from './device.data/webhooks/providers/terra/terra.webhook.routes';
+import { register as registerStatisticsRoutes } from './statistics/statistics.routes';
 import { register as registerWearableDeviceDetailsRoutes } from './device.data/device.details/wearable.device.details.routes';
 import { register as registerDonationCommunicationRoutes } from './clinical/donation.communication/donation.communication.routes';
 import { register as registerUserGroupRoutes } from './community/user.groups/user.group.routes';
@@ -180,6 +181,7 @@ export class Router {
                 registerPatientDonorsRoutes(this._app);
                 registerDonationRecordRoutes(this._app);
                 registerWearableWebhookTerraRoutes(this._app);
+                registerStatisticsRoutes(this._app);
                 registerWearableDeviceDetailsRoutes(this._app);
                 registerDonationCommunicationRoutes(this._app);
                 registerUserGroupRoutes(this._app);

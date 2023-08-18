@@ -2,7 +2,7 @@ import {
     BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import Address from '../general/address.model';
+import Address from '../address.model';
 import Organization from './organization.model';
 
 ///////////////////////////////////////////////////////////////////////

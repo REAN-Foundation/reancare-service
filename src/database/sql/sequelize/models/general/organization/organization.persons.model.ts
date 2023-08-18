@@ -14,7 +14,7 @@ import {
 
 import { v4 } from 'uuid';
 import Organization from './organization.model';
-import Person from '../person/person.model';
+import Person from '../../person/person.model';
 
 ///////////////////////////////////////////////////////////////////////
 //This is a junction table model representing many-to-many association

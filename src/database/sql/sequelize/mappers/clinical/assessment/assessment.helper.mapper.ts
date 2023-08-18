@@ -122,7 +122,8 @@ export class AssessmentHelperMapper {
         node: AssessmentNode,
         children?: CAssessmentNode[],
         paths?: CAssessmentNodePath[],
-        options?: CAssessmentQueryOption[]
+        options?: CAssessmentQueryOption[],
+        scoringCondition?: CScoringCondition,
     ): CAssessmentMessageNode | CAssessmentQuestionNode | CAssessmentListNode => {
 
         if (node == null) {
@@ -143,6 +144,7 @@ export class AssessmentHelperMapper {
             questionNodeDto.Options = options;
             questionNodeDto.Paths = paths;
             questionNodeDto.CorrectAnswer = node.CorrectAnswer ? JSON.parse(node.CorrectAnswer) : null;
+            questionNodeDto.ScoringCondition = scoringCondition ?? null;
             return questionNodeDto;
         }
         if (node.NodeType === AssessmentNodeType.NodeList) {

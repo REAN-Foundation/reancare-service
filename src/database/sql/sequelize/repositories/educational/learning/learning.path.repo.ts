@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { CourseDto } from '../../../../../../domain.types/educational/learning/course/course.dto';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { LearningPathDomainModel } from "../../../../../../domain.types/educational/learning/learning.path/learning.path.domain.model";
@@ -8,7 +9,10 @@ import { LearningPathSearchFilters,
 } from "../../../../../../domain.types/educational/learning/learning.path/learning.path.search.types";
 import { ILearningPathRepo } from '../../../../../repository.interfaces/educational/learning/learning.path.repo.interface';
 import { LearningPathMapper } from '../../../mappers/educational/learning/learning.path.mapper';
+import Course from '../../../models/educational/learning/course.model';
+import  LearningPathCourses from '../../../models/educational/learning/learning.course.model';
 import LearningPath from '../../../models/educational/learning/learning.path.model';
+import { CourseMapper } from '../../../mappers/educational/learning/course.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,14 +32,15 @@ export class LearningPathRepo implements ILearningPathRepo {
                 Enabled          : createModel.Enabled,
             };
 
-            const course = await LearningPath.create(entity);
-            return await LearningPathMapper.toDto(course);
+            const learningPath = await LearningPath.create(entity);
+            await this.addCourses(learningPath.id, createModel.CourseIds);
+            return await LearningPathMapper.toDto(learningPath);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
-
+    
     getById = async (id: string): Promise<LearningPathDto> => {
         try {
             const course = await LearningPath.findByPk(id);
@@ -49,10 +54,21 @@ export class LearningPathRepo implements ILearningPathRepo {
     search = async (filters: LearningPathSearchFilters): Promise<LearningPathSearchResults> => {
         try {
 
-            const search = { where: {} };
+            const search = { where   : {},
+                include : [
+                    {
+                        model    : LearningPathCourses,
+                        as       : 'LearningPathCourses',
+                        required : true,
+                    }
+                ]
+            };
 
             if (filters.Name != null) {
                 search.where['Name'] = { [Op.like]: '%' + filters.Name + '%' };
+            }
+            if (filters.PreferenceWeight != null) {
+                search.where['PreferenceWeight'] = filters.PreferenceWeight;
             }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
@@ -127,7 +143,8 @@ export class LearningPathRepo implements ILearningPathRepo {
             }
 
             await course.save();
-
+            
+            await this.addCourses(course.id, updateModel.CourseIds);
             return await LearningPathMapper.toDto(course);
 
         } catch (error) {
@@ -147,4 +164,57 @@ export class LearningPathRepo implements ILearningPathRepo {
         }
     };
 
+    private addCourses = async (learningPathId, courseIds) => {
+        if (courseIds !== null && courseIds.length > 0) {
+            for await (var courseId of courseIds) {
+                await this.addCourse(learningPathId, courseId);
+            }
+        }
+    };
+
+    addCourse = async (id: string, courseId: string): Promise<boolean> => {
+        try {
+            const learningCourse = await  LearningPathCourses.findAll({
+                where : {
+                    CourseId       : courseId,
+                    LearningPathId : id
+                }
+            });
+            if (learningCourse.length > 0) {
+                return false;
+            }
+            var entity = await  LearningPathCourses.create({
+                CourseId       : courseId,
+                LearningPathId : id
+            });
+            return entity != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getCourses = async (id: string): Promise<CourseDto[]> => {
+
+        try {
+            const learningCourses = await  LearningPathCourses.findAll({
+                where : {
+                    LearningPathId : id
+                },
+                include : [
+                    {
+                        model : Course
+                    }
+                ]
+            });
+            var list = learningCourses.map(x => x.Course);
+            return list.map(y => CourseMapper.toDto(y));
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }
+

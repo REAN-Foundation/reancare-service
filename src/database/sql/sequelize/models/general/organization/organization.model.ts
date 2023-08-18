@@ -15,9 +15,9 @@ import {
     ForeignKey,
 } from 'sequelize-typescript';
 
-import { OrganizationTypeList } from '../../../../../domain.types/general/organization/organization.types';
+import { OrganizationTypeList } from '../../../../../../domain.types/general/organization/organization.types';
 import { v4 } from 'uuid';
-import User from '../users/user/user.model';
+import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

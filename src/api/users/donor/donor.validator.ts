@@ -181,7 +181,7 @@ export class DonorValidator {
             .trim()
             .escape()
             .run(request);
-        
+
         await query('donorType').optional()
             .trim()
             .escape()

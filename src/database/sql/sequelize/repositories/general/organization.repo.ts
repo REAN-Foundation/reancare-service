@@ -11,9 +11,9 @@ import { AddressMapper } from '../../mappers/general/address.mapper';
 import { OrganizationMapper } from '../../mappers/general/organization.mapper';
 import { PersonMapper } from '../../mappers/person/person.mapper';
 import Address from '../../models/general/address.model';
-import OrganizationAddress from '../../models/organization/organization.addresses.model';
-import Organization from '../../models/organization/organization.model';
-import OrganizationPersons from '../../models/organization/organization.persons.model';
+import OrganizationAddresses from '../../models/general/organization/organization.addresses.model';
+import Organization from '../../models/general/organization/organization.model';
+import OrganizationPersons from '../../models/general/organization/organization.persons.model';
 import Person from '../../models/person/person.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -255,7 +255,7 @@ export class OrganizationRepo implements IOrganizationRepo {
 
     addAddress = async (id: string, addressId: string): Promise<boolean> => {
         try {
-            const organizationAddresses = await OrganizationAddress.findAll({
+            const organizationAddresses = await OrganizationAddresses.findAll({
                 where : {
                     AddressId      : addressId,
                     OrganizationId : id
@@ -264,7 +264,7 @@ export class OrganizationRepo implements IOrganizationRepo {
             if (organizationAddresses.length > 0) {
                 return false;
             }
-            var entity = await OrganizationAddress.create({
+            var entity = await OrganizationAddresses.create({
                 AddressId      : addressId,
                 OrganizationId : id
             });
@@ -277,7 +277,7 @@ export class OrganizationRepo implements IOrganizationRepo {
 
     removeAddress = async (id: string, addressId: string): Promise<boolean> => {
         try {
-            var result = await OrganizationAddress.destroy({
+            var result = await OrganizationAddresses.destroy({
                 where : {
                     AddressId      : addressId,
                     OrganizationId : id
@@ -293,7 +293,7 @@ export class OrganizationRepo implements IOrganizationRepo {
     getAddresses = async (id: string): Promise<AddressDto[]> => {
 
         try {
-            const organizationAddresses = await OrganizationAddress.findAll({
+            const organizationAddresses = await OrganizationAddresses.findAll({
                 where : {
                     OrganizationId : id
                 },

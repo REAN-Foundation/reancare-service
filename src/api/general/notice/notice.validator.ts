@@ -19,7 +19,7 @@ export class NoticeValidator extends BaseValidator {
             Description : request.body.Description,
             Link        : request.body.Link,
             PostDate    : request.body.PostDate ?? new Date(),
-            DaysActive  : request.body.DaysActive,
+            DaysActive  : request.body.DaysActive ?? null,
             IsActive    : request.body.IsActive,
             Tags        : request.body.Tags ?? [],
             ImageUrl    : request.body.ImageUrl,
@@ -104,14 +104,14 @@ export class NoticeValidator extends BaseValidator {
     private  async validateUpdateBody(request) {
 
         await this.validateString(request, 'Title', Where.Body, false, false);
-        await this.validateString(request, 'Description', Where.Body, false, false);
-        await this.validateString(request, 'Link', Where.Body, false, false);
-        await this.validateDate(request, 'PostDate', Where.Body, false, false);
-        await this.validateDecimal(request, 'DaysActive', Where.Body, false, false);
-        await this.validateBoolean(request, 'IsActive', Where.Body, false, false);
-        await this.validateArray(request, 'Tags', Where.Body, false, false);
-        await this.validateString(request, 'ImageUrl', Where.Body, false, false);
-        await this.validateUuid(request, 'Action', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateString(request, 'Link', Where.Body, false, true);
+        await this.validateDate(request, 'PostDate', Where.Body, false, true);
+        await this.validateDecimal(request, 'DaysActive', Where.Body, false, true);
+        await this.validateBoolean(request, 'IsActive', Where.Body, false, true);
+        await this.validateArray(request, 'Tags', Where.Body, false, true);
+        await this.validateString(request, 'ImageUrl', Where.Body, false, true);
+        await this.validateUuid(request, 'Action', Where.Body, false, true);
 
         this.validateRequest(request);
     }

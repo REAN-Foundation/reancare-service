@@ -56,7 +56,6 @@ import { Loader } from "./loader";
 import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
 import { LabRecordService } from "../services/clinical/lab.record/lab.record.service";
 import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
-import { LabRecordType } from "../domain.types/clinical/lab.record/lab.record/lab.record.types";
 import { IFoodConsumptionRepo }
     from "../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
 import { NutritionQuestionnaireDomainModel }
@@ -590,7 +589,7 @@ export class Seeder {
 
             const model: LabRecordTypeDomainModel = {
                 TypeName       : c['TypeName'],
-                DisplayName    : c['DisplayName'] as LabRecordType,
+                DisplayName    : c['DisplayName'],
                 SnowmedCode    : c['SnowmedCode'],
                 LoincCode      : c['LoincCode'],
                 NormalRangeMin : c['NormalRangeMin'],

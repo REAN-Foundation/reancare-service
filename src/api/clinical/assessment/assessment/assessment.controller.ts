@@ -410,7 +410,7 @@ export class AssessmentController extends BaseController{
                 await this._userTaskService.finishTask(task.id);
             }
         }
-        
+
     }
 
     private async generateScoreReport(assessment: AssessmentDto) {

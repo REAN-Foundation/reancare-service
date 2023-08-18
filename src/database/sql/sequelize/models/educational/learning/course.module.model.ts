@@ -9,9 +9,13 @@ import {
     IsUUID,
     PrimaryKey,
     ForeignKey,
+    BelongsTo,
+    HasMany,
+    IsInt,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
+import CourseContent from './course.content.model';
 import Course from './course.model';
 import LearningPath from './learning.path.model';
 
@@ -44,6 +48,9 @@ export default class CourseModule extends Model {
         allowNull : true,
     })
     CourseId: string;
+    
+    @BelongsTo(() =>  Course)
+    Course:  Course;
 
     @IsUUID(4)
     @ForeignKey(() => LearningPath)
@@ -76,6 +83,16 @@ export default class CourseModule extends Model {
         allowNull : true,
     })
     DurationInMins: number;
+
+    @IsInt
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    Sequence: number;
+
+    @HasMany(() => CourseContent)
+    CourseContents: CourseContent[];
 
     @Column
     @CreatedAt

@@ -4,6 +4,7 @@ import { body } from 'express-validator';
 import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
 import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
+import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +20,7 @@ export class PatientValidator extends BaseValidator {
             ? new Date(Date.parse(request.body.BirthDate))
             : null;
 
+        const patientAge = Helper.getAgeFromBirthDate(birthdate);
         const phone = request.body.Phone;
 
         const entity: PatientDomainModel = {
@@ -36,7 +38,7 @@ export class PatientValidator extends BaseValidator {
                     Race                      : request.body.Race ?? null,
                     Ethnicity                 : request.body.Ethnicity ?? null,
                     BirthDate                 : birthdate,
-                    Age                       : request.body.Age ?? null,
+                    Age                       : request.body.Age ?? patientAge,
                     StrokeSurvivorOrCaregiver : request.body.StrokeSurvivorOrCaregiver ?? null,
                     LivingAlone               : request.body.LivingAlone ?? null,
                     WorkedPriorToStroke       : request.body.WorkedPriorToStroke ?? null,
@@ -67,6 +69,8 @@ export class PatientValidator extends BaseValidator {
         const birthdate = body.BirthDate !== undefined ?
             (body.BirthDate !== null ? new Date(Date.parse(body.BirthDate)) : null) : undefined;
 
+        const patientAge = Helper.getAgeFromBirthDate(birthdate);
+
         const entity: PatientDomainModel = {
             User : {
                 Person : {
@@ -81,7 +85,7 @@ export class PatientValidator extends BaseValidator {
                     Race                      : body.Race !== undefined ? body.Race                                          : undefined,
                     Ethnicity                 : body.Ethnicity !== undefined ? body.Ethnicity                                : undefined,
                     BirthDate                 : birthdate,
-                    Age                       : body.Age !== undefined ? body.Age                                            : undefined,
+                    Age                       : body.Age !== undefined ? body.Age                                            : patientAge,
                     StrokeSurvivorOrCaregiver : body.StrokeSurvivorOrCaregiver !== undefined ? body.StrokeSurvivorOrCaregiver : undefined,
                     LivingAlone               : body.LivingAlone !== undefined ? body.LivingAlone                            : undefined,
                     WorkedPriorToStroke       : body.WorkedPriorToStroke !== undefined ? body.WorkedPriorToStroke            : undefined,

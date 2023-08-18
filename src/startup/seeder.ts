@@ -657,7 +657,7 @@ export class Seeder {
             const existingRecord = await this._healthSystemService.searchType(filters);
             //console.log(JSON.stringify(existingRecord, null, 2));
             if (existingRecord.Items.length > 0) {
-                Logger.instance().log(`Health system record has already been exist ${t['HealthSystem']}!`);
+                Logger.instance().log(`Health system record ${t['HealthSystem']} already exists!`);
                 continue;
             }
 

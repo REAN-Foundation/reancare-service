@@ -35,14 +35,10 @@ import Doctor from '../../models/users/doctor.model';
 import EmergencyContact from '../../models/users/patient/emergency.contact.model';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
-import { Sequelize } from 'sequelize-typescript';
+import { DatabaseConnector_Sequelize } from '../../../../../database/sql/sequelize/database.connector.sequelize';
 
-///////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 
-const sequelize = new Sequelize("reanadmindata", "root", "root", {
-    host    : "localhost",
-    dialect : "mysql",
-});
 export class StatisticsRepo implements IStatisticsRepo {
 
     getUsersCount = async (filters: StatisticSearchFilters): Promise<any> => {
@@ -458,13 +454,16 @@ export class StatisticsRepo implements IStatisticsRepo {
                 WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null
             )`;
 
-            const response = await sequelize.query(query,
+            const db = DatabaseConnector_Sequelize.db;
+
+            const response = await db.query(query,
                 {
                     type : QueryTypes.SELECT,
                 }
             );
 
             return response;
+
             // const totalUsers = await this.getTotalUsers(filters);
             // const enrollmentDetails = [];
             // for (const u of totalUsers.rows) {

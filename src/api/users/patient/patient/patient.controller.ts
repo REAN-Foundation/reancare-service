@@ -171,6 +171,10 @@ export class PatientController extends BaseUserController {
 
             const updateModel = await this._validator.updateByUserId(request);
             const userDomainModel: UserDomainModel = updateModel.User;
+            if (userDomainModel.Person.Phone != null) {
+                const IsTestUser = await this._userHelper.isTestUser(userDomainModel);
+                userDomainModel.IsTestUser = IsTestUser;
+            }
             const updatedUser = await this._userService.update(userId, userDomainModel);
             if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');

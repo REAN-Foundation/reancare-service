@@ -13,6 +13,7 @@ export interface UserDomainModel {
     Password        ?: string;
     DefaultTimeZone ?: string;
     CurrentTimeZone ?: string;
+    IsTestUser      ?: boolean;
     GenerateLoginOTP?: boolean;
     LastLogin       ?: Date;
     RoleId          ?: number;

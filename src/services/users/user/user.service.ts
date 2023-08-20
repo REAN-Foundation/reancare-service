@@ -102,11 +102,11 @@ export class UserService {
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
 
-        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
+        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
 
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
-        if (!isInternalTestUser) {
+        if (!isTestUser) {
             const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
             const isPasswordValid = Helper.compare(loginModel.Password, hashedPassword);
             if (!isPasswordValid) {
@@ -160,8 +160,8 @@ export class UserService {
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
 
-        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(otpDetails.Phone);
-        if (isInternalTestUser) {
+        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(otpDetails.Phone);
+        if (isTestUser) {
             return true;
         }
 
@@ -225,11 +225,11 @@ export class UserService {
 
     public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
 
-        var isInternalTestUser = await this.isInternalTestUser(loginModel.Phone);
+        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
 
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
-        if (!isInternalTestUser) {
+        if (!isTestUser) {
             const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
             if (!storedOtp) {
                 throw new ApiError(404, 'Active OTP record not found!');
@@ -478,16 +478,15 @@ export class UserService {
         return dto;
     };
 
-    private isInternalTestUser = async (phone: string): Promise<boolean> => {
+    public isInternalTestUser = async (phone: string): Promise<boolean> => {
         var startingRange = 1000000001;
         var endingRange = startingRange + parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS) - 1;
-
         var phoneNumber = parseInt(phone);
-        var isInternalTestUser = false;
+        var isTestUser = false;
         if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
-            isInternalTestUser = true;
+            isTestUser = true;
         }
-        return isInternalTestUser;
+        return isTestUser;
     };
 
     //#endregion

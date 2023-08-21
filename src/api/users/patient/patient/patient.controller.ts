@@ -179,14 +179,13 @@ export class PatientController extends BaseUserController {
             personDomainModel.id = updatedUser.Person.id;
 
             const healthProfile: HealthProfileDomainModel = {
-
                 MaritalStatus             : personDomainModel.MaritalStatus,
                 Race                      : personDomainModel.Race,
                 Ethnicity                 : personDomainModel.Ethnicity,
                 StrokeSurvivorOrCaregiver : personDomainModel.StrokeSurvivorOrCaregiver,
                 LivingAlone               : personDomainModel.LivingAlone,
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
-
+                OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
             await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);

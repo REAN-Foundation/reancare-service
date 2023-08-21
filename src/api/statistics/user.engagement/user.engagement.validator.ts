@@ -10,7 +10,6 @@ export class UserEngagementValidator extends BaseValidator {
     }
 
     getDateRanges = async (request: express.Request) => {
-
         await this.validateDateString(request, 'from', Where.Query, false, true);
         await this.validateDateString(request, 'to', Where.Query, false, true);
         this.validateRequest(request);

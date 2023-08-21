@@ -69,7 +69,7 @@ export class PatientValidator extends BaseValidator {
         const birthdate = body.BirthDate !== undefined ?
             (body.BirthDate !== null ? new Date(Date.parse(body.BirthDate)) : null) : undefined;
 
-        const patientAge = Helper.getAgeFromBirthDate(birthdate);
+        const patientAge = birthdate ? Helper.getAgeFromBirthDate(birthdate) : undefined;
 
         const entity: PatientDomainModel = {
             User : {
@@ -77,6 +77,7 @@ export class PatientValidator extends BaseValidator {
                     FirstName                 : body.FirstName !== undefined ? body.FirstName                                : undefined,
                     LastName                  : body.LastName !== undefined ? body.LastName                                  : undefined,
                     Prefix                    : body.Prefix !== undefined ? body.Prefix                                      : undefined,
+                    Phone                     : body.Phone !== undefined ? body.Phone                                        : undefined,
                     Email                     : body.Email !== undefined ? body.Email                                        : undefined,
                     TelegramChatId            : body.TelegramChatId !== undefined ? body.TelegramChatId                      : undefined,
                     Gender                    : body.Gender !== undefined ? body.Gender                                      : undefined,

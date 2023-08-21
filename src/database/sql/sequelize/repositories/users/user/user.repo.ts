@@ -197,6 +197,10 @@ export class UserRepo implements IUserRepo {
                 userDomainModel.Password.length > 0) {
                 user.Password = Helper.hash(userDomainModel.Password);
             }
+            if (userDomainModel.IsTestUser !== undefined &&
+                userDomainModel.IsTestUser !== null) {
+                user.IsTestUser = userDomainModel.IsTestUser;
+            }
             if (userDomainModel.LastLogin != null) {
                 user.LastLogin = userDomainModel.LastLogin;
             }

@@ -60,7 +60,15 @@ export class UserLearningService {
         if (userLearnings.length === 0) {
             return 0;
         }
-        const contents = await this._contentRepo.getContentsForLearningPath(learningPathId);
+        const contents = [];
+        const courses = await this._courseRepo.getCoursesForLearningPath(learningPathId);
+        for await (var course of courses) {
+            const modules = await this._moduleRepo.getModulesForCourse(course.id);
+            for await (var module of modules) {
+                const contents_ = await this._contentRepo.GetContentsForModule(module.id);
+                contents.push(...contents_);
+            }
+        }
         if (contents.length === 0) {
             return 0;
         }

@@ -53,7 +53,8 @@ export class PatientValidator extends BaseValidator {
             HealthProfile : {
                 BloodGroup           : request.body.BloodGroup ?? null,
                 BloodTransfusionDate : request.body.BloodTransfusionDate ?? null,
-                BloodDonationCycle   : request.body.BloodDonationCycle ?? null
+                BloodDonationCycle   : request.body.BloodDonationCycle ?? null,
+                OtherInformation     : request.body.OtherInformation ?? null,
             },
             UserId   : request.params.userId ?? null,
             Address  : request.body.Address ?? null,
@@ -96,6 +97,10 @@ export class PatientValidator extends BaseValidator {
                 DefaultTimeZone : body.DefaultTimeZone ?? null,
                 CurrentTimeZone : body.CurrentTimeZone ?? null,
                 TenantId        : body.TenantId ?? null,
+            },
+            HealthProfile : {
+                OtherInformation : body.OtherInformation ?? null,
+                BloodGroup       : body.BloodGroup ?? null,
             },
             Address           : body.Address ?? null,
             DonorAcceptance   : body.DonorAcceptance ?? null,
@@ -171,6 +176,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateBoolean(request, 'IsRemindersLoaded', Where.Body, false, true);
         await this.validateUuid(request, 'TenantId', Where.Body, false, true);
         await this.validateUuid(request, 'CohortId', Where.Body, false, true);
+        await this.validateString(request, 'OtherInformation', Where.Body, false, true);
 
         await body('AddressIds').optional()
             .isArray()

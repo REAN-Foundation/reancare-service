@@ -18,6 +18,8 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
+import { RoleDto } from '../../../../domain.types/role/role.dto';
+import { Roles } from '../../../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -171,6 +173,12 @@ export class PatientController extends BaseUserController {
 
             const updateModel = await this._validator.updateByUserId(request);
             const userDomainModel: UserDomainModel = updateModel.User;
+            if (userDomainModel.Person.Phone != null) {
+                await this.checkBeforeUpdatingPhone(userDomainModel, userId);
+                //We identify test users only by phone currently!
+                const IsTestUser = await this._userHelper.isTestUser(userDomainModel);
+                userDomainModel.IsTestUser = IsTestUser;
+            }
             const updatedUser = await this._userService.update(userId, userDomainModel);
             if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
@@ -350,6 +358,19 @@ export class PatientController extends BaseUserController {
             throw error;
         }
     };
+
+    private async checkBeforeUpdatingPhone(userDomainModel: UserDomainModel, userId: string) {
+        const role: RoleDto = await this._roleService.getByName(Roles.Patient);
+        if (role == null) {
+            throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
+        }
+        const existing = await this._userService.getByPhoneAndRole(userDomainModel.Person.Phone, role.id);
+        if (existing != null) {
+            if (existing.id !== userId) {
+                throw new ApiError(409, 'Phone number already exists with other patient!');
+            }
+        }
+    }
 
     //#endregion
 

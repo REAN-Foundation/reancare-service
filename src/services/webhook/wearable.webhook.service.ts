@@ -1,5 +1,5 @@
+/* eslint-disable max-len */
 import { inject, injectable } from "tsyringe";
-import { BodyWeightDomainModel } from '../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { BodyWeightStore } from "../../modules/ehr/services/body.weight.store";
 import { Loader } from "../../startup/loader";
@@ -50,11 +50,6 @@ export class TeraWebhookService {
             this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
         }
     }
-
-    create = async (bodyWeightDomainModel: BodyWeightDomainModel) => {
-
-        // var dto = await this._bloodCholesterolRepo.create(bodyWeightDomainModel);
-    };
 
     auth = async (authDomainModel: AuthDomainModel) => {
 
@@ -246,7 +241,15 @@ export class TeraWebhookService {
             const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredPulseSamples = [];
             if (recentPulse != null) {
-                filteredPulseSamples = heartRateSamples.filter((pulse) => new Date(pulse.TimeStamp) > recentPulse.RecordDate);
+                const allowedDuration_in_sec = parseInt(process.env.ALLOWED_PULSE_TIME_DIFFERENCE_INSEC);
+                for (const pulseSample of heartRateSamples) {
+                    const oldTimeStamp: any = recentPulse.RecordDate;
+                    const newTimeStamp: any = new Date(pulseSample.TimeStamp);
+                    const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
+                    if (timeDiffrence > allowedDuration_in_sec) {
+                        filteredPulseSamples.push(pulseSample);
+                    }
+                }
             } else {
                 filteredPulseSamples = heartRateSamples;
             }

@@ -16,8 +16,9 @@ export class TerraCache {
             const oldTimeStamp: any = new Date(TerraCache.TerraRequest[key]);
             const newTimeStamp: any = new Date(body.User.LastWebhookUpdate);
             const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
+            const allowedTimeDiff: number = parseInt(process.env.TERRA_ALLOWED_TIME_DIFFERENCE_INSEC);
             await this.CacheCurrentRequest(body);
-            if (timeDiffrence > 60 ) {
+            if (timeDiffrence > allowedTimeDiff ) {
                 return body;
             } else {
                 return null;

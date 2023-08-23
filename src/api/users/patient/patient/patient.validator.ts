@@ -99,7 +99,7 @@ export class PatientValidator extends BaseValidator {
                 TenantId        : body.TenantId ?? null,
             },
             HealthProfile : {
-                OtherInformation : body.OtherInformation ?? null,
+                OtherInformation : body.OtherInformation !== undefined ? body.OtherInformation : undefined,
                 BloodGroup       : body.BloodGroup ?? null,
             },
             Address           : body.Address ?? null,

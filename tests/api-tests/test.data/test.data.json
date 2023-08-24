@@ -1,0 +1,32 @@
+{
+  "AdminLoginModel": {
+    "UserName": "admin",
+    "Password": "uHqLYqjh",
+    "LoginRoleId": 1
+  },
+  "PatientLoginModel": {
+    "Phone": "+91-7349901967",
+    "Password": "Test@123",
+    "LoginRoleId": 2
+  },
+  "PatientLoginModel2": {
+    "Phone": "+91-7349901969",
+    "Password": "Test@123",
+    "LoginRoleId": 2
+  },
+  "DoctorLoginModel": {
+    "Phone": "+91-9876543219",
+    "Password": "Test@123",
+    "LoginRoleId": 3
+  },
+  "PatientLoginModel3": {
+    "Phone": "+91-7349901957",
+    "Password": "Test@123",
+    "LoginRoleId": 2
+  },
+  "PatientLoginModel4": {
+    "Phone": "+91-7749901967",
+    "Password": "Test@123",
+    "LoginRoleId": 2
+  }
+}

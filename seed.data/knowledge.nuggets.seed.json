@@ -206,5 +206,35 @@
         "AdditionalResources": [],
         "Tags": "Support Network"
 
+    },
+    {
+        "TopicName": "What is Lp(a)?",
+        "BriefInformation": "It stands for lipoprotein (a).It is a type of lipoprotein that is genetically inherited and is a common independent risk factor for heart disease.",
+        "DetailedInformation": "It stands for lipoprotein (a).It is a type of lipoprotein that is genetically inherited and is a common independent risk factor for heart disease.",
+        "AdditionalResources": [
+            "https://www.heart.org/-/media/files/health-topics/cholesterol/what-is-lpa.pdf?utm_source=heart-stroke-app&utm_medium=display&utm_campaign=lpa"
+        ],
+        "Tags": "Lipoprotein"
+
+    },
+    {
+        "TopicName": "Understanding the Lp(a) Test",
+        "BriefInformation": "Levels higher than 50 mg/dL(125 nmol/L) are considered to be high. Lp(a) is a genetic risk factor, if you have high Lp(a), encourage your family member.",
+        "DetailedInformation": "Levels higher than 50 mg/dL(125 nmol/L) are considered to be high. Lp(a) is a genetic risk factor, if you have high Lp(a), encourage your family member.",
+        "AdditionalResources": [
+            "https://www.heart.org/-/media/files/health-topics/cholesterol/lpa-test.pdf?utm_source=heart-stroke-app&utm_medium=display&utm_campaign=lpa"
+        ],
+        "Tags": "Lipoprotein, Lp(a) Test"
+
+    },
+    {
+        "TopicName": "Understanding My Lp(a) Risk",
+        "BriefInformation": "Patients with an Lp(a) of 14-30mg/dl are considered to be at borderline risk, and those within the range of 31-50md/dl are at high risk.",
+        "DetailedInformation": "Patients with an Lp(a) of 14-30mg/dl are considered to be at borderline risk, and those within the range of 31-50md/dl are at high risk.",
+        "AdditionalResources": [
+            "https://www.heart.org/-/media/files/health-topics/cholesterol/lpa-discussion-guide.pdf?utm_source=heart-stroke-app&utm_medium=display&utm_campaign=lpa"
+        ],
+        "Tags": "Lipoprotein, Lp(a) Risk"
+
     }
 ]

@@ -35,5 +35,7 @@ export interface IStatisticsRepo {
     getUsersByHealthPillar(filters: StatisticSearchFilters): Promise<any>;
 
     getUsersByBiometrics(filters: StatisticSearchFilters): Promise<any>;
+    
+    getAllYears(filters: StatisticSearchFilters): Promise<any>;
 
 }

@@ -1105,6 +1105,30 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
+    getAllYears = async (filters): Promise<any> => {
+        try {
+           
+            const search: any = {
+                where      : {},
+                include    : [],
+                paranoid   : false,
+                attributes : [
+                    [sequelize.fn('YEAR', sequelize.col('CreatedAt')), 'year'], // Extract year from createdAt
+                ],
+                group : [sequelize.fn('YEAR', sequelize.col('CreatedAt'))],
+            };
+
+            const allYears = await Patient.findAll(search);
+            // const allYears = allYears_;
+            // const uniqueYears = [...new Set(allYears.map(item => item.year))];
+            return allYears;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     // #private region
 
     private getOnboardedUsers = async (filters: StatisticSearchFilters): Promise<any> => {

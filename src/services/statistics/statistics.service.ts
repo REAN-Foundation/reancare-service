@@ -76,5 +76,9 @@ export class StatisticsService {
     getUsersByBiometrics = async (filters: StatisticSearchFilters): Promise<any> => {
         return await this._statisticsRepo.getUsersByBiometrics(filters);
     };
+
+    getAllYears = async (filters: StatisticSearchFilters): Promise<any> => {
+        return await this._statisticsRepo.getAllYears(filters);
+    };
     
 }

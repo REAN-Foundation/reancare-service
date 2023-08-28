@@ -250,4 +250,18 @@ export class StatisticsController extends BaseController {
         }
     };
 
+    getAllYears = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Statistics.GetAllYears', request, response);
+            const filters = await this._validator.searchFilter(request);
+            const allYears = await this._service.getAllYears(filters);
+            const message = 'Years retrieved successfully!';
+            ResponseHandler.success(request, response,message, 200, {
+                Years : allYears });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }

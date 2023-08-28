@@ -39,14 +39,14 @@ export default class FoodConsumption extends Model {
         },
         allowNull : false,
     })
-        id: string;
+    id: string;
 
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-        EhrId: string;
+    EhrId: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)
@@ -54,68 +54,67 @@ export default class FoodConsumption extends Model {
         type      : DataType.UUID,
         allowNull : false,
     })
-        PatientUserId: string;
+    PatientUserId: string;
 
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-        TerraSummaryId: string;
+    TerraSummaryId: string;
 
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-        Provider: string;
+    Provider: string;
 
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-        Food: string;
-
+    Food: string;
 
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-        FoodTypes: string;
+    FoodTypes: string;
 
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,
     })
-        Servings: number;
+    Servings: number;
 
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-        ServingUnit: string;
+    ServingUnit: string;
 
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-        Tags: string;
+    Tags: string;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : true,
         defaultValue : false,
     })
-        UserResponse: boolean;
+    UserResponse: boolean;
 
     @Length({ max: 1024 })
     @Column({
         type      : DataType.STRING(1024),
         allowNull : true,
     })
-        Description: string;
+    Description: string;
 
     @Length({ max: 128 })
     @Column({
@@ -124,14 +123,14 @@ export default class FoodConsumption extends Model {
         values       : FoodConsumptionEventList,
         defaultValue : FoodConsumptionEvents.Other
     })
-        ConsumedAs: string;
+    ConsumedAs: string;
 
     @IsDecimal
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,
     })
-        Calories: number;
+    Calories: number;
 
     @IsUUID(4)
     @ForeignKey(() => FileResource)
@@ -139,28 +138,28 @@ export default class FoodConsumption extends Model {
         type      : DataType.UUID,
         allowNull : true,
     })
-        ImageResourceId: string;
+    ImageResourceId: string;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-        StartTime: Date;
+    StartTime: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-        EndTime: Date;
+    EndTime: Date;
 
     @Column
     @CreatedAt
-        CreatedAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
-        UpdatedAt: Date;
+    UpdatedAt: Date;
 
     @DeletedAt
     DeletedAt: Date;

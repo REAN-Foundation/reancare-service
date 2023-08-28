@@ -18,6 +18,7 @@ export class CourseModuleMapper {
             Description    : courseModule.Description,
             ImageUrl       : courseModule.ImageUrl,
             DurationInMins : courseModule.DurationInMins,
+            Sequence       : courseModule.Sequence,
         };
         return dto;
     };

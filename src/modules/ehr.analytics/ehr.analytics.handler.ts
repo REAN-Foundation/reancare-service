@@ -8,6 +8,7 @@ import * as asyncLib from 'async';
 import { Logger } from "../../common/logger";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { EHRRecordTypes } from "./ehr.record.types";
+import { ConfigurationManager } from "../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,6 +30,9 @@ export class EHRAnalyticsHandler {
     }, EHRAnalyticsHandler._numAsyncTasks);
 
     private static add = (model:EHRDynamicRecordDomainModel) => {
+        if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
+            return;
+        }
         EHRAnalyticsHandler._q.push(model, (model, error) => {
             if (error) {
                 Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error)}`);
@@ -44,6 +48,9 @@ export class EHRAnalyticsHandler {
         patientUserId: uuid,
         details: EHRStaticRecordDomainModel
     ) => {
+        if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
+            return;
+        }
         await EHRAnalyticsHandler._ehrDatasetRepo.addOrUpdatePatient(
             patientUserId, details);
     };

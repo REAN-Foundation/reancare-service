@@ -31,8 +31,11 @@ export class ConfigurationManager {
             SystemIdentifier : configuration.SystemIdentifier,
             BaseUrl          : process.env.BASE_URL,
             Auth             : {
-                Authentication : configuration.Auth.Authentication as AuthenticationType,
-                Authorization  : configuration.Auth.Authorization as AuthorizationType,
+                Authentication               : configuration.Auth.Authentication as AuthenticationType,
+                Authorization                : configuration.Auth.Authorization as AuthorizationType,
+                UseRefreshToken              : configuration.Auth.UseRefreshToken,
+                AccessTokenExpiresInSeconds  : configuration.Auth.AccessTokenExpiresInSeconds,
+                RefreshTokenExpiresInSeconds : configuration.Auth.RefreshTokenExpiresInSeconds
             },
             Database : {
                 Type : configuration.Database.Type as DatabaseType,
@@ -64,8 +67,8 @@ export class ConfigurationManager {
             FormServiceProviders       : configuration.FormServiceProviders,
             WebhookControllerProviders : configuration.WebhookControllerProviders,
             MaxUploadFileSize          : configuration.MaxUploadFileSize,
-            JwtExpiresIn               : configuration.JwtExpiresIn,
-            SessionExpiresIn           : configuration.SessionExpiresIn,
+            EHRAnalytics               : configuration.EHRAnalytics,
+            Gamification               : configuration.Gamification,
         };
 
         ConfigurationManager.checkConfigSanity();
@@ -85,6 +88,18 @@ export class ConfigurationManager {
 
     public static Authorization = (): AuthorizationType => {
         return ConfigurationManager._config.Auth.Authorization;
+    };
+
+    public static UseRefreshToken = (): boolean => {
+        return ConfigurationManager._config.Auth.UseRefreshToken;
+    };
+
+    public static AccessTokenExpiresInSeconds = (): number => {
+        return ConfigurationManager._config.Auth.AccessTokenExpiresInSeconds;
+    };
+
+    public static RefreshTokenExpiresInSeconds = (): number => {
+        return ConfigurationManager._config.Auth.RefreshTokenExpiresInSeconds;
     };
 
     public static DatabaseType = (): DatabaseType => {
@@ -109,10 +124,6 @@ export class ConfigurationManager {
 
     public static MaxUploadFileSize = (): number => {
         return ConfigurationManager._config.MaxUploadFileSize;
-    };
-
-    public static JwtExpiresIn = (): number => {
-        return ConfigurationManager._config.JwtExpiresIn;
     };
 
     public static FileStorageProvider = (): FileStorageProvider => {
@@ -162,8 +173,12 @@ export class ConfigurationManager {
         return ConfigurationManager._config.WebhookControllerProviders;
     };
 
-    public static SessionExpiresIn = (): number => {
-        return ConfigurationManager._config.SessionExpiresIn;
+    public static EHRAnalyticsEnabled = (): boolean => {
+        return ConfigurationManager._config?.EHRAnalytics;
+    };
+
+    public static GamificationEnabled = (): boolean => {
+        return ConfigurationManager._config?.Gamification;
     };
 
     private static checkConfigSanity() {

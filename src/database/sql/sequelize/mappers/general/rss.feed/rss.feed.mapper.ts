@@ -36,7 +36,8 @@ export class RssfeedMapper {
             AtomFeedResourceId : feed.AtomFeedResourceId,
             JsonFeedResourceId : feed.JsonFeedResourceId,
             RssFeedResourceId  : feed.RssFeedResourceId,
-            FeedItems          : feedItems ?? []
+            FeedItems          : feedItems ?? [],
+            CreatedAt          : feed.CreatedAt,
         };
         return dto;
     };
@@ -53,6 +54,7 @@ export class RssfeedMapper {
             Title          : feedItem.Title,
             Description    : feedItem.Description,
             Link           : feedItem.Link,
+            Content        : feedItem.Content,
             Image          : feedItem.Image,
             Tags           : JSON.parse(feedItem.Tags),
             PublishingDate : feedItem.PublishingDate,

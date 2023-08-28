@@ -1,8 +1,8 @@
-import { ConversationDomainModel } from "../../../domain.types/general/chat/conversation.domain.model";
-import { ConversationDto } from "../../../domain.types/general/chat/conversation.dto";
-import { ChatMessageDomainModel } from "../../../domain.types/general/chat/chat.message.domain.model";
-import { ChatMessageDto } from "../../../domain.types/general/chat/chat.message.dto";
-import { ConversationSearchFilters, ConversationSearchResults } from "../../../domain.types/general/chat/conversation.search.types";
+import { ConversationDomainModel } from "../../../domain.types/community/chat/conversation.domain.model";
+import { ConversationDto } from "../../../domain.types/community/chat/conversation.dto";
+import { ChatMessageDomainModel } from "../../../domain.types/community/chat/chat.message.domain.model";
+import { ChatMessageDto } from "../../../domain.types/community/chat/chat.message.dto";
+import { ConversationSearchFilters, ConversationSearchResults } from "../../../domain.types/community/chat/conversation.search.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 export interface IChatRepo {

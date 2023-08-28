@@ -1,5 +1,7 @@
 import Goal from '../../../models/users/patient/goal.model';
 import { GoalDto } from '../../../../../../domain.types/users/patient/goal/goal.dto';
+import { GoalTypeDto } from '../../../../../../domain.types/users/patient/goal.type/goal.type.dto';
+import GoalTypeModel from '../../../models/users/patient/goal.type.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +30,22 @@ export class GoalMapper {
             GoalAbandoned        : goal.GoalAbandoned
         };
         return dto;
+    };
+
+    static toTypeDto = (goalType: GoalTypeModel): GoalTypeDto => {
+
+        if (goalType == null){
+            return null;
+        }
+
+        const typeDto: GoalTypeDto = {
+            id        : goalType.id,
+            Type      : goalType.Type,
+            Tags      : goalType.Tags ? JSON.parse(goalType.Tags) : [],
+            CreatedAt : goalType.CreatedAt,
+        };
+
+        return typeDto;
     };
 
 }

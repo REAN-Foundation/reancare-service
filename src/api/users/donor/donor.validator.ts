@@ -11,7 +11,7 @@ export class DonorValidator {
 
     static getDomainModel = (request: express.Request): DonorDomainModel => {
 
-        const birthdate = request.body.BirthDate != null && typeof request.body.BirthDate !== undefined
+        const birthdate = request.body.BirthDate != null && request.body.BirthDate !== undefined
             ? new Date(Date.parse(request.body.BirthDate))
             : null;
 
@@ -181,7 +181,7 @@ export class DonorValidator {
             .trim()
             .escape()
             .run(request);
-        
+
         await query('donorType').optional()
             .trim()
             .escape()

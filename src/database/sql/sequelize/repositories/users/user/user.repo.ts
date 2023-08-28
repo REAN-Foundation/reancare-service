@@ -8,6 +8,8 @@ import { IUserRepo } from "../../../../../repository.interfaces/users/user/user.
 import { UserMapper } from "../../../mappers/users/user/user.mapper";
 import Person from "../../../models/person/person.model";
 import User from '../../../models/users/user/user.model';
+import Tenant from '../../../models/tenant/tenant.model';
+import TenantUser from '../../../models/tenant/tenant.user.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -113,19 +115,33 @@ export class UserRepo implements IUserRepo {
         return null;
     };
 
-    create = async (userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
+    create = async (model: UserDomainModel): Promise<UserDetailsDto> => {
         try {
             const entity = {
-                PersonId        : userDomainModel.Person.id,
-                RoleId          : userDomainModel.RoleId ?? null,
-                UserName        : userDomainModel.UserName,
-                Password        : userDomainModel.Password ? Helper.hash(userDomainModel.Password) : null,
-                DefaultTimeZone : userDomainModel.DefaultTimeZone ?? '+05:30',
-                CurrentTimeZone : userDomainModel.DefaultTimeZone ?? '+05:30',
+                PersonId        : model.Person.id,
+                RoleId          : model.RoleId ?? null,
+                UserName        : model.UserName,
+                IsTestUser      : model.IsTestUser ?? false,
+                Password        : model.Password ? Helper.hash(model.Password) : null,
+                DefaultTimeZone : model.DefaultTimeZone ?? '+05:30',
+                CurrentTimeZone : model.DefaultTimeZone ?? '+05:30',
             };
             const user = await User.create(entity);
-            const dto = await UserMapper.toDetailsDto(user);
-            return dto;
+
+            // Add user to tenant
+            var tenant = null;
+            if (model.TenantId != null) {
+                tenant = await Tenant.findByPk(model.TenantId);
+                if (tenant != null) {
+                    const tenantUser = await TenantUser.create({
+                        UserId   : user.id,
+                        TenantId : tenant.id,
+                        Admin    : false,
+                    });
+                    Logger.instance().log(`Tenant user created: ${JSON.stringify(tenantUser)}`);
+                }
+            }
+            return UserMapper.toDetailsDto(user, tenant);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -181,6 +197,10 @@ export class UserRepo implements IUserRepo {
                 userDomainModel.Password.length > 0) {
                 user.Password = Helper.hash(userDomainModel.Password);
             }
+            if (userDomainModel.IsTestUser !== undefined &&
+                userDomainModel.IsTestUser !== null) {
+                user.IsTestUser = userDomainModel.IsTestUser;
+            }
             if (userDomainModel.LastLogin != null) {
                 user.LastLogin = userDomainModel.LastLogin;
             }
@@ -199,6 +219,12 @@ export class UserRepo implements IUserRepo {
             const count = await User.destroy({
                 where : {
                     id : id
+                }
+            });
+            //Destroy tenant user
+            await TenantUser.destroy({
+                where : {
+                    UserId : id
                 }
             });
             return count === 1;

@@ -7,6 +7,7 @@ import { PersonDomainModel } from '../../../../domain.types/person/person.domain
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
+import { CohortService } from '../../../../services/community/cohort.service';
 import { Loader } from '../../../../startup/loader';
 import { PatientValidator } from './patient.validator';
 import { BaseUserController } from '../../base.user.controller';
@@ -17,6 +18,8 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
+import { RoleDto } from '../../../../domain.types/role/role.dto';
+import { Roles } from '../../../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +41,8 @@ export class PatientController extends BaseUserController {
 
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
+    _cohortService: CohortService = null;
+
     _validator = new PatientValidator();
 
     constructor() {
@@ -47,6 +52,7 @@ export class PatientController extends BaseUserController {
         this._personService = Loader.container.resolve(PersonService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
+        this._cohortService = Loader.container.resolve(CohortService);
     }
 
     //#endregion
@@ -59,6 +65,10 @@ export class PatientController extends BaseUserController {
 
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
+
+            if (createModel.CohortId != null) {
+                await this.addPatientToCohort(patient.UserId, createModel.CohortId);
+            }
 
             const clientCode = request.currentClient.ClientCode;
             await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
@@ -163,6 +173,12 @@ export class PatientController extends BaseUserController {
 
             const updateModel = await this._validator.updateByUserId(request);
             const userDomainModel: UserDomainModel = updateModel.User;
+            if (userDomainModel.Person.Phone != null) {
+                await this.checkBeforeUpdatingPhone(userDomainModel, userId);
+                //We identify test users only by phone currently!
+                const IsTestUser = await this._userHelper.isTestUser(userDomainModel);
+                userDomainModel.IsTestUser = IsTestUser;
+            }
             const updatedUser = await this._userService.update(userId, userDomainModel);
             if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
@@ -171,14 +187,13 @@ export class PatientController extends BaseUserController {
             personDomainModel.id = updatedUser.Person.id;
 
             const healthProfile: HealthProfileDomainModel = {
-
                 MaritalStatus             : personDomainModel.MaritalStatus,
                 Race                      : personDomainModel.Race,
                 Ethnicity                 : personDomainModel.Ethnicity,
                 StrokeSurvivorOrCaregiver : personDomainModel.StrokeSurvivorOrCaregiver,
                 LivingAlone               : personDomainModel.LivingAlone,
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
-
+                OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
             await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
@@ -240,6 +255,7 @@ export class PatientController extends BaseUserController {
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
+            deleted = await this._cohortService.removeUserFromAllCohorts(userId);
             deleted = await this._userService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
@@ -324,6 +340,37 @@ export class PatientController extends BaseUserController {
             });
         }
     };
+
+    private addPatientToCohort = async (patientUserId: uuid, cohortId: uuid) => {
+        try {
+            const cohort = await this._cohortService.getById(cohortId);
+            if (cohort == null) {
+                Logger.instance().log(`Cohort not found: ${cohortId}`);
+                return;
+            }
+            const added = await this._cohortService.addUserToCohort(cohortId, patientUserId);
+            if (!added) {
+                throw new ApiError(400, 'Unable to add patient to cohort!');
+            }
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw error;
+        }
+    };
+
+    private async checkBeforeUpdatingPhone(userDomainModel: UserDomainModel, userId: string) {
+        const role: RoleDto = await this._roleService.getByName(Roles.Patient);
+        if (role == null) {
+            throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
+        }
+        const existing = await this._userService.getByPhoneAndRole(userDomainModel.Person.Phone, role.id);
+        if (existing != null) {
+            if (existing.id !== userId) {
+                throw new ApiError(409, 'Phone number already exists with other patient!');
+            }
+        }
+    }
 
     //#endregion
 

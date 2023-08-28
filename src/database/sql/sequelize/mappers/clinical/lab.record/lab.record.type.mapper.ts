@@ -1,5 +1,4 @@
 import { LabRecordTypeDto } from "../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
-
 export class LabRecordTypeMapper {
 
     static toTypeDto = (labRecordType ): LabRecordTypeDto => {
@@ -17,7 +16,6 @@ export class LabRecordTypeMapper {
             NormalRangeMin : labRecordType.NormalRangeMin,
             NormalRangeMax : labRecordType.NormalRangeMax,
             Unit           : labRecordType.Unit,
-
         };
 
         return dto;

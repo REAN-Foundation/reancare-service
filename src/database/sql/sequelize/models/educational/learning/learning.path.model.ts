@@ -8,9 +8,11 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
+    HasMany,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
+import  LearningPathCourses from './learning.course.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -69,6 +71,9 @@ export default class LearningPath extends Model {
         allowNull : true,
     })
     Enabled: boolean;
+
+    @HasMany(() =>  LearningPathCourses)
+    LearningPathCourses:   LearningPathCourses[];
 
     @Column
     @CreatedAt

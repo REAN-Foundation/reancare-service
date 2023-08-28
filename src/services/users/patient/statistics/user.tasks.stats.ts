@@ -105,7 +105,7 @@ const createUserEngagement_DonutChart = async (stats: any, filename: string) => 
         Height : SQUARE_CHART_HEIGHT,
         Colors : [
             ChartColors.MediumSeaGreen,
-            ChartColors.Coral,
+            ChartColors.OrangeRed,
         ],
     };
     const data = [
@@ -178,7 +178,7 @@ const getUserTaskStatusColors = () => {
         },
         {
             Key   : 'Unfinished',
-            Color : ChartColors.Coral,
+            Color : ChartColors.OrangeRed,
         },
     ];
     return items;

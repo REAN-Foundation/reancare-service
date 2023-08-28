@@ -26,13 +26,22 @@ dayjs.extend(calendar);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+export const MINUTES_IN_HOUR = 60;
+export const MINUTES_IN_DAY = 24 * MINUTES_IN_HOUR;
+export const MINUTES_IN_WEEK = 7 * MINUTES_IN_DAY;
+export const MINUTES_IN_MONTH = 30 * MINUTES_IN_DAY;
+export const MINUTES_IN_YEAR = 365 * MINUTES_IN_DAY;
+export const MINUTES_IN_QUARTER = 3 * MINUTES_IN_MONTH;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export class TimeHelper {
 
     static timestamp = (date: Date): string => {
         return date.getTime().toString();
     };
 
-    static getWeekDay = (date: Date, short: boolean): string => {
+    static getWeekday = (date: Date, short: boolean): string => {
         const idx = date.getDay();
         if (short) {
             var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
@@ -44,12 +53,96 @@ export class TimeHelper {
         }
     };
 
-    static getStartOfDay = (date: Date, offsetMinutes: number) => {
-        const tempDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
-        const todayStr = tempDate.toISOString()
+    static nowUtc(): Date {
+        return dayjs.utc().toDate();
+    }
+
+    static startOfTodayUtc(): Date {
+        return dayjs
+            .utc()
+            .startOf('day')
+            .toDate();
+    }
+
+    static endOfTodayUtc(): Date {
+        return dayjs
+            .utc()
+            .endOf('day')
+            .toDate();
+    }
+
+    static startOfThisWeekUtc(): Date {
+        return dayjs
+            .utc()
+            .startOf('week')
+            .toDate();
+    }
+
+    static getWeekdayIndex(day: string): number {
+        const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        const daysShort = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        let idx = days.indexOf(day);
+        if (idx === -1) {
+            idx = daysShort.indexOf(day);
+        }
+        return idx;
+    }
+
+    static sameTimeOfDayThisWeekUtc(day: string): Date {
+        const idx = TimeHelper.getWeekdayIndex(day);
+        if (idx === -1) {
+            throw new Error(`Invalid day: ${day}`);
+        }
+        return dayjs
+            .utc()
+            .weekday(idx)
+            .utc()
+            .toDate();
+    }
+
+    static startOfDayThisWeekUtc(day: string): Date {
+        const idx = TimeHelper.getWeekdayIndex(day);
+        if (idx === -1) {
+            throw new Error(`Invalid day: ${day}`);
+        }
+        const weekday = dayjs
+            .utc()
+            .weekday(idx)
+            .startOf('day');
+
+        const weekdayStr = weekday.format()
             .split('T')[0];
-        const reference = new Date(todayStr);
-        return reference;
+
+        const year = parseInt(weekdayStr.split('-')[0]);
+        const month = parseInt(weekdayStr.split('-')[1]);
+        const dt = parseInt(weekdayStr.split('-')[2]);
+
+        const date = Date.UTC(year, month - 1, dt);
+        return new Date(date);
+    }
+
+    static startOfThisMonthUtc(): Date {
+        return dayjs
+            .utc()
+            .startOf('month')
+            .toDate();
+    }
+
+    static startOfThisYearUtc(): Date {
+        return dayjs
+            .utc()
+            .startOf('year')
+            .toDate();
+    }
+
+    static getStartOfDay = (date: Date, timezoneOffsetMinutes: number) => {
+        const startOfDayUtc = dayjs(date)
+            .utc()
+            .startOf('day');
+        const startOfDay = startOfDayUtc
+            .add(timezoneOffsetMinutes, 'minutes')
+            .toDate();
+        return startOfDay;
     };
 
     static getDayOfMonth = (date: Date): string => {
@@ -379,7 +472,7 @@ export class TimeHelper {
     };
 
     static getDateWithTimezone = (dateStr: string, timezoneOffset: string) => {
-        var todayStr = new Date().toISOString();
+        var todayStr = dayjs.utc().format();
         var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
         var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
         return TimeHelper.strToUtc(str, offsetMinutes);
@@ -389,6 +482,18 @@ export class TimeHelper {
         const diff = first.getTime() - second.getTime();
         var dayDiff = diff / (1000 * 60 * 60 * 24);
         return dayDiff;
+    };
+
+    static hourDiff = (first: Date, second: Date|undefined) => {
+        const diff = first.getTime() - second.getTime();
+        var hourDiff = diff / (1000 * 60 * 60);
+        return hourDiff;
+    };
+
+    static minuteDiff = (first: Date, second: Date|undefined) => {
+        const diff = first.getTime() - second.getTime();
+        var minuteDiff = diff / (1000 * 60);
+        return minuteDiff;
     };
 
     static formatDateToLocal_YYYY_MM_DD = async (date : Date) => {

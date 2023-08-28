@@ -4,7 +4,6 @@ import {
 import { v4 } from 'uuid';
 import { Gender, Genders } from '../../../../../domain.types/miscellaneous/system.types';
 import { PersonIdentificationType } from '../../../../../domain.types/person/person.types';
-import Address from '../general/address.model';
 import User from '../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -127,9 +126,6 @@ export default class Person extends Model {
         defaultValue : PersonIdentificationType.Aadhar
     })
     NationalIdType: string;
-
-    @HasMany(() => Address)
-    Addresses: Address[];
 
     @HasMany(() => User)
     Users: User[];

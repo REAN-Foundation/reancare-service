@@ -20,7 +20,7 @@ export class FoodConsumptionValidator extends BaseValidator {
             Servings        : request.body.Servings ?? null,
             ServingUnit     : request.body.ServingUnit ?? null,
             Tags            : request.body.Tags ?? [],
-            UserResponse    : request.body.UserResponse ?? false,
+            UserResponse    : request.body.UserResponse ?? null,
             Description     : request.body.Description ?? null,
             ConsumedAs      : request.body.ConsumedAs ?? null,
             Calories        : request.body.Calories ?? null,

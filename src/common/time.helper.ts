@@ -391,6 +391,28 @@ export class TimeHelper {
         return dayDiff;
     };
 
+    static hourDiff = (first: Date, second: Date|undefined) => {
+        const diff = first.getTime() - second.getTime();
+        var hourDiff = diff / (1000 * 60 * 60);
+        return hourDiff;
+    };
+
+    static minuteDiff = (first: Date, second: Date|undefined) => {
+        const date1 = dayjs(first);
+        const date2 = dayjs(second);
+        const diffMillisec =  date1.diff(date2);
+        const diff = diffMillisec / (1000 * 60);
+        return diff;
+    };
+
+    static secDiff = (first: Date, second: Date|undefined) => {
+        const date1 = dayjs(first);
+        const date2 = dayjs(second);
+        const diffMillisec =  date1.diff(date2);
+        const diff = diffMillisec / (1000);
+        return diff;
+    };
+
     static formatDateToLocal_YYYY_MM_DD = async (date : Date) => {
         Logger.instance().log(`Date :: ${date}`);
         const mnth = ("0" + (date.getMonth() + 1)).slice(-2);

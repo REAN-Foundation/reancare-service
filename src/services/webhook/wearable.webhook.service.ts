@@ -236,22 +236,24 @@ export class TeraWebhookService {
 
             });
 
-            const heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
+            var heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
+            heartRateSamples = heartRateSamples.sort((a, b) => {
+                return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
+            } );
             Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
             const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredPulseSamples = [];
             if (recentPulse != null) {
-                const allowedDuration_in_sec = parseInt(process.env.ALLOWED_PULSE_TIME_DIFFERENCE_INSEC);
-                for (const pulseSample of heartRateSamples) {
-                    const oldTimeStamp: any = recentPulse.RecordDate;
-                    const newTimeStamp: any = new Date(pulseSample.TimeStamp);
-                    const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
-                    if (timeDiffrence > allowedDuration_in_sec) {
-                        filteredPulseSamples.push(pulseSample);
-                    }
+                const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
+                const pulseSample =  heartRateSamples[0];
+                const oldTimeStamp: any = new Date(recentPulse.RecordDate).getTime();
+                const newTimeStamp: any = new Date(pulseSample.TimeStamp).getTime();
+                const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
+                if (timeDiffrence > allowedDuration_in_sec) {
+                    filteredPulseSamples.push(pulseSample);
                 }
             } else {
-                filteredPulseSamples = heartRateSamples;
+                filteredPulseSamples = [heartRateSamples[0]];
             }
             Logger.instance().log(`Filterred pulse samples ${JSON.stringify(filteredPulseSamples, null, 2)}`);
             filteredPulseSamples.forEach(async heartRate => {

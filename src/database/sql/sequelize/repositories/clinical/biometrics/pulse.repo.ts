@@ -185,13 +185,15 @@ export class PulseRepo implements IPulseRepo {
 
     getRecent = async (patientUserId: string): Promise<PulseDto> => {
         try {
-            const record = await PulseModel.findOne({
+            const records = await PulseModel.findAll({
                 where : {
                     PatientUserId : patientUserId,
                 },
-                order : [['RecordDate', 'DESC']]
+                order : [['RecordDate', 'DESC']],
+                limit : 1
             });
-            return await PulseMapper.toDto(record);
+            const record = records.length > 0 ? records[0] : null;
+            return PulseMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

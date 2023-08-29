@@ -1,6 +1,7 @@
 import express from 'express';
 import { BaseValidator, Where } from '../base.validator';
 import { AppDownloadDomainModel } from '../../domain.types/statistics/app.download.domain.model';
+import { ExecuteQueryDomainModel } from '../../domain.types/statistics/execute.query.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +65,21 @@ export class StatistcsValidator extends BaseValidator {
         return this.getFilterForAge(request);
     };
 
+    getQueryModel = (request: express.Request): ExecuteQueryDomainModel => {
+
+        const executeQueryDomainModel: ExecuteQueryDomainModel = {
+            Query  : request.body.Query,
+            Format : request.body.Format ?? null
+        };
+
+        return executeQueryDomainModel;
+    };
+
+    validateQuery = async (request: express.Request): Promise<ExecuteQueryDomainModel> => {
+        await this.validateQueryBody(request);
+        return this.getQueryModel(request);
+    };
+
     private getFilterForAge(request) {
 
         const filters = {
@@ -81,6 +97,13 @@ export class StatistcsValidator extends BaseValidator {
         await this.validateDecimal(request, 'TotalDownloads', Where.Body, false, true);
         await this.validateDecimal(request, 'IOSDownloads', Where.Body, false, true);
         await this.validateDecimal(request, 'AndroidDownloads', Where.Body, false, true);
+        this.validateRequest(request);
+    }
+
+    private  async validateQueryBody(request) {
+
+        await this.validateString(request, 'Query', Where.Body, false, true);
+        await this.validateString(request, 'Format', Where.Body, true, false);
         this.validateRequest(request);
     }
 

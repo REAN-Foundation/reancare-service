@@ -1,4 +1,4 @@
-import { Op, QueryTypes } from 'sequelize';
+import { Dialect, Op, QueryTypes } from 'sequelize';
 import { CountryCurrencyPhone } from 'country-currency-phone';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
@@ -36,12 +36,13 @@ import EmergencyContact from '../../models/users/patient/emergency.contact.model
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
 import { Sequelize } from 'sequelize-typescript';
-
+import { ExecuteQueryDomainModel } from '../../../../../domain.types/statistics/execute.query.domain.model';
+ 
 ///////////////////////////////////////////////////////////////////////
 
-const sequelize = new Sequelize("reanadmindata", "root", "root", {
-    host    : "localhost",
-    dialect : "mysql",
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER_NAME, process.env.DB_USER_PASSWORD, {
+    host    : process.env.DB_HOST,
+    dialect : process.env.DB_DIALECT  as Dialect,
 });
 export class StatisticsRepo implements IStatisticsRepo {
 
@@ -1105,7 +1106,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    getAllYears = async (filters): Promise<any> => {
+    getAllYears = async (): Promise<any> => {
         try {
            
             const search: any = {
@@ -1119,13 +1120,43 @@ export class StatisticsRepo implements IStatisticsRepo {
             };
 
             const allYears = await Patient.findAll(search);
-            // const allYears = allYears_;
-            // const uniqueYears = [...new Set(allYears.map(item => item.year))];
             return allYears;
 
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    executeQuery = async (model: ExecuteQueryDomainModel): Promise<any> => {
+        try {
+            const disallowedKeywords = [
+                'CREATE', 'ALTER', 'DROP', 'TRUNCATE',
+                'RENAME', 'INSERT', 'UPDATE', 'DELETE',
+                'MERGE', 'GRANT', 'REVOKE', 'COMMIT',
+                'ROLLBACK', 'SAVEPOINT', 'SET', 'UPSERT'
+            ];
+            
+            const query: string = model.Query;
+
+            const hasDisallowedKeyword = containsDisallowedKeyword(query, disallowedKeywords);
+
+            if (hasDisallowedKeyword) {
+                throw new ApiError(404, 'Forbidden: Query contains disallowed keyword' );
+            }
+
+            const [results] = await sequelize.query(query);
+
+            if (model.Format === 'CSV') {
+                const csvData = convertToCsv(results);
+                return csvData;
+            }
+
+            return results;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(404, error.message);
         }
     };
 
@@ -2997,4 +3028,27 @@ function getUniqueUsers(usersData) {
         );
     });
     return uniqueArray;
+}
+
+function containsDisallowedKeyword(query: string, disallowedKeywords: string[]): boolean {
+    const words = query.split(/\s+/);
+    for (const word of words) {
+        const normalizedWord = word.trim().toUpperCase();
+        if (disallowedKeywords.includes(normalizedWord)) {
+            return true;
+        }
+    }
+    return false;
+}
+  
+function convertToCsv(data) {
+    const keys = Object.keys(data[0]);
+    const csvRows = [keys.join(',')];
+  
+    for (const row of data) {
+        const values = keys.map(key => row[key]);
+        csvRows.push(values.join(','));
+    }
+  
+    return csvRows.join('\n');
 }

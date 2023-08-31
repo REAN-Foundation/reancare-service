@@ -1,10 +1,11 @@
-import express from 'express';
+import express, { application } from 'express';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { BaseController } from '../base.controller';
 import { StatisticsService } from '../../services/statistics/statistics.service';
 import { StatistcsValidator } from './statistics.validator';
 import { ApiError } from '../../common/api.error';
+import * as path from 'path';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -265,15 +266,23 @@ export class StatisticsController extends BaseController {
     executeQuery = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Statistics.ExecuteQuery', request, response, false);
-        
             const model = await this._validator.validateQuery(request);
             const queryResponse = await this._service.executeQuery(model);
             const message = 'Query response retrieved successfully!';
-            ResponseHandler.success(request, response,message, 200, {
-                Response : queryResponse });
+            if (model.Format === 'CSV' || model.Format === 'JSON'){
+                const filePath = queryResponse.split('\\');
+                const fileName = filePath[filePath.length - 1];
+                response.setHeader('Content-disposition', 'attachment; filename=' + fileName);
+                response.sendFile(path.resolve(queryResponse));
+            }
+            else {
+                ResponseHandler.success(request, response,message, 200, {
+                    Response : queryResponse });
+            }
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
 }
+

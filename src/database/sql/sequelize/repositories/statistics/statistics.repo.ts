@@ -41,6 +41,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { ExecuteQueryDomainModel } from '../../../../../domain.types/statistics/execute.query.domain.model';
 import path from 'path';
 import { ConfigurationManager } from '../../../../../config/configuration.manager';
+import StatisticsCustomQueries from '../../models/statistics/custom.query.model';
  
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1138,27 +1139,34 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    executeQuery = async (model: ExecuteQueryDomainModel): Promise<any> => {
+    executeQuery = async (createModel: ExecuteQueryDomainModel): Promise<any> => {
         try {
             
-            const query: string = model.Query;
+            const entity = {
+                Name        : createModel.Name,
+                Description : createModel.Description,
+                UserId      : createModel.UserId,
+                TenantId    : createModel.TenantId,
+            };
 
-            const hasDisallowedKeyword = containsDisallowedKeyword(query);
+            const hasDisallowedKeyword = containsDisallowedKeyword(entity.Name);
 
             if (hasDisallowedKeyword) {
                 throw new ApiError(404, 'Only read only queries are allowed' );
             }
 
-            const [results] = await sequelizeStats.query(query);
+            const [results] = await sequelizeStats.query(entity.Name);
+
+            const customQuery = await StatisticsCustomQueries.create(entity);
         
-            if (model.Format === 'JSON'){
+            if (createModel.Format === 'JSON'){
                 const generatedFilePath = await getGeneratedFilePath('.json' );
                 const jsonContent = JSON.stringify(results, null, 2);
                 fs.writeFileSync(generatedFilePath, jsonContent);
                 return generatedFilePath;
             }
 
-            if (model.Format === 'CSV') {
+            if (createModel.Format === 'CSV') {
                 const generatedFilePath = await getGeneratedFilePath('.csv' );
                 const csvWriter = createObjectCsvWriter({
                     path   : generatedFilePath,

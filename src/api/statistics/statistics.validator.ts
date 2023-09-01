@@ -68,8 +68,11 @@ export class StatistcsValidator extends BaseValidator {
     getQueryModel = (request: express.Request): ExecuteQueryDomainModel => {
 
         const executeQueryDomainModel: ExecuteQueryDomainModel = {
-            Query  : request.body.Query,
-            Format : request.body.Format ?? null
+            Name        : request.body.Name,
+            Format      : request.body.Format ?? null,
+            Description : request.body.Description ?? null,
+            UserId      : request.body.UserId ?? null,
+            TenantId    : request.body.TenantId ?? null
         };
 
         return executeQueryDomainModel;
@@ -102,8 +105,11 @@ export class StatistcsValidator extends BaseValidator {
 
     private  async validateQueryBody(request) {
 
-        await this.validateString(request, 'Query', Where.Body, false, true);
+        await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateString(request, 'Format', Where.Body, true, false);
+        await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateUuid(request, 'UserId', Where.Body, false, true);
+        await this.validateUuid(request, 'TenentId', Where.Body, false, true);
         this.validateRequest(request);
     }
 

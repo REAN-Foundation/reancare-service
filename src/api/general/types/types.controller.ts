@@ -566,11 +566,15 @@ export class TypesController extends BaseController {
 
             const tags : string = request.query.tags as string ?? null;
             const goalTypes = await this._service.getGoalTypes(tags);
-            if (goalTypes.length === 0) {
-                throw new ApiError(400, 'Cannot fetch goal types!');
-            }
 
-            ResponseHandler.success(request, response, 'Fetched goal types successfully!', 200, {
+            const count = goalTypes.length;
+
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} goal types retrieved successfully!`;
+                    
+            ResponseHandler.success(request, response, message, 200, {
                 GoalTypes : goalTypes ,
             });
 

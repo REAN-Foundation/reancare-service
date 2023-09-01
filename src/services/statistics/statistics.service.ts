@@ -3,6 +3,7 @@ import { IStatisticsRepo } from "../../database/repository.interfaces/statistics
 import { AppDownloadDto } from "../../domain.types/statistics/app.download.dto";
 import { AppDownloadDomainModel } from "../../domain.types/statistics/app.download.domain.model";
 import { StatisticSearchFilters } from "../../domain.types/statistics/statistics.search.type";
+import { ExecuteQueryDomainModel } from "../../domain.types/statistics/execute.query.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,4 +78,12 @@ export class StatisticsService {
         return await this._statisticsRepo.getUsersByBiometrics(filters);
     };
 
+    getAllYears = async (): Promise<any> => {
+        return await this._statisticsRepo.getAllYears();
+    };
+ 
+    executeQuery = async (model: ExecuteQueryDomainModel): Promise<any> => {
+        return await this._statisticsRepo.executeQuery(model);
+    };
+    
 }

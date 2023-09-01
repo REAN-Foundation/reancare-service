@@ -1,4 +1,6 @@
-import { Op, QueryTypes } from 'sequelize';
+import { Dialect, Op, QueryTypes } from 'sequelize';
+import fs from 'fs';
+import { createObjectCsvWriter } from 'csv-writer';
 import { CountryCurrencyPhone } from 'country-currency-phone';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
@@ -33,11 +35,25 @@ import User from '../../models/users/user/user.model';
 import Role from '../../models/role/role.model';
 import Doctor from '../../models/users/doctor.model';
 import EmergencyContact from '../../models/users/patient/emergency.contact.model';
-import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
+import { DateStringFormat, DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
-import { DatabaseConnector_Sequelize } from '../../../../../database/sql/sequelize/database.connector.sequelize';
-
+import { Sequelize } from 'sequelize-typescript';
+import { ExecuteQueryDomainModel } from '../../../../../domain.types/statistics/execute.query.domain.model';
+import path from 'path';
+import { ConfigurationManager } from '../../../../../config/configuration.manager';
+import StatisticsCustomQueries from '../../models/statistics/custom.query.model';
+ 
 ////////////////////////////////////////////////////////////////////////////////////////////
+
+const sequelizeStats = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER_NAME,
+    process.env.DB_USER_PASSWORD, {
+        host    : process.env.DB_HOST,
+        dialect : process.env.DB_DIALECT  as Dialect,
+    });
+    
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 export class StatisticsRepo implements IStatisticsRepo {
 
@@ -454,9 +470,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null
             )`;
 
-            const db = DatabaseConnector_Sequelize.db;
-
-            const response = await db.query(query,
+            const response = await sequelizeStats.query(query,
                 {
                     type : QueryTypes.SELECT,
                 }
@@ -1101,6 +1115,73 @@ export class StatisticsRepo implements IStatisticsRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllYears = async (): Promise<any> => {
+        try {
+           
+            const search: any = {
+                where      : {},
+                include    : [],
+                paranoid   : false,
+                attributes : [
+                    [sequelizeStats.fn('YEAR', sequelizeStats.col('CreatedAt')), 'year'], // Extract year from createdAt
+                ],
+                group : [sequelizeStats.fn('YEAR', sequelizeStats.col('CreatedAt'))],
+            };
+
+            const allYears = await Patient.findAll(search);
+            return allYears;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    executeQuery = async (createModel: ExecuteQueryDomainModel): Promise<any> => {
+        try {
+            
+            const entity = {
+                Name        : createModel.Name,
+                Description : createModel.Description,
+                UserId      : createModel.UserId,
+                TenantId    : createModel.TenantId,
+            };
+
+            const hasDisallowedKeyword = containsDisallowedKeyword(entity.Name);
+
+            if (hasDisallowedKeyword) {
+                throw new ApiError(404, 'Only read only queries are allowed' );
+            }
+
+            const [results] = await sequelizeStats.query(entity.Name);
+
+            const customQuery = await StatisticsCustomQueries.create(entity);
+        
+            if (createModel.Format === 'JSON'){
+                const generatedFilePath = await getGeneratedFilePath('.json' );
+                const jsonContent = JSON.stringify(results, null, 2);
+                fs.writeFileSync(generatedFilePath, jsonContent);
+                return generatedFilePath;
+            }
+
+            if (createModel.Format === 'CSV') {
+                const generatedFilePath = await getGeneratedFilePath('.csv' );
+                const csvWriter = createObjectCsvWriter({
+                    path   : generatedFilePath,
+                    header : Object.keys(results[0]).map(key => ({ id: key, title: key })),
+                });
+                await csvWriter.writeRecords(results);
+                return generatedFilePath;
+            }
+
+            return results;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(404, error.message);
         }
     };
 
@@ -2972,4 +3053,34 @@ function getUniqueUsers(usersData) {
         );
     });
     return uniqueArray;
+}
+
+function containsDisallowedKeyword(query: string ): boolean {
+    const disallowedKeywords = [
+        'CREATE', 'ALTER', 'DROP', 'TRUNCATE',
+        'RENAME', 'INSERT', 'UPDATE', 'DELETE',
+        'MERGE', 'GRANT', 'REVOKE', 'COMMIT',
+        'ROLLBACK', 'SAVEPOINT', 'SET', 'UPSERT'
+    ];
+
+    const queryKeywords = query.split(" ");
+
+    for (const keyword of queryKeywords) {
+        const normalizedWord = keyword.trim().toUpperCase();
+        if (disallowedKeywords.includes(normalizedWord)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+async function getGeneratedFilePath( extension: string): Promise<string> {
+    const uploadFolder = ConfigurationManager.UploadTemporaryFolder();
+    var dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+    var fileFolder = path.join(uploadFolder, dateFolder);
+    await fs.promises.mkdir(fileFolder, { recursive: true });
+    const timestamp = TimeHelper.timestamp(new Date());
+    const filename = timestamp + extension;
+    const absFilepath = path.join(fileFolder, filename);
+    return absFilepath;
 }

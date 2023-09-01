@@ -36,6 +36,16 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleCareplanRegistrationReminders = async () => {
+        try {
+                await this._ahaActions.scheduleCareplanRegistrationReminders();
+
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending reminders for careplan registration.`);
+        }
+    };
+
     public performActions_PostCareplanEnrollment = async (enrollmentModel: EnrollmentDomainModel) => {
         try {
             if (this.isForAHA()) {

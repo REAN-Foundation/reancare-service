@@ -46,6 +46,7 @@ export class Scheduler {
                 this.scheduleHsSurvey();
                 this.scheduleReminderOnNoActionToDonationRequest();
                 this.scheduleReminders();
+                this.scheduleCareplanRegistrationReminders();
 
                 resolve(true);
             } catch (error) {
@@ -109,6 +110,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Custom Tasks...');
                 var customActionHandler = new CustomActionsHandler();
                 await customActionHandler.scheduledMonthlyRecurrentTasks();
+            })();
+        });
+    };
+
+    private scheduleCareplanRegistrationReminders = () => {
+        cron.schedule(Scheduler._schedules['CareplanRegistrationReminder'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Reminders for Careplan Registration...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleCareplanRegistrationReminders();
             })();
         });
     };

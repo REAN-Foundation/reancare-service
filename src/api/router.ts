@@ -82,6 +82,7 @@ import { register as registerUserGroupRoutes } from './community/user.groups/use
 import { register as registerReminderRoutes } from './general/reminder/reminder.routes';
 import { register as registerTenantRoutes } from './tenant/tenant.routes';
 import { register as registerCohortRoutes } from './community/cohorts/cohort.routes';
+import { register as registerCustomQueryRoutes } from './statistics/custom.query/custom.query.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -188,6 +189,7 @@ export class Router {
                 registerReminderRoutes(this._app);
                 registerTenantRoutes(this._app);
                 registerCohortRoutes(this._app);
+                registerCustomQueryRoutes(this._app);
 
                 resolve(true);
 

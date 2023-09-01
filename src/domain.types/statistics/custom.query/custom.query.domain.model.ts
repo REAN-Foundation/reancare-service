@@ -1,5 +1,5 @@
-import { uuid } from "../miscellaneous/system.types";
-export interface ExecuteQueryDomainModel {
+import { uuid } from "../../miscellaneous/system.types";
+export interface CustomQueryDomainModel {
   Name         : string;
   Format?      : string;
   Description? : string;

@@ -1,7 +1,6 @@
 import { StatisticSearchFilters } from "../../../domain.types/statistics/statistics.search.type";
 import { AppDownloadDomainModel } from "../../../domain.types/statistics/app.download.domain.model";
 import { AppDownloadDto } from "../../../domain.types/statistics/app.download.dto";
-import { ExecuteQueryDomainModel } from "../../../domain.types/statistics/execute.query.domain.model";
 
 ////////////////////////////////////////////////////////////////////
 export interface IStatisticsRepo {
@@ -39,7 +38,5 @@ export interface IStatisticsRepo {
     getUsersByBiometrics(filters: StatisticSearchFilters): Promise<any>;
     
     getAllYears(): Promise<any>;
-
-    executeQuery(model: ExecuteQueryDomainModel): Promise<any>;
 
 }

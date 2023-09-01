@@ -27,7 +27,6 @@ export const register = (app: express.Application): void => {
     router.get('/by-health-pillars', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUsersByHealthPillar);
     router.get('/by-biometrics', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUsersByBiometrics);
     router.get('/years', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAllYears);
-    router.post('/execute-query', authenticator.authenticateClient, controller.executeQuery);
 
     app.use('/api/v1/users-statistics', router);
 };

@@ -1,6 +1,6 @@
 import express from 'express';
 import { StatisticsController } from './statistics.controller';
-import { Loader } from '../../startup/loader';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

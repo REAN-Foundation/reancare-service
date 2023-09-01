@@ -8,6 +8,7 @@ import { BaseController } from '../../base.controller';
 import { AwardsFactsService } from '../../../modules/awards.facts/awards.facts.service';
 import { ReminderTypeList, RepeatAfterEveryUnitList } from '../../../domain.types/general/reminder/reminder.domain.model';
 import { TypesValidator } from './types.validator';
+import { UserEngagementCategoryList } from '../../../domain.types/statistics/user.engagement.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -235,6 +236,17 @@ export class TypesController extends BaseController {
                 QueryResponseTypes : types,
             });
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getUserEngagementCategories = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.GetUserEngagementCategories', request, response, false);
+            ResponseHandler.success(request, response, 'User engagement categories retrieved successfully!', 200, {
+                UserEngagementCategories : UserEngagementCategoryList,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

@@ -25,7 +25,8 @@ export const register = (app: express.Application): void => {
     router.get('/reminder-repeat-after-every-units', authenticator.authenticateClient, controller.getReminderRepeatAfterEveryTypes);
     router.get('/goal-types', authenticator.authenticateClient, controller.getGoalTypes);
     router.get('/query-response-types', authenticator.authenticateClient, controller.getQueryResponseTypes);
-    
+    router.get('/user-engagement-categories', authenticator.authenticateClient, controller.getUserEngagementCategories);
+
     //Priority type
     router.post('/priorities/', authenticator.authenticateClient, authenticator.authenticateUser, controller.createPriorityType);
     router.get('/priorities/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPriorityTypeById);

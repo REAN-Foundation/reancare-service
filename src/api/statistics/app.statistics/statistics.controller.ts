@@ -1,10 +1,10 @@
 import express from 'express';
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { BaseController } from '../base.controller';
-import { StatisticsService } from '../../services/statistics/statistics.service';
+import { ResponseHandler } from '../../../common/response.handler';
+import { Loader } from '../../../startup/loader';
+import { BaseController } from '../../base.controller';
+import { StatisticsService } from '../../../services/statistics/statistics.service';
 import { StatistcsValidator } from './statistics.validator';
-import { ApiError } from '../../common/api.error';
+import { ApiError } from '../../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +50,7 @@ export class StatisticsController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     getUsersByRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Statistics.GetUsersByRole', request, response);
@@ -136,7 +136,7 @@ export class StatisticsController extends BaseController {
 
     updateAppDownloadCount = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Statistics.UpdateAppDownloadCount', request, response);
 
             const model = await this._validator.updateAppDownloads(request);
@@ -155,7 +155,7 @@ export class StatisticsController extends BaseController {
 
     getAppDownlodCount = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Statistics.GetAppDownlodCount', request, response);
 
             const appDownload = await this._service.getAppDownlodCount();
@@ -196,7 +196,7 @@ export class StatisticsController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     getUsersByObesity = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Statistics.GetUsersByObesity', request, response);

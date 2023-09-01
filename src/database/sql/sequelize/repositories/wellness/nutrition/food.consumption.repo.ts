@@ -48,7 +48,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                     createModel.FoodTypes.length > 0 ? JSON.stringify(createModel.FoodTypes) : null,
                 Servings     : createModel.Servings,
                 ServingUnit  : createModel.ServingUnit,
-                UserResponse : createModel.UserResponse,
+                UserResponse : createModel.UserResponse ?? null,
                 Tags         : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
             };
 

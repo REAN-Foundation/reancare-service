@@ -4,7 +4,7 @@ import fs from 'fs';
 import { Logger } from '../../../common/logger';
 import { IFileStorageService } from '../interfaces/file.storage.service.interface';
 import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { Readable, Stream } from "stream";
+import { Readable } from "stream";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -34,22 +34,19 @@ export class AWSS3FileStorageService implements IFileStorageService {
         }
     };
 
-    uploadStream = async (storageKey: string, stream: Stream): Promise<string> => {
+    uploadStream = async (storageKey: string, stream: Readable): Promise<string> => {
 
         try {
             const s3 = this.getS3Client();
             const params = {
                 Bucket : process.env.STORAGE_BUCKET,
                 Key    : storageKey,
-                Body   : stream
+                Body   : stream.read()
             };
-            // var stored = await new Upload({
-            //     client: s3,
-            //     params
-            // }).done();
-            var stored = await s3.createMultipartUpload(params);
+            const command = new aws.PutObjectCommand(params);
+            const response = await s3.send(command);
 
-            Logger.instance().log(JSON.stringify(stored, null, 2));
+            Logger.instance().log(JSON.stringify(response, null, 2));
 
             return storageKey;
         }
@@ -95,7 +92,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         // var localFile = tokens[tokens.length - 1];
         // var folderPath = path.join(TEMP_DOWNLOAD_FOLDER, localFolder);
         // var localDestination = path.join(folderPath, localFile);
-          
+
         const file = fs.createWriteStream(localFilePath);
         const command = new GetObjectCommand(params);
         const response = await s3.send(command);

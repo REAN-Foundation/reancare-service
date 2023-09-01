@@ -491,9 +491,19 @@ export class TimeHelper {
     };
 
     static minuteDiff = (first: Date, second: Date|undefined) => {
-        const diff = first.getTime() - second.getTime();
-        var minuteDiff = diff / (1000 * 60);
-        return minuteDiff;
+        const date1 = dayjs(first);
+        const date2 = dayjs(second);
+        const diffMillisec =  date1.diff(date2);
+        const diff = diffMillisec / (1000 * 60);
+        return diff;
+    };
+
+    static secDiff = (first: Date, second: Date|undefined) => {
+        const date1 = dayjs(first);
+        const date2 = dayjs(second);
+        const diffMillisec =  date1.diff(date2);
+        const diff = diffMillisec / (1000);
+        return diff;
     };
 
     static formatDateToLocal_YYYY_MM_DD = async (date : Date) => {

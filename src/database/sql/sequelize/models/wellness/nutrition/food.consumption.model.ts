@@ -105,7 +105,6 @@ export default class FoodConsumption extends Model {
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : true,
-        defaultValue : false,
     })
     UserResponse: boolean;
 

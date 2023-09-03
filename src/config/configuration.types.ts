@@ -18,6 +18,9 @@ export type AuthenticationType = 'Custom'; //TBD: Other options need to be suppo
 export interface AuthConfig {
     Authentication: AuthenticationType;
     Authorization : AuthorizationType;
+    UseRefreshToken: boolean;
+    AccessTokenExpiresInSeconds: number;
+    RefreshTokenExpiresInSeconds: number;
 }
 
 export interface DatabaseConfig {
@@ -87,8 +90,8 @@ export interface Configurations {
         Plans   : CareplanConfig[]
     } [];
     MaxUploadFileSize   : number;
-    JwtExpiresIn        : number;
     FormServiceProviders: FormServiceProvider[];
     WebhookControllerProviders: WebhookControllerProvider[];
-    SessionExpiresIn    : number;
+    Gamification        : boolean;
+    EHRAnalytics        : boolean;
 }

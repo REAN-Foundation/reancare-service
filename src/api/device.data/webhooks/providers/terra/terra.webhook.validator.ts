@@ -21,7 +21,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static auth = async (request: express.Request): Promise<AuthDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
+        const version = request.body.version != null && request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
 
@@ -46,7 +46,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static reAuth = async (request: express.Request): Promise<ReAuthDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
+        const version = request.body.version != null && request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
 
@@ -76,7 +76,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static deAuth = async (request: express.Request): Promise<DeAuthDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
+        const version = request.body.version != null && request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
 
@@ -512,7 +512,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static sleep = async (request: express.Request): Promise<SleepDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
+        const version = request.body.version != null && request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
         const sleepDomainModel: SleepDomainModel = {
@@ -563,7 +563,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static athlete = async (request: express.Request): Promise<AthleteDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
+        const version = request.body.version != null && request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
 

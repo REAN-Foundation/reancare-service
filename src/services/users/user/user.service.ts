@@ -102,11 +102,11 @@ export class UserService {
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
 
-        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
+        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
 
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
-        if (!isInternalTestUser) {
+        if (!isTestUser) {
             const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
             const isPasswordValid = Helper.compare(loginModel.Password, hashedPassword);
             if (!isPasswordValid) {
@@ -118,14 +118,14 @@ export class UserService {
 
         //Generate login session
 
-        const expiresIn: number = ConfigurationManager.SessionExpiresIn();
-        var validTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+        const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
+        var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
 
         var entity: UserLoginSessionDomainModel = {
             UserId    : user.id,
             IsActive  : true,
             StartedAt : new Date(),
-            ValidTill : validTill
+            ValidTill : sessionValidTill
         };
 
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
@@ -142,15 +142,26 @@ export class UserService {
             SessionId     : loginSessionDetails.id,
         };
 
-        const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
+        const sessionId = currentUser.SessionId;
+        const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
+        var refreshToken = null;
+        if (ConfigurationManager.UseRefreshToken()) {
+            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId);
+        }
 
-        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId, sessionValidTill: validTill };
+        return {
+            user,
+            accessToken,
+            refreshToken : refreshToken ?? null,
+            sessionId,
+            sessionValidTill
+        };
     };
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
 
-        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(otpDetails.Phone);
-        if (isInternalTestUser) {
+        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(otpDetails.Phone);
+        if (isTestUser) {
             return true;
         }
 
@@ -214,11 +225,11 @@ export class UserService {
 
     public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
 
-        var isInternalTestUser = await this.isInternalTestUser(loginModel.Phone);
+        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
 
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
-        if (!isInternalTestUser) {
+        if (!isTestUser) {
             const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
             if (!storedOtp) {
                 throw new ApiError(404, 'Active OTP record not found!');
@@ -233,14 +244,14 @@ export class UserService {
 
         //Generate login session
 
-        const expiresIn: number = ConfigurationManager.SessionExpiresIn();
-        var validTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+        const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
+        var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
 
         var entity: UserLoginSessionDomainModel = {
             UserId    : user.id,
             IsActive  : true,
             StartedAt : new Date(),
-            ValidTill : validTill
+            ValidTill : sessionValidTill
         };
 
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
@@ -257,21 +268,34 @@ export class UserService {
             SessionId     : loginSessionDetails.id
         };
 
-        const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
+        const sessionId = currentUser.SessionId;
+        const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
+        var refreshToken = null;
+        if (ConfigurationManager.UseRefreshToken()) {
+            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId);
+        }
 
-        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId, sessionValidTill: validTill };
+        return {
+            user,
+            accessToken,
+            refreshToken : refreshToken ?? null,
+            sessionId,
+            sessionValidTill
+        };
     };
 
     public invalidateSession = async (sesssionId: uuid): Promise<boolean> => {
-
         var invalidated = await this._userLoginSessionRepo.invalidateSession(sesssionId);
         return invalidated;
     };
 
     public invalidateAllSessions = async (userId: uuid): Promise<boolean> => {
-
         var invalidatedAllSessions = await this._userLoginSessionRepo.invalidateAllSessions(userId);
         return invalidatedAllSessions;
+    };
+
+    public rotateUserAccessToken = async (refreshToken: string): Promise<string> => {
+        return await Loader.authenticator.rotateUserSessionToken(refreshToken);
     };
 
     public generateUserName = async (firstName, lastName):Promise<string> => {
@@ -454,16 +478,15 @@ export class UserService {
         return dto;
     };
 
-    private isInternalTestUser = async (phone: string): Promise<boolean> => {
+    public isInternalTestUser = async (phone: string): Promise<boolean> => {
         var startingRange = 1000000001;
         var endingRange = startingRange + parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS) - 1;
-
         var phoneNumber = parseInt(phone);
-        var isInternalTestUser = false;
+        var isTestUser = false;
         if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
-            isInternalTestUser = true;
+            isTestUser = true;
         }
-        return isInternalTestUser;
+        return isTestUser;
     };
 
     //#endregion

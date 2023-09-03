@@ -1,22 +1,25 @@
 import { PersonDetailsDto, PersonDto } from "../../person/person.dto";
 import { RoleDto } from "../../role/role.dto";
+import { uuid } from "../../miscellaneous/system.types";
 
 export interface UserDetailsDto {
-    id: string;
-    PersonId: string;
-    Person: PersonDetailsDto;
-    RoleId: number;
-    Role: RoleDto;
-    UserName: string;
-    DefaultTimeZone:string;
-    CurrentTimeZone:string;
-    LastLogin: Date;
+    id             : uuid;
+    PersonId       : uuid;
+    TenantId       : uuid;
+    Person         : PersonDetailsDto;
+    RoleId         : number;
+    Role           : RoleDto;
+    UserName       : string;
+    DefaultTimeZone: string;
+    CurrentTimeZone: string;
+    LastLogin      : Date;
 }
 
 export interface UserDto {
-    id: string;
-    PersonId: string;
-    Person: PersonDto;
-    DefaultTimeZone:string;
-    CurrentTimeZone:string;
+    id             : uuid;
+    PersonId       : uuid;
+    TenantId       : uuid;
+    Person         : PersonDto;
+    DefaultTimeZone: string;
+    CurrentTimeZone: string;
 }

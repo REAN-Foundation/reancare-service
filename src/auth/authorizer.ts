@@ -2,7 +2,6 @@ import express from 'express';
 import 'reflect-metadata';
 import { inject, injectable } from "tsyringe";
 import { ApiError } from '../common/api.error';
-import { CurrentUser } from '../domain.types/miscellaneous/current.user';
 import { IAuthorizer } from './authorizer.interface';
 
 ////////////////////////////////////////////////////////////////////////
@@ -20,10 +19,6 @@ export class Authorizer {
         if (!authorized) {
             throw new ApiError(403, 'Unauthorized access');
         }
-    };
-
-    public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
-        return await this._authorizer.generateUserSessionToken(user);
     };
 
 }

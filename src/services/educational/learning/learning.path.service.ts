@@ -7,6 +7,7 @@ import { LearningPathSearchFilters, LearningPathSearchResults } from '../../../d
 import { ICourseRepo } from "../../../database/repository.interfaces/educational/learning/course.repo.interface";
 import { ICourseModuleRepo } from "../../../database/repository.interfaces/educational/learning/course.module.repo.interface";
 import { ICourseContentRepo } from "../../../database/repository.interfaces/educational/learning/course.content.repo.interface";
+import { CourseDto } from "../../../domain.types/educational/learning/course/course.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,11 +47,24 @@ export class LearningPathService {
 
     update = async (id: uuid, courseDomainModel: LearningPathDomainModel):
     Promise<LearningPathDto> => {
-        return await this._learningPathRepo.update(id, courseDomainModel);
+        var dto =  await this._learningPathRepo.update(id, courseDomainModel);
+        dto = await this.updateDto(dto);
+        return dto;
     };
 
     delete = async (id: uuid): Promise<boolean> => {
         return await this._learningPathRepo.delete(id);
     };
+
+    //#region Privates
+
+       private updateDto = async (dto: LearningPathDto): Promise<LearningPathDto> => {
+           if (dto == null) {
+               return null;
+           }
+           var courses: CourseDto[] = await this._learningPathRepo.getCourses(dto.id);
+           dto.Courses = courses;
+           return dto;
+       };
 
 }

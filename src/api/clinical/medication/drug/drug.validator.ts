@@ -35,6 +35,7 @@ export class DrugValidator extends BaseValidator{
     search = async (request: express.Request): Promise<DrugSearchFilters> => {
 
         await this.validateString(request, 'name', Where.Query, false, false);
+        await this.validateString(request, 'GenericName', Where.Body, false, false);
 
         await this.validateBaseSearchFilters(request);
 
@@ -53,13 +54,13 @@ export class DrugValidator extends BaseValidator{
 
     private  async validateCreateBody(request) {
 
-        await this.validateString(request, 'DrugName', Where.Body, true, true);
-        await this.validateString(request, 'GenericName', Where.Body, true, false);
-        await this.validateString(request, 'Ingredients', Where.Body, true, false);
-        await this.validateString(request, 'Strength', Where.Body, true, false);
-        await this.validateString(request, 'OtherCommercialNames', Where.Body, true, true);
-        await this.validateString(request, 'Manufacturer', Where.Body, true, false);
-        await this.validateString(request, 'OtherInformation', Where.Body, true, false);
+        await this.validateString(request, 'DrugName', Where.Body, true, false);
+        await this.validateString(request, 'GenericName', Where.Body, false, true);
+        await this.validateString(request, 'Ingredients', Where.Body, false, true);
+        await this.validateString(request, 'Strength', Where.Body, false, true);
+        await this.validateString(request, 'OtherCommercialNames', Where.Body, false, true);
+        await this.validateString(request, 'Manufacturer', Where.Body, false, true);
+        await this.validateString(request, 'OtherInformation', Where.Body, false, true);
 
         this.validateRequest(request);
     }
@@ -67,12 +68,12 @@ export class DrugValidator extends BaseValidator{
     private  async validateUpdateBody(request) {
 
         await this.validateString(request, 'DrugName', Where.Body, false, false);
-        await this.validateString(request, 'GenericName', Where.Body, false, false);
-        await this.validateString(request, 'Ingredients', Where.Body, false, false);
-        await this.validateString(request, 'Strength', Where.Body, false, false);
+        await this.validateString(request, 'GenericName', Where.Body, false, true);
+        await this.validateString(request, 'Ingredients', Where.Body, false, true);
+        await this.validateString(request, 'Strength', Where.Body, false, true);
         await this.validateString(request, 'OtherCommercialNames', Where.Body, false, true);
-        await this.validateString(request, 'Manufacturer', Where.Body, false, false);
-        await this.validateString(request, 'OtherInformation', Where.Body, false, false);
+        await this.validateString(request, 'Manufacturer', Where.Body, false, true);
+        await this.validateString(request, 'OtherInformation', Where.Body, false, true);
 
         this.validateRequest(request);
     }
@@ -80,7 +81,8 @@ export class DrugValidator extends BaseValidator{
     private getFilter(request): DrugSearchFilters {
 
         var filters: DrugSearchFilters = {
-            Name : request.query.name ?? null,
+            Name        : request.query.name ?? null,
+            GenericName : request.query.genericName ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

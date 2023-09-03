@@ -1,12 +1,8 @@
 import {
-    BelongsTo,
     Column, CreatedAt, DataType, DeletedAt,
-    ForeignKey,
     IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import Organization from './organization/organization.model';
-import Person from '../person/person.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -27,28 +23,6 @@ export default class Address extends Model {
         allowNull    : false
     })
     id: string;
-
-    @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    PersonId: string;
-
-    @BelongsTo(() => Person)
-    Person: Person;
-
-    @IsUUID(4)
-    @ForeignKey(() => Organization)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    OrganizationId: string;
-
-    @BelongsTo(() => Organization)
-    Organization: Organization;
 
     @Length({ min: 2, max: 16 })
     @Column({

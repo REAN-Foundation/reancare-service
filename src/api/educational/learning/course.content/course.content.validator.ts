@@ -74,13 +74,13 @@ export class CourseContentValidator extends BaseValidator {
     private async validateUpdateBody(request) {
         await this.validateUuid(request, 'ModuleId', Where.Body, false, false);
         await this.validateString(request, 'Title', Where.Body, false, false);
-        await this.validateString(request, 'Description', Where.Body, false, false);
-        await this.validateString(request, 'ImageUrl', Where.Body, false, false);
-        await this.validateDecimal(request, 'DurationInMins', Where.Body, false, false);
-        await this.validateString(request, 'ContentType', Where.Body, false, false);
-        await this.validateString(request, 'ResourceLink ', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateString(request, 'ImageUrl', Where.Body, false, true);
+        await this.validateDecimal(request, 'DurationInMins', Where.Body, false, true);
+        await this.validateString(request, 'ContentType', Where.Body, false, true);
+        await this.validateString(request, 'ResourceLink ', Where.Body, false, true);
         await this.validateUuid(request, 'ActionTemplateId ', Where.Body, false, false);
-        await this.validateString(request, 'Sequence ', Where.Body, false, false);
+        await this.validateString(request, 'Sequence ', Where.Body, false, true);
 
         this.validateRequest(request);
     }

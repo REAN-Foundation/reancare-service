@@ -24,6 +24,7 @@ export class CourseModuleRepo implements ICourseModuleRepo {
                 Description    : createModel.Description,
                 ImageUrl       : createModel.ImageUrl,
                 DurationInMins : createModel.DurationInMins,
+                Sequence       : createModel.Sequence,
             };
             const courseModule = await CourseModule.create(entity);
             return await CourseModuleMapper.toDto(courseModule);
@@ -124,6 +125,9 @@ export class CourseModuleRepo implements ICourseModuleRepo {
             }
             if (updateModel.DurationInMins != null) {
                 courseModule.DurationInMins = updateModel.DurationInMins;
+            }
+            if (updateModel.Sequence != null) {
+                courseModule.Sequence = updateModel.Sequence;
             }
 
             await courseModule.save();

@@ -8,6 +8,8 @@ import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from
 import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentTemplateFileConverter } from "./assessment.template.file.converter";
+import { AssessmentNodeSearchFilters } from "../../../domain.types/clinical/assessment/assessment.node.search.types";
+import { AssessmentNodeSearchResults } from "../../../domain.types/clinical/assessment/assessment.node.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,6 +135,10 @@ export class AssessmentTemplateService {
 
     deleteScoringCondition = async(conditionId: uuid): Promise<boolean> => {
         return await this._assessmentHelperRepo.deleteScoringCondition(conditionId);
+    };
+
+    public searchNode = async (filters: AssessmentNodeSearchFilters): Promise<AssessmentNodeSearchResults> => {
+        return await this._assessmentHelperRepo.searchNode(filters);
     };
 
 }

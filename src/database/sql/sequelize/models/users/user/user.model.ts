@@ -84,6 +84,13 @@ export default class User extends Model {
     })
     CurrentTimeZone: string;
 
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    IsTestUser: boolean;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

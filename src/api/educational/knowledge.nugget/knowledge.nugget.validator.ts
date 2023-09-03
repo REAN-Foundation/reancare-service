@@ -52,22 +52,22 @@ export class KnowledgeNuggetValidator extends BaseValidator {
 
     private async validateCreateBody(request) {
 
-        await this.validateString(request, 'TopicName', Where.Body, false, false);
-        await this.validateString(request, 'BriefInformation', Where.Body, false, false);
-        await this.validateString(request, 'DetailedInformation', Where.Body, false, false);
-        await this.validateString(request, 'AdditionalResources', Where.Body, false, false);
-        await this.validateString(request, 'Tags', Where.Body, false, false);
+        await this.validateString(request, 'TopicName', Where.Body, false, true);
+        await this.validateString(request, 'BriefInformation', Where.Body, false, true);
+        await this.validateString(request, 'DetailedInformation', Where.Body, false, true);
+        await this.validateArray(request, 'AdditionalResources', Where.Body, false, true);
+        await this.validateArray(request, 'Tags', Where.Body, false, true);
 
         this.validateRequest(request);
     }
 
     private async validateUpdateBody(request) {
 
-        await this.validateString(request, 'TopicName', Where.Body, false, false);
-        await this.validateString(request, 'BriefInformation', Where.Body, false, false);
-        await this.validateString(request, 'DetailedInformation', Where.Body, false, false);
-        await this.validateString(request, 'AdditionalResources', Where.Body, false, false);
-        await this.validateString(request, 'Tags', Where.Body, false, false);
+        await this.validateString(request, 'TopicName', Where.Body, false, true);
+        await this.validateString(request, 'BriefInformation', Where.Body, false, true);
+        await this.validateString(request, 'DetailedInformation', Where.Body, false, true);
+        await this.validateArray(request, 'AdditionalResources', Where.Body, false, true);
+        await this.validateArray(request, 'Tags', Where.Body, false, true);
 
         this.validateRequest(request);
     }

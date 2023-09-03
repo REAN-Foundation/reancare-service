@@ -4,7 +4,7 @@ import { HealthSystemDto } from "./health.system.dto";
 //////////////////////////////////////////////////////////////////////
 
 export interface HealthSystemSearchFilters extends BaseSearchFilters{
-    Name? : string;   
+    Name? : string;
 }
 
 export interface HealthSystemSearchResults extends BaseSearchResults{

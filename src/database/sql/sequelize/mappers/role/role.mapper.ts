@@ -10,8 +10,10 @@ export class RoleMapper {
             return null;
         }
         const dto: RoleDto = {
-            id       : role.id,
-            RoleName : role.RoleName
+            id          : role.id,
+            RoleName    : role.RoleName,
+            Description : role.Description,
+            CreatedAt   : role.CreatedAt,
         };
         return dto;
     };

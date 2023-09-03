@@ -7,6 +7,7 @@ import { Loader } from './loader';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
 import { CommunityNetworkService } from '../modules/community.bw/community.network.service';
+import { ReminderSenderService } from '../services/general/reminder.sender.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -44,8 +45,8 @@ export class Scheduler {
                 this.scheduleDailyHighRiskCareplan();
                 this.scheduleHsSurvey();
                 this.scheduleReminderOnNoActionToDonationRequest();
-
-                //this.scheduleDaillyPatientTasks();
+                this.scheduleReminders();
+                this.scheduleCareplanRegistrationReminders();
 
                 resolve(true);
             } catch (error) {
@@ -65,6 +66,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheducled jobs: temp file clean-up...');
                 var service = Loader.container.resolve(FileResourceService);
                 await service.cleanupTempFiles();
+            })();
+        });
+    };
+
+    private scheduleReminders = () => {
+        cron.schedule(Scheduler._schedules['Reminders'], () => {
+            (async () => {
+                Logger.instance().log('Running scheducled jobs: Reminders...');
+                const nextMinutes = 15;
+                await ReminderSenderService.sendReminders(nextMinutes);
             })();
         });
     };
@@ -99,6 +110,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Custom Tasks...');
                 var customActionHandler = new CustomActionsHandler();
                 await customActionHandler.scheduledMonthlyRecurrentTasks();
+            })();
+        });
+    };
+
+    private scheduleCareplanRegistrationReminders = () => {
+        cron.schedule(Scheduler._schedules['CareplanRegistrationReminder'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Reminders for Careplan Registration...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleCareplanRegistrationReminders();
             })();
         });
     };

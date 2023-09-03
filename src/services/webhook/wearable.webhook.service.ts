@@ -335,32 +335,6 @@ export class TeraWebhookService {
         const dailyData = dailyDomainModel.Data;
         dailyData.forEach(async daily => {
 
-            const oxygenSamples = daily.OxygenData.SaturationSamples;
-            oxygenSamples.forEach(async bloodOxygen => {
-                const bloodOxygenDomainModel = {
-                    PatientUserId         : dailyDomainModel.User.ReferenceId,
-                    Provider              : dailyDomainModel.User.Provider,
-                    BloodOxygenSaturation : bloodOxygen.Percentage,
-                    Unit                  : "%",
-                    RecordDate            : new Date(bloodOxygen.TimeStamp)
-                };
-                await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
-
-            });
-
-            const heartRateSamples = daily.HeartRateData.Detailed.HrSamples;
-            heartRateSamples.forEach(async heartRate => {
-                const heartRateDomainModel = {
-                    PatientUserId : dailyDomainModel.User.ReferenceId,
-                    Provider      : dailyDomainModel.User.Provider,
-                    Pulse         : heartRate.BPM,
-                    Unit          : "bpm",
-                    RecordDate    : new Date(heartRate.TimeStamp)
-                };
-                await this._pulseRepo.create(heartRateDomainModel);
-
-            });
-
             // Adding calorie summary data in daily records
             const recordDate = daily.MetaData.StartTime.split('T')[0];
             var existingRecord =

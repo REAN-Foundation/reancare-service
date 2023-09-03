@@ -82,7 +82,7 @@ export class BloodPressureService {
         Logger.instance().log(`Notification Body: ${body}`);
 
         var message = Loader.notificationService.formatNotificationMessage(
-            MessageTemplates.MedicationReminder.NotificationType, title, body
+            MessageTemplates.BPNotification.NotificationType, title, body
         );
         for await (var device of deviceList) {
             await Loader.notificationService.sendNotificationToDevice(device.Token, message);

@@ -95,6 +95,7 @@ export class UserController {
 
             const user: UserDetailsDto = userDetails.user;
             const accessToken = userDetails.accessToken;
+            const refreshToken = userDetails.refreshToken;
 
             const isProfileComplete = user.Person.FirstName &&
             user.Person.LastName &&
@@ -104,6 +105,7 @@ export class UserController {
             const message = `User '${user.Person.DisplayName}' logged in successfully!`;
             const data = {
                 AccessToken       : accessToken,
+                RefreshToken      : refreshToken,
                 User              : user,
                 RoleId            : user.RoleId,
                 IsProfileComplete : isProfileComplete,
@@ -145,6 +147,7 @@ export class UserController {
 
             const user: UserDetailsDto = userDetails.user;
             const accessToken = userDetails.accessToken;
+            const refreshToken = userDetails.refreshToken;
 
             const isProfileComplete = user.Person.FirstName &&
                                       user.Person.LastName &&
@@ -152,6 +155,7 @@ export class UserController {
                                       user.Person.BirthDate ? true : false;
             const data = {
                 AccessToken       : accessToken,
+                RefreshToken      : refreshToken,
                 User              : user,
                 RoleId            : user.RoleId,
                 IsProfileComplete : isProfileComplete,
@@ -201,6 +205,21 @@ export class UserController {
 
             ResponseHandler.success(request, response, 'User logged out successfully!', 200);
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    rotateUserAccessToken = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'User.RotateUserAccessToken';
+
+            const refreshToken = request.params.refreshToken;
+            const accessToken = await this._service.rotateUserAccessToken(refreshToken);
+
+            ResponseHandler.success(request, response, 'User access token rotated successfully!', 200, {
+                AccessToken : accessToken,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

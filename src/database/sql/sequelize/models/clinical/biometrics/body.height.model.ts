@@ -64,6 +64,9 @@ export default class BodyHeight extends Model {
     })
     PatientUserId: string;
 
+    @BelongsTo(() => User)
+    User: User;
+
     // @IsUUID(4)
     // @ForeignKey(() => Encounter)
     // @Column({

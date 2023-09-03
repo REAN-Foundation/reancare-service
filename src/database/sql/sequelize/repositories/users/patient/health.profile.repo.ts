@@ -10,40 +10,40 @@ import HealthProfile from '../../../models/users/patient/health.profile.model';
 
 export class HealthProfileRepo implements IHealthProfileRepo {
 
-    create = async (patientHealthProfileDomainModel: HealthProfileDomainModel)
+    create = async (model: HealthProfileDomainModel)
     : Promise<HealthProfileDto> => {
         try {
             const entity = {
-                PatientUserId             : patientHealthProfileDomainModel.PatientUserId,
-                BloodGroup                : patientHealthProfileDomainModel.BloodGroup ?? '',
-                MajorAilment              : patientHealthProfileDomainModel.MajorAilment ?? '',
-                OtherConditions           : patientHealthProfileDomainModel.OtherConditions ?? '',
-                IsDiabetic                : patientHealthProfileDomainModel.IsDiabetic ?? null,
-                HasHeartAilment           : patientHealthProfileDomainModel.HasHeartAilment ?? null,
-                MaritalStatus             : patientHealthProfileDomainModel.MaritalStatus ?? 'Unknown',
-                Ethnicity                 : patientHealthProfileDomainModel.Ethnicity ?? '',
-                Race                      : patientHealthProfileDomainModel.Race ?? '',
-                Nationality               : patientHealthProfileDomainModel.Nationality ?? '',
-                Occupation                : patientHealthProfileDomainModel.Occupation ?? '',
-                SedentaryLifestyle        : patientHealthProfileDomainModel.SedentaryLifestyle ?? false,
-                IsSmoker                  : patientHealthProfileDomainModel.IsSmoker ?? false,
-                SmokingSeverity           : patientHealthProfileDomainModel.SmokingSeverity ?? 'Low',
-                SmokingSince              : patientHealthProfileDomainModel.SmokingSince ?? null,
-                IsDrinker                 : patientHealthProfileDomainModel.IsDrinker ?? false,
-                DrinkingSeverity          : patientHealthProfileDomainModel.DrinkingSeverity ?? 'Low',
-                DrinkingSince             : patientHealthProfileDomainModel.DrinkingSince ?? null,
-                SubstanceAbuse            : patientHealthProfileDomainModel.SubstanceAbuse ?? false,
-                ProcedureHistory          : patientHealthProfileDomainModel.ProcedureHistory ?? '',
-                ObstetricHistory          : patientHealthProfileDomainModel.ObstetricHistory ?? '',
-                OtherInformation          : patientHealthProfileDomainModel.OtherInformation ?? '',
-                TypeOfStroke              : patientHealthProfileDomainModel.TypeOfStroke ?? null,
-                HasHighBloodPressure      : patientHealthProfileDomainModel.HasHighBloodPressure ?? null,
-                HasHighCholesterol        : patientHealthProfileDomainModel.HasHighCholesterol ?? null,
-                HasAtrialFibrillation     : patientHealthProfileDomainModel.HasAtrialFibrillation ?? null,
+                PatientUserId             : model.PatientUserId,
+                BloodGroup                : model.BloodGroup ?? '',
+                MajorAilment              : model.MajorAilment ?? '',
+                OtherConditions           : model.OtherConditions ?? '',
+                IsDiabetic                : model.IsDiabetic ?? null,
+                HasHeartAilment           : model.HasHeartAilment ?? null,
+                MaritalStatus             : model.MaritalStatus ?? 'Unknown',
+                Ethnicity                 : model.Ethnicity ?? '',
+                Race                      : model.Race ?? '',
+                Nationality               : model.Nationality ?? '',
+                Occupation                : model.Occupation ?? '',
+                SedentaryLifestyle        : model.SedentaryLifestyle ?? false,
+                IsSmoker                  : model.IsSmoker ?? false,
+                SmokingSeverity           : model.SmokingSeverity ?? 'Low',
+                SmokingSince              : model.SmokingSince ?? null,
+                IsDrinker                 : model.IsDrinker ?? false,
+                DrinkingSeverity          : model.DrinkingSeverity ?? 'Low',
+                DrinkingSince             : model.DrinkingSince ?? null,
+                SubstanceAbuse            : model.SubstanceAbuse ?? false,
+                ProcedureHistory          : model.ProcedureHistory ?? '',
+                ObstetricHistory          : model.ObstetricHistory ?? '',
+                OtherInformation          : model.OtherInformation ?? '',
+                TypeOfStroke              : model.TypeOfStroke ?? null,
+                HasHighBloodPressure      : model.HasHighBloodPressure ?? null,
+                HasHighCholesterol        : model.HasHighCholesterol ?? null,
+                HasAtrialFibrillation     : model.HasAtrialFibrillation ?? null,
                 TobaccoQuestion           : "Have you used tobacco products (such as cigarettes, electronic cigarettes, cigars, smokeless tobacco, or hookah) over the past year?",
-                StrokeSurvivorOrCaregiver : patientHealthProfileDomainModel.StrokeSurvivorOrCaregiver ?? null,
-                LivingAlone               : patientHealthProfileDomainModel.LivingAlone ?? null,
-                WorkedPriorToStroke       : patientHealthProfileDomainModel.WorkedPriorToStroke ?? null
+                StrokeSurvivorOrCaregiver : model.StrokeSurvivorOrCaregiver ?? null,
+                LivingAlone               : model.LivingAlone ?? null,
+                WorkedPriorToStroke       : model.WorkedPriorToStroke ?? null
 
             };
             const patientHealthProfile = await HealthProfile.create(entity);
@@ -70,7 +70,7 @@ export class HealthProfileRepo implements IHealthProfileRepo {
 
     updateByPatientUserId = async (
         patientUserId: string,
-        patientHealthProfileDomainModel: HealthProfileDomainModel)
+        model: HealthProfileDomainModel)
         : Promise<HealthProfileDto> => {
 
         try {
@@ -82,98 +82,98 @@ export class HealthProfileRepo implements IHealthProfileRepo {
             if (patientHealthProfile == null) {
                 throw new Error("Cannot find health-profile for the patient.");
             }
-            if (patientHealthProfileDomainModel.BloodTransfusionDate !== undefined) {
-                patientHealthProfile.BloodTransfusionDate = patientHealthProfileDomainModel.BloodTransfusionDate;
+            if (model.BloodTransfusionDate !== undefined) {
+                patientHealthProfile.BloodTransfusionDate = model.BloodTransfusionDate;
             }
-            if (patientHealthProfileDomainModel.BloodDonationCycle !== undefined) {
-                patientHealthProfile.BloodDonationCycle = patientHealthProfileDomainModel.BloodDonationCycle;
+            if (model.BloodDonationCycle !== undefined) {
+                patientHealthProfile.BloodDonationCycle = model.BloodDonationCycle;
             }
-            if (patientHealthProfileDomainModel.BloodGroup !== undefined) {
-                patientHealthProfile.BloodGroup = patientHealthProfileDomainModel.BloodGroup;
+            if (model.BloodGroup !== undefined) {
+                patientHealthProfile.BloodGroup = model.BloodGroup;
             }
-            if (patientHealthProfileDomainModel.MajorAilment !== undefined) {
-                patientHealthProfile.MajorAilment = patientHealthProfileDomainModel.MajorAilment;
+            if (model.MajorAilment !== undefined) {
+                patientHealthProfile.MajorAilment = model.MajorAilment;
             }
-            if (patientHealthProfileDomainModel.OtherConditions !== undefined) {
-                patientHealthProfile.OtherConditions = patientHealthProfileDomainModel.OtherConditions;
+            if (model.OtherConditions !== undefined) {
+                patientHealthProfile.OtherConditions = model.OtherConditions;
             }
-            if (patientHealthProfileDomainModel.IsDiabetic !== undefined) {
-                patientHealthProfile.IsDiabetic = patientHealthProfileDomainModel.IsDiabetic;
+            if (model.IsDiabetic !== undefined) {
+                patientHealthProfile.IsDiabetic = model.IsDiabetic;
             }
-            if (patientHealthProfileDomainModel.HasHeartAilment !== undefined) {
-                patientHealthProfile.HasHeartAilment = patientHealthProfileDomainModel.HasHeartAilment;
+            if (model.HasHeartAilment !== undefined) {
+                patientHealthProfile.HasHeartAilment = model.HasHeartAilment;
             }
-            if (patientHealthProfileDomainModel.MaritalStatus !== undefined) {
-                patientHealthProfile.MaritalStatus = patientHealthProfileDomainModel.MaritalStatus;
+            if (model.MaritalStatus !== undefined) {
+                patientHealthProfile.MaritalStatus = model.MaritalStatus;
             }
-            if (patientHealthProfileDomainModel.Ethnicity !== undefined) {
-                patientHealthProfile.Ethnicity = patientHealthProfileDomainModel.Ethnicity;
+            if (model.Ethnicity !== undefined) {
+                patientHealthProfile.Ethnicity = model.Ethnicity;
             }
-            if (patientHealthProfileDomainModel.Race !== undefined) {
-                patientHealthProfile.Race = patientHealthProfileDomainModel.Race;
+            if (model.Race !== undefined) {
+                patientHealthProfile.Race = model.Race;
             }
-            if (patientHealthProfileDomainModel.Nationality !== undefined) {
-                patientHealthProfile.Nationality = patientHealthProfileDomainModel.Nationality;
+            if (model.Nationality !== undefined) {
+                patientHealthProfile.Nationality = model.Nationality;
             }
-            if (patientHealthProfileDomainModel.Occupation !== undefined) {
-                patientHealthProfile.Occupation = patientHealthProfileDomainModel.Occupation;
+            if (model.Occupation !== undefined) {
+                patientHealthProfile.Occupation = model.Occupation;
             }
-            if (patientHealthProfileDomainModel.SedentaryLifestyle !== undefined) {
-                patientHealthProfile.SedentaryLifestyle = patientHealthProfileDomainModel.SedentaryLifestyle;
+            if (model.SedentaryLifestyle !== undefined) {
+                patientHealthProfile.SedentaryLifestyle = model.SedentaryLifestyle;
             }
-            if (patientHealthProfileDomainModel.IsSmoker !== undefined) {
-                patientHealthProfile.IsSmoker = patientHealthProfileDomainModel.IsSmoker;
+            if (model.IsSmoker !== undefined) {
+                patientHealthProfile.IsSmoker = model.IsSmoker;
             }
-            if (patientHealthProfileDomainModel.SmokingSeverity !== undefined) {
-                patientHealthProfile.SmokingSeverity = patientHealthProfileDomainModel.SmokingSeverity;
+            if (model.SmokingSeverity !== undefined) {
+                patientHealthProfile.SmokingSeverity = model.SmokingSeverity;
             }
-            if (patientHealthProfileDomainModel.SmokingSince !== undefined) {
-                patientHealthProfile.SmokingSince = patientHealthProfileDomainModel.SmokingSince;
+            if (model.SmokingSince !== undefined) {
+                patientHealthProfile.SmokingSince = model.SmokingSince;
             }
-            if (patientHealthProfileDomainModel.IsDrinker !== undefined) {
-                patientHealthProfile.IsDrinker = patientHealthProfileDomainModel.IsDrinker;
+            if (model.IsDrinker !== undefined) {
+                patientHealthProfile.IsDrinker = model.IsDrinker;
             }
-            if (patientHealthProfileDomainModel.DrinkingSeverity !== undefined) {
-                patientHealthProfile.DrinkingSeverity = patientHealthProfileDomainModel.DrinkingSeverity;
+            if (model.DrinkingSeverity !== undefined) {
+                patientHealthProfile.DrinkingSeverity = model.DrinkingSeverity;
             }
-            if (patientHealthProfileDomainModel.DrinkingSince !== undefined) {
-                patientHealthProfile.DrinkingSince = patientHealthProfileDomainModel.DrinkingSince;
+            if (model.DrinkingSince !== undefined) {
+                patientHealthProfile.DrinkingSince = model.DrinkingSince;
             }
-            if (patientHealthProfileDomainModel.SubstanceAbuse !== undefined) {
-                patientHealthProfile.SubstanceAbuse = patientHealthProfileDomainModel.SubstanceAbuse;
+            if (model.SubstanceAbuse !== undefined) {
+                patientHealthProfile.SubstanceAbuse = model.SubstanceAbuse;
             }
-            if (patientHealthProfileDomainModel.ProcedureHistory !== undefined) {
-                patientHealthProfile.ProcedureHistory = patientHealthProfileDomainModel.ProcedureHistory;
+            if (model.ProcedureHistory !== undefined) {
+                patientHealthProfile.ProcedureHistory = model.ProcedureHistory;
             }
-            if (patientHealthProfileDomainModel.ObstetricHistory !== undefined) {
-                patientHealthProfile.ObstetricHistory = patientHealthProfileDomainModel.ObstetricHistory;
+            if (model.ObstetricHistory !== undefined) {
+                patientHealthProfile.ObstetricHistory = model.ObstetricHistory;
             }
-            if (patientHealthProfileDomainModel.OtherInformation !== undefined) {
-                patientHealthProfile.OtherInformation = patientHealthProfileDomainModel.OtherInformation;
+            if (model.OtherInformation !== undefined) {
+                patientHealthProfile.OtherInformation = model.OtherInformation;
             }
-            if (patientHealthProfileDomainModel.TobaccoQuestionAns !== undefined) {
-                patientHealthProfile.TobaccoQuestionAns = patientHealthProfileDomainModel.TobaccoQuestionAns;
+            if (model.TobaccoQuestionAns !== undefined) {
+                patientHealthProfile.TobaccoQuestionAns = model.TobaccoQuestionAns;
             }
-            if (patientHealthProfileDomainModel.TypeOfStroke !== undefined) {
-                patientHealthProfile.TypeOfStroke = patientHealthProfileDomainModel.TypeOfStroke;
+            if (model.TypeOfStroke !== undefined) {
+                patientHealthProfile.TypeOfStroke = model.TypeOfStroke;
             }
-            if (patientHealthProfileDomainModel.HasHighBloodPressure !== undefined) {
-                patientHealthProfile.HasHighBloodPressure = patientHealthProfileDomainModel.HasHighBloodPressure;
+            if (model.HasHighBloodPressure !== undefined) {
+                patientHealthProfile.HasHighBloodPressure = model.HasHighBloodPressure;
             }
-            if (patientHealthProfileDomainModel.HasHighCholesterol !== undefined) {
-                patientHealthProfile.HasHighCholesterol = patientHealthProfileDomainModel.HasHighCholesterol;
+            if (model.HasHighCholesterol !== undefined) {
+                patientHealthProfile.HasHighCholesterol = model.HasHighCholesterol;
             }
-            if (patientHealthProfileDomainModel.HasAtrialFibrillation !== undefined) {
-                patientHealthProfile.HasAtrialFibrillation = patientHealthProfileDomainModel.HasAtrialFibrillation;
+            if (model.HasAtrialFibrillation !== undefined) {
+                patientHealthProfile.HasAtrialFibrillation = model.HasAtrialFibrillation;
             }
-            if (patientHealthProfileDomainModel.StrokeSurvivorOrCaregiver !== undefined) {
-                patientHealthProfile.StrokeSurvivorOrCaregiver = patientHealthProfileDomainModel.StrokeSurvivorOrCaregiver;
+            if (model.StrokeSurvivorOrCaregiver !== undefined) {
+                patientHealthProfile.StrokeSurvivorOrCaregiver = model.StrokeSurvivorOrCaregiver;
             }
-            if (patientHealthProfileDomainModel.LivingAlone !== undefined) {
-                patientHealthProfile.LivingAlone = patientHealthProfileDomainModel.LivingAlone;
+            if (model.LivingAlone !== undefined) {
+                patientHealthProfile.LivingAlone = model.LivingAlone;
             }
-            if (patientHealthProfileDomainModel.WorkedPriorToStroke !== undefined) {
-                patientHealthProfile.WorkedPriorToStroke = patientHealthProfileDomainModel.WorkedPriorToStroke;
+            if (model.WorkedPriorToStroke !== undefined) {
+                patientHealthProfile.WorkedPriorToStroke = model.WorkedPriorToStroke;
             }
 
             await patientHealthProfile.save();

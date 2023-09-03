@@ -4,6 +4,7 @@ import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical
 import { AssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
 import { Helper } from '../../../../common/helper';
+import { AssessmentNodeSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.node.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +19,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         const model: AssessmentTemplateDomainModel = {
             Type                        : request.body.Type ?? null,
             Title                       : request.body.Title ?? null,
-            Description                 : request.body.Description,
+            Description                 : request.body.Description ?? null,
             DisplayCode                 : request.body.DisplayCode ?? null,
             ScoringApplicable           : request.body.ScoringApplicable ?? false,
             ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
@@ -68,10 +69,10 @@ export class AssessmentTemplateValidator extends BaseValidator {
     private async validateCreateBody(request) {
         await this.validateString(request, 'Type', Where.Body, true, false);
         await this.validateString(request, 'Title', Where.Body, true, false);
-        await this.validateString(request, 'Description', Where.Body, false, false);
-        await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, false);
-        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
-        await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, true);
+        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, true);
+        await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);
         await this.validateString(request, 'DisplayCode', Where.Body, false, false);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
         this.validateRequest(request);
@@ -80,10 +81,10 @@ export class AssessmentTemplateValidator extends BaseValidator {
     private async validateUpdateBody(request) {
         await this.validateString(request, 'Type', Where.Body, false, false);
         await this.validateString(request, 'Title', Where.Body, false, false);
-        await this.validateString(request, 'Description', Where.Body, false, false);
-        await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, false);
-        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
-        await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, true);
+        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, true);
+        await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
         this.validateRequest(request);
     }
@@ -97,7 +98,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
 
         var templateId = await this.getParamUuid(request, 'id');
-        await this.validateUuid(request, 'ParentNodeId', Where.Body, false, true);
+        await this.validateString(request, 'ParentNodeId', Where.Body, false, true);
         await this.validateString(request, 'NodeType', Where.Body, true, false);
         await this.validateString(request, 'Title', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, true);
@@ -238,5 +239,27 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
         return request.body;
     };
+
+    searchNode = async (
+        request: express.Request
+    ): Promise<AssessmentNodeSearchFilters> => {
+        await this.validateString(request, 'title', Where.Query, false, false);
+        await this.validateString(request, 'nodeType', Where.Query, false, false, true);
+        await this.validateString(request, 'templateId', Where.Query, false, false, true);
+        await this.validateBaseSearchFilters(request);
+        this.validateRequest(request);
+        return this.getNodeFilter(request);
+    };
+
+    private getNodeFilter(request): AssessmentNodeSearchFilters {
+
+        var filters: AssessmentNodeSearchFilters = {
+            Title      : request.query.title ?? null,
+            NodeType   : request.query.nodeType ?? null,
+            TemplateId : request.query.templateId ?? null,
+        };
+
+        return this.updateBaseSearchFilters(request, filters);
+    }
 
 }

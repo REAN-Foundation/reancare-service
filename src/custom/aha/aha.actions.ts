@@ -1,4 +1,5 @@
 import { PatientService } from '../../services/users/patient/patient.service';
+import * as MessageTemplates from '../../modules/communication/message.template/message.templates.json';
 import { Loader } from '../../startup/loader';
 import { PatientDetailsDto } from '../../domain.types/users/patient/patient/patient.dto';
 import { CustomTaskDomainModel } from '../../domain.types/users/custom.task/custom.task.domain.model';
@@ -16,6 +17,9 @@ import { KccqAssessmentUtils } from './quality.of.life/kccq.assessment.utils';
 import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
 import { FileResourceService } from '../../services/general/file.resource.service';
 import { PersonService } from '../../services/person/person.service';
+import { UserService } from '../../services/users/user/user.service';
+import { TimeHelper } from '../../common/time.helper';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +43,8 @@ export class AHAActions {
 
     _fileResourceService: FileResourceService = null;
 
+    _userService: UserService = null;
+
     constructor() {
         this._patientService = Loader.container.resolve(PatientService);
         this._personService = Loader.container.resolve(PersonService);
@@ -48,6 +54,8 @@ export class AHAActions {
         this._careplanService = Loader.container.resolve(CareplanService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._userService = Loader.container.resolve(UserService);
+
     }
 
     //#region Public
@@ -94,6 +102,46 @@ export class AHAActions {
         }
         catch (error) {
             Logger.instance().log(`[KCCQTask] Error performing post registration custom actions.`);
+        }
+    };
+
+    public scheduleCareplanRegistrationReminders = async () => {
+        try {
+            const patients = await this._patientService.getPatientsRegisteredLastMonth();
+
+            Logger.instance().log(`Patients registered to the app in last month: ${JSON.stringify(patients.length)}`);
+            for await (var patient of patients) {
+                const enrollments = await this._careplanService.getPatientEnrollments(patient.UserId, true);
+                if (enrollments.length <= 0) {
+                    const today = new Date();
+                    const patientRegistrationDate = patient.CreatedAt;
+                    const dayDiff = Math.floor(TimeHelper.dayDiff(today, patientRegistrationDate));
+                    if (dayDiff === 3 || dayDiff === 10 || dayDiff === 30) {
+                        var userDevices = await this._userDeviceDetailsService.getByUserId(patient.UserId);
+                        var userAppRegistrations = [];
+                        var userDeviceTokens = [];
+                        userDevices.forEach(userDevice => {
+                            userAppRegistrations.push(userDevice.AppName);
+                            userDeviceTokens.push(userDevice.Token);
+                        });
+
+                        if (userAppRegistrations.length > 0 && this.eligibleForCareplanRegistartionReminder(userAppRegistrations)) {
+                            Logger.instance().log(`Sending careplan registration reminder to :${patient.UserId}`);
+                            await this.sendCareplanRegistrationReminder(userDeviceTokens);        
+                        } else {
+                            Logger.instance().log(`Skip sending careplan registration reminder as device is not eligible:${patient.UserId}`);
+                        }
+                    } else {
+                        Logger.instance().log(`Skip sending careplan registration reminder as ineligible day:${patient.UserId}`);
+                    }
+                } else {
+                    Logger.instance().log(`Skip sending careplan registration reminder as patient is already enrolled:${patient.UserId}`);
+                }
+                
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending careplan registration reminder.`);
         }
     };
 
@@ -176,7 +224,7 @@ export class AHAActions {
                 Logger.instance().log(`[HsCron] Enrollment details:${JSON.stringify(careplanEnrollment)}`);
                 var patientDetails = await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
                 if (patientDetails.HealthSystem === null) {
-                    Logger.instance().log(`[HsCron] Skip sending survey for :${patientDetails.UserId} 
+                    Logger.instance().log(`[HsCron] Skip sending survey for :${patientDetails.UserId}
                                 as health system is ${patientDetails.HealthSystem}`);
                     continue;
                 }
@@ -220,7 +268,6 @@ export class AHAActions {
                             } else {
                                 Logger.instance().log(`[HsCron] Failed to send SMS for ${phoneNumber}, hence skip creating task.`);
                             }
-     
                         } else {
                             Logger.instance().log(`[HsCron] Health behaviors assessment is not finished. Status:${action.Status} `);
                         }
@@ -324,6 +371,35 @@ export class AHAActions {
 
         return eligibleClientCodes.indexOf(clientCode) >= 0;
     };
+
+    private eligibleForCareplanRegistartionReminder = (userAppRegistrations) => {
+
+        const eligibleForCareplanRegistartionReminder =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
+
+        return eligibleForCareplanRegistartionReminder;
+    };
+
+    private sendCareplanRegistrationReminder = async (userDeviceTokens) => {
+
+        var title = MessageTemplates['CareplanRegistrationReminder'].Title;
+        var body = MessageTemplates['CareplanRegistrationReminder'].Body;
+
+        Logger.instance().log(`Notification Title: ${title}`);
+        Logger.instance().log(`Notification Body: ${body}`);
+
+        Logger.instance().log(`Notification template: ${JSON.stringify(MessageTemplates['CareplanRegistrationReminder'])}`);
+
+        var message = Loader.notificationService.formatNotificationMessage(
+            MessageTemplates['CareplanRegistrationReminder'].NotificationType, title, body
+        );
+        for await (var deviceToken of userDeviceTokens) {
+            await Loader.notificationService.sendNotificationToDevice(deviceToken, message);
+        }
+
+    };
+
 
     //#endregion
 

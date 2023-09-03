@@ -26,7 +26,6 @@ export class BloodGlucoseController extends BaseController {
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodGlucoseService);
-
     }
 
     //#endregion

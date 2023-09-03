@@ -49,8 +49,13 @@ export default class Application {
 
             //Connect databases
             await connectDatabase_Primary();
-            await connectDatabase_EHRInsights();
-            await connectDatabase_AwardsFacts();
+
+            if (ConfigurationManager.EHRAnalyticsEnabled()) {
+                await connectDatabase_EHRInsights();
+            }
+            if (ConfigurationManager.GamificationEnabled()) {
+                await connectDatabase_AwardsFacts();
+            }
 
             //Set-up middlewares
             await this.setupMiddlewares();

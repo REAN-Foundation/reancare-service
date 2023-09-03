@@ -74,10 +74,14 @@ export class StatisticsController {
             const clientCode = request.currentClient.ClientCode;
 
             this.triggerReportGeneration(patientUserId, clientCode);
-            ResponseHandler.success(request, response,
-                'Your health report is getting downloaded, please check in the medical records after few minutes!', 200, {
-                ReportUrl : "",
-            });
+            ResponseHandler.success(
+                request,
+                response,
+                'Your health report is getting downloaded, please check in the medical records after few minutes!',
+                200,
+                {
+                    ReportUrl : "",
+                });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

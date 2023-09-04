@@ -1,15 +1,15 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { DeAuthDomainModel, ReAuthDomainModel } from '../../../../../domain.types/webhook/reauth.domain.model';
-import { AuthDomainModel } from '../../../../../domain.types/webhook/auth.domain.model';
-import { BaseValidator } from '../../../../base.validator';
-import { Activity, ActivityDomainModel } from '../../../../../domain.types/webhook/activity.domain.model';
-import { Daily, DailyDomainModel } from '../../../../../domain.types/webhook/daily.domain.model';
-import { BodyDomainModel, Body } from '../../../../../domain.types/webhook/body.domain.model';
-import { NutritionDomainModel } from '../../../../../domain.types/webhook/nutrition.domain.model';
-import { Meal } from '../../../../../domain.types/webhook/webhook.event';
-import { SleepDomainModel } from '../../../../../domain.types/webhook/sleep.domain.model';
-import { AthleteDomainModel } from '../../../../../domain.types/webhook/athlete.domain.model';
+import { DeAuthDomainModel, ReAuthDomainModel } from '../../../../domain.types/webhook/reauth.domain.model';
+import { AuthDomainModel } from '../../../../domain.types/webhook/auth.domain.model';
+import { BaseValidator } from '../../../base.validator';
+import { Activity, ActivityDomainModel } from '../../../../domain.types/webhook/activity.domain.model';
+import { Daily, DailyDomainModel } from '../../../../domain.types/webhook/daily.domain.model';
+import { BodyDomainModel, Body } from '../../../../domain.types/webhook/body.domain.model';
+import { NutritionDomainModel } from '../../../../domain.types/webhook/nutrition.domain.model';
+import { Meal } from '../../../../domain.types/webhook/webhook.event';
+import { SleepDomainModel } from '../../../../domain.types/webhook/sleep.domain.model';
+import { AthleteDomainModel } from '../../../../domain.types/webhook/athlete.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,26 +19,17 @@ export class TeraWebhookValidator extends BaseValidator {
         super();
     }
 
-    static auth = async (request: express.Request): Promise<AuthDomainModel> => {
-
-        const version = request.body.version != null && request.body.version !== undefined
-            ? new Date(Date.parse(request.body.version))
-            : null;
+    static auth = async (request ): Promise<AuthDomainModel> => {
 
         const authDomainModel: AuthDomainModel = {
             Status : request.body.status ?? null,
-            Type   : request.body.type ?? null,
             User   : {
-                UserId            : request.body.user.user_id,
-                Provider          : request.body.user.provider,
-                ReferenceId       : request.body.user.reference_id,
-                Scopes            : request.body.user.scopes ?? null,
-                LastWebhookUpdate : request.body.user.last_webhook_update ?? null
-            },
-            Message         : request.body.message ?? null,
-            WidgetSessionId : request.body.widget_session_id ?? null,
-            ReferenceId     : request.body.reference_id ?? null,
-            Version         : version ?? null
+                UserId            : request.body.user_id,
+                Provider          : request.body.provider,
+                ReferenceId       : request.body.reference_id,
+                Scopes            : request.body.scopes ?? null,
+                LastWebhookUpdate : request.body.last_webhook_update ?? null
+            }
         };
 
         return authDomainModel;
@@ -46,7 +37,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static reAuth = async (request: express.Request): Promise<ReAuthDomainModel> => {
 
-        const version = request.body.version != null && request.body.version !== undefined
+        const version = request.body.version != null && typeof request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
 
@@ -76,7 +67,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static deAuth = async (request: express.Request): Promise<DeAuthDomainModel> => {
 
-        const version = request.body.version != null && request.body.version !== undefined
+        const version = request.body.version != null && typeof request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
 
@@ -97,7 +88,7 @@ export class TeraWebhookValidator extends BaseValidator {
         return authDomainModel;
     };
 
-    static activity = async (request: express.Request): Promise<ActivityDomainModel> => {
+    static activity = async (request): Promise<ActivityDomainModel> => {
 
         const activitiesData = request.body.data ?? [];
         const activities = [];
@@ -157,7 +148,7 @@ export class TeraWebhookValidator extends BaseValidator {
         return await activityDomainModel;
     };
 
-    static daily = async (request: express.Request): Promise<DailyDomainModel> => {
+    static daily = async (request): Promise<DailyDomainModel> => {
 
         const dailyData = request.body.data ?? [];
         const dailyArray = [];
@@ -193,14 +184,6 @@ export class TeraWebhookValidator extends BaseValidator {
                     EndTime    : daily.metadata.end_time,
                     StartTime  : daily.metadata.start_time,
                     UploadType : daily.metadata.upload_type
-                },
-                DeviceData : {
-                    Name                : daily.device_data.name,
-                    HardwareVersion     : daily.device_data.hardware_version,
-                    Manufacturer        : daily.device_data.manufacturer,
-                    SoftwareVersion     : daily.device_data.software_version,
-                    ActivationTimestamp : daily.device_data.activation_timestamp,
-                    SerialNumber        : daily.device_data.serial_number,
                 },
                 DistanceData : {
                     Swimming : {
@@ -287,7 +270,7 @@ export class TeraWebhookValidator extends BaseValidator {
         return dailyDomainModel;
     };
 
-    static body = async (request: express.Request): Promise<BodyDomainModel> => {
+    static body = async (request): Promise<BodyDomainModel> => {
 
         const bodyData = request.body.data ?? [];
         const bodyArray = [];
@@ -450,7 +433,7 @@ export class TeraWebhookValidator extends BaseValidator {
         return bodyDomainModel;
     };
 
-    static nutrition = async (request: express.Request): Promise<NutritionDomainModel> => {
+    static nutrition = async (request): Promise<NutritionDomainModel> => {
 
         const mealData = request.body.data[0].meals ?? [];
         const meals = [];
@@ -510,9 +493,9 @@ export class TeraWebhookValidator extends BaseValidator {
         return nutritionDomainModel;
     };
 
-    static sleep = async (request: express.Request): Promise<SleepDomainModel> => {
+    static sleep = async (request): Promise<SleepDomainModel> => {
 
-        const version = request.body.version != null && request.body.version !== undefined
+        const version = request.body.version != null && typeof request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
         const sleepDomainModel: SleepDomainModel = {
@@ -528,8 +511,8 @@ export class TeraWebhookValidator extends BaseValidator {
             Data : {
                 SleepDurationsData : {
                     Other : {
-                        DurationInBedSeconds             : request.body.data[0].sleep_durations_data.other,
-                        DurationUnmeasurableSleepSeconds : request.body.data[0].sleep_durations_data.other
+                        DurationInBedSeconds             : request.body.data[0].sleep_durations_data.other.duration_in_bed_seconds,
+                        DurationUnmeasurableSleepSeconds : request.body.data[0].sleep_durations_data.other.duration_unmeasurable_sleep_seconds
                     },
                     SleepEfficiency : request.body.data[0].sleep_durations_data.sleep_efficiency,
                     Awake           : {
@@ -542,7 +525,7 @@ export class TeraWebhookValidator extends BaseValidator {
                         SleepLatencySeconds              : request.body.data[0].sleep_durations_data.awake.sleep_latency_seconds },
                     Asleep : {
                         DurationLightSleepStateSeconds : request.body.data[0].sleep_durations_data.asleep.duration_light_sleep_state_seconds,
-                        DurationAsleepStateSeconds     : request.body.data[0].sleep_durations_data.asleep.duration_asleep_state_seconds,
+                        DurationAsleepStateSeconds     : request.body.data[0].sleep_durations_data.asleep.duration_asleep_state_seconds ?? null,
                         NumREMEvents                   : request.body.data[0].sleep_durations_data.asleep.num_REM_events,
                         DurationREMSleepStateSeconds   : request.body.data[0].sleep_durations_data.asleep.duration_REM_sleep_state_seconds,
                         DurationDeepSleepStateSeconds  : request.body.data[0].sleep_durations_data.asleep.duration_deep_sleep_state_seconds
@@ -558,12 +541,15 @@ export class TeraWebhookValidator extends BaseValidator {
             Version : version
         };
 
+        if (!sleepDomainModel.Data.SleepDurationsData.Asleep.DurationAsleepStateSeconds) {
+            sleepDomainModel.Data.SleepDurationsData.Asleep.DurationAsleepStateSeconds = sleepDomainModel.Data.SleepDurationsData.Other.DurationInBedSeconds;
+        }
         return sleepDomainModel;
     };
 
     static athlete = async (request: express.Request): Promise<AthleteDomainModel> => {
 
-        const version = request.body.version != null && request.body.version !== undefined
+        const version = request.body.version != null && typeof request.body.version !== undefined
             ? new Date(Date.parse(request.body.version))
             : null;
 

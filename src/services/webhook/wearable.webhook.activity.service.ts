@@ -32,10 +32,18 @@ export class TeraWebhookActivityService {
 
     activity = async (activityDomainModel: ActivityDomainModel) => {
         
-        activityDomainModel.Data.forEach(async activity => {
+        const recentActivity = await this._physicalActivityRepo.getRecent(activityDomainModel.User.ReferenceId);
+        let filteredActivitySamples = [];
+            if (recentActivity != null) {
+                filteredActivitySamples = activityDomainModel.Data.filter((activity) =>
+                    new Date(activity.MetaData.EndTime) > new Date(recentActivity.EndTime));
+            } else {
+                filteredActivitySamples = activityDomainModel.Data;
+            }
+            filteredActivitySamples.forEach(async activity => {
+            
             const durationInMin = activity.ActiveDurationsData.ActivitySeconds / 60;
             const category = await this.getActivityType(activity.MetaData.Type);
-            
             const activityModel : PhysicalActivityDomainModel = {
                 PatientUserId  : activityDomainModel.User.ReferenceId,
                 Exercise       : activity.MetaData.Name,

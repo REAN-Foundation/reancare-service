@@ -69,4 +69,8 @@ export class WearableDeviceDetailsService {
         return healthAppStatuses;
     };
 
+    getAllUsers = async (): Promise<WearableDeviceDetailsDto[]> => {
+        return await this._webhookWearableDeviceDetailsRepo.getAllUsers();
+    };
+
 }

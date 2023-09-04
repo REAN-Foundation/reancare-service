@@ -94,6 +94,7 @@ export class TeraWebhookService {
                 DeauthenticatedAt : new Date()
             };
             await this._webhookWearableDeviceDetailsRepo.update(currentUser.id, entityToUpdate);
+            await this._webhookWearableDeviceDetailsRepo.delete(currentUser.id);
         } else {
             Logger.instance().log(`Reference id is null for ${deAuthDomainModel.User.UserId} terra user id`);
         }

@@ -15,5 +15,5 @@ export const register = (app: express.Application): void => {
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
-    app.use('/api/v1/execute-query', router);
+    app.use('/api/v1/custom-query', router);
 };

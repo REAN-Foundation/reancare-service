@@ -25,7 +25,7 @@
         "ReminderOnNoActionToDonationRequest": "30 12 * * *",
         "Reminders": "*/15 * * * *",
         "CareplanRegistrationReminder": "0 13 * * *",
-        "ScheduleFetchDataFromDevices": "*/5 * * * *"
+        "ScheduleFetchDataFromDevices": "*/10 * * * *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",

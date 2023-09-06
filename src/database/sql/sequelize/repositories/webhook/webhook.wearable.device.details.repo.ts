@@ -220,9 +220,9 @@ export class WearableDeviceDetailsRepo implements IWearableDeviceDetailsRepo {
             const deviceData = await WearableDeviceDetails.findOne({ where: { PatientUserId: patientUserId } });
             if (deviceData) {
                 const dto = await WearableDeviceDetailsMapper.toDto(deviceData);
-            return dto;
+                return dto;
             } else {
-                return null
+                return null;
             }
         } catch (error) {
             Logger.instance().log(error.message);

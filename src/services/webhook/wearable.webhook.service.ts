@@ -166,7 +166,6 @@ export class TeraWebhookService {
     };
 
     body = async (bodyDomainModel: BodyDomainModel) => {
-
         const bodyData = bodyDomainModel.Data;
         bodyData.forEach(async body => {
            
@@ -219,7 +218,7 @@ export class TeraWebhookService {
             let oxygenSamples = body.OxygenData.SaturationSamples;
             oxygenSamples = oxygenSamples.sort((a, b) => {
                 return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
-            } );
+            });
             Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
             const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredOxygenSamples = [];
@@ -245,11 +244,12 @@ export class TeraWebhookService {
                     RecordDate            : new Date(bloodOxygen.TimeStamp)
                 };
                 await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
+            });
 
             var heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
             heartRateSamples = heartRateSamples.sort((a, b) => {
                 return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
-            } );
+            });
             Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
             const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredPulseSamples = [];
@@ -390,5 +390,5 @@ export class TeraWebhookService {
             }
         });
     };
-
+    
 }

@@ -246,8 +246,6 @@ export class TeraWebhookService {
                 };
                 await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
 
-            });
-
             var heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
             heartRateSamples = heartRateSamples.sort((a, b) => {
                 return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
@@ -277,7 +275,6 @@ export class TeraWebhookService {
                     RecordDate    : new Date(heartRate.TimeStamp)
                 };
                 await this._pulseRepo.create(heartRateDomainModel);
-
             });
 
             const tempSamples = body.TemperatureData.BodyTemperatureSamples;

@@ -46,6 +46,16 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleCareplanRegistrationRemindersForOldUsers = async () => {
+        try {
+                await this._ahaActions.scheduleCareplanRegistrationRemindersForOldUsers();
+
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending reminders to old users for careplan registration.`);
+        }
+    };
+
     public performActions_PostCareplanEnrollment = async (enrollmentModel: EnrollmentDomainModel) => {
         try {
             if (this.isForAHA()) {

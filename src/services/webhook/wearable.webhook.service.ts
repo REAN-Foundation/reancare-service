@@ -216,13 +216,22 @@ export class TeraWebhookService {
 
             });
 
-            const oxygenSamples = body.OxygenData.SaturationSamples;
+            let oxygenSamples = body.OxygenData.SaturationSamples;
+            oxygenSamples = oxygenSamples.sort((a, b) => {
+                return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
+            } );
             Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
             const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredOxygenSamples = [];
             if (recentOxygen != null) {
-                filteredOxygenSamples = oxygenSamples.filter((oxygen) =>
-                    new Date(oxygen.TimeStamp) > recentOxygen.RecordDate);
+                const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
+                const oxygenSample =  oxygenSamples[0];
+                const oldTimeStamp: any = new Date(recentOxygen.RecordDate).getTime();
+                const newTimeStamp: any = new Date(oxygenSample.TimeStamp).getTime();
+                const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
+                if (timeDiffrence > allowedDuration_in_sec) {
+                    filteredOxygenSamples.push(oxygenSample);
+                }
             } else {
                 filteredOxygenSamples = oxygenSamples;
             }

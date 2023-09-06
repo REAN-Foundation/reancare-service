@@ -266,6 +266,17 @@ export class PatientRepo implements IPatientRepo {
         }
     };
 
+    getAllRegisteredPatients = async (): Promise<any[]> => {
+        try {
+            const patients = await Patient.findAll();
+            return patients;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     terraAuth = async (reference_id: string, model: AuthDomainModel) => {
         try {
             const patient = await Patient.findOne({ where: { UserId: reference_id } });

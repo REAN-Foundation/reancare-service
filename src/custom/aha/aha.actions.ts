@@ -145,6 +145,50 @@ export class AHAActions {
         }
     };
 
+    public scheduleCareplanRegistrationRemindersForOldUsers = async () => {
+        try {
+            const patients = await this._patientService.getAllRegisteredPatients();
+
+            Logger.instance().log(`All the Patients registered to the app: ${JSON.stringify(patients.length)}`);
+            for await (var patient of patients) {
+                const enrollments = await this._careplanService.getPatientEnrollments(patient.UserId, true);
+                if (enrollments.length <= 0) {
+                    var referenceDate = new Date(process.env.CAREPLAN_REG_CRON_REFERENCE_DATE);
+                    referenceDate = new Date(referenceDate.setHours(0, 0, 0, 0));
+
+                    var today = new Date();
+                    today = new Date(today.setHours(0, 0, 0, 0));
+
+                    const dayDiff = Math.floor(TimeHelper.dayDiff(today, referenceDate));
+                    
+                    if (dayDiff === 3 || dayDiff === 10 || dayDiff === 30) {
+                    var userDevices = await this._userDeviceDetailsService.getByUserId(patient.UserId);
+                        var userAppRegistrations = [];
+                        var userDeviceTokens = [];
+                        userDevices.forEach(userDevice => {
+                            userAppRegistrations.push(userDevice.AppName);
+                            userDeviceTokens.push(userDevice.Token);
+                        });
+
+                    if (userAppRegistrations.length > 0 && this.eligibleForCareplanRegistartionReminder(userAppRegistrations)) {
+                        Logger.instance().log(`Sending careplan registration reminder (old user) to :${patient.UserId}`);
+                        await this.sendCareplanRegistrationReminder(userDeviceTokens);        
+                    } else {
+                        Logger.instance().log(`Skip sending careplan registration reminder (old user) as device is not eligible:${patient.UserId}`);
+                    }               
+                } else {
+                    Logger.instance().log(`Skip sending careplan registration reminder (old user) as ineligible day:${patient.UserId}`);
+                }
+            } else {
+                    Logger.instance().log(`Skip sending careplan registration reminder (old user) as patient is already enrolled:${patient.UserId}`);
+                }          
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending careplan registration reminder (old users).`);
+        }
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public performActions_PostCareplanEnrollment = async (model: EnrollmentDomainModel) => {
         try {
@@ -376,7 +420,8 @@ export class AHAActions {
 
         const eligibleForCareplanRegistartionReminder =
         userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
-        userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
+        userAppRegistrations.indexOf('HF Helper') >= 0;
 
         return eligibleForCareplanRegistartionReminder;
     };

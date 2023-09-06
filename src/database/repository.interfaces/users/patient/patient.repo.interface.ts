@@ -22,6 +22,8 @@ export interface IPatientRepo {
 
     getPatientsRegisteredLastMonth(): Promise<any[]>;
 
+    getAllRegisteredPatients(): Promise<any[]>;
+
     terraAuth(userId: string, updateModel: AuthDomainModel);
 
     terraReAuth(userId: string, updateModel: ReAuthDomainModel);

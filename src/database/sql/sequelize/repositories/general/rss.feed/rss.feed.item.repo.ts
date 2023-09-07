@@ -30,7 +30,8 @@ export class RssfeedItemRepo implements IRssfeedItemRepo {
             };
 
             const feedItem = await RssfeedItem.create(entity);
-            return await RssfeedMapper.toFeedItemDto(feedItem);
+            const dto = RssfeedMapper.toFeedItemDto(feedItem);
+            return  dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

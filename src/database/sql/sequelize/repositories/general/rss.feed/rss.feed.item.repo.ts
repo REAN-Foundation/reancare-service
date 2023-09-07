@@ -70,9 +70,6 @@ export class RssfeedItemRepo implements IRssfeedItemRepo {
             if (updateModel.Title != null) {
                 newsfeed.Title = updateModel.Title;
             }
-            if (updateModel.FeedId != null) {
-                newsfeed.FeedId = updateModel.FeedId;
-            }
             if (updateModel.Description != null) {
                 newsfeed.Description = updateModel.Description;
             }

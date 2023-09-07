@@ -22,7 +22,7 @@
 
 ## Branching Strategy
 
-We are using GitFlow Branching [here](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
+We are following the GitFlow branching strategy. Please refer here [here](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
 
 * ```main``` : The main branch serves as the stable and production-ready branch, where all the changes from release branches are merged and tested before deployment.
 * ```develop``` : The develop branch, where all the changes from feature branches are merged 

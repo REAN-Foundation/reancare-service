@@ -137,6 +137,10 @@ export class PatientService {
         return await this._patientRepo.getPatientsRegisteredLastMonth();
     };
 
+    public getAllRegisteredPatients = async (): Promise<any[]> => {
+        return await this._patientRepo.getAllRegisteredPatients();
+    };
+
     public checkforExistingPersonWithRole
         = async (domainModel: PatientDomainModel, roleId: number): Promise<PersonDetailsDto> => {
 

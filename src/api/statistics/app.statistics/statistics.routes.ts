@@ -1,6 +1,6 @@
 import express from 'express';
 import { StatisticsController } from './statistics.controller';
-import { Loader } from '../../startup/loader';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +26,7 @@ export const register = (app: express.Application): void => {
     router.get('/by-addictions', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUsersByAddiction);
     router.get('/by-health-pillars', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUsersByHealthPillar);
     router.get('/by-biometrics', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUsersByBiometrics);
+    router.get('/years', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAllYears);
 
     app.use('/api/v1/users-statistics', router);
 };

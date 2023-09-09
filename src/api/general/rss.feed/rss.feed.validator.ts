@@ -146,7 +146,7 @@ export class RssfeedValidator extends BaseValidator {
         await this.validateUuid(request, 'FeedId', Where.Body, true, false);
         await this.validateString(request, 'Title', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, true);
-        await this.validateString(request, 'Link', Where.Body, false, true);
+        await this.validateString(request, 'Link', Where.Body, true, false);
         await this.validateString(request, 'Content', Where.Body, true, false);
         await this.validateString(request, 'Image', Where.Body, false, true);
         await this.validateArray(request, 'Tags', Where.Body, false, true);

@@ -1,4 +1,4 @@
-import { Op, QueryTypes } from 'sequelize';
+import { Dialect, Op, QueryTypes } from 'sequelize';
 import { CountryCurrencyPhone } from 'country-currency-phone';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
@@ -36,13 +36,19 @@ import EmergencyContact from '../../models/users/patient/emergency.contact.model
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
 import { Sequelize } from 'sequelize-typescript';
+ 
+////////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////
+const sequelizeStats = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER_NAME,
+    process.env.DB_USER_PASSWORD, {
+        host    : process.env.DB_HOST,
+        dialect : process.env.DB_DIALECT  as Dialect,
+    });
+    
+//////////////////////////////////////////////////////////////////////////////////////////////
 
-const sequelize = new Sequelize("reanadmindata", "root", "root", {
-    host    : "localhost",
-    dialect : "mysql",
-});
 export class StatisticsRepo implements IStatisticsRepo {
 
     getUsersCount = async (filters: StatisticSearchFilters): Promise<any> => {
@@ -458,13 +464,14 @@ export class StatisticsRepo implements IStatisticsRepo {
                 WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null
             )`;
 
-            const response = await sequelize.query(query,
+            const response = await sequelizeStats.query(query,
                 {
                     type : QueryTypes.SELECT,
                 }
             );
 
             return response;
+
             // const totalUsers = await this.getTotalUsers(filters);
             // const enrollmentDetails = [];
             // for (const u of totalUsers.rows) {
@@ -1098,6 +1105,28 @@ export class StatisticsRepo implements IStatisticsRepo {
             }
 
             return biometricUsers;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllYears = async (): Promise<any> => {
+        try {
+           
+            const search: any = {
+                where      : {},
+                include    : [],
+                paranoid   : false,
+                attributes : [
+                    [sequelizeStats.fn('YEAR', sequelizeStats.col('CreatedAt')), 'year'], // Extract year from createdAt
+                ],
+                group : [sequelizeStats.fn('YEAR', sequelizeStats.col('CreatedAt'))],
+            };
+
+            const allYears = await Patient.findAll(search);
+            return allYears;
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -2974,3 +3003,4 @@ function getUniqueUsers(usersData) {
     });
     return uniqueArray;
 }
+

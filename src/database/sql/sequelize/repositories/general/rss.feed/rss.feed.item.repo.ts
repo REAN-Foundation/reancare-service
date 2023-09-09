@@ -30,7 +30,8 @@ export class RssfeedItemRepo implements IRssfeedItemRepo {
             };
 
             const feedItem = await RssfeedItem.create(entity);
-            return await RssfeedMapper.toFeedItemDto(feedItem);
+            const dto = RssfeedMapper.toFeedItemDto(feedItem);
+            return  dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -68,9 +69,6 @@ export class RssfeedItemRepo implements IRssfeedItemRepo {
 
             if (updateModel.Title != null) {
                 newsfeed.Title = updateModel.Title;
-            }
-            if (updateModel.FeedId != null) {
-                newsfeed.FeedId = updateModel.FeedId;
             }
             if (updateModel.Description != null) {
                 newsfeed.Description = updateModel.Description;

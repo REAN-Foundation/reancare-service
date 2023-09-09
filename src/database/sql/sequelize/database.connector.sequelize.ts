@@ -15,6 +15,8 @@ export class DatabaseConnector_Sequelize implements IPrimaryDatabaseConnector {
 
     private _sequelize: Sequelize = null;
 
+    public static db: Sequelize = null;
+
     public connect = async (): Promise<boolean> => {
         try {
 
@@ -47,12 +49,18 @@ export class DatabaseConnector_Sequelize implements IPrimaryDatabaseConnector {
 
             Logger.instance().log(`Connected to database '${config.DatabaseName}'.`);
 
+            DatabaseConnector_Sequelize.db = this._sequelize;
+
             return true;
 
         } catch (error) {
             Logger.instance().log(error.message);
             return false;
         }
+    };
+
+    public db = (): Sequelize => {
+        return this._sequelize;
     };
 
     public sync = async () => {

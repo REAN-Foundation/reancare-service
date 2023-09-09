@@ -40,6 +40,7 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "country-currency-phone": "^0.1.11",
+    "csv-writer": "^1.6.0",
     "dayjs": "^1.11.7",
     "dotenv": "^8.2.0",
     "express": "^4.18.2",

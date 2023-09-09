@@ -195,13 +195,14 @@ export class UserDeviceDetailsController {
                 deviceTokens.push(device.Token);
             });
 
-            const message = await this._firebaseNotificationService.formatNotificationMessage('APP', details.Title, details.Body);
+            const message = await this._firebaseNotificationService.formatNotificationMessage(details.Type, details.Title, details.Body);
 
             // call notification service to send multiple devices
             await this._firebaseNotificationService.sendNotificationToMultipleDevice(deviceTokens, message);
 
             ResponseHandler.success(request, response, 'Notification sent to device successfully!', 201, {
                 Title       : details.Title,
+                Type        : details.Type,
                 Body        : details.Body,
                 DeviceCount : deviceTokens.length,
             });

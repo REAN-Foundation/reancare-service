@@ -210,6 +210,11 @@ export class UserDeviceDetailsValidator {
                 .escape()
                 .run(request);
 
+            await body('Type').exists()
+                .trim()
+                .escape()
+                .run(request);
+
             await body('Title').exists()
                 .trim()
                 .escape()
@@ -227,8 +232,9 @@ export class UserDeviceDetailsValidator {
 
             var details = {
                 Phone : request.body.Phone,
+                Type  : request.body.Type,
                 Title : request.body.Title,
-                Body  : request.body.Body,
+                Body  : request.body.Body
             };
             return details;
 

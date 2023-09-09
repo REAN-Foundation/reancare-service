@@ -243,6 +243,40 @@ export class PatientRepo implements IPatientRepo {
         }
     };
 
+    getPatientsRegisteredLastMonth = async (): Promise<any[]> => {
+        try {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+    
+            const lastMonth = new Date(today);
+            lastMonth.setDate(lastMonth.getDate() - 30);
+    
+            const patients = await Patient.findAll({
+                where: {
+                    CreatedAt: {
+                        [Op.between]: [lastMonth, today],
+                    },
+                },
+            });
+    
+            return patients;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllRegisteredPatients = async (): Promise<any[]> => {
+        try {
+            const patients = await Patient.findAll();
+            return patients;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     terraAuth = async (reference_id: string, model: AuthDomainModel) => {
         try {
             const patient = await Patient.findOne({ where: { UserId: reference_id } });

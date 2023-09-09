@@ -69,7 +69,12 @@ export class FirebaseNotificationService implements INotificationService {
     
     formatNotificationMessage = (notificationType: string, title: string, body: any): any => {
         var message = {
-            data         : { type: notificationType },
+            data : { 
+                type         : notificationType,
+                title        : title,
+                body         : body,
+                click_action : "FLUTTER_NOTIFICATION_CLICK",
+            },
             notification : {
                 title : title,
                 body  : body,
@@ -93,9 +98,11 @@ export class FirebaseNotificationService implements INotificationService {
                             title : title,
                             body  : body,
                         },
-                        badge   : 2,
+                        //badge   : 2,
                         message : {
-                            type : notificationType,
+                            type  : notificationType,
+                            title : title,
+                            body  : body,
                         },
                     },
                 },

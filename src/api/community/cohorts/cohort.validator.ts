@@ -59,9 +59,9 @@ export class CohortValidator extends BaseValidator {
     private getSearchFilters = (request: express.Request): CohortSearchFilters => {
 
         var filters: CohortSearchFilters = {
-            Name     : request.params.name ?? null,
-            UserId   : request.params.userId ?? null,
-            TenantId : request.params.tenantId ?? null,
+            Name     : request.query.name as string ?? null,
+            UserId   : request.query.userId as string  ?? null,
+            TenantId : request.query.tenantId as string  ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

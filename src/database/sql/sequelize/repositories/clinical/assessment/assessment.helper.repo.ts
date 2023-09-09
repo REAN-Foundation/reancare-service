@@ -527,7 +527,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (Helper.hasProperty(updates, 'QueryResponseType')) {
                 thisNode.QueryResponseType = updates['QueryResponseType'];
             }
-
+            if (Helper.hasProperty(updates, 'Message')) {
+                thisNode.Message = updates['Message'];
+            }
             thisNode = await thisNode.save();
             return await this.populateNodeDetails(thisNode);
 

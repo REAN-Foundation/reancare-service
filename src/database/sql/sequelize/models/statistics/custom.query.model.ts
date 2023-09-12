@@ -49,17 +49,30 @@ export default class StatisticsCustomQueries extends Model {
   Tenant: Tenant;
 
   @Column({
-      type      : DataType.STRING(24),
+      type      : DataType.STRING(128),
       allowNull : true,
   })
   Name : string;
 
   @Length({ max: 1024 })
   @Column({
-      type      : DataType.STRING(24),
+      type      : DataType.STRING(1024),
+      allowNull : true,
+  })
+  Query : string;
+
+  @Length({ max: 1024 })
+  @Column({
+      type      : DataType.STRING(1024),
       allowNull : true,
   })
   Description : string;
+
+  @Column({
+      type      : DataType.TEXT,
+      allowNull : true,
+  })
+  Tags: string;
 
   @Column
   @CreatedAt

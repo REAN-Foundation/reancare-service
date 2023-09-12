@@ -27,7 +27,11 @@ export class PatientNetworkService implements IBloodWarriorService {
 
         activities.forEach(async activity => {
             Logger.instance().log(`Blood transfusion date: ${bloodTransfusionDate}`);
-            let activityDate = TimeHelper.subtractDuration(bloodTransfusionDate, activity.Day, DurationType.Day);
+            let scedulingVariable = "Day";
+            if (process.env.REAN_CAREPLAN_SCHEDULING_VARIABLE) {
+                scedulingVariable = process.env.REAN_CAREPLAN_SCHEDULING_VARIABLE;
+            }
+            let activityDate = TimeHelper.subtractDuration(bloodTransfusionDate, activity[`${scedulingVariable}`], DurationType.Day);
             activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
             Logger.instance().log(`Date of patient reminder  ${activity.Sequence}: ${activityDate}`);
 

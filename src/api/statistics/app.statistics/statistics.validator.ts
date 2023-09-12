@@ -1,6 +1,6 @@
 import express from 'express';
-import { BaseValidator, Where } from '../base.validator';
-import { AppDownloadDomainModel } from '../../domain.types/statistics/app.download.domain.model';
+import { BaseValidator, Where } from '../../base.validator';
+import { AppDownloadDomainModel } from '../../../domain.types/statistics/app.download.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,6 @@ export class StatistcsValidator extends BaseValidator {
             TotalDownloads   : request.body.TotalDownloads,
             IOSDownloads     : request.body.IOSDownloads,
             AndroidDownloads : request.body.AndroidDownloads,
-           
         };
 
         return AppDownloadModel;
@@ -58,7 +57,7 @@ export class StatistcsValidator extends BaseValidator {
         await this.validateDecimal(request, 'year', Where.Query, false, false);
         await this.validateDecimal(request, 'ageFrom', Where.Query, false, false);
         await this.validateDecimal(request, 'ageTo', Where.Query, false, false);
-     
+
         this.validateRequest(request);
 
         return this.getFilterForAge(request);

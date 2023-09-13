@@ -234,9 +234,10 @@ function loadHowDoYouFeelQueryString() {
 }
 
 export const loadNegativeHowDoYouFeelCreateModel = async (
+    Comments = faker.lorem.words(),
 ) => {
     const model = {
-      
+        Comments: Comments,
     };
     setTestData(model, "NegativeHowDoYouFeelCreateModel");
 };

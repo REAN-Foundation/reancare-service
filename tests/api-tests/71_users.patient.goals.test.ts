@@ -13,22 +13,7 @@ describe('71 - Health priority tests', function() {
 
     var agent = request.agent(infra._app);
 
-    // it('71 - 01 - Get goals by priorities', function(done) {
-     
-    //     agent
-    //         .get(`/api/v1/patient-goals/by-priority/${getTestData('HealthPriorityId')}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-                
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('71 - 02 - Get patient goals', function(done) {
+    it('71 - 01 - Get patient goals', function(done) {
      
         agent
             .get(`/api/v1/patient-goals/for-patient/${getTestData('PatientUserId')}`)
@@ -43,7 +28,7 @@ describe('71 - Health priority tests', function() {
             .expect(200, done);
     });
 
-    it('71 - 03 - Create goal', function(done) {
+    it('71 - 02 - Create goal', function(done) {
         loadGoalCreateModel();
         const createModel = getTestData("GoalCreateModel");
         agent
@@ -77,7 +62,7 @@ describe('71 - Health priority tests', function() {
             .expect(201, done);
     });
 
-    it('71 - 04 - Get goal by id', function(done) {
+    it('71 - 03 - Get goal by id', function(done) {
      
         agent
             .get(`/api/v1/patient-goals/${getTestData('GoalId_1')}`)
@@ -107,7 +92,7 @@ describe('71 - Health priority tests', function() {
             .expect(200, done);
     });
 
-    it('71 - 05 - Search goal records', function(done) {
+    it('71 - 04 - Search goal records', function(done) {
         loadGoalQueryString();
         agent
             .get(`/api/v1/patient-goals/search${loadGoalQueryString()}`)
@@ -127,47 +112,7 @@ describe('71 - Health priority tests', function() {
             .expect(200, done);
     });
 
-    // it('71 - 06 - Update goal', function(done) {
-    //     loadGoalUpdateModel();
-    //     const updateModel = getTestData("GoalUpdateModel");
-    //     agent
-    //         .put(`/api/v1/patient-goals/${getTestData('GoalId_1')}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .send(updateModel)
-    //         .expect(response => {
-    //             expect(response.body.Data.Goal).to.have.property('PatientUserId');
-    //             expect(response.body.Data.Goal).to.have.property('ProviderEnrollmentId');
-    //             expect(response.body.Data.Goal).to.have.property('Provider');
-    //             expect(response.body.Data.Goal).to.have.property('ProviderCareplanName');
-    //             expect(response.body.Data.Goal).to.have.property('ProviderCareplanCode');
-    //             expect(response.body.Data.Goal).to.have.property('Title');
-    //             expect(response.body.Data.Goal).to.have.property('Sequence');
-    //             expect(response.body.Data.Goal).to.have.property('HealthPriorityId');
-    //             expect(response.body.Data.Goal).to.have.property('GoalAchieved');
-    //             expect(response.body.Data.Goal).to.have.property('GoalAbandoned');
-
-    //             expect(response.body.Data.Goal.PatientUserId).to.equal(getTestData("GoalUpdateModel").PatientUserId);
-    // eslint-disable-next-line max-len
-    //             expect(response.body.Data.Goal.ProviderEnrollmentId).to.equal(getTestData("GoalUpdateModel").ProviderEnrollmentId);
-    //             expect(response.body.Data.Goal.Provider).to.equal(getTestData("GoalUpdateModel").Provider);
-    // eslint-disable-next-line max-len
-    //             expect(response.body.Data.Goal.ProviderCareplanName).to.equal(getTestData("GoalUpdateModel").ProviderCareplanName);
-    // eslint-disable-next-line max-len
-    //             expect(response.body.Data.Goal.ProviderCareplanCode).to.equal(getTestData("GoalUpdateModel").ProviderCareplanCode);
-    //             expect(response.body.Data.Goal.Title).to.equal(getTestData("GoalUpdateModel").Title);
-    //             expect(response.body.Data.Goal.Sequence).to.equal(getTestData("GoalUpdateModel").Sequence);
-    // eslint-disable-next-line max-len
-    //             expect(response.body.Data.Goal.HealthPriorityId).to.equal(getTestData("GoalUpdateModel").HealthPriorityId);
-    //             expect(response.body.Data.Goal.GoalAchieved).to.equal(getTestData("GoalUpdateModel").GoalAchieved);
-    //             expect(response.body.Data.Goal.GoalAbandoned).to.equal(getTestData("GoalUpdateModel").GoalAbandoned);
-
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('71 - 07 - Delete goal', function(done) {
+    it('71 - 05 - Delete goal', function(done) {
         
         agent
             .delete(`/api/v1/patient-goals/${getTestData('GoalId_1')}`)

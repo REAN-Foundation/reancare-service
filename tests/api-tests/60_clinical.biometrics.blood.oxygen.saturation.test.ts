@@ -207,15 +207,15 @@ describe('60 - Blood oxygen saturation tests', function() {
 ///////////////////////////////////////////////////////////////////////////
 
 export const loadBloodOxygenSaturationCreateModel = async (
-    bloodOxygenSaturation = faker.number.int(100),
+    bloodOxygenSaturation = faker.number.int({ min: 75, max:85 }),
     Unit = faker.string.symbol(),
-    recordDate = faker.date.anytime()
+    recordDate = faker.date.past()
 ) => {
     const model = {
         PatientUserId         : getTestData('PatientUserId'),
         BloodOxygenSaturation : bloodOxygenSaturation,
-        Unit                  : Unit,
-        RecordDate            : recordDate,
+        Unit                  : "%",
+        RecordDate            : "2021-09-01",
         RecordedByUserId      : getTestData('PatientUserId')
     };
 
@@ -223,13 +223,12 @@ export const loadBloodOxygenSaturationCreateModel = async (
 };
 
 export const loadBloodOxygenSaturationUpdateModel = async (
-    bloodOxygenSaturation = faker.number.int(100),
-    recordDate = faker.date.anytime()
+    bloodOxygenSaturation = faker.number.int({ min: 75, max:85 }),
+    recordDate = faker.date.past()
 ) => {
     const model = {
-  
         BloodOxygenSaturation : bloodOxygenSaturation,
-        RecordDate            : recordDate
+        RecordDate            : "2021-09-01"
     };
     setTestData(model, "BloodOxygenSaturationUpdateModel");
 };

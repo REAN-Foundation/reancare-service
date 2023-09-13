@@ -203,26 +203,26 @@ describe('64 - Pulse tests', function() {
 ///////////////////////////////////////////////////////////////////////////
 
 export const loadPulseCreateModel = async (
-    Pulse = faker.number.int(100),
+    Pulse = faker.number.int({ min: 70, max:75 }),
     Unit = faker.string.symbol(),
-    recordDate = faker.date.anytime()
+    recordDate = faker.date.past()
 ) => {
     const model = {
         PatientUserId : getTestData("PatientUserId"),
         Pulse         : Pulse,
-        Unit          : Unit,
-        RecordDate    : recordDate
+        Unit          : "bpm",
+        RecordDate    : "2021-09-01"
     };
     setTestData(model, "PulseCreateModel");
 };
 
 export const loadPulseUpdateModel = async (
-    Pulse = faker.number.int(100),
-    recordDate = faker.date.anytime()
+    Pulse = faker.number.int({ min: 70, max:75 }),
+    recordDate = faker.date.past()
 ) => {
     const model = {
         Pulse      : Pulse,
-        RecordDate : recordDate
+        RecordDate : "2021-09-01"
     };
     setTestData(model, "PulseUpdateModel");
 };
@@ -239,7 +239,7 @@ export const loadNegativePulseCreateModel = async (
 ) => {
     const model = {
         Unit       : Unit,
-        RecordDate : recordDate
+        RecordDate : recordDate 
     };
     setTestData(model, "NegativePulseCreateModel");
 };

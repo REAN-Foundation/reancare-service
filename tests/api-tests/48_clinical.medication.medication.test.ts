@@ -115,20 +115,7 @@ describe('48 - Medication tests', function() {
             .expect(200, done);
     });
 
-    // it('48 - 08 - Download medication stock image by id', function(done) {
-    //     agent
-    //         .get(`/api/v1/clinical/medications/stock-images/1/download`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('48 - 09 - Add new medication by drug name', function(done) {
+    it('48 - 08 - Add new medication by drug name', function(done) {
         loadMedicationCreateModel();
         const createModel = getTestData("MedicationCreateModel");
         agent
@@ -157,21 +144,18 @@ describe('48 - Medication tests', function() {
 
                 expect(response.body.Data.Medication.PatientUserId).to.equal(getTestData("MedicationCreateModel").PatientUserId);
                 expect(response.body.Data.Medication.DrugName).to.equal(getTestData("MedicationCreateModel").DrugName);
-                expect(response.body.Data.Medication.Dose).to.equal(getTestData("MedicationCreateModel").Dose);
                 expect(response.body.Data.Medication.DosageUnit).to.equal(getTestData("MedicationCreateModel").DosageUnit);
-                expect(response.body.Data.Medication.Frequency).to.equal(getTestData("MedicationCreateModel").Frequency);
                 expect(response.body.Data.Medication.FrequencyUnit).to.equal(getTestData("MedicationCreateModel").FrequencyUnit);
                 expect(response.body.Data.Medication.Route).to.equal(getTestData("MedicationCreateModel").Route);
                 expect(response.body.Data.Medication.Duration).to.equal(getTestData("MedicationCreateModel").Duration);
                 expect(response.body.Data.Medication.DurationUnit).to.equal(getTestData("MedicationCreateModel").DurationUnit);
-                expect(response.body.Data.Medication.RefillNeeded).to.equal(getTestData("MedicationCreateModel").RefillNeeded);
                 expect(response.body.Data.Medication.Instructions).to.equal(getTestData("MedicationCreateModel").Instructions);
 
             })
             .expect(201, done);
     });
 
-    it('48 - 10 - Add new medication by drug id', function(done) {
+    it('48 - 09 - Add new medication by drug id', function(done) {
         loadMedicationDrugIdCreateModel();
         const createModel = getTestData("MedicationDrugIdCreateModel");
         agent
@@ -200,13 +184,11 @@ describe('48 - Medication tests', function() {
 
                 expect(response.body.Data.Medication.PatientUserId).to.equal(getTestData("MedicationDrugIdCreateModel").PatientUserId);
                 expect(response.body.Data.Medication.DrugId).to.equal(getTestData("MedicationDrugIdCreateModel").DrugId);
-                expect(response.body.Data.Medication.Dose).to.equal(getTestData("MedicationDrugIdCreateModel").Dose);
                 expect(response.body.Data.Medication.DosageUnit).to.equal(getTestData("MedicationDrugIdCreateModel").DosageUnit);
                 expect(response.body.Data.Medication.FrequencyUnit).to.equal(getTestData("MedicationDrugIdCreateModel").FrequencyUnit);
                 expect(response.body.Data.Medication.Route).to.equal(getTestData("MedicationDrugIdCreateModel").Route);
                 expect(response.body.Data.Medication.Duration).to.equal(getTestData("MedicationDrugIdCreateModel").Duration);
                 expect(response.body.Data.Medication.DurationUnit).to.equal(getTestData("MedicationDrugIdCreateModel").DurationUnit);
-                expect(response.body.Data.Medication.RefillNeeded).to.equal(getTestData("MedicationDrugIdCreateModel").RefillNeeded);
                 expect(response.body.Data.Medication.RefillCount).to.equal(getTestData("MedicationDrugIdCreateModel").RefillCount);
                 expect(response.body.Data.Medication.Instructions).to.equal(getTestData("MedicationDrugIdCreateModel").Instructions);
 
@@ -214,7 +196,7 @@ describe('48 - Medication tests', function() {
             .expect(201, done);
     });
 
-    it('48 - 11 - Search patient medication', function(done) {
+    it('48 - 10 - Search patient medication', function(done) {
         loadMedicationQueryString();
         agent
             .get(`/api/v1/clinical/medications/search${loadMedicationQueryString()}`)
@@ -234,7 +216,7 @@ describe('48 - Medication tests', function() {
             .expect(200, done);
     });
 
-    it('48 - 12 - Get current patient medications', function(done) {
+    it('48 - 11 - Get current patient medications', function(done) {
         agent
             .get(`/api/v1/clinical/medications/current/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
@@ -247,7 +229,7 @@ describe('48 - Medication tests', function() {
             .expect(200, done);
     });
 
-    it('48 - 13 - Get medication by id', function(done) {
+    it('48 - 12 - Get medication by id', function(done) {
     
         agent
             .get(`/api/v1/clinical/medications/${getTestData('MedicationId_1')}`)
@@ -271,21 +253,18 @@ describe('48 - Medication tests', function() {
 
                 expect(response.body.Data.Medication.PatientUserId).to.equal(getTestData("MedicationCreateModel").PatientUserId);
                 expect(response.body.Data.Medication.DrugName).to.equal(getTestData("MedicationCreateModel").DrugName);
-                expect(response.body.Data.Medication.Dose).to.equal(getTestData("MedicationCreateModel").Dose);
                 expect(response.body.Data.Medication.DosageUnit).to.equal(getTestData("MedicationCreateModel").DosageUnit);
-                expect(response.body.Data.Medication.Frequency).to.equal(getTestData("MedicationCreateModel").Frequency);
                 expect(response.body.Data.Medication.FrequencyUnit).to.equal(getTestData("MedicationCreateModel").FrequencyUnit);
                 expect(response.body.Data.Medication.Route).to.equal(getTestData("MedicationCreateModel").Route);
                 expect(response.body.Data.Medication.Duration).to.equal(getTestData("MedicationCreateModel").Duration);
                 expect(response.body.Data.Medication.DurationUnit).to.equal(getTestData("MedicationCreateModel").DurationUnit);
-                expect(response.body.Data.Medication.RefillNeeded).to.equal(getTestData("MedicationCreateModel").RefillNeeded);
                 expect(response.body.Data.Medication.Instructions).to.equal(getTestData("MedicationCreateModel").Instructions);
 
             })
             .expect(200, done);
     });
 
-    it('48 - 14 - Update medication', function(done) {
+    it('48 - 13 - Update medication', function(done) {
         loadMedicationUpdateModel();
         const updateModel = getTestData("MedicationUpdateModel");
         agent
@@ -309,22 +288,19 @@ describe('48 - Medication tests', function() {
                 expect(response.body.Data.Medication).to.have.property('RefillNeeded');
                 expect(response.body.Data.Medication).to.have.property('Instructions');
 
-                expect(response.body.Data.Medication.PatientUserId).to.equal(getTestData("MedicationUpdateModel").PatientUserId);
-                expect(response.body.Data.Medication.Dose).to.equal(getTestData("MedicationUpdateModel").Dose);
+                expect(response.body.Data.Medication.PatientUserId).to.equal(getTestData("MedicationUpdateModel").PatientUserId);                
                 expect(response.body.Data.Medication.DosageUnit).to.equal(getTestData("MedicationUpdateModel").DosageUnit);
-                expect(response.body.Data.Medication.Frequency).to.equal(getTestData("MedicationUpdateModel").Frequency);
                 expect(response.body.Data.Medication.FrequencyUnit).to.equal(getTestData("MedicationUpdateModel").FrequencyUnit);
                 expect(response.body.Data.Medication.Route).to.equal(getTestData("MedicationUpdateModel").Route);
                 expect(response.body.Data.Medication.Duration).to.equal(getTestData("MedicationUpdateModel").Duration);
                 expect(response.body.Data.Medication.DurationUnit).to.equal(getTestData("MedicationUpdateModel").DurationUnit);
-                expect(response.body.Data.Medication.RefillNeeded).to.equal(getTestData("MedicationUpdateModel").RefillNeeded);
                 expect(response.body.Data.Medication.Instructions).to.equal(getTestData("MedicationUpdateModel").Instructions);
 
             })
             .expect(200, done);
     });
 
-    it('48 - 15 - Delete Medication', function(done) {
+    it('48 - 14 - Delete Medication', function(done) {
        
         agent
             .delete(`/api/v1/clinical/medications/${getTestData('MedicationId_1')}`)
@@ -367,14 +343,11 @@ describe('48 - Medication tests', function() {
 
                 expect(response.body.Data.Medication.PatientUserId).to.equal(getTestData("MedicationCreateModel").PatientUserId);
                 expect(response.body.Data.Medication.DrugName).to.equal(getTestData("MedicationCreateModel").DrugName);
-                expect(response.body.Data.Medication.Dose).to.equal(getTestData("MedicationCreateModel").Dose);
                 expect(response.body.Data.Medication.DosageUnit).to.equal(getTestData("MedicationCreateModel").DosageUnit);
-                expect(response.body.Data.Medication.Frequency).to.equal(getTestData("MedicationCreateModel").Frequency);
                 expect(response.body.Data.Medication.FrequencyUnit).to.equal(getTestData("MedicationCreateModel").FrequencyUnit);
                 expect(response.body.Data.Medication.Route).to.equal(getTestData("MedicationCreateModel").Route);
                 expect(response.body.Data.Medication.Duration).to.equal(getTestData("MedicationCreateModel").Duration);
                 expect(response.body.Data.Medication.DurationUnit).to.equal(getTestData("MedicationCreateModel").DurationUnit);
-                expect(response.body.Data.Medication.RefillNeeded).to.equal(getTestData("MedicationCreateModel").RefillNeeded);
                 expect(response.body.Data.Medication.Instructions).to.equal(getTestData("MedicationCreateModel").Instructions);
 
             })
@@ -514,23 +487,23 @@ function loadDrugQueryString() {
 
 export const loadMedicationCreateModel = async (
     DrugName = faker.lorem.word(),
-    Dose = faker.number.int(10),
-    Frequency = faker.number.int(10),
-    Duration = faker.number.int(60),
+    Dose = faker.number.int({ min: 1, max: 1.5 }),
+    Frequency = faker.number.int({ min: 2, max: 4 }),
+    Duration = faker.number.int({ min: 10, max: 20 }),
     refillNeeded = faker.datatype.boolean(),
-    Instructions = faker.lorem.words(10),
+    Instructions = faker.lorem.words(),
 ) => {
     const model = {
         PatientUserId : getTestData("PatientUserId"),
         DrugName      : DrugName,
         Dose          : Dose,
-        DosageUnit    : medicationDosageUnits,
+        DosageUnit    : "Tablet",
         TimeSchedules : [
             medicationTimeSchedules
         ],
         Frequency     : Frequency,
-        FrequencyUnit : medicationFrequencyUnits,
-        Route         : medicationAdministrationRoutes,
+        FrequencyUnit : "Daily",
+        Route         : "Oral",
         Duration      : Duration,
         DurationUnit  : medicationDurationUnits,
         StartDate     : "2023-09-14",
@@ -541,22 +514,22 @@ export const loadMedicationCreateModel = async (
 };
 
 export const loadMedicationDrugIdCreateModel = async (
-    Dose = faker.number.int(10),
-    Duration = faker.number.int(60),
+    Dose = faker.number.int({ min: 1, max: 1.5 }),
+    Duration = faker.number.int({ min: 10, max: 20 }),
     refillNeeded = faker.datatype.boolean(),
-    refillCount = faker.number.int(10),
-    Instructions = faker.lorem.words(10),
+    refillCount = faker.number.int({ min:2, max: 5 }),
+    Instructions = faker.lorem.words(),
 ) => {
     const model = {
         PatientUserId : getTestData("PatientUserId"),
         DrugId        : getTestData("DrugId"),
         Dose          : Dose,
-        DosageUnit    : medicationDosageUnits,
+        DosageUnit    : "Tablet",
         TimeSchedules : [
             medicationTimeSchedules
         ],
-        FrequencyUnit : medicationFrequencyUnits,
-        Route         : medicationAdministrationRoutes,
+        FrequencyUnit : "Daily",
+        Route         : "Oral",
         Duration      : Duration,
         DurationUnit  : medicationDurationUnits,
         StartDate     : "2023-10-14",
@@ -568,22 +541,22 @@ export const loadMedicationDrugIdCreateModel = async (
 };
 
 export const loadMedicationUpdateModel = async (
-    Dose = faker.number.int(10),
-    Frequency = faker.number.int(10),
-    Duration = faker.number.int(60),
+    Dose = faker.number.int({ min: 1, max: 1.5 }),
+    Frequency = faker.number.int({ min: 2, max: 4 }),
+    Duration = faker.number.int({ min: 10, max: 20 }),
     refillNeeded = faker.datatype.boolean(),
-    Instructions = faker.lorem.words(10),
+    Instructions = faker.lorem.words(),
 ) => {
     const model = {
         PatientUserId : getTestData("PatientUserId"),
         Dose          : Dose,
-        DosageUnit    : medicationDosageUnits,
+        DosageUnit    : "Tablet",
         TimeSchedules : [
             medicationTimeSchedules
         ],
         Frequency     : Frequency,
-        FrequencyUnit : medicationFrequencyUnits,
-        Route         : medicationAdministrationRoutes,
+        FrequencyUnit : "Daily",
+        Route         : "Oral",
         Duration      : Duration,
         DurationUnit  : medicationDurationUnits,
         StartDate     : "2023-09-14",

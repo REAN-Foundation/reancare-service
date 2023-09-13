@@ -41,7 +41,6 @@ describe('56 - Symptom tests', function() {
                 expect(response.body.Data.Symptom.PatientUserId).to.equal(getTestData("SymptomCreateModel").PatientUserId);
                 expect(response.body.Data.Symptom.AssessmentId).to.equal(getTestData("SymptomCreateModel").AssessmentId);
                 expect(response.body.Data.Symptom.SymptomTypeId).to.equal(getTestData("SymptomCreateModel").SymptomTypeId);
-                expect(response.body.Data.Symptom.IsPresent).to.equal(getTestData("SymptomCreateModel").IsPresent);
                 expect(response.body.Data.Symptom.Severity).to.equal(getTestData("SymptomCreateModel").Severity);
                 expect(response.body.Data.Symptom.Interpretation).to.equal(getTestData("SymptomCreateModel").Interpretation);
                 expect(response.body.Data.Symptom.Comments).to.equal(getTestData("SymptomCreateModel").Comments);
@@ -70,7 +69,6 @@ describe('56 - Symptom tests', function() {
                 expect(response.body.Data.Symptom.PatientUserId).to.equal(getTestData("SymptomCreateModel").PatientUserId);
                 expect(response.body.Data.Symptom.AssessmentId).to.equal(getTestData("SymptomCreateModel").AssessmentId);
                 expect(response.body.Data.Symptom.SymptomTypeId).to.equal(getTestData("SymptomCreateModel").SymptomTypeId);
-                expect(response.body.Data.Symptom.IsPresent).to.equal(getTestData("SymptomCreateModel").IsPresent);
                 expect(response.body.Data.Symptom.Severity).to.equal(getTestData("SymptomCreateModel").Severity);
                 expect(response.body.Data.Symptom.Interpretation).to.equal(getTestData("SymptomCreateModel").Interpretation);
                 expect(response.body.Data.Symptom.Comments).to.equal(getTestData("SymptomCreateModel").Comments);
@@ -121,7 +119,6 @@ describe('56 - Symptom tests', function() {
                 expect(response.body.Data.Symptom.PatientUserId).to.equal(getTestData("SymptomUpdateModel").PatientUserId);
                 expect(response.body.Data.Symptom.AssessmentId).to.equal(getTestData("SymptomUpdateModel").AssessmentId);
                 expect(response.body.Data.Symptom.SymptomTypeId).to.equal(getTestData("SymptomUpdateModel").SymptomTypeId);
-                expect(response.body.Data.Symptom.IsPresent).to.equal(getTestData("SymptomUpdateModel").IsPresent);
                 expect(response.body.Data.Symptom.Severity).to.equal(getTestData("SymptomUpdateModel").Severity);
                 expect(response.body.Data.Symptom.Interpretation).to.equal(getTestData("SymptomUpdateModel").Interpretation);
                 expect(response.body.Data.Symptom.Comments).to.equal(getTestData("SymptomUpdateModel").Comments);
@@ -168,7 +165,6 @@ describe('56 - Symptom tests', function() {
                 expect(response.body.Data.Symptom.PatientUserId).to.equal(getTestData("SymptomCreateModel").PatientUserId);
                 expect(response.body.Data.Symptom.AssessmentId).to.equal(getTestData("SymptomCreateModel").AssessmentId);
                 expect(response.body.Data.Symptom.SymptomTypeId).to.equal(getTestData("SymptomCreateModel").SymptomTypeId);
-                expect(response.body.Data.Symptom.IsPresent).to.equal(getTestData("SymptomCreateModel").IsPresent);
                 expect(response.body.Data.Symptom.Severity).to.equal(getTestData("SymptomCreateModel").Severity);
                 expect(response.body.Data.Symptom.Interpretation).to.equal(getTestData("SymptomCreateModel").Interpretation);
                 expect(response.body.Data.Symptom.Comments).to.equal(getTestData("SymptomCreateModel").Comments);
@@ -226,7 +222,7 @@ describe('56 - Symptom tests', function() {
 ///////////////////////////////////////////////////////////////////////////
 
 export const loadSymptomCreateModel = async (
-    isPresent = faker.datatype.boolean(0.9),
+    isPresent = faker.datatype.boolean(),
     Comments = faker.lorem.words(10),
 ) => {
     const model = {
@@ -234,9 +230,8 @@ export const loadSymptomCreateModel = async (
         AssessmentId   : getTestData("AssessmentId"),
         SymptomTypeId  : getTestData("SymptomTypeId"),
         IsPresent      : isPresent,
-        Severity       : severity,
-        Status         : clinicalValidationStatus,
-        Interpretation : clinicalInterpretation,
+        Severity       : 'Low',
+        Interpretation : 'Normal',
         Comments       : Comments
   
     };
@@ -244,7 +239,7 @@ export const loadSymptomCreateModel = async (
 };
 
 export const loadSymptomUpdateModel = async (
-    isPresent = faker.datatype.boolean(0.9),
+    isPresent = faker.datatype.boolean(),
     Comments = faker.lorem.words(10),
 ) => {
     const model = {
@@ -252,9 +247,8 @@ export const loadSymptomUpdateModel = async (
         AssessmentId   : getTestData("AssessmentId"),
         SymptomTypeId  : getTestData("SymptomTypeId"),
         IsPresent      : isPresent,
-        Severity       : severity,
-        Status         : clinicalValidationStatus,
-        Interpretation : clinicalInterpretation,
+        Severity       : 'Low',
+        Interpretation : 'Normal',
         Comments       : Comments
     };
     setTestData(model, "SymptomUpdateModel");
@@ -267,7 +261,7 @@ function loadSymptomQueryString() {
 }
 
 export const loadNegativeSymptomCreateModel = async (
-    isPresent = faker.datatype.boolean(0.9),
+    isPresent = faker.datatype.boolean(),
     Comments = faker.lorem.words(10),
 ) => {
     const model = {

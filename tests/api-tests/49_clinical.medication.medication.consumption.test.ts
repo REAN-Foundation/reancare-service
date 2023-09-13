@@ -35,35 +35,7 @@ describe('49 - Medication consumption tests', function() {
             .expect(200, done);
     });
 
-    // it('49 - 02 - Get medication schedule for duration in future', function(done) {
-    //     loadFutureQueryString();
-    //     agent
-    //         .get(`/api/v1/clinical/medication-consumptions/schedule-for-duration/${getTestData("PatientUserId")}${loadFutureQueryString()}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-    //         })
-    //         .expect(200, done);
-    // });
-
-    // it('49 - 03 - Get medication schedule for duration in past', function(done) {
-    //     loadPastQueryString();
-    //     agent
-    //         .get(`/api/v1/clinical/medication-consumptions/schedule-for-duration/${getTestData("PatientUserId")}${loadPastQueryString()}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('49 - 04 - Get medication summary for day', function(done) {
+    it('49 - 02 - Get medication summary for day', function(done) {
         loadSummaryQueryString();
         agent
             .get(`/api/v1/clinical/medication-consumptions/summary-for-day/${getTestData("PatientUserId")}/2021-06-22${loadSummaryQueryString()}`)
@@ -77,21 +49,7 @@ describe('49 - Medication consumption tests', function() {
             .expect(200, done);
     });
 
-    // it('49 - 05 - Get medication schedules for day', function(done) {
-    //     loadDayQueryString();
-    //     agent
-    //         .get(`/api/v1/clinical/medication-consumptions/schedule-for-day/${getTestData("PatientUserId")}/2023-10-14${loadDayQueryString()}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('49 - 06 - Get medication consumption summary for calendar months', function(done) {
+    it('49 - 03 - Get medication consumption summary for calendar months', function(done) {
         agent
             .get(`/api/v1/clinical/medication-consumptions/summary-for-calendar-months/${getTestData("PatientUserId")}`)
             .set('Content-Type', 'application/json')
@@ -104,33 +62,7 @@ describe('49 - Medication consumption tests', function() {
             .expect(200, done);
     });
 
-    // it('49 - 07 - Mark as taken', function(done) {
-    //     agent
-    //         .put(`/api/v1/clinical/medication-consumptions/mark-as-taken/${getTestData('MedicationId')}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-    //         })
-    //         .expect(200, done);
-    // });
-
-    // it('49 - 08 - Mark list of medication consumptions as taken', function(done) {
-    //     agent
-    //         .put(`/api/v1/clinical/medication-consumptions/mark-list-as-taken`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('49 - 09 - Add new medication by drug id', function(done) {
+    it('49 - 04 - Add new medication by drug id', function(done) {
         loadMedicationDrugIdCreateModel();
         const createModel = getTestData("MedicationDrugIdCreateModel");
         agent
@@ -173,7 +105,7 @@ describe('49 - Medication consumption tests', function() {
             .expect(201, done);
     });
 
-    it('49 - 10 - Delete future medication consumptions', function(done) {
+    it('49 - 05 - Delete future medication consumptions', function(done) {
         agent
             .post(`/api/v1/clinical/medication-consumptions/delete-future-schedules/${getTestData("MedicationDrugId")}`)
             .set('Content-Type', 'application/json')
@@ -186,7 +118,7 @@ describe('49 - Medication consumption tests', function() {
             .expect(200, done);
     });
 
-    it('49 - 11 - Delete Medication', function(done) {
+    it('49 - 06 - Delete Medication', function(done) {
        
         agent
             .delete(`/api/v1/clinical/medications/${getTestData('MedicationDrugId')}`)
@@ -315,23 +247,23 @@ function loadDayQueryString() {
 
 export const loadMedicationCreateModel = async (
     DrugName = faker.lorem.word(),
-    Dose = faker.number.int(10),
-    Frequency = faker.number.int(10),
-    Duration = faker.number.int(60),
+    Dose = faker.number.int({ min: 1, max: 1.5 }),
+    Frequency = faker.number.int({ min: 2, max: 4 }),
+    Duration = faker.number.int({ min: 10, max: 20 }),
     refillNeeded = faker.datatype.boolean(),
-    Instructions = faker.lorem.words(10),
+    Instructions = faker.lorem.words(),
 ) => {
     const model = {
         PatientUserId : getTestData("PatientUserId"),
         DrugName      : DrugName,
         Dose          : Dose,
-        DosageUnit    : medicationDosageUnits,
+        DosageUnit    : "Tablet",
         TimeSchedules : [
             medicationTimeSchedules
         ],
         Frequency     : Frequency,
-        FrequencyUnit : medicationFrequencyUnits,
-        Route         : medicationAdministrationRoutes,
+        FrequencyUnit : "Daily",
+        Route         : "Oral",
         Duration      : Duration,
         DurationUnit  : medicationDurationUnits,
         StartDate     : "2023-09-14",
@@ -342,22 +274,22 @@ export const loadMedicationCreateModel = async (
 };
 
 export const loadMedicationDrugIdCreateModel = async (
-    Dose = faker.number.int(10),
-    Duration = faker.number.int(60),
+    Dose = faker.number.int({ min: 1, max: 1.5 }),
+    Duration = faker.number.int({ min: 10, max: 20 }),
     refillNeeded = faker.datatype.boolean(),
-    refillCount = faker.number.int(10),
-    Instructions = faker.lorem.words(10),
+    refillCount = faker.number.int({ min:2, max: 5 }),
+    Instructions = faker.lorem.words(),
 ) => {
     const model = {
         PatientUserId : getTestData("PatientUserId"),
         DrugId        : getTestData("DrugId"),
         Dose          : Dose,
-        DosageUnit    : medicationDosageUnits,
+        DosageUnit    : "Tablet",
         TimeSchedules : [
             medicationTimeSchedules
         ],
-        FrequencyUnit : medicationFrequencyUnits,
-        Route         : medicationAdministrationRoutes,
+        FrequencyUnit : "Daily",
+        Route         : "Oral",
         Duration      : Duration,
         DurationUnit  : medicationDurationUnits,
         StartDate     : "2023-10-14",
@@ -369,22 +301,22 @@ export const loadMedicationDrugIdCreateModel = async (
 };
 
 export const loadMedicationUpdateModel = async (
-    Dose = faker.number.int(10),
-    Frequency = faker.number.int(10),
-    Duration = faker.number.int(60),
+    Dose = faker.number.int({ min: 1, max: 1.5 }),
+    Frequency = faker.number.int({ min: 2, max: 4 }),
+    Duration = faker.number.int({ min: 10, max: 20 }),
     refillNeeded = faker.datatype.boolean(),
-    Instructions = faker.lorem.words(10),
+    Instructions = faker.lorem.words(),
 ) => {
     const model = {
         PatientUserId : getTestData("PatientUserId"),
         Dose          : Dose,
-        DosageUnit    : medicationDosageUnits,
+        DosageUnit    : "Tablet",
         TimeSchedules : [
             medicationTimeSchedules
         ],
         Frequency     : Frequency,
-        FrequencyUnit : medicationFrequencyUnits,
-        Route         : medicationAdministrationRoutes,
+        FrequencyUnit : "Daily",
+        Route         : "Oral",
         Duration      : Duration,
         DurationUnit  : medicationDurationUnits,
         StartDate     : "2023-09-14",

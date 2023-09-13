@@ -45,41 +45,8 @@ describe('75 - KoboToolbox integration tests', function() {
             .expect(200, done);
     });
 
-    // it('75 - 03 - import form as assessment template', function(done) {
-    //     loadConnectKoboToolBoxModel();
-    //     const createModel = getTestData("ConnectKoboToolBoxModel");
-    //     agent
-    //         .post(`/api/v1/clinical/forms/provider/KoboToolbox/import-form/911036`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-    //         .send(createModel)
-    //         .expect(response => {
-    //             expect(response.body.Data).to.have.property('Connected');
-    //             expect(response.body.Data.Connected).to.equal(true);
-                            
-    //         })
-    //         .expect(200, done);
-    // });
 
-    // it('75 - 04 - import submitted form data as assessment', function(done) {
-    //     loadConnectKoboToolBoxModel();
-    //     const createModel = getTestData("ConnectKoboToolBoxModel");
-    //     agent
-    //         .post(`/api/v1/clinical/forms/provider/KoboToolbox/import-form-submissions/911036`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-    //         .send(createModel)
-    //         .expect(response => {
-    //             expect(response.body.Data).to.have.property('Connected');
-    //             expect(response.body.Data.Connected).to.equal(true);
-                          
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('75 - 05 - Schedule assessment with generated template', function(done) {
+    it('75 - 03 - Schedule assessment with generated template', function(done) {
         loadAssessmentModel();
         const createModel = getTestData("AssessmentCreateModel");
         agent
@@ -155,9 +122,6 @@ describe('75 - KoboToolbox integration tests', function() {
 ///////////////////////////////////////////////////////////////////////
 
 export const loadConnectKoboToolBoxModel = async (
-    // baseUrl = faker.internet.url(),
-    // secondaryUrl = faker.internet.url(),
-    // Token = faker.string.uuid()
 ) => {
     const model = {
         BaseUrl      : "https://kc.kobotoolbox.org/api/",
@@ -181,7 +145,7 @@ export const loadAssessmentModel = async (
 export const loadNegativeConnectKoboToolBoxModel = async (
 ) => {
     const model = {
-
+        Token        : "058f77bc58acfc6874b3bca738b438f0f45d9c31"
     };
     setTestData(model, "NegativeConnectKoboToolBoxModel");
 };

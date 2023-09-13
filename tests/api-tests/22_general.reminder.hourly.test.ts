@@ -118,12 +118,12 @@ export const loadReminderHourCreateModel = async (
     const model = {
         UserId               : getTestData("PatientUserId"),
         Name                 : Name,
-        WhenTime             : whenTime.toLocaleTimeString(),
+        WhenTime             : "12:10:12",
         HookUrl              : hookUrl,
         StartDate            : startDate,
         EndDate              : endDate,
         EndAfterNRepetitions : endAfterNRepetitions,
-        NotificationType     : notificationType
+        NotificationType     : "SMS"
   
     };
     setTestData(model, "ReminderHourCreateModel");

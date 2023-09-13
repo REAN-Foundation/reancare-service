@@ -222,14 +222,11 @@ function loadCareplanQueryString() {
 }
 
 export const loadEnrollmentCreateModel = async (
-    Provider = faker.lorem.word(),
-    planCode = faker.lorem.words(),
-    startDate = faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2030-01-01T00:00:00.000Z' })
 ) => {
     const model = {
         Provider  : "AHA",
         PlanCode  : "Cholesterol",
-        StartDate : startDate
+        StartDate : "2024-08-17"
     };
     setTestData(model, "EnrollmentCreateModel");
 };

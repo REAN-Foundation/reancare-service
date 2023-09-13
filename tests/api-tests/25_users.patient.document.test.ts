@@ -63,24 +63,8 @@ describe('25 - Patient document tests', function() {
             })
             .expect(200, done);
     });
-
-    // it('25 - 04 - Download Patient document', function(done) {
-    //     const id = `${getTestData('PatientDocumentId')}`;
-    //     agent
-    //         .get(`/api/v1/patient-documents/${getTestData('PatientDocumentId')}/download`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body.Data.PatientDocument).to.have.property('id');
-    //             expect(response.body.Data.PatientDocument).to.have.property('PatientUserId');
-    //             expect(response.body.Data.PatientDocument).to.have.property('MedicalPractitionerUserId');
-    //             expect(response.body.Data.PatientDocument).to.have.property('DocumentType');
-    //         })
-    //         .expect(200, done);
-    // });
    
-    it('25 - 05 - Update Patient document', function(done) {
+    it('25 - 04 - Update Patient document', function(done) {
         loadPatientDocumentUpdateModel();
         const updateModel = getTestData("PatientDocumentUpdateModel");
         agent
@@ -104,7 +88,7 @@ describe('25 - Patient document tests', function() {
             .expect(200, done);
     });
 
-    it('25 - 06 - Rename Patient document', function(done) {
+    it('25 - 05 - Rename Patient document', function(done) {
         loadRenamePatientDocumentUpdateModel();
         const updateModel = getTestData("RenamePatientDocumentUpdateModel");
         agent
@@ -121,27 +105,7 @@ describe('25 - Patient document tests', function() {
             .expect(200, done);
     });
 
-    // it('25 - 07 - Get shareable link for document', function(done) {
-    //     loadShareLinkQueryString();
-    //     agent
-    //         .get(`/api/v1/patient-documents/${getTestData('PatientDocumentId')}/share${loadShareLinkQueryString()}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body.Data.GoalRecords).to.have.property('TotalCount');
-    //             expect(response.body.Data.GoalRecords).to.have.property('RetrievedCount');
-    //             expect(response.body.Data.GoalRecords).to.have.property('PageIndex');
-    //             expect(response.body.Data.GoalRecords).to.have.property('ItemsPerPage');
-    //             expect(response.body.Data.GoalRecords).to.have.property('Order');
-    //             expect(response.body.Data.GoalRecords.TotalCount).to.greaterThan(0);
-    //             expect(response.body.Data.GoalRecords.RetrievedCount).to.greaterThan(0);
-    //             expect(response.body.Data.GoalRecords.Items.length).to.greaterThan(0);
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('25 - 08 - Search Patient document', function(done) {
+    it('25 - 06 - Search Patient document', function(done) {
         loadPatientDocumentQueryString();
         agent
             .get(`/api/v1/patient-documents/search${loadPatientDocumentQueryString()}`)
@@ -154,22 +118,6 @@ describe('25 - Patient document tests', function() {
             })
             .expect(200, done);
     });
-
-    // it('25 - 09 - Delete Patient document', function(done) {
-    //     const id = `${getTestData('PatientDocumentId')}`;
-        
-    //     //Delete
-    //     agent
-    //         .delete(`/api/v1/patient-documents/${getTestData('PatientDocumentId')}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-    //         })
-    //         .expect(200, done);
-    // });
 
     it('25 - 01 - Negative - Get document type', function(done) {
         agent
@@ -282,12 +230,6 @@ export const loadRenamePatientDocumentUpdateModel = async (
     };
     setTestData(model, "RenamePatientDocumentUpdateModel");
 };
-
-// function loadShareLinkQueryString() {
-//     //This is raw query. Please modify to suit the test
-//     const queryString = '?documentType=Drug prescription';
-//     return queryString;
-// }
 
 function loadPatientDocumentQueryString() {
     //This is raw query. Please modify to suit the test

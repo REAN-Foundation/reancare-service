@@ -188,9 +188,9 @@ export const loadOneTimeReminderCreateModel = async (
         UserId           : getTestData("PatientUserId"),
         Name             : Name,
         WhenDate         : "2024-01-01",
-        WhenTime         : whenTime.toLocaleTimeString(),
+        WhenTime         : "12:10:12",
         HookUrl          : hookUrl,
-        NotificationType : notificationType
+        NotificationType : "SMS"
 
     };
     setTestData(model, "OneTimeReminderCreateModel");
@@ -213,7 +213,7 @@ export const loadNegativeOneTimeReminderCreateModel = async (
         WhenDate         : whenDate,
         WhenTime         : whenTime,
         HookUrl          : hookUrl,
-        NotificationType : notificationType
+        NotificationType : "SMS"
     
     };
     setTestData(model, "NegativeOneTimeReminderCreateModel");

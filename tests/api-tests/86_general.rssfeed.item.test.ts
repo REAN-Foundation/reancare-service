@@ -159,48 +159,6 @@ describe('86 - Rssfeed Item tests', function() {
             .expect(201, done);
     });
 
-    // it('86 - 05 - Get atom feed', function(done) {
-    //     agent
-    //         .get(`/api/v1/rss-feeds/${getTestData('RssfeedId')}/atom`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-            
-    //         })
-    //         .expect(200, done);
-    // });
-
-    // it('86 - 06 - Get rss feed', function(done) {
-    //     agent
-    //         .get(`/api/v1/rss-feeds/${getTestData('RssfeedId')}/rss`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-          
-    //         })
-    //         .expect(200, done);
-    // });
-
-    // it('86 - 07 - Get json feed', function(done) {
-    //     agent
-    //         .get(`/api/v1/rss-feeds/${getTestData('RssfeedId')}/json`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-        
-    //         })
-    //         .expect(200, done);
-    // });
-
     it('86 - 01 - Negative - Create rssfeed item', function(done) {
         loadNegativeRssfeedItemCreateModel();
         const createModel = getTestData("NegativeRssfeedItemCreateModel");

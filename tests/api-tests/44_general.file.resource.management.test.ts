@@ -70,24 +70,7 @@ describe('44 - File resource management tests', function() {
             .expect(201, done);
     });
 
-    // it('44 - 04 - Update file resource - references and tags', function(done) {
-    //     loadFileUpdateModel();
-    //     const updateModel = getTestData("FileUpdateModel");
-    //     agent
-    //         .put(`/api/v1/file-resources/${getTestData("FileId")}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .send(updateModel)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-
-    //         })
-    //         .expect(201, done);
-    // });
-
-    it('44 - 05 - Upload file version', function(done) {
+    it('44 - 04 - Upload file version', function(done) {
         agent
             .post(`/api/v1/file-resources/${getTestData("FileId")}/upload-version/`)
             .set('Content-Type', 'application/json')
@@ -107,7 +90,7 @@ describe('44 - File resource management tests', function() {
             .expect(201, done);
     });
 
-    it('44 - 06 - Rename file', function(done) {
+    it('44 - 05 - Rename file', function(done) {
         agent
             .post(`/api/v1/file-resources/${getTestData("FileId")}/rename/new_name.png`)
             .set('Content-Type', 'application/json')
@@ -121,7 +104,7 @@ describe('44 - File resource management tests', function() {
             .expect(200, done);
     });
 
-    it('44 - 07 - Get resource by id', function(done) {
+    it('44 - 06 - Get resource by id', function(done) {
         agent
             .get(`/api/v1/file-resources/${getTestData("FileId")}`)
             .set('Content-Type', 'application/json')
@@ -135,63 +118,7 @@ describe('44 - File resource management tests', function() {
             .expect(200, done);
     });
 
-    // it('44 - 08 - Download by resource id as an attachment', function(done) {
-    //     loadFileQueryString();
-    //     agent
-    //         .get(`/api/v1/file-resources/${getTestData("FileId")}/download${loadFileQueryString()}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-
-    //         })
-    //         .expect(201, done);
-    // });
-
-    // it('44 - 09 - Download by version name', function(done) {
-    //     loadFileQueryString();
-    //     agent
-    // eslint-disable-next-line max-len
-    //         .get(`/api/v1/file-resources/${getTestData("FileId")}/download-by-version-name/${getTestData("OriginalName")}`)
-    //         .set('Content-Type', 'application/json')
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-
-    //         })
-    //         .expect(201, done);
-    // });
-
-    // it('44 - 10 - Download by version id', function(done) {
-    //     loadFileQueryString();
-    //     agent
-    //         .get(`/api/v1/file-resources/${getTestData("FileId")}/download-by-version-id/${getTestData("FileVersionId")}`)
-    //         .set('Content-Type', 'application/json')
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-
-    //         })
-    //         .expect(201, done);
-    // });
-
-    // it('44 - 11 - Get version by version id', function(done) {
-    //     agent
-    //         .get(`/api/v1/file-resources/${getTestData("FileId")}/versions/${getTestData("FileVersionId")}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-
-    //         })
-    //         .expect(200, done);
-    // });
-
-    it('44 - 12 - Get versions', function(done) {
+    it('44 - 07 - Get versions', function(done) {
         agent
             .get(`/api/v1/file-resources/${getTestData("FileId")}/versions`)
             .set('Content-Type', 'application/json')
@@ -204,34 +131,6 @@ describe('44 - File resource management tests', function() {
             })
             .expect(200, done);
     });
-
-    // it('44 - 13 - Delete version by version id', function(done) {
-    //     agent
-    //         .delete(`/api/v1/file-resources/${getTestData("FileId")}/versions/${getTestData("FileVersionId")}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-
-    //         })
-    //         .expect(200, done);
-    // });
-
-    // it('44 - 14 - Delete resource', function(done) {
-    //     agent
-    //         .delete(`/api/v1/file-resources/${getTestData("FileId")}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-
-    //         })
-    //         .expect(200, done);
-    // });
 
     it('44 - 01 - Negative - upload file', function(done) {
         agent

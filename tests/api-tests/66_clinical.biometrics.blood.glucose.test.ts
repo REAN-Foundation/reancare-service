@@ -206,14 +206,14 @@ describe('66 - Blood glucose tests', function() {
 
 export const loadBloodGlucoseCreateModel = async (
     Unit = faker.string.symbol(),
-    bloodGlucose = faker.number.int(150),
+    bloodGlucose = faker.number.int({ min:95, max: 105 }),
     recordDate = faker.date.anytime()
 ) => {
     const model = {
         PatientUserId    : getTestData('PatientUserId'),
-        Unit             : Unit,
+        Unit             : "mg|dL",
         BloodGlucose     : bloodGlucose,
-        RecordDate       : recordDate,
+        RecordDate       : "2021-09-02",
         RecordedByUserId : getTestData('PatientUserId')
 
     };
@@ -222,14 +222,14 @@ export const loadBloodGlucoseCreateModel = async (
 
 export const loadBloodGlucoseUpdateModel = async (
     Unit = faker.string.symbol(),
-    bloodGlucose = faker.number.int(150),
+    bloodGlucose = faker.number.int({ min:95, max: 105 }),
     recordDate = faker.date.anytime()
 ) => {
     const model = {
         PatientUserId    : getTestData('PatientUserId'),
-        Unit             : Unit,
+        Unit             : "mg|dL",
         BloodGlucose     : bloodGlucose,
-        RecordDate       : recordDate,
+        RecordDate       : "2021-09-02",
         RecordedByUserId : getTestData('PatientUserId'),
     };
     setTestData(model, "BloodGlucoseUpdateModel");
@@ -243,7 +243,7 @@ function loadBloodGlucoseQueryString() {
 
 export const loadNegativeBloodGlucoseCreateModel = async (
     Unit = faker.string.symbol(),
-    bloodGlucose = faker.number.int(150),
+    bloodGlucose = faker.number.int({ max: 75 }),
     recordDate = faker.date.anytime()
 ) => {
     const model = {

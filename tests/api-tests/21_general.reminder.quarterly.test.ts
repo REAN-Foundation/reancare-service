@@ -107,17 +107,17 @@ export const loadReminderQuarterCreateModel = async (
     hookUrl = faker.internet.url(),
     startDate = faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
     endDate = faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
-    endAfterNRepetitions = faker.number.int(200),
+    endAfterNRepetitions = faker.number.int({ max: 200 }),
 ) => {
     const model = {
         UserId               : getTestData("PatientUserId"),
         Name                 : Name,
-        WhenTime             : whenTime.toLocaleTimeString(),
+        WhenTime             : "12:10:12",
         HookUrl              : hookUrl,
         StartDate            : startDate,
         EndDate              : endDate,
         EndAfterNRepetitions : endAfterNRepetitions,
-        NotificationType     : notificationType
+        NotificationType     : "SMS"
   
     };
     setTestData(model, "ReminderQuarterCreateModel");

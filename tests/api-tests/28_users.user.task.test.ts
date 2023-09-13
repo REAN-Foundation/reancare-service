@@ -367,15 +367,15 @@ describe('28 - User task tests', function() {
 export const loadTaskCreateModel = async (
     Task = faker.lorem.word(),
     actionId = faker.string.uuid(),
-    scheduledStartTime = faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-    scheduledEndTime = faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
+    scheduledStartTime = faker.date.between({ from: '2024-05-15T00:00:00.000Z', to: '2024-05-30T00:00:00.000Z' }),
+    scheduledEndTime = faker.date.between({ from: '2024-06-16T00:00:00.000Z', to: '2024-06-29T00:00:00.000Z' }),
     isRecurrent = faker.datatype.boolean()
 ) => {
     const model = {
         UserId             : getTestData("PatientUserId"),
         Task               : Task,
-        Category           : Category,
-        ActionType         : actionType,
+        Category           : "Custom",
+        ActionType         : "Medication",
         ActionId           : actionId,
         ScheduledStartTime : scheduledStartTime,
         ScheduledEndTime   : scheduledEndTime,
@@ -387,12 +387,12 @@ export const loadTaskCreateModel = async (
 
 export const loadTaskUpdateModel = async (
     Task = faker.lorem.word(),
-    scheduledStartTime = faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-    scheduledEndTime = faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
+    scheduledStartTime = faker.date.between({ from: '2024-05-15T00:00:00.000Z', to: '2024-05-30T00:00:00.000Z' }),
+    scheduledEndTime = faker.date.between({ from: '2024-06-16T00:00:00.000Z', to: '2024-06-29T00:00:00.000Z' }),
 ) => {
     const model = {
         Task               : Task,
-        Category           : Category,
+        Category           : "Custom",
         ScheduledStartTime : scheduledStartTime,
         ScheduledEndTime   : scheduledEndTime
       

@@ -223,9 +223,10 @@ export const loadNodeCreateModel = async (
 };
 
 export const loadNegativeKCCQAssessmentTemplateCreateModel = async (
+    Provider = faker.lorem.word(),
 ) => {
     const model = {
-           
+        Provider: Provider,
     };
     setTestData(model, "NegativeAssessmentTemplateCreateModel");
 };

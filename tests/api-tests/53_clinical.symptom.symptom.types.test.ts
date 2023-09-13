@@ -202,7 +202,7 @@ describe('53 - Symptom type tests', function() {
 
 export const loadSymptomCreateModel = async (
     Symptom = faker.lorem.word(),
-    Description = faker.lorem.words(10),
+    Description = faker.lorem.words(),
     Tags = faker.lorem.words(),
     Language = faker.lorem.word(),
     imageResourceId = faker.string.uuid()
@@ -211,9 +211,10 @@ export const loadSymptomCreateModel = async (
         Symptom     : Symptom,
         Description : Description,
         Tags        : [
-            Tags
+            "Stroke",
+            "Migrain"
         ],
-        Language        : Language,
+        Language        : "en-US",
         ImageResourceId : imageResourceId
   
     };
@@ -222,14 +223,15 @@ export const loadSymptomCreateModel = async (
 
 export const loadSymptomUpdateModel = async (
     Symptom = faker.lorem.word(),
-    Description = faker.lorem.words(10),
+    Description = faker.lorem.words(),
     Tags = faker.lorem.words(),
 ) => {
     const model = {
         Symptom     : Symptom,
         Description : Description,
         Tags        : [
-            Tags
+            "Stroke",
+            "Migrain"
         ],
 
     };

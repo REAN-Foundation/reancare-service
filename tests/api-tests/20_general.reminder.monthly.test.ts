@@ -144,12 +144,12 @@ export const loadReminderMonthCreateModel = async (
     const model = {
         UserId               : getTestData("PatientUserId"),
         Name                 : Name,
-        WhenTime             : whenTime.toLocaleTimeString(),
+        WhenTime             : "12:10:12",
         HookUrl              : hookUrl,
         StartDate            : startDate,
         EndDate              : endDate,
         EndAfterNRepetitions : endAfterNRepetitions,
-        NotificationType     : notificationType
+        NotificationType     : "SMS"
   
     };
     setTestData(model, "ReminderMonthCreateModel");
@@ -159,7 +159,7 @@ export const loadReminderCertainMonthCreateModel = async (
     Name = faker.person.fullName(),
     // whenDate = faker.time.recent('abbr'),
     hookUrl = faker.internet.url(),
-    repeatAfterEvery = faker.number.int(100),
+    repeatAfterEvery = faker.number.int({ min: 2, max: 5 }),
     startDate = faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
     endDate = faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
     endAfterNRepetitions = faker.number.int(200),
@@ -167,17 +167,19 @@ export const loadReminderCertainMonthCreateModel = async (
     const model = {
         UserId                : getTestData("PatientUserId"),
         Name                  : Name,
-        WhenTime              : whenTime.toLocaleTimeString(),
+        WhenTime              : "12:10:12",
         HookUrl               : hookUrl,
         RepeatAfterEvery      : repeatAfterEvery,
-        RepeatAfterEveryNUnit : repeatAfterEveryNUnit,
+        RepeatAfterEveryNUnit : "Month",
         StartDate             : startDate,
         EndDate               : endDate,
         EndAfterNRepetitions  : endAfterNRepetitions,
         RepeatList            : [
-            repeatList
+            "First-Wednesday",
+            "Last-Friday",
+            "Second-Saturday"
         ],
-        NotificationType : notificationType
+        NotificationType : "SMS"
     
     };
     setTestData(model, "ReminderCertainMonthCreateModel");

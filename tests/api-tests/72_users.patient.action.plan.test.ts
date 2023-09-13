@@ -63,22 +63,7 @@ describe('72 - Action plan tests', function() {
             .expect(200, done);
     });
 
-    // it('72 - 03 - Get action plans', function(done) {
-     
-    //     agent
-    //         .get(`/api/v1/action-plans/by-goal/${getTestData('GoalId')}`)
-    //         .set('Content-Type', 'application/json')
-    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-    //         .expect(response => {
-    //             expect(response.body).to.have.property('Status');
-    //             expect(response.body.Status).to.equal('success');
-              
-    //         })
-    //         .expect(201, done);
-    // });
-
-    it('72 - 04 - Search action plan records', function(done) {
+    it('72 - 03 - Search action plan records', function(done) {
         loadActionPlanQueryString();
         agent
             .get(`/api/v1/action-plans/search${loadActionPlanQueryString()}`)
@@ -98,7 +83,7 @@ describe('72 - Action plan tests', function() {
             .expect(200, done);
     });
 
-    it('72 - 05 - Update action plan', function(done) {
+    it('72 - 04 - Update action plan', function(done) {
         loadActionPlanUpdateModel();
         const updateModel = getTestData("ActionPlanUpdateModel");
         agent
@@ -130,7 +115,7 @@ describe('72 - Action plan tests', function() {
             .expect(200, done);
     });
 
-    it('72 - 06 - Delete action plan', function(done) {
+    it('72 - 05 - Delete action plan', function(done) {
         
         agent
             .delete(`/api/v1/action-plans/${getTestData('ActionPlanId_1')}`)

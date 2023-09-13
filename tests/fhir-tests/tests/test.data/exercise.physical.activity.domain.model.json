@@ -1,8 +1,0 @@
-{
-    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
-    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
-    "ActivityType": "walking",
-    "DurationMinutes": 80,
-    "StartTime": "2021-06-16T02:50:00.000Z",
-    "EndTime": "2021-06-18T01:45:00.000Z"
-}

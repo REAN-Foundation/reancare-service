@@ -312,7 +312,8 @@
             "CustomQuery.ExecuteQuery",
             "CustomQuery.GetById",
             "CustomQuery.Search",
-            "CustomQuery.Delete"
+            "CustomQuery.Delete",
+            "CustomQuery.Update"
         ]
     },
     {

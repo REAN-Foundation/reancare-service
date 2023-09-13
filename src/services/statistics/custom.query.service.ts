@@ -28,6 +28,11 @@ export class CustomQueryService {
         return dtos;
     };
 
+    update = async (id: uuid, updateModel: CustomQueryDomainModel):
+    Promise<CustomQueryDto> => {
+        return await this._customQueryRepo.update(id, updateModel);
+    };
+
     delete = async (id: uuid): Promise<boolean> => {
         return await this._customQueryRepo.delete(id);
     };

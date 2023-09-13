@@ -37,9 +37,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static reAuth = async (request: express.Request): Promise<ReAuthDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
-            ? new Date(Date.parse(request.body.version))
-            : null;
+        const version = request.body.version != null ? new Date(Date.parse(request.body.version)) : null;
 
         const authDomainModel: ReAuthDomainModel = {
             Status  : request.body.status ?? null,
@@ -67,9 +65,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static deAuth = async (request: express.Request): Promise<DeAuthDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
-            ? new Date(Date.parse(request.body.version))
-            : null;
+        const version = request.body.version != null ? new Date(Date.parse(request.body.version)) : null;
 
         const authDomainModel: DeAuthDomainModel = {
             Status : request.body.status ?? null,
@@ -495,9 +491,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static sleep = async (request): Promise<SleepDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
-            ? new Date(Date.parse(request.body.version))
-            : null;
+        const version = request.body.version != null ? new Date(Date.parse(request.body.version)) : null;
         const sleepDomainModel: SleepDomainModel = {
             Status : request.body.status ?? null,
             Type   : request.body.type ?? null,
@@ -549,9 +543,7 @@ export class TeraWebhookValidator extends BaseValidator {
 
     static athlete = async (request: express.Request): Promise<AthleteDomainModel> => {
 
-        const version = request.body.version != null && typeof request.body.version !== undefined
-            ? new Date(Date.parse(request.body.version))
-            : null;
+        const version = request.body.version != null ? new Date(Date.parse(request.body.version)) : null;
 
         const athleteDomainModel: AthleteDomainModel = {
             Status : request.body.status ?? null,

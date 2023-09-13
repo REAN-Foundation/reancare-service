@@ -157,11 +157,8 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
 
                 knowledgeNugget.AdditionalResources = additionalResources;
             }
-            if (updateModel.Tags != null && updateModel.Tags.length > 0) {
-
-                var tags = updateModel.Tags.length > 0 ?
-                    JSON.stringify(updateModel.Tags) : '[]';
-
+            if (updateModel.Tags != null) {
+                var tags = JSON.stringify(updateModel.Tags);
                 knowledgeNugget.Tags = tags;
             }
     

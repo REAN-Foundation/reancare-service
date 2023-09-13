@@ -10,6 +10,7 @@ import {
     PrimaryKey,
     Length,
     ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -44,6 +45,9 @@ export default class UserDeviceDetails extends Model {
         allowNull : false,
     })
     UserId: string;
+
+    @BelongsTo(() => User)
+    User: User;
 
     @Length({ max: 1024 })
     @Column({

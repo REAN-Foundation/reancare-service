@@ -261,11 +261,8 @@ export class GoalRepo implements IGoalRepo {
             if (updateModel.Type != null) {
                 goalType.Type = updateModel.Type;
             }
-            if (updateModel.Tags != null && updateModel.Tags.length > 0) {
-
-                var tags = updateModel.Tags.length > 0 ?
-                    JSON.stringify(updateModel.Tags) : '[]';
-
+            if (updateModel.Tags != null) {
+                var tags = JSON.stringify(updateModel.Tags);
                 goalType.Tags = tags;
             }
             

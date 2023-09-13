@@ -4,6 +4,7 @@ import { IWearableDeviceDetailsRepo } from "../../database/repository.interfaces
 import { WearableDeviceDetailsDto } from "../../domain.types/webhook/wearable.device.details/webhook.wearable.device.details.dto";
 import { WearableDeviceDetailsSearchFilters } from "../../domain.types/webhook/wearable.device.details/webhook.wearable.device.details.search.types";
 import { WearableDeviceDetailsSearchResults } from "../../domain.types/webhook/wearable.device.details/webhook.wearable.device.details.search.types";
+import Terra from "terra-api";
 
 @injectable()
 
@@ -37,7 +38,11 @@ export class WearableDeviceDetailsService {
     };
     
     getAvailableDeviceList = async (patientUserId: string): Promise<HealthAppStatus[]> => {
-        const connectedDevices = await this._webhookWearableDeviceDetailsRepo.getAvailableDeviceList(patientUserId);
+        //const connectedDevices = await this._webhookWearableDeviceDetailsRepo.getAvailableDeviceList(patientUserId);
+
+        const terra = new Terra(process.env.TERRA_DEV_ID, process.env.TERRA_API_KEY, process.env.TERRA_SIGNING_SECRET);
+        const terraUsers = await terra.getUsers();
+        const connectedDevices = terraUsers.users.filter( user => user.reference_id === patientUserId);
         const allTerraApps = ["BIOSTRAP","CARDIOMOOD","CONCEPT2","COROS","CRONOMETER","DEXCOM","EATTHISMUCH",
             "EIGHT","FATSECRET","FINALSURGE","FITBIT","FREESTYLELIBRE","GARMIN","GOOGLE","HAMMERHEAD",
             "HUAWEI","IFIT","INBODY","KOMOOT","LIVEROWING","LEZYNE","MOXY",
@@ -59,14 +64,18 @@ export class WearableDeviceDetailsService {
         }
         for (const healthAppStatus of healthAppStatuses) {
             for (const connectedDevice of connectedDevices) {
-                if ( healthAppStatus.Provider === connectedDevice.Provider) {
+                if ( healthAppStatus.Provider === connectedDevice.provider) {
                     healthAppStatus.Status = "Connected";
-                    healthAppStatus.TerraUserId = connectedDevice.TerraUserId;
-                    healthAppStatus.AuthenticatedAt = connectedDevice.AuthenticatedAt;
+                    healthAppStatus.TerraUserId = connectedDevice.user_id;
+                    healthAppStatus.AuthenticatedAt = connectedDevice.last_webhook_update;
                 }
             }
         }
         return healthAppStatuses;
+    };
+
+    getAllUsers = async (): Promise<WearableDeviceDetailsDto[]> => {
+        return await this._webhookWearableDeviceDetailsRepo.getAllUsers();
     };
 
 }

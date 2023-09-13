@@ -409,6 +409,21 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
+    getRecent = async (patientUserId: string): Promise<PhysicalActivityDto> => {
+        try {
+            const record = await PhysicalActivity.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['CreatedAt', 'DESC']]
+            });
+            return await PhysicalActivityMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     //#endregion
 
 }

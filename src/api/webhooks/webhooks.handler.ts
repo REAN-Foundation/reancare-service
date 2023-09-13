@@ -1,5 +1,5 @@
 import express from "express";
-import Dictionary from "../../../common/dictionary";
+import Dictionary from "../../common/dictionary";
 import { IWebhooksService } from "./interfaces/webhooks.service.interface";
 import { ProviderResolver } from "./provider.resolver";
 

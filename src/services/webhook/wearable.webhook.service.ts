@@ -215,60 +215,61 @@ export class TeraWebhookService {
 
             });
 
-            const oxygenSamples = body.OxygenData.SaturationSamples;
-            Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
-            const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
-            let filteredOxygenSamples = [];
-            if (recentOxygen != null) {
-                filteredOxygenSamples = oxygenSamples.filter((oxygen) =>
-                    new Date(oxygen.TimeStamp) > recentOxygen.RecordDate);
-            } else {
-                filteredOxygenSamples = oxygenSamples;
-            }
-            Logger.instance().log(`Filterred oxygen samples ${JSON.stringify(filteredOxygenSamples, null, 2)}`);
-            filteredOxygenSamples.forEach(async bloodOxygen => {
-                const bloodOxygenDomainModel = {
-                    PatientUserId         : bodyDomainModel.User.ReferenceId,
-                    Provider              : bodyDomainModel.User.Provider,
-                    BloodOxygenSaturation : bloodOxygen.Percentage,
-                    Unit                  : "%",
-                    RecordDate            : new Date(bloodOxygen.TimeStamp)
-                };
-                await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
 
-            });
+            // const oxygenSamples = body.OxygenData.SaturationSamples;
+            // Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
+            // const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            // let filteredOxygenSamples = [];
+            // if (recentOxygen != null) {
+            //     filteredOxygenSamples = oxygenSamples.filter((oxygen) => new Date(oxygen.TimeStamp) > recentOxygen.RecordDate);
+            // } else {
+            //     filteredOxygenSamples = oxygenSamples;
+            // }
+            // Logger.instance().log(`Filterred oxygen samples ${JSON.stringify(filteredOxygenSamples, null, 2)}`);
+            // filteredOxygenSamples.forEach(async bloodOxygen => {
+            //     const bloodOxygenDomainModel = {
+            //         PatientUserId         : bodyDomainModel.User.ReferenceId,
+            //         Provider              : bodyDomainModel.User.Provider,
+            //         BloodOxygenSaturation : bloodOxygen.Percentage,
+            //         Unit                  : "%",
+            //         RecordDate            : new Date(bloodOxygen.TimeStamp)
+            //     };
+            //     await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
 
-            var heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
-            heartRateSamples = heartRateSamples.sort((a, b) => {
-                return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
-            } );
-            Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
-            const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
-            let filteredPulseSamples = [];
-            if (recentPulse != null) {
-                const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
-                const pulseSample =  heartRateSamples[0];
-                const oldTimeStamp: any = new Date(recentPulse.RecordDate).getTime();
-                const newTimeStamp: any = new Date(pulseSample.TimeStamp).getTime();
-                const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
-                if (timeDiffrence > allowedDuration_in_sec) {
-                    filteredPulseSamples.push(pulseSample);
-                }
-            } else {
-                filteredPulseSamples = [heartRateSamples[0]];
-            }
-            Logger.instance().log(`Filterred pulse samples ${JSON.stringify(filteredPulseSamples, null, 2)}`);
-            filteredPulseSamples.forEach(async heartRate => {
-                const heartRateDomainModel = {
-                    PatientUserId : bodyDomainModel.User.ReferenceId,
-                    Provider      : bodyDomainModel.User.Provider,
-                    Pulse         : heartRate.BPM,
-                    Unit          : "bpm",
-                    RecordDate    : new Date(heartRate.TimeStamp)
-                };
-                await this._pulseRepo.create(heartRateDomainModel);
 
-            });
+            // });
+
+            // var heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
+            // heartRateSamples = heartRateSamples.sort((a, b) => {
+            //     return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
+            // } );
+            // Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
+            // const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
+            // let filteredPulseSamples = [];
+            // if (recentPulse != null) {
+            //     const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
+            //     const pulseSample =  heartRateSamples[0];
+            //     const oldTimeStamp: any = new Date(recentPulse.RecordDate).getTime();
+            //     const newTimeStamp: any = new Date(pulseSample.TimeStamp).getTime();
+            //     const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
+            //     if (timeDiffrence > allowedDuration_in_sec) {
+            //         filteredPulseSamples.push(pulseSample);
+            //     }
+            // } else {
+            //     filteredPulseSamples = [heartRateSamples[0]];
+            // }
+            // Logger.instance().log(`Filterred pulse samples ${JSON.stringify(filteredPulseSamples, null, 2)}`);
+            // filteredPulseSamples.forEach(async heartRate => {
+            //     const heartRateDomainModel = {
+            //         PatientUserId : bodyDomainModel.User.ReferenceId,
+            //         Provider      : bodyDomainModel.User.Provider,
+            //         Pulse         : heartRate.BPM,
+            //         Unit          : "bpm",
+            //         RecordDate    : new Date(heartRate.TimeStamp)
+            //     };
+            //     await this._pulseRepo.create(heartRateDomainModel);
+
+            // });
 
             const tempSamples = body.TemperatureData.BodyTemperatureSamples;
             Logger.instance().log(`Incoming Temp samples ${JSON.stringify(tempSamples, null, 2)}`);
@@ -334,32 +335,6 @@ export class TeraWebhookService {
 
         const dailyData = dailyDomainModel.Data;
         dailyData.forEach(async daily => {
-
-            const oxygenSamples = daily.OxygenData.SaturationSamples;
-            oxygenSamples.forEach(async bloodOxygen => {
-                const bloodOxygenDomainModel = {
-                    PatientUserId         : dailyDomainModel.User.ReferenceId,
-                    Provider              : dailyDomainModel.User.Provider,
-                    BloodOxygenSaturation : bloodOxygen.Percentage,
-                    Unit                  : "%",
-                    RecordDate            : new Date(bloodOxygen.TimeStamp)
-                };
-                await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
-
-            });
-
-            const heartRateSamples = daily.HeartRateData.Detailed.HrSamples;
-            heartRateSamples.forEach(async heartRate => {
-                const heartRateDomainModel = {
-                    PatientUserId : dailyDomainModel.User.ReferenceId,
-                    Provider      : dailyDomainModel.User.Provider,
-                    Pulse         : heartRate.BPM,
-                    Unit          : "bpm",
-                    RecordDate    : new Date(heartRate.TimeStamp)
-                };
-                await this._pulseRepo.create(heartRateDomainModel);
-
-            });
 
             // Adding calorie summary data in daily records
             const recordDate = daily.MetaData.StartTime.split('T')[0];

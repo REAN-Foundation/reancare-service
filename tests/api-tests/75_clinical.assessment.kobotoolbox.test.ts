@@ -124,9 +124,9 @@ describe('75 - KoboToolbox integration tests', function() {
 export const loadConnectKoboToolBoxModel = async (
 ) => {
     const model = {
-        BaseUrl      : "https://kc.kobotoolbox.org/api/",
-        SecondaryUrl : "https://kf.kobotoolbox.org/api/",
-        Token        : "058f77bc58acfc6874b3bca738b438f0f45d9c31"
+        BaseUrl      : `${process.env.TEST_KOBO_BASE_URL}`,
+        SecondaryUrl : `${process.env.TEST_KOBO_SECONDARY_URL}`,
+        Token        : `${process.env.TEST_KOBO_TOKEN}`
     };
     setTestData(model, "ConnectKoboToolBoxModel");
 };
@@ -145,7 +145,7 @@ export const loadAssessmentModel = async (
 export const loadNegativeConnectKoboToolBoxModel = async (
 ) => {
     const model = {
-        Token        : "058f77bc58acfc6874b3bca738b438f0f45d9c31"
+        Token        : `${process.env.TEST_KOBO_TOKEN}`
     };
     setTestData(model, "NegativeConnectKoboToolBoxModel");
 };

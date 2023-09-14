@@ -20,4 +20,6 @@ export interface IPhysicalActivityRepo {
 
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
+    getRecent(patientUserId: string): Promise<PhysicalActivityDto>;
+
 }

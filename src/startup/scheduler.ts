@@ -8,6 +8,7 @@ import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
 import { CommunityNetworkService } from '../modules/community.bw/community.network.service';
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
+import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +48,9 @@ export class Scheduler {
                 this.scheduleReminderOnNoActionToDonationRequest();
                 this.scheduleReminders();
                 this.scheduleCareplanRegistrationReminders();
+                this.scheduleFetchDataFromDevices();
+
+                //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
 
                 resolve(true);
@@ -172,6 +176,17 @@ export class Scheduler {
                 var communityNetworkService = Loader.container.resolve(CommunityNetworkService);
                 await communityNetworkService.reminderOnNoActionToDonationRequest();
                 await communityNetworkService.reminderOnNoActionToFifthDayReminder();
+            })();
+        });
+    };
+
+    private scheduleFetchDataFromDevices = () => {
+        cron.schedule(Scheduler._schedules['ScheduleFetchDataFromDevices'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Fetch data from wearable devices...');
+                var terraSupportService = new TerraSupportService();
+                await terraSupportService.getAllHealthAppUser();
+                await terraSupportService.fetchDataForAllUser();
             })();
         });
     };

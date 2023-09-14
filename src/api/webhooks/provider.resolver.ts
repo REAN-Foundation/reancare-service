@@ -1,6 +1,6 @@
-import { ConfigurationManager } from "../../../config/configuration.manager";
-import { Loader } from "../../../startup/loader";
-import Dictionary from "../../../common/dictionary";
+import { ConfigurationManager } from "../../config/configuration.manager";
+import { Loader } from "../../startup/loader";
+import Dictionary from "../../common/dictionary";
 import { IWebhooksService } from "./interfaces/webhooks.service.interface";
 import { TeraWebhookController } from "./providers/terra/terra.webhook.controller";
 

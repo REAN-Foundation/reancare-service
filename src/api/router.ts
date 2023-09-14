@@ -74,9 +74,9 @@ import { register as registerPatientStatisticsRoutes } from './users/patient/sta
 import { register as registerRssfeedRoutes } from './general/rss.feed/rss.feed.routes';
 import { register as registerPatientDonorsRoutes } from './clinical/donation/patient.donors.routes';
 import { register as registerDonationRecordRoutes } from './clinical/donation.record/donation.record.routes';
-import { register as registerWearableWebhookTerraRoutes } from './device.data/webhooks/providers/terra/terra.webhook.routes';
+import { register as registerWearableWebhookTerraRoutes } from './webhooks/providers/terra/terra.webhook.routes';
+import { register as registerWearableDeviceDetailsRoutes } from './devices/wearables/wearable.device.details.routes';
 import { register as registerStatisticsRoutes } from './statistics/app.statistics/statistics.routes';
-import { register as registerWearableDeviceDetailsRoutes } from './device.data/device.details/wearable.device.details.routes';
 import { register as registerDonationCommunicationRoutes } from './clinical/donation.communication/donation.communication.routes';
 import { register as registerUserGroupRoutes } from './community/user.groups/user.group.routes';
 import { register as registerReminderRoutes } from './general/reminder/reminder.routes';

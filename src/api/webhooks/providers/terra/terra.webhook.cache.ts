@@ -1,5 +1,4 @@
-import { TimeHelper } from "../../../../../common/time.helper";
-import { Logger } from "../../../../../common/logger";
+import { Logger } from "../../../../common/logger";
 
 export class TerraCache {
 
@@ -16,10 +15,10 @@ export class TerraCache {
         if (key in TerraCache.TerraRequest) {
             const oldTimeStamp: any = new Date(TerraCache.TerraRequest[key]);
             const newTimeStamp: any = new Date(body.User.LastWebhookUpdate);
-            const timeDiffrenceInSec = TimeHelper.secDiff(newTimeStamp, oldTimeStamp);
+            const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
             const allowedTimeDiff: number = parseInt(process.env.TERRA_ALLOWED_TIME_DIFFERENCE_INSEC);
             await this.CacheCurrentRequest(body);
-            if (timeDiffrenceInSec > allowedTimeDiff ) {
+            if (timeDiffrence >  allowedTimeDiff) {
                 return body;
             } else {
                 return null;

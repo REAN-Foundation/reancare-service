@@ -42,7 +42,7 @@ class AwardsFactsDatabaseConnector {
         migrations  : [],
         subscribers : [],
         logger      : 'advanced-console', //Use console for the typeorm logging
-        logging     : true,
+        logging     : process.env.NODE_ENV !== 'test',
         poolSize    : 20,
         cache       : true,
     });

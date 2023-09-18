@@ -42,7 +42,7 @@ export const getTestData = (key:string): any => {
 };
 
 function loadTestData() {
-    var filepath = path.join(process.cwd(), 'tests', 'api-tests', 'test.data', 'test.data.json');
+    var filepath = path.join(process.cwd(), 'tests', 'api-tests', 'test.data', 'test.data.json');   
     var fileBuffer = fs.readFileSync(filepath, 'utf8');
     const obj = JSON.parse(fileBuffer);
     return obj;

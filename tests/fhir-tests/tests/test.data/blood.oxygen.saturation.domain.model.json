@@ -1,0 +1,11 @@
+{
+    "PatientUserId": "55eebba2-837b-4025-88ba-e984ce257c22",
+    "EhrId": "55eebba2-837b-4025-88ba-e984ce257c22",
+    "VisitId": "1234",
+    "VisitEhrId": "",
+    "Unit": "%",
+    "RecordedByUserId": "ff81568a-6933-4031-a776-4316156fe03c",
+    "RecordedByEhrId": "ff81568a-6933-4031-a776-4316156fe03c",
+    "RecordDate": "2021-01-05",
+    "BloodOxygenSaturation": 92  
+}

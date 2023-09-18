@@ -20,7 +20,7 @@
               "--timeout",
               "999999",
               "--colors",
-              "${workspaceFolder}/dist/tests/api-tests"
+              "${workspaceFolder}/dist/tests/api-tests/tests"
             ],
             "internalConsoleOptions": "openOnSessionStart",
             "name": "Mocha Tests",

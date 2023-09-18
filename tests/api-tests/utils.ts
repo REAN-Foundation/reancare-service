@@ -9,5 +9,3 @@ export enum repeatListdata {
   'Last-Friday',
   'Second-Saturday'
 }
-
-export const whenTime = new Date();

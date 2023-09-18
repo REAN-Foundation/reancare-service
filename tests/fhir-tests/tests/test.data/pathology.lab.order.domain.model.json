@@ -1,0 +1,14 @@
+{
+
+    "DisplayId": "MED-1622213036290",
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "DoctorUserId": "",
+    "DoctorEhrId": "",
+    "LabAppointmentId": "36dd35f0-28b0-4659-83c9-4a2f4f15096e",
+    "LabAppointmentEhrId": "36dd35f0-28b0-4659-83c9-4a2f4f15096e",
+    "DoctorVisitId": "30182fdf-75a8-475c-b29d-6f55b0a1ef67",
+    "DoctorVisitEhrId": "30182fdf-75a8-475c-b29d-6f55b0a1ef67",
+    "SuggestedLabId": "bd17a0cf-09f1-4de4-ad5b-8c17b92f425f",
+    "CurrentState": 1
+}

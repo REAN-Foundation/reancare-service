@@ -1,0 +1,25 @@
+{
+    "User": {
+        "Person": {
+            "Prefix": "Mr.",
+            "FirstName": "John",
+            "MiddleName": "K",
+            "LastName": "Doe",
+            "Phone": "+1 540-373-0517",
+            "Email": "john.k.doe@gmail.com",
+            "Gender": "Male",
+            "BirthDate": "1970-06-25"
+        }
+    },
+    "Addresses": [
+        {
+            "Type": "Official",
+            "AddressLine": "1129 Hurry Street",
+            "City": "Fredericksburg",
+            "District": "",
+            "State": "Virginia",
+            "Country": "United States",
+            "PostalCode": "22401"
+        }
+    ]
+}

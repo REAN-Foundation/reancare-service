@@ -1,0 +1,9 @@
+{
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "EhrId"        : "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "Relationship" : "Mother",
+    "Condition"    : "Low Blood Pressure",
+    "ConditionId"  : "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "Status"       : "completed",
+    "Date"         : "2022-03-28"
+}

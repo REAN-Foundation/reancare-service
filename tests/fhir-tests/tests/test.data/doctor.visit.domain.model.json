@@ -1,0 +1,12 @@
+{
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "EhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "RecordedByUserId": "ff81568a-6933-4031-a776-4316156fe03c",
+    "RecordedByEhrId": "ff81568a-6933-4031-a776-4316156fe03c",
+    "PastVisitId": "1234",
+    "PastVisitEhrId":null,
+    "StartDate": "2022-03-28T00:00:00.000Z",
+    "EndDate": "2022-03-28T00:00:00.000Z",
+    "CreatedByUser": "bcefa9d0-25b5-4748-8629-89f5ad5dbc88"
+    
+}

@@ -1,0 +1,11 @@
+{
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "EhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "VisitId": "1234",
+    "VisitEhrId": "",
+    "Unit": "bpm",
+    "RecordedByUserId": "ff81568a-6933-4031-a776-4316156fe03c",
+    "RecordedByEhrId": "ff81568a-6933-4031-a776-4316156fe03c",
+    "RecordDate": "2021-01-05",
+    "Pulse": 84
+}

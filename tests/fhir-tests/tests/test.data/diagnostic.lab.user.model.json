@@ -1,0 +1,65 @@
+{
+    "Prefix": "Miss.",
+    "FirstName": "Sarah",
+    "LastName": "Robinson",
+    "Phone": "8265596983",
+    "Email": "Sarah.53252.Robinson@gmail.com",
+    "Gender": "Female",
+    "BirthDate": "2004-06-07",
+    "ImageURL": "https://reancare-api-dev.services.reanfoundation.org//resources/download-public/c845a245-a22c-4f18-9df9-db7b2da577f8",
+    "Specialities": "Pathology",
+    "Organizations": [
+        {
+            "Type": "Pathology-Lab",
+            "Name": "Excellent Diagnostic Labs, Pune",
+            "AboutUs": "Life Labs is a leading blood test laboratory of India to book test online for home collection and check lab test results with just a couple of clicks.",
+            "OperationalSince": "2010-06-10",       
+            "ContactPhone": "1233232343",
+            "ContactEmail": "excellent.diagnostics@gmail.com",
+            "Address": {}
+        }
+    ],
+    "Locality": "Pune",
+    "Address": {
+        "Type": "Official",
+        "AddressLine": "Gold Adlabs Mariplex Mall, Ground Floor, next to Axis Bank, Kalyani Nagar",
+        "City": "Pune",
+        "District": "Pune",
+        "State": "Maharashtra",
+        "Country": "India",
+        "PostalCode": "411006",
+        "Location": {
+            "LocationCoords_Longitude": "73.894525",
+            "LocationCoords_Lattitude": "18.556302"
+        }
+    },
+    "AppointmentDetails": {
+        "AppointmentSlotDuration": "15m",
+        "OperationalTimeZone": "+05:30",
+        "SendReminder": true,
+        "ReminderType": "IN-APP",
+        "RemindClientBefore": "2h",
+        "CanBookBefore": "2h",
+        "AllowCancellation": true,
+        "CanCancelBefore": "2h",
+        "EnableLoyaltyProgram": true,
+        "AllowWalkiInAppointments": true,
+        "CanBookForNext": "30d",
+        "WorkingHours": [
+            "MON 02:00 PM - 10:00 PM",
+            "TUE 09:00 AM - 10:00 PM",
+            "WED 09:00 AM - 10:00 PM",
+            "THU 02:00 PM - 10:00 PM",
+            "FRI 04:00 PM - 10:00 PM",
+            "SAT 04:00 PM - 10:00 PM"
+        ],
+        "PaymentDetails": {
+            "Fee": 500,
+            "IsTaxable": true,
+            "TaxRate": 10,
+            "PaymentRequiredBeforeBooking": true,
+            "PaymentPercentage": 30,
+            "CancellationCharges": 0
+        }
+    }
+}

@@ -11,6 +11,7 @@ import { updateNutritionFact } from './nutrition.facts.service';
 import { updatePhysicalActivityFact } from './exercise.physical.activity.facts.service';
 import { updateVitalFact } from './vital.facts.service';
 import { updateMentalHealthFact } from './mental.health.facts.service';
+import { ConfigurationManager } from "../../config/configuration.manager";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -55,6 +56,8 @@ export class AwardsFactsService {
 
     static _eventTypes = [];
 
+    static _groupActivityTypes = [];
+
     static _initialized = false;
 
     //#endregion Privates
@@ -62,6 +65,12 @@ export class AwardsFactsService {
     //#region Task queue
 
     static _q = asyncLib.queue((model: AwardsFact, onCompleted) => {
+                        
+        //Only if gamification is enabled
+        if (ConfigurationManager.GamificationEnabled() === false) {
+            return;
+        }
+
         (async () => {
             await AwardsFactsService.record(model);
             onCompleted(model);
@@ -114,7 +123,6 @@ export class AwardsFactsService {
                 await this.notifyAwardsService(eventType.id, model);
             }
         }
-
         else if (model.FactType === FactType.Vitals) {
             await updateVitalFact(model);
             const eventType = AwardsFactsService._eventTypes.find(x => x.Name === 'Vital');
@@ -123,7 +131,6 @@ export class AwardsFactsService {
                 await this.notifyAwardsService(eventType.id, model);
             }
         }
-
         else if (model.FactType === FactType.MentalHealth) {
             await updateMentalHealthFact(model);
             const eventType = AwardsFactsService._eventTypes.find(x => x.Name === 'MentalHealth');
@@ -140,12 +147,12 @@ export class AwardsFactsService {
             var url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/types/event-types';
             var response = await needle('get', url, options);
             if (response.statusCode === 200) {
-                Logger.instance().log('Successfully triggered award event!');
+                Logger.instance().log('Successfully retrieved award event types!');
                 AwardsFactsService._eventTypes = response.body.Data.Types;
                 AwardsFactsService._initialized = true;
                 return true;
             } else {
-                Logger.instance().error('Unable to trigger award event!', response.statusCode, response.Data);
+                Logger.instance().error('Unable to retrieve award event types!', response.statusCode, response.Data);
                 AwardsFactsService._initialized = true;
                 return false;
             }
@@ -155,12 +162,26 @@ export class AwardsFactsService {
         }
     };
 
+    private static getGroupActivityTypes = async () => {
+        try {
+            const options = Helper.getNeedleOptions(headers);
+            var url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/types/group-activity-types';
+            var response = await needle('get', url, options);
+            if (response.statusCode === 200) {
+                Logger.instance().log('Successfully retrieved award group activity types!');
+                AwardsFactsService._groupActivityTypes = response.body.Data.Types;
+            } else {
+                Logger.instance().error('Unable to retrieve award group activity types!', response.statusCode, response.Data);
+                return [];
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`${error.message}`);
+        }
+    };
+
     private static notifyAwardsService = async (eventTypeId: uuid, model: AwardsFact) => {
         try {
-            const options = {
-                headers : headers,
-                json    : true,
-            };
             var url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/engine/events';
             var body = {
                 TypeId      : eventTypeId,
@@ -216,7 +237,6 @@ export class AwardsFactsService {
         }
     };
 
-
     public static addOrUpdateVitalFact = (model: AwardsFact) => {
         try {
             model.FactType = 'Vitals';
@@ -240,9 +260,16 @@ export class AwardsFactsService {
     };
 
     public static initialize = async () => {
+
+        //Only if gamification is enabled
+        if (ConfigurationManager.GamificationEnabled() === false) {
+            return true;
+        }
+
         if (this._initialized) {
             return true;
         }
+        await this.getGroupActivityTypes();
         return await this.getEventTypes();
     };
 

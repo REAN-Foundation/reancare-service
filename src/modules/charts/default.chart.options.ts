@@ -30,7 +30,7 @@ export class DefaultChartOptions {
             FontSize        : "14px",
             Color           : "steelblue",
             XAxisTimeScaled : true,
-            Colors          : [ChartColors.Orange, ChartColors.Green],
+            Colors          : [ChartColors.OrangeRed, ChartColors.Green],
             Categories      : ['Y1', 'Y2'],
             StrokeWidth     : 3,
             ShowXAxis       : true,

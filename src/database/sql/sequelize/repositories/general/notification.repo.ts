@@ -181,6 +181,9 @@ export class NotificationRepo implements INotificationRepo {
             if (updateModel.Type != null) {
                 notification.Type = updateModel.Type;
             }
+            if (updateModel.BroadcastToAll != null) {
+                notification.BroadcastToAll = updateModel.BroadcastToAll;
+            }
 
             await notification.save();
 

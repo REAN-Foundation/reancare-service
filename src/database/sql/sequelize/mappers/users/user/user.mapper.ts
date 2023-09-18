@@ -1,12 +1,14 @@
 import User from '../../../models/users/user/user.model';
 import { PersonDetailsDto, PersonDto } from '../../../../../../domain.types/person/person.dto';
 import { UserDetailsDto, UserDto } from '../../../../../../domain.types/users/user/user.dto';
+import Tenant from '../../../models/tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserMapper {
 
-    static toDetailsDto = async (user: User, personDto: PersonDetailsDto = null): Promise<UserDetailsDto> => {
+    static toDetailsDto = (user: User, tenant: Tenant = null, personDto: PersonDetailsDto = null)
+        : UserDetailsDto => {
 
         if (user == null){
             return null;
@@ -16,6 +18,7 @@ export class UserMapper {
             id              : user.id,
             UserName        : user.UserName,
             PersonId        : user.PersonId,
+            TenantId        : tenant?.id,
             Person          : personDto,
             LastLogin       : user.LastLogin,
             DefaultTimeZone : user.DefaultTimeZone,
@@ -26,7 +29,7 @@ export class UserMapper {
         return dto;
     };
 
-    toDto = (user: User, personDto: PersonDto) => {
+    toDto = (user: User, tenant: Tenant = null, personDto: PersonDto) => {
 
         if (user == null){
             return null;
@@ -34,6 +37,7 @@ export class UserMapper {
         const dto: UserDto = {
             id              : user.id,
             PersonId        : user.PersonId,
+            TenantId        : tenant?.id,
             Person          : personDto,
             CurrentTimeZone : user.CurrentTimeZone,
             DefaultTimeZone : user.DefaultTimeZone

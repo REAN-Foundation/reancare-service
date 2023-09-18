@@ -4,6 +4,11 @@
         "Title"           : "Hey {{PatientName}}, reminder to take {{DrugName}}.",
         "Body"            : "Please take your medicine before {{EndTime}}."
     },
+    "CareplanRegistrationReminder": {
+        "NotificationType": "Careplan registration reminder",
+        "Title"           : "Choose a Health Journey Now",
+        "Body"            : "Receive daily health info by enrolling in our free, science-based health journey now!"
+    },
     "BPNotification": {
         "NotificationType": "Alert",
         "Title"           : "Dear {{PatientName}},",

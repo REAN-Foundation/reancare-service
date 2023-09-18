@@ -68,7 +68,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
 
     getHealthSystems = async (planName?: string): Promise<HealthSystemDto[]> => {
         try {
-            const filter = { where: {
+            const filter = { where : {
                 Tags : { [Op.like]: '%' + planName + '%' }
             } };
             

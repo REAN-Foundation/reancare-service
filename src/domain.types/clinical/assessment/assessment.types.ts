@@ -239,6 +239,7 @@ export class CAssessmentQuestionNode extends CAssessmentNode {
     Options?         : CAssessmentQueryOption[];
     UserResponse?    : CAssessmentQueryResponse;
     SkipCondition?   : CAssessmentPathCondition;
+    ScoringCondition?: CScoringCondition;
     CorrectAnswer?   : string | any;
 
     constructor() {
@@ -334,13 +335,13 @@ export class CAssessmentQueryResponse {
 
 export class ConditionOperand {
 
-    DataType: ConditionOperandDataType;
-    Name    : string;
-    Value   : string | number | boolean | any[] | null;
+    DataType?: ConditionOperandDataType;
+    Name ?   : string | null;
+    Value?   : string | number | boolean | any[] | null;
 
     constructor(
         dataType: ConditionOperandDataType,
-        name: string,
+        name: string | null,
         value: string | number | boolean | any[] | null) {
         this.DataType = dataType;
         this.Name = name;
@@ -378,12 +379,12 @@ export class CAssessmentPathCondition {
     PathId     : uuid;    //Chosen path if the condition satisfies
 
     //For composition type condition
-    IsCompositeCondition: boolean;
-    CompositionType     : ConditionCompositionType;
-    ParentConditionId   : uuid;
-    OperatorType        : ConditionOperatorType;
+    IsCompositeCondition?: boolean;
+    CompositionType ?    : ConditionCompositionType;
+    ParentConditionId?   : uuid;
+    OperatorType ?       : ConditionOperatorType;
 
-    FirstOperand: ConditionOperand;
+    FirstOperand?: ConditionOperand;
     SecondOperand?: ConditionOperand;
     ThirdOperand?: ConditionOperand;
 
@@ -475,7 +476,7 @@ export class CScoringCondition {
     //For composition type condition
     IsCompositeCondition?: boolean;
     CompositionType?    : ConditionCompositionType;
-    ParentConditionId?  : uuid;
+    ParentConditionId?  : string;
     OperatorType?       : ConditionOperatorType;
 
     FirstOperand? : ConditionOperand;

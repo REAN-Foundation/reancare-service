@@ -50,7 +50,7 @@ export class TeraWebhookService {
             this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
         }
     }
-
+  
     auth = async (authDomainModel: AuthDomainModel) => {
 
         if (authDomainModel.User.ReferenceId) {
@@ -197,7 +197,8 @@ export class TeraWebhookService {
             const recentGlucose = await this._bloodGlucoseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredGlucoseSamples = [];
             if (recentGlucose != null) {
-                filteredGlucoseSamples = bloodGlucoseSamples.filter((bloodGluocse) => new Date(bloodGluocse.TimeStamp) > recentGlucose.RecordDate);
+                filteredGlucoseSamples = bloodGlucoseSamples.filter((bloodGluocse) =>
+                    new Date(bloodGluocse.TimeStamp) > recentGlucose.RecordDate);
             } else {
                 filteredGlucoseSamples = bloodGlucoseSamples;
             }
@@ -213,6 +214,7 @@ export class TeraWebhookService {
                 await this._bloodGlucoseRepo.create(bloodGlucoseDomainModel);
 
             });
+
 
             // const oxygenSamples = body.OxygenData.SaturationSamples;
             // Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
@@ -233,6 +235,7 @@ export class TeraWebhookService {
             //         RecordDate            : new Date(bloodOxygen.TimeStamp)
             //     };
             //     await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
+
 
             // });
 
@@ -295,7 +298,8 @@ export class TeraWebhookService {
             const recentWeight = await this._bodyWeightRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredMeasurementSamples = [];
             if (recentWeight != null) {
-                filteredMeasurementSamples = measurementSamples.filter((weight) => new Date(weight.MeasurementTime) > recentWeight.RecordDate);
+                filteredMeasurementSamples = measurementSamples.filter((weight) =>
+                    new Date(weight.MeasurementTime) > recentWeight.RecordDate);
             } else {
                 filteredMeasurementSamples = measurementSamples;
             }

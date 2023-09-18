@@ -8,7 +8,11 @@
         "ScheduleCustomTasks": "0 9 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleHsSurvey": "0 11 * * *",
-        "ReminderOnNoActionToDonationRequest": "30 12 * * *"
+        "ReminderOnNoActionToDonationRequest": "30 12 * * *",
+        "Reminders": "*/10 * * * *",
+        "CareplanRegistrationReminder": "0 13 * * *",
+        "CareplanRegistrationReminderForOldUsers": "0 15 * * *"
+
     },
     "development": {
         "FileCleanup": "*/55 * * * *",
@@ -19,7 +23,11 @@
         "ScheduleCustomTasks": "0 9 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleHsSurvey": "0 11 * * *",
-        "ReminderOnNoActionToDonationRequest": "30 12 * * *"
+        "ReminderOnNoActionToDonationRequest": "30 12 * * *",
+        "Reminders": "*/15 * * * *",
+        "CareplanRegistrationReminder": "0 13 * * *",
+        "CareplanRegistrationReminderForOldUsers": "0 15 * * *"
+
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",
@@ -30,8 +38,10 @@
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleHsSurvey": "0 11 * * *",
-        "ReminderOnNoActionToDonationRequest": "30 12 * * *"
-
+        "ReminderOnNoActionToDonationRequest": "30 12 * * *",
+        "Reminders": "*/15 * * * *",
+        "CareplanRegistrationReminder": "0 13 * * *",
+        "CareplanRegistrationReminderForOldUsers": "0 15 * * *"
 
     },
     "production": {
@@ -43,8 +53,9 @@
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleHsSurvey": "0 11 * * *",
-        "ReminderOnNoActionToDonationRequest": "30 12 * * *"
-
-
+        "ReminderOnNoActionToDonationRequest": "30 12 * * *",
+        "Reminders": "*/15 * * * *", 
+        "CareplanRegistrationReminder": "0 13 * * *",
+        "CareplanRegistrationReminderForOldUsers": "0 15 * * *"
     }
 }

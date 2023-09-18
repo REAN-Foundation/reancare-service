@@ -6,7 +6,7 @@ export enum FoodConsumptionEvents {
     AfternoonSnacks = 'Afternoon snacks',
     EveningSnacks = 'Evening snacks',
     LateNightSnacks = 'Late night snacks',
-    LateNightDinner = 'Late night snacks',
+    LateNightDinner = 'Late night dinner',
     Other = 'Other',
 }
 

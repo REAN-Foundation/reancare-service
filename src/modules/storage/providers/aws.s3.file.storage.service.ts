@@ -3,8 +3,8 @@ import * as aws from "@aws-sdk/client-s3";
 import fs from 'fs';
 import { Logger } from '../../../common/logger';
 import { IFileStorageService } from '../interfaces/file.storage.service.interface';
-import { GetObjectCommand, GetObjectCommandOutput } from "@aws-sdk/client-s3";
-import { Readable, Stream } from "stream";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { Readable } from "stream";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -34,22 +34,19 @@ export class AWSS3FileStorageService implements IFileStorageService {
         }
     };
 
-    uploadStream = async (storageKey: string, stream: Stream): Promise<string> => {
+    uploadStream = async (storageKey: string, stream: Readable): Promise<string> => {
 
         try {
             const s3 = this.getS3Client();
             const params = {
                 Bucket : process.env.STORAGE_BUCKET,
                 Key    : storageKey,
-                Body   : stream
+                Body   : stream.read()
             };
-            // var stored = await new Upload({
-            //     client: s3,
-            //     params
-            // }).done();
-            var stored = await s3.createMultipartUpload(params);
+            const command = new aws.PutObjectCommand(params);
+            const response = await s3.send(command);
 
-            Logger.instance().log(JSON.stringify(stored, null, 2));
+            Logger.instance().log(JSON.stringify(response, null, 2));
 
             return storageKey;
         }
@@ -95,7 +92,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         // var localFile = tokens[tokens.length - 1];
         // var folderPath = path.join(TEMP_DOWNLOAD_FOLDER, localFolder);
         // var localDestination = path.join(folderPath, localFile);
-          
+
         const file = fs.createWriteStream(localFilePath);
         const command = new GetObjectCommand(params);
         const response = await s3.send(command);
@@ -108,13 +105,14 @@ export class AWSS3FileStorageService implements IFileStorageService {
                 while (stats.size === 0 && count < 5) {
                     setTimeout(() => {
                         stats = fs.statSync(localFilePath);
-                            }, 3000);
-                        count++;
+                    }, 3000);
+                    count++;
                 }
                 return resolve(localFilePath);
             }).on('error', (error) => {
                 return reject(error);
-            }).pipe(file);
+            })
+                .pipe(file);
         });
     };
 
@@ -187,11 +185,11 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
     getS3Client = (): aws.S3 => {
         return new aws.S3({
-            credentials: {
+            credentials : {
                 accessKeyId     : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
                 secretAccessKey : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET
             },
-            region: process.env.STORAGE_CLOUD_REGION
+            region : process.env.STORAGE_CLOUD_REGION
         });
     };
 

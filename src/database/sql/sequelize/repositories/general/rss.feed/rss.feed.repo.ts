@@ -100,7 +100,8 @@ export class RssfeedRepo implements IRssfeedRepo {
 
             const dtos: RssfeedDto[] = [];
             for (const feed of foundResults.rows) {
-                const dto = await RssfeedMapper.toFeedDto(feed, null);
+                const feedItems = await this.getFeedItems(feed.id);
+                const dto = await RssfeedMapper.toFeedDto(feed, feedItems);
                 dtos.push(dto);
             }
 

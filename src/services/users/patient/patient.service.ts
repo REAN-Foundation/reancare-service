@@ -112,7 +112,7 @@ export class PatientService {
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
             };
-            const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
+            const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
             items[0].accessToken = accessToken;
         }
         results.Items = items;
@@ -131,6 +131,14 @@ export class PatientService {
 
     public getAllPatientUserIds = async (): Promise<any[]> => {
         return await this._patientRepo.getAllPatientUserIds();
+    };
+
+    public getPatientsRegisteredLastMonth = async (): Promise<any[]> => {
+        return await this._patientRepo.getPatientsRegisteredLastMonth();
+    };
+
+    public getAllRegisteredPatients = async (): Promise<any[]> => {
+        return await this._patientRepo.getAllRegisteredPatients();
     };
 
     public checkforExistingPersonWithRole

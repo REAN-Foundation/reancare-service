@@ -1,7 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import { IPatientDonorsRepo } from '../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface';
 import { IPatientRepo } from '../../../database/repository.interfaces/users/patient/patient.repo.interface';
-import { DonorAcceptance } from '../../../domain.types/miscellaneous/clinical.types';
 import { IDonationCommunicationRepo } from '../../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface';
 import { DonationCommunicationDto } from '../../../domain.types/clinical/donation.communication/donation.communication.dto';
 import { DonationCommunicationDomainModel } from '../../../domain.types/clinical/donation.communication/donation.communication.domain.model';

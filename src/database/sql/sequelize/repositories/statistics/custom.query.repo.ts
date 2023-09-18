@@ -151,7 +151,7 @@ export class CustomQueryRepo implements ICustomQueryRepo {
    };
 
    update = async (id: string, updateModel: CustomQueryDomainModel):
-   Promise<CustomQueryDto> => {
+   Promise<any> => {
        try {
            const query = await StatisticsCustomQueries.findByPk(id);
 
@@ -177,7 +177,32 @@ export class CustomQueryRepo implements ICustomQueryRepo {
          
            await query.save();
 
-           return await CustomQueryMapper.toDto(query);
+           const hasDisallowedKeyword = containsDisallowedKeyword(updateModel.Query);
+
+           if (hasDisallowedKeyword) {
+               throw new ApiError(404, 'Only read only queries are allowed' );
+           }
+ 
+           const [results] = await sequelizeStats.query(updateModel.Query);
+     
+           if (updateModel.Format === 'JSON'){
+               const generatedFilePath = await getGeneratedFilePath('.json' );
+               const jsonContent = JSON.stringify(results, null, 2);
+               fs.writeFileSync(generatedFilePath, jsonContent);
+               return generatedFilePath;
+           }
+ 
+           if (updateModel.Format === 'CSV') {
+               const generatedFilePath = await getGeneratedFilePath('.csv' );
+               const csvWriter = createObjectCsvWriter({
+                   path   : generatedFilePath,
+                   header : Object.keys(results[0]).map(key => ({ id: key, title: key })),
+               });
+               await csvWriter.writeRecords(results);
+               return generatedFilePath;
+           }
+ 
+           return results;
 
        } catch (error) {
            Logger.instance().log(error.message);

@@ -29,7 +29,7 @@ export class CustomQueryService {
     };
 
     update = async (id: uuid, updateModel: CustomQueryDomainModel):
-    Promise<CustomQueryDto> => {
+    Promise<any> => {
         return await this._customQueryRepo.update(id, updateModel);
     };
 

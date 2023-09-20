@@ -4,6 +4,7 @@ import  Application  from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
+import { endDate, startDate } from '../utils';
 
 const infra = Application.instance();
 
@@ -217,8 +218,8 @@ export const loadMeditationCreateModel = async (
         Meditation    : faker.lorem.word(),
         Description   : faker.word.words(),
         Category      : faker.lorem.word(),
-        StartTime     : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndTime       : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' })
+        StartTime     : startDate,
+        EndTime       : endDate
   
     };
     setTestData(model, "MeditationCreateModel");
@@ -231,8 +232,8 @@ export const loadMeditationUpdateModel = async (
         Meditation    : faker.lorem.word(),
         Description   : faker.word.words(),
         Category      : faker.lorem.word(),
-        StartTime     : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndTime       : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' })
+        StartTime     : startDate,
+        EndTime       : endDate
     
     };
     setTestData(model, "MeditationUpdateModel");

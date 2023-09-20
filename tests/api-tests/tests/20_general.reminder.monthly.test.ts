@@ -5,7 +5,7 @@ import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
 import { NotificationType, RepeatAfterEveryNUnit } from '../../../src/domain.types/general/reminder/reminder.domain.model';
-import { getRandomEnumValue, repeatListdata } from '../utils';
+import { endDate, getRandomEnumValue, repeatListdata, startDate } from '../utils';
 
 const infra = Application.instance();
 
@@ -141,8 +141,8 @@ export const loadReminderMonthCreateModel = async (
         Name                 : faker.person.fullName(),
         WhenTime             : "12:10:12",
         HookUrl              : faker.internet.url(),
-        StartDate            : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndDate              : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
+        StartDate            : startDate,
+        EndDate              : endDate,
         EndAfterNRepetitions : faker.number.int(200),
         NotificationType     : "SMS"
   
@@ -159,8 +159,8 @@ export const loadReminderCertainMonthCreateModel = async (
         HookUrl               : faker.internet.url(),
         RepeatAfterEvery      : faker.number.int({ min: 2, max: 5 }),
         RepeatAfterEveryNUnit : "Month",
-        StartDate             : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndDate               : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
+        StartDate             : startDate,
+        EndDate               : endDate,
         EndAfterNRepetitions  : faker.number.int(200),
         RepeatList            : [
             "First-Wednesday",

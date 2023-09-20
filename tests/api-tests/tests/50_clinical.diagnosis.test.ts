@@ -5,7 +5,7 @@ import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
 import { ClinicalInterpretation, ClinicalValidationStatus } from '../../../src/domain.types/miscellaneous/clinical.types';
-import { getRandomEnumValue } from '../utils';
+import { endDate, getRandomEnumValue, startDate } from '../utils';
 
 const infra = Application.instance();
 
@@ -234,8 +234,8 @@ export const loadDiagnosisCreateModel = async (
         IsClinicallyActive        : faker.datatype.boolean(),
         ValidationStatus          : getRandomEnumValue(ClinicalValidationStatus),
         Interpretation            : getRandomEnumValue(ClinicalInterpretation),
-        OnsetDate                 : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndDate                   : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' })
+        OnsetDate                 : startDate,
+        EndDate                   : endDate
   
     };
     setTestData(model, "DiagnosisCreateModel");
@@ -251,8 +251,8 @@ export const loadDiagnosisUpdateModel = async (
         IsClinicallyActive        : faker.datatype.boolean(),
         ValidationStatus          : getRandomEnumValue(ClinicalValidationStatus),
         Interpretation            : getRandomEnumValue(ClinicalInterpretation),
-        OnsetDate                 : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndDate                   : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' })
+        OnsetDate                 : startDate,
+        EndDate                   : endDate
     };
     setTestData(model, "DiagnosisUpdateModel");
 };

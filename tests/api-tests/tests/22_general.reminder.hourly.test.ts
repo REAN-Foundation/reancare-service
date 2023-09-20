@@ -5,7 +5,7 @@ import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
 import { NotificationType } from '../../../src/domain.types/general/reminder/reminder.domain.model';
-import { getRandomEnumValue } from '../utils';
+import { endDate, getRandomEnumValue, startDate } from '../utils';
 
 const infra = Application.instance();
 
@@ -115,8 +115,8 @@ export const loadReminderHourCreateModel = async (
         Name                 : faker.person.fullName(),
         WhenTime             : "12:10:12",
         HookUrl              : faker.internet.url(),
-        StartDate            : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndDate              : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
+        StartDate             : startDate,
+        EndDate               : endDate,
         EndAfterNRepetitions : faker.number.int(200),
         NotificationType     : "SMS"
   

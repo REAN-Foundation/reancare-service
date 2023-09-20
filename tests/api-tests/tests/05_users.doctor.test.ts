@@ -176,6 +176,10 @@ describe('05 - Doctor tests', function() {
 
 ///////////////////////////////////////////////////////////////////////////
 
+const firstDoctorPhoneNumber: string = faker.phone.number('+91-##########');
+
+const secondDoctorPhoneNumber: string = faker.phone.number('+91-##########');
+
 export const loadDoctorPhoneCreateModel = async (
 ) => {
     const model = {
@@ -190,7 +194,7 @@ export const loadDoctorCreateModel = async (
     const model = {
         FirstName : faker.person.firstName(),
         Email     : faker.internet.exampleEmail(),
-        Phone     : "+91-9876543220",
+        Phone     : firstDoctorPhoneNumber,
     
     };
     setTestData(model, "DoctorCreateModel");
@@ -199,7 +203,7 @@ export const loadDoctorCreateModel = async (
 export const loadDoctorCreateWithPhoneModel = async (
     ) => {
         const model = {
-            Phone: "+91-9876543219",
+            Phone: secondDoctorPhoneNumber,
             Password: `${process.env.TEST_PATIENT_PASSWORD}`,
         };
         setTestData(model, 'DoctorCreateWithPhoneModel');
@@ -208,7 +212,7 @@ export const loadDoctorCreateWithPhoneModel = async (
 export const loadDoctorLoginModel = async (
     ) => {
         const model = {
-            Phone: "+91-9876543219",
+            Phone: secondDoctorPhoneNumber,
             Password: `${process.env.TEST_PATIENT_PASSWORD}`,
             LoginRoleId: getTestData("doctorRoleId")
         };
@@ -220,7 +224,7 @@ export const loadDoctorFailCreateModel = async (
     const model = {
         FirstName : faker.person.firstName(),
         Email     : faker.internet.exampleEmail(),
-        Phone     : "+91-9876543220",
+        Phone     : firstDoctorPhoneNumber,
         
     };
     setTestData(model, "DoctorFailCreateModel");

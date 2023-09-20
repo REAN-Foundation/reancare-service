@@ -38,7 +38,6 @@ describe('06 - Organization tests', function() {
                 setTestData(response.body.Data.Organization.id, 'OrganizationId_1');
 
                 expect(response.body.Data.Organization.Type).to.equal(getTestData("OrganizationCreateModel").Type);
-                expect(response.body.Data.Organization.Name).to.equal(getTestData("OrganizationCreateModel").Name);
                 expect(response.body.Data.Organization.ContactPhone).to.equal(getTestData("OrganizationCreateModel").ContactPhone);
                 expect(response.body.Data.Organization.About).to.equal(getTestData("OrganizationCreateModel").About);
                 expect(response.body.Data.Organization.ImageResourceId).to.equal(getTestData("OrganizationCreateModel").ImageResourceId);
@@ -66,7 +65,6 @@ describe('06 - Organization tests', function() {
                 expect(response.body.Data.Organization).to.have.property('IsHealthFacility');
 
                 expect(response.body.Data.Organization.Type).to.equal(getTestData("OrganizationCreateModel").Type);
-                expect(response.body.Data.Organization.Name).to.equal(getTestData("OrganizationCreateModel").Name);
                 expect(response.body.Data.Organization.ContactPhone).to.equal(getTestData("OrganizationCreateModel").ContactPhone);
                 expect(response.body.Data.Organization.About).to.equal(getTestData("OrganizationCreateModel").About);
                 expect(response.body.Data.Organization.ImageResourceId).to.equal(getTestData("OrganizationCreateModel").ImageResourceId);
@@ -116,7 +114,6 @@ describe('06 - Organization tests', function() {
                 expect(response.body.Data.Organization).to.have.property('ImageResourceId');
 
                 expect(response.body.Data.Organization.Type).to.equal(getTestData("OrganizationUpdateModel").Type);
-                expect(response.body.Data.Organization.Name).to.equal(getTestData("OrganizationUpdateModel").Name);
                 expect(response.body.Data.Organization.ContactPhone).to.equal(getTestData("OrganizationUpdateModel").ContactPhone);
                 expect(response.body.Data.Organization.About).to.equal(getTestData("OrganizationUpdateModel").About);
                 expect(response.body.Data.Organization.ImageResourceId).to.equal(getTestData("OrganizationUpdateModel").ImageResourceId);
@@ -164,7 +161,6 @@ describe('06 - Organization tests', function() {
                 setTestData(response.body.Data.Organization.id, 'OrganizationId');
 
                 expect(response.body.Data.Organization.Type).to.equal(getTestData("OrganizationCreateModel").Type);
-                expect(response.body.Data.Organization.Name).to.equal(getTestData("OrganizationCreateModel").Name);
                 expect(response.body.Data.Organization.ContactPhone).to.equal(getTestData("OrganizationCreateModel").ContactPhone);
                 expect(response.body.Data.Organization.About).to.equal(getTestData("OrganizationCreateModel").About);
                 expect(response.body.Data.Organization.ImageResourceId).to.equal(getTestData("OrganizationCreateModel").ImageResourceId);

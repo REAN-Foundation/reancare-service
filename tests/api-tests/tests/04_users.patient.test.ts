@@ -74,7 +74,7 @@ describe('04 - Patient tests', function() {
 
     it('04:03 -> Get user with phone and role', function(done) {
         agent
-            .get(`/api/v1/users/by-phone/${getTestData("PatientCreateModel")}/role/${getTestData("patientRoleId")}`)
+            .get(`/api/v1/users/by-phone/${firstPatientPhoneNumber}/role/${getTestData("patientRoleId")}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect(response => {
@@ -211,6 +211,10 @@ describe('04 - Patient tests', function() {
 
 ///////////////////////////////////////////////////////////////////////////
 
+const firstPatientPhoneNumber: string = faker.phone.number('+91-##########');
+
+const secondPatientPhoneNumber: string = faker.phone.number('+91-##########');
+
 export const loadPatientPhoneCreateFirstModel = async (
 ) => {
     const model = {
@@ -223,7 +227,7 @@ export const loadPatientPhoneCreateFirstModel = async (
 export const loadPatientLoginFirstModel = async (
     ) => {
         const model = {
-            Phone: "+91-7349901967",
+            Phone: secondPatientPhoneNumber,
             Password: `${process.env.TEST_PATIENT_PASSWORD}`,
             LoginRoleId: getTestData("patientRoleId"),
         };
@@ -233,7 +237,7 @@ export const loadPatientLoginFirstModel = async (
 export const loadPatientCreateWithPhoneFirstModel = async (
     ) => {
         const model = {
-            Phone: "+91-7349901967",
+            Phone: secondPatientPhoneNumber,
             Password: `${process.env.TEST_PATIENT_PASSWORD}`,
             LoginRoleId: getTestData("patientRoleId"),
         };
@@ -245,7 +249,7 @@ export const loadPatientCreateFirstModel = async (
     const model = {
         FirstName : faker.person.firstName(),
         Email     : faker.internet.exampleEmail(),
-        Phone     : getTestData("PatientCreateModel"),
+        Phone     : firstPatientPhoneNumber,
     };
     setTestData(model, "PatientCreateFirstModel");
 };
@@ -255,7 +259,7 @@ export const loadPatientFailCreateModel = async (
     const model = {
         FirstName : faker.person.firstName(),
         Email     : faker.internet.exampleEmail(),
-        Phone     : getTestData("PatientCreateModel"),
+        Phone     : firstPatientPhoneNumber,
           
     };
     setTestData(model, "PatientFailCreateModel");

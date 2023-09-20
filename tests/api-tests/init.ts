@@ -11,7 +11,6 @@ const infra = Application.instance();
 //Set-up
 before(async () => {
     console.log('Set-up: Initializing test set-up!');
-    initializeCache();
     await infra.start();
     await wait(1000);
     console.log('\nTest set-up: Done!\n');

@@ -4,6 +4,7 @@ import  Application  from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
+import { pastDateString } from '../utils';
 
 const infra = Application.instance();
 
@@ -208,7 +209,7 @@ export const loadPulseCreateModel = async (
         PatientUserId : getTestData("PatientUserId"),
         Pulse         : faker.number.int({ min: 70, max:75 }),
         Unit          : "bpm",
-        RecordDate    : "2021-09-01"
+        RecordDate    : pastDateString
     };
     setTestData(model, "PulseCreateModel");
 };
@@ -217,7 +218,7 @@ export const loadPulseUpdateModel = async (
 ) => {
     const model = {
         Pulse      : faker.number.int({ min: 70, max:75 }),
-        RecordDate : "2021-09-01"
+        RecordDate : pastDateString
     };
     setTestData(model, "PulseUpdateModel");
 };

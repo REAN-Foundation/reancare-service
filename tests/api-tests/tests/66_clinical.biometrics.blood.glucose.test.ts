@@ -4,6 +4,7 @@ import  Application  from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
+import { pastDateString } from '../utils';
 
 const infra = Application.instance();
 
@@ -210,7 +211,7 @@ export const loadBloodGlucoseCreateModel = async (
         PatientUserId    : getTestData('PatientUserId'),
         Unit             : "mg|dL",
         BloodGlucose     : faker.number.int({ min:95, max: 105 }),
-        RecordDate       : "2021-09-02",
+        RecordDate       : pastDateString,
         RecordedByUserId : getTestData('PatientUserId')
 
     };
@@ -223,7 +224,7 @@ export const loadBloodGlucoseUpdateModel = async (
         PatientUserId    : getTestData('PatientUserId'),
         Unit             : "mg|dL",
         BloodGlucose     : faker.number.int({ min:95, max: 105 }),
-        RecordDate       : "2021-09-02",
+        RecordDate       : pastDateString,
         RecordedByUserId : getTestData('PatientUserId'),
     };
     setTestData(model, "BloodGlucoseUpdateModel");

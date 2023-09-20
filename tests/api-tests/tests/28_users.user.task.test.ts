@@ -5,7 +5,7 @@ import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
 import { UserActionType, UserTaskCategory } from '../../../src/domain.types/users/user.task/user.task.types';
-import { getRandomEnumValue } from '../utils';
+import { endDate, getRandomEnumValue, startDate } from '../utils';
 
 const infra = Application.instance();
 
@@ -372,8 +372,8 @@ export const loadTaskCreateModel = async (
         Category           : "Custom",
         ActionType         : "Medication",
         ActionId           : faker.string.uuid(),
-        ScheduledStartTime : faker.date.between({ from: '2024-05-15T00:00:00.000Z', to: '2024-05-30T00:00:00.000Z' }),
-        ScheduledEndTime   : faker.date.between({ from: '2024-06-16T00:00:00.000Z', to: '2024-06-29T00:00:00.000Z' }),
+        ScheduledStartTime : startDate,
+        ScheduledEndTime   : endDate,
         IsRecurrent        : false
     
     };
@@ -385,8 +385,8 @@ export const loadTaskUpdateModel = async (
     const model = {
         Task               : faker.lorem.word(),
         Category           : "Custom",
-        ScheduledStartTime : faker.date.between({ from: '2024-05-15T00:00:00.000Z', to: '2024-05-30T00:00:00.000Z' }),
-        ScheduledEndTime   : faker.date.between({ from: '2024-06-16T00:00:00.000Z', to: '2024-06-29T00:00:00.000Z' })
+        ScheduledStartTime : startDate,
+        ScheduledEndTime   : endDate
       
     };
     setTestData(model, "TaskUpdateModel");

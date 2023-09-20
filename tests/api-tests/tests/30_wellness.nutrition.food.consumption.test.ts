@@ -5,7 +5,7 @@ import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
 import { FoodConsumptionEvents } from '../../../src/domain.types/wellness/nutrition/food.consumption/food.consumption.types';
-import { getRandomEnumValue } from '../utils';
+import { endDate, getRandomEnumValue, startDate } from '../utils';
 
 const infra = Application.instance();
 
@@ -262,8 +262,8 @@ export const loadFoodCreateModel = async (
         Description   : faker.word.words(),
         ConsumedAs    : getRandomEnumValue(FoodConsumptionEvents),
         Calories      : faker.number.int(500),
-        StartTime     : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndTime       : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' })
+        StartTime     : startDate,
+        EndTime       : endDate
   
     };
     setTestData(model, "FoodCreateModel");
@@ -277,8 +277,8 @@ export const loadFoodUpdateModel = async (
         Description   : faker.word.words(),
         ConsumedAs    : getRandomEnumValue(FoodConsumptionEvents),
         Calories      : faker.number.int(500),
-        StartTime     : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndTime       : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' })
+        StartTime     : startDate,
+        EndTime       : endDate
     
     };
     setTestData(model, "FoodUpdateModel");

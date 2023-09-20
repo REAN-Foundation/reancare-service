@@ -5,7 +5,7 @@ import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
 import { Intensity, PhysicalActivityCategories } from '../../../src/domain.types/wellness/exercise/physical.activity/physical.activity.types';
-import { getRandomEnumValue } from '../utils';
+import { endDate, getRandomEnumValue, startDate } from '../utils';
 
 const infra = Application.instance();
 
@@ -241,8 +241,8 @@ export const loadPhysicalActivityCreateModel = async (
         Category       : getRandomEnumValue(PhysicalActivityCategories),
         CaloriesBurned : faker.number.int(500),
         Intensity      : getRandomEnumValue(Intensity),
-        StartTime      : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndTime        : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
+        StartTime      : startDate,
+        EndTime        : endDate,
         DurationInMin  : faker.number.int(60)
   
     };
@@ -258,8 +258,8 @@ export const loadPhysicalActivityUpdateModel = async (
         Category       : getRandomEnumValue(PhysicalActivityCategories),
         CaloriesBurned : faker.number.int(500),
         Intensity      : getRandomEnumValue(Intensity),
-        StartTime      : faker.date.between({ from: '2024-01-01T00:00:00.000Z', to: '2024-05-05T00:00:00.000Z' }),
-        EndTime        : faker.date.between({ from: '2024-06-06T00:00:00.000Z', to: '2024-11-11T00:00:00.000Z' }),
+        StartTime      : startDate,
+        EndTime        : endDate,
         DurationInMin  : faker.number.int(60)
     
     };

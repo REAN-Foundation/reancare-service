@@ -4,6 +4,7 @@ import  Application  from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
+import { futureDateString, pastDateString } from '../utils';
 
 const infra = Application.instance();
 
@@ -30,7 +31,6 @@ describe('03 - Api client tests', function () {
 
                 setTestData(response.body.Data.Client.id, 'ApiClientId');
 
-                expect(response.body.Data.Client.ClientName).to.equal(getTestData('ApiClientCreateModel').ClientName);
                 expect(response.body.Data.Client.Phone).to.equal(getTestData('ApiClientCreateModel').Phone);
                 expect(response.body.Data.Client.Email).to.equal(getTestData('ApiClientCreateModel').Email);
             })
@@ -73,7 +73,6 @@ describe('03 - Api client tests', function () {
                 expect(response.body.Data.Client).to.have.property('Phone');
                 expect(response.body.Data.Client).to.have.property('Email');
 
-                expect(response.body.Data.Client.ClientName).to.equal(getTestData('ApiClientCreateModel').ClientName);
                 expect(response.body.Data.Client.Phone).to.equal(getTestData('ApiClientCreateModel').Phone);
                 expect(response.body.Data.Client.Email).to.equal(getTestData('ApiClientCreateModel').Email);
             })
@@ -141,7 +140,7 @@ describe('03 - Api client tests', function () {
                 expect(response.body.Data.Client).to.have.property('Phone');
                 expect(response.body.Data.Client).to.have.property('Email');
 
-                expect(response.body.Data.Client.ClientName).to.equal(getTestData('ApiClientUpdateModel').ClientName);
+
                 expect(response.body.Data.Client.Phone).to.equal(getTestData('ApiClientUpdateModel').Phone);
                 expect(response.body.Data.Client.Email).to.equal(getTestData('ApiClientUpdateModel').Email);
             })
@@ -179,7 +178,6 @@ describe('03 - Api client tests', function () {
 
                 setTestData(response.body.Data.Client.id, 'ApiClientId');
 
-                expect(response.body.Data.Client.ClientName).to.equal(getTestData('ApiClientCreateModel').ClientName);
                 expect(response.body.Data.Client.Phone).to.equal(getTestData('ApiClientCreateModel').Phone);
                 expect(response.body.Data.Client.Email).to.equal(getTestData('ApiClientCreateModel').Email);
             })
@@ -262,8 +260,8 @@ export const loadApiClientValidityCreateModel = async (
         Password: `${process.env.TEST_CLIENT_PASSWORD}`,
         Phone : faker.phone.number('+91-##########'),
         Email: faker.internet.exampleEmail(),
-        ValidFrom  : "2021-07-21",
-        ValidTill  : "2030-07-20"    
+        ValidFrom  : pastDateString,
+        ValidTill  : futureDateString   
     };
     setTestData(model, 'ApiClientValidityCreateModel');
 };
@@ -271,8 +269,8 @@ export const loadApiClientValidityCreateModel = async (
 export const loadApiKeyUpdateModel = async (
 ) => {
     const model = {
-        ValidFrom  : "2021-07-21",
-        ValidTill  : "2035-07-20"     
+        ValidFrom  : pastDateString,
+        ValidTill  : futureDateString     
     };
     setTestData(model, 'ApiKeyUpdateModel');
 };

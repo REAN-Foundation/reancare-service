@@ -5,7 +5,7 @@ import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
 import { NotificationType } from '../../../src/domain.types/general/reminder/reminder.domain.model';
-import { getRandomEnumValue } from '../utils';
+import { futureDateString, getRandomEnumValue } from '../utils';
 
 const infra = Application.instance();
 
@@ -184,7 +184,7 @@ export const loadOneTimeReminderCreateModel = async (
     const model = {
         UserId           : getTestData("PatientUserId"),
         Name             : faker.person.fullName(),
-        WhenDate         : "2024-01-01",
+        WhenDate         : futureDateString,
         WhenTime         : "12:10:12",
         HookUrl          : faker.internet.url(),
         NotificationType : "SMS"
@@ -203,7 +203,7 @@ export const loadNegativeOneTimeReminderCreateModel = async (
 ) => {
     const model = {
         Name             : faker.person.fullName(),
-        WhenDate         : faker.setDefaultRefDate(new Date('2024-01-01')),
+        WhenDate         : futureDateString,
         WhenTime         : faker.date.anytime(),
         HookUrl          : faker.internet.url(),
         NotificationType : "SMS"

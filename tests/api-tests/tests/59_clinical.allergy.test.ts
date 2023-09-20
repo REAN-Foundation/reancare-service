@@ -311,7 +311,7 @@ export const loadAllergyCreateModel = async (
         Severity              : getRandomEnumValue(Severity),
         Reaction              : faker.lorem.words(),
         OtherInformation      : faker.lorem.words(10),
-        LastOccurrence        : faker.date.between({ from: '2000-06-06T00:00:00.000Z', to: '2022-11-11T00:00:00.000Z' })
+        LastOccurrence        : faker.date.past()
   
     };
     setTestData(model, "AllergyCreateModel");
@@ -327,7 +327,7 @@ export const loadAllergyUpdateModel = async (
         Severity              : getRandomEnumValue(Severity),
         Reaction              : faker.lorem.words(),
         OtherInformation      : faker.lorem.words(10),
-        LastOccurrence        : faker.date.between({ from: '2000-06-06T00:00:00.000Z', to: '2022-11-11T00:00:00.000Z' })
+        LastOccurrence        : faker.date.past()
     };
     setTestData(model, "AllergyUpdateModel");
 };

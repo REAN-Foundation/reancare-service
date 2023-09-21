@@ -180,6 +180,8 @@ const firstDoctorPhoneNumber: string = faker.phone.number('+91-##########');
 
 const secondDoctorPhoneNumber: string = faker.phone.number('+91-##########');
 
+const doctorPassword : string = faker.internet.password()
+
 export const loadDoctorPhoneCreateModel = async (
 ) => {
     const model = {
@@ -204,7 +206,7 @@ export const loadDoctorCreateWithPhoneModel = async (
     ) => {
         const model = {
             Phone: secondDoctorPhoneNumber,
-            Password: `${process.env.TEST_PATIENT_PASSWORD}`,
+            Password: doctorPassword,
         };
         setTestData(model, 'DoctorCreateWithPhoneModel');
 };
@@ -213,7 +215,7 @@ export const loadDoctorLoginModel = async (
     ) => {
         const model = {
             Phone: secondDoctorPhoneNumber,
-            Password: `${process.env.TEST_PATIENT_PASSWORD}`,
+            Password: doctorPassword,
             LoginRoleId: getTestData("doctorRoleId")
         };
         setTestData(model, 'DoctorLoginModel');

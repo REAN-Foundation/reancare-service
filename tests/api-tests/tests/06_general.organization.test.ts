@@ -184,7 +184,7 @@ describe('06 - Organization tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(422, done);
     });
 
     it('06:07 -> Negative - Search organization records', function(done) {
@@ -258,15 +258,8 @@ function loadOrganizationQueryString() {
 export const loadNegativeOrganizationCreateModel = async (   
 ) => {
     const model = {
-        Type             : faker.lorem.word(),
-        Name             : faker.person.fullName(),
-        ContactPhone     : faker.phone.number('+91-##########'),
-        ContactEmail     : faker.internet.exampleEmail(),
-        About            : faker.word.words(5),
-        OperationalSince : faker.date.past(),
         ImageResourceId  : faker.string.uuid(),
         IsHealthFacility : faker.datatype.boolean()
-    
     };
     setTestData(model, "NegativeOrganizationCreateModel");
 };

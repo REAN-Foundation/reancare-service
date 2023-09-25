@@ -297,7 +297,6 @@ describe('76 - Custom Assessment - Add nodes', function() {
         agent
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .send(createModel)
             .expect(response => {
@@ -305,7 +304,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
                 expect(response.body.Status).to.equal('failure');
                            
             })
-            .expect(500, done);
+            .expect(401, done);
     });
 
     it('76:12 -> Negative - Add question node - single choice', function(done) {

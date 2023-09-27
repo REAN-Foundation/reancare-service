@@ -78,7 +78,7 @@ export default class BloodOxygenSaturation extends Model {
         type      : DataType.FLOAT,
         allowNull : false,
         validate  : {
-            min : 10,
+            min : 1,
             max : 100
         }
     })

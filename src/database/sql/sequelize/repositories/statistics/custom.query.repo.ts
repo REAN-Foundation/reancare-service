@@ -33,21 +33,26 @@ export class CustomQueryRepo implements ICustomQueryRepo {
 
   executeQuery = async (createModel: CustomQueryDomainModel): Promise<any> => {
       try {
-        
+
+          var tags = createModel.Tags && createModel.Tags.length > 0 ?
+              JSON.stringify(createModel.Tags) : '[]';
+
           const entity = {
               Name        : createModel.Name,
+              Query       : createModel.Query,
+              Tags        : tags,
               Description : createModel.Description,
               UserId      : createModel.UserId,
               TenantId    : createModel.TenantId,
           };
 
-          const hasDisallowedKeyword = containsDisallowedKeyword(entity.Name);
+          const hasDisallowedKeyword = containsDisallowedKeyword(entity.Query);
 
           if (hasDisallowedKeyword) {
               throw new ApiError(404, 'Only read only queries are allowed' );
           }
 
-          const [results] = await sequelizeStats.query(entity.Name);
+          const [results] = await sequelizeStats.query(entity.Query);
 
           const customQuery = await StatisticsCustomQueries.create(entity);
     
@@ -87,6 +92,10 @@ export class CustomQueryRepo implements ICustomQueryRepo {
            }
            if (filters.TenantId != null) {
                search.where['TenantId'] = filters.TenantId;
+           }
+
+           if (filters.Tags !== null) {
+               search.where['Tags'] = { [Op.like]: '%' + filters.Tags + '%' };
            }
 
            let orderByColum = 'CreatedAt';
@@ -138,6 +147,66 @@ export class CustomQueryRepo implements ICustomQueryRepo {
            return CustomQueryMapper.toDto(cohort);
        } catch (error) {
            throw new Error(`Failed to retrieve query by Id: ${error.message}`);
+       }
+   };
+
+   update = async (id: string, updateModel: CustomQueryDomainModel):
+   Promise<any> => {
+       try {
+           const query = await StatisticsCustomQueries.findByPk(id);
+
+           if (updateModel.Name != null) {
+               query.Name = updateModel.Name;
+           }
+           if (updateModel.Description != null) {
+               query.Description = updateModel.Description;
+           }
+           if (updateModel.Query != null) {
+               query.Query = updateModel.Query;
+           }
+           if (updateModel.Tags != null) {
+               var tags = JSON.stringify(updateModel.Tags);
+               query.Tags = tags;
+           }
+           if (updateModel.TenantId != null) {
+               query.TenantId = updateModel.TenantId;
+           }
+           if (updateModel.UserId != null) {
+               query.UserId = updateModel.UserId;
+           }
+         
+           await query.save();
+
+           const hasDisallowedKeyword = containsDisallowedKeyword(updateModel.Query);
+
+           if (hasDisallowedKeyword) {
+               throw new ApiError(404, 'Only read only queries are allowed' );
+           }
+ 
+           const [results] = await sequelizeStats.query(updateModel.Query);
+     
+           if (updateModel.Format === 'JSON'){
+               const generatedFilePath = await getGeneratedFilePath('.json' );
+               const jsonContent = JSON.stringify(results, null, 2);
+               fs.writeFileSync(generatedFilePath, jsonContent);
+               return generatedFilePath;
+           }
+ 
+           if (updateModel.Format === 'CSV') {
+               const generatedFilePath = await getGeneratedFilePath('.csv' );
+               const csvWriter = createObjectCsvWriter({
+                   path   : generatedFilePath,
+                   header : Object.keys(results[0]).map(key => ({ id: key, title: key })),
+               });
+               await csvWriter.writeRecords(results);
+               return generatedFilePath;
+           }
+ 
+           return results;
+
+       } catch (error) {
+           Logger.instance().log(error.message);
+           throw new ApiError(500, error.message);
        }
    };
 

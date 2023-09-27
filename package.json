@@ -67,6 +67,8 @@
     "sequelize-typescript": "^2.1.3",
     "sharp": "^0.32.0",
     "sleep": "^6.3.0",
+    "sqlite": "^5.0.1",
+    "sqlite3": "^5.1.6",
     "terra-api": "^1.4.0",
     "timezone-support": "^3.1.0",
     "tsyringe": "^4.8.0",

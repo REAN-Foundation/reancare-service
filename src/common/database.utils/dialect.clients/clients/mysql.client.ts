@@ -1,9 +1,9 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mysql = require('mysql2');
-import { Logger } from '../../logger';
-import { DatabaseSchemaType, databaseConfig } from '../database.config';
-import { IDatabaseClient } from './database.client.interface';
+import { Logger } from '../../../logger';
+import { DatabaseSchemaType, databaseConfig } from '../../database.config';
+import { IDatabaseClient } from '../database.client.interface';
 
 //////////////////////////////////////////////////////////////////////////////
 

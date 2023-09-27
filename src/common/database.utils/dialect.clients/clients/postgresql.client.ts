@@ -1,7 +1,7 @@
 import { Client } from 'pg';
-import { Logger } from '../../logger';
-import { IDatabaseClient } from './database.client.interface';
-import { DatabaseSchemaType, databaseConfig } from '../database.config';
+import { Logger } from '../../../logger';
+import { IDatabaseClient } from '../database.client.interface';
+import { DatabaseSchemaType, databaseConfig } from '../../database.config';
 
 ////////////////////////////////////////////////////////////////
 

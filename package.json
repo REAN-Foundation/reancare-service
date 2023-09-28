@@ -20,9 +20,9 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.325.0",
     "@aws-sdk/client-ses": "^3.370.0",
-    "@aws-sdk/credential-provider-node": "^3.370.0",
+    "@aws-sdk/credential-provider-node": "^3.405.0",
     "@aws-sdk/lib-storage": "^3.405.0",
-    "@aws-sdk/s3-request-presigner": "^3.370.0",
+    "@aws-sdk/s3-request-presigner": "^3.405.0",
     "@types/adm-zip": "^0.5.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.17",

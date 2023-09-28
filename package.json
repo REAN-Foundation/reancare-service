@@ -71,7 +71,7 @@
     "terra-api": "^1.4.0",
     "timezone-support": "^3.1.0",
     "tsyringe": "^4.8.0",
-    "twilio": "^4.13.0",
+    "twilio": "^4.16.0",
     "typeorm": "^0.3.15",
     "uuid": "^9.0.0",
     "uuid-apikey": "^1.5.3",

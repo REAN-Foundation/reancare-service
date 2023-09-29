@@ -172,7 +172,12 @@ export class ReminderSenderService {
         }
         const deviceTokens = deviceDetails.map(x => x.Token);
         const message = ReminderSenderService.constructMessage(schedule, reminder);
-        return { notificationService, deviceTokens, message };
+        const formattedMessage = notificationService.formatNotificationMessage(
+            'Reminder',
+            reminder.Name,
+            message
+        );
+        return { notificationService, deviceTokens, formattedMessage };
     }
 
     private static async getUserEmailDetails(user: any, reminder: any, schedule: any) {

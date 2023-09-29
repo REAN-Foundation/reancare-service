@@ -129,10 +129,10 @@ export class ReminderSenderService {
     };
 
     private static sendReminderByMobilePush = async (user, reminder, schedule): Promise<boolean> => {
-        const { notificationService, deviceTokens, message } =
+        const { notificationService, deviceTokens, formattedMessage } =
             await ReminderSenderService.getUserMobilePushDetails(user, reminder, schedule);
         for await (const deviceToken of deviceTokens) {
-            await notificationService.sendNotificationToDevice(deviceToken, message);
+            await notificationService.sendNotificationToDevice(deviceToken, formattedMessage);
         }
         await ReminderSenderService.markAsDelivered(true, schedule.id);
         return true;

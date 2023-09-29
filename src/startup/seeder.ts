@@ -37,7 +37,7 @@ import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledg
 import { HealthPriorityTypeDomainModel } from "../domain.types/users/patient/health.priority.type/health.priority.type.domain.model";
 import { HealthPriorityTypeList } from "../domain.types/users/patient/health.priority.type/health.priority.types";
 import { PatientDomainModel } from "../domain.types/users/patient/patient/patient.domain.model";
-import { Roles } from "../domain.types/role/role.types";
+import { DefaultRoles, Roles } from "../domain.types/role/role.types";
 import { UserDomainModel } from "../domain.types/users/user/user.domain.model";
 import { ApiClientService } from "../services/api.client/api.client.service";
 import { DrugService } from "../services/clinical/medication/drug.service";
@@ -63,6 +63,8 @@ import { NutritionQuestionnaireDomainModel }
 import { HealthSystemDomainModel } from "../domain.types/users/patient/health.system/health.system.domain.model";
 import { HealthSystemHospitalDomainModel } from "../domain.types/users/patient/health.system/health.system.hospital.domain.model";
 import { HealthSystemService } from "../services/users/patient/health.system.service";
+import { ITenantRepo } from "../database/repository.interfaces/tenant/tenant.repo.interface";
+import { TenantDomainModel } from "../domain.types/tenant/tenant.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -118,6 +120,7 @@ export class Seeder {
         @inject('ILabRecordRepo') private _labRecordRepo: ILabRecordRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
         @inject('IHealthSystemRepo') private _healthSystemRepo: IHealthSystemRepo,
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -139,6 +142,7 @@ export class Seeder {
     public init = async (): Promise<void> => {
         try {
             await this.createTempFolders();
+            await this.seedDefaultTenant();
             await this.seedDefaultRoles();
             await this.seedRolePrivileges();
             await this.seedInternalClients();
@@ -162,6 +166,25 @@ export class Seeder {
     private createTempFolders = async () => {
         await Helper.createTempDownloadFolder();
         await Helper.createTempUploadFolder();
+    };
+
+    private seedDefaultTenant = async () => {
+        const count = await this._tenantRepo.tenantCount();
+        if (count === 0) {
+            var tenant: TenantDomainModel = {
+                Name        : 'default',
+                Description : 'Default tenant',
+                Code        : 'default',
+                Phone       : '0000000000',
+                Email       : 'support@reanfoundation.org',
+            };
+            var defaultTenant = await this._tenantRepo.create(tenant);
+            return defaultTenant;
+        }
+        else {
+            var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
+            return defaultTenant;
+        }
     };
 
     private seedRolePrivileges = async () => {
@@ -260,65 +283,18 @@ export class Seeder {
 
     private seedDefaultRoles = async () => {
 
-        const existing = await this._roleRepo.search();
-        if (existing.length === 11) {
-            await this._roleRepo.create({
-                RoleName : Roles.Volunteer,
-                Description :
-                    'Represents a person managing the blood bridge.',
-            });
+        for await (const r of DefaultRoles) {
+            const role = await this._roleRepo.getByName(r.Role);
+            if (role == null) {
+                await this._roleRepo.create({
+                    RoleName     : r.Role,
+                    Description  : r.Description,
+                    TenantId     : null,
+                    IsSystemRole : r.IsSystemRole,
+                    IsUserRole   : r.IsUserRole,
+                });
+            }
         }
-        if (existing.length > 0) {
-            return;
-        }
-
-        await this._roleRepo.create({
-            RoleName    : Roles.SystemAdmin,
-            Description : 'Admin of the system having elevated privileges.',
-        });
-        this._roleRepo.create({
-            RoleName    : Roles.Patient,
-            Description : 'Represents a patient.',
-        });
-        await this._roleRepo.create({
-            RoleName    : Roles.Doctor,
-            Description : 'Represents a doctor/physician.',
-        });
-        await this._roleRepo.create({
-            RoleName : Roles.LabUser,
-            Description :
-                'Represents a pathology/radiology lab representative/technician/pathologist/radiologist.',
-        });
-        await this._roleRepo.create({
-            RoleName    : Roles.PharmacyUser,
-            Description : 'Represents a pharmacy/pharmacist/pharmacy shop owner/drug dispenser.',
-        });
-        await this._roleRepo.create({
-            RoleName    : Roles.Nurse,
-            Description : 'Represents an nurse and medical care taker.',
-        });
-        await this._roleRepo.create({
-            RoleName    : Roles.AmbulanceServiceUser,
-            Description : 'Represents an ambulance service provider/driver/mobile emergency medic.',
-        });
-        await this._roleRepo.create({
-            RoleName    : Roles.PatientFamilyMember,
-            Description : 'Represents a family member of the patient.',
-        });
-        await this._roleRepo.create({
-            RoleName    : Roles.PatientFriend,
-            Description : 'Represents a friend of the patient.',
-        });
-        await this._roleRepo.create({
-            RoleName : Roles.SocialHealthWorker,
-            Description :
-                'Represents a health social worker/health support professional representing government/private health service.',
-        });
-        await this._roleRepo.create({
-            RoleName : Roles.Donor,
-            Description :
-                'Represents blood donor as a person.',
-        });
 
         Logger.instance().log('Seeded default roles successfully!');
     };

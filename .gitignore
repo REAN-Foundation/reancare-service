@@ -115,3 +115,4 @@ seed.data/internal.clients.seed.json
 seed.data/internal.test.users.seed.json
 seed.data/system.admin.seed.json
 tmp/
+seed.data/default.tenants.seed.json

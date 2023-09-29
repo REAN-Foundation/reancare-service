@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IRoleRepo } from "../../database/repository.interfaces/role/role.repo.interface";
 import { RoleDto } from "../../domain.types/role/role.dto";
+import { RoleSearchFilters } from "../../domain.types/role/role.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +26,18 @@ export class RoleService {
 
     delete = async (id: number): Promise<boolean> => {
         return await this._roleRepo.delete(id);
+    };
+
+    search = async (filters: RoleSearchFilters): Promise<RoleDto[]> => {
+        return await this._roleRepo.search(filters);
+    };
+
+    searchByName = async (name: string): Promise<RoleDto[]> => {
+        return await this._roleRepo.searchByName(name);
+    };
+
+    update = async (id: number, entity: any): Promise<RoleDto> => {
+        return await this._roleRepo.update(id, entity);
     };
 
 }

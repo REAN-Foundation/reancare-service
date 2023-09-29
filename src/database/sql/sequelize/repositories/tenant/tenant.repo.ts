@@ -73,6 +73,15 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
+    tenantCount = async (): Promise<number> => {
+        try {
+            return await Tenant.count();
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch tenant count: ${error.message}`);
+        }
+    };
+
     exists = async (id: uuid): Promise<boolean> => {
         try {
             const tenant = await Tenant.findByPk(id);

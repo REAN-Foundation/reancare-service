@@ -24,6 +24,8 @@ export interface ITenantRepo {
 
     search(filters: TenantSearchFilters): Promise<TenantSearchResults>;
 
+    tenantCount(): Promise<number>;
+
     update(id: uuid, model: TenantDomainModel): Promise<TenantDto>;
 
     delete(id: uuid): Promise<boolean>;

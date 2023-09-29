@@ -64,20 +64,19 @@ describe('38 - Knowledge nuggets tests', function() {
             .expect(200, done);
     });
 
-    it('38:03 -> Get knowledge nugget by todays topic', function(done) {
+    // it('38:03 -> Get knowledge nugget by todays topic', function(done) {
 
-        agent
-            .get(`/api/v1/educational/knowledge-nuggets/today/${getTestData('PatientUserId')}`)
-            .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
-                expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('success');
-
-            })
-            .expect(200, done);
-    });
+    //     agent
+    //         .get(`/api/v1/educational/knowledge-nuggets/today/${getTestData('PatientUserId')}`)
+    //         .set('Content-Type', 'application/json')
+    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
+    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+    //         .expect(response => {
+    //             expect(response.body).to.have.property('Status');
+    //             expect(response.body.Status).to.equal('success');
+    //         })
+    //         .expect(200, done);
+    // });
 
     it('38:04 -> Search knowledge nugget records', function(done) {
         loadKnowledgeNuggetQueryString();

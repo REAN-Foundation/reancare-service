@@ -4,6 +4,8 @@ import  Application  from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
+import { GenderList } from '../../../src/domain.types/miscellaneous/system.types';
+import { getRandomEnumValue } from '../utils';
 
 const infra = Application.instance();
 
@@ -142,7 +144,7 @@ export const loadUserDetailsUpdateModel = async (
         MiddleName      : faker.person.middleName(),
         LastName        : faker.person.lastName(),
         Email           : faker.internet.email(),
-        Gender          : faker.person.gender(),
+        Gender          : getRandomEnumValue(GenderList),
         BirthDate       : faker.date.birthdate(),
         ImageResourceId : faker.string.uuid(),
         Address         : {

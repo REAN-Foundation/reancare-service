@@ -81,7 +81,6 @@ describe('74 - Cholesterol Demographic Assessment template Copy tests', function
         agent
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .send(createModel)
             .expect(response => {
@@ -89,7 +88,7 @@ describe('74 - Cholesterol Demographic Assessment template Copy tests', function
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(401, done);
     });
 
     it('74:04 -> Negative - Add question node- 1', function(done) {

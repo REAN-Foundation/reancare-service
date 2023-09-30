@@ -14,5 +14,7 @@ export interface ICustomQueryRepo {
 
     search(filters: CustomQuerySearchFilters): Promise<CustomQuerySearchResults>;
 
+    update(id: uuid, updateModel: CustomQueryDomainModel): Promise<any>;
+
     delete(id: uuid): Promise<boolean>;
 }

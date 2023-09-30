@@ -86,6 +86,38 @@ export class CustomQueryController extends BaseController {
         }
     };
 
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('CustomQuery.Update', request, response);
+
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Query not found.');
+            }
+
+            const updated = await this._service.update(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update Query!');
+            }
+
+            const message = 'Query response retrieved successfully!';
+            if (domainModel.Format === 'CSV' || domainModel.Format === 'JSON'){
+                const filePath = updated.split('\\');
+                const fileName = filePath[filePath.length - 1];
+                response.setHeader('Content-disposition', 'attachment; filename=' + fileName);
+                response.sendFile(path.resolve(updated));
+            }
+            else {
+                ResponseHandler.success(request, response,message, 200, {
+                    Response : updated });
+            }
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('CustomQuery.Delete', request, response);

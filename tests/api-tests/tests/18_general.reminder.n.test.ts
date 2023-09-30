@@ -234,7 +234,7 @@ export const loadReminderThreeMonthsCreateModel = async (
         WhenTime              : "12:10:12",
         HookUrl               : faker.internet.url(),
         RepeatAfterEvery      : faker.number.int({ min: 2, max: 5 }),
-        RepeatAfterEveryNUnit : getRandomEnumValue(RepeatAfterEveryNUnit),
+        RepeatAfterEveryNUnit : 'Hour',
         StartDate             : startDate,
         EndDate               : endDate,
         EndAfterNRepetitions  : faker.number.int({ max: 200 }),

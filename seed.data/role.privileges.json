@@ -29,6 +29,8 @@
             "FileResource.Delete",
             "FileResource.DeleteVersionByVersionId",
             "Patient.Search",
+            "Patient.UpdateByUserId",
+            "Patient.GetByUserId",
             "Patient.GetPatientByPhone",
             "Organization.Create",
             "Organization.GetById",

@@ -97,6 +97,7 @@ export const NotificationTypeList: NotificationType [] = [
     NotificationType.WhatsApp,
     NotificationType.Telegram,
     NotificationType.Slack,
+    NotificationType.MicrosoftTeams,
 ];
 
 export interface ReminderDomainModel {

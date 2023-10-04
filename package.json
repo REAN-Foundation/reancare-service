@@ -9,7 +9,8 @@
     "lint": "eslint ./src/**",
     "lint:fix": "eslint ./src/** --fix",
     "test": "tsc && mocha --require ts-node/register --file ./tests/api-tests/init.ts --reporter spec --exit",
-    "test-debug": "NODE_ENV=test mocha --file ./tests/api-tests/init.ts --reporter spec --exit"
+    "test-debug": "NODE_ENV=test mocha --file ./tests/api-tests/init.ts --reporter spec --exit",
+    "pre-commit": "npm test -- --grep '^(?!kobotoolbox|careplan).*'"
   },
   "repository": {
     "type": "git",
@@ -21,10 +22,10 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.325.0",
     "@aws-sdk/client-ses": "^3.370.0",
-    "@faker-js/faker": "^8.0.2",
     "@aws-sdk/credential-provider-node": "^3.405.0",
     "@aws-sdk/lib-storage": "^3.405.0",
     "@aws-sdk/s3-request-presigner": "^3.405.0",
+    "@faker-js/faker": "^8.0.2",
     "@types/adm-zip": "^0.5.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.17",
@@ -101,6 +102,7 @@
     "eslint": "8.45.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
+    "husky": "^8.0.3",
     "mocha": "^10.2.0",
     "supertest": "^6.3.3",
     "ts-node": "^10.9.1",
@@ -110,5 +112,8 @@
     "projects": [
       "src/modules/ehr/jest.config.ts"
     ]
-  }
+  },
+  "husky": {
+     "hooks": { "pre-commit": "npm run pre-commit" } 
+    }
 }

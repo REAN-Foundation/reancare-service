@@ -146,6 +146,8 @@ export interface ReminderSearchFilters extends BaseSearchFilters {
     Name?            : string;
     ReminderType?    : string;
     NotificationType?: string;
+    WhenDate?        : string;
+    WhenTime?        : string;
 }
 
 export interface ReminderSearchResults extends BaseSearchResults {

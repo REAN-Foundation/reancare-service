@@ -36,7 +36,6 @@ import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/sympt
 import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
 import { HealthPriorityTypeDomainModel } from "../domain.types/users/patient/health.priority.type/health.priority.type.domain.model";
 import { HealthPriorityTypeList } from "../domain.types/users/patient/health.priority.type/health.priority.types";
-import { PatientDomainModel } from "../domain.types/users/patient/patient/patient.domain.model";
 import { DefaultRoles, Roles } from "../domain.types/role/role.types";
 import { UserDomainModel } from "../domain.types/users/user/user.domain.model";
 import { ApiClientService } from "../services/api.client/api.client.service";
@@ -169,8 +168,8 @@ export class Seeder {
     };
 
     private seedDefaultTenant = async () => {
-        const count = await this._tenantRepo.tenantCount();
-        if (count === 0) {
+        var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
+        if (defaultTenant == null) {
             var tenant: TenantDomainModel = {
                 Name        : 'default',
                 Description : 'Default tenant',
@@ -283,60 +282,26 @@ export class Seeder {
 
     private seedDefaultRoles = async () => {
 
+        const defaultTenant = await this._tenantRepo.getTenantWithCode('default');
+        if (defaultTenant == null) {
+            return;
+        }
+
         for await (const r of DefaultRoles) {
             const role = await this._roleRepo.getByName(r.Role);
             if (role == null) {
                 await this._roleRepo.create({
-                    RoleName     : r.Role,
-                    Description  : r.Description,
-                    TenantId     : null,
-                    IsSystemRole : r.IsSystemRole,
-                    IsUserRole   : r.IsUserRole,
+                    RoleName      : r.Role,
+                    Description   : r.Description,
+                    TenantId      : defaultTenant.id,
+                    IsSystemRole  : r.IsSystemRole,
+                    IsUserRole    : r.IsUserRole,
+                    IsDefaultRole : true,
                 });
             }
         }
 
         Logger.instance().log('Seeded default roles successfully!');
-    };
-
-    private seedInternalPatients = async () => {
-        try {
-            var numInternalTestUsers = parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS);
-            var arr = JSON.parse("[" + [...Array(numInternalTestUsers)].map((_, i) => 1000000001 + i * 1) + "]");
-            if (arr.length === numInternalTestUsers) {
-                for (let i = 0; i < arr.length; i++) {
-                    var phone = arr[i];
-                    var exists = await this._personRepo.personExistsWithPhone(phone.toString());
-                    if (!exists) {
-                        var added = await this.createTestPatient(phone.toString());
-                        if (added) {
-                            await this._internalTestUserRepo.create(phone.toString());
-                        }
-                    }
-                }
-            }
-        }
-        catch (error) {
-            Logger.instance().log('Error occurred while seeding internal test users!');
-        }
-        Logger.instance().log('Seeded internal-test-users successfully!');
-    };
-
-    private createTestPatient = async (phone: string): Promise<boolean> => {
-        var createModel: PatientDomainModel = {
-            User : {
-                Person : {
-                    Phone : phone
-                }
-            },
-            Address : null
-        };
-        var [patient, createdNew ] = await this._userHelper.createPatient(createModel);
-
-        const message = createdNew ? `Created new test patient with phone ${phone}!` : `Test patient with phone ${phone} already exists!`;
-        Logger.instance().log(message);
-
-        return patient != null;
     };
 
     private seedMedicationStockImages = async () => {
@@ -659,5 +624,44 @@ export class Seeder {
         }
 
     };
+
+    // private seedInternalPatients = async () => {
+    //     try {
+    //         var numInternalTestUsers = parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS);
+    //         var arr = JSON.parse("[" + [...Array(numInternalTestUsers)].map((_, i) => 1000000001 + i * 1) + "]");
+    //         if (arr.length === numInternalTestUsers) {
+    //             for (let i = 0; i < arr.length; i++) {
+    //                 var phone = arr[i];
+    //                 var exists = await this._personRepo.personExistsWithPhone(phone.toString());
+    //                 if (!exists) {
+    //                     var added = await this.createTestPatient(phone.toString());
+    //                     if (added) {
+    //                         await this._internalTestUserRepo.create(phone.toString());
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     catch (error) {
+    //         Logger.instance().log('Error occurred while seeding internal test users!');
+    //     }
+    //     Logger.instance().log('Seeded internal-test-users successfully!');
+    // };
+    //
+    // private createTestPatient = async (phone: string): Promise<boolean> => {
+    //     var createModel: PatientDomainModel = {
+    //         User : {
+    //             Person : {
+    //                 Phone : phone
+    //             }
+    //         },
+    //         Address : null
+    //     };
+    //     var [patient, createdNew ] = await this._userHelper.createPatient(createModel);
+    //     const message = createdNew ?
+    //      `Created new test patient with phone ${phone}!` : `Test patient with phone ${phone} already exists!`;
+    //     Logger.instance().log(message);
+    //     return patient != null;
+    // };
 
 }

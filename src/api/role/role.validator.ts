@@ -24,12 +24,13 @@ export class RoleValidator extends BaseValidator {
         const body = request.body;
 
         const model: RoleDomainModel = {
-            RoleName     : body.Name ?? null,
-            Description  : body.Description ?? null,
-            TenantId     : body.TenantId ?? null,
-            ParentRoleId : body.ParentRoleId ?? null,
-            IsSystemRole : body.IsSystemRole ?? false,
-            IsUserRole   : body.IsUserRole ?? false,
+            RoleName      : body.Name ?? null,
+            Description   : body.Description ?? null,
+            TenantId      : body.TenantId ?? null,
+            ParentRoleId  : body.ParentRoleId ?? null,
+            IsSystemRole  : body.IsSystemRole ?? false,
+            IsUserRole    : body.IsUserRole ?? false,
+            IsDefaultRole : false, //All roles added later are not default roles
         };
         return model;
     };
@@ -41,14 +42,16 @@ export class RoleValidator extends BaseValidator {
         await this.validateInt(request, 'parentRoleId', Where.Query, false, false);
         await this.validateBoolean(request, 'isSystemRole', Where.Query, false, false);
         await this.validateBoolean(request, 'isUserRole', Where.Query, false, false);
+        await this.validateBoolean(request, 'isDefaultRole', Where.Query, false, false);
         this.validateRequest(request);
 
         const model: RoleSearchFilters = {
-            RoleName     : request.query.name as string ?? null,
-            ParentRoleId : request.query.parentRoleId ? parseInt(request.query.parentRoleId as string) : null,
-            IsSystemRole : request.query.isSystemRole ? request.query.isSystemRole as string === 'true' : null,
-            IsUserRole   : request.query.isUserRole ? request.query.isUserRole as string === 'true' : null,
-            TenantId     : request.query.tenantId as string ?? null,
+            RoleName      : request.query.name as string ?? null,
+            ParentRoleId  : request.query.parentRoleId ? parseInt(request.query.parentRoleId as string) : null,
+            IsSystemRole  : request.query.isSystemRole ? request.query.isSystemRole as string === 'true' : null,
+            IsUserRole    : request.query.isUserRole ? request.query.isUserRole as string === 'true' : null,
+            TenantId      : request.query.tenantId as string ?? null,
+            IsDefaultRole : request.query.isDefaultRole ? request.query.isDefaultRole as string === 'true' : null,
         };
         return model;
     };

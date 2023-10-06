@@ -14,12 +14,13 @@ export class RoleRepo implements IRoleRepo {
     create = async (roleEntity: any): Promise<RoleDto> => {
         try {
             const entity = {
-                RoleName     : roleEntity.RoleName,
-                Description  : roleEntity.Description ?? null,
-                TenantId     : roleEntity.TenantId ?? null,
-                ParentRoleId : roleEntity.ParentRoleId ?? null,
-                IsSystemRole : roleEntity.IsSystemRole ?? false,
-                IsUserRole   : roleEntity.IsUserRole ?? false,
+                RoleName      : roleEntity.RoleName,
+                Description   : roleEntity.Description ?? null,
+                TenantId      : roleEntity.TenantId ?? null,
+                ParentRoleId  : roleEntity.ParentRoleId ?? null,
+                IsSystemRole  : roleEntity.IsSystemRole ?? false,
+                IsUserRole    : roleEntity.IsUserRole ?? false,
+                IsDefaultRole : roleEntity.IsDefaultRole ?? false,
             };
             const role = await Role.create(entity);
             const dto = RoleMapper.toDto(role);

@@ -8,11 +8,11 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new RoleController();
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
+    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
+    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
+    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
+    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
 
     app.use('/api/v1/roles', router);
 };

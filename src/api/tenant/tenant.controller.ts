@@ -28,6 +28,9 @@ export class TenantController extends BaseController{
         try {
             await this.setContext('Tenant.Create', request, response);
             const model = await this._validator.createOrUpdate(request, false);
+            if (model.Code === 'default') {
+                throw new ApiError(400, 'Cannot create tenant with code "default"!');
+            }
             const tenant = await this._service.create(model);
             if (tenant == null) {
                 throw new ApiError(400, 'Unable to create tenant.');
@@ -80,6 +83,9 @@ export class TenantController extends BaseController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            if (tenant.Code === 'default') {
+                throw new ApiError(400, 'Cannot update tenant with code "default"!');
+            }
             const domainModel = await this._validator.createOrUpdate(request, true);
             const updatedTenant = await this._service.update(id, domainModel);
             if (tenant == null) {
@@ -100,6 +106,9 @@ export class TenantController extends BaseController{
             const tenant = await this._service.getById(id);
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
+            }
+            if (tenant.Code === 'default') {
+                throw new ApiError(400, 'Cannot delete tenant with code "default"!');
             }
             const deleted = await this._service.delete(id);
             ResponseHandler.success(request, response, 'Tenant deleted successfully!', 200, {
@@ -156,9 +165,9 @@ export class TenantController extends BaseController{
         }
     };
 
-    addUserAsModeratorToTenant = async (request: express.Request, response: express.Response): Promise<void> => {
+    addUserAsRegularUserToTenant = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.AddUserAsModeratorToTenant', request, response);
+            await this.setContext('Tenant.AddUserAsRegularUserToTenant', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const tenant = await this._service.getById(id);
@@ -169,7 +178,7 @@ export class TenantController extends BaseController{
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
-            const added = await this._service.addUserAsModeratorToTenant(id, userId);
+            const added = await this._service.addUserAsRegularUserToTenant(id, userId);
             ResponseHandler.success(request, response, 'User added as moderator to tenant successfully!', 200, {
                 Added : added,
             });
@@ -179,9 +188,9 @@ export class TenantController extends BaseController{
         }
     };
 
-    removeUserAsModeratorFromTenant = async (request: express.Request, response: express.Response): Promise<void> => {
+    removeUserAsRegularUserFromTenant = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.RemoveUserAsModeratorFromTenant', request, response);
+            await this.setContext('Tenant.RemoveUserAsRegularUserFromTenant', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const tenant = await this._service.getById(id);
@@ -192,7 +201,7 @@ export class TenantController extends BaseController{
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
-            const removed = await this._service.removeUserAsModeratorFromTenant(id, userId);
+            const removed = await this._service.removeUserAsRegularUserFromTenant(id, userId);
             ResponseHandler.success(request, response, 'User removed as moderator from tenant successfully!', 200, {
                 Removed : removed,
             });
@@ -238,15 +247,15 @@ export class TenantController extends BaseController{
         }
     };
 
-    getTenantModerators = async (request: express.Request, response: express.Response): Promise<void> => {
+    getTenantRegularUsers = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.GetTenantModerators', request, response);
+            await this.setContext('Tenant.GetTenantRegularUsers', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
-            const moderators = await this._service.getTenantModerators(id);
+            const moderators = await this._service.getTenantRegularUsers(id);
             ResponseHandler.success(request, response, 'Tenant moderators retrieved successfully!', 200, {
                 Moderators : moderators,
             });

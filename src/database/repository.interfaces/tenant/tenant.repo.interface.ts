@@ -34,14 +34,14 @@ export interface ITenantRepo {
 
     removeUserAsAdminFromTenant(id: uuid, userId: uuid): Promise<boolean>;
 
-    addUserAsModeratorToTenant(id: uuid, userId: uuid): Promise<boolean>;
+    addUserAsRegularUserToTenant(id: uuid, userId: uuid): Promise<boolean>;
 
-    removeUserAsModeratorFromTenant(id: uuid, userId: uuid): Promise<boolean>;
+    removeUserAsRegularUserFromTenant(id: uuid, userId: uuid): Promise<boolean>;
 
     getTenantStats(id: uuid): Promise<any>;
 
     getTenantAdmins(id: uuid): Promise<any[]>;
 
-    getTenantModerators(id: uuid): Promise<any[]>;
+    getTenantRegularUsers(id: uuid): Promise<any[]>;
 
 }

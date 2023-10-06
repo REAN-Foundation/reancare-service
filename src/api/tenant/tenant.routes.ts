@@ -15,12 +15,12 @@ export const register = (app: express.Application): void => {
 
     router.post('/:id/add-user-as-admin', authenticator.authenticateUser, controller.addUserAsAdminToTenant);
     router.post('/:id/remove-user-as-admin', authenticator.authenticateUser, controller.removeUserAsAdminFromTenant);
-    router.post('/:id/add-user-as-moderator', authenticator.authenticateUser, controller.addUserAsModeratorToTenant);
-    router.post('/:id/remove-user-as-moderator', authenticator.authenticateUser, controller.removeUserAsModeratorFromTenant);
+    router.post('/:id/add-user-as-regular-user', authenticator.authenticateUser, controller.addUserAsRegularUserToTenant);
+    router.post('/:id/remove-user-as-regular-user', authenticator.authenticateUser, controller.removeUserAsRegularUserFromTenant);
 
     router.get('/:id/stats', authenticator.authenticateUser, controller.getTenantStats);
     router.get('/:id/admins', authenticator.authenticateUser, controller.getTenantAdmins);
-    router.get('/:id/moderators', authenticator.authenticateUser, controller.getTenantModerators);
+    router.get('/:id/regular-users', authenticator.authenticateUser, controller.getTenantRegularUsers);
 
     router.get('/:id', authenticator.authenticateUser, controller.getById);
 

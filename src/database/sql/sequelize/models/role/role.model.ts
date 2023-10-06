@@ -88,6 +88,13 @@ export default class Role extends Model {
     })
     IsUserRole: boolean;
 
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    IsDefaultRole: boolean;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

@@ -61,12 +61,12 @@ export class TenantService {
         return await this._tenantRepo.removeUserAsAdminFromTenant(id, userId);
     };
 
-    public addUserAsModeratorToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.addUserAsModeratorToTenant(id, userId);
+    public addUserAsRegularUserToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+        return await this._tenantRepo.addUserAsRegularUserToTenant(id, userId);
     };
 
-    public removeUserAsModeratorFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.removeUserAsModeratorFromTenant(id, userId);
+    public removeUserAsRegularUserFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+        return await this._tenantRepo.removeUserAsRegularUserFromTenant(id, userId);
     };
 
     public getTenantStats = async (id: uuid): Promise<any> => {
@@ -77,8 +77,8 @@ export class TenantService {
         return await this._tenantRepo.getTenantAdmins(id);
     };
 
-    public getTenantModerators = async (id: uuid): Promise<any[]> => {
-        return await this._tenantRepo.getTenantModerators(id);
+    public getTenantRegularUsers = async (id: uuid): Promise<any[]> => {
+        return await this._tenantRepo.getTenantRegularUsers(id);
     };
 
     //#endregion

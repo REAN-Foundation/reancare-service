@@ -71,12 +71,19 @@ export class RoleController extends BaseController{
         try {
             const roleId: number = await this._validator.getParamInt(req, 'id');
             const roleDomainModel = await this._validator.update(req);
-            const role = await this._service.update(roleId, roleDomainModel);
+            const role = await this._service.getById(roleId);
             if (role == null) {
+                throw new ApiError(404, 'Role not found.');
+            }
+            if (role.IsDefaultRole) {
+                throw new ApiError(400, 'Default role cannot be updated.');
+            }
+            const updatedRole = await this._service.update(roleId, roleDomainModel);
+            if (updatedRole == null) {
                 throw new ApiError(400, 'Unable to update role!');
             }
             ResponseHandler.success(req, res, 'Role updated successfully!', 200, {
-                Role : role,
+                Role : updatedRole,
             });
         } catch (error) {
             ResponseHandler.handleError(req, res, error);
@@ -86,6 +93,13 @@ export class RoleController extends BaseController{
     delete = async (req: express.Request, res: express.Response): Promise<void> => {
         try {
             const roleId: number = await this._validator.getParamInt(req, 'id');
+            const role = await this._service.getById(roleId);
+            if (role == null) {
+                throw new ApiError(404, 'Role not found.');
+            }
+            if (role.IsDefaultRole) {
+                throw new ApiError(400, 'Default role cannot be deleted.');
+            }
             const success: boolean = await this._service.delete(roleId);
             if (!success) {
                 throw new ApiError(400, 'Role cannot be deleted.');

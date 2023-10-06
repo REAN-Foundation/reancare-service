@@ -232,7 +232,7 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
-    addUserAsModeratorToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+    addUserAsRegularUserToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
         try {
             var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
             if (tenantUser == null) {
@@ -255,7 +255,7 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
-    removeUserAsModeratorFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+    removeUserAsRegularUserFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
         try {
             var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
             if (tenantUser == null) {
@@ -344,7 +344,7 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
-    getTenantModerators = async (id: uuid): Promise<any[]> => {
+    getTenantRegularUsers = async (id: uuid): Promise<any[]> => {
         try {
             const tenantUsers = await TenantUser.findAll({
                 where : {

@@ -513,4 +513,10 @@ export class TimeHelper {
         return [date.getFullYear(), mnth, day].join("-");
     };
 
+    static formatTimeTo_HH_MM_A(timeString) {
+        const [hourString, minute] = timeString.split(":");
+        const hour = +hourString % 24;
+        return (hour % 12 || 12) + ":" + minute + (hour < 12 ? " AM" : " PM");
+    }
+
 }

@@ -13,6 +13,7 @@ import * as asyncLib from 'async';
 import axios from 'axios';
 import { IUserDeviceDetailsRepo } from "../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
 import { INotificationService } from "../../modules/communication/notification.service/notification.service.interface";
+import { TimeHelper } from "../../common/time.helper";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -158,8 +159,8 @@ export class ReminderSenderService {
     private static constructMessage(schedule: any, reminder: any) {
         const duration = dayjs.duration(dayjs(schedule.Schedule).diff(dayjs()));
         const minutes = Math.ceil(duration.asMinutes());
-        Logger.instance().log(`Sending reminder for ${dayjs(schedule.Schedule).format('hh:mm:ss')}`);
-        const message = `You have a reminder: '${reminder.Name}' in ${minutes} minutes at ${dayjs(schedule.Schedule).format('hh:mm:ss')}. Thank you.`;
+        Logger.instance().log(`Sending reminder for ${TimeHelper.formatTimeTo_HH_MM_A(reminder.WhenTime)}`);
+        const message = `${reminder.Name} in ${minutes} minutes at ${TimeHelper.formatTimeTo_HH_MM_A(reminder.WhenTime)}.`;
         return message;
     }
 

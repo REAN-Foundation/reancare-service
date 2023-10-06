@@ -159,8 +159,8 @@ export class ReminderSenderService {
     private static constructMessage(schedule: any, reminder: any) {
         const duration = dayjs.duration(dayjs(schedule.Schedule).diff(dayjs()));
         const minutes = Math.ceil(duration.asMinutes());
-        Logger.instance().log(`Sending reminder for ${TimeHelper.formatTimeTo_HH_MM_A(reminder.WhenTime)}`);
-        const message = `${reminder.Name} in ${minutes} minutes at ${TimeHelper.formatTimeTo_HH_MM_A(reminder.WhenTime)}.`;
+        Logger.instance().log(`Sending reminder for ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}`);
+        const message = `${reminder.Name} in ${minutes} minutes at ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}.`;
         return message;
     }
 

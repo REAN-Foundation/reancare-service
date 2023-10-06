@@ -29,6 +29,23 @@ export class UserController {
 
     //#endregion
 
+    create = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'User.Create';
+
+            const domainModel = await UserValidator.create(request);
+            const user = await this._service.create(domainModel);
+            if (user == null) {
+                throw new ApiError(400, 'Cannot create user!');
+            }
+            ResponseHandler.success(request, response, 'User created successfully!', 201, {
+                User : user,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GetById';

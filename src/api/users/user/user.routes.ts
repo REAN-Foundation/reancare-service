@@ -26,6 +26,7 @@ export const register = (app: express.Application): void => {
     router.post('/logout', authenticator.authenticateClient, authenticator.authenticateUser, controller.logout);
 
     router.post('/access-token/:refreshToken', authenticator.authenticateClient, controller.rotateUserAccessToken);
+    router.post('/', authenticator.authenticateClient, controller.create);
 
     app.use('/api/v1/users', router);
 };

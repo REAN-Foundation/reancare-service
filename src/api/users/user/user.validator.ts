@@ -2,12 +2,121 @@ import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
-import { UserExistanceModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
+import { UserDomainModel, UserExistanceModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserSearchFilters } from '../../../domain.types/users/user/user.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class UserValidator {
+
+    static create = async (request: express.Request): Promise<UserDomainModel> => {
+
+        await body('TenantId').exists()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await body('RoleId').exists()
+            .trim()
+            .isNumeric()
+            .run(request);
+
+        await body('Prefix').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('FirstName').exists()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('MiddleName').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('LastName').exists()
+            .trim()
+            .escape()
+            .run(request);
+
+        await oneOf([
+            body('Phone').optional()
+                .trim()
+                .escape(),
+            body('Email').optional()
+                .trim()
+                .escape(),
+            body('UserName').optional()
+                .trim()
+                .escape(),
+        ]).run(request);
+
+        await body('Password').exists()
+            .trim()
+            .escape()
+            .isStrongPassword({
+                minLength                 : 8,
+                minLowercase              : 1,
+                minUppercase              : 1,
+                minNumbers                : 1,
+                minSymbols                : 1,
+                returnScore               : false,
+                pointsPerUnique           : 1,
+                pointsPerRepeat           : 0.5,
+                pointsForContainingLower  : 10,
+                pointsForContainingUpper  : 10,
+                pointsForContainingNumber : 10,
+                pointsForContainingSymbol : 10,
+            })
+            .run(request);
+
+        await body('DefaultTimeZone').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('CurrentTimeZone').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('IsTestUser').optional()
+            .isBoolean()
+            .run(request);
+
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        return UserValidator.getCreateModel(request);
+
+    };
+
+    private static getCreateModel(request): UserDomainModel {
+
+        const model: UserDomainModel = {
+            TenantId : request.body.TenantId,
+            RoleId   : request.body.RoleId,
+            Person   : {
+                Prefix     : request.body.Prefix ?? null,
+                FirstName  : request.body.FirstName,
+                MiddleName : request.body.MiddleName ?? null,
+                LastName   : request.body.LastName,
+                Phone      : request.body.Phone ?? null,
+                Email      : request.body.Email ?? null,
+            },
+            UserName        : request.body.UserName ?? null,
+            Password        : request.body.Password,
+            DefaultTimeZone : request.body.DefaultTimeZone ?? null,
+            CurrentTimeZone : request.body.CurrentTimeZone ?? null,
+            IsTestUser      : request.body.IsTestUser ?? false,
+        };
+
+        return model;
+    }
 
     static getById = async (request: express.Request): Promise<string> => {
 
@@ -179,6 +288,11 @@ export class UserValidator {
             await body('LoginRoleId').exists()
                 .trim()
                 .isNumeric()
+                .run(request);
+
+            await body('TenantId').exists()
+                .trim()
+                .isUUID()
                 .run(request);
 
             const result = validationResult(request);

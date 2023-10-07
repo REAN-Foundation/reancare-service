@@ -10,13 +10,13 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new CareplanController();
 
-    router.get('/eligibility/:patientUserId/providers/:provider/careplans/:careplanCode', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientEligibility);
-    router.get('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAvailableCareplans);
-    router.post('/patients/:patientUserId/enroll', authenticator.authenticateClient, authenticator.authenticateUser, controller.enroll);
-    router.get('/patients/:patientUserId/enrollments', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientEnrollments);
-    router.get('/:id/fetch-tasks', authenticator.authenticateClient, authenticator.authenticateUser, controller.fetchTasks);
-    router.get('/:id/weekly-status', authenticator.authenticateClient, authenticator.authenticateUser, controller.getWeeklyStatus);
-    router.post('/patients/update-risk', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateRisk);
+    router.get('/eligibility/:patientUserId/providers/:provider/careplans/:careplanCode', authenticator.authenticateUser, controller.getPatientEligibility);
+    router.get('/', authenticator.authenticateUser, controller.getAvailableCareplans);
+    router.post('/patients/:patientUserId/enroll', authenticator.authenticateUser, controller.enroll);
+    router.get('/patients/:patientUserId/enrollments', authenticator.authenticateUser, controller.getPatientEnrollments);
+    router.get('/:id/fetch-tasks', authenticator.authenticateUser, controller.fetchTasks);
+    router.get('/:id/weekly-status', authenticator.authenticateUser, controller.getWeeklyStatus);
+    router.post('/patients/update-risk', authenticator.authenticateUser, controller.updateRisk);
 
     app.use('/api/v1/care-plans', router);
 };

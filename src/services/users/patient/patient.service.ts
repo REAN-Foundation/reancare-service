@@ -6,6 +6,7 @@ import { IPersonRepo } from '../../../database/repository.interfaces/person/pers
 import { IPersonRoleRepo } from '../../../database/repository.interfaces/person/person.role.repo.interface';
 import { IRoleRepo } from '../../../database/repository.interfaces/role/role.repo.interface';
 import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
+import { ITenantRepo } from '../../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { IHealthProfileRepo } from '../../../database/repository.interfaces/users/patient/health.profile.repo.interface';
 import { CurrentUser } from '../../../domain.types/miscellaneous/current.user';
 import { PatientDomainModel } from '../../../domain.types/users/patient/patient/patient.domain.model';
@@ -30,6 +31,7 @@ export class PatientService {
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
@@ -77,18 +79,18 @@ export class PatientService {
             items.push(dto);
         }
 
-        if (items.length > 0) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const currentUser: CurrentUser = {
-                UserId        : items[0].id,
-                DisplayName   : items[0].DisplayName,
-                Phone         : items[0].Phone,
-                Email         : items[0].Email,
-                UserName      : items[0].UserName,
-                CurrentRoleId : 2,
-            };
+        // if (items.length > 0) {
+        //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        //     const currentUser: CurrentUser = {
+        //         UserId        : items[0].id,
+        //         DisplayName   : items[0].DisplayName,
+        //         Phone         : items[0].Phone,
+        //         Email         : items[0].Email,
+        //         UserName      : items[0].UserName,
+        //         CurrentRoleId : 2,
+        //     };
+        // }
 
-        }
         results.Items = items;
         return results;
     };
@@ -96,6 +98,7 @@ export class PatientService {
     public getPatientByPhone = async (
         filters: PatientSearchFilters
     ): Promise<PatientDetailsSearchResults | PatientSearchResults> => {
+
         var items = [];
         var results = await this._patientRepo.search(filters);
         for await (var dto of results.Items) {
@@ -103,9 +106,13 @@ export class PatientService {
             items.push(dto);
         }
 
+        var tenant = await this._tenantRepo.getTenantWithCode('default');
+
         if (items.length > 0) {
             const currentUser: CurrentUser = {
                 UserId        : items[0].id,
+                TenantId      : tenant.id,
+                TenantCode    : tenant.Code,
                 DisplayName   : items[0].DisplayName,
                 Phone         : items[0].Phone,
                 Email         : items[0].Email,

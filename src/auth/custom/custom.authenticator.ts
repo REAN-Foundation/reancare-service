@@ -3,13 +3,12 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { UserService } from '../../services/users/user/user.service';
 import { Logger } from '../../common/logger';
 import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
-import { CurrentClient } from '../../domain.types/miscellaneous/current.client';
 import { ApiClientService } from '../../services/api.client/api.client.service';
+import { TenantService } from '../../services/tenant/tenant.service';
 import { Loader } from '../../startup/loader';
 import { IAuthenticator } from '../authenticator.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { ConfigurationManager } from '../../config/configuration.manager';
-//import Terra  from 'terra-api';
 
 //////////////////////////////////////////////////////////////
 
@@ -19,9 +18,12 @@ export class CustomAuthenticator implements IAuthenticator {
 
     _userService: UserService = null;
 
+    _tenantService: TenantService = null;
+
     constructor() {
         this._clientService = Loader.container.resolve(ApiClientService);
         this._userService = Loader.container.resolve(UserService);
+        this._tenantService = Loader.container.resolve(TenantService);
     }
 
     public authenticateUser = async (
@@ -101,47 +103,6 @@ export class CustomAuthenticator implements IAuthenticator {
         }
     };
 
-    public authenticateClient = async (request: express.Request): Promise<AuthenticationResult> => {
-        try {
-            var res: AuthenticationResult = {
-                Result        : true,
-                Message       : 'Authenticated',
-                HttpErrorCode : 200,
-            };
-            let apiKey: string = request.headers['x-api-key'] as string;
-
-            if (!apiKey) {
-                res = {
-                    Result        : false,
-                    Message       : 'Missing API key for the client',
-                    HttpErrorCode : 401,
-                };
-                return res;
-            }
-            apiKey = apiKey.trim();
-
-            const client: CurrentClient = await this._clientService.isApiKeyValid(apiKey);
-            if (!client) {
-                res = {
-                    Result        : false,
-                    Message       : 'Invalid API Key: Forbidden access',
-                    HttpErrorCode : 403,
-                };
-                return res;
-            }
-            request.currentClient = client;
-
-        } catch (err) {
-            Logger.instance().log(JSON.stringify(err, null, 2));
-            res = {
-                Result        : false,
-                Message       : 'Error authenticating client',
-                HttpErrorCode : 401,
-            };
-        }
-        return res;
-    };
-
     public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
         return new Promise((resolve, reject) => {
             try {
@@ -162,6 +123,7 @@ export class CustomAuthenticator implements IAuthenticator {
         const payload = jwt.verify(refreshToken, process.env.USER_REFRESH_TOKEN_SECRET) as JwtPayload;
         const userId = payload.userId;
         const sessionId = payload.sessionId;
+        const tenantId = payload.tenantId;
         var isValidUserLoginSession = await this._userService.isValidUserLoginSession(sessionId);
         if (!isValidUserLoginSession) {
             throw ('Invalid or expired user login session.');
@@ -170,8 +132,11 @@ export class CustomAuthenticator implements IAuthenticator {
         if (!user) {
             throw ('Invalid user');
         }
+        const tenant = await this._tenantService.getById(tenantId);
         var currentUser: CurrentUser = {
             UserId        : user.id,
+            TenantId      : tenant.id,
+            TenantCode    : tenant.Code,
             DisplayName   : user.Person.DisplayName,
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,
@@ -183,14 +148,15 @@ export class CustomAuthenticator implements IAuthenticator {
         return accessToken;
     };
 
-    public generateRefreshToken = async (userId: string, sessionId: string): Promise<string> => {
+    public generateRefreshToken = async (userId: string, sessionId: string, tenantId: string): Promise<string> => {
         return new Promise((resolve, reject) => {
             try {
                 const expiresIn: number = ConfigurationManager.RefreshTokenExpiresInSeconds();
                 var seconds = expiresIn.toString() + 's';
                 const payload = {
                     userId,
-                    sessionId
+                    sessionId,
+                    tenantId
                 };
                 const token = jwt.sign(payload, process.env.USER_REFRESH_TOKEN_SECRET, { expiresIn: seconds });
                 resolve(token);
@@ -198,44 +164,6 @@ export class CustomAuthenticator implements IAuthenticator {
                 reject(error);
             }
         });
-    };
-
-    public authenticateTerra = async (request: express.Request): Promise<AuthenticationResult> => {
-        try {
-            var res: AuthenticationResult = {
-                Result        : true,
-                Message       : 'Authenticated',
-                HttpErrorCode : 200,
-            };
-            if (!process.env.TERRA_DEV_ID && !process.env.TERRA_API_KEY) {
-                res = {
-                    Result        : false,
-                    Message       : 'Missing API key for the client',
-                    HttpErrorCode : 401,
-                };
-                return res;
-            }
-            //const terra = new Terra(process.env.TERRA_DEV_ID, process.env.TERRA_API_KEY, process.env.TERRA_SIGNING_SECRET);
-            const devId = request.headers['dev-id'];
-            //const verified = terra.checkTerraSignature(terraSiganture.toString() , request.body);
-            if (!(devId.toString() === process.env.TERRA_DEV_ID)) {
-                res = {
-                    Result        : false,
-                    Message       : 'Invalid Signing Secret: Forbidden access',
-                    HttpErrorCode : 403,
-                };
-                return res;
-            }
-
-        } catch (err) {
-            Logger.instance().log(JSON.stringify(err, null, 2));
-            res = {
-                Result        : false,
-                Message       : 'Error authenticating client',
-                HttpErrorCode : 401,
-            };
-        }
-        return res;
     };
 
 }

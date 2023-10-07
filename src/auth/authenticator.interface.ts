@@ -7,14 +7,10 @@ export interface IAuthenticator {
 
     authenticateUser(request: express.Request) : Promise<AuthenticationResult>;
 
-    authenticateClient(request: express.Request) : Promise<AuthenticationResult>;
-
     generateUserSessionToken(user: CurrentUser): Promise<string>;
 
-    generateRefreshToken(userId: uuid, sessionId: uuid): Promise<string>;
+    generateRefreshToken(userId: uuid, sessionId: uuid, tenantId: string): Promise<string>;
 
     rotateUserSessionToken(refreshToken: string): Promise<string>;
-
-    authenticateTerra(request: express.Request) : Promise<AuthenticationResult>;
 
 }

@@ -10,6 +10,7 @@ import Person from "../../../models/person/person.model";
 import User from '../../../models/users/user/user.model';
 import Tenant from '../../../models/tenant/tenant.model';
 import TenantUser from '../../../models/tenant/tenant.user.model';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -240,6 +241,57 @@ export class UserRepo implements IUserRepo {
             return null;
         }
         return user.Password;
+    };
+
+    checkUsersWithoutTenants = async (): Promise<void> => {
+        try {
+
+            const tentant = await Tenant.findOne({
+                where : {
+                    Code : 'default'
+                }
+            });
+
+            const users = await User.findAll({
+                attributes : ['id']
+            });
+
+            for await (const user of users) {
+                var tenantUser = await TenantUser.findOne({
+                    where : {
+                        UserId : user.id
+                    }
+                });
+                if (tenantUser == null) {
+                    await TenantUser.create({
+                        UserId    : user.id,
+                        TenantId  : tentant.id,
+                        Admin     : false,
+                        Moderator : false
+                    });
+                    // Logger.instance().log(`Tenant user associated: ${JSON.stringify(x)}`);
+                }
+            }
+        }   catch (error) {
+            Logger.instance().log(error.message);
+            //throw new ApiError(500, error.message);
+        }
+    };
+
+    public isTenantUser = async (userId: uuid, tenantId: uuid): Promise<boolean> => {
+        try {
+            var tenantUser = await TenantUser.findOne({
+                where : {
+                    UserId   : userId,
+                    TenantId : tenantId
+                }
+            });
+            return tenantUser != null;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
 }

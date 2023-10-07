@@ -4,7 +4,8 @@ import { PatientDetailsDto, PatientDto } from "./patient.dto";
 
 //////////////////////////////////////////////////////////////////////////////////
 
-export interface PatientSearchFilters extends BaseSearchFilters{
+export interface PatientSearchFilters extends BaseSearchFilters {
+    TenantId?       : string;
     Phone?          : string;
     Email?          : string;
     Name?           : string;

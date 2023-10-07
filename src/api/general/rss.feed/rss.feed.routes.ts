@@ -16,16 +16,16 @@ export const register = (app: express.Application): void => {
     router.get('/:id/json', controller.getJsonFeed);
 
     //Protected routes
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', authenticator.authenticateUser, controller.create);
+    router.get('/search', authenticator.authenticateUser, controller.search);
+    router.get('/:id', authenticator.authenticateUser, controller.getById);
+    router.put('/:id', authenticator.authenticateUser, controller.update);
+    router.delete('/:id', authenticator.authenticateUser, controller.delete);
 
-    router.post('/feed-items', authenticator.authenticateClient, authenticator.authenticateUser, controller.addFeedItem);
-    router.get('/feed-items/:itemId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getFeedItemById);
-    router.put('/feed-items/:itemId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateFeedItem);
-    router.delete('/feed-items/:itemId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteFeedItem);
+    router.post('/feed-items', authenticator.authenticateUser, controller.addFeedItem);
+    router.get('/feed-items/:itemId', authenticator.authenticateUser, controller.getFeedItemById);
+    router.put('/feed-items/:itemId', authenticator.authenticateUser, controller.updateFeedItem);
+    router.delete('/feed-items/:itemId', authenticator.authenticateUser, controller.deleteFeedItem);
 
     app.use('/api/v1/rss-feeds', router);
 };

@@ -8,12 +8,13 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new PatientController();
 
-    router.post('/', authenticator.authenticateClient, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/byPhone', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientByPhone);
-    router.get('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByUserId);
-    router.put('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateByUserId);
-    router.delete('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteByUserId);
+    router.post('/', controller.create);
+    router.get('/search', authenticator.authenticateUser, controller.search);
+    router.get('/byPhone', authenticator.authenticateUser, controller.getPatientByPhone);
+    router.get('/by-phone', authenticator.authenticateUser, controller.getPatientByPhone);
+    router.get('/:userId', authenticator.authenticateUser, controller.getByUserId);
+    router.put('/:userId', authenticator.authenticateUser, controller.updateByUserId);
+    router.delete('/:userId', authenticator.authenticateUser, controller.deleteByUserId);
 
     app.use('/api/v1/patients', router);
 };

@@ -26,7 +26,9 @@ import { IUserDeviceDetailsRepo } from '../../../database/repository.interfaces/
 import { IPatientRepo } from '../../../database/repository.interfaces/users/patient/patient.repo.interface';
 import { IAssessmentTemplateRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface';
 import { IAssessmentRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface';
+import { ITenantRepo } from '../../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { IUserTaskRepo } from '../../../database/repository.interfaces/users/user/user.task.repo.interface';
+import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +48,7 @@ export class UserService {
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
     ) {}
 
     //#region Publics
@@ -102,10 +104,10 @@ export class UserService {
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
 
-        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
-
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
+        var tenant = await this.checkTenant(loginModel, user);
 
+        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
         if (!isTestUser) {
             const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
             const isPasswordValid = Helper.compare(loginModel.Password, hashedPassword);
@@ -134,6 +136,8 @@ export class UserService {
 
         var currentUser: CurrentUser = {
             UserId        : user.id,
+            TenantId      : tenant.id,
+            TenantCode    : tenant.Code,
             DisplayName   : user.Person.DisplayName,
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,
@@ -146,7 +150,7 @@ export class UserService {
         const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
         var refreshToken = null;
         if (ConfigurationManager.UseRefreshToken()) {
-            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId);
+            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId, tenant.id);
         }
 
         return {
@@ -228,6 +232,12 @@ export class UserService {
         var isTestUser = await this.isInternalTestUser(loginModel.Phone);
 
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
+        var tenant = await this.checkTenant(loginModel, user);
+
+        var isTenantUser = await this._userRepo.isTenantUser(user.id, loginModel.TenantId);
+        if (!isTenantUser) {
+            throw new ApiError(401, 'User does not belong to the given tenant.');
+        }
 
         if (!isTestUser) {
             const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
@@ -260,6 +270,8 @@ export class UserService {
 
         var currentUser: CurrentUser = {
             UserId        : user.id,
+            TenantId      : tenant.id,
+            TenantCode    : tenant.Code,
             DisplayName   : user.Person.DisplayName,
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,
@@ -272,7 +284,7 @@ export class UserService {
         const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
         var refreshToken = null;
         if (ConfigurationManager.UseRefreshToken()) {
-            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId);
+            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId, tenant.id);
         }
 
         return {
@@ -377,6 +389,18 @@ export class UserService {
 
         const isValidLoginSession = await this._userLoginSessionRepo.isValidUserLoginSession(sessionId);
         return isValidLoginSession;
+    };
+
+    private checkTenant = async (loginModel: UserLoginDetails, user: UserDetailsDto): Promise<TenantDto> => {
+        var tenant = await this.getTenant(loginModel.TenantId, loginModel.TenantCode);
+        if (tenant == null) {
+            throw new ApiError(404, 'Tenant not found.');
+        }
+        var isTenantUser = await this._userRepo.isTenantUser(user.id, tenant.id);
+        if (!isTenantUser) {
+            throw new ApiError(401, 'User does not belong to the given tenant.');
+        }
+        return tenant;
     };
 
     //#endregion
@@ -487,6 +511,17 @@ export class UserService {
             isTestUser = true;
         }
         return isTestUser;
+    };
+
+    private getTenant = async (tenantId: uuid, tenantCode: string): Promise<TenantDto> => {
+        var tenant = null;
+        if (tenantId != null) {
+            tenant = await this._tenantRepo.getById(tenantId);
+        }
+        if (tenant == null && tenantCode != null) {
+            tenant = await this._tenantRepo.getTenantWithCode(tenantCode);
+        }
+        return tenant;
     };
 
     //#endregion

@@ -8,6 +8,7 @@ declare global{
             currentClient: CurrentClient
             context: string,
             resourceType: string,
+            tenantId: string,
             resourceId: string | number | null | undefined
             resourceOwnerUserId: string
         }

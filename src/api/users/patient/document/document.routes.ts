@@ -10,17 +10,17 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new DocumentController();
 
-    router.get('/types', authenticator.authenticateClient, authenticator.authenticateUser, controller.getTypes);
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.upload);
-    router.put('/:id/rename', authenticator.authenticateClient, authenticator.authenticateUser, controller.rename);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
+    router.get('/types', authenticator.authenticateUser, controller.getTypes);
+    router.post('/', authenticator.authenticateUser, controller.upload);
+    router.put('/:id/rename', authenticator.authenticateUser, controller.rename);
+    router.put('/:id', authenticator.authenticateUser, controller.update);
 
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id/download', authenticator.authenticateClient, authenticator.authenticateUser, controller.download);
-    router.get('/:id/share', authenticator.authenticateClient, authenticator.authenticateUser, controller.share);
+    router.get('/search', authenticator.authenticateUser, controller.search);
+    router.get('/:id/download', authenticator.authenticateUser, controller.download);
+    router.get('/:id/share', authenticator.authenticateUser, controller.share);
 
-    router.get('/:id/', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.get('/:id/', authenticator.authenticateUser, controller.getById);
+    router.delete('/:id', authenticator.authenticateUser, controller.delete);
 
     app.use('/api/v1/patient-documents', router);
 };

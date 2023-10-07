@@ -10,25 +10,25 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new OrganizationController();
 
-    router.post('/', authenticator.authenticateClient, controller.create);
+    router.post('/', controller.create);
 
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
+    router.get('/search', authenticator.authenticateUser, controller.search);
 
-    router.get('/by-contact-user/:contactUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByContactUserId);
-    router.get('/:id/addresses', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAddresses);
-    router.get('/:id/persons', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPersons);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
+    router.get('/by-contact-user/:contactUserId', authenticator.authenticateUser, controller.getByContactUserId);
+    router.get('/:id/addresses', authenticator.authenticateUser, controller.getAddresses);
+    router.get('/:id/persons', authenticator.authenticateUser, controller.getPersons);
+    router.get('/:id', authenticator.authenticateUser, controller.getById);
 
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.put('/:id', authenticator.authenticateUser, controller.update);
+    router.delete('/:id', authenticator.authenticateUser, controller.delete);
 
     //Addresses
-    router.post('/:id/add-address/:addressId', authenticator.authenticateClient, authenticator.authenticateUser, controller.addAddress);
-    router.post('/:id/remove-address/:addressId', authenticator.authenticateClient, authenticator.authenticateUser, controller.removeAddress);
+    router.post('/:id/add-address/:addressId', authenticator.authenticateUser, controller.addAddress);
+    router.post('/:id/remove-address/:addressId', authenticator.authenticateUser, controller.removeAddress);
 
     //Persons
-    router.post('/:id/add-person/:personId', authenticator.authenticateClient, authenticator.authenticateUser, controller.addPerson);
-    router.post('/:id/remove-person/:personId', authenticator.authenticateClient, authenticator.authenticateUser, controller.removePerson);
+    router.post('/:id/add-person/:personId', authenticator.authenticateUser, controller.addPerson);
+    router.post('/:id/remove-person/:personId', authenticator.authenticateUser, controller.removePerson);
 
     app.use('/api/v1/organizations', router);
 };

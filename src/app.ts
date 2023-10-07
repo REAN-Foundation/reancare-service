@@ -14,6 +14,7 @@ import { Loader } from './startup/loader';
 import { AwardsFactsService } from './modules/awards.facts/awards.facts.service';
 import { DatabaseClient } from './common/database.utils/dialect.clients/database.client';
 import { DatabaseSchemaType } from './common/database.utils/database.config';
+import ClientAppAuthMiddleware from './middlewares/client.app.auth.middleware';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -90,6 +91,8 @@ export default class Application {
                 this._app.use(express.json( { limit: '50mb' }));
                 this._app.use(helmet());
                 this._app.use(cors());
+
+                this._app.use(ClientAppAuthMiddleware.authenticateClient);
 
                 const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
 

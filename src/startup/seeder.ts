@@ -142,6 +142,7 @@ export class Seeder {
         try {
             await this.createTempFolders();
             await this.seedDefaultTenant();
+            await this.checkUsersWithoutTenants();
             await this.seedDefaultRoles();
             await this.seedRolePrivileges();
             await this.seedInternalClients();
@@ -184,6 +185,10 @@ export class Seeder {
             var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
             return defaultTenant;
         }
+    };
+
+    private checkUsersWithoutTenants = async () => {
+        await this._userRepo.checkUsersWithoutTenants();
     };
 
     private seedRolePrivileges = async () => {

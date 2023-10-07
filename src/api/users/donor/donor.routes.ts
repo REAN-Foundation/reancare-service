@@ -8,11 +8,11 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new DonorController();
 
-    router.post('/', authenticator.authenticateClient, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByUserId);
-    router.put('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateByUserId);
-    router.delete('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', controller.create);
+    router.get('/search', authenticator.authenticateUser, controller.search);
+    router.get('/:userId', authenticator.authenticateUser, controller.getByUserId);
+    router.put('/:userId', authenticator.authenticateUser, controller.updateByUserId);
+    router.delete('/:userId', authenticator.authenticateUser, controller.delete);
 
     app.use('/api/v1/donors', router);
 };

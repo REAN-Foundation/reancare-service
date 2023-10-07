@@ -35,29 +35,7 @@ export class Authenticator {
         }
     };
 
-    public authenticateClient = async (
-        request: express.Request,
-        response: express.Response,
-        next: express.NextFunction
-    ): Promise<boolean> => {
-        try {
-            const authResult = await this._authenticator.authenticateClient(request);
-            if (authResult.Result === false){
-                ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
-                return false;
-            }
-            next();
-        } catch (error) {
-            Logger.instance().log(error.message);
-            ResponseHandler.failure(request, response, 'Client authentication error: ' + error.message, 401);
-        }
-    };
-
     public checkAuthentication = async(request: express.Request): Promise<boolean> => {
-        const clientAuthResult = await this._authenticator.authenticateClient(request);
-        if (clientAuthResult.Result === false){
-            throw new ApiError(401, 'Unauthorized access');
-        }
         const userAuthResult = await this._authenticator.authenticateUser(request);
         if (userAuthResult.Result === false){
             throw new ApiError(401, 'Unauthorized access');
@@ -69,32 +47,12 @@ export class Authenticator {
         return await this._authenticator.generateUserSessionToken(user);
     };
 
-    public generateRefreshToken = async (userId: uuid, sessionId: uuid): Promise<string> => {
-        return await this._authenticator.generateRefreshToken(userId, sessionId);
+    public generateRefreshToken = async (userId: uuid, sessionId: uuid, tenantId: string): Promise<string> => {
+        return await this._authenticator.generateRefreshToken(userId, sessionId, tenantId);
     };
 
     public rotateUserSessionToken = async (refreshToken: string): Promise<string> => {
         return await this._authenticator.rotateUserSessionToken(refreshToken);
     };
 
-    public authenticateTerraWebhook = async (
-        request: express.Request,
-        response: express.Response,
-        next: express.NextFunction
-    ): Promise<boolean> => {
-        try {
-            const authenticationResult = await this._authenticator.authenticateTerra(request);
-            if (authenticationResult.Result === false){
-                ResponseHandler.failure(request, response, authenticationResult.Message, authenticationResult.HttpErrorCode);
-                return false;
-            }
-            next();
-        } catch (error) {
-            Logger.instance().log(error.message);
-            ResponseHandler.failure(request, response, 'Client authentication error: ' + error.message, 401);
-        }
-    };
-
 }
-
-////////////////////////////////////////////////////////////////////////

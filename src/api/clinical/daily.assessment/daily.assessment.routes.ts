@@ -10,8 +10,8 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new DailyAssessmentController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
+    router.post('/', authenticator.authenticateUser, controller.create);
+    router.get('/search', authenticator.authenticateUser, controller.search);
 
     app.use('/api/v1/clinical/daily-assessments', router);
 };

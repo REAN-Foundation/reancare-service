@@ -25,12 +25,16 @@ export interface UserLoginDetails {
     UserName   ?: string;
     Password   ?: string,
     Otp        ?: string,
-    LoginRoleId : number
+    LoginRoleId : number,
+    TenantId   ?: uuid,
+    TenantCode ?: string,
 }
 
 export interface UserExistanceModel {
-    Phone   ?: string,
-    Email   ?: string,
-    UserName?: string;
-    RoleId   : number
+    Phone     ?: string,
+    Email     ?: string,
+    UserName  ?: string;
+    RoleId     : number,
+    TenantId  ?: uuid,
+    TenantCode?: string,
 }

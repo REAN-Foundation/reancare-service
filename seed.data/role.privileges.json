@@ -315,7 +315,12 @@
             "CustomQuery.GetById",
             "CustomQuery.Search",
             "CustomQuery.Delete",
-            "CustomQuery.Update"
+            "CustomQuery.Update",
+            "Consent.Create",
+            "Consent.GetById",
+            "Consent.Search",
+            "Consent.Update",
+            "Consent.Delete"
         ]
     },
     {
@@ -776,7 +781,12 @@
             "Cohort.RemoveUserFromCohort",
             "Cohort.GetCohortUsers",
             "Cohort.GetCohortsForTenant",
-            "Cohort.GetCohortStats"
+            "Cohort.GetCohortStats",
+            "Consent.Create",
+            "Consent.GetById",
+            "Consent.Search",
+            "Consent.Update",
+            "Consent.Delete"
         ]
     },
     {

@@ -1,0 +1,137 @@
+import express from 'express';
+import { ApiError } from '../../../common/api.error';
+import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { ConsentService } from '../../../services/auth/consent.service';
+import { UserService } from '../../../services/users/user/user.service';
+import { RoleService } from '../../../services/role/role.service';
+import { Loader } from '../../../startup/loader';
+import { ConsentValidator } from './consent.validator';
+import { BaseController } from '../../base.controller';
+import { PersonService } from '../../../services/person/person.service';
+import { TenantService } from '../../../services/tenant/tenant.service';
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+export class ConsentController extends BaseController {
+
+    //#region member variables and constructors
+
+    _service: ConsentService = null;
+
+    _roleService: RoleService = null;
+
+    _userService: UserService = null;
+
+    _personService: PersonService = null;
+
+    _tenantService: TenantService = null;
+
+    _validator = new ConsentValidator();
+
+    constructor() {
+        super();
+        this._service = Loader.container.resolve(ConsentService);
+        this._personService = Loader.container.resolve(PersonService);
+        this._userService = Loader.container.resolve(UserService);
+        this._roleService = Loader.container.resolve(RoleService);
+        this._tenantService = Loader.container.resolve(TenantService);
+    }
+
+    //#endregion
+
+    //#region Action methods
+
+    create = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Consent.Create', request, response);
+            const model = await this._validator.create(request);
+            const record = await this._service.create(model);
+            if (record == null) {
+                throw new ApiError(400, 'Cannot start conversation!');
+            }
+            ResponseHandler.success(request, response, 'Consent created successfully!', 201, {
+                Consent : record,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Consent.GetById', request, response);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const record = await this._service.getById(id);
+            if (record == null) {
+                throw new ApiError(404, ' Consent record not found.');
+            }
+            ResponseHandler.success(request, response, 'Consent record retrieved successfully!', 200, {
+                Consent : record,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    search = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Consent.Search', request, response);
+            const filters = await this._validator.search(request);
+            const searchResults = await this._service.search(filters);
+            const count = searchResults.Items.length;
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} consent records retrieved successfully!`;
+            ResponseHandler.success(request, response, message, 200, {
+                Consents : searchResults });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Consent.Update', request, response);
+            const model = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Consent record not found.');
+            }
+            const updated = await this._service.update(id, model);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update consent record!');
+            }
+            ResponseHandler.success(request, response, 'Consent record updated successfully!', 200, {
+                Consent : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Consent.Delete', request, response);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Consent record not found.');
+            }
+            const deleted = await this._service.delete(id);
+            if (!deleted) {
+                throw new ApiError(400, 'Consent record cannot be deleted.');
+            }
+            ResponseHandler.success(request, response, 'Consent record deleted successfully!', 200, {
+                Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    //#endregion
+
+}

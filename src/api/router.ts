@@ -83,6 +83,7 @@ import { register as registerReminderRoutes } from './general/reminder/reminder.
 import { register as registerTenantRoutes } from './tenant/tenant.routes';
 import { register as registerCohortRoutes } from './community/cohorts/cohort.routes';
 import { register as registerCustomQueryRoutes } from './statistics/custom.query/custom.query.routes';
+import { register as registerConsentRoutes } from './auth/consent/consent.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -190,6 +191,7 @@ export class Router {
                 registerTenantRoutes(this._app);
                 registerCohortRoutes(this._app);
                 registerCustomQueryRoutes(this._app);
+                registerConsentRoutes(this._app);
 
                 resolve(true);
 

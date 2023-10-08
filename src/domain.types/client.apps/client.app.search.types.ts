@@ -1,8 +1,8 @@
-import { ApiClientDto } from "./api.client.dto";
+import { ClientAppDto } from "./client.app.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export interface ApiClientSearchFilters {
+export interface ClientAppSearchFilters {
     ClientName   : string;
     ClientCode?  : string;
     Phone?       : string;
@@ -15,12 +15,12 @@ export interface ApiClientSearchFilters {
     ItemsPerPage : number;
 }
 
-export interface ApiClientSearchResults {
+export interface ClientAppSearchResults {
     TotalCount     : number;
     RetrievedCount : number;
     PageIndex      : number;
     ItemsPerPage   : number;
     Order          : string;
     OrderedBy      : string;
-    Items          : ApiClientDto[];
+    Items          : ClientAppDto[];
 }

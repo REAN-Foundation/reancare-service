@@ -1,11 +1,11 @@
-import { ApiClientDto, ClientApiKeyDto } from '../../../../../domain.types/api.client/api.client.dto';
-import ApiClient from '../../models/api.client/api.client.model';
+import { ClientAppDto, ApiKeyDto } from '../../../../../domain.types/client.apps/client.app.dto';
+import ClientApp from '../../models/client.apps/client.app.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class ClientMapper {
 
-    static toDto = (client: ApiClient): ApiClientDto => {
+    static toDto = (client: ClientApp): ClientAppDto => {
         if (client == null){
             return null;
         }
@@ -13,7 +13,7 @@ export class ClientMapper {
         if (client.ValidFrom < new Date() && client.ValidTill > new Date()) {
             active = true;
         }
-        const dto: ApiClientDto = {
+        const dto: ClientAppDto = {
             id           : client.id,
             ClientName   : client.ClientName,
             ClientCode   : client.ClientCode,
@@ -25,11 +25,11 @@ export class ClientMapper {
         return dto;
     };
 
-    static toClientSecretsDto = (client: ApiClient): ClientApiKeyDto => {
+    static toClientSecretsDto = (client: ClientApp): ApiKeyDto => {
         if (client == null){
             return null;
         }
-        const dto: ClientApiKeyDto = {
+        const dto: ApiKeyDto = {
             id         : client.id,
             ClientName : client.ClientName,
             ClientCode : client.ClientCode,

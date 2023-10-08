@@ -13,18 +13,18 @@ import { ClientAppSearchFilters, ClientAppSearchResults } from '../../../../../d
 
 export class ClientAppRepo implements IClientAppRepo {
 
-    create = async (clientDomainModel: ClientAppDomainModel): Promise<ClientAppDto> => {
+    create = async (model: ClientAppDomainModel): Promise<ClientAppDto> => {
         try {
             const entity = {
-                ClientName   : clientDomainModel.ClientName,
-                ClientCode   : clientDomainModel.ClientCode,
-                IsPrivileged : clientDomainModel.IsPrivileged,
-                Phone        : clientDomainModel.Phone,
-                Email        : clientDomainModel.Email,
-                Password     : clientDomainModel.Password ?? null,
-                ApiKey       : clientDomainModel.ApiKey ?? null,
-                ValidFrom    : clientDomainModel.ValidFrom ?? null,
-                ValidTill    : clientDomainModel.ValidTill ?? null,
+                ClientName   : model.ClientName,
+                ClientCode   : model.ClientCode,
+                IsPrivileged : model.IsPrivileged,
+                Phone        : model.Phone,
+                Email        : model.Email,
+                Password     : model.Password ?? null,
+                ApiKey       : model.ApiKey ?? null,
+                ValidFrom    : model.ValidFrom ?? null,
+                ValidTill    : model.ValidTill ?? null,
             };
             const client = await ClientApp.create(entity);
             const dto = await ClientMapper.toDto(client);
@@ -195,27 +195,27 @@ export class ClientAppRepo implements IClientAppRepo {
         }
     };
 
-    update = async (id: string, clientDomainModel: ClientAppDomainModel): Promise<ClientAppDto> => {
+    update = async (id: string, model: ClientAppDomainModel): Promise<ClientAppDto> => {
         try {
             const client = await ClientApp.findByPk(id);
 
             //Client code is not modifiable
             //Use renew key to update ApiKey, ValidFrom and ValidTill
 
-            if (clientDomainModel.ClientName != null) {
-                client.ClientName = clientDomainModel.ClientName;
+            if (model.ClientName != null) {
+                client.ClientName = model.ClientName;
             }
-            if (clientDomainModel.Password != null) {
-                client.Password = clientDomainModel.Password;
+            if (model.Password != null) {
+                client.Password = model.Password;
             }
-            if (clientDomainModel.Phone != null) {
-                client.Phone = clientDomainModel.Phone;
+            if (model.Phone != null) {
+                client.Phone = model.Phone;
             }
-            if (clientDomainModel.Email != null) {
-                client.Email = clientDomainModel.Email;
+            if (model.Email != null) {
+                client.Email = model.Email;
             }
-            if (clientDomainModel.ValidTill != null) {
-                client.ValidTill = clientDomainModel.ValidTill;
+            if (model.ValidTill != null) {
+                client.ValidTill = model.ValidTill;
             }
             await client.save();
 

@@ -1,5 +1,5 @@
 
-export interface ApiClientDomainModel {
+export interface ClientAppDomainModel {
     id?: string;
     ClientName: string;
     ClientCode?: string;
@@ -12,7 +12,7 @@ export interface ApiClientDomainModel {
     ValidTill?: Date;
 }
 
-export interface ApiClientVerificationDomainModel {
+export interface ClientAppVerificationDomainModel {
     ClientCode: string;
     Password: string;
     ValidFrom: Date;

@@ -1,12 +1,12 @@
 import express from 'express';
-import { ApiClientController } from './api.client.controller';
+import { ClientAppController } from './client.app.controller';
 import { Loader } from '../../startup/loader';
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
     const authenticator = Loader.authenticator;
-    const controller = new ApiClientController();
+    const controller = new ClientAppController();
 
     router.post('/', authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateUser, controller.search);

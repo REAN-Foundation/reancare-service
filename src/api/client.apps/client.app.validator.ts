@@ -1,16 +1,19 @@
 import express from 'express';
 import { body, validationResult, param, query } from 'express-validator';
-import { ApiClientSearchFilters } from '../../domain.types/api.client/api.client.search.types';
+import { ClientAppSearchFilters } from '../../domain.types/client.apps/client.app.search.types';
 import { Helper } from '../../common/helper';
-import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../domain.types/api.client/api.client.domain.model';
+import {
+    ClientAppDomainModel,
+    ClientAppVerificationDomainModel
+} from '../../domain.types/client.apps/client.app.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ApiClientValidator {
+export class ClientAppValidator {
 
-    static getDomainModel = async (body: any): Promise<ApiClientDomainModel> => {
+    static getDomainModel = async (body: any): Promise<ClientAppDomainModel> => {
 
-        let clientModel: ApiClientDomainModel = null;
+        let clientModel: ClientAppDomainModel = null;
 
         clientModel = {
             ClientName   : body.ClientName ?? null,
@@ -28,7 +31,7 @@ export class ApiClientValidator {
 
     static create = async (
         request: express.Request
-    ): Promise<ApiClientDomainModel> => {
+    ): Promise<ClientAppDomainModel> => {
 
         await body('ClientName').exists()
             .trim()
@@ -66,12 +69,12 @@ export class ApiClientValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ApiClientValidator.getDomainModel(request.body);
+        return ClientAppValidator.getDomainModel(request.body);
     };
 
     static search = async (
         request: express.Request
-    ): Promise<ApiClientSearchFilters> => {
+    ): Promise<ClientAppSearchFilters> => {
 
         await query('clientName').optional()
             .trim()
@@ -140,12 +143,12 @@ export class ApiClientValidator {
             Helper.handleValidationError(result);
         }
 
-        return ApiClientValidator.getFilter(request);
+        return ClientAppValidator.getFilter(request);
     };
 
     static getOrRenewApiKey = async (
         request: express.Request
-    ): Promise<ApiClientVerificationDomainModel> => {
+    ): Promise<ClientAppVerificationDomainModel> => {
 
         const authHeader = request.headers['authorization'].toString();
         let tokens = authHeader.split(' ');
@@ -178,13 +181,13 @@ export class ApiClientValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ApiClientValidator.getVerificationDomainModel(request.body, clientCode, password);
+        return ClientAppValidator.getVerificationDomainModel(request.body, clientCode, password);
     };
 
     static getVerificationDomainModel = async (body: any, clientCode: string, password: string):
-        Promise<ApiClientVerificationDomainModel> => {
+        Promise<ClientAppVerificationDomainModel> => {
 
-        let model: ApiClientVerificationDomainModel = null;
+        let model: ClientAppVerificationDomainModel = null;
         model = {
             ClientCode : clientCode,
             Password   : password,
@@ -213,7 +216,7 @@ export class ApiClientValidator {
 
     static update = async (
         request: express.Request
-    ): Promise<ApiClientDomainModel> => {
+    ): Promise<ClientAppDomainModel> => {
 
         await body('ClientName').optional()
             .isLength({ min: 1 })
@@ -245,10 +248,10 @@ export class ApiClientValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ApiClientValidator.getDomainModel(request.body);
+        return ClientAppValidator.getDomainModel(request.body);
     };
 
-    private static getFilter(request): ApiClientSearchFilters {
+    private static getFilter(request): ClientAppSearchFilters {
 
         const pageIndex =
             request.query.pageIndex !== 'undefined'
@@ -260,7 +263,7 @@ export class ApiClientValidator {
                 ? parseInt(request.query.itemsPerPage as string, 10)
                 : 25;
 
-        const filters: ApiClientSearchFilters = {
+        const filters: ClientAppSearchFilters = {
             ClientName   : request.query.clientName ?? null,
             ClientCode   : request.query.clientCode ?? null,
             Phone        : request.query.phone ?? null,

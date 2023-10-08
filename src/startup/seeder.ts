@@ -13,7 +13,7 @@ import * as SeededLabRecordTypes from '../../seed.data/lab.record.types.seed.jso
 import * as seededHealthSystemsAndHospitals from '../../seed.data/health.systems.and.hospitals.seed..json';
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
-import { IApiClientRepo } from "../database/repository.interfaces/api.client/api.client.repo.interface";
+import { IClientAppRepo } from "../database/repository.interfaces/client.apps/client.app.repo.interface";
 import { IDrugRepo } from "../database/repository.interfaces/clinical/medication/drug.repo.interface";
 import { IMedicationStockImageRepo } from "../database/repository.interfaces/clinical/medication/medication.stock.image.repo.interface";
 import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
@@ -27,7 +27,7 @@ import { IRolePrivilegeRepo } from "../database/repository.interfaces/role/role.
 import { IRoleRepo } from "../database/repository.interfaces/role/role.repo.interface";
 import { IUserRepo } from "../database/repository.interfaces/users/user/user.repo.interface";
 import { IHealthSystemRepo } from "../database/repository.interfaces/users/patient/health.system.repo.interface";
-import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
+import { ClientAppDomainModel } from "../domain.types/client.apps/client.app.domain.model";
 import { DrugDomainModel } from "../domain.types/clinical/medication/drug/drug.domain.model";
 import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
@@ -38,7 +38,7 @@ import { HealthPriorityTypeDomainModel } from "../domain.types/users/patient/hea
 import { HealthPriorityTypeList } from "../domain.types/users/patient/health.priority.type/health.priority.types";
 import { DefaultRoles, Roles } from "../domain.types/role/role.types";
 import { UserDomainModel } from "../domain.types/users/user/user.domain.model";
-import { ApiClientService } from "../services/api.client/api.client.service";
+import { ClientAppService } from "../services/client.apps/client.app.service";
 import { DrugService } from "../services/clinical/medication/drug.service";
 import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/symptom.assessment.template.service";
 import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.service";
@@ -70,7 +70,7 @@ import { TenantDomainModel } from "../domain.types/tenant/tenant.domain.model";
 @injectable()
 export class Seeder {
 
-    _apiClientService: ApiClientService = null;
+    _apiClientService: ClientAppService = null;
 
     _patientService: PatientService = null;
 
@@ -104,7 +104,7 @@ export class Seeder {
 
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
-        @inject('IApiClientRepo') private _apiClientRepo: IApiClientRepo,
+        @inject('IClientAppRepo') private _apiClientRepo: IClientAppRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IRolePrivilegeRepo') private _rolePrivilegeRepo: IRolePrivilegeRepo,
@@ -121,7 +121,7 @@ export class Seeder {
         @inject('IHealthSystemRepo') private _healthSystemRepo: IHealthSystemRepo,
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
     ) {
-        this._apiClientService = Loader.container.resolve(ApiClientService);
+        this._apiClientService = Loader.container.resolve(ClientAppService);
         this._patientService = Loader.container.resolve(PatientService);
         this._personService = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);
@@ -265,16 +265,16 @@ export class Seeder {
 
         for (let i = 0; i < arr.length; i++) {
             var c = arr[i];
-            let client = await this._apiClientService.getByClientCode(c.ClientCode);
+            let client = await this._apiClientService.getByCode(c.ClientCode);
             if (client == null) {
-                const model: ApiClientDomainModel = {
+                const model: ClientAppDomainModel = {
                     ClientName   : c['ClientName'],
                     ClientCode   : c['ClientCode'],
                     IsPrivileged : c['IsPrivileged'],
                     Email        : c['Email'],
                     Password     : c['Password'],
                     ValidFrom    : new Date(),
-                    ValidTill    : new Date(2030, 12, 31),
+                    ValidTill    : new Date(2040, 12, 31),
                     ApiKey       : c['ApiKey'],
                 };
                 client = await this._apiClientService.create(model);

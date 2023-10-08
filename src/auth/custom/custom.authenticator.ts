@@ -3,7 +3,6 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { UserService } from '../../services/users/user/user.service';
 import { Logger } from '../../common/logger';
 import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
-import { ApiClientService } from '../../services/api.client/api.client.service';
 import { TenantService } from '../../services/tenant/tenant.service';
 import { Loader } from '../../startup/loader';
 import { IAuthenticator } from '../authenticator.interface';
@@ -14,14 +13,11 @@ import { ConfigurationManager } from '../../config/configuration.manager';
 
 export class CustomAuthenticator implements IAuthenticator {
 
-    _clientService: ApiClientService = null;
-
     _userService: UserService = null;
 
     _tenantService: TenantService = null;
 
     constructor() {
-        this._clientService = Loader.container.resolve(ApiClientService);
         this._userService = Loader.container.resolve(UserService);
         this._tenantService = Loader.container.resolve(TenantService);
     }

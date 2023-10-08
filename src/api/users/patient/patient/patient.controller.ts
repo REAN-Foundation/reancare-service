@@ -161,6 +161,36 @@ export class PatientController extends BaseUserController {
         }
     };
 
+    getByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Patient.GetByPhone', request, response);
+
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            const phone: string = await request.params.phone as string;
+            const patientRole = await this._roleService.getByName(Roles.Patient);
+
+            const existingUser = await this._userService.getByPhoneAndRole(phone, patientRole.id);
+            if (existingUser == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            const tenantUser = await this._userService.isTenantUser(existingUser.id, tenantId);
+            if (!tenantUser) {
+                throw new ApiError(404, 'User is not associated with the tenant.');
+            }
+            const patient = await this._service.getByUserId(existingUser.id);
+            if (patient == null) {
+                throw new ApiError(404, 'Patient not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Patient retrieved successfully!', 200, {
+                Patient : patient,
+            });
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Patient.UpdateByUserId', request, response);

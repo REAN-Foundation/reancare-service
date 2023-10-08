@@ -21,12 +21,12 @@ import { Helper } from '../../../../../common/helper';
 
 @Table({
     timestamps      : true,
-    modelName       : 'ApiClient',
+    modelName       : 'ClientApp',
     tableName       : 'api_clients',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class ApiClient extends Model {
+export default class ClientApp extends Model {
 
     @IsUUID(4)
     @PrimaryKey

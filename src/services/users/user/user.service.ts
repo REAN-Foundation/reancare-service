@@ -391,6 +391,26 @@ export class UserService {
         return isValidLoginSession;
     };
 
+    public isInternalTestUser = async (phone: string): Promise<boolean> => {
+        var startingRange = 1000000001;
+        var endingRange = startingRange + parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS) - 1;
+        var phoneNumber = parseInt(phone);
+        var isTestUser = false;
+        if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
+            isTestUser = true;
+        }
+        return isTestUser;
+    };
+
+    public isTenantUser = async (userId: uuid, tenantId: uuid): Promise<boolean> => {
+        var isTenantUser = await this._userRepo.isTenantUser(userId, tenantId);
+        return isTenantUser;
+    };
+
+    //#endregion
+
+    //#region Privates
+
     private checkTenant = async (loginModel: UserLoginDetails, user: UserDetailsDto): Promise<TenantDto> => {
         var tenant = await this.getTenant(loginModel.TenantId, loginModel.TenantCode);
         if (tenant == null) {
@@ -402,10 +422,6 @@ export class UserService {
         }
         return tenant;
     };
-
-    //#endregion
-
-    //#region Privates
 
     private constructUserName(firstName: string, lastName: string) {
         const rand = Math.random()
@@ -500,17 +516,6 @@ export class UserService {
             dto.Person = person;
         }
         return dto;
-    };
-
-    public isInternalTestUser = async (phone: string): Promise<boolean> => {
-        var startingRange = 1000000001;
-        var endingRange = startingRange + parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS) - 1;
-        var phoneNumber = parseInt(phone);
-        var isTestUser = false;
-        if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
-            isTestUser = true;
-        }
-        return isTestUser;
     };
 
     private getTenant = async (tenantId: uuid, tenantCode: string): Promise<TenantDto> => {

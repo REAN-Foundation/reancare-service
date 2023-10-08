@@ -2,7 +2,7 @@ import express from "express";
 import { AuthenticationResult } from "../domain.types/auth/auth.domain.types";
 import { CurrentClient } from "../domain.types/miscellaneous/current.client";
 import { Loader } from "../startup/loader";
-import { ApiClientService } from "../services/api.client/api.client.service";
+import { ClientAppService } from "../services/client.apps/client.app.service";
 import { ResponseHandler } from "../common/response.handler";
 import { Logger } from "../common/logger";
 
@@ -48,7 +48,7 @@ export default class ClientAppAuthMiddleware
             }
             apiKey = apiKey.trim();
 
-            const clientService = Loader.container.resolve(ApiClientService);
+            const clientService = Loader.container.resolve(ClientAppService);
             const client: CurrentClient = await clientService.isApiKeyValid(apiKey);
             if (!client) {
                 res = {

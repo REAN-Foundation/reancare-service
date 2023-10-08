@@ -11,7 +11,7 @@ export const register = (app: express.Application): void => {
     router.post('/', controller.create);
     router.get('/search', authenticator.authenticateUser, controller.search);
     router.get('/byPhone', authenticator.authenticateUser, controller.getPatientByPhone);
-    router.get('/by-phone', authenticator.authenticateUser, controller.getPatientByPhone);
+    router.get('/:tenantId/by-phone/:phone', authenticator.authenticateUser, controller.getByPhone);
     router.get('/:userId', authenticator.authenticateUser, controller.getByUserId);
     router.put('/:userId', authenticator.authenticateUser, controller.updateByUserId);
     router.delete('/:userId', authenticator.authenticateUser, controller.deleteByUserId);

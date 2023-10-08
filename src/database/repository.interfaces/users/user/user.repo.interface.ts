@@ -1,6 +1,7 @@
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto } from '../../../../domain.types/users/user/user.dto';
+import { TenantDto } from '../../../../domain.types/tenant/tenant.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,5 +36,7 @@ export interface IUserRepo {
     checkUsersWithoutTenants(): Promise<void>;
 
     isTenantUser(userId: uuid, tenantId: uuid): Promise<boolean>;
+
+    getTenantsForUser(userId: uuid): Promise<TenantDto[]>;
 
 }

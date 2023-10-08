@@ -11,6 +11,8 @@ import User from '../../../models/users/user/user.model';
 import Tenant from '../../../models/tenant/tenant.model';
 import TenantUser from '../../../models/tenant/tenant.user.model';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { TenantMapper } from '../../../mappers/tenant/tenant.mapper';
+import { TenantDto } from '../../../../../../domain.types/tenant/tenant.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -287,6 +289,28 @@ export class UserRepo implements IUserRepo {
                 }
             });
             return tenantUser != null;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public getTenantsForUser = async (userId: uuid): Promise<TenantDto[]> => {
+        try {
+            var tenantUsers = await TenantUser.findAll({
+                where : {
+                    UserId : userId
+                },
+                include : [
+                    {
+                        model : Tenant,
+                        as    : 'Tenant'
+                    }
+                ]
+            });
+            var tenants = tenantUsers.map(x => x.Tenant);
+            return tenants.map(x => TenantMapper.toDto(x));
         }
         catch (error) {
             Logger.instance().log(error.message);

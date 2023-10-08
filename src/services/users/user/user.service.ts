@@ -407,6 +407,11 @@ export class UserService {
         return isTenantUser;
     };
 
+    public getTenantsForUser = async (userId: uuid): Promise<TenantDto[]> => {
+        var tenants = await this._userRepo.getTenantsForUser(userId);
+        return tenants;
+    };
+
     //#endregion
 
     //#region Privates

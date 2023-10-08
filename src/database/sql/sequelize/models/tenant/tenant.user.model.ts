@@ -46,7 +46,7 @@ export default class TenantUser extends Model {
     })
     UserId: string;
 
-    @BelongsTo(() => User)
+    @BelongsTo(() => User, 'UserId')
     User: User;
 
     @IsUUID(4)
@@ -57,7 +57,7 @@ export default class TenantUser extends Model {
     })
     TenantId: string;
 
-    @BelongsTo(() => Tenant)
+    @BelongsTo(() => Tenant, 'TenantId')
     Tenant: Tenant;
 
     @Column({

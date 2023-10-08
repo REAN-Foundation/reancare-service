@@ -15,6 +15,7 @@ export const register = (app: express.Application): void => {
 
     router.get('/by-phone/:phone/role/:roleId', controller.getByPhoneAndRole);
     router.get('/by-email/:email/role/:roleId', controller.getByEmailAndRole);
+    router.get('/:id/tenants', controller.getTenantsForUser);
     router.get('/:id', authenticator.authenticateUser, controller.getById);
 
     //router.get('/search', authenticator.authenticateUser, controller.search);

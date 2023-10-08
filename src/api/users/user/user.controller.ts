@@ -242,4 +242,18 @@ export class UserController {
         }
     };
 
+    getTenantsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'User.GetUserTenants';
+
+            const id: string = request.params.id;
+            const tenants = await this._service.getTenantsForUser(id);
+            ResponseHandler.success(request, response, 'User tenants retrieved successfully!', 200, {
+                Tenants : tenants,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }

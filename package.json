@@ -10,7 +10,6 @@
     "lint:fix": "eslint ./src/** --fix",
     "test": "tsc && mocha -u tdd --timeout 999999 --colors ./dist/tests/**/*.js",
     "test-debug": "NODE_ENV=test mocha --file ./tests/api-tests/init.ts --reporter spec --exit",
-    "pre-commit": "prettier --write && npm test -- --grep ^(?!kobotoolbox|careplan).*",
     "prepare": "husky install"
   },
   "repository": {

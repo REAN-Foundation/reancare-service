@@ -35,7 +35,7 @@ jobs:
 
   Build-Docker-Image:
     runs-on: ubuntu-latest
-       group: Default Larger Runners
+       #group: Default Larger Runners
        labels: ubuntu-latest-4-cores
 
     steps:

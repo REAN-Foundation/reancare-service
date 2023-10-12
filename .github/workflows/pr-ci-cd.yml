@@ -23,14 +23,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: free disk space
-        run:
-             sudo swapoff -a
-             sudo rm -f /swapfile
-             sudo apt clean
-             docker rmi $(docker image ls -aq)
-             df -h
-
       - name: Lint Code Base
         uses: docker://ghcr.io/github/super-linter:latest
         env:
@@ -43,8 +35,8 @@ jobs:
 
   Build-Docker-Image:
     runs-on: ubuntu-latest
-       #group: Default Larger Runners
-       #labels: ubuntu-latest-4-cores
+#       group: Default Larger Runners
+#       labels: ubuntu-latest-4-cores
 
     steps:
       - name: Checkout
@@ -86,6 +78,3 @@ jobs:
           tags: reancare/services:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-
-    
-   

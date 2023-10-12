@@ -1,8 +1,10 @@
+import { BaseSearchFilters } from "../../../domain.types/miscellaneous/base.search.types";
 import { OrganizationDto } from "./organization.dto";
+import { BaseSearchResults } from "../../../domain.types/miscellaneous/base.search.types";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface OrganizationSearchFilters {
+export interface OrganizationSearchFilters extends BaseSearchFilters {
     Type?: string;
     Name?: string;
     ContactUserId?: string;
@@ -12,18 +14,8 @@ export interface OrganizationSearchFilters {
     OperationalSinceTo: Date;
     CreatedDateFrom: Date;
     CreatedDateTo: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
 }
 
-export interface OrganizationSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface OrganizationSearchResults extends BaseSearchResults {
     Items: OrganizationDto[];
 }

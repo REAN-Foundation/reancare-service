@@ -145,11 +145,6 @@ export class TypesService {
 
     getGoalTypes = async (tags?: string): Promise<GoalTypeDto[]> => {
         var goalTypes = await this._goalTypeRepo.getGoalTypes(tags);
-
-        if (!goalTypes || goalTypes.length === 0) {
-            throw new ApiError(500, 'Error while fetching goal types.');
-        }
-
         return goalTypes;
     };
 

@@ -177,11 +177,8 @@ export class NoticeRepo implements INoticeRepo {
             if (updateModel.IsActive != null) {
                 notice.IsActive = updateModel.IsActive;
             }
-            if (updateModel.Tags != null && updateModel.Tags.length > 0) {
-
-                var tags = updateModel.Tags.length > 0 ?
-                    JSON.stringify(updateModel.Tags) : '[]';
-
+            if (updateModel.Tags != null) {
+                var tags = JSON.stringify(updateModel.Tags);
                 notice.Tags = tags;
             }
             if (updateModel.ImageUrl != null) {

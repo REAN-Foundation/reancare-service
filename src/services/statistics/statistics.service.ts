@@ -20,7 +20,7 @@ export class StatisticsService {
     getUsersStats = async (filters: StatisticSearchFilters): Promise<any> => {
         return await this._statisticsRepo.getUsersStats(filters);
     };
-    
+
     getUsersByRole = async (filters: StatisticSearchFilters): Promise<any> => {
         return await this._statisticsRepo.getUsersByRole(filters);
     };
@@ -64,7 +64,7 @@ export class StatisticsService {
     getUsersByObesity = async (filters: StatisticSearchFilters): Promise<any> => {
         return await this._statisticsRepo.getUsersByObesity(filters);
     };
-    
+
     getUsersByAddiction = async (filters: StatisticSearchFilters): Promise<any> => {
         return await this._statisticsRepo.getUsersByAddiction(filters);
     };
@@ -75,6 +75,10 @@ export class StatisticsService {
 
     getUsersByBiometrics = async (filters: StatisticSearchFilters): Promise<any> => {
         return await this._statisticsRepo.getUsersByBiometrics(filters);
+    };
+
+    getAllYears = async (): Promise<any> => {
+        return await this._statisticsRepo.getAllYears();
     };
     
 }

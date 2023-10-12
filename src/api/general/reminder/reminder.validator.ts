@@ -385,6 +385,8 @@ export class ReminderValidator extends BaseValidator {
         await this.validateString(request, 'name', Where.Query, false, false);
         await this.validateString(request, 'reminderType', Where.Query, false, false);
         await this.validateString(request, 'notificationType', Where.Query, false, false);
+        await this.validateString(request, 'whenDate', Where.Query, false, false);
+        await this.validateString(request, 'whenTime', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
 
         this.validateRequest(request);
@@ -540,6 +542,8 @@ export class ReminderValidator extends BaseValidator {
             Name             : request.query.name ?? null,
             ReminderType     : request.query.reminderType ?? null,
             NotificationType : request.query.notificationType ?? null,
+            WhenDate         : request.query.whenDate ?? null,
+            WhenTime         : request.query.whenTime ?? null
         };
 
         return this.updateBaseSearchFilters(request, filters);

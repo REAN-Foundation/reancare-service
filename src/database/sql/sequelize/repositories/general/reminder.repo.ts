@@ -84,6 +84,12 @@ export class ReminderRepo implements IReminderRepo {
             if (filters.UserId != null) {
                 search.where['UserId'] = filters.UserId;
             }
+            if (filters.WhenDate != null) {
+                search.where['WhenDate'] = filters.WhenDate;
+            }
+            if (filters.WhenTime != null) {
+                search.where['WhenTime'] = filters.WhenTime;
+            }
 
             let orderByColum = 'ReminderLine';
             if (filters.OrderBy) {

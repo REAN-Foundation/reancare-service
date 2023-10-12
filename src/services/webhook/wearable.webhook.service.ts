@@ -94,6 +94,7 @@ export class TeraWebhookService {
                 DeauthenticatedAt : new Date()
             };
             await this._webhookWearableDeviceDetailsRepo.update(currentUser.id, entityToUpdate);
+            await this._webhookWearableDeviceDetailsRepo.delete(currentUser.id);
         } else {
             Logger.instance().log(`Reference id is null for ${deAuthDomainModel.User.UserId} terra user id`);
         }
@@ -165,7 +166,6 @@ export class TeraWebhookService {
     };
 
     body = async (bodyDomainModel: BodyDomainModel) => {
-
         const bodyData = bodyDomainModel.Data;
         bodyData.forEach(async body => {
            
@@ -215,13 +215,22 @@ export class TeraWebhookService {
 
             });
 
-            const oxygenSamples = body.OxygenData.SaturationSamples;
+            let oxygenSamples = body.OxygenData.SaturationSamples;
+            oxygenSamples = oxygenSamples.sort((a, b) => {
+                return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
+            });
             Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
             const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredOxygenSamples = [];
             if (recentOxygen != null) {
-                filteredOxygenSamples = oxygenSamples.filter((oxygen) =>
-                    new Date(oxygen.TimeStamp) > recentOxygen.RecordDate);
+                const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
+                const oxygenSample =  oxygenSamples[0];
+                const oldTimeStamp: any = new Date(recentOxygen.RecordDate).getTime();
+                const newTimeStamp: any = new Date(oxygenSample.TimeStamp).getTime();
+                const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
+                if (timeDiffrence > allowedDuration_in_sec) {
+                    filteredOxygenSamples.push(oxygenSample);
+                }
             } else {
                 filteredOxygenSamples = oxygenSamples;
             }
@@ -235,13 +244,12 @@ export class TeraWebhookService {
                     RecordDate            : new Date(bloodOxygen.TimeStamp)
                 };
                 await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
-
             });
 
             var heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
             heartRateSamples = heartRateSamples.sort((a, b) => {
                 return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
-            } );
+            });
             Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
             const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
             let filteredPulseSamples = [];
@@ -267,7 +275,6 @@ export class TeraWebhookService {
                     RecordDate    : new Date(heartRate.TimeStamp)
                 };
                 await this._pulseRepo.create(heartRateDomainModel);
-
             });
 
             const tempSamples = body.TemperatureData.BodyTemperatureSamples;
@@ -335,32 +342,6 @@ export class TeraWebhookService {
         const dailyData = dailyDomainModel.Data;
         dailyData.forEach(async daily => {
 
-            const oxygenSamples = daily.OxygenData.SaturationSamples;
-            oxygenSamples.forEach(async bloodOxygen => {
-                const bloodOxygenDomainModel = {
-                    PatientUserId         : dailyDomainModel.User.ReferenceId,
-                    Provider              : dailyDomainModel.User.Provider,
-                    BloodOxygenSaturation : bloodOxygen.Percentage,
-                    Unit                  : "%",
-                    RecordDate            : new Date(bloodOxygen.TimeStamp)
-                };
-                await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
-
-            });
-
-            const heartRateSamples = daily.HeartRateData.Detailed.HrSamples;
-            heartRateSamples.forEach(async heartRate => {
-                const heartRateDomainModel = {
-                    PatientUserId : dailyDomainModel.User.ReferenceId,
-                    Provider      : dailyDomainModel.User.Provider,
-                    Pulse         : heartRate.BPM,
-                    Unit          : "bpm",
-                    RecordDate    : new Date(heartRate.TimeStamp)
-                };
-                await this._pulseRepo.create(heartRateDomainModel);
-
-            });
-
             // Adding calorie summary data in daily records
             const recordDate = daily.MetaData.StartTime.split('T')[0];
             var existingRecord =
@@ -409,5 +390,5 @@ export class TeraWebhookService {
             }
         });
     };
-
+    
 }

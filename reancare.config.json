@@ -12,7 +12,7 @@
         "ORM": "Sequelize"
     },
     "Ehr" : {
-        "Enabled": true,
+        "Enabled": false,
         "Specification": "FHIR",
         "Provider": "GCP-FHIR"
     },

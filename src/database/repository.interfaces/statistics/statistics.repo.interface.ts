@@ -2,6 +2,7 @@ import { StatisticSearchFilters } from "../../../domain.types/statistics/statist
 import { AppDownloadDomainModel } from "../../../domain.types/statistics/app.download.domain.model";
 import { AppDownloadDto } from "../../../domain.types/statistics/app.download.dto";
 
+////////////////////////////////////////////////////////////////////
 export interface IStatisticsRepo {
 
     getUsersCount(filters: StatisticSearchFilters): Promise<any>;
@@ -35,5 +36,7 @@ export interface IStatisticsRepo {
     getUsersByHealthPillar(filters: StatisticSearchFilters): Promise<any>;
 
     getUsersByBiometrics(filters: StatisticSearchFilters): Promise<any>;
+    
+    getAllYears(): Promise<any>;
 
 }

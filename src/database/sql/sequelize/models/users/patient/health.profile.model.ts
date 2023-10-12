@@ -1,4 +1,5 @@
 import {
+    BelongsTo,
     Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID,
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
@@ -38,6 +39,9 @@ export default class HealthProfile extends Model {
         allowNull : false,
     })
     PatientUserId: string;
+
+    @BelongsTo(() => User)
+    User: User;
 
     @Column({
         type         : DataType.STRING(16),

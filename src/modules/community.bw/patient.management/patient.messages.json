@@ -2,7 +2,7 @@
     {
         "Name": "Message before 10 day",
         "TimeSlot": "Morning",
-        "Sequence": 1,
+        "Sequence": 3,
         "Day": 10,
         "TemplateName": "reminder_1",
         "Message": { "Variables" : [
@@ -37,7 +37,7 @@
     {
         "Name": "Message before 5 day",
         "TimeSlot": "Morning",
-        "Sequence": 3,
+        "Sequence": 1,
         "Day": 5,
         "TemplateName": "reminder_three",
         "Message": { "Variables" : [

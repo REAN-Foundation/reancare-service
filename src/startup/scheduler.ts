@@ -8,6 +8,7 @@ import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
 import { CommunityNetworkService } from '../modules/community.bw/community.network.service';
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
+import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -119,6 +120,8 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const careplanService = Loader.container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
+                const nextMinutes = 15;
+                await UserTaskSenderService.sendUserTasks(nextMinutes);
             })();
         });
     };

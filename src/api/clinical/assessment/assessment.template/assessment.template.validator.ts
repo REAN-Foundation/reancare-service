@@ -106,6 +106,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateArray(request, 'Options', Where.Body, false, false);
         await this.validateDecimal(request, 'Score', Where.Body, false, false);
         await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
+        await this.validateObject(request, 'Hint', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -123,7 +124,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 TemplateId        : templateId,
                 Score             : request.body.Score ?? 0,
                 CorrectAnswer     : request.body.CorrectAnswer ? JSON.stringify(request.body.CorrectAnswer) : null,
-                Options           : []
+                Options           : [],
+                Hint              : request.body.Hint ? JSON.stringify(request.body.Hint) : null,
             };
             if (request.body.Options && request.body.Options.length > 0) {
                 var options: CAssessmentQueryOption[] = [];
@@ -170,7 +172,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 TemplateId        : templateId,
                 Score             : request.body.Score ?? 0,
                 Message           : request.body.Message,
-                Acknowledged      : false
+                Acknowledged      : false,
+                Hint              : request.body.Hint ? JSON.stringify(request.body.Hint) : null,
             };
             return messageNode;
         }

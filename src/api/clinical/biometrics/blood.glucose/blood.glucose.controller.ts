@@ -147,6 +147,7 @@ export class BloodGlucoseController extends BaseController {
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : updated.PatientUserId,
                     Facts         : {
+                        VitalName    : "BloodGlucose",
                         BloodGlucose : updated.BloodGlucose,
                         Unit         : updated.Unit,
                     },

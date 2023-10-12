@@ -41,7 +41,7 @@ export default class DonationCommunication extends Model {
         type      : DataType.UUID,
         allowNull : true,
     })
-    DonorUserId: string;
+    AcceptedDonorUserId: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)
@@ -49,7 +49,14 @@ export default class DonationCommunication extends Model {
         type      : DataType.UUID,
         allowNull : true,
     })
-    VolunteerUserId: string;
+    SelectedVolunteerUserId: string;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    SelectedDonationRecordId: string;
 
     @Column({
         type         : DataType.ENUM,

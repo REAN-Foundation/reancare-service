@@ -6,8 +6,9 @@ import { DonationCommunicationDto } from "./donation.communication.dto";
 
 export interface DonationCommunicationSearchFilters extends BaseSearchFilters {
     PatientUserId?             : uuid;
-    DonorUserId?               : uuid;
-    VolunteerUserId?           : uuid,
+    AcceptedDonorUserId?       : uuid;
+    SelectedVolunteerUserId?   : uuid;
+    SelectedDonationRecordId?  : uuid;
     FifthDayReminderFlag?      : boolean;
     DonorNoResponseFirstFlag?  : boolean;
     DonorNoResponseSecondFlag? : boolean;

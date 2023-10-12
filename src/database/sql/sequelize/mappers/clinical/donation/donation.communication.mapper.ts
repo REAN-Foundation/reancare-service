@@ -14,8 +14,9 @@ export class DonationCommunicationMapper {
         const dto: DonationCommunicationDto = {
             id                        : donationCommunication.id,
             PatientUserId             : donationCommunication.PatientUserId,
-            DonorUserId               : donationCommunication.DonorUserId,
-            VolunteerUserId           : donationCommunication.VolunteerUserId,
+            AcceptedDonorUserId       : donationCommunication.AcceptedDonorUserId,
+            SelectedVolunteerUserId   : donationCommunication.SelectedVolunteerUserId,
+            SelectedDonationRecordId  : donationCommunication.SelectedDonationRecordId,
             FifthDayReminderFlag      : donationCommunication.FifthDayReminderFlag,
             DonorNoResponseFirstFlag  : donationCommunication.DonorNoResponseFirstFlag,
             DonorNoResponseSecondFlag : donationCommunication.DonorNoResponseSecondFlag,

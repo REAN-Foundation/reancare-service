@@ -32,6 +32,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateString(request, 'WhenTime', Where.Body, true, false);
         await this.validateString(request, 'HookUrl', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
+        await this.validateString(request, 'RawContent', Where.Body, false, false);
 
         await this.validateRequest(request);
 
@@ -48,6 +49,7 @@ export class ReminderValidator extends BaseValidator {
             WhenTime         : requestBody.WhenTime ?? null,
             HookUrl          : requestBody.HookUrl ?? null,
             NotificationType : requestBody.NotificationType ?? NotificationType.SMS,
+            RawContent       : requestBody.RawContent ?? null,
         };
 
         return createModel;
@@ -65,6 +67,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
+        await this.validateString(request, 'RawContent', Where.Body, false, false);
 
         await this.validateRequest(request);
 
@@ -102,6 +105,7 @@ export class ReminderValidator extends BaseValidator {
             EndDate               : requestBody.EndDate ?? null,
             EndAfterNRepetitions  : requestBody.EndAfterNRepetitions ?? null,
             NotificationType      : requestBody.NotificationType ?? NotificationType.SMS,
+            RawContent            : requestBody.RawContent ?? null,
         };
 
         return createModel;
@@ -118,6 +122,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
+        await this.validateString(request, 'RawContent', Where.Body, false, false);
 
         await this.validateRequest(request);
 
@@ -144,6 +149,7 @@ export class ReminderValidator extends BaseValidator {
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            RawContent           : requestBody.RawContent ?? null,
         };
 
         return createModel;
@@ -161,6 +167,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
+        await this.validateString(request, 'RawContent', Where.Body, false, false);
 
         await this.validateRequest(request);
 
@@ -188,6 +195,7 @@ export class ReminderValidator extends BaseValidator {
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            RawContent           : requestBody.RawContent ?? null,
         };
 
         return createModel;
@@ -205,6 +213,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
+        await this.validateString(request, 'RawContent', Where.Body, false, false);
 
         await this.validateRequest(request);
 
@@ -232,6 +241,7 @@ export class ReminderValidator extends BaseValidator {
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            RawContent           : requestBody.RawContent ?? null,
         };
 
         return createModel;
@@ -248,6 +258,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
+        await this.validateString(request, 'RawContent', Where.Body, false, false);
 
         await this.validateRequest(request);
 
@@ -274,6 +285,7 @@ export class ReminderValidator extends BaseValidator {
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            RawContent           : requestBody.RawContent ?? null,
         };
 
         return createModel;
@@ -290,6 +302,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
+        await this.validateString(request, 'RawContent', Where.Body, false, false);
 
         await this.validateRequest(request);
 
@@ -316,6 +329,7 @@ export class ReminderValidator extends BaseValidator {
             StartDate            : requestBody.StartDate ?? null,
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
+            RawContent           : requestBody.RawContent ?? null,
         };
 
         return createModel;
@@ -332,6 +346,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateDate(request, 'EndDate', Where.Body, false, true);
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
+        await this.validateString(request, 'RawContent', Where.Body, false, false);
 
         await this.validateRequest(request);
 
@@ -358,6 +373,7 @@ export class ReminderValidator extends BaseValidator {
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            RawContent           : requestBody.RawContent ?? null,
         };
 
         return createModel;

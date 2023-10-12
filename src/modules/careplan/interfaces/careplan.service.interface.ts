@@ -33,7 +33,8 @@ export interface ICareplanService {
             careplanCode: string,
             enrollmentId: string | number,
             activityId: string,
-            scheduledAt?:string
+            scheduledAt?:string,
+            activity? : any,
         ): Promise<CareplanActivity>;
 
     completeActivity(

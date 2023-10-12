@@ -125,10 +125,11 @@ export class CareplanHandler {
         careplanCode: string,
         enrollmentId: string | number,
         activityId: string,
-        scheduledAt?: string
+        scheduledAt?: string,
+        activity?: any,
     ): Promise<CareplanActivity> => {
         var service = CareplanHandler._services.getItem(provider);
-        return await service.getActivity(patientUserId, careplanCode, enrollmentId, activityId, scheduledAt);
+        return await service.getActivity(patientUserId, careplanCode, enrollmentId, activityId, scheduledAt, activity);
     };
 
     public updateActivity = async (

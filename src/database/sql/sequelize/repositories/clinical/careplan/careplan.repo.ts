@@ -20,6 +20,7 @@ import { Helper } from '../../../../../../common/helper';
 import UserTask from '../../../models/users/user/user.task.model';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import User from '../../../models/users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -197,7 +198,8 @@ export class CareplanRepo implements ICareplanRepo {
                     ScheduledAt      : activity.ScheduledAt,
                     Sequence         : activity.Sequence ?? count,
                     Frequency        : activity.Frequency ?? 1,
-                    Status           : activity.Status
+                    Status           : activity.Status,
+                    RawContent       : activity.RawContent,
                 };
                 count++;
                 activityEntities.push(entity);
@@ -425,6 +427,47 @@ export class CareplanRepo implements ICareplanRepo {
             await record.save();
 
             return CareplanActivityMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    getUserTasksOfSelectiveProvider = async (timePeriod): Promise<any[]> => {
+        try {
+            const from = new Date();
+            const to = TimeHelper.addDuration(from, timePeriod, DurationType.Minute);
+
+            const foundResults = await CareplanActivity.findAndCountAll({
+                where : {
+                    Provider : {
+                        [Op.or] : ["REAN", "REAN_BW"]
+                    },
+                },
+                include : [
+                    {
+                        model    : UserTask,
+                        as       : 'UserTask',
+                        required : true,
+                        where    : {
+                            ScheduledStartTime : {
+                                [Op.between] : [from, to]
+                            }
+                        }
+                    },
+                    {
+                        model    : User,
+                        as       : 'User',
+                        required : true,
+                    }
+                ]
+            });
+            // const dtos: CareplanActivityDto[] = [];
+            // for (const activity of foundResults.rows) {
+            //     const dto = CareplanActivityMapper.toDto(activity);
+            //     dtos.push(dto);
+            // }
+            return foundResults.rows;
+
         } catch (error) {
             Logger.instance().log(error.message);
         }

@@ -17,8 +17,9 @@ export class DonationCommunicationRepo implements IDonationCommunicationRepo {
         try {
             const entity = {
                 PatientUserId             : donationCommunicationDomainModel.PatientUserId,
-                DonorUserId               : donationCommunicationDomainModel.DonorUserId,
-                VolunteerUserId           : donationCommunicationDomainModel.VolunteerUserId,
+                AcceptedDonorUserId       : donationCommunicationDomainModel.AcceptedDonorUserId,
+                SelectedVolunteerUserId   : donationCommunicationDomainModel.SelectedVolunteerUserId,
+                SelectedDonationRecordId  : donationCommunicationDomainModel.SelectedDonationRecordId,
                 FifthDayReminderFlag      : donationCommunicationDomainModel.FifthDayReminderFlag,
                 DonorNoResponseFirstFlag  : donationCommunicationDomainModel.DonorNoResponseFirstFlag,
                 DonorNoResponseSecondFlag : donationCommunicationDomainModel.DonorNoResponseSecondFlag,
@@ -62,11 +63,14 @@ export class DonationCommunicationRepo implements IDonationCommunicationRepo {
             if (model.PatientUserId != null) {
                 donationCommunication.PatientUserId = model.PatientUserId;
             }
-            if (model.DonorUserId != null) {
-                donationCommunication.DonorUserId = model.DonorUserId;
+            if (model.AcceptedDonorUserId != null) {
+                donationCommunication.AcceptedDonorUserId = model.AcceptedDonorUserId;
             }
-            if (model.VolunteerUserId != null) {
-                donationCommunication.VolunteerUserId = model.VolunteerUserId;
+            if (model.SelectedVolunteerUserId != null) {
+                donationCommunication.SelectedVolunteerUserId = model.SelectedVolunteerUserId;
+            }
+            if (model.SelectedDonationRecordId != null) {
+                donationCommunication.SelectedDonationRecordId = model.SelectedDonationRecordId;
             }
             if (model.FifthDayReminderFlag != null) {
                 donationCommunication.FifthDayReminderFlag = model.FifthDayReminderFlag;
@@ -104,11 +108,14 @@ export class DonationCommunicationRepo implements IDonationCommunicationRepo {
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] =  filters.PatientUserId;
             }
-            if (filters.DonorUserId != null) {
-                search.where['DonorUserId'] =  filters.DonorUserId;
+            if (filters.AcceptedDonorUserId != null) {
+                search.where['AcceptedDonorUserId'] =  filters.AcceptedDonorUserId;
             }
-            if (filters.VolunteerUserId != null) {
-                search.where['VolunteerUserId'] =  filters.VolunteerUserId;
+            if (filters.SelectedVolunteerUserId != null) {
+                search.where['SelectedVolunteerUserId'] =  filters.SelectedVolunteerUserId;
+            }
+            if (filters.SelectedDonationRecordId != null) {
+                search.where['SelectedDonationRecordId'] =  filters.SelectedDonationRecordId;
             }
             if (filters.FifthDayReminderFlag != null) {
                 search.where['FifthDayReminderFlag'] =  filters.FifthDayReminderFlag;

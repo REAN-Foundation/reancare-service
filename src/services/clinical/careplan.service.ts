@@ -268,7 +268,8 @@ export class CareplanService implements IUserActionService {
                 activity.PlanCode,
                 activity.EnrollmentId,
                 activity.ProviderActionId,
-                scheduledAt);
+                scheduledAt,
+                activity);
 
             details.PatientUserId = activity.PatientUserId;
             details.Provider = activity.Provider;
@@ -518,14 +519,14 @@ export class CareplanService implements IUserActionService {
                 await this._careplanRepo.setUserTaskToActivity(activity.id, userTask.id);
 
                 Logger.instance().log(`User task dto: ${JSON.stringify(userTask)}`);
-                Logger.instance().log(`New user task created for AHA careplan with id: ${userTask.id}`);
+                Logger.instance().log(`New user task created for AHA careplan with id: ${userTask.id}`); //Give the name of provider
             });
         }
     }
 
     public async enrollAndCreateTask(enrollmentDetails ) {
 
-        var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
+        var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);// sara initial assessment banayega
         if (!enrollmentId) {
             throw new ApiError(500, 'Error while enrolling patient to careplan');
         }
@@ -558,7 +559,8 @@ export class CareplanService implements IUserActionService {
                 ScheduledAt      : x.ScheduledAt,
                 Sequence         : x.Sequence,
                 Frequency        : x.Frequency,
-                Status           : x.Status
+                Status           : x.Status,
+                RawContent       : x.RawContent ?? null,
             };
 
             return a;

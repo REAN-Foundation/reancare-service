@@ -172,6 +172,12 @@ export default class AssessmentNode extends Model {
     })
     CorrectAnswer: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Hint: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

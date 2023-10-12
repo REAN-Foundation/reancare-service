@@ -226,7 +226,7 @@ export class CustomAuthenticator implements IAuthenticator {
                 };
                 return res;
             }
-
+            
         } catch (err) {
             Logger.instance().log(JSON.stringify(err, null, 2));
             res = {

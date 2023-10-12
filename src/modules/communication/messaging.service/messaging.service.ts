@@ -23,7 +23,7 @@ export class MessagingService {
     };
 
     sendWhatsappWithReanBot = async (toPhone: string, message: any, provider:string,
-        type:string, PlanCode:string, buttonIds = null): Promise<boolean> => {
+        type:string, PlanCode:string, payload = null): Promise<boolean> => {
 
         const reanBotBaseUrl = process.env.REANBOT_BACKEND_BASE_URL;
         const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
@@ -37,11 +37,10 @@ export class MessagingService {
         if (message.Variables) {
             templateName = type;
             type = "template";
-            buttonIds = message.ButtonIds ? message.ButtonIds : null;
             message = JSON.stringify(message);
 
         }
-        const client = provider === "REAN_BW" ? "BLOOD_WARRIORS" : "MATERNAL_BOT";
+        const client = await this.getClientByProvider(provider);
         const headers = {
             'authentication' : process.env.REANBOT_WEBHOOK_CLIENT_HEADER_TOKEN,
         };
@@ -54,12 +53,12 @@ export class MessagingService {
         Logger.instance().log(`Phone: ${toPhone}`);
         const obj = {
             userId       : toPhone,
-            agentName    : "ReanCare",
+            agentName    : "Reancare",
             provider     : provider,
             type         : type,
             templateName : templateName,
             message      : message,
-            payload      : buttonIds
+            payload      : payload
         };
         Logger.instance().log(`Body of request: ${JSON.stringify(obj)}`);
         const resp1 = await needle('post', url, obj, options);
@@ -69,5 +68,14 @@ export class MessagingService {
         }
         return true;
     };
+
+    private getClientByProvider (provider) {
+        const clientName = {
+            "REAN_BW"       : "BLOOD_WARRIORS",
+            "REAN"          : "MATERNAL_BOT",
+            "REAN_REMINDER" : "REAN_BOT",
+        };
+        return clientName[provider] ?? "DEFAULT";
+    }
     
 }

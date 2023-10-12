@@ -1,4 +1,5 @@
 import {
+    BelongsTo,
     Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUrl, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { ProgressStatus, ProgressStatusList } from '../../../../../../domain.types/miscellaneous/system.types';
@@ -37,6 +38,9 @@ export default class CareplanActivity extends Model {
     })
     PatientUserId: string;
 
+    @BelongsTo(() => User)
+    User: User;
+
     @IsUUID(4)
     @ForeignKey(() => UserTask)
     @Column({
@@ -44,6 +48,9 @@ export default class CareplanActivity extends Model {
         allowNull : true,
     })
     UserTaskId: string;
+
+    @BelongsTo(() => UserTask)
+    UserTask: UserTask;
 
     @Column({
         type      : DataType.STRING(64),

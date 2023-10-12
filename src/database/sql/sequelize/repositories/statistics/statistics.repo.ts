@@ -832,8 +832,10 @@ export class StatisticsRepo implements IStatisticsRepo {
 
                 const usresBmi = [];
                 for (const u of heightWeightArray) {
-                    const bmi = Helper.calculateBMI(u.bodyHeight, u.heightUnits, u.bodyWeight, u.weightUnits);
-                    usresBmi.push((bmi.bmi).toFixed(2));
+                    if (u.bodyHeight !== null && u.bodyWeight !== null){
+                        const bmi = Helper.calculateBMI(u.bodyHeight, u.heightUnits, u.bodyWeight, u.weightUnits);
+                        usresBmi.push((bmi.bmi).toFixed(2));
+                    }
                 }
 
                 const underWeight = usresBmi.filter(x => x < 18.5);

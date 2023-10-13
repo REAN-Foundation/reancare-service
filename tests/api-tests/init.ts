@@ -3,6 +3,7 @@ import  Application  from '../../src/app';
 import  path  from 'path';
 import  fs  from 'fs';
 import { before, after } from 'mocha';
+import { exit } from 'process';
 
 const infra = Application.instance();
 
@@ -17,11 +18,11 @@ before(async () => {
 });
 
 //Tear-down
-after(() => {
-    // var server = infra._server;
-    // server.close(() => {
+after(async (done) => {
     console.info('Tear-down: Server shut down successfully!');
-    // });
+    done();
+    await wait(1000);
+    exit(0);
 });
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -51,5 +52,3 @@ function initializeCache() {
     const testData = loadTestData();
     global.TestCache = { ...testData };
 }
-
-

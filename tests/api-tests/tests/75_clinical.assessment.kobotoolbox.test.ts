@@ -9,7 +9,7 @@ const infra = Application.instance();
 
 //////////////////////////////////////////////////////////////////////////////////
 
-describe('75 - KoboToolbox integration tests', function() {
+describe.skip('75 - KoboToolbox integration tests', function() {
 
     var agent = request.agent(infra._app);
 

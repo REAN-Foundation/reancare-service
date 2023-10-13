@@ -115,3 +115,6 @@ seed.data/internal.clients.seed.json
 seed.data/internal.test.users.seed.json
 seed.data/system.admin.seed.json
 tmp/
+127.0.0.1
+rean.db
+reancare_y

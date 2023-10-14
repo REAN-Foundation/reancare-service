@@ -175,9 +175,9 @@ export class TenantController extends BaseController{
         }
     };
 
-    addUserAsAdminToTenant = async (request: express.Request, response: express.Response): Promise<void> => {
+    promoteTenantUserAsAdmin = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.AddUserAsAdminToTenant', request, response);
+            await this.setContext('Tenant.PromoteTenantUserAsAdmin', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const tenant = await this._service.getById(id);
@@ -188,9 +188,9 @@ export class TenantController extends BaseController{
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
-            const added = await this._service.addUserAsAdminToTenant(id, userId);
-            ResponseHandler.success(request, response, 'User added as admin to tenant successfully!', 200, {
-                Added : added,
+            const promoted = await this._service.promoteTenantUserAsAdmin(id, userId);
+            ResponseHandler.success(request, response, 'User promoted as admin to tenant successfully!', 200, {
+                Promoted : promoted,
             });
         }
         catch (error) {
@@ -198,9 +198,9 @@ export class TenantController extends BaseController{
         }
     };
 
-    removeUserAsAdminFromTenant = async (request: express.Request, response: express.Response): Promise<void> => {
+    demoteAdmin = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.RemoveUserAsAdminFromTenant', request, response);
+            await this.setContext('Tenant.DemoteAdmin', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const tenant = await this._service.getById(id);
@@ -211,55 +211,9 @@ export class TenantController extends BaseController{
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
-            const removed = await this._service.removeUserAsAdminFromTenant(id, userId);
-            ResponseHandler.success(request, response, 'User removed as admin from tenant successfully!', 200, {
-                Removed : removed,
-            });
-        }
-        catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    addUserAsRegularUserToTenant = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            await this.setContext('Tenant.AddUserAsRegularUserToTenant', request, response);
-            const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const tenant = await this._service.getById(id);
-            if (tenant == null) {
-                throw new ApiError(404, 'Tenant not found.');
-            }
-            const user = await this._service.getById(userId);
-            if (user == null) {
-                throw new ApiError(404, 'User not found.');
-            }
-            const added = await this._service.addUserAsRegularUserToTenant(id, userId);
-            ResponseHandler.success(request, response, 'User added as moderator to tenant successfully!', 200, {
-                Added : added,
-            });
-        }
-        catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    removeUserAsRegularUserFromTenant = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            await this.setContext('Tenant.RemoveUserAsRegularUserFromTenant', request, response);
-            const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const tenant = await this._service.getById(id);
-            if (tenant == null) {
-                throw new ApiError(404, 'Tenant not found.');
-            }
-            const user = await this._service.getById(userId);
-            if (user == null) {
-                throw new ApiError(404, 'User not found.');
-            }
-            const removed = await this._service.removeUserAsRegularUserFromTenant(id, userId);
-            ResponseHandler.success(request, response, 'User removed as moderator from tenant successfully!', 200, {
-                Removed : removed,
+            const demoted = await this._service.demoteAdmin(id, userId);
+            ResponseHandler.success(request, response, 'User demoted as admin from tenant successfully!', 200, {
+                Demoted : demoted,
             });
         }
         catch (error) {

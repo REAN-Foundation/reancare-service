@@ -1,6 +1,7 @@
 
 export enum Roles {
     SystemAdmin          = 'System admin',
+    SystemUser           = 'System user',
     Patient              = 'Patient',
     Doctor               = 'Doctor',
     LabUser              = 'Lab user',
@@ -19,7 +20,13 @@ export enum Roles {
 export const DefaultRoles = [
     {
         Role         : Roles.SystemAdmin,
-        Description  : 'Admin of the system having elevated privileges.',
+        Description  : 'Admin of the system having elevated super-admin privileges.',
+        IsSystemRole : true,
+        IsUserRole   : true,
+    },
+    {
+        Role         : Roles.SystemUser,
+        Description  : 'User of the system having elevated privileges in select areas.',
         IsSystemRole : true,
         IsUserRole   : true,
     },

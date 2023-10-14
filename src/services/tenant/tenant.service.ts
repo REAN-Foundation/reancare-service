@@ -53,20 +53,12 @@ export class TenantService {
         return await this._tenantRepo.getTenantWithEmail(email);
     };
 
-    public addUserAsAdminToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.addUserAsAdminToTenant(id, userId);
+    public promoteTenantUserAsAdmin = async (id: uuid, userId: uuid): Promise<boolean> => {
+        return await this._tenantRepo.promoteTenantUserAsAdmin(id, userId);
     };
 
-    public removeUserAsAdminFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.removeUserAsAdminFromTenant(id, userId);
-    };
-
-    public addUserAsRegularUserToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.addUserAsRegularUserToTenant(id, userId);
-    };
-
-    public removeUserAsRegularUserFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.removeUserAsRegularUserFromTenant(id, userId);
+    public demoteAdmin = async (id: uuid, userId: uuid): Promise<boolean> => {
+        return await this._tenantRepo.demoteAdmin(id, userId);
     };
 
     public getTenantStats = async (id: uuid): Promise<any> => {

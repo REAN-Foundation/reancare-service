@@ -8,6 +8,7 @@ import { UserService } from '../../../services/users/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
+import { authorize } from '../../decorators';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -99,17 +100,15 @@ export class UserController {
         }
     };
 
-    loginWithPassword = async (request: express.Request, response: express.Response): Promise<void> => {
+    @authorize('User.LoginWithPassword', true) //Allow anonymous access
+    public async loginWithPassword(request: express.Request, response: express.Response): Promise<void> {
         try {
-            request.context = 'User.LoginWithPassword';
-
             const loginObject = await UserValidator.loginWithPassword(request, response);
             const userDetails = await this._service.loginWithPassword(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);
                 return;
             }
-
             const user: UserDetailsDto = userDetails.user;
             const accessToken = userDetails.accessToken;
             const refreshToken = userDetails.refreshToken;
@@ -135,7 +134,7 @@ export class UserController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    };
+    }
 
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

@@ -221,12 +221,13 @@ export class Seeder {
 
     private seedSystemAdmin = async () => {
 
-        const exists = await this._userRepo.userNameExists('admin');
+        const exists = await this._userRepo.userNameExists('super-admin');
         if (exists) {
             return;
         }
 
         const SeededSystemAdmin = this.loadJSONSeedFile('system.admin.seed.json');
+        const tenant = await this._tenantRepo.getTenantWithCode('default');
 
         const role = await this._roleRepo.getByName(Roles.SystemAdmin);
 
@@ -235,6 +236,7 @@ export class Seeder {
                 Phone     : SeededSystemAdmin.Phone,
                 FirstName : SeededSystemAdmin.FirstName,
             },
+            TenantId        : tenant.id,
             UserName        : SeededSystemAdmin.UserName,
             Password        : SeededSystemAdmin.Password,
             DefaultTimeZone : SeededSystemAdmin.DefaultTimeZone,

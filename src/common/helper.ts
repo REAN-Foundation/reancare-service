@@ -636,4 +636,11 @@ export class Helper {
         return sorted;
     };
 
+    public static getServiceName = () => {
+        const environment = process.env.NODE_ENV ?? '';
+        const name = process.env.SERVICE_NAME ?? 'rean-care-service';
+        const serviceName = `${name}-${environment}`;
+        return serviceName;
+    };
+
 }

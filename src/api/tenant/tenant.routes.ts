@@ -13,10 +13,8 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateUser, controller.delete);
 
-    router.post('/:id/add-user-as-admin', authenticator.authenticateUser, controller.addUserAsAdminToTenant);
-    router.post('/:id/remove-user-as-admin', authenticator.authenticateUser, controller.removeUserAsAdminFromTenant);
-    router.post('/:id/add-user-as-regular-user', authenticator.authenticateUser, controller.addUserAsRegularUserToTenant);
-    router.post('/:id/remove-user-as-regular-user', authenticator.authenticateUser, controller.removeUserAsRegularUserFromTenant);
+    router.post('/:id/promote-as-admin', authenticator.authenticateUser, controller.promoteTenantUserAsAdmin);
+    router.post('/:id/demote-as-admin', authenticator.authenticateUser, controller.demoteAdmin);
 
     router.get('/:id/stats', authenticator.authenticateUser, controller.getTenantStats);
     router.get('/:id/admins', authenticator.authenticateUser, controller.getTenantAdmins);

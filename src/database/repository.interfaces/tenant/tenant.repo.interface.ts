@@ -30,13 +30,9 @@ export interface ITenantRepo {
 
     delete(id: uuid): Promise<boolean>;
 
-    addUserAsAdminToTenant(id: uuid, userId: uuid): Promise<boolean>;
+    promoteTenantUserAsAdmin(id: uuid, userId: uuid): Promise<boolean>;
 
-    removeUserAsAdminFromTenant(id: uuid, userId: uuid): Promise<boolean>;
-
-    addUserAsRegularUserToTenant(id: uuid, userId: uuid): Promise<boolean>;
-
-    removeUserAsRegularUserFromTenant(id: uuid, userId: uuid): Promise<boolean>;
+    demoteAdmin(id: uuid, userId: uuid): Promise<boolean>;
 
     getTenantStats(id: uuid): Promise<any>;
 

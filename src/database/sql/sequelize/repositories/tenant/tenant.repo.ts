@@ -1,5 +1,4 @@
 import Tenant from '../../models/tenant/tenant.model';
-import TenantUser from '../../models/tenant/tenant.user.model';
 import { TenantDto } from '../../../../../domain.types/tenant/tenant.dto';
 import { TenantSearchFilters, TenantSearchResults } from '../../../../../domain.types/tenant/tenant.search.types';
 import { TenantDomainModel } from '../../../../../domain.types/tenant/tenant.domain.model';
@@ -10,6 +9,8 @@ import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import Cohort from '../../models/community/cohorts/cohort.model';
 import User from '../../models/users/user/user.model';
 import Person from '../../models/person/person.model';
+import Role from '../../models/role/role.model';
+import { Roles } from '../../../../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -192,83 +193,76 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
-    addUserAsAdminToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+    promoteTenantUserAsAdmin = async (tenantId: uuid, userId: uuid): Promise<boolean> => {
         try {
-            var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
+            const tenantUserRole = await Role.findOne({ where: { RoleName: Roles.TenantUser } });
+            if (tenantUserRole == null) {
+                throw new Error(`Tenant user role not found!`);
+            }
+            const tenantAdminRole = await Role.findOne({ where: { RoleName: Roles.TenantAdmin } });
+            if (tenantAdminRole == null) {
+                throw new Error(`Tenant admin role not found!`);
+            }
+            var tenantUser = await User.findOne(
+                {
+                    where : {
+                        TenantId : tenantId,
+                        id       : userId,
+                        RoleId   : tenantUserRole.id
+                    }
+                }
+            );
             if (tenantUser == null) {
-                const entity = {
-                    TenantId : id,
-                    UserId   : userId,
-                    Admin    : true,
-                };
-                tenantUser = await TenantUser.create(entity);
-                return tenantUser != null;
+                throw new Error(`User is not tenant user!`);
             }
-            else {
-                tenantUser.Admin = true;
-                await tenantUser.save();
-                return true;
-            }
+            tenantUser.RoleId = tenantAdminRole.id;
+            await tenantUser.save();
+            return true;
         }
         catch (error) {
             throw new Error(`Failed to add user as admin to tenant: ${error.message}`);
         }
     };
 
-    removeUserAsAdminFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
+    demoteAdmin = async (tenantId: uuid, userId: uuid): Promise<boolean> => {
         try {
-            var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
+            const tenantUserRole = await Role.findOne({ where: { RoleName: Roles.TenantUser } });
+            if (tenantUserRole == null) {
+                throw new Error(`Tenant user role not found!`);
+            }
+            const tenantAdminRole = await Role.findOne({ where: { RoleName: Roles.TenantAdmin } });
+            if (tenantAdminRole == null) {
+                throw new Error(`Tenant admin role not found!`);
+            }
+            var tenantUser = await User.findOne(
+                {
+                    where : {
+                        TenantId : tenantId,
+                        id       : userId,
+                        RoleId   : tenantAdminRole.id
+                    }
+                }
+            );
             if (tenantUser == null) {
-                throw new Error(`User is not associated with this tenant!`);
+                throw new Error(`User is not tenant user!`);
             }
-            else {
-                tenantUser.Admin = false;
-                await tenantUser.save();
-                return true;
+            const tenantAdminCount = await User.count(
+                {
+                    where : {
+                        TenantId : tenantId,
+                        RoleId   : tenantAdminRole.id
+                    }
+                }
+            );
+            if (tenantAdminCount <= 1) {
+                throw new Error(`Cannot demote the only admin user!`);
             }
+            tenantUser.RoleId = tenantUserRole.id;
+            await tenantUser.save();
+            return true;
         }
         catch (error) {
             throw new Error(`Failed to remove user as admin from tenant: ${error.message}`);
-        }
-    };
-
-    addUserAsRegularUserToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        try {
-            var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
-            if (tenantUser == null) {
-                const entity = {
-                    TenantId  : id,
-                    UserId    : userId,
-                    Moderator : true,
-                };
-                tenantUser = await TenantUser.create(entity);
-                return tenantUser != null;
-            }
-            else {
-                tenantUser.Moderator = true;
-                await tenantUser.save();
-                return true;
-            }
-        }
-        catch (error) {
-            throw new Error(`Failed to add user as moderator to tenant: ${error.message}`);
-        }
-    };
-
-    removeUserAsRegularUserFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        try {
-            var tenantUser = await TenantUser.findOne({ where: { TenantId: id, UserId: userId } });
-            if (tenantUser == null) {
-                throw new Error(`User is not associated with this tenant!`);
-            }
-            else {
-                tenantUser.Moderator = false;
-                await tenantUser.save();
-                return true;
-            }
-        }
-        catch (error) {
-            throw new Error(`Failed to remove user as moderator from tenant: ${error.message}`);
         }
     };
 
@@ -278,16 +272,24 @@ export class TenantRepo implements ITenantRepo {
             if (tenant == null) {
                 throw new Error(`Tenant not found!`);
             }
-            const tenantUsersCount = await TenantUser.count({ where: { TenantId: id } });
-            const adminUsersCount = await TenantUser.count({ where: { TenantId: id, Admin: true } });
-            const modUsersCount = await TenantUser.count({ where: { TenantId: id, Moderator: true } });
+            const tenantUserRole = await Role.findOne({ where: { RoleName: Roles.TenantUser } });
+            if (tenantUserRole == null) {
+                throw new Error(`Tenant user role not found!`);
+            }
+            const tenantAdminRole = await Role.findOne({ where: { RoleName: Roles.TenantAdmin } });
+            if (tenantAdminRole == null) {
+                throw new Error(`Tenant admin role not found!`);
+            }
+            const usersCount = await User.count({ where: { TenantId: id } });
+            const adminUsersCount = await User.count({ where: { TenantId: id, RoleId: tenantAdminRole.id } });
+            const regularUsersCount = await User.count({ where: { TenantId: id, RoleId: tenantUserRole.id } });
             const cohortCount = await Cohort.count({ where: { TenantId: id } });
 
             const stats = {
-                TotalUsers   : tenantUsersCount,
-                TotalAdmins  : adminUsersCount,
-                TotalMods    : modUsersCount,
-                TotalCohorts : cohortCount,
+                TotalUsers    : usersCount,
+                TotalAdmins   : adminUsersCount,
+                TotalRegulars : regularUsersCount,
+                TotalCohorts  : cohortCount,
             };
             return stats;
         }
@@ -298,40 +300,34 @@ export class TenantRepo implements ITenantRepo {
 
     getTenantAdmins = async (id: uuid): Promise<any[]> => {
         try {
-            const tenantUsers = await TenantUser.findAll({
+            const role = await Role.findOne({ where: { RoleName: Roles.TenantAdmin } });
+            if (role == null) {
+                throw new Error(`Tenant admin role not found!`);
+            }
+            const tenantAdmins = await User.findAll({
                 where : {
                     TenantId : id,
-                    Admin    : true
+                    RoleId   : role.id
                 },
                 include : [
                     {
-                        model    : User,
-                        as       : 'User',
+                        model    : Person,
+                        as       : 'Person',
                         required : true,
-                        include  : [
-                            {
-                                model    : Person,
-                                as       : 'Person',
-                                required : true,
-                            }
-                        ]
                     }
                 ]
             });
-            const dtos = tenantUsers.map((u) => {
+            const dtos = tenantAdmins.map((u) => {
                 return {
-                    UserId : u.UserId,
-                    User   : {
-                        id       : u.User.id,
-                        UserName : u.User.UserName,
-                        Person   : {
-                            id                : u.User.Person.id,
-                            FirstName         : u.User.Person.FirstName,
-                            LastName          : u.User.Person.LastName,
-                            Phone             : u.User.Person.Phone,
-                            Email             : u.User.Person.Email,
-                            ProfilePictureUrl : u.User.Person.ImageResourceId,
-                        }
+                    id       : u.id,
+                    UserName : u.UserName,
+                    Person   : {
+                        id                : u.Person.id,
+                        FirstName         : u.Person.FirstName,
+                        LastName          : u.Person.LastName,
+                        Phone             : u.Person.Phone,
+                        Email             : u.Person.Email,
+                        ProfilePictureUrl : u.Person.ImageResourceId,
                     },
                     CreatedAt : u.createdAt,
                     UpdatedAt : u.updatedAt,
@@ -346,40 +342,34 @@ export class TenantRepo implements ITenantRepo {
 
     getTenantRegularUsers = async (id: uuid): Promise<any[]> => {
         try {
-            const tenantUsers = await TenantUser.findAll({
+            const role = await Role.findOne({ where: { RoleName: Roles.TenantUser } });
+            if (role == null) {
+                throw new Error(`Tenant user role not found!`);
+            }
+            const tenantAdmins = await User.findAll({
                 where : {
-                    TenantId  : id,
-                    Moderator : true
+                    TenantId : id,
+                    RoleId   : role.id
                 },
                 include : [
                     {
-                        model    : User,
-                        as       : 'User',
+                        model    : Person,
+                        as       : 'Person',
                         required : true,
-                        include  : [
-                            {
-                                model    : Person,
-                                as       : 'Person',
-                                required : true,
-                            }
-                        ]
                     }
                 ]
             });
-            const dtos = tenantUsers.map((u) => {
+            const dtos = tenantAdmins.map((u) => {
                 return {
-                    UserId : u.UserId,
-                    User   : {
-                        id       : u.User.id,
-                        UserName : u.User.UserName,
-                        Person   : {
-                            id                : u.User.Person.id,
-                            FirstName         : u.User.Person.FirstName,
-                            LastName          : u.User.Person.LastName,
-                            Phone             : u.User.Person.Phone,
-                            Email             : u.User.Person.Email,
-                            ProfilePictureUrl : u.User.Person.ImageResourceId,
-                        }
+                    id       : u.id,
+                    UserName : u.UserName,
+                    Person   : {
+                        id                : u.Person.id,
+                        FirstName         : u.Person.FirstName,
+                        LastName          : u.Person.LastName,
+                        Phone             : u.Person.Phone,
+                        Email             : u.Person.Email,
+                        ProfilePictureUrl : u.Person.ImageResourceId,
                     },
                     CreatedAt : u.createdAt,
                     UpdatedAt : u.updatedAt,

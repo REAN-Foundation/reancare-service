@@ -189,6 +189,7 @@ export class ReminderSenderService {
             throw new Error(`Email address not found for user ${user.PersonId}`);
         }
         var body = await emailService.getTemplate('reminder.template.html');
+        body.replace('{{FIRST_NAME}}', person.FirstName);
         body.replace('{{TITLE}}', reminder.Name);
         body.replace('{{SCHEDULE_TIME}}', dayjs(schedule.Schedule).format(`L LT`));
         const emailDetails: EmailDetails = {

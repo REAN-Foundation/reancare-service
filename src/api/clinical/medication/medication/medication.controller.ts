@@ -3,7 +3,7 @@ import fs from 'fs';
 import { Helper } from '../../../../common/helper';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
@@ -236,17 +236,17 @@ export class MedicationController {
 
                 if (updated.FrequencyUnit !== 'Other') {
                     var stats = await this._medicationConsumptionService.create(updated);
-    
+
                     var consumptionSummary: ConsumptionSummaryDto = {
                         TotalConsumptionCount   : stats.TotalConsumptionCount,
                         TotalDoseCount          : stats.TotalConsumptionCount * updated.Dose,
                         PendingConsumptionCount : stats.PendingConsumptionCount,
                         PendingDoseCount        : stats.PendingConsumptionCount * updated.Dose,
                     };
-    
+
                     updated.ConsumptionSummary = consumptionSummary;
                 }
-                
+
             }
 
             ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {

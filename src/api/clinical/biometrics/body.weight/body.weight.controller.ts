@@ -3,7 +3,7 @@ import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analy
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { BodyWeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
 import { Loader } from '../../../../startup/loader';

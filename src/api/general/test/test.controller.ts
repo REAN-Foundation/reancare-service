@@ -1,6 +1,6 @@
 import express from 'express';
 import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserService } from '../../../services/users/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { Logger } from '../../../common/logger';

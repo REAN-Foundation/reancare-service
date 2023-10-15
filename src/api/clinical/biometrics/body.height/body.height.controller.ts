@@ -5,7 +5,7 @@ import { BodyHeightDomainModel } from '../../../../domain.types/clinical/biometr
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyHeightValidator } from './body.height.validator';

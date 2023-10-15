@@ -1,7 +1,7 @@
 import express from 'express';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FormDto } from '../../../../domain.types/clinical/assessment/form.types';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ThirdpartyApiCredentialsDto } from '../../../../domain.types/thirdparty/thirdparty.api.credentials';

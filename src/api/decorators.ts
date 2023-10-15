@@ -1,36 +1,37 @@
 import { Request, Response, NextFunction } from 'express';
 import { Span, context, SpanKind, Tracer, trace, Context } from '@opentelemetry/api';
 import { Helper } from '../common/helper';
-import { CustomAuthorizer } from '../auth/custom/custom.authorizer';
-import { ResponseHandler } from '../common/response.handler';
+// import { CustomAuthorizer } from '../auth/custom/custom.authorizer';
+// import { ResponseHandler } from '../common/handlers/response.handler';
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Authorization decorator
 
-export function authorize(context: string, allowAnonymous = false) {
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-        const originalMethod = descriptor.value;
-        descriptor.value = async function(request: Request, response: Response) {
-            request.context = context;
-            if (allowAnonymous) {
-                // If anonymous access is allowed, directly call the original method
-                await originalMethod.apply(this, request, response);
-                return;
-            }
-            var authorizer = new CustomAuthorizer();
-            const authorized = authorizer.authorize(request);
-            if (authorized) {
-                // If authorized, call the original method
-                await originalMethod.apply(this, request, response);
-                return;
-            } else {
-                // If not authorized, return a 403 Forbidden response
-                ResponseHandler.failure(request, response, 'Unauthorized', 403);
-            }
-        };
-    };
-}
+// export function authorize(context: string, allowAnonymous = false) {
+//     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+//         const originalMethod = descriptor.value;
+//         descriptor.value = async function(request: Request, response: Response, next: NextFunction) {
+//             request.context = context;
+//             if (allowAnonymous) {
+//                 // If anonymous access is allowed, directly call the original method
+//                 await originalMethod.call(this, request, response, next);
+//                 return;
+//             }
+//             var authorizer = new CustomAuthorizer();
+//             const authorized = authorizer.authorize(request);
+//             if (authorized) {
+//                 // If authorized, call the original method
+//                 await originalMethod.apply(this, request, response, next);
+//                 return;
+//             } else {
+//                 // If not authorized, return a 403 Forbidden response
+//                 ResponseHandler.failure(request, response, 'Unauthorized', 403);
+//                 return;
+//             }
+//         };
+//     };
+// }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 

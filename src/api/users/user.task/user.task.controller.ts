@@ -3,7 +3,7 @@ import { UserTaskDto } from '../../../domain.types/users/user.task/user.task.dto
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { Logger } from '../../../common/logger';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserActionType, UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/users/user.task/user.task.types';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PersonService } from '../../../services/person/person.service';

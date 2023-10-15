@@ -1,7 +1,7 @@
 import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { CustomTaskService } from '../../../services/users/user/custom.task.service';
 import { UserTaskService } from '../../../services/users/user/user.task.service';
 import { CustomTaskValidator } from './custom.task.validator';

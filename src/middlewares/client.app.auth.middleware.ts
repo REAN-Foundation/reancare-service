@@ -3,7 +3,7 @@ import { AuthenticationResult } from "../domain.types/auth/auth.domain.types";
 import { CurrentClient } from "../domain.types/miscellaneous/current.client";
 import { Loader } from "../startup/loader";
 import { ClientAppService } from "../services/client.apps/client.app.service";
-import { ResponseHandler } from "../common/response.handler";
+import { ResponseHandler } from "../common/handlers/response.handler";
 import { Logger } from "../common/logger";
 
 /////////////////////////////////////////////////////////////////////////////

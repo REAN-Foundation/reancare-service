@@ -1,6 +1,6 @@
 import express from 'express';
 import { TenantService } from '../../services/tenant/tenant.service';
-import { ResponseHandler } from '../../common/response.handler';
+import { ResponseHandler } from '../../common/handlers/response.handler';
 import { Loader } from '../../startup/loader';
 import { TenantValidator } from './tenant.validator';
 import { ApiError } from '../../common/api.error';

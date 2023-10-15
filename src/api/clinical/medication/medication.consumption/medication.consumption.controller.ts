@@ -7,7 +7,7 @@ import { MedicationConsumptionDomainModel }
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { SchedulesForDayDto } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';

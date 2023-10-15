@@ -1,28 +1,28 @@
 import express from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { UserService } from '../../services/users/user/user.service';
 import { Logger } from '../../common/logger';
+import { IUserAuthenticator } from '../interfaces/user.authenticator.interface';
 import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
-import { TenantService } from '../../services/tenant/tenant.service';
-import { Loader } from '../../startup/loader';
-import { IAuthenticator } from '../authenticator.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { ConfigurationManager } from '../../config/configuration.manager';
+import { UserService } from '../../services/users/user/user.service';
+import { TenantService } from '../../services/tenant/tenant.service';
+import { Injector } from '../../startup/injector';
 
-//////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
-export class CustomAuthenticator implements IAuthenticator {
+export class CustomUserAuthenticator implements IUserAuthenticator {
 
     _userService: UserService = null;
 
     _tenantService: TenantService = null;
 
     constructor() {
-        this._userService = Loader.container.resolve(UserService);
-        this._tenantService = Loader.container.resolve(TenantService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._tenantService = Injector.Container.resolve(TenantService);
     }
 
-    public authenticateUser = async (
+    public authenticate = async (
         request: express.Request
     ): Promise<AuthenticationResult> => {
         try {
@@ -99,19 +99,6 @@ export class CustomAuthenticator implements IAuthenticator {
         }
     };
 
-    public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            try {
-                const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
-                var seconds = expiresIn.toString() + 's';
-                const token = jwt.sign(user, process.env.USER_ACCESS_TOKEN_SECRET, { expiresIn: seconds });
-                resolve(token);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    };
-
     public rotateUserSessionToken = async (refreshToken: string): Promise<string> => {
         if (!refreshToken) {
             throw ('Invalid refresh token');
@@ -155,6 +142,19 @@ export class CustomAuthenticator implements IAuthenticator {
                     tenantId
                 };
                 const token = jwt.sign(payload, process.env.USER_REFRESH_TOKEN_SECRET, { expiresIn: seconds });
+                resolve(token);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            try {
+                const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
+                var seconds = expiresIn.toString() + 's';
+                const token = jwt.sign(user, process.env.USER_ACCESS_TOKEN_SECRET, { expiresIn: seconds });
                 resolve(token);
             } catch (error) {
                 reject(error);

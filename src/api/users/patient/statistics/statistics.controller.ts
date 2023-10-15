@@ -1,7 +1,7 @@
 import express from 'express';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { Authorizer } from '../../../../auth/authorizer';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
 import { StatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
 import { Loader } from '../../../../startup/loader';
@@ -124,12 +124,12 @@ export class StatisticsController {
     };
 
     private sendMessageForReportUpdate = async (url: any, reportModel: any) => {
-        
+
         const patient  = await this._patientService.getByUserId(reportModel.PatientUserId);
         const phoneNumber = patient.User.Person.Phone;
         const person = await this._personService.getById(patient.User.PersonId);
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
-        
+
         var userFirstName = 'user';
         if (person && person.FirstName) {
             userFirstName = person.FirstName;

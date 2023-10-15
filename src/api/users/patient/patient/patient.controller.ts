@@ -1,7 +1,7 @@
 import express from 'express';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';

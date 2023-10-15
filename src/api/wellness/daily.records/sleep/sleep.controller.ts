@@ -1,7 +1,7 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { SleepService } from '../../../../services/wellness/daily.records/sleep.service';
 import { Loader } from '../../../../startup/loader';
 import { SleepValidator } from './sleep.validator';
@@ -38,7 +38,7 @@ export class SleepController extends BaseController{
             const model = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
             const patientUserId = request.body.PatientUserId;
-        
+
             var existingRecord = await this._service.getByRecordDate(recordDate, patientUserId);
             if (existingRecord !== null) {
                 var sleep = await this._service.update(existingRecord.id, model);

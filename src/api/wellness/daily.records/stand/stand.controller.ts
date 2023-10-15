@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { StandService } from '../../../../services/wellness/daily.records/stand.service';
 import { Loader } from '../../../../startup/loader';

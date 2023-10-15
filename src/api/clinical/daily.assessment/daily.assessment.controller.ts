@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { DailyAssessmentService } from '../../../services/clinical/daily.assessment/daily.assessment.service';
 import { Loader } from '../../../startup/loader';
 import { DailyAssessmentValidator } from './daily.assessment.validator';

@@ -1,5 +1,5 @@
 import express from 'express';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { ClinicalInterpretationList, ClinicalValidationStatusList } from '../../../domain.types/miscellaneous/clinical.types';
 import { SeverityList } from '../../../domain.types/miscellaneous/system.types';
 

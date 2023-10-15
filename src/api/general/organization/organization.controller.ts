@@ -1,7 +1,7 @@
 import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
@@ -157,7 +157,7 @@ export class OrganizationController {
             await this._authorizer.authorize(request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-        
+
             const existingOrganization = await this._service.getById(id);
             if (existingOrganization == null) {
                 throw new ApiError(404, 'Organization not found.');

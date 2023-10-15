@@ -5,7 +5,7 @@ import path from 'path';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { TimeHelper } from '../../../../common/time.helper';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
 import { FileResourceUploadDomainModel } from '../../../../domain.types/general/file.resource/file.resource.domain.model';

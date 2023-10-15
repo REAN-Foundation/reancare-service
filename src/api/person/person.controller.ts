@@ -1,7 +1,7 @@
 import express from 'express';
 import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
-import { ResponseHandler } from '../../common/response.handler';
+import { ResponseHandler } from '../../common/handlers/response.handler';
 import { AddressService } from '../../services/general/address.service';
 import { OrganizationService } from '../../services/general/organization.service';
 import { PersonService } from '../../services/person/person.service';
@@ -168,7 +168,7 @@ export class PersonController {
             const persons = await this._service.getPersonWithPhone(phone);
             const message =
                 persons ? `Person record retrieved successfully!` : 'No records found!';
-                
+
             ResponseHandler.success(request, response, message, 200, {
                 Persons : persons,
             });

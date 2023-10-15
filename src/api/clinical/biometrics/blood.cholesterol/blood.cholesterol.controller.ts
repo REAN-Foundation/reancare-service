@@ -1,7 +1,7 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodCholesterolService } from '../../../../services/clinical/biometrics/blood.cholesterol.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodCholesterolValidator } from './blood.cholesterol.validator';

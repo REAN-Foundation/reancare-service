@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
 import { Loader } from '../../../../startup/loader';
@@ -200,7 +200,7 @@ export class FoodConsumptionController extends BaseController {
                 }
                 //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
                 //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                
+
                 AwardsFactsService.addOrUpdateNutritionResponseFact({
                     PatientUserId : updated.PatientUserId,
                     Facts         : {

@@ -4,7 +4,7 @@ import path from 'path';
 import { Authenticator } from '../../../auth/authenticator';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { TimeHelper } from '../../../common/time.helper';
 import { FileResourceDetailsDto, FileResourceDto } from '../../../domain.types/general/file.resource/file.resource.dto';
 import { FileResourceSearchFilters } from '../../../domain.types/general/file.resource/file.resource.search.types';

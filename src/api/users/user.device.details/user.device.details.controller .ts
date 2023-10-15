@@ -2,7 +2,7 @@ import express from 'express';
 import { PersonService } from '../../../services/person/person.service';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
 import { Loader } from '../../../startup/loader';
 import { UserDeviceDetailsValidator } from './user.device.details.validator';

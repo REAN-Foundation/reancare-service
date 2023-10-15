@@ -1,5 +1,5 @@
 import express, { application } from 'express';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import * as path from 'path';

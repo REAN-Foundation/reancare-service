@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { ClientAppService } from '../../services/client.apps/client.app.service';
-import { ResponseHandler } from '../../common/response.handler';
+import { ResponseHandler } from '../../common/handlers/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
 import { ClientAppValidator } from './client.app.validator';

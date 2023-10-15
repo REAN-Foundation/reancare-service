@@ -1,7 +1,7 @@
 import express from 'express';
 import { PatientDonorsService } from '../../../services/clinical/donation/patient.donors.service';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';

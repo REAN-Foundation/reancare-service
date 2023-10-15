@@ -1,7 +1,7 @@
 import express from 'express';
 import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
 import { CareplanService } from '../../../../services/clinical/careplan.service';
 import { UserTaskService } from '../../../../services/users/user/user.task.service';

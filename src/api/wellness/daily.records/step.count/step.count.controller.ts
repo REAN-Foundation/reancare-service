@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
@@ -37,7 +37,7 @@ export class StepCountController extends BaseController {
             const domainModel = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
             const provider = request.body.Provider;
-        
+
             if (provider) {
                 var existingRecord =
                     await this._service.getByRecordDateAndPatientUserId(recordDate, request.body.PatientUserId, provider);

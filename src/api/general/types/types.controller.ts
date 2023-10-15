@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, SeverityList, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { TypesService } from '../../../services/general/types.service';
 import { Loader } from '../../../startup/loader';
@@ -573,7 +573,7 @@ export class TypesController extends BaseController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} goal types retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 GoalTypes : goalTypes ,
             });

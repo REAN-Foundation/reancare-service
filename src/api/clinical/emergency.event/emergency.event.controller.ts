@@ -1,7 +1,7 @@
 import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { EmergencyEventService } from '../../../services/clinical/emergency.event.service';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PatientService } from '../../../services/users/patient/patient.service';

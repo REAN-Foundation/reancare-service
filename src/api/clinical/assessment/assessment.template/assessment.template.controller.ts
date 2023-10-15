@@ -3,7 +3,7 @@ import fs from 'fs';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AssessmentTemplateFileConverter } from '../../../../services/clinical/assessment/assessment.template.file.converter';

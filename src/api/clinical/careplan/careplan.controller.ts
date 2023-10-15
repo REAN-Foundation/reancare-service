@@ -1,7 +1,7 @@
 import express from 'express';
 import { CareplanService } from '../../../services/clinical/careplan.service';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { Loader } from '../../../startup/loader';
 import { CareplanValidator } from './careplan.validator';
 import { BaseController } from '../../base.controller';

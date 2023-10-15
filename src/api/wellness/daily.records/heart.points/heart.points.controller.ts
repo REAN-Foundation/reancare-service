@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HeartPointsService } from '../../../../services/wellness/daily.records/heart.points.service';
 import { Loader } from '../../../../startup/loader';

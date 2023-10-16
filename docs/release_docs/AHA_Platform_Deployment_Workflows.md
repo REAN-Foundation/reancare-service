@@ -1,80 +1,82 @@
-# AHA Platform Deployment Workflows
+# AHA Platform Deployment Workflows Documentation
 
-## AHA-PROD-CI-CD
-Mode of trigger: ```On-Demand```
+## AHA-PROD-CI-CD Release Workflow
 
-Parameter : 
-* ```Tag_name```: Please provide the GitHub tag name that the user wishes to use for deployment, For example ```v1.0.1```
+**Trigger Mode:** On-Demand
 
-This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy ```reancare-service``` release to ```aha-prod``` environment
+**Parameters:**
+- `Tag_name`: Please provide the GitHub tag name that the user wishes to use for deployment. For example, `v1.0.1`.
 
-### AHA Prod Release Workflow
+This workflow involves two jobs: `GitHub-ECR-Tag-Check` and `Deploy-ECS`, which are responsible for validating and deploying the `reancare-service` release to the `aha-prod` environment.
 
-Release Process Workflow Diagram.
-![AHA-PROD](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/AHA-PROD_Workflow.png?raw=true)
+### AHA-PROD Release Workflow Overview
 
-GitHub Action Workflow run
-![AHA-PROD-JOB](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/aha_github_workflow.png?raw=true)
+The following diagram illustrates the high-level process of the AHA-PROD release workflow:
+![AHA-PROD Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/AHA-PROD_Workflow.png?raw=true)
 
+Visual representation of the GitHub Action Workflow execution:
+![AHA-PROD Job Execution](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/aha_github_workflow.png?raw=true)
 
+### Workflow Jobs
 
-### JOBS
+#### Job: GitHub-ECR-Tag-Check
 
-#### GitHub-ECR-Tag-Check
-The GitHub ECR Tag Check will be performing the following steps.
+The `GitHub-ECR-Tag-Check` job performs the following steps:
 
-* This job uses [mukunku/tag-exists-action](https://github.com/marketplace/actions/tag-exists-action), [git-get-release-action](https://github.com/marketplace/actions/git-get-release-action).
-* This job will validate whether the given input release tag exists or not
-* This job gets the GitHub release with the associated GitHub tag name with it and store the GitHub release ID.
-* Then it will check ECR image tag with the same as GitHub release ID.
+- Utilizes the [mukunku/tag-exists-action](https://github.com/marketplace/actions/tag-exists-action) and [git-get-release-action](https://github.com/marketplace/actions/git-get-release-action) actions.
+- Validates the existence of the provided release tag.
+- Retrieves the GitHub release associated with the given tag and stores the release ID.
+- Compares the ECR image tag with the retrieved GitHub release ID to ensure consistency.
 
-#### Deploy-ECS
-The Deploy ECS will be performing the following steps
+#### Job: Deploy-ECS
 
-* This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
-* This job uses 'aha-prod' environment and login to ECR using creds and pull the ECR image which was created in PROD-CI-CD with the GitHub release ID.
-* Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
+The `Deploy-ECS` job performs the following steps:
 
+- Utilizes the [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images) action.
+- Operates within the `aha-prod` environment, authenticates with ECR using credentials, and pulls the ECR image generated in the `AHA-PROD-CI-CD` workflow using the GitHub release ID.
+- Generates a new version of the Amazon ECS task definition containing the updated Docker image.
+- Deploys the updated Amazon ECS task definition using the Duplo API.
 
+---
 
-## AHA-UAT-CI-CD
-Mode of trigger: ```On-Demand```
+## AHA-UAT-CI-CD Release Workflow
 
-Parameter : 
-* ```Tag_name```: Please provide the GitHub tag name that the user wishes to use for deployment, For example ```v1.0.1```
+**Trigger Mode:** On-Demand
 
-This workflow uses two jobs: GitHub-ECR-Tag-Check and Deploy ECS to verify and deploy ```reancare-service``` release to ```aha-uat``` environment
+**Parameters:**
+- `Tag_name`: Please provide the GitHub tag name that the user wishes to use for deployment. For example, `v1.0.1`.
 
-### AHA UAT Release Workflow
+This workflow also comprises two jobs: `CodeScan-ESLint`, `GitHub-ECR-Tag-Check`, and `Deploy-ECS`, which validate and deploy the `reancare-service` release to the `aha-uat` environment.
 
-Release Process Workflow Diagram..
-![AHA-uat](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/AHA-UAT_wrokflow.png?raw=true)
+### AHA-UAT Release Workflow Overview
 
-GitHub Action Workflow run
-![aha-uat-workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/aha_uat_workflow.png?raw=true)
+The following diagram illustrates the overall process of the AHA-UAT release workflow:
+![AHA-UAT Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/AHA-UAT_workflow.png?raw=true)
 
+Visual representation of the GitHub Action Workflow execution:
+![AHA-UAT Job Execution](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/aha_uat_workflow.png?raw=true)
 
-### JOBS
+### Workflow Jobs
 
-#### CodeScan-ESLint
+#### Job: CodeScan-ESLint
 
-* This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job.
-* This job use static code analysis tool which identify problematic patterns found in application source code.
+- Uses the [Super-linter](https://github.com/marketplace/actions/super-linter) action to perform static code analysis.
+- Identifies problematic patterns within the application's source code.
 
-#### GitHub-ECR-Tag-Check
-The GitHub ECR Tag Check will be performing the following steps.
+#### Job: GitHub-ECR-Tag-Check
 
+The `GitHub-ECR-Tag-Check` job executes the following steps:
 
-* This job uses [mukunku/tag-exists-action](https://github.com/marketplace/actions/tag-exists-action), [git-get-release-action](https://github.com/marketplace/actions/git-get-release-action).
-* This job will validate whether the given input release tag exists or not.
-* This job get the GitHub release with the associated GitHub tag name with it and store the GitHub release ID.
-* Then it will check ECR image tag with the same as GitHub release ID.
+- Utilizes the [mukunku/tag-exists-action](https://github.com/marketplace/actions/tag-exists-action) and [git-get-release-action](https://github.com/marketplace/actions/git-get-release-action) actions.
+- Validates the presence of the specified release tag.
+- Retrieves the GitHub release associated with the provided tag and stores the release ID.
+- Compares the ECR image tag with the obtained GitHub release ID for consistency.
 
-#### Deploy-ECS
-The Deploy ECS will be performing the following steps.
+#### Job: Deploy-ECS
 
-* This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
-* This job uses 'aha-uat' environment and login to ECR using creds and pull the ECR image which was created in PROD-CI-CD with the GitHub release ID.
-* Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
+The `Deploy-ECS` job operates as follows:
 
-
+- Utilizes the [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images) action.
+- Functions within the `aha-uat` environment, authenticates with ECR using credentials, and retrieves the ECR image generated during the `AHA-PROD-CI-CD` workflow using the GitHub release ID.
+- Creates a new version of the Amazon ECS task definition containing the updated Docker image.
+- Deploys the updated Amazon ECS task definition using the Duplo API.

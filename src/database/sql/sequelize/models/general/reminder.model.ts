@@ -141,6 +141,12 @@ export default class Reminder extends Model {
         defaultValue : 'SMS',
     })
     NotificationType: string;
+    
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    RawContent: string;
 
     @Column
     @CreatedAt

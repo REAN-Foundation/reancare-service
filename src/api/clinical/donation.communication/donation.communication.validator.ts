@@ -15,8 +15,9 @@ export class DonationCommunicationValidator extends BaseValidator {
 
         const doctorNoteModel: DonationCommunicationDomainModel = {
             PatientUserId             : request.body.PatientUserId ?? null,
-            DonorUserId               : request.body.DonorUserId ?? null,
-            VolunteerUserId           : request.body.VolunteerUserId ?? null,
+            AcceptedDonorUserId       : request.body.AcceptedDonorUserId ?? null,
+            SelectedDonationRecordId  : request.body.SelectedDonationRecordId ?? null,
+            SelectedVolunteerUserId   : request.body.SelectedVolunteerUserId ?? null,
             FifthDayReminderFlag      : request.body.FifthDayReminderFlag ?? false,
             DonorNoResponseFirstFlag  : request.body.DonorNoResponseFirstFlag ?? false,
             DonorNoResponseSecondFlag : request.body.DonorNoResponseSecondFlag ?? false,
@@ -35,8 +36,9 @@ export class DonationCommunicationValidator extends BaseValidator {
     search = async (request: express.Request): Promise<DonationCommunicationSearchFilters> => {
 
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
-        await this.validateUuid(request, 'donorUserId', Where.Query, false, false);
-        await this.validateUuid(request, 'volunteerUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'selectedDonorUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'selectedVolunteerUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'selectedDonationRecordId', Where.Query, false, false);
         await this.validateString(request, 'donorAcceptance', Where.Query, false, false);
         await this.validateBoolean(request, 'fifthDayReminderFlag', Where.Query, false, false);
         await this.validateBoolean(request, 'donorNoResponseFirstFlag', Where.Query, false, false);
@@ -62,8 +64,9 @@ export class DonationCommunicationValidator extends BaseValidator {
     private  async validateCreateBody(request) {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
-        await this.validateUuid(request, 'DonorUserId', Where.Body, false, false);
-        await this.validateUuid(request, 'VolunteerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'AcceptedDonorUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'SelectedVolunteerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'SelectedDonationRecordId', Where.Body, false, false);
         await this.validateBoolean(request, 'FifthDayReminderFlag', Where.Body, false, false);
         await this.validateBoolean(request, 'DonorNoResponseFirstFlag', Where.Body, false, false);
         await this.validateBoolean(request, 'DonorNoResponseSecondFlag', Where.Body, false, false);
@@ -76,8 +79,9 @@ export class DonationCommunicationValidator extends BaseValidator {
     private  async validateUpdateBody(request) {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
-        await this.validateUuid(request, 'DonorUserId', Where.Body, false, false);
-        await this.validateUuid(request, 'VolunteerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'AcceptedDonorUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'SelectedVolunteerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'SelectedDonationRecordId', Where.Body, false, false);
         await this.validateBoolean(request, 'FifthDayReminderFlag', Where.Body, false, false);
         await this.validateBoolean(request, 'DonorNoResponseFirstFlag', Where.Body, false, false);
         await this.validateBoolean(request, 'DonorNoResponseSecondFlag', Where.Body, false, false);
@@ -91,8 +95,9 @@ export class DonationCommunicationValidator extends BaseValidator {
 
         var filters: DonationCommunicationSearchFilters = {
             PatientUserId             : request.query.patientUserId ?? null,
-            DonorUserId               : request.query.donorUserId ?? null,
-            VolunteerUserId           : request.query.volunteerUserId ?? null,
+            AcceptedDonorUserId       : request.query.acceptedDonorUserId ?? null,
+            SelectedVolunteerUserId   : request.query.selectedVolunteerUserId ?? null,
+            SelectedDonationRecordId  : request.query.selectedDonationRecordId ?? null,
             FifthDayReminderFlag      : request.query.fifthDayReminderFlag ?? null,
             DonorNoResponseFirstFlag  : request.query.donorNoResponseFirstFlag ?? null,
             DonorNoResponseSecondFlag : request.query.donorNoResponseSecondFlag ?? null,

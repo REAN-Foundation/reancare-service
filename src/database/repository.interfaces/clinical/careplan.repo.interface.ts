@@ -66,4 +66,6 @@ export interface ICareplanRepo {
 
     deleteFutureCareplanTask(enrollment): Promise<number>;
 
+    getUserTasksOfSelectiveProvider(timePeriod): Promise<any[]>;
+
 }

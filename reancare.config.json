@@ -90,6 +90,14 @@
                     "DisplayName": "Maternity Careplan",
                     "DefaultDurationDays": 100,
                     "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
+                },
+                {
+                    "Provider" : "REAN",
+                    "Name": "High Risk Maternity Careplan",
+                    "Code": "DMC-Maternity-Phase-2",
+                    "DisplayName": "Maternity Careplan",
+                    "DefaultDurationDays": 100,
+                    "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
                 }
             ]
         },

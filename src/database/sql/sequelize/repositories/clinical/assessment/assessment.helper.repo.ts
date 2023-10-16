@@ -451,6 +451,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Score                       : nodeObj.Score,
                 ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce,
                 QueryResponseType           : QueryResponseType.None,
+                Hint                        : nodeObj.Hint ?? null,
             };
 
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -526,6 +527,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'QueryResponseType')) {
                 thisNode.QueryResponseType = updates['QueryResponseType'];
+            }
+            if (Helper.hasProperty(updates, 'Hint')) {
+                thisNode.Hint = updates['Hint'];
             }
             if (Helper.hasProperty(updates, 'Message')) {
                 thisNode.Message = updates['Message'];
@@ -727,7 +731,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Sequence                    : nodeObj.Sequence,
                 Score                       : nodeObj.Score,
                 QueryResponseType           : QueryResponseType.None,
-                ServeListNodeChildrenAtOnce : false
+                ServeListNodeChildrenAtOnce : false,
+                Hint                        : nodeObj.Hint,
             };
 
             if (nodeObj.ChildrenNodeDisplayCodes !== undefined) {

@@ -97,9 +97,10 @@ export class ReminderSenderService {
     };
 
     private static sendReminderByWhatsApp = async (user, reminder, schedule): Promise<boolean> => {
-        const { messagingService, phone, message } =
-            await ReminderSenderService.getUserSMSDetails(user, reminder, schedule);
-        const sent = await messagingService.sendWhatsappMessage(phone, message);
+        const { messagingService, phone, message, templateName } =
+            await ReminderSenderService.getUserWhatsAppDetails(user, reminder, schedule);
+        const sent = await messagingService.sendWhatsappWithReanBot(phone, message, "REAN_REMINDER",
+            templateName, null, null);
         await ReminderSenderService.markAsDelivered(sent, schedule.id);
         return true;
     };
@@ -156,6 +157,33 @@ export class ReminderSenderService {
         return { messagingService, phone, message };
     }
 
+    private static async getUserWhatsAppDetails(user: any, reminder: any, schedule: any) {
+        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const messagingService = Loader.messagingService;
+        const person = await personRepo.getById(user.PersonId);
+        const phone = person.Phone;
+        const { message, templateName } = ReminderSenderService.constructWhatsAppTemplateMessage(schedule, reminder);
+        return { messagingService, phone, message, templateName };
+    }
+
+    private static constructWhatsAppTemplateMessage(schedule: any, reminder: any) {
+        const duration = dayjs.duration(dayjs(schedule.Schedule).diff(dayjs()));
+        const minutes = Math.ceil(duration.asMinutes());
+        Logger.instance().log(`Sending reminder for ${dayjs(schedule.Schedule).format('hh:mm:ss')}`);
+
+        // Creating variables for template
+        const messageData = { TemplateName: "",Variables: {} };
+        const templateData = JSON.parse(JSON.parse(reminder.RawContent));
+        messageData.TemplateName = templateData.TemplateName;
+        templateData.Variables.en[1].text = minutes;
+        templateData.Variables.en[2].text = dayjs(schedule.Schedule).format('hh:mm:ss');
+        messageData.Variables = JSON.stringify(templateData.Variables);
+        const message = JSON.stringify(messageData);
+        const templateName = templateData.TemplateName;
+
+        return { message, templateName };
+    }
+
     private static constructMessage(schedule: any, reminder: any) {
         const duration = dayjs.duration(dayjs(schedule.Schedule).diff(dayjs()));
         const minutes = Math.ceil(duration.asMinutes());
@@ -167,6 +195,7 @@ export class ReminderSenderService {
         }
         Logger.instance().log(`Sending reminder for ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}`);
         const message = `${reminder.Name} ${subString} at ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}.`;
+        Logger.instance().log(message);
         return message;
     }
 

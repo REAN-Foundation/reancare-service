@@ -8,6 +8,7 @@ import { Loader } from '../../../startup/loader';
 import { UserDeviceDetailsValidator } from './user.device.details.validator';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -194,13 +195,14 @@ export class UserDeviceDetailsController {
                 deviceTokens.push(device.Token);
             });
 
-            const message = await this._firebaseNotificationService.formatNotificationMessage('APP', details.Title, details.Body);
+            const message = await this._firebaseNotificationService.formatNotificationMessage(details.Type, details.Title, details.Body);
 
             // call notification service to send multiple devices
             await this._firebaseNotificationService.sendNotificationToMultipleDevice(deviceTokens, message);
 
             ResponseHandler.success(request, response, 'Notification sent to device successfully!', 201, {
                 Title       : details.Title,
+                Type        : details.Type,
                 Body        : details.Body,
                 DeviceCount : deviceTokens.length,
             });
@@ -228,7 +230,9 @@ export class UserDeviceDetailsController {
         } else {
             userDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
         }
-    
+
+        Logger.instance().log(JSON.stringify(userDeviceDetails));
+
     };
 
     //#endregion

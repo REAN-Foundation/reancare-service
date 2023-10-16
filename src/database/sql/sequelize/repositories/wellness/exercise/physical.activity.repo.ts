@@ -301,7 +301,8 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 MoveMinutes : totalMoveMinutesForDay
             });
         }
-        return stats;
+        const stats_ = stats.sort((a, b) => new Date(a.DayStr).getTime() - new Date(b.DayStr).getTime());
+        return stats_;
     }
 
     private async getPatientTimezone(patientUserId: string) {
@@ -343,15 +344,20 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
-                const recordDate = x.EndTime ?? x.StartTime;
+            const records_ = records.map(async x => {
+                var recordDate = x.StartTime ?? x.EndTime;
+                if (!recordDate) {
+                    recordDate = x.CreatedAt;
+                }
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
+                const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
+                Logger.instance().log(`RecordDate: ${tempDate} RecordDateStr: ${recordDateStr}`);
                 return {
                     RecordId                    : x.id,
                     PatientUserId               : x.PatientUserId,
                     PhysicalActivityQuestionAns : x.PhysicalActivityQuestionAns,
                     RecordDate                  : tempDate,
-                    RecordDateStr               : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr               : recordDateStr,
                     RecordTimeZone              : currentTimeZone,
                 };
             });
@@ -380,21 +386,39 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
-                const recordDate = x.EndTime ?? x.StartTime;
+            const records_ = records.map(async x => {
+                var recordDate = x.StartTime ?? x.EndTime;
+                if (!recordDate) {
+                    recordDate = x.CreatedAt;
+                }
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId                    : x.id,
                     PatientUserId               : x.PatientUserId,
                     PhysicalActivityQuestionAns : x.PhysicalActivityQuestionAns,
                     RecordDate                  : tempDate,
-                    RecordDateStr               : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr               : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
                     RecordTimeZone              : currentTimeZone,
                 };
             });
             return records_;
         }
         catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getRecent = async (patientUserId: string): Promise<PhysicalActivityDto> => {
+        try {
+            const record = await PhysicalActivity.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['CreatedAt', 'DESC']]
+            });
+            return await PhysicalActivityMapper.toDto(record);
+        } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

@@ -31,7 +31,7 @@ export const addUserTasksStats = (document, model, y) => {
         y = addNoDataDisplay(document, y);
     } else {
         y = y + 25;
-        addText(document, title, 80, 294, 6, titleColor, 'center');
+        //addText(document, title, 80, 294, 6, titleColor, 'center');
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 23;
         const colors = getUserTaskStatusColors();
@@ -105,7 +105,7 @@ const createUserEngagement_DonutChart = async (stats: any, filename: string) => 
         Height : SQUARE_CHART_HEIGHT,
         Colors : [
             ChartColors.MediumSeaGreen,
-            ChartColors.Coral,
+            ChartColors.OrangeRed,
         ],
     };
     const data = [
@@ -143,12 +143,12 @@ const createUserTasks_StackedBarChart = async (stats: any, filename: string) => 
     const temp = [];
     for (var c of stats) {
         temp.push({
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date(c.DayStr),
             y : c.Finished,
             z : 'Finished'
         });
         temp.push({
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date(c.DayStr),
             y : c.Unfinished,
             z : 'Unfinished'
         });
@@ -165,6 +165,7 @@ const createUserTasks_StackedBarChart = async (stats: any, filename: string) => 
     options.Categories      = categories;
     options.Colors          = colors;
     options.FontSize        = '9px';
+    options.XAxisTimeScaled = true;
 
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
@@ -177,7 +178,7 @@ const getUserTaskStatusColors = () => {
         },
         {
             Key   : 'Unfinished',
-            Color : ChartColors.Coral,
+            Color : ChartColors.OrangeRed,
         },
     ];
     return items;

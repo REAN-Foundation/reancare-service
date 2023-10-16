@@ -15,6 +15,7 @@ import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { RoleDto } from '../../domain.types/role/role.dto';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
+import { UserDomainModel } from '../../domain.types/users/user/user.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,7 +122,7 @@ export class UserHelper {
         patient.HealthProfile = healthProfile;
         return patient;
     };
- 
+
     private async addAddress(createModel: PatientDomainModel, person: PersonDetailsDto)
         : Promise<AddressDto> {
         if (createModel.Address) {
@@ -151,11 +152,28 @@ export class UserHelper {
         createModel.User.RoleId = roleId;
         createModel = await this.updateUserDomainModel(createModel);
 
+        const userModel = createModel.User;
+        const isTestUser = await this.isTestUser(userModel);
+        userModel.IsTestUser = isTestUser;
+
         var user = await this._userService.create(createModel.User);
         if (!user) {
             throw new ApiError(500, 'Error creating missing user definition!');
         }
         return user;
+    }
+
+    public async isTestUser(userModel: UserDomainModel) {
+        var phone = userModel.Person.Phone;
+        const tokens = userModel.Person.Phone ? userModel.Person.Phone.split('-') : [];
+        if (tokens.length === 1) {
+            phone = tokens[0];
+        }
+        else if (tokens.length === 2) {
+            phone = tokens[1];
+        }
+        const isTestUser = await this._userService.isInternalTestUser(phone);
+        return isTestUser;
     }
 
     private async updateUserDomainModel(createModel: PatientDomainModel): Promise<PatientDomainModel> {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { IBloodWarriorService } from "../interface/community.network.interface";
 import * as PatientMessages from '../patient.management/patient.messages.json';
@@ -13,14 +14,24 @@ export class PatientNetworkService implements IBloodWarriorService {
         return "REAN_BW";
     }
 
-    public fetchActivities = async (careplanCode: string, enrollmentId: string,participantId?: string,
-        startDate?: Date, bloodTransfusionDate?: Date, toDate?: Date): Promise<CareplanActivity[]> => {
+    public fetchActivities = async (
+        careplanCode: string,
+        enrollmentId: string,
+        participantId?: string,
+        startDate?: Date,
+        bloodTransfusionDate?: Date,
+        toDate?: Date)
+            : Promise<CareplanActivity[]> => {
         const activities = PatientMessages['default'];
         var activityEntities: CareplanActivity[] = [];
 
         activities.forEach(async activity => {
             Logger.instance().log(`Blood transfusion date: ${bloodTransfusionDate}`);
-            let activityDate = TimeHelper.subtractDuration(bloodTransfusionDate, activity.Day, DurationType.Day);
+            let scedulingVariable = "Day";
+            if (process.env.REAN_CAREPLAN_SCHEDULING_VARIABLE) {
+                scedulingVariable = process.env.REAN_CAREPLAN_SCHEDULING_VARIABLE;
+            }
+            let activityDate = TimeHelper.subtractDuration(bloodTransfusionDate, activity[`${scedulingVariable}`], DurationType.Day);
             activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
             Logger.instance().log(`Date of patient reminder  ${activity.Sequence}: ${activityDate}`);
 

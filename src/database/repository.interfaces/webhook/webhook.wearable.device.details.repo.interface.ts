@@ -18,5 +18,9 @@ export interface IWearableDeviceDetailsRepo {
     getAvailableDeviceList(patientUserId: string): Promise<WearableDeviceDetailsDto[]>;
 
     getWearableDeviceDetails(oldTerraUserId: string, provider : string ): Promise<WearableDeviceDetailsDto>;
+
+    getAllUsers(): Promise<WearableDeviceDetailsDto[]>;
+
+    getByPatientUserId(patientUserId: string): Promise<WearableDeviceDetailsDto>;
     
 }

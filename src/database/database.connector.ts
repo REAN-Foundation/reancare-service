@@ -12,8 +12,7 @@ export class PrimaryDatabaseConnector {
 
     public init = async (): Promise<boolean> => {
         try {
-            await this._db.connect();
-            return true;
+            return await this._db.connect();
         } catch (error) {
             Logger.instance().log('Create database error: ' + error.message);
             return false;

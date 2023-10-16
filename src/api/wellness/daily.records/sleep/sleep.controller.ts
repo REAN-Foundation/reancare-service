@@ -67,7 +67,7 @@ export class SleepController extends BaseController{
                     },
                     RecordId       : sleep.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }

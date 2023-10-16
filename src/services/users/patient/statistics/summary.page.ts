@@ -4,7 +4,7 @@ import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { BarChartOptions, ChartColors, LineChartOptions, MultiBarChartOptions } from "../../../../modules/charts/chart.options";
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { createFeelings_DonutChart, getFeelingsColors } from "./daily.assessments.stats";
-import { createMedicationConsumption_DonutChart, getMedicationStatusCategoryColors } from "./medication.stats";
+import { createMedicationConsumption_DonutChart } from "./medication.stats";
 import { getNutritionQuestionCategoryColors } from "./nutrition.stats";
 import {
     addTableRow,
@@ -14,7 +14,6 @@ import {
     RECTANGULAR_CHART_WIDTH,
     TableRowProperties } from "./report.helper";
 import {
-    addSectionTitle,
     addLegend,
     SECOND_COLUMN_START,
     addFirstColumnSectionTitle,
@@ -45,6 +44,11 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
 
     const labValues = model.Stats.Biometrics.LastMonth;
 
+    var useLpaUnit = false;
+    if (labValues.Lipids.Lpa.Unit !== 'mg/dL') {
+        useLpaUnit = true;
+    }
+
     const vals = [];
     vals.push([true, 'Value', 'Starting', 'Current', 'Change']);
     vals.push([false, 'Blood Glucose (mg/dL)', labValues.BloodGlucose.StartingBloodGlucose, labValues.BloodGlucose.CurrentBloodGlucose, labValues.BloodGlucose.TotalChange]);
@@ -54,8 +58,10 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
     vals.push([false, 'HDL (mg/dL)', labValues.Lipids.HDL.StartingHDL, labValues.Lipids.HDL.CurrentHDL, labValues.Lipids.HDL.TotalHDLChange]);
     vals.push([false, 'LDL (mg/dL)', labValues.Lipids.LDL.StartingLDL, labValues.Lipids.LDL.CurrentLDL, labValues.Lipids.LDL.TotalLDLChange]);
     vals.push([false, 'Triglyceride (mg/dL)', labValues.Lipids.TriglycerideLevel.StartingTriglycerideLevel, labValues.Lipids.TriglycerideLevel.CurrentTriglycerideLevel, labValues.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange]);
-    vals.push([false, 'A1C level (%)', labValues.Lipids.A1CLevel.StartingA1CLevel, labValues.Lipids.A1CLevel.CurrentA1CLevel, labValues.Lipids.A1CLevel.TotalA1CLevelChange]);
-    vals.push([false, useBodyWeightKg ? 'Body weight (Kg)' : 'Body weight (lbs)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
+    vals.push([false, 'A1C level (%)', labValues.Lipids.A1CLevel.StartingA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.CurrentA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.TotalA1CLevelChange.toFixed(1)]);
+    vals.push([false, useBodyWeightKg ? 'Body weight (lbs)' : 'Body weight (Kg)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
+    vals.push([false, useLpaUnit ? 'Lipoprotein (nmo/L)' : 'Lipoprotein (mg/dL)', labValues.Lipids.Lpa.StartingLpa.toFixed(1), labValues.Lipids.Lpa.CurrentLpa.toFixed(1), labValues.Lipids.Lpa.TotalLpaChange.toFixed(1)]);
+
 
     for (var r of vals) {
         const row: TableRowProperties = {
@@ -206,7 +212,7 @@ const createSleep_BarChart = async (stats: any, filename: string) => {
     }
     const sleepStats = stats.map(c => {
         return {
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date(c.DayStr),
             y : c.SleepDuration
         };
     });
@@ -215,6 +221,7 @@ const createSleep_BarChart = async (stats: any, filename: string) => {
     options.Height = RECTANGULAR_CHART_HEIGHT;
     options.YLabel = 'Per 24-hour period';
     options.Color  = ChartColors.GrayDarker;
+    options.XAxisTimeScaled  = true;
 
     return await ChartGenerator.createBarChart(sleepStats, options, filename);
 };
@@ -234,7 +241,7 @@ const createNutritionQueryForMonth_GroupedBarChart = async (stats: any, filename
     }
     const temp = qstats.map(c => {
         return {
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date(c.DayStr),
             y : c.Response,
             z : c.Type,
         };
@@ -250,10 +257,12 @@ const createNutritionQueryForMonth_GroupedBarChart = async (stats: any, filename
     options.CategoriesCount = categories.length;
     options.Categories      = categories;
     options.Colors          = colors;
-    options.FontSize        = '9px';
+    options.FontSize        = '10px';
     options.ShowYAxis       = false;
+    options.XAxisTimeScaled = true;
 
-    return await ChartGenerator.createGroupBarChart(temp, options, filename);
+
+    return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 
 const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: string) => {
@@ -284,7 +293,7 @@ const createMoodsSummaryChart_HorizontalBarChart = async (stats: any, filename: 
 function addSleepSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'SleepSummary_LastMonth';
     const sectionTitle = 'Sleep';
-    const title = 'Days of the month';
+    const title = 'Over 30 days';
     const titleColor = '#505050';
     const icon = Helper.getIconsPath('sleep.png');
     y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);
@@ -307,7 +316,6 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
     const chartImage = 'MedicationsSummary_LastMonth';
     const sectionTitle = 'Medication Adherence';
     const icon = Helper.getIconsPath('medications.png');
-    const legend = getMedicationStatusCategoryColors();
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 
     if (!chartExists(model, chartImage)) {
@@ -323,7 +331,7 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
         document.moveDown();
 
         const yFrozen = y;
-        const legendY = 10;
+        //const legendY = 10;
         //y = yFrozen + legendY;
         //const legendFontSize = 9;
         //const legendStartX = startX + 135;
@@ -339,7 +347,7 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
 }
 
 function addCurrentMedications(document, medications, y) {
-    const icon = Helper.getIconsPath('current-medications.png');
+    //const icon = Helper.getIconsPath('current-medications.png');
     //y = addSectionTitle(document, y, "Current Medications", icon);
 
     if (medications.length === 0) {
@@ -417,7 +425,7 @@ function addNutritionQuestionSummary(y: any, document: PDFKit.PDFDocument, model
     const chartImage = 'NutritionQuestionSummary_LastMonth';
     const sectionTitle = 'Daily Nutrition Intake';
     const icon = Helper.getIconsPath('nutrition.png');
-    const title = 'Days of the month';
+    const title = 'Over 30 days';
     const titleColor = '#505050';
 
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
@@ -485,7 +493,7 @@ function addDailyMovementQuestionSummary(y: any, document: PDFKit.PDFDocument, m
             },
             {
                 Key   : 'No',
-                Color : ChartColors.Coral,
+                Color : ChartColors.OrangeRed,
             }
         ];
         y = addLegend(document, y, legend, legendStartX, legendFontSize, 25, 8, 5);

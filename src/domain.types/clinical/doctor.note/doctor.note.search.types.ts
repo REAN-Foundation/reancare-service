@@ -14,11 +14,5 @@ export interface DoctorNoteSearchFilters extends BaseSearchFilters{
 }
 
 export interface DoctorNoteSearchResults extends BaseSearchResults{
-    TotalCount    : number;
-    RetrievedCount: number;
-    PageIndex     : number;
-    ItemsPerPage  : number;
-    Order         : string;
-    OrderedBy     : string;
-    Items         : DoctorNoteDto[];
+    Items : DoctorNoteDto[];
 }

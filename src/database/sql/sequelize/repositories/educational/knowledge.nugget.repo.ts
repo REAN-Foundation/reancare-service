@@ -83,8 +83,9 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
             if (filters.TopicName != null) {
                 search.where['TopicName'] = { [Op.like]: '%' + filters.TopicName + '%' };
             }
+            
             if (filters.Tags != null) {
-                search.where['Tags'] = filters.Tags;
+                search.where['Tags'] = { [Op.like]: '%' + filters.Tags + '%' };
             }
 
             let orderByColum = 'CreatedAt';
@@ -149,18 +150,15 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
             if (updateModel.DetailedInformation != null) {
                 knowledgeNugget.DetailedInformation = updateModel.DetailedInformation;
             }
-            if (updateModel.AdditionalResources != null) {
+            if (updateModel.AdditionalResources != null && updateModel.AdditionalResources.length > 0) {
                 
                 var additionalResources = updateModel.AdditionalResources.length > 0 ?
                     JSON.stringify(updateModel.AdditionalResources) : '[]';
 
                 knowledgeNugget.AdditionalResources = additionalResources;
             }
-            if (updateModel.Tags != null && updateModel.Tags.length > 0) {
-
-                var tags = updateModel.Tags.length > 0 ?
-                    JSON.stringify(updateModel.Tags) : '[]';
-
+            if (updateModel.Tags != null) {
+                var tags = JSON.stringify(updateModel.Tags);
                 knowledgeNugget.Tags = tags;
             }
     

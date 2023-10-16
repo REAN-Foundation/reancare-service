@@ -77,13 +77,21 @@ import { DonorRepo } from './repositories/users/donor.repo';
 import { HealthSystemRepo } from './repositories/users/patient/health.system.repo';
 import { NotificationRepo } from './repositories/general/notification.repo';
 import { VolunteerRepo } from './repositories/users/volunteer.repo';
-import { ChatRepo } from './repositories/general/chat.repo';
+import { ChatRepo } from './repositories/community/chat.repo';
 import { RssfeedRepo } from './repositories/general/rss.feed/rss.feed.repo';
 import { RssfeedItemRepo } from './repositories/general/rss.feed/rss.feed.item.repo';
 import { PatientDonorsRepo } from './repositories/clinical/donation/patient.donors.repo';
 import { DonationRecordRepo } from './repositories/clinical/donation/donation.record.repo';
+import { StatisticsRepo } from './repositories/statistics/statistics.repo';
 import { WearableDeviceDetailsRepo } from './repositories/webhook/webhook.wearable.device.details.repo';
 import { DonationCommunicationRepo } from './repositories/clinical/donation/donation.communication.repo';
+import { UserGroupRepo } from './repositories/community/user.group.repo';
+import { ReminderRepo } from './repositories/general/reminder.repo';
+import { ReminderScheduleRepo } from './repositories/general/reminder.schedule.repo';
+import { TenantRepo } from './repositories/tenant/tenant.repo';
+import { CohortRepo } from './repositories/community/cohort.repo';
+import { UserEngagementRepo } from './repositories/statistics/user.engagement.repo';
+import { CustomQueryRepo } from './repositories/statistics/custom.query.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -175,8 +183,16 @@ export class SequelizeInjector {
         container.register('IRssfeedItemRepo', RssfeedItemRepo);
         container.register('IPatientDonorsRepo', PatientDonorsRepo);
         container.register('IDonationRecordRepo', DonationRecordRepo);
+        container.register('IStatisticsRepo', StatisticsRepo);
         container.register('IWearableDeviceDetailsRepo', WearableDeviceDetailsRepo);
         container.register('IDonationCommunicationRepo', DonationCommunicationRepo);
+        container.register('IUserGroupRepo', UserGroupRepo);
+        container.register('IReminderRepo', ReminderRepo);
+        container.register('IReminderScheduleRepo', ReminderScheduleRepo);
+        container.register('ITenantRepo', TenantRepo);
+        container.register('ICohortRepo', CohortRepo);
+        container.register('IUserEngagementRepo', UserEngagementRepo);
+        container.register('ICustomQueryRepo', CustomQueryRepo);
 
     }
 

@@ -1,6 +1,7 @@
 import { DatabaseDialect } from "../../domain.types/miscellaneous/system.types";
 import * as dotenv from 'dotenv';
 import { Logger } from "../../common/logger";
+import { ConfigurationManager } from "../../config/configuration.manager";
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -52,10 +53,12 @@ export const databaseConfig = (schemaType: DatabaseSchemaType)
         Synchronize : true
     };
 
-    if (schemaType === DatabaseSchemaType.EHRInsights) {
+    if (schemaType === DatabaseSchemaType.EHRInsights &&
+        ConfigurationManager.EHRAnalyticsEnabled()) {
         config.DatabaseName = process.env.DB_NAME_EHR_INSIGHTS;
     }
-    else if (schemaType === DatabaseSchemaType.AwardsFacts) {
+    else if (schemaType === DatabaseSchemaType.AwardsFacts &&
+        ConfigurationManager.GamificationEnabled()) {
         config.DatabaseName = process.env.DB_NAME_AWARDS_FACTS;
     }
 
@@ -75,8 +78,14 @@ Logger.instance().log('Database host              : ' + process.env.DB_HOST);
 Logger.instance().log('Database port              : ' + process.env.DB_PORT);
 Logger.instance().log('Database user-name         : ' + process.env.DB_USER_NAME);
 Logger.instance().log('Primary database name      : ' + process.env.DB_NAME);
-Logger.instance().log('EHR insights database name : ' + process.env.DB_NAME_EHR_INSIGHTS);
-Logger.instance().log('Awards facts database name : ' + process.env.DB_NAME_AWARDS_FACTS);
+
+if (ConfigurationManager.EHRAnalyticsEnabled()) {
+    Logger.instance().log('EHR insights database name : ' + process.env.DB_NAME_EHR_INSIGHTS);
+}
+if (ConfigurationManager.GamificationEnabled()) {
+    Logger.instance().log('Awards facts database name : ' + process.env.DB_NAME_AWARDS_FACTS);
+}
+
 Logger.instance().log('================================================');
 
 //////////////////////////////////////////////////////////////////////////////////

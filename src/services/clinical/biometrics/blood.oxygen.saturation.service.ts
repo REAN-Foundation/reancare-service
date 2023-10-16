@@ -6,7 +6,6 @@ import { BloodOxygenSaturationDto } from '../../../domain.types/clinical/biometr
 import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types';
 import { Loader } from "../../../startup/loader";
 import { BloodOxygenSaturationStore } from "../../../modules/ehr/services/blood.oxygen.saturation.store";
-import { Logger } from "../../../common/logger";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

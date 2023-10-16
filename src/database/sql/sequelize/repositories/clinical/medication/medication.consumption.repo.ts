@@ -169,20 +169,21 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     }
                 }
             });
-
+            Logger.instance().log(`All records taken before - repo :: ${JSON.stringify(records)}`);
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,
                     PatientUserId  : x.PatientUserId,
                     Taken          : x.IsTaken,
                     DrugName       : x.DrugName,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
                     RecordDate     : tempDate,
                     RecordTimeZone : currentTimeZone,
                 };
             });
+            Logger.instance().log(`All records_ taken before - repo :: ${JSON.stringify(records_)}`);
 
             return records_;
         } catch (error) {
@@ -206,20 +207,21 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     }
                 }
             });
-
+            Logger.instance().log(`All records taken between - repo :: ${JSON.stringify(records)}`);
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId       : x.id,
                     PatientUserId  : x.PatientUserId,
                     Taken          : x.IsTaken,
                     DrugName       : x.DrugName,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
                     RecordDate     : tempDate,
                     RecordTimeZone : currentTimeZone,
                 };
             });
+            Logger.instance().log(`All records_ taken between - repo :: ${JSON.stringify(records_)}`);
 
             return records_;
         } catch (error) {
@@ -555,6 +557,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 MissedCount : missedCount,
             });
         }
+        const stats_ = stats.sort((a, b) => new Date(a.DayStr).getTime() - new Date(b.DayStr).getTime());
 
         const totalMissed = stats.map(x => x.MissedCount).reduce((a, b) => a + b, 0);
         const totalTaken = stats.map(x => x.TakenCount).reduce((a, b) => a + b, 0);
@@ -562,7 +565,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         return {
             TotalMissedCount : totalMissed,
             TotalTakenCount  : totalTaken,
-            Daily            : stats
+            Daily            : stats_
         };
     }
 

@@ -56,7 +56,6 @@ import { Loader } from "./loader";
 import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
 import { LabRecordService } from "../services/clinical/lab.record/lab.record.service";
 import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
-import { LabRecordType } from "../domain.types/clinical/lab.record/lab.record/lab.record.types";
 import { IFoodConsumptionRepo }
     from "../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
 import { NutritionQuestionnaireDomainModel }
@@ -264,7 +263,7 @@ export class Seeder {
         const existing = await this._roleRepo.search();
         if (existing.length === 11) {
             await this._roleRepo.create({
-                RoleName    : Roles.Volunteer,
+                RoleName : Roles.Volunteer,
                 Description :
                     'Represents a person managing the blood bridge.',
             });
@@ -286,7 +285,7 @@ export class Seeder {
             Description : 'Represents a doctor/physician.',
         });
         await this._roleRepo.create({
-            RoleName    : Roles.LabUser,
+            RoleName : Roles.LabUser,
             Description :
                 'Represents a pathology/radiology lab representative/technician/pathologist/radiologist.',
         });
@@ -311,12 +310,12 @@ export class Seeder {
             Description : 'Represents a friend of the patient.',
         });
         await this._roleRepo.create({
-            RoleName    : Roles.SocialHealthWorker,
+            RoleName : Roles.SocialHealthWorker,
             Description :
                 'Represents a health social worker/health support professional representing government/private health service.',
         });
         await this._roleRepo.create({
-            RoleName    : Roles.Donor,
+            RoleName : Roles.Donor,
             Description :
                 'Represents blood donor as a person.',
         });
@@ -590,7 +589,7 @@ export class Seeder {
 
             const model: LabRecordTypeDomainModel = {
                 TypeName       : c['TypeName'],
-                DisplayName    : c['DisplayName'] as LabRecordType,
+                DisplayName    : c['DisplayName'],
                 SnowmedCode    : c['SnowmedCode'],
                 LoincCode      : c['LoincCode'],
                 NormalRangeMin : c['NormalRangeMin'],
@@ -642,12 +641,10 @@ export class Seeder {
     };
 
     public seedHealthSystemsAndHospitals = async () => {
-        
 
         const arr = seededHealthSystemsAndHospitals['default'];
 
         Logger.instance().log('Seeding health systems and associated hospitals...');
-
 
         for (let i = 0; i < arr.length; i++) {
 
@@ -660,7 +657,7 @@ export class Seeder {
             const existingRecord = await this._healthSystemService.searchType(filters);
             //console.log(JSON.stringify(existingRecord, null, 2));
             if (existingRecord.Items.length > 0) {
-                Logger.instance().log(`Health system record has already been exist ${t['HealthSystem']}!`);
+                Logger.instance().log(`Health system record ${t['HealthSystem']} already exists!`);
                 continue;
             }
 
@@ -670,7 +667,7 @@ export class Seeder {
             const model: HealthSystemDomainModel = {
                 Name : t['HealthSystem'],
                 Tags : tags
-                };
+            };
             var healthSystem = await this._healthSystemService.createHealthSystem(model);
 
             for (let j = 0; j < t['AssociatedHospitals'].length; j++) {

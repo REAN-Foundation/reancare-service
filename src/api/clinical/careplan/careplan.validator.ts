@@ -49,14 +49,11 @@ export class CareplanValidator extends BaseValidator {
     };
 
     updateRisk = async (request: express.Request): Promise<EnrollmentDomainModel> => {
-
         await this.validateUpdateRiskBody(request);
-
         return this.updateRiskDomainModel(request);
     };
 
     private async validateCreateBody(request) {
-
         await this.validateString(request, 'Provider', Where.Body, true, false);
         await this.validateString(request, 'PlanCode', Where.Body, true, false);
         await this.validateString(request, 'PlanName', Where.Body, false, true);
@@ -64,7 +61,6 @@ export class CareplanValidator extends BaseValidator {
         await this.validateString(request, 'EndDate', Where.Body, false, false);
         await this.validateInt(request, 'DayOffset', Where.Body, false, false);
         await this.validateInt(request, 'WeekOffset', Where.Body, false, false);
-
         this.validateRequest(request);
     }
 

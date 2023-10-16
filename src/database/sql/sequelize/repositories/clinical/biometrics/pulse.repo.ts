@@ -183,6 +183,23 @@ export class PulseRepo implements IPulseRepo {
         }
     };
 
+    getRecent = async (patientUserId: string): Promise<PulseDto> => {
+        try {
+            const records = await PulseModel.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['RecordDate', 'DESC']],
+                limit : 1
+            });
+            const record = records.length > 0 ? records[0] : null;
+            return PulseMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     getAllUserResponsesBetween = async (patientUserId: string, dateFrom: Date, dateTo: Date)
         : Promise<any[]> => {
         try {
@@ -202,7 +219,7 @@ export class PulseRepo implements IPulseRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId          : x.id,
@@ -210,7 +227,7 @@ export class PulseRepo implements IPulseRepo {
                     VitalName         : "Pulse",
                     VitalPrimaryValue : x.Pulse,
                     Unit              : x.Unit,
-                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };
@@ -240,7 +257,7 @@ export class PulseRepo implements IPulseRepo {
                 }
             });
             records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-            const records_ = records.map(x => {
+            const records_ = records.map(async x => {
                 const tempDate = TimeHelper.addDuration(x.RecordDate, offsetMinutes, DurationType.Minute);
                 return {
                     RecordId          : x.id,
@@ -248,7 +265,7 @@ export class PulseRepo implements IPulseRepo {
                     VitalName         : "Pulse",
                     VitalPrimaryValue : x.Pulse,
                     Unit              : x.Unit,
-                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };

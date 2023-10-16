@@ -30,7 +30,7 @@ export class DefaultChartOptions {
             FontSize        : "14px",
             Color           : "steelblue",
             XAxisTimeScaled : true,
-            Colors          : [ChartColors.Orange, ChartColors.Green],
+            Colors          : [ChartColors.OrangeRed, ChartColors.Green],
             Categories      : ['Y1', 'Y2'],
             StrokeWidth     : 3,
             ShowXAxis       : true,
@@ -41,13 +41,14 @@ export class DefaultChartOptions {
 
     static barChart = (): BarChartOptions => {
         const opts: BarChartOptions = {
-            Width     : 650,
-            Height    : 450,
-            FontSize  : "14px",
-            Color     : "steelblue",
-            YLabel    : '',
-            ShowXAxis : true,
-            ShowYAxis : true,
+            Width           : 650,
+            Height          : 450,
+            FontSize        : "14px",
+            Color           : "steelblue",
+            YLabel          : '',
+            XAxisTimeScaled : false,
+            ShowXAxis       : true,
+            ShowYAxis       : true,
         };
         return opts;
     };
@@ -59,6 +60,7 @@ export class DefaultChartOptions {
             FontSize        : "14px",
             Color           : "steelblue",
             YLabel          : '',
+            XAxisTimeScaled : false,
             ShowXAxis       : true,
             ShowYAxis       : true,
             CategoriesCount : 0,

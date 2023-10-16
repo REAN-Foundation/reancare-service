@@ -13,11 +13,15 @@ import SymptomType from '../../../models/clinical/symptom/symptom.type.model';
 export class SymptomTypeRepo implements ISymptomTypeRepo {
 
     create = async (model: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
+
+        var tags = model.Tags && model.Tags.length > 0 ?
+            JSON.stringify(model.Tags) : '[]';
+
         try {
             const entity = {
                 Symptom         : model.Symptom,
                 Description     : model.Description ?? null,
-                Tags            : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
+                Tags            : tags,
                 Language        : model.Language ?? 'en-US',
                 ImageResourceId : model.ImageResourceId ?? null,
             };
@@ -61,6 +65,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             if (filters.Symptom != null) {
                 search.where['Symptom'] = { [Op.like]: '%' + filters.Symptom + '%' };
             }
+            
             if (filters.Tag != null) {
                 search.where['Tags'] = { [Op.like]: '%' + filters.Tag + '%' };
             }
@@ -118,11 +123,8 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
                 symptomType.Symptom = updateModel.Symptom;
             }
             if (updateModel.Tags != null) {
-
-                var existingTags = [JSON.parse(symptomType.Tags) as Array<string>];
-                existingTags.push(updateModel.Tags);
-                existingTags = [...new Set(existingTags)];
-                symptomType.Tags = JSON.stringify(existingTags);
+                var tags = JSON.stringify(updateModel.Tags);
+                symptomType.Tags = tags;
             }
             if (updateModel.Description != null) {
                 symptomType.Description = updateModel.Description;

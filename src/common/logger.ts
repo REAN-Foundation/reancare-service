@@ -12,6 +12,9 @@ export class Logger {
     }
     
     public log = (message: string): void => {
+        if (process.env.NODE_ENV === 'test') {
+            return;
+        }
         const dateTime = new Date().toISOString();
         const temp_str = dateTime + '> ' + message;
         console.log(' ');
@@ -19,6 +22,9 @@ export class Logger {
     };
     
     public error = (message: string, code: number, details: unknown): void => {
+        if (process.env.NODE_ENV === 'test') {
+            return;
+        }
         const dateTime = new Date().toISOString();
         const err = {
             message : message,

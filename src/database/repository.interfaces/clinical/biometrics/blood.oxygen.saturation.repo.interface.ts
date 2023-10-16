@@ -19,4 +19,6 @@ export interface IBloodOxygenSaturationRepo {
 
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
+    getRecent(patientUserId: string): Promise<BloodOxygenSaturationDto>;
+
 }

@@ -7,6 +7,9 @@ import { ApiError } from '../../../../../../common/api.error';
 import { GoalDomainModel } from '../../../../../../domain.types/users/patient/goal/goal.domain.model';
 import { GoalDto } from '../../../../../../domain.types/users/patient/goal/goal.dto';
 import { GoalSearchFilters, GoalSearchResults } from '../../../../../../domain.types/users/patient/goal/goal.search.types';
+import { GoalTypeDomainModel } from '../../../../../../domain.types/users/patient/goal.type/goal.type.domain.model';
+import { GoalTypeDto } from '../../../../../../domain.types/users/patient/goal.type/goal.type.dto';
+import GoalType from '../../../models/users/patient/goal.type.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -199,6 +202,85 @@ export class GoalRepo implements IGoalRepo {
         try {
             await Goal.destroy({ where: { id: id } });
             return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    createGoalType = async (model: GoalTypeDomainModel): Promise<GoalTypeDto> => {
+        try {
+            const entity = {
+                Type : model.Type,
+                Tags : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
+            };
+            const goal = await GoalType.create(entity);
+            return GoalMapper.toTypeDto(goal);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getGoalTypeById = async (id: string): Promise<GoalTypeDto> => {
+        try {
+            const goalType = await GoalType.findByPk(id);
+            return GoalMapper.toTypeDto(goalType);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getGoalTypes = async (tags?: string): Promise<GoalTypeDto[]> => {
+        try {
+            const filter = { where: {} };
+            if (tags != null) {
+                filter.where['Tags'] = { [Op.like]: '%' + tags + '%' };
+            }
+
+            const goalTypes = await GoalType.findAll(filter);
+            const dtos: GoalTypeDto[] = [];
+            for (const goalType of goalTypes) {
+                const dto = GoalMapper.toTypeDto(goalType);
+                dtos.push(dto);
+            }
+
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    updateGoalType = async (id: string, updateModel: GoalTypeDomainModel): Promise<GoalTypeDto> => {
+        try {
+            const goalType = await GoalType.findByPk(id);
+
+            if (updateModel.Type != null) {
+                goalType.Type = updateModel.Type;
+            }
+            if (updateModel.Tags != null) {
+                var tags = JSON.stringify(updateModel.Tags);
+                goalType.Tags = tags;
+            }
+            
+            await goalType.save();
+
+            return await GoalMapper.toTypeDto(goalType);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    deleteGoalType = async (id: string): Promise<boolean> => {
+        try {
+
+            const result = await GoalType.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

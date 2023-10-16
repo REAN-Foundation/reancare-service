@@ -32,10 +32,18 @@ export class TeraWebhookActivityService {
 
     activity = async (activityDomainModel: ActivityDomainModel) => {
         
-        activityDomainModel.Data.forEach(async activity => {
+        const recentActivity = await this._physicalActivityRepo.getRecent(activityDomainModel.User.ReferenceId);
+        let filteredActivitySamples = [];
+        if (recentActivity != null) {
+            filteredActivitySamples = activityDomainModel.Data.filter((activity) =>
+                new Date(activity.MetaData.EndTime) > new Date(recentActivity.EndTime));
+        } else {
+            filteredActivitySamples = activityDomainModel.Data;
+        }
+        filteredActivitySamples.forEach(async activity => {
+            
             const durationInMin = activity.ActiveDurationsData.ActivitySeconds / 60;
             const category = await this.getActivityType(activity.MetaData.Type);
-            
             const activityModel : PhysicalActivityDomainModel = {
                 PatientUserId  : activityDomainModel.User.ReferenceId,
                 Exercise       : activity.MetaData.Name,
@@ -56,15 +64,15 @@ export class TeraWebhookActivityService {
     sleep = async (sleepDomainModel: SleepDomainModel) => {
         
         const sleep = sleepDomainModel.Data;
-        var existingStepRecord = await this._sleepRepo.getByRecordDateAndPatientUserId(new Date(sleep.MetaData.StartTime.split('T')[0]),
+        var existingSleepRecord = await this._sleepRepo.getByRecordDateAndPatientUserId(new Date(sleep.MetaData.StartTime.split('T')[0]),
             sleepDomainModel.User.ReferenceId);
-        if (existingStepRecord !== null) {
+        if (existingSleepRecord !== null) {
             const domainModel = {
                 Provider      : sleepDomainModel.User.Provider,
                 SleepDuration : parseInt(`${sleep.SleepDurationsData.Asleep.DurationAsleepStateSeconds / 60}`),
                 Unit          : "minutes"
             };
-            var sleepRecord = await this._sleepRepo.update(existingStepRecord.id, domainModel);
+            var sleepRecord = await this._sleepRepo.update(existingSleepRecord.id, domainModel);
         } else {
             const domainModel = {
                 PatientUserId : sleepDomainModel.User.ReferenceId,

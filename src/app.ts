@@ -49,8 +49,13 @@ export default class Application {
 
             //Connect databases
             await connectDatabase_Primary();
-            await connectDatabase_EHRInsights();
-            await connectDatabase_AwardsFacts();
+
+            if (ConfigurationManager.EHRAnalyticsEnabled()) {
+                await connectDatabase_EHRInsights();
+            }
+            if (ConfigurationManager.GamificationEnabled()) {
+                await connectDatabase_AwardsFacts();
+            }
 
             //Set-up middlewares
             await this.setupMiddlewares();
@@ -61,8 +66,10 @@ export default class Application {
             //Seed the service
             await Loader.seeder.init();
 
-            //Set-up cron jobs
-            await Loader.scheduler.schedule();
+            if (process.env.NODE_ENV !== 'test') {
+                //Set-up cron jobs
+                await Loader.scheduler.schedule();
+            }
 
             process.on('exit', code => {
                 Logger.instance().log(`Process exited with code: ${code}`);

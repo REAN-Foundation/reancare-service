@@ -7,6 +7,7 @@ export enum DurationType {
     Day        = 'Day',
     Week       = 'Week',
     Month      = 'Month',
+    Quarter    = 'Quarter',
     Year       = 'Year',
 }
 

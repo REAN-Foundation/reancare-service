@@ -23,6 +23,8 @@ import {
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { AssessmentNodeSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.node.search.types';
+import { AssessmentNodeSearchResults } from '../../../../domain.types/clinical/assessment/assessment.node.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -82,5 +84,7 @@ export interface IAssessmentHelperRepo {
     updateScoringCondition(conditionId: string, updates: any): Promise<CScoringCondition>;
 
     deleteScoringCondition(conditionId: string): Promise<boolean>;
+
+    searchNode(filters: AssessmentNodeSearchFilters): Promise<AssessmentNodeSearchResults>;
 
 }

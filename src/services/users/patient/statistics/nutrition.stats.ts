@@ -165,7 +165,7 @@ const createNutritionCalorie_BarChart = async (stats: any, filename: string) => 
     }
     const calorieStats = stats.map(c => {
         return {
-            x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
+            x : `"${TimeHelper.getWeekday(new Date(c.DayStr), true)}"`,
             y : c.Calories
         };
     });
@@ -184,7 +184,7 @@ const createNutritionQueryForWeek_BarChart = async (stats: any, filename: string
     }
     const temp = stats.map(c => {
         return {
-            x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
+            x : `"${TimeHelper.getWeekday(new Date(c.DayStr), true)}"`,
             y : c.Response,
             z : c.Type,
         };
@@ -212,7 +212,7 @@ const createNutritionQueryForMonth_StackedBarChart = async (stats: any, filename
     }
     const temp = stats.map(c => {
         return {
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date (c.DayStr),
             y : c.Response,
             z : c.Type,
         };
@@ -228,8 +228,10 @@ const createNutritionQueryForMonth_StackedBarChart = async (stats: any, filename
     options.CategoriesCount = categories.length;
     options.Categories      = categories;
     options.Colors          = colors;
-    options.FontSize        = '9px';
+    options.FontSize        = '12px';
     options.ShowYAxis       = false;
+    options.XAxisTimeScaled = true;
+
 
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
@@ -240,7 +242,7 @@ const createNutritionServingsForWeek_BarChart = async (stats: any, filename: str
     }
     const temp = stats.map(c => {
         return {
-            x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
+            x : `"${TimeHelper.getWeekday(new Date(c.DayStr), true)}"`,
             y : c.Servings,
             z : c.Type,
         };
@@ -266,7 +268,7 @@ const createNutritionServingsForMonth_BarChart = async (stats: any, filename: st
     }
     const temp = stats.map(c => {
         return {
-            x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+            x : new Date (c.DayStr),
             y : c.Servings,
             z : c.Type
         };
@@ -281,7 +283,9 @@ const createNutritionServingsForMonth_BarChart = async (stats: any, filename: st
     options.CategoriesCount = categories.length;
     options.Categories      = categories;
     options.Colors          = colors;
-    options.FontSize        = '9px';
+    options.FontSize        = '12px';
+    options.XAxisTimeScaled = true;
+
 
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
@@ -300,7 +304,7 @@ export const getNutritionQuestionCategoryColors = () => {
         },
         {
             Key      : 'Low Salt',
-            Color    : ChartColors.Coral,
+            Color    : ChartColors.OrangeRed,
             Question : 'Did you choose or prepare foods with little or no salt today?',
         },
     ];
@@ -331,7 +335,7 @@ const getNutritionServingsCategoryColors = () => {
         },
         {
             Key      : 'Sugar',
-            Color    : ChartColors.Coral,
+            Color    : ChartColors.OrangeRed,
             Question : 'How many servings of sugary drinks did you drink today?',
         },
     ];

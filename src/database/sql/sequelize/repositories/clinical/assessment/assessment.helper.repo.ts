@@ -28,6 +28,8 @@ import {
     DateQueryAnswer,
     AssessmentType,
     CScoringCondition,
+    ConditionOperatorType,
+    ConditionCompositionType,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -40,6 +42,9 @@ import { AssessmentHelperMapper } from '../../../mappers/clinical/assessment/ass
 import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
 import { Helper } from '../../../../../../common/helper';
 import ScoringCondition from '../../../models/clinical/assessment/scoring.condition.model';
+import { AssessmentNodeSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
+import { AssessmentNodeSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -522,9 +527,73 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (Helper.hasProperty(updates, 'QueryResponseType')) {
                 thisNode.QueryResponseType = updates['QueryResponseType'];
             }
-
+            if (Helper.hasProperty(updates, 'Message')) {
+                thisNode.Message = updates['Message'];
+            }
             thisNode = await thisNode.save();
             return await this.populateNodeDetails(thisNode);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public searchNode = async ( filters:AssessmentNodeSearchFilters):
+     Promise<AssessmentNodeSearchResults> => {
+        try {
+            const search = { where: {} };
+
+            if (filters.Title != null) {
+                search.where['Title'] = { [Op.like]: '%' + filters.Title + '%' };
+            }
+            if (filters.NodeType != null) {
+                search.where['NodeType'] = { [Op.like]: '%' + filters.NodeType + '%' };
+            }
+            if (filters.TemplateId != null) {
+                search.where['TemplateId'] = filters.TemplateId;
+            }
+            let orderByColum = 'Title';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await AssessmentNode.findAndCountAll(search);
+
+            const dtos: CAssessmentNode[] = [];
+            for (const doctorNote of foundResults.rows) {
+                const dto = await this.populateNodeDetails(doctorNote);
+                dtos.push(dto);
+            }
+
+            const searchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos
+            };
+            return searchResults;
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -558,7 +627,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         const options = await this.getQuestionNodeOptions(node.NodeType as AssessmentNodeType, nodeId);
         const paths = await this.getQuestionNodePaths(node.NodeType as AssessmentNodeType, nodeId);
         const children = await this.getNodeListChildren(nodeId);
-        return AssessmentHelperMapper.toNodeDto(node, children, paths, options);
+        const scoringCondition = await this.getScoringConditionByNodeId(nodeId);
+        return AssessmentHelperMapper.toNodeDto(node, children, paths, options, scoringCondition);
     }
 
     private async updateQuestionNode(
@@ -928,17 +998,17 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 TemplateId            : model.TemplateId,
                 ParentConditionId     : model.ParentConditionId,
                 IsCompositeCondition  : model.IsCompositeCondition,
-                CompositionType       : model.CompositionType,
-                OperatorType          : model.OperatorType,
-                FirstOperandName      : model.FirstOperand.Name,
-                FirstOperandValue     : model.FirstOperand.Value.toString(),
-                FirstOperandDataType  : model.FirstOperand.DataType,
-                SecondOperandName     : model.SecondOperand.Name,
-                SecondOperandValue    : model.SecondOperand.Value.toString(),
-                SecondOperandDataType : model.SecondOperand.DataType,
-                ThirdOperandName      : model.ThirdOperand.Name,
-                ThirdOperandValue     : model.ThirdOperand.Value.toString(),
-                ThirdOperandDataType  : model.ThirdOperand.DataType,
+                CompositionType       : model.CompositionType ?? ConditionCompositionType.And,
+                OperatorType          : model.OperatorType ?? ConditionOperatorType.EqualTo ,
+                FirstOperandName      : model.FirstOperand?.Name ?? null,
+                FirstOperandValue     : model.FirstOperand?.Value.toString() ?? null,
+                FirstOperandDataType  : model.FirstOperand?.DataType ?? null ,
+                SecondOperandName     : model.SecondOperand?.Name ?? null ,
+                SecondOperandValue    : model.SecondOperand?.Value.toString() ?? null,
+                SecondOperandDataType : model.SecondOperand?.DataType ?? null,
+                ThirdOperandName      : model.ThirdOperand?.Name ?? null ,
+                ThirdOperandValue     : model.ThirdOperand?.Value.toString() ?? null,
+                ThirdOperandDataType  : model.ThirdOperand?.DataType ?? null,
                 ResolutionScore       : model.ResolutionScore
             };
 
@@ -954,6 +1024,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     getScoringCondition = async (conditionId: uuid): Promise<CScoringCondition> => {
         try {
             const condition = await ScoringCondition.findByPk(conditionId);
+            return AssessmentHelperMapper.toScoringConditionDto(condition);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getScoringConditionByNodeId = async (nodeId: uuid): Promise<CScoringCondition> => {
+        try {
+            const condition = await ScoringCondition.findOne(
+                {
+                    where : {
+                        NodeId : nodeId
+                    }
+                }
+            );
             return AssessmentHelperMapper.toScoringConditionDto(condition);
         } catch (error) {
             Logger.instance().log(error.message);

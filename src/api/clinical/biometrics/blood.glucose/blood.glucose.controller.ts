@@ -26,7 +26,6 @@ export class BloodGlucoseController extends BaseController {
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodGlucoseService);
-
     }
 
     //#endregion
@@ -64,7 +63,7 @@ export class BloodGlucoseController extends BaseController {
                     },
                     RecordId       : bloodGlucose.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -148,12 +147,13 @@ export class BloodGlucoseController extends BaseController {
                 AwardsFactsService.addOrUpdateVitalFact({
                     PatientUserId : updated.PatientUserId,
                     Facts         : {
+                        VitalName    : "BloodGlucose",
                         BloodGlucose : updated.BloodGlucose,
                         Unit         : updated.Unit,
                     },
                     RecordId       : updated.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }

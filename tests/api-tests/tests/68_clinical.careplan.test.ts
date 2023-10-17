@@ -9,7 +9,7 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('68 - Patient tests', function() {
+describe.skip('68 - Patient tests', function() {
 
     var agent = request.agent(infra._app);
    

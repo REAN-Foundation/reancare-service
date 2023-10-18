@@ -27,7 +27,8 @@
         "typeRoots": ["@types", "node_modules/@types"]
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "tests/api-tests/tests/*"
     ],
     "exclude":[ 
         "node_modules"

@@ -39,8 +39,8 @@ export class ReminderService {
     getById = async (id: string): Promise<ReminderDto> => {
         const reminder = await this._reminderRepo.getById(id);
         const schedules = await this._reminderScheduleRepo.createSchedules(reminder);
-        const delivered = schedules?.filter(x => x.IsDelivered === true);
-        const pending = schedules?.filter(x => x.IsDelivered === false);
+        const delivered = schedules?.filter(x => x?.IsDelivered === true);
+        const pending = schedules?.filter(x => x?.IsDelivered === false);
         reminder.DeliveredSchedules = delivered?.length;
         reminder.PendingSchedules = pending?.length;
         return reminder;

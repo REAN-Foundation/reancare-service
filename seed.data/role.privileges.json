@@ -29,6 +29,8 @@
             "FileResource.Delete",
             "FileResource.DeleteVersionByVersionId",
             "Patient.Search",
+            "Patient.UpdateByUserId",
+            "Patient.GetByUserId",
             "Patient.GetPatientByPhone",
             "Organization.Create",
             "Organization.GetById",
@@ -259,6 +261,7 @@
             "Statistics.GetUsersByRole",
             "Statistics.GetUsersStats",
             "Statistics.GetUsersByBiometrics",
+            "Statistics.GetAllYears",
             "UserGroup.Create",
             "UserGroup.GetById",
             "UserGroup.Search",
@@ -307,7 +310,12 @@
             "Cohort.RemoveUserFromCohort",
             "Cohort.GetCohortUsers",
             "Cohort.GetCohortsForTenant",
-            "Cohort.GetCohortStats"
+            "Cohort.GetCohortStats",
+            "CustomQuery.ExecuteQuery",
+            "CustomQuery.GetById",
+            "CustomQuery.Search",
+            "CustomQuery.Delete",
+            "CustomQuery.Update"
         ]
     },
     {

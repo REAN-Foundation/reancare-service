@@ -24,7 +24,14 @@ export class WearableDeviceDetailsRepo implements IWearableDeviceDetailsRepo {
                 AuthenticatedAt   : wearableDeviceDetailsDomainModel.AuthenticatedAt,
                 DeauthenticatedAt : wearableDeviceDetailsDomainModel.DeauthenticatedAt
             };
-            const deviceData = await WearableDeviceDetails.create(entity);
+
+            let deviceData = null;
+            var existingRecord = await this.getByPatientUserId(entity.PatientUserId);
+            if (existingRecord !== null) {
+                deviceData = await this.update(existingRecord.id, entity);
+            } else {
+                deviceData = await WearableDeviceDetails.create(entity);
+            }
             const dto = WearableDeviceDetailsMapper.toDto(deviceData);
             return dto;
         } catch (error) {
@@ -187,6 +194,36 @@ export class WearableDeviceDetailsRepo implements IWearableDeviceDetailsRepo {
                 TerraUserId : oldTerraUserId,
                 Provider    : provider } });
             return WearableDeviceDetailsMapper.toDto(deviceData);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllUsers = async (): Promise<WearableDeviceDetailsDto[]> => {
+        try {
+            const foundResults = await WearableDeviceDetails.findAll();
+            const dtos: WearableDeviceDetailsDto[] = [];
+            for (const deviceData of foundResults) {
+                const dto = await WearableDeviceDetailsMapper.toDto(deviceData);
+                dtos.push(dto);
+            }
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByPatientUserId = async (patientUserId: string): Promise<WearableDeviceDetailsDto> => {
+        try {
+            const deviceData = await WearableDeviceDetails.findOne({ where: { PatientUserId: patientUserId } });
+            if (deviceData) {
+                const dto = await WearableDeviceDetailsMapper.toDto(deviceData);
+                return dto;
+            } else {
+                return null;
+            }
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

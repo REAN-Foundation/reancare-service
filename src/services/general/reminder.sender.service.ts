@@ -13,6 +13,7 @@ import * as asyncLib from 'async';
 import axios from 'axios';
 import { IUserDeviceDetailsRepo } from "../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
 import { INotificationService } from "../../modules/communication/notification.service/notification.service.interface";
+import { TimeHelper } from "../../common/time.helper";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -129,10 +130,10 @@ export class ReminderSenderService {
     };
 
     private static sendReminderByMobilePush = async (user, reminder, schedule): Promise<boolean> => {
-        const { notificationService, deviceTokens, message } =
+        const { notificationService, deviceTokens, formattedMessage } =
             await ReminderSenderService.getUserMobilePushDetails(user, reminder, schedule);
         for await (const deviceToken of deviceTokens) {
-            await notificationService.sendNotificationToDevice(deviceToken, message);
+            await notificationService.sendNotificationToDevice(deviceToken, formattedMessage);
         }
         await ReminderSenderService.markAsDelivered(true, schedule.id);
         return true;
@@ -158,8 +159,14 @@ export class ReminderSenderService {
     private static constructMessage(schedule: any, reminder: any) {
         const duration = dayjs.duration(dayjs(schedule.Schedule).diff(dayjs()));
         const minutes = Math.ceil(duration.asMinutes());
-        Logger.instance().log(`Sending reminder for ${dayjs(schedule.Schedule).format('hh:mm:ss')}`);
-        const message = `You have a reminder: '${reminder.Name}' in ${minutes} minutes at ${dayjs(schedule.Schedule).format('hh:mm:ss')}. Thank you.`;
+        let subString = "";
+        if (minutes === 0) {
+            subString = 'now,';
+        } else {
+            subString = `in ${minutes} minutes`;
+        }
+        Logger.instance().log(`Sending reminder for ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}`);
+        const message = `${reminder.Name} ${subString} at ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}.`;
         return message;
     }
 
@@ -172,7 +179,12 @@ export class ReminderSenderService {
         }
         const deviceTokens = deviceDetails.map(x => x.Token);
         const message = ReminderSenderService.constructMessage(schedule, reminder);
-        return { notificationService, deviceTokens, message };
+        const formattedMessage = notificationService.formatNotificationMessage(
+            'Reminder',
+            reminder.Name,
+            message
+        );
+        return { notificationService, deviceTokens, formattedMessage };
     }
 
     private static async getUserEmailDetails(user: any, reminder: any, schedule: any) {

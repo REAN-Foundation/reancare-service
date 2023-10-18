@@ -8,6 +8,7 @@ import { BaseController } from '../../base.controller';
 import { AwardsFactsService } from '../../../modules/awards.facts/awards.facts.service';
 import { ReminderTypeList, RepeatAfterEveryUnitList } from '../../../domain.types/general/reminder/reminder.domain.model';
 import { TypesValidator } from './types.validator';
+import { UserEngagementCategoryList } from '../../../domain.types/statistics/user.engagement.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -235,6 +236,17 @@ export class TypesController extends BaseController {
                 QueryResponseTypes : types,
             });
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getUserEngagementCategories = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.GetUserEngagementCategories', request, response, false);
+            ResponseHandler.success(request, response, 'User engagement categories retrieved successfully!', 200, {
+                UserEngagementCategories : UserEngagementCategoryList,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -554,11 +566,15 @@ export class TypesController extends BaseController {
 
             const tags : string = request.query.tags as string ?? null;
             const goalTypes = await this._service.getGoalTypes(tags);
-            if (goalTypes.length === 0) {
-                throw new ApiError(400, 'Cannot fetch goal types!');
-            }
 
-            ResponseHandler.success(request, response, 'Fetched goal types successfully!', 200, {
+            const count = goalTypes.length;
+
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} goal types retrieved successfully!`;
+                    
+            ResponseHandler.success(request, response, message, 200, {
                 GoalTypes : goalTypes ,
             });
 

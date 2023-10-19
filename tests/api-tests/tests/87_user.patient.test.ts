@@ -76,7 +76,7 @@ describe('87 - Second user logs in tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(404, done);
+            .expect(409, done);
     });
 
     it('87:05 -> Negative - Second user logs in', function(done) {

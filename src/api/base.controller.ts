@@ -1,17 +1,10 @@
 import express from 'express';
-import { Authorizer } from '../auth/authorizer';
 import { ApiError } from '../common/api.error';
 import { Loader } from '../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class BaseController {
-
-    _authorizer: Authorizer = null;
-
-    constructor() {
-        this._authorizer = Loader.authorizer;
-    }
 
     setContext = async (
         context: string,

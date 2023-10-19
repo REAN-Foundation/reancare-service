@@ -1,6 +1,6 @@
 import express, { application } from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { BaseController } from '../../base.controller';
 import * as path from 'path';
 import { CustomQueryService } from '../../../services/statistics/custom.query.service';

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { WearableDeviceDetailsController } from './wearable.device.details.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -8,15 +8,14 @@ import { WearableDeviceDetailsController } from './wearable.device.details.contr
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new WearableDeviceDetailsController();
 
     router.post('/', controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/patients/:patientUserId', authenticator.authenticateUser, controller.getPatientWearableDeviceDetails);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.get('/search', auth(), controller.search);
+    router.get('/patients/:patientUserId', auth(), controller.getPatientWearableDeviceDetails);
+    router.get('/:id', auth(), controller.getById);
+    router.put('/:id', auth(), controller.update);
+    router.delete('/:id', auth(), controller.delete);
 
     app.use('/api/v1/wearable-device-details', router);
 };

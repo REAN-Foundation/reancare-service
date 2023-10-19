@@ -1,12 +1,11 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { EmergencyEventService } from '../../../services/clinical/emergency.event.service';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { RoleService } from '../../../services/role/role.service';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { EmergencyEventValidator } from './emergency.event.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -23,14 +22,12 @@ export class EmergencyEventController {
 
     _organizationService: OrganizationService = null;
 
-    _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(EmergencyEventService);
         this._roleService = Loader.container.resolve(RoleService);
         this._patientService = Loader.container.resolve(PatientService);
         this._organizationService = Loader.container.resolve(OrganizationService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -40,8 +37,6 @@ export class EmergencyEventController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'EmergencyEvent.Create';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await EmergencyEventValidator.create(request);
 
             if (domainModel.PatientUserId != null) {
@@ -68,8 +63,6 @@ export class EmergencyEventController {
         try {
             request.context = 'EmergencyEvent.GetById';
 
-            await this._authorizer.authorize(request, response);
-
             const id: string = await EmergencyEventValidator.getById(request);
 
             const emergencyEvent = await this._service.getById(id);
@@ -88,8 +81,6 @@ export class EmergencyEventController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'EmergencyEvent.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await EmergencyEventValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -110,8 +101,6 @@ export class EmergencyEventController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'EmergencyEvent.Update';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await EmergencyEventValidator.update(request);
 
             const id: string = await EmergencyEventValidator.getById(request);
@@ -136,8 +125,6 @@ export class EmergencyEventController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'EmergencyEvent.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await EmergencyEventValidator.getById(request);
             const existingEmergencyEvent = await this._service.getById(id);
             if (existingEmergencyEvent == null) {

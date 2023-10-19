@@ -5,7 +5,7 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ChatService } from '../../../services/community/chat.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { ChatValidator } from './chat.validator';
 import { BaseController } from '../../base.controller';
 import { ConversationDomainModel } from '../../../domain.types/community/chat/conversation.domain.model';

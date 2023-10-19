@@ -1,11 +1,10 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { CustomTaskService } from '../../../services/users/user/custom.task.service';
 import { UserTaskService } from '../../../services/users/user/user.task.service';
 import { CustomTaskValidator } from './custom.task.validator';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { CommonActions } from '../../../custom/common/common.actions';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +17,6 @@ export class CustomTaskController {
 
     _userTaskService: UserTaskService = null;
 
-    _authorizer: Authorizer = null;
 
     _validator: CustomTaskValidator = new CustomTaskValidator();
 
@@ -27,7 +25,6 @@ export class CustomTaskController {
     constructor() {
         this._service = Loader.container.resolve(CustomTaskService);
         this._userTaskService = Loader.container.resolve(UserTaskService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -37,8 +34,6 @@ export class CustomTaskController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'CustomTask.Create';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await this._validator.create(request);
 
             var userTask = await this._customActions.createCustomTask(domainModel);
@@ -55,8 +50,6 @@ export class CustomTaskController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'CustomTask.GetById';
-
-            await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -80,8 +73,6 @@ export class CustomTaskController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'CustomTask.Update';
-            await this._authorizer.authorize(request, response);
-
             const updateModel = await this._validator.update(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
 

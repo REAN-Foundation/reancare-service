@@ -1,18 +1,17 @@
 import express from 'express';
 import { ClientAppController } from './client.app.controller';
-import { Loader } from '../../startup/loader';
+import { auth } from '../../auth/auth.handler';
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new ClientAppController();
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.post('/', auth(), controller.create);
+    router.get('/search', auth(), controller.search);
+    router.get('/:id', auth(), controller.getById);
+    router.put('/:id', auth(), controller.update);
+    router.delete('/:id', auth(), controller.delete);
 
     router.get('/:clientCode/current-api-key', controller.getCurrentApiKey);
     router.put('/:clientCode/renew-api-key', controller.renewApiKey);

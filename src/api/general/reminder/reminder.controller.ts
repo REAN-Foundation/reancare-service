@@ -6,7 +6,7 @@ import { ReminderService } from '../../../services/general/reminder.service';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { ReminderValidator } from './reminder.validator';
 import { BaseController } from '../../base.controller';
 

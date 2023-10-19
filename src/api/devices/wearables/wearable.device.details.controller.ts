@@ -2,7 +2,7 @@ import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { BaseController } from '../../base.controller';
 import { WearableDeviceDetailsService } from '../../../services/webhook/wearable.device.details.service';
 import { WearableDeviceDetailsValidator } from './wearable.device.details.validator';

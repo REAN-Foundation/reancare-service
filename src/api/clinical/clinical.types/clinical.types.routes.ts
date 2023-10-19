@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { ClinicalTypesController } from './clinical.types.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,7 +7,6 @@ import { ClinicalTypesController } from './clinical.types.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new ClinicalTypesController();
 
     router.get('/severities', controller.getSeverities);

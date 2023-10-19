@@ -3,7 +3,7 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { KnowledgeNuggetService } from '../../../services/educational/knowledge.nugget.service';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { KnowledgeNuggetValidator } from './knowledge.nugget.validator';
 import { BaseController } from '../../base.controller';
 

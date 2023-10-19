@@ -1,6 +1,5 @@
 import express from 'express';
 import { PatientService } from '../../../../services/users/patient/patient.service';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
 import { StatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
@@ -31,8 +30,6 @@ export class StatisticsController {
 
     _documentService: DocumentService = null;
 
-    _authorizer: Authorizer = null;
-
     _validator: StatisticsValidator = new StatisticsValidator();
 
     _personService: PersonService = null;
@@ -43,7 +40,6 @@ export class StatisticsController {
         this._patientService = Loader.container.resolve(PatientService);
         this._personService = Loader.container.resolve(PersonService);
         this._documentService = Loader.container.resolve(DocumentService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -53,7 +49,6 @@ export class StatisticsController {
     getPatientStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientStatistics.GetPatientStats';
-            //await this._authorizer.authorize(request, response);
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const stats = await this._service.getPatientStats(patientUserId);
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
@@ -67,8 +62,6 @@ export class StatisticsController {
     getPatientStatsReport = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientStatistics.GetPatientStatsReport';
-
-            await this._authorizer.authorize(request, response);
 
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const clientCode = request.currentClient.ClientCode;

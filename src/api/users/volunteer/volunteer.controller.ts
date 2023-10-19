@@ -6,7 +6,7 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { BaseUserController } from '../base.user.controller';
 import { VolunteerValidator } from './volunteer.validator';
 
@@ -108,8 +108,6 @@ export class VolunteerController extends BaseUserController {
         try {
             request.context = 'Volunteer.GetByUserId';
 
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await VolunteerValidator.getByUserId(request);
 
             const existingUser = await this._userService.getById(userId);
@@ -133,8 +131,6 @@ export class VolunteerController extends BaseUserController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Volunteer.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await VolunteerValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -154,8 +150,6 @@ export class VolunteerController extends BaseUserController {
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Volunteer.UpdateByUserId';
-            await this._authorizer.authorize(request, response);
-
             const donorDomainModel = await VolunteerValidator.updateByUserId(request);
 
             const userId: string = await VolunteerValidator.getByUserId(request);
@@ -197,8 +191,6 @@ export class VolunteerController extends BaseUserController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Volunteer.DeleteByUserId';
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await VolunteerValidator.delete(request);
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {

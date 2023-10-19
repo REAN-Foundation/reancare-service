@@ -50,8 +50,6 @@ export class SymptomController extends BaseController {
         try {
             request.context = 'Symptom.GetById';
 
-            await this._authorizer.authorize(request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const symptom = await this._service.getById(id);
             if (symptom == null) {
@@ -69,8 +67,6 @@ export class SymptomController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Symptom.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -91,8 +87,6 @@ export class SymptomController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Symptom.Update';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await this._validator.update(request);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -117,8 +111,6 @@ export class SymptomController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Symptom.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptom = await this._service.getById(id);
             if (existingSymptom == null) {

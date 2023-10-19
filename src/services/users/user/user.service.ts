@@ -18,7 +18,7 @@ import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto, UserDto } from '../../../domain.types/users/user/user.dto';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { UserLoginSessionDomainModel } from '../../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';

@@ -2,7 +2,6 @@ import express from 'express';
 
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { Loader } from '../../../../startup/loader';
-import { Authorizer } from '../../../../auth/authorizer';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { SymptomTypeValidator } from './symptom.type.validator';
@@ -19,12 +18,10 @@ export class SymptomTypeController extends BaseController {
 
     _validator: SymptomTypeValidator = new SymptomTypeValidator();
 
-    _authorizer: Authorizer = null;
 
     constructor() {
         super();
         this._service = Loader.container.resolve(SymptomTypeService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion

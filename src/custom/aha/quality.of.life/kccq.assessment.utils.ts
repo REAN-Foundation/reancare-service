@@ -5,7 +5,7 @@ import { Logger } from '../../../common/logger';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { CommonActions } from '../../common/common.actions';
 import { TimeHelper } from '../../../common/time.helper';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { PatientDetailsDto } from '../../../domain.types/users/patient/patient/patient.dto';
 import { generateReportPDF } from './kccq.report.generator';

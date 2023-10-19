@@ -15,7 +15,7 @@ import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

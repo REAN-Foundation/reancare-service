@@ -55,13 +55,13 @@ export class AuthHandler {
         var userAuthenticator = Injector.Container.resolve(UserAuthenticator);
         const userVerified = await userAuthenticator.verify(request);
         if (userVerified === false){
-            ErrorHandler.throwInternalServerError('Unauthorized access');
+            ErrorHandler.throwUnauthorizedUserError('Unauthorized access');
         }
 
         var userAuthorizer = Injector.Container.resolve(UserAuthorizer);
         const authorized = await userAuthorizer.verify(request);
         if (authorized === false){
-            ErrorHandler.throwUnauthorizedUserError('Unauthorized access');
+            ErrorHandler.throwForebiddenAccessError('Unauthorized access');
         }
         return true;
     };

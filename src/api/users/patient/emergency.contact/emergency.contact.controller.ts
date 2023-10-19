@@ -48,7 +48,6 @@ export class EmergencyContactController extends BaseController {
         this._userService = Loader.container.resolve(UserService);
         this._addressService = Loader.container.resolve(AddressService);
         this._healthSystemService = Loader.container.resolve(HealthSystemService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -179,8 +178,6 @@ export class EmergencyContactController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Emergency.Contact.GetById';
-
-            await this._authorizer.authorize(request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 

@@ -2,7 +2,7 @@ import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { DailyAssessmentService } from '../../../services/clinical/daily.assessment/daily.assessment.service';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { BaseController } from '../../base.controller';
 

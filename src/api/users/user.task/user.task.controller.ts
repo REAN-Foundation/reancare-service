@@ -1,6 +1,5 @@
 import express from 'express';
 import { UserTaskDto } from '../../../domain.types/users/user.task/user.task.dto';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { Logger } from '../../../common/logger';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
@@ -10,7 +9,7 @@ import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { UserActionResolver } from '../../../services/users/user/user.action.resolver';
 import { UserTaskService } from '../../../services/users/user/user.task.service';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
@@ -33,8 +32,6 @@ export class UserTaskController {
 
     _careplanService: CareplanService = null;
 
-    _authorizer: Authorizer = null;
-
     _validator: UserTaskValidator = new UserTaskValidator();
 
     constructor() {
@@ -44,7 +41,6 @@ export class UserTaskController {
         this._organizationService = Loader.container.resolve(OrganizationService);
         this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
         this._careplanService = Loader.container.resolve(CareplanService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -74,8 +70,6 @@ export class UserTaskController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.Create';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await this._validator.create(request);
 
             const userTask = await this._service.create(domainModel);
@@ -95,8 +89,6 @@ export class UserTaskController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.GetById';
-
-            await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -130,8 +122,6 @@ export class UserTaskController {
         try {
             request.context = 'UserTask.GetByDisplayId';
 
-            await this._authorizer.authorize(request, response);
-
             const id: string = await this._validator.getParamStr(request, 'displayId');
 
             const userTask = await this._service.getByDisplayId(id);
@@ -159,8 +149,6 @@ export class UserTaskController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await this._validator.search(request);
 
             var searchResults = await this._service.search(filters);
@@ -181,7 +169,6 @@ export class UserTaskController {
     startTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.StartTask';
-            await this._authorizer.authorize(request, response);
             var actionResolver = new UserActionResolver();
 
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -221,7 +208,6 @@ export class UserTaskController {
     finishTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.FinishTask';
-            await this._authorizer.authorize(request, response);
             var actionResolver = new UserActionResolver();
 
             const { id, finishedAt, userResponse } = await this._validator.finishTask(request);
@@ -266,7 +252,6 @@ export class UserTaskController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.Update';
-            await this._authorizer.authorize(request, response);
             var actionResolver = new UserActionResolver();
 
             const updateModel = await this._validator.update(request);
@@ -306,7 +291,6 @@ export class UserTaskController {
     cancelTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.CancelTask';
-            await this._authorizer.authorize(request, response);
             var actionResolver = new UserActionResolver();
 
             const { id, reason } = await this._validator.cancelTask(request);
@@ -345,8 +329,6 @@ export class UserTaskController {
     getTaskSummaryForDay = async(request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.SummaryForDay';
-            await this._authorizer.authorize(request, response);
-
             const { userId, date } = await this._validator.getTaskSummaryForDay(request);
             const summary = await this._service.getTaskSummaryForDay(userId, date);
             summary.CompletedTasks = await this.updateDtos(summary.CompletedTasks);
@@ -365,8 +347,6 @@ export class UserTaskController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingUserTask = await this._service.getById(id);
             if (existingUserTask == null) {
@@ -389,8 +369,6 @@ export class UserTaskController {
     deletePatientFutureTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.DeleteFutureTask';
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await this._validator.getParamUuid(request, 'userId');
             const deletedUserTask = await this._service.getFutureTaskByUserId(userId);
 

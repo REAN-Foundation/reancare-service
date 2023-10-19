@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from "path";
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { ApiError } from '../../../common/api.error';
 import { Helper } from "../../../common/helper";
 import { Logger } from '../../../common/logger';

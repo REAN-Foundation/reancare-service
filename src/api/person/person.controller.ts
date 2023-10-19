@@ -1,5 +1,4 @@
 import express from 'express';
-import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { ResponseHandler } from '../../common/handlers/response.handler';
 import { AddressService } from '../../services/general/address.service';
@@ -23,14 +22,12 @@ export class PersonController {
 
     _organizationService: OrganizationService = null;
 
-    _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);
         this._addressService = Loader.container.resolve(AddressService);
         this._organizationService = Loader.container.resolve(OrganizationService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -38,8 +35,6 @@ export class PersonController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.GetById';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await PersonValidator.validateId(request);
             const person = await this._service.getById(id);
             if (person == null) {
@@ -57,8 +52,6 @@ export class PersonController {
     getAllPersonsWithPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.GetAllPersonsWithPhoneAndRole';
-            await this._authorizer.authorize(request, response);
-
             const { phone, roleId } = await PersonValidator.getAllPersonsWithPhoneAndRole(request);
             const persons = await this._service.getAllPersonsWithPhoneAndRole(phone, roleId);
             const message =
@@ -77,8 +70,6 @@ export class PersonController {
     getOrganizations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.GetOrganizations';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await PersonValidator.validateId(request);
             const organizations = await this._service.getOrganizations(id);
 
@@ -96,8 +87,6 @@ export class PersonController {
     addAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.AddAddress';
-            await this._authorizer.authorize(request, response);
-
             const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
@@ -120,8 +109,6 @@ export class PersonController {
     removeAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.RemoveAddress';
-            await this._authorizer.authorize(request, response);
-
             const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
@@ -144,8 +131,6 @@ export class PersonController {
     getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.GetAddresses';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await PersonValidator.validateId(request);
             const addresses = await this._service.getAddresses(id);
 

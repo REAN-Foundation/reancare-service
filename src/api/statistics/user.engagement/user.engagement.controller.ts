@@ -1,6 +1,6 @@
 import express from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { BaseController } from '../../base.controller';
 import { UserEngagementService } from '../../../services/statistics/user.engagement.service';
 import { UserEngagementValidator } from './user.engagement.validator';

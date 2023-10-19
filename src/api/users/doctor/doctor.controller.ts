@@ -6,7 +6,7 @@ import { PersonDomainModel } from '../../../domain.types/person/person.domain.mo
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
 import { DoctorService } from '../../../services/users/doctor.service';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { DoctorValidator } from './doctor.validator';
 import { BaseUserController } from '../base.user.controller';
 
@@ -108,8 +108,6 @@ export class DoctorController extends BaseUserController {
         try {
             request.context = 'Doctor.GetByUserId';
 
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await DoctorValidator.getByUserId(request);
 
             const existingUser = await this._userService.getById(userId);
@@ -133,8 +131,6 @@ export class DoctorController extends BaseUserController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Doctor.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await DoctorValidator.search(request);
 
             // const extractFull: boolean =
@@ -159,8 +155,6 @@ export class DoctorController extends BaseUserController {
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Doctor.UpdateByUserId';
-            await this._authorizer.authorize(request, response);
-
             const doctorDomainModel = await DoctorValidator.updateByUserId(request);
 
             const userId: string = await DoctorValidator.getByUserId(request);
@@ -202,8 +196,6 @@ export class DoctorController extends BaseUserController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Doctor.DeleteByUserId';
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await DoctorValidator.delete(request);
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {

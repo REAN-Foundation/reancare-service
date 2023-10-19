@@ -1,7 +1,6 @@
 import express from 'express';
 import fs from 'fs';
 import { Helper } from '../../../../common/helper';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
@@ -36,7 +35,6 @@ export class MedicationController {
 
     _medicationConsumptionService: MedicationConsumptionService = null;
 
-    _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(MedicationService);
@@ -45,7 +43,6 @@ export class MedicationController {
         this._drugService = Loader.container.resolve(DrugService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -110,8 +107,6 @@ export class MedicationController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.Create';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await MedicationValidator.create(request);
 
             const user = await this._userService.getById(domainModel.PatientUserId);
@@ -150,8 +145,6 @@ export class MedicationController {
         try {
             request.context = 'Medication.GetById';
 
-            await this._authorizer.authorize(request, response);
-
             const id: string = await MedicationValidator.getParamId(request);
 
             const medication = await this._service.getById(id);
@@ -181,8 +174,6 @@ export class MedicationController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await MedicationValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -203,8 +194,6 @@ export class MedicationController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.Update';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await MedicationValidator.update(request);
             const id: string = await MedicationValidator.getParamId(request);
 
@@ -260,8 +249,6 @@ export class MedicationController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await MedicationValidator.getParamId(request);
             const existingMedication = await this._service.getById(id);
             if (existingMedication == null) {
@@ -287,8 +274,6 @@ export class MedicationController {
         try {
             request.context = 'Medication.GetCurrentMedications';
 
-            await this._authorizer.authorize(request, response);
-
             const patientUserId: string = await MedicationValidator.getPatientUserId(request);
 
             const medications = await this._service.getCurrentMedications(patientUserId);
@@ -304,8 +289,6 @@ export class MedicationController {
     getStockMedicationImages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.GetStockMedicationImages';
-            await this._authorizer.authorize(request, response);
-
             const images = await this._service.getStockMedicationImages();
 
             ResponseHandler.success(request, response, 'Medication stock images retrieved successfully!', 200, {
@@ -320,8 +303,6 @@ export class MedicationController {
     getStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.GetStockMedicationImageById';
-
-            await this._authorizer.authorize(request, response);
 
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
@@ -339,8 +320,6 @@ export class MedicationController {
     downloadStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.DownloadStockMedicationImageById';
-
-            await this._authorizer.authorize(request, response);
 
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);

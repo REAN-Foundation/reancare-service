@@ -2,7 +2,6 @@ import express from 'express';
 import fs from 'fs';
 import * as genpass from 'generate-password';
 import path from 'path';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
@@ -30,7 +29,6 @@ export class DocumentController {
 
     _fileResourceService: FileResourceService = null;
 
-    _authorizer: Authorizer = null;
 
     _validator: DocumentValidator = new DocumentValidator();
 
@@ -39,7 +37,6 @@ export class DocumentController {
     constructor() {
         this._service = Loader.container.resolve(DocumentService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -60,8 +57,6 @@ export class DocumentController {
     upload = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Upload';
-            await this._authorizer.authorize(request, response);
-
             const documentDomainModel = await this._validator.upload(request);
 
             var fileResourceDomainModel : FileResourceUploadDomainModel = {
@@ -90,8 +85,6 @@ export class DocumentController {
         try {
             request.context = 'PatientDocument.GetById';
 
-            await this._authorizer.authorize(request, response);
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             const Document = await this._service.getById(id);
             if (Document == null) {
@@ -109,8 +102,6 @@ export class DocumentController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Update';
-
-            await this._authorizer.authorize(request, response);
 
             const domainModel = await this._validator.update(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -138,8 +129,6 @@ export class DocumentController {
         try {
             request.context = 'PatientDocument.Search';
 
-            await this._authorizer.authorize(request, response);
-
             var filters: DocumentSearchFilters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -159,8 +148,6 @@ export class DocumentController {
     rename = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Rename';
-
-            await this._authorizer.authorize(request, response);
 
             const newName = await this._validator.rename(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -198,8 +185,6 @@ export class DocumentController {
         try {
             request.context = 'PatientDocument.Download';
 
-            await this._authorizer.authorize(request, response);
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -224,8 +209,6 @@ export class DocumentController {
     share = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Share';
-
-            await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
             var durationMinutes = await this._validator.getQueryInt(request, 'durationMinutes');
@@ -271,8 +254,6 @@ export class DocumentController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Delete';
-
-            await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

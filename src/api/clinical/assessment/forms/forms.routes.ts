@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { FormsController } from '../../../clinical/assessment/forms/forms.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,15 +7,14 @@ import { FormsController } from '../../../clinical/assessment/forms/forms.contro
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new FormsController();
 
     //Connects with Form provider with user's stored credentials.
     //If the credentials are not provided, credentials are taken up from the database if they exists for the user
-    router.post('/provider/:providerCode/connect', authenticator.authenticateUser, controller.connect);
+    router.post('/provider/:providerCode/connect', auth(), controller.connect);
 
     //Get list of forms for the user with an account with given provider
-    router.get('/provider/:providerCode/forms', authenticator.authenticateUser, controller.getFormsList);
+    router.get('/provider/:providerCode/forms', auth(), controller.getFormsList);
 
     //Import form as assessment template
     //If the forms has already imported but with previous version, a new assessment template is created with new version

@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { MedicationController } from './medication.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,7 +7,6 @@ import { MedicationController } from './medication.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new MedicationController();
 
     router.get('/time-schedules', controller.getTimeSchedules);
@@ -16,16 +15,16 @@ export const register = (app: express.Application): void => {
     router.get('/duration-units', controller.getDurationUnits);
     router.get('/administration-routes', controller.getAdministrationRoutes);
 
-    router.get('/stock-images', authenticator.authenticateUser, controller.getStockMedicationImages);
-    router.get('/stock-images/:imageId/download', authenticator.authenticateUser, controller.downloadStockMedicationImageById);
-    router.get('/stock-images/:imageId', authenticator.authenticateUser, controller.getStockMedicationImageById);
+    router.get('/stock-images', auth(), controller.getStockMedicationImages);
+    router.get('/stock-images/:imageId/download', auth(), controller.downloadStockMedicationImageById);
+    router.get('/stock-images/:imageId', auth(), controller.getStockMedicationImageById);
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/current/:patientUserId', authenticator.authenticateUser, controller.getCurrentMedications);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.post('/', auth(), controller.create);
+    router.get('/search', auth(), controller.search);
+    router.get('/current/:patientUserId', auth(), controller.getCurrentMedications);
+    router.get('/:id', auth(), controller.getById);
+    router.put('/:id', auth(), controller.update);
+    router.delete('/:id', auth(), controller.delete);
 
     app.use('/api/v1/clinical/medications', router);
 };

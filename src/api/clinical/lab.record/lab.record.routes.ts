@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new LabRecordController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('LabRecord.Create'), controller.create);
+    router.get('/search', auth('LabRecord.Search'), controller.search);
+    router.get('/:id', auth('LabRecord.GetById'), controller.getById);
+    router.put('/:id', auth('LabRecord.Update'), controller.update);
+    router.delete('/:id', auth('LabRecord.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/lab-records', router);
 };

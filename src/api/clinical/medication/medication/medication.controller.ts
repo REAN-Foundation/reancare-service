@@ -35,7 +35,6 @@ export class MedicationController {
 
     _medicationConsumptionService: MedicationConsumptionService = null;
 
-
     constructor() {
         this._service = Loader.container.resolve(MedicationService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -106,7 +105,6 @@ export class MedicationController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Create';
             const domainModel = await MedicationValidator.create(request);
 
             const user = await this._userService.getById(domainModel.PatientUserId);
@@ -143,8 +141,6 @@ export class MedicationController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetById';
-
             const id: string = await MedicationValidator.getParamId(request);
 
             const medication = await this._service.getById(id);
@@ -173,7 +169,6 @@ export class MedicationController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Search';
             const filters = await MedicationValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -193,7 +188,6 @@ export class MedicationController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Update';
             const domainModel = await MedicationValidator.update(request);
             const id: string = await MedicationValidator.getParamId(request);
 
@@ -248,7 +242,6 @@ export class MedicationController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Delete';
             const id: string = await MedicationValidator.getParamId(request);
             const existingMedication = await this._service.getById(id);
             if (existingMedication == null) {
@@ -272,8 +265,6 @@ export class MedicationController {
 
     getCurrentMedications = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetCurrentMedications';
-
             const patientUserId: string = await MedicationValidator.getPatientUserId(request);
 
             const medications = await this._service.getCurrentMedications(patientUserId);
@@ -288,7 +279,6 @@ export class MedicationController {
 
     getStockMedicationImages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetStockMedicationImages';
             const images = await this._service.getStockMedicationImages();
 
             ResponseHandler.success(request, response, 'Medication stock images retrieved successfully!', 200, {
@@ -302,8 +292,6 @@ export class MedicationController {
 
     getStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetStockMedicationImageById';
-
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
@@ -319,8 +307,6 @@ export class MedicationController {
 
     downloadStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.DownloadStockMedicationImageById';
-
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {

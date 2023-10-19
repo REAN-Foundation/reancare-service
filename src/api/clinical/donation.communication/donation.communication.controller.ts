@@ -2,10 +2,10 @@ import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { auth } from '../../../auth/auth.handler';
 import { BaseController } from '../../base.controller';
 import { DonationCommunicationValidator } from './donation.communication.validator';
 import { DonationCommunicationService } from '../../../services/clinical/donation/donation.communication.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +29,6 @@ export class DonationCommunicationController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.create(request);
 
             const donationCommunication = await this._service.create(domainModel);
@@ -48,7 +47,6 @@ export class DonationCommunicationController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const donationCommunication = await this._service.getById(id);
@@ -66,7 +64,6 @@ export class DonationCommunicationController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const filters = await this._validator.search(request);
 
@@ -87,7 +84,6 @@ export class DonationCommunicationController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.update(request);
 
@@ -113,7 +109,6 @@ export class DonationCommunicationController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const donationCommunication = await this._service.getById(id);

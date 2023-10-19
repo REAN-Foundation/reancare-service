@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new DrugController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('Medication.Drug.Create'), controller.create);
+    router.get('/search', auth('Medication.Drug.Search'), controller.search);
+    router.get('/:id', auth('Medication.Drug.GetById'), controller.getById);
+    router.put('/:id', auth('Medication.Drug.Update'), controller.update);
+    router.delete('/:id', auth('Medication.Drug.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/drugs', router);
 };

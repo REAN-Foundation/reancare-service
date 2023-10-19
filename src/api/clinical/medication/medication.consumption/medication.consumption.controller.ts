@@ -48,7 +48,6 @@ export class MedicationConsumptionController {
 
     markListAsTaken = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkListAsTaken';
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
                 throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
@@ -87,7 +86,6 @@ export class MedicationConsumptionController {
 
     markListAsMissed = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkListAsMissed';
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
                 throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
@@ -126,7 +124,6 @@ export class MedicationConsumptionController {
 
     markAsTaken = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkAsTaken';
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsTaken(consumptionId);
             if (dto === null) {
@@ -163,7 +160,6 @@ export class MedicationConsumptionController {
 
     markAsMissed = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkAsMissed';
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsMissed(consumptionId);
             if (dto === null) {
@@ -197,7 +193,6 @@ export class MedicationConsumptionController {
 
     deleteFutureMedicationSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.DeleteFutureMedicationSchedules';
             const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
             const deletedCount = await this._service.deleteFutureMedicationSchedules(medicationId);
 
@@ -212,8 +207,6 @@ export class MedicationConsumptionController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetById';
-
             const id: string = await MedicationConsumptionValidator.getParam(request, 'id');
 
             const medicationConsumption = await this._service.getById(id);
@@ -231,7 +224,6 @@ export class MedicationConsumptionController {
 
     searchForPatient = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.Search';
             const filters = await MedicationConsumptionValidator.searchForPatient(request);
 
             const searchResults = await this._service.search(filters);
@@ -251,8 +243,6 @@ export class MedicationConsumptionController {
 
     getScheduleForDuration = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetMedicationSchedule';
-
             const model = await MedicationConsumptionValidator.getScheduleForDuration(request);
 
             const dtos = await this._service.getScheduleForDuration(
@@ -274,9 +264,6 @@ export class MedicationConsumptionController {
 
     getScheduleForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            request.context = 'MedicationConsumption.GetMedicationScheduleForDay';
-
             const model = await MedicationConsumptionValidator.getScheduleForDay(request);
 
             const schedules: SchedulesForDayDto = await this._service.getSchedulesForDay(
@@ -298,8 +285,6 @@ export class MedicationConsumptionController {
 
     getSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetMedicationConsumptionSummaryForDay';
-
             const model = await MedicationConsumptionValidator.getSummaryForDay(request);
 
             const summary = await this._service.getSchedulesForDayByDrugs(
@@ -321,8 +306,6 @@ export class MedicationConsumptionController {
 
     getSummaryByCalendarMonths = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetSummaryByCalendarMonths';
-
             const model = await MedicationConsumptionValidator.getSummaryByCalendarMonths(request);
 
             const summary = await this._service.getSummaryByCalendarMonths(

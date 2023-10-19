@@ -4,9 +4,9 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
 import { UserService } from '../../../services/users/user/user.service';
-import { auth } from '../../../auth/auth.handler';
 import { DiagnosisValidator } from './diagnosis.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class DiagnosisController extends BaseController {
@@ -31,7 +31,6 @@ export class DiagnosisController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.create(request);
 

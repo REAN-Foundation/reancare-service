@@ -32,7 +32,6 @@ export class BloodCholesterolController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.create(request);
             const bloodCholesterol = await this._service.create(model);
             if (bloodCholesterol == null) {
@@ -49,7 +48,6 @@ export class BloodCholesterolController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bloodCholesterol = await this._service.getById(id);
@@ -89,7 +87,6 @@ export class BloodCholesterolController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -113,7 +110,6 @@ export class BloodCholesterolController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

@@ -5,9 +5,9 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ComplaintService } from '../../../services/clinical/complaint.service';
 import { DoctorService } from '../../../services/users/doctor.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
-import { auth } from '../../../auth/auth.handler';
 import { ComplaintValidator } from './complaint.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

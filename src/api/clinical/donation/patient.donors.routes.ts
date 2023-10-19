@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new PatientDonorsController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('PatientDonors.Create'), controller.create);
+    router.get('/search', auth('PatientDonors.Search'), controller.search);
+    router.get('/:id', auth('PatientDonors.GetById'), controller.getById);
+    router.put('/:id', auth('PatientDonors.Update'), controller.update);
+    router.delete('/:id', auth('PatientDonors.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/patient-donors', router);
 };

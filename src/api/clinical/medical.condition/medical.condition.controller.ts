@@ -3,9 +3,9 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { MedicalConditionService } from '../../../services/clinical/medical.condition.service';
-import { auth } from '../../../auth/auth.handler';
 import { MedicalConditionValidator } from './medical.condition.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +29,6 @@ export class MedicalConditionController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const medicalConditionDomainModel = await this._validator.create(request);
 

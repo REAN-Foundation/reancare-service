@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new EmergencyEventController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('EmergencyEvent.Create'), controller.create);
+    router.get('/search', auth('EmergencyEvent.Search'), controller.search);
+    router.get('/:id', auth('EmergencyEvent.GetById'), controller.getById);
+    router.put('/:id', auth('EmergencyEvent.Update'), controller.update);
+    router.delete('/:id', auth('EmergencyEvent.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/emergency-events', router);
 };

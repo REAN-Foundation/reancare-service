@@ -9,8 +9,8 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new DailyAssessmentController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
+    router.post('/', auth('DailyAssessment.Create'), controller.create);
+    router.get('/search', auth('DailyAssessment.Search'), controller.search);
 
     app.use('/api/v1/clinical/daily-assessments', router);
 };

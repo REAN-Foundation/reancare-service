@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new ComplaintController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search/:id', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('Complaint.Create'), controller.create);
+    router.get('/search/:id', auth('Complaint.Search'), controller.search);
+    router.get('/:id', auth('Complaint.GetById'), controller.getById);
+    router.put('/:id', auth('Complaint.Update'), controller.update);
+    router.delete('/:id', auth('Complaint.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/complaints', router);
 };

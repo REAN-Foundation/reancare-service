@@ -2,9 +2,9 @@ import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { DailyAssessmentService } from '../../../services/clinical/daily.assessment/daily.assessment.service';
-import { auth } from '../../../auth/auth.handler';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +27,6 @@ export class DailyAssessmentController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.create(request);
             const dailyAssessment = await this._service.create(model);
 
@@ -45,7 +44,6 @@ export class DailyAssessmentController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);

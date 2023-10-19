@@ -37,7 +37,6 @@ export class BodyTemperatureController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.create(request);
             const bodyTemperature = await this._service.create(model);
             if (bodyTemperature == null) {
@@ -79,7 +78,6 @@ export class BodyTemperatureController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bodyTemperature = await this._service.getById(id);
             if (bodyTemperature == null) {
@@ -96,7 +94,6 @@ export class BodyTemperatureController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -116,7 +113,6 @@ export class BodyTemperatureController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -164,7 +160,6 @@ export class BodyTemperatureController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

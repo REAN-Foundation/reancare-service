@@ -17,7 +17,6 @@ export class BodyHeightController {
 
     _service: BodyHeightService = null;
 
-
     constructor() {
         this._service = Loader.container.resolve(BodyHeightService);
     }
@@ -28,7 +27,6 @@ export class BodyHeightController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.Create";
             const model = await BodyHeightValidator.create(request);
 
             const bodyHeight = await this._service.create(model);
@@ -46,8 +44,6 @@ export class BodyHeightController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.GetById";
-
             const id: string = await BodyHeightValidator.getById(request);
 
             const bodyHeight = await this._service.getById(id);
@@ -65,7 +61,6 @@ export class BodyHeightController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.Search";
             const filters = await BodyHeightValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -87,7 +82,6 @@ export class BodyHeightController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.Update";
             const model = await BodyHeightValidator.update(request);
 
             const id: string = await BodyHeightValidator.getById(request);
@@ -111,7 +105,6 @@ export class BodyHeightController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.Delete";
             const id: string = await BodyHeightValidator.getById(request);
             const existing = await this._service.getById(id);
             if (existing == null) {

@@ -6,9 +6,9 @@ import { AllergySearchFilters } from '../../../domain.types/clinical/allergy/all
 import { AllergenCategoriesList, AllergenExposureRoutesList } from '../../../domain.types/clinical/allergy/allergy.types';
 import { AllergyService } from '../../../services/clinical/allergy.service';
 import { UserService } from '../../../services/users/user/user.service';
-import { auth } from '../../../auth/auth.handler';
 import { AllergyValidator } from './allergy.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

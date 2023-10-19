@@ -103,7 +103,6 @@ export class FormsController extends BaseController{
     getFormsList = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;
 
@@ -138,7 +137,6 @@ export class FormsController extends BaseController{
     importFormAsAssessmentTemplate = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;
             const providerFormId = request.params.providerFormId;
@@ -172,7 +170,6 @@ export class FormsController extends BaseController{
 
     importFormSubmissions = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;

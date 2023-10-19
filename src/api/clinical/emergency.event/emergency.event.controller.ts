@@ -5,8 +5,8 @@ import { EmergencyEventService } from '../../../services/clinical/emergency.even
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { RoleService } from '../../../services/role/role.service';
-import { auth } from '../../../auth/auth.handler';
 import { EmergencyEventValidator } from './emergency.event.validator';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,6 @@ export class EmergencyEventController {
 
     _organizationService: OrganizationService = null;
 
-
     constructor() {
         this._service = Loader.container.resolve(EmergencyEventService);
         this._roleService = Loader.container.resolve(RoleService);
@@ -36,7 +35,6 @@ export class EmergencyEventController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Create';
             const domainModel = await EmergencyEventValidator.create(request);
 
             if (domainModel.PatientUserId != null) {
@@ -61,8 +59,6 @@ export class EmergencyEventController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.GetById';
-
             const id: string = await EmergencyEventValidator.getById(request);
 
             const emergencyEvent = await this._service.getById(id);
@@ -80,7 +76,6 @@ export class EmergencyEventController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Search';
             const filters = await EmergencyEventValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -100,7 +95,6 @@ export class EmergencyEventController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Update';
             const domainModel = await EmergencyEventValidator.update(request);
 
             const id: string = await EmergencyEventValidator.getById(request);
@@ -124,7 +118,6 @@ export class EmergencyEventController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Delete';
             const id: string = await EmergencyEventValidator.getById(request);
             const existingEmergencyEvent = await this._service.getById(id);
             if (existingEmergencyEvent == null) {

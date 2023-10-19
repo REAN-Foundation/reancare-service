@@ -5,11 +5,11 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ConsentService } from '../../../services/auth/consent.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
-import { auth } from '../../../auth/auth.handler';
 import { ConsentValidator } from './consent.validator';
 import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
 import { TenantService } from '../../../services/tenant/tenant.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

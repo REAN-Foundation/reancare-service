@@ -28,7 +28,6 @@ export class StandController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -48,7 +47,6 @@ export class StandController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const stand = await this._service.getById(id);
@@ -66,7 +64,6 @@ export class StandController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -87,7 +84,6 @@ export class StandController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -112,7 +108,6 @@ export class StandController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingStand = await this._service.getById(id);

@@ -29,7 +29,6 @@ export class GoalController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Goal.Create', request, response);
 
             const model = await this._validator.create(request);
             const goal = await this._service.create(model);
@@ -48,7 +47,6 @@ export class GoalController extends BaseController {
     getPatientGoals = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Goal.GetPatientGoals', request, response);
 
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const goals = await this._service.getPatientGoals(patientUserId);
@@ -67,7 +65,6 @@ export class GoalController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Goal.GetById', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const goal = await this._service.getById(id);
             if (goal == null) {
@@ -84,7 +81,6 @@ export class GoalController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Goal.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -104,7 +100,6 @@ export class GoalController extends BaseController {
 
     getGoalsByPriority = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Goal.GetGoalsByPriority', request, response);
             const priorityId: string = await this._validator.getParamUuid(request, 'priorityId');
             const patientGoals = await this._service.getGoalsByPriority(priorityId);
             if (patientGoals == null || patientGoals.length === 0) {
@@ -122,7 +117,6 @@ export class GoalController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Goal.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -147,7 +141,6 @@ export class GoalController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Goal.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

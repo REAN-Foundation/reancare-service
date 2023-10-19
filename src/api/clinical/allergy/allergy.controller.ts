@@ -56,7 +56,6 @@ export class AllergyController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Allergy.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -82,7 +81,6 @@ export class AllergyController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Allergy.Create', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const allergy = await this._service.getById(id);
@@ -100,7 +98,6 @@ export class AllergyController extends BaseController {
 
     getForPatient = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Allergy.GetForPatient', request, response);
 
             const patientUserId = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -117,7 +114,6 @@ export class AllergyController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Allergy.Search', request, response);
 
             const filters: AllergySearchFilters  = await this._validator.search(request);
 
@@ -138,7 +134,6 @@ export class AllergyController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Allergy.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -163,7 +158,6 @@ export class AllergyController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Allergy.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingAllergy = await this._service.getById(id);

@@ -36,7 +36,6 @@ export class ComplaintController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -69,7 +68,6 @@ export class ComplaintController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -88,7 +86,6 @@ export class ComplaintController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -109,7 +106,6 @@ export class ComplaintController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -134,7 +130,6 @@ export class ComplaintController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingComplaint = await this._service.getById(id);

@@ -49,7 +49,6 @@ export class BloodPressureController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.Create', request, response);
 
             const model = await this._validator.create(request);
             const bloodPressure = await this._service.create(model);
@@ -98,7 +97,6 @@ export class BloodPressureController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bloodPressure = await this._service.getById(id);
@@ -117,7 +115,6 @@ export class BloodPressureController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.Search', request, response);
 
             Logger.instance().log(`trying to fetch data for search...`);
             const filters = await this._validator.search(request);
@@ -143,7 +140,6 @@ export class BloodPressureController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.Update', request, response);
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -193,7 +189,6 @@ export class BloodPressureController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

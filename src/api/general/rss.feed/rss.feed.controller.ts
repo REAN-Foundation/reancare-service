@@ -35,7 +35,6 @@ export class RssfeedController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.Create', request, response);
 
             const model = await this._validator.create(request);
             const feed = await this._service.create(model);
@@ -56,7 +55,6 @@ export class RssfeedController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const feed = await this._service.getById(id);
@@ -75,7 +73,6 @@ export class RssfeedController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
@@ -97,7 +94,6 @@ export class RssfeedController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -123,7 +119,6 @@ export class RssfeedController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -147,7 +142,6 @@ export class RssfeedController extends BaseController {
     addFeedItem = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.AddFeedItem', request, response);
 
             const model = await this._validator.addFeedItem(request);
             const item = await this._service.addFeedItem(model);
@@ -168,7 +162,6 @@ export class RssfeedController extends BaseController {
     getFeedItemById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.GetFeedItemById', request, response);
 
             const itemId: uuid = await this._validator.getParamUuid(request, 'itemId');
             const item = await this._service.getFeedItemById(itemId);
@@ -187,7 +180,6 @@ export class RssfeedController extends BaseController {
     updateFeedItem = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.UpdateFeedItem', request, response);
 
             const domainModel = await this._validator.updateFeedItem(request);
             const itemId: uuid = await this._validator.getParamUuid(request, 'itemId');
@@ -214,7 +206,6 @@ export class RssfeedController extends BaseController {
     deleteFeedItem = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.DeleteFeedItem', request, response);
 
             const itemId: uuid = await this._validator.getParamUuid(request, 'itemId');
             const existingRecord = await this._service.getFeedItemById(itemId);
@@ -241,7 +232,6 @@ export class RssfeedController extends BaseController {
     getRssFeed  = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.GetRssFeed', request, response, false);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const feed = await this._service.getById(id);
@@ -259,7 +249,6 @@ export class RssfeedController extends BaseController {
     getAtomFeed = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.GetAtomFeed', request, response, false);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const feed = await this._service.getById(id);
@@ -277,7 +266,6 @@ export class RssfeedController extends BaseController {
     getJsonFeed = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Rssfeed.GetJsonFeed', request, response, false);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const feed = await this._service.getById(id);

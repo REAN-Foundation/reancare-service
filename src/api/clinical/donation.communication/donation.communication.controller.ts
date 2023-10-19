@@ -29,7 +29,6 @@ export class DonationCommunicationController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DonationCommunication.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -49,7 +48,6 @@ export class DonationCommunicationController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DonationCommunication.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -69,7 +67,6 @@ export class DonationCommunicationController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DonationCommunication.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -91,7 +88,6 @@ export class DonationCommunicationController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DonationCommunication.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -118,7 +114,6 @@ export class DonationCommunicationController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DonationCommunication.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const donationCommunication = await this._service.getById(id);

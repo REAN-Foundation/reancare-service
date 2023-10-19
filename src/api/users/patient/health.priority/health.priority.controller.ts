@@ -32,7 +32,6 @@ export class HealthPriorityController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HealthPriority.Create', request, response);
 
             const model = await this._validator.create(request);
             const healthPriority = await this._service.create(model);
@@ -50,7 +49,6 @@ export class HealthPriorityController extends BaseController {
 
     getPatientHealthPriorities = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('HealthPriority.getPatientHealthPriorities', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -71,7 +69,6 @@ export class HealthPriorityController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HealthPriority.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -92,7 +89,6 @@ export class HealthPriorityController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HealthPriority.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -117,7 +113,6 @@ export class HealthPriorityController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HealthPriority.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

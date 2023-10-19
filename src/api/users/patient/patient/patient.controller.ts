@@ -61,7 +61,6 @@ export class PatientController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.Create', request, response, false);
 
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
@@ -91,7 +90,6 @@ export class PatientController extends BaseUserController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.GetByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const existingUser = await this._userService.getById(userId);
@@ -120,7 +118,6 @@ export class PatientController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.Search', request, response, false);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -139,7 +136,6 @@ export class PatientController extends BaseUserController {
 
     getPatientByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.GetPatientByPhone', request, response, false);
 
             if (request.currentClient.IsPrivileged) {
 
@@ -163,7 +159,6 @@ export class PatientController extends BaseUserController {
 
     getByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.GetByPhone', request, response);
 
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             const phone: string = await request.params.phone as string;
@@ -193,7 +188,6 @@ export class PatientController extends BaseUserController {
 
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.UpdateByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const existingUser = await this._userService.getById(userId);
@@ -260,7 +254,6 @@ export class PatientController extends BaseUserController {
 
     deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.DeleteByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const currentUserId = request.currentUser.UserId;

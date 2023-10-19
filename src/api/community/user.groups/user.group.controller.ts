@@ -40,7 +40,6 @@ export class UserGroupController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.Create', request, response);
             const model = await this._validator.create(request);
             const record = await this._service.create(model);
             if (record == null) {
@@ -56,7 +55,6 @@ export class UserGroupController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.GetById', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const record = await this._service.getById(id);
             if (record == null) {
@@ -72,7 +70,6 @@ export class UserGroupController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -89,7 +86,6 @@ export class UserGroupController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.Update', request, response);
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -110,7 +106,6 @@ export class UserGroupController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.Delete', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -130,7 +125,6 @@ export class UserGroupController extends BaseController {
 
     getGroupUsers = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.GetGroupUsers', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const group = await this._service.getById(id);
             if (group == null) {
@@ -148,7 +142,6 @@ export class UserGroupController extends BaseController {
 
     addUserToGroup = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.AddUserToGroup', request, response);
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const group = await this._service.getById(groupId);
@@ -174,7 +167,6 @@ export class UserGroupController extends BaseController {
 
     removeUserFromGroup = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.RemoveUserFromGroup', request, response);
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const group = await this._service.getById(groupId);
@@ -200,7 +192,6 @@ export class UserGroupController extends BaseController {
 
     makeUserAdmin = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.MakeUserAdmin', request, response);
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const group = await this._service.getById(groupId);
@@ -226,7 +217,6 @@ export class UserGroupController extends BaseController {
 
     removeUserAdmin = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.RemoveUserAdmin', request, response);
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const group = await this._service.getById(groupId);
@@ -252,7 +242,6 @@ export class UserGroupController extends BaseController {
 
     getGroupAdmins = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.GetGroupAdmins', request, response);
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
             const group = await this._service.getById(groupId);
             if (group == null) {
@@ -270,7 +259,6 @@ export class UserGroupController extends BaseController {
 
     setGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.SetGroupActivityTypes', request, response);
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
             const group = await this._service.getById(groupId);
             if (group == null) {
@@ -292,7 +280,6 @@ export class UserGroupController extends BaseController {
 
     getGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserGroup.GetGroupActivityTypes', request, response);
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
             const group = await this._service.getById(groupId);
             if (group == null) {

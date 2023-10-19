@@ -29,7 +29,6 @@ export class SymptomController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Symptom.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 

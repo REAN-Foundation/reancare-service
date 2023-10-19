@@ -61,7 +61,6 @@ export class FormsController extends BaseController{
     connect = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Forms.Connect', request, response);
             var connectionModel = await this._validator.connect(request);
 
             const provider = connectionModel.Provider;
@@ -104,7 +103,6 @@ export class FormsController extends BaseController{
     getFormsList = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Forms.GetFormsList', request, response);
 
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;
@@ -140,7 +138,6 @@ export class FormsController extends BaseController{
     importFormAsAssessmentTemplate = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Forms.ImportFormAsAssessmentTemplate', request, response);
 
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;
@@ -176,7 +173,6 @@ export class FormsController extends BaseController{
     importFormSubmissions = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Forms.ImportFormSubmissions', request, response);
 
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;

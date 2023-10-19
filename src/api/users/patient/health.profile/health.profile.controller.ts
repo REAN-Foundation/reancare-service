@@ -32,7 +32,6 @@ export class HealthProfileController extends BaseController{
     getByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HealthProfile.GetByPatientUserId', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -53,7 +52,6 @@ export class HealthProfileController extends BaseController{
     updateByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HealthProfile.UpdateByPatientUserId', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
             const domainModel: HealthProfileDomainModel = await this._validator.update(request);

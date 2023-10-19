@@ -32,7 +32,6 @@ export class DiagnosisController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Diagnosis.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -58,7 +57,6 @@ export class DiagnosisController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Diagnosis.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -77,7 +75,6 @@ export class DiagnosisController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Diagnosis.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -97,7 +94,6 @@ export class DiagnosisController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Diagnosis.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -122,7 +118,6 @@ export class DiagnosisController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Diagnosis.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingUser = await this._service.getById(id);

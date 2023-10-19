@@ -28,7 +28,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomAssessmentTemplate.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -48,7 +47,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('SymptomAssessmentTemplate.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -67,7 +65,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomAssessmentTemplate.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -89,7 +86,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('SymptomAssessmentTemplate.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -114,7 +110,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomAssessmentTemplate.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -138,7 +133,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
 
     addSymptomTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomAssessmentTemplate.AddSymptomTypes', request, response);
 
             const x = await this._validator.addRemoveSymptomTypes(request);
 
@@ -162,7 +156,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
 
     removeSymptomTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomAssessmentTemplate.RemoveSymptomTypes', request, response);
 
             const x = await this._validator.addRemoveSymptomTypes(request);
 

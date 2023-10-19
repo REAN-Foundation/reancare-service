@@ -29,7 +29,6 @@ export class FoodComponentMonitoringController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponentMonitoring.Create', request, response);
 
             const model = await this._validator.create(request);
 
@@ -49,7 +48,6 @@ export class FoodComponentMonitoringController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('FoodComponentMonitoring.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -69,7 +67,6 @@ export class FoodComponentMonitoringController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('FoodComponentMonitoring.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -89,7 +86,6 @@ export class FoodComponentMonitoringController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponentMonitoring.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -113,7 +109,6 @@ export class FoodComponentMonitoringController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponentMonitoring.Delete', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {

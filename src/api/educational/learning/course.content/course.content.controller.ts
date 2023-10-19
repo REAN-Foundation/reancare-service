@@ -29,7 +29,6 @@ export class CourseContentController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CourseContent.Create', request, response);
 
             const model = await this._validator.create(request);
             const courseContent = await this._service.create(model);
@@ -48,7 +47,6 @@ export class CourseContentController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CourseContent.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const courseContent = await this._service.getById(id);
@@ -67,7 +65,6 @@ export class CourseContentController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CourseContent.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
@@ -89,7 +86,6 @@ export class CourseContentController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CourseContent.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -114,7 +110,6 @@ export class CourseContentController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CourseContent.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -137,7 +132,6 @@ export class CourseContentController extends BaseController {
 
     getContentsForCourse = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CourseContent.GetContentsForCourse', request, response);
             const courseId: uuid = await this._validator.getParamUuid(request, 'courseId');
             const courseContents = await this._service.getContentsForCourse(courseId);
             if (courseContents == null) {
@@ -153,7 +147,6 @@ export class CourseContentController extends BaseController {
 
     getContentsForLearningPath = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CourseContent.GetContentsForLearningPath', request, response);
             const learningPathId: uuid = await this._validator.getParamUuid(request, 'learningPathId');
             const courseContents = await this._service.getContentsForLearningPath(learningPathId);
             if (courseContents == null) {

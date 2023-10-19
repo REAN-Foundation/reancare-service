@@ -40,7 +40,6 @@ export class CohortController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.Create', request, response);
             const model = await this._validator.create(request);
             const record = await this._service.create(model);
             if (record == null) {
@@ -56,7 +55,6 @@ export class CohortController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.GetById', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const record = await this._service.getById(id);
             if (record == null) {
@@ -72,7 +70,6 @@ export class CohortController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -89,7 +86,6 @@ export class CohortController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.Update', request, response);
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -110,7 +106,6 @@ export class CohortController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.Delete', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -130,7 +125,6 @@ export class CohortController extends BaseController {
 
     getCohortUsers = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.GetCohortUsers', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const cohort = await this._service.getById(id);
             if (cohort == null) {
@@ -148,7 +142,6 @@ export class CohortController extends BaseController {
 
     addUserToCohort = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.AddUserToCohort', request, response);
             const cohortId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const cohort = await this._service.getById(cohortId);
@@ -174,7 +167,6 @@ export class CohortController extends BaseController {
 
     removeUserFromCohort = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.RemoveUserFromCohort', request, response);
             const cohortId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const cohort = await this._service.getById(cohortId);
@@ -200,7 +192,6 @@ export class CohortController extends BaseController {
 
     getCohortStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.GetCohortStats', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const cohort = await this._service.getById(id);
             if (cohort == null) {
@@ -218,7 +209,6 @@ export class CohortController extends BaseController {
 
     getCohortsForTenant = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Cohort.GetCohortsForTenant', request, response);
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             const cohorts = await this._service.getCohortsForTenant(tenantId);
             ResponseHandler.success(request, response, 'Cohorts retrieved successfully!', 200, {

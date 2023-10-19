@@ -40,7 +40,6 @@ export class ActionPlanController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('ActionPlan.Create', request, response);
 
             const model = await this._validator.create(request);
             const actionPlan = await this._service.create(model);
@@ -58,7 +57,6 @@ export class ActionPlanController extends BaseController {
 
     getActionPlans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('ActionPlan.GetActionPlans', request, response);
 
             const goalId: uuid = await this._validator.getParamUuid(request, 'goalId');
 
@@ -78,7 +76,6 @@ export class ActionPlanController extends BaseController {
 
     getSelectedActionPlans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('ActionPlan.GetSelectedActionPlans', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -99,7 +96,6 @@ export class ActionPlanController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('ActionPlan.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -122,7 +118,6 @@ export class ActionPlanController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('ActionPlan.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -148,7 +143,6 @@ export class ActionPlanController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('ActionPlan.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

@@ -2,11 +2,11 @@ import express from 'express';
 import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserService } from '../../../services/users/user/user.service';
-import { auth } from '../../../auth/auth.handler';
 import { Logger } from '../../../common/logger';
 import { CustomActionsHandler } from '../../../custom/custom.actions.handler';
 import { CommonActions } from '../../../custom/common/common.actions';
 import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

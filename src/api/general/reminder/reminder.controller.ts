@@ -6,9 +6,9 @@ import { ReminderService } from '../../../services/general/reminder.service';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
-import { auth } from '../../../auth/auth.handler';
 import { ReminderValidator } from './reminder.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +41,6 @@ export class ReminderController extends BaseController {
     createOneTimeReminder = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.createOneTimeReminder(request);
             const reminder = await this._service.create(domainModel);
             if (reminder == null) {
@@ -60,7 +59,6 @@ export class ReminderController extends BaseController {
     createReminderWithRepeatAfterEveryN = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.createReminderWithRepeatAfterEveryN(request);
             const reminder = await this._service.create(domainModel);
             if (reminder == null) {
@@ -78,7 +76,6 @@ export class ReminderController extends BaseController {
 
     createReminderWithRepeatEveryWeekday = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.createReminderWithRepeatEveryWeekday(request);
             const reminder = await this._service.create(domainModel);
@@ -99,7 +96,6 @@ export class ReminderController extends BaseController {
         request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.createReminderWithRepeatEveryWeekOnDays(request);
             const reminder = await this._service.create(domainModel);
             if (reminder == null) {
@@ -117,7 +113,6 @@ export class ReminderController extends BaseController {
 
     createReminderWithEveryMonthOn = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.createReminderWithEveryMonthOn(request);
             const reminder = await this._service.create(domainModel);
@@ -137,7 +132,6 @@ export class ReminderController extends BaseController {
     createReminderWithEveryQuarterOn = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.createReminderWithEveryQuarterOn(request);
             const reminder = await this._service.create(domainModel);
             if (reminder == null) {
@@ -155,7 +149,6 @@ export class ReminderController extends BaseController {
 
     createReminderWithRepeatEveryHour = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.createReminderWithRepeatEveryHour(request);
             const reminder = await this._service.create(domainModel);
@@ -175,7 +168,6 @@ export class ReminderController extends BaseController {
     createReminderWithRepeatEveryDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.createReminderWithRepeatEveryDay(request);
             const reminder = await this._service.create(domainModel);
             if (reminder == null) {
@@ -193,7 +185,6 @@ export class ReminderController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const reminder = await this._service.getById(id);
@@ -228,7 +219,6 @@ export class ReminderController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -246,7 +236,6 @@ export class ReminderController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingReminder = await this._service.getById(id);

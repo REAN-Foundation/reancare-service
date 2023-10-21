@@ -1,5 +1,4 @@
 import express from 'express';
-import { auth } from '../../../auth/auth.handler';
 import { TestController } from './test.controller';
 
 export const register = (app: express.Application): void => {

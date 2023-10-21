@@ -33,7 +33,6 @@ export class MeditationController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.create(request);
             const meditation = await this._service.create(model);
             if (meditation == null) {
@@ -74,7 +73,6 @@ export class MeditationController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const meditation = await this._service.getById(id);
             if (meditation == null) {
@@ -91,7 +89,6 @@ export class MeditationController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -112,7 +109,6 @@ export class MeditationController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -136,7 +132,6 @@ export class MeditationController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

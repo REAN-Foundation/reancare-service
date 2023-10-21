@@ -48,7 +48,6 @@ export class WaterConsumptionController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const WaterConsumption = await this._service.getById(id);
@@ -66,7 +65,6 @@ export class WaterConsumptionController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);

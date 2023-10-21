@@ -3,11 +3,11 @@ import { PersonService } from '../../../services/person/person.service';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
-import { auth } from '../../../auth/auth.handler';
 import { UserDeviceDetailsValidator } from './user.device.details.validator';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
 import { Logger } from '../../../common/logger';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,8 +36,6 @@ export class UserDeviceDetailsController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Create';
-
             this.addUserDeviceDetails(request);
 
             // TODO - whole of this bussiness logic should get executed in queue.
@@ -51,8 +49,6 @@ export class UserDeviceDetailsController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.GetById';
-
             const id: string = await UserDeviceDetailsValidator.getById(request);
 
             const UserDeviceDetails = await this._service.getById(id);
@@ -70,8 +66,6 @@ export class UserDeviceDetailsController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.GetByUserId';
-
             const id: string = await UserDeviceDetailsValidator.getById(request);
 
             const UserDeviceDetails = await this._service.getByUserId(id);
@@ -89,8 +83,6 @@ export class UserDeviceDetailsController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Search';
-
             const filters = await UserDeviceDetailsValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -113,8 +105,6 @@ export class UserDeviceDetailsController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Update';
-
             const domainModel = await UserDeviceDetailsValidator.update(request);
 
             const id: string = await UserDeviceDetailsValidator.getById(request);
@@ -138,7 +128,6 @@ export class UserDeviceDetailsController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Delete';
             const id: string = await UserDeviceDetailsValidator.getById(request);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -160,7 +149,6 @@ export class UserDeviceDetailsController {
 
     sendTestNotification = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.SendTestNotification';
             var details = await UserDeviceDetailsValidator.sendTestNotification(request, response);
 
             // get person by phone number

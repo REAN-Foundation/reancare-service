@@ -22,7 +22,6 @@ export class PersonController {
 
     _organizationService: OrganizationService = null;
 
-
     constructor() {
         this._service = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);
@@ -34,7 +33,6 @@ export class PersonController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetById';
             const id: string = await PersonValidator.validateId(request);
             const person = await this._service.getById(id);
             if (person == null) {
@@ -51,7 +49,6 @@ export class PersonController {
 
     getAllPersonsWithPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetAllPersonsWithPhoneAndRole';
             const { phone, roleId } = await PersonValidator.getAllPersonsWithPhoneAndRole(request);
             const persons = await this._service.getAllPersonsWithPhoneAndRole(phone, roleId);
             const message =
@@ -69,7 +66,6 @@ export class PersonController {
 
     getOrganizations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetOrganizations';
             const id: string = await PersonValidator.validateId(request);
             const organizations = await this._service.getOrganizations(id);
 
@@ -86,7 +82,6 @@ export class PersonController {
 
     addAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.AddAddress';
             const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
@@ -108,7 +103,6 @@ export class PersonController {
 
     removeAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.RemoveAddress';
             const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
@@ -130,7 +124,6 @@ export class PersonController {
 
     getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetAddresses';
             const id: string = await PersonValidator.validateId(request);
             const addresses = await this._service.getAddresses(id);
 
@@ -147,8 +140,6 @@ export class PersonController {
 
     getAllPersonsWithPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetAllPersonsWithPhone';
-
             const { phone } = await PersonValidator.getAllPersonsWithPhone(request);
             const persons = await this._service.getPersonWithPhone(phone);
             const message =

@@ -29,7 +29,6 @@ export class CalorieBalanceController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.create(request);
 
             const calorieBalance = await this._service.create(domainModel);
@@ -48,7 +47,6 @@ export class CalorieBalanceController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const calorieBalance = await this._service.getById(id);
             if (calorieBalance == null) {
@@ -65,7 +63,6 @@ export class CalorieBalanceController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -84,7 +81,6 @@ export class CalorieBalanceController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -108,7 +104,6 @@ export class CalorieBalanceController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

@@ -1,11 +1,10 @@
-import express, { application } from 'express';
+import express from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { auth } from '../../../auth/auth.handler';
 import { BaseController } from '../../base.controller';
 import { StatisticsService } from '../../../services/statistics/statistics.service';
 import { StatistcsValidator } from './statistics.validator';
 import { ApiError } from '../../../common/api.error';
-import * as path from 'path';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,7 +129,6 @@ export class StatisticsController extends BaseController {
     updateAppDownloadCount = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.updateAppDownloads(request);
             const appDownload = await this._service.updateAppDownloadCount(model);
             if (appDownload == null) {
@@ -147,7 +145,6 @@ export class StatisticsController extends BaseController {
 
     getAppDownlodCount = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const appDownload = await this._service.getAppDownlodCount();
             if (appDownload == null) {

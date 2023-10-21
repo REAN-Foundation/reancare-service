@@ -29,7 +29,6 @@ export class DocumentController {
 
     _fileResourceService: FileResourceService = null;
 
-
     _validator: DocumentValidator = new DocumentValidator();
 
     _personService: any;
@@ -45,7 +44,6 @@ export class DocumentController {
 
     getTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.GetTypes';
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
                 PatientDocumentTypes : DocumentTypesList,
             });
@@ -56,7 +54,6 @@ export class DocumentController {
 
     upload = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Upload';
             const documentDomainModel = await this._validator.upload(request);
 
             var fileResourceDomainModel : FileResourceUploadDomainModel = {
@@ -83,7 +80,6 @@ export class DocumentController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.GetById';
 
             const id: string = await this._validator.getParamUuid(request, 'id');
             const Document = await this._service.getById(id);
@@ -101,8 +97,6 @@ export class DocumentController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Update';
-
             const domainModel = await this._validator.update(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -127,8 +121,6 @@ export class DocumentController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Search';
-
             var filters: DocumentSearchFilters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -147,8 +139,6 @@ export class DocumentController {
 
     rename = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Rename';
-
             const newName = await this._validator.rename(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -183,8 +173,6 @@ export class DocumentController {
 
     download = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Download';
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -208,8 +196,6 @@ export class DocumentController {
 
     share = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Share';
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             var durationMinutes = await this._validator.getQueryInt(request, 'durationMinutes');
             if (durationMinutes === null) {
@@ -253,8 +239,6 @@ export class DocumentController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Delete';
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {

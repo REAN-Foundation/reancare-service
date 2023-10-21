@@ -9,10 +9,10 @@ import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { UserActionResolver } from '../../../services/users/user/user.action.resolver';
 import { UserTaskService } from '../../../services/users/user/user.task.service';
-import { auth } from '../../../auth/auth.handler';
 import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,7 +69,6 @@ export class UserTaskController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Create';
             const domainModel = await this._validator.create(request);
 
             const userTask = await this._service.create(domainModel);
@@ -88,8 +87,6 @@ export class UserTaskController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.GetById';
-
             const id: string = await this._validator.getParamUuid(request, 'id');
 
             const userTask = await this._service.getById(id);
@@ -120,8 +117,6 @@ export class UserTaskController {
 
     getByDisplayId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.GetByDisplayId';
-
             const id: string = await this._validator.getParamStr(request, 'displayId');
 
             const userTask = await this._service.getByDisplayId(id);
@@ -148,7 +143,6 @@ export class UserTaskController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Search';
             const filters = await this._validator.search(request);
 
             var searchResults = await this._service.search(filters);
@@ -168,7 +162,6 @@ export class UserTaskController {
 
     startTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.StartTask';
             var actionResolver = new UserActionResolver();
 
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -207,7 +200,6 @@ export class UserTaskController {
 
     finishTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.FinishTask';
             var actionResolver = new UserActionResolver();
 
             const { id, finishedAt, userResponse } = await this._validator.finishTask(request);
@@ -251,7 +243,6 @@ export class UserTaskController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Update';
             var actionResolver = new UserActionResolver();
 
             const updateModel = await this._validator.update(request);
@@ -290,7 +281,6 @@ export class UserTaskController {
 
     cancelTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.CancelTask';
             var actionResolver = new UserActionResolver();
 
             const { id, reason } = await this._validator.cancelTask(request);
@@ -328,7 +318,6 @@ export class UserTaskController {
 
     getTaskSummaryForDay = async(request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.SummaryForDay';
             const { userId, date } = await this._validator.getTaskSummaryForDay(request);
             const summary = await this._service.getTaskSummaryForDay(userId, date);
             summary.CompletedTasks = await this.updateDtos(summary.CompletedTasks);
@@ -346,7 +335,6 @@ export class UserTaskController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Delete';
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingUserTask = await this._service.getById(id);
             if (existingUserTask == null) {
@@ -368,7 +356,6 @@ export class UserTaskController {
 
     deletePatientFutureTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.DeleteFutureTask';
             const userId: string = await this._validator.getParamUuid(request, 'userId');
             const deletedUserTask = await this._service.getFutureTaskByUserId(userId);
 

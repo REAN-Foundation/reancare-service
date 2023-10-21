@@ -10,11 +10,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new MeditationController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('Exercise.Meditation.Create'), controller.create);
+    router.get('/search', auth('Exercise.Meditation.Search'), controller.search);
+    router.get('/:id', auth('Exercise.Meditation.GetById'), controller.getById);
+    router.put('/:id', auth('Exercise.Meditation.Update'), controller.update);
+    router.delete('/:id', auth('Exercise.Meditation.Delete'), controller.delete);
 
     app.use('/api/v1/wellness/exercise/meditations', router);
 };

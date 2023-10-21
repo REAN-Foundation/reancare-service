@@ -29,7 +29,6 @@ export class GoalController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.create(request);
             const goal = await this._service.create(model);
             if (goal == null) {
@@ -46,7 +45,6 @@ export class GoalController extends BaseController {
 
     getPatientGoals = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const goals = await this._service.getPatientGoals(patientUserId);
@@ -117,7 +115,6 @@ export class GoalController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -140,7 +137,6 @@ export class GoalController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

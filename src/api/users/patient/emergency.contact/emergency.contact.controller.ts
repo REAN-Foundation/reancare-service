@@ -176,8 +176,6 @@ export class EmergencyContactController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Emergency.Contact.GetById';
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const patientEmergencyContact = await this._service.getById(id);
@@ -239,7 +237,6 @@ export class EmergencyContactController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingEmergencyContact = await this._service.getById(id);

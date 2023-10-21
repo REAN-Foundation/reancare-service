@@ -10,9 +10,9 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new CustomTaskController();
 
-    router.post('/', auth(), controller.create);
-    router.put("/:id", auth(), controller.update);
-    router.get('/:id', auth(), controller.getById);
+    router.post('/', auth('CustomTask.Create'), controller.create);
+    router.put("/:id", auth('CustomTask.Update'), controller.update);
+    router.get('/:id', auth('CustomTask.GetById'), controller.getById);
 
     app.use('/api/v1/custom-tasks', router);
 };

@@ -6,9 +6,9 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
-import { auth } from '../../../auth/auth.handler';
 import { DonorValidator } from './donor.validator';
 import { BaseUserController } from '../base.user.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,8 +29,6 @@ export class DonorController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Donor.Create';
-
             const donorDomainModel = await DonorValidator.create(request);
 
             //Throw an error if donor with same name and phone number exists
@@ -106,8 +104,6 @@ export class DonorController extends BaseUserController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Donor.GetByUserId';
-
             const userId: string = await DonorValidator.getByUserId(request);
 
             const existingUser = await this._userService.getById(userId);
@@ -130,7 +126,6 @@ export class DonorController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Donor.Search';
             const filters = await DonorValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -149,7 +144,6 @@ export class DonorController extends BaseUserController {
 
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Donor.UpdateByUserId';
             const donorDomainModel = await DonorValidator.updateByUserId(request);
 
             const userId: string = await DonorValidator.getByUserId(request);
@@ -190,7 +184,6 @@ export class DonorController extends BaseUserController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Donor.DeleteByUserId';
             const userId: string = await DonorValidator.delete(request);
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {

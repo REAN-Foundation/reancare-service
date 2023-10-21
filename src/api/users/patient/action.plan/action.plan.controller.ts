@@ -40,7 +40,6 @@ export class ActionPlanController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.create(request);
             const actionPlan = await this._service.create(model);
             if (actionPlan == null) {
@@ -96,7 +95,6 @@ export class ActionPlanController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
@@ -117,7 +115,6 @@ export class ActionPlanController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -142,7 +139,6 @@ export class ActionPlanController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

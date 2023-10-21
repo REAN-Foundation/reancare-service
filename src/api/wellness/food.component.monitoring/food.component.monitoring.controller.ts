@@ -3,9 +3,9 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { FoodComponentMonitoringService } from '../../../services/wellness/food.component.monitoring/food.component.monitoring.service';
-import { auth } from '../../../auth/auth.handler';
 import { FoodComponentMonitoringValidator } from './food.component.monitoring.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +48,6 @@ export class FoodComponentMonitoringController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const foodComponentMonitoring = await this._service.getById(id);
@@ -66,7 +65,6 @@ export class FoodComponentMonitoringController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);

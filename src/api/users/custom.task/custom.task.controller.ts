@@ -4,8 +4,8 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { CustomTaskService } from '../../../services/users/user/custom.task.service';
 import { UserTaskService } from '../../../services/users/user/user.task.service';
 import { CustomTaskValidator } from './custom.task.validator';
-import { auth } from '../../../auth/auth.handler';
 import { CommonActions } from '../../../custom/common/common.actions';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,6 @@ export class CustomTaskController {
     _service: CustomTaskService = null;
 
     _userTaskService: UserTaskService = null;
-
 
     _validator: CustomTaskValidator = new CustomTaskValidator();
 
@@ -33,15 +32,11 @@ export class CustomTaskController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'CustomTask.Create';
             const domainModel = await this._validator.create(request);
-
             var userTask = await this._customActions.createCustomTask(domainModel);
-
             ResponseHandler.success(request, response, 'Custom task created successfully!', 201, {
                 UserTask : userTask,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -49,22 +44,16 @@ export class CustomTaskController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'CustomTask.GetById';
-
             const id: string = await this._validator.getParamUuid(request, 'id');
-
             const task = await this._service.getById(id);
             if (task == null) {
                 throw new ApiError(404, 'Custom task not found.');
             }
-
             var userTask = await this._userTaskService.getByActionId(task.id);
             userTask['Action'] = task;
-
             ResponseHandler.success(request, response, 'Custom task retrieved successfully!', 200, {
                 UserTask : userTask,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -72,7 +61,6 @@ export class CustomTaskController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'CustomTask.Update';
             const updateModel = await this._validator.update(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
 

@@ -1,12 +1,12 @@
-import express, { application } from 'express';
+import express from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { auth } from '../../../auth/auth.handler';
 import { BaseController } from '../../base.controller';
 import * as path from 'path';
 import { CustomQueryService } from '../../../services/statistics/custom.query.service';
 import { CustomQueryValidator } from './custom.query.validator';
 import { ApiError } from '../../../common/api.error';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +44,6 @@ export class CustomQueryController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 

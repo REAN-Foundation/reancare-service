@@ -32,7 +32,6 @@ export class HealthProfileController extends BaseController{
     getByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
             const healthProfile : HealthProfileDto = await this._service.getByPatientUserId(patientUserId);
@@ -51,7 +50,6 @@ export class HealthProfileController extends BaseController{
 
     updateByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
             const domainModel: HealthProfileDomainModel = await this._validator.update(request);

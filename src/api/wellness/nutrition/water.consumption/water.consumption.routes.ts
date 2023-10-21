@@ -10,11 +10,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new WaterConsumptionController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('Nutrition.WaterConsumption.Create'), controller.create);
+    router.get('/search', auth('Nutrition.WaterConsumption.Search'), controller.search);
+    router.get('/:id', auth('Nutrition.WaterConsumption.GetById'), controller.getById);
+    router.put('/:id', auth('Nutrition.WaterConsumption.Update'), controller.update);
+    router.delete('/:id', auth('Nutrition.WaterConsumption.Delete'), controller.delete);
 
     app.use('/api/v1/wellness/nutrition/water-consumptions', router);
 };

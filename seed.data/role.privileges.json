@@ -2,6 +2,11 @@
     {
         "Role": "System Admin",
         "Privileges": [
+            "Role.Create",
+            "Role.GetById",
+            "Role.Search",
+            "Role.Update",
+            "Role.Delete",
             "Client.Create",
             "Client.GetById",
             "Client.Search",

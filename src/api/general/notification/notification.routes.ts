@@ -9,12 +9,12 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new NotificationController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id/mark-as-read', auth(), controller.markAsRead);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('Notification.Create'), controller.create);
+    router.get('/search', auth('Notification.Search'), controller.search);
+    router.get('/:id', auth('Notification.GetById'), controller.getById);
+    router.put('/:id/mark-as-read', auth('Notification.MarkAsRead'), controller.markAsRead);
+    router.put('/:id', auth('Notification.Update'), controller.update);
+    router.delete('/:id', auth('Notification.Delete'), controller.delete);
 
     app.use('/api/v1/general/notifications', router);
 };

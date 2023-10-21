@@ -39,7 +39,6 @@ export class MessagingService {
             type = "template";
             buttonIds = message.ButtonIds ? message.ButtonIds : null;
             message = JSON.stringify(message);
-
         }
         const client = provider === "REAN_BW" ? "BLOOD_WARRIORS" : "MATERNAL_BOT";
         const headers = {
@@ -48,7 +47,7 @@ export class MessagingService {
         const options = {
             headers : headers
         };
-        
+
         const url = `${reanBotBaseUrl}${client}/whatsappMeta/${urlToken}/send`;
         Logger.instance().log(`URL: ${url}`);
         Logger.instance().log(`Phone: ${toPhone}`);
@@ -69,5 +68,5 @@ export class MessagingService {
         }
         return true;
     };
-    
+
 }

@@ -321,7 +321,13 @@
             "Consent.GetById",
             "Consent.Search",
             "Consent.Update",
-            "Consent.Delete"
+            "Consent.Delete",
+            "Devices.Wearables.Create",
+            "Devices.Wearables.Search",
+            "Devices.Wearables.GetById",
+            "Devices.Wearables.Update",
+            "Devices.Wearables.Delete",
+            "Devices.Wearables.GetUserWearables"
         ]
     },
     {
@@ -788,7 +794,13 @@
             "Consent.GetById",
             "Consent.Search",
             "Consent.Update",
-            "Consent.Delete"
+            "Consent.Delete",
+            "Devices.Wearables.Create",
+            "Devices.Wearables.Search",
+            "Devices.Wearables.GetById",
+            "Devices.Wearables.Update",
+            "Devices.Wearables.Delete",
+            "Devices.Wearables.GetUserWearables"
         ]
     },
     {

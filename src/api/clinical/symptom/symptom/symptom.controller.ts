@@ -29,14 +29,11 @@ export class SymptomController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const domainModel = await this._validator.create(request);
-
             const symptom = await this._service.create(domainModel);
             if (symptom == null) {
                 throw new ApiError(400, 'Cannot create symptom!');
             }
-
             ResponseHandler.success(request, response, 'Symptom created successfully!', 201, {
                 Symptom : symptom,
             });
@@ -47,14 +44,11 @@ export class SymptomController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Symptom.GetById';
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const symptom = await this._service.getById(id);
             if (symptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
-
             ResponseHandler.success(request, response, 'Symptom retrieved successfully!', 200, {
                 Symptom : symptom,
             });
@@ -65,19 +59,14 @@ export class SymptomController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Symptom.Search';
             const filters = await this._validator.search(request);
-
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
             const message =
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} symptom records retrieved successfully!`;
-
             ResponseHandler.success(request, response, message, 200, { Symptoms: searchResults });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -85,20 +74,16 @@ export class SymptomController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Symptom.Update';
             const domainModel = await this._validator.update(request);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptom = await this._service.getById(id);
             if (existingSymptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
-
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update symptom record!');
             }
-
             ResponseHandler.success(request, response, 'Symptom record updated successfully!', 200, {
                 Symptom : updated,
             });
@@ -109,18 +94,15 @@ export class SymptomController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Symptom.Delete';
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptom = await this._service.getById(id);
             if (existingSymptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
-
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Symptom cannot be deleted.');
             }
-
             ResponseHandler.success(request, response, 'Symptom record deleted successfully!', 200, {
                 Deleted : true,
             });

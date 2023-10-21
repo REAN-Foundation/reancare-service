@@ -9,12 +9,12 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new KnowledgeNuggetController();
 
-    router.get("/today/:patientUserId", auth(), controller.getTodaysTopic);
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.get("/today/:patientUserId", auth('KnowledgeNugget.GetTodaysTopic'), controller.getTodaysTopic);
+    router.post('/', auth('KnowledgeNugget.Create'), controller.create);
+    router.get('/search', auth('KnowledgeNugget.Search'), controller.search);
+    router.get('/:id', auth('KnowledgeNugget.GetById'), controller.getById);
+    router.put('/:id', auth('KnowledgeNugget.Update'), controller.update);
+    router.delete('/:id', auth('KnowledgeNugget.Delete'), controller.delete);
 
     app.use('/api/v1/educational/knowledge-nuggets', router);
 };

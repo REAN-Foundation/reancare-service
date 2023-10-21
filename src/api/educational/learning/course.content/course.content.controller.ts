@@ -29,7 +29,6 @@ export class CourseContentController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.create(request);
             const courseContent = await this._service.create(model);
             if (courseContent == null) {
@@ -46,7 +45,6 @@ export class CourseContentController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const courseContent = await this._service.getById(id);
@@ -86,7 +84,6 @@ export class CourseContentController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -109,7 +106,6 @@ export class CourseContentController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

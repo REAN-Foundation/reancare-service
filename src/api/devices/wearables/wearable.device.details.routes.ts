@@ -10,12 +10,12 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new WearableDeviceDetailsController();
 
-    router.post('/', controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/patients/:patientUserId', auth(), controller.getPatientWearableDeviceDetails);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('Devices.Wearables.Create'), controller.create);
+    router.get('/search', auth('Devices.Wearables.Search'), controller.search);
+    router.get('/patients/:patientUserId', auth('Devices.Wearables.GetUserWearables'), controller.getPatientWearableDeviceDetails);
+    router.get('/:id', auth('Devices.Wearables.GetById'), controller.getById);
+    router.put('/:id', auth('Devices.Wearables.Update'), controller.update);
+    router.delete('/:id', auth('Devices.Wearables.Delete'), controller.delete);
 
-    app.use('/api/v1/wearable-device-details', router);
+    app.use('/api/v1/devices/wearables', router);
 };

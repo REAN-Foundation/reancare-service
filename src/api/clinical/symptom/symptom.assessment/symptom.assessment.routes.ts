@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new SymptomAssessmentController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('SymptomAssessment.Create'), controller.create);
+    router.get('/search', auth('SymptomAssessment.Search'), controller.search);
+    router.get('/:id', auth('SymptomAssessment.GetById'), controller.getById);
+    router.put('/:id', auth('SymptomAssessment.Update'), controller.update);
+    router.delete('/:id', auth('SymptomAssessment.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/symptom-assessments', router);
 };

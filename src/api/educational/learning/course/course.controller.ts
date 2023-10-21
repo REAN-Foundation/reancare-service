@@ -20,7 +20,6 @@ export class CourseController extends BaseController {
     constructor() {
         super();
         this._service = Loader.container.resolve(CourseService);
-
     }
 
     //#endregion
@@ -47,7 +46,6 @@ export class CourseController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 

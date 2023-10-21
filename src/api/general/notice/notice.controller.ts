@@ -3,10 +3,10 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { NoticeService } from '../../../services/general/notice.service';
-import { auth } from '../../../auth/auth.handler';
 import { NoticeValidator } from './notice.validator';
 import { BaseController } from '../../base.controller';
 import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +30,6 @@ export class NoticeController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const model = await this._validator.create(request);
             const notice = await this._service.create(model);
             if (notice == null) {
@@ -47,7 +46,6 @@ export class NoticeController extends BaseController {
 
     getNotice = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const notice = await this._service.getNotice(id);
@@ -88,7 +86,6 @@ export class NoticeController extends BaseController {
     updateNotice = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getNotice(id);
@@ -112,7 +109,6 @@ export class NoticeController extends BaseController {
     deleteNotice = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getNotice(id);
             if (existingRecord == null) {
@@ -134,7 +130,6 @@ export class NoticeController extends BaseController {
 
     takeAction = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const userId = request.currentUser.UserId;
             const model = await this._validator.takeAction(request);

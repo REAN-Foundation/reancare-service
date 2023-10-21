@@ -6,9 +6,9 @@ import { AddressService } from '../../../services/general/address.service';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
-import { auth } from '../../../auth/auth.handler';
 import { AddressValidator } from './address.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +41,6 @@ export class AddressController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.create(request);
             const address = await this._service.create(domainModel);
             if (address == null) {
@@ -59,7 +58,6 @@ export class AddressController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const address = await this._service.getById(id);
@@ -79,7 +77,6 @@ export class AddressController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -97,7 +94,6 @@ export class AddressController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -121,7 +117,6 @@ export class AddressController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingAddress = await this._service.getById(id);

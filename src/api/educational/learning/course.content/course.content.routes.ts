@@ -9,13 +9,13 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new CourseContentController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/by-course/:courseId', auth(), controller.getContentsForCourse);
-    router.get('/by-learning-path/:learningPathId', auth(), controller.getContentsForLearningPath);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('CourseContent.Create'), controller.create);
+    router.get('/by-course/:courseId', auth('CourseContent.GetContentsForCourse'), controller.getContentsForCourse);
+    router.get('/by-learning-path/:learningPathId', auth('CourseContent.GetContentsForLearningPath'), controller.getContentsForLearningPath);
+    router.get('/search', auth('CourseContent.Search'), controller.search);
+    router.get('/:id', auth('CourseContent.GetById'), controller.getById);
+    router.put('/:id', auth('CourseContent.Update'), controller.update);
+    router.delete('/:id', auth('CourseContent.Delete'), controller.delete);
 
     app.use('/api/v1/educational/course-contents', router);
 };

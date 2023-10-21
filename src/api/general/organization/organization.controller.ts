@@ -4,9 +4,9 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
-import { auth } from '../../../auth/auth.handler';
 import { OrganizationValidator } from './organization.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,6 @@ export class OrganizationController {
     _roleService: RoleService = null;
 
     _personService: PersonService = null;
-
 
     _validator: OrganizationValidator = new OrganizationValidator();
 
@@ -35,8 +34,6 @@ export class OrganizationController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.Create';
-
             const domainModel = await this._validator.create(request);
 
             if (domainModel.ParentOrganizationId != null) {
@@ -61,8 +58,6 @@ export class OrganizationController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.GetById';
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const organization = await this._service.getById(id);
@@ -80,8 +75,6 @@ export class OrganizationController {
 
     getByContactUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.GetByContactUserId';
-
             const contactUserId: uuid = await this._validator.getParamUuid(request, 'id');
 
             const organization = await this._service.getByContactUserId(contactUserId);
@@ -99,7 +92,6 @@ export class OrganizationController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.Search';
             const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -118,7 +110,6 @@ export class OrganizationController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.Update';
             const domainModel = await this._validator.update(request);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -142,7 +133,6 @@ export class OrganizationController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.Delete';
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const existingOrganization = await this._service.getById(id);
@@ -165,7 +155,6 @@ export class OrganizationController {
 
     addAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.AddAddress';
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const addressId: uuid = await this._validator.getParamUuid(request, 'addressId');
@@ -189,7 +178,6 @@ export class OrganizationController {
 
     removeAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.RemoveAddress';
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const addressId: uuid = await this._validator.getParamUuid(request, 'addressId');
@@ -213,7 +201,6 @@ export class OrganizationController {
 
     getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.GetAddresses';
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const addresses = await this._service.getAddresses(id);
@@ -231,7 +218,6 @@ export class OrganizationController {
 
     addPerson = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.AddPerson';
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const personId: uuid = await this._validator.getParamUuid(request, 'personId');
 
@@ -255,7 +241,6 @@ export class OrganizationController {
 
     removePerson = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.RemovePerson';
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const personId: uuid = await this._validator.getParamUuid(request, 'personId');
 
@@ -279,11 +264,8 @@ export class OrganizationController {
 
     getPersons = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.GetPersons';
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-
             const persons = await this._service.getPersons(id);
-
             const message = persons.length === 0 ?
                 'No records found!' : `Total ${persons.length} person records retrieved successfully!`;
 

@@ -5,10 +5,10 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { CohortService } from '../../../services/community/cohort.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
-import { auth } from '../../../auth/auth.handler';
 import { CohortValidator } from './cohort.validator';
 import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

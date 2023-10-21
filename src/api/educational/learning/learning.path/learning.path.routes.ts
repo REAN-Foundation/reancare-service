@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new LearningPathController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('LearningPath.Create'), controller.create);
+    router.get('/search', auth('LearningPath.Search'), controller.search);
+    router.get('/:id', auth('LearningPath.GetById'), controller.getById);
+    router.put('/:id', auth('LearningPath.Update'), controller.update);
+    router.delete('/:id', auth('LearningPath.Delete'), controller.delete);
 
     app.use('/api/v1/educational/learning-paths', router);
 };

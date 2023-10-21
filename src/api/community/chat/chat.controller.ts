@@ -5,10 +5,10 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ChatService } from '../../../services/community/chat.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
-import { auth } from '../../../auth/auth.handler';
 import { ChatValidator } from './chat.validator';
 import { BaseController } from '../../base.controller';
 import { ConversationDomainModel } from '../../../domain.types/community/chat/conversation.domain.model';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +38,6 @@ export class ChatController extends BaseController {
     startConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.startConversation(request);
             const conversation = await this._service.startConversation(domainModel);
             if (conversation == null) {
@@ -57,7 +56,6 @@ export class ChatController extends BaseController {
     sendMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const domainModel = await this._validator.sendMessage(request);
             const message = await this._service.sendMessage(domainModel);
             if (message == null) {
@@ -75,7 +73,6 @@ export class ChatController extends BaseController {
 
     getConversationMessages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const conversationId = await this._validator.getParamUuid(request, 'conversationId');
             const conversationMessages = await this._service.getConversationMessages(conversationId);
@@ -106,7 +103,6 @@ export class ChatController extends BaseController {
     getConversationById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const conversation = await this._service.getConversationById(conversationId);
             if (conversation == null) {
@@ -124,7 +120,6 @@ export class ChatController extends BaseController {
 
     updateConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const updates: ConversationDomainModel = await this._validator.updateConversation(request);
@@ -145,7 +140,6 @@ export class ChatController extends BaseController {
     deleteConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const deleted = await this._service.deleteConversation(conversationId);
             if (!deleted) {
@@ -162,7 +156,6 @@ export class ChatController extends BaseController {
 
     addUserToConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
@@ -183,7 +176,6 @@ export class ChatController extends BaseController {
     removeUserFromConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
 
@@ -202,7 +194,6 @@ export class ChatController extends BaseController {
 
     getConversationBetweenTwoUsers = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const firstUserId: uuid = await this._validator.getParamUuid(request, 'firstUserId');
             const secondUserId: uuid = await this._validator.getParamUuid(request, 'secondUserId');
@@ -223,7 +214,6 @@ export class ChatController extends BaseController {
     getMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
             const message = await this._service.getMessage(messageId);
             if (message == null) {
@@ -239,7 +229,6 @@ export class ChatController extends BaseController {
 
     updateMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.updateMessage(request);
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
@@ -263,7 +252,6 @@ export class ChatController extends BaseController {
 
     deleteMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
             const deleted = await this._service.deleteMessage(messageId);

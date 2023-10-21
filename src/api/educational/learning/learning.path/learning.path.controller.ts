@@ -47,7 +47,6 @@ export class LearningPathController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const learningPath = await this._service.getById(id);

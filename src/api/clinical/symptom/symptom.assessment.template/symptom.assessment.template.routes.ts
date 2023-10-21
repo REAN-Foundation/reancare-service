@@ -9,14 +9,14 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new SymptomAssessmentTemplateController();
 
-    router.post('/', auth(), controller.create);
-    router.get('/search', auth(), controller.search);
-    router.get('/:id', auth(), controller.getById);
-    router.put('/:id', auth(), controller.update);
-    router.delete('/:id', auth(), controller.delete);
+    router.post('/', auth('SymptomAssessmentTemplate.Create'), controller.create);
+    router.get('/search', auth('SymptomAssessmentTemplate.search'), controller.search);
+    router.get('/:id', auth('SymptomAssessmentTemplate.GetById'), controller.getById);
+    router.put('/:id', auth('SymptomAssessmentTemplate.Update'), controller.update);
+    router.delete('/:id', auth('SymptomAssessmentTemplate.Delete'), controller.delete);
 
-    router.post("/:id/add-symptom-types", auth(), controller.addSymptomTypes);
-    router.post("/:id/remove-symptom-types", auth(), controller.removeSymptomTypes);
+    router.post("/:id/add-symptom-types", auth('SymptomAssessmentTemplate.AddSymptomTypes'), controller.addSymptomTypes);
+    router.post("/:id/remove-symptom-types", auth('SymptomAssessmentTemplate.RemoveSymptomTypes'), controller.removeSymptomTypes);
 
     app.use('/api/v1/clinical/symptom-assessment-templates', router);
 };

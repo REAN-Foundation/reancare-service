@@ -47,7 +47,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const template = await this._service.getById(id);
@@ -85,7 +84,6 @@ export class SymptomAssessmentTemplateController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');

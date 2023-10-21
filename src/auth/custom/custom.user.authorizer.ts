@@ -1,32 +1,28 @@
 import express from 'express';
 import { Logger } from '../../common/logger';
-import { IAuthorizer } from '../authorizer.interface';
+import { IUserAuthorizer } from '../interfaces/user.authorizer.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
+import { Injector } from '../../startup/injector';
+import { UserService } from '../../services/users/user/user.service';
 import { RolePrivilegeService } from '../../services/role/role.privilege.service';
-import { Loader } from '../../startup/loader';
-
-//const execSync = require('child_process').execSync;
 
 //////////////////////////////////////////////////////////////
 
-export class CustomAuthorizer implements IAuthorizer {
+export class CustomUserAuthorizer implements IUserAuthorizer {
 
-    _rolePrivilegeService: RolePrivilegeService = null;
+    _userService: UserService = null;
+
+    _rolePrivilegeService: any = null;
 
     constructor() {
-        this._rolePrivilegeService = Loader.container.resolve(RolePrivilegeService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._rolePrivilegeService = Injector.Container.resolve(RolePrivilegeService);
     }
 
     public authorize = async (request: express.Request): Promise<boolean> => {
         try {
             const currentUser = request.currentUser;
             const context = request.context;
-            const currentClient = request.currentClient;
-            if (currentClient) {
-                if (currentClient.IsPrivileged === true) {
-                    return true;
-                }
-            }
             if (context == null || context === 'undefined') {
                 return false;
             }

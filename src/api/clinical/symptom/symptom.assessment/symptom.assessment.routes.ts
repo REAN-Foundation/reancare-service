@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { SymptomAssessmentController } from '../../../clinical/symptom/symptom.assessment/symptom.assessment.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,14 +7,13 @@ import { SymptomAssessmentController } from '../../../clinical/symptom/symptom.a
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new SymptomAssessmentController();
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('SymptomAssessment.Create'), controller.create);
+    router.get('/search', auth('SymptomAssessment.Search'), controller.search);
+    router.get('/:id', auth('SymptomAssessment.GetById'), controller.getById);
+    router.put('/:id', auth('SymptomAssessment.Update'), controller.update);
+    router.delete('/:id', auth('SymptomAssessment.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/symptom-assessments', router);
 };

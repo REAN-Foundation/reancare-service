@@ -1,13 +1,12 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
 import { FileResourceController } from './file.resource.controller';
+import { auth } from '../../../auth/auth.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new FileResourceController();
 
     //#region Upload routes
@@ -26,13 +25,12 @@ export const register = (app: express.Application): void => {
 
     //Upload a new version of existing resource
 
-    router.post('/:id/upload-version',
-        authenticator.authenticateUser, controller.uploadVersion);
-    router.post('/upload-binary', authenticator.authenticateUser, controller.uploadBinary);
-    router.post('/upload', authenticator.authenticateUser, controller.upload);
-    router.post('/:id/rename/:newFileName', authenticator.authenticateUser, controller.rename);
+    router.post('/:id/upload-version', auth('FileResource.Upload'), controller.uploadVersion);
+    router.post('/upload-binary', auth('FileResource.Upload'), controller.uploadBinary);
+    router.post('/upload', auth('FileResource.Upload'), controller.upload);
+    router.post('/:id/rename/:newFileName', auth('FileResource.Rename'), controller.rename);
 
-    router.put('/:id', authenticator.authenticateUser, controller.update);
+    router.put('/:id', auth('FileResource.Update'), controller.update);
 
     //#endregion
 
@@ -46,9 +44,9 @@ export const register = (app: express.Application): void => {
     //3. referenceId=<> and optional referenceType=<>
     //4. tag=<>
 
-    router.get('/search-download', authenticator.authenticateUser, controller.searchAndDownload);
-    router.get('/:id/download-by-version-name/:version', controller.downloadByVersionName);
-    router.get('/:id/download-by-version-id/:versionId', controller.downloadByVersionId);
+    router.get('/search-download', auth('FileResource.SearchAndDownload'), controller.searchAndDownload);
+    router.get('/:id/download-by-version-name/:version', auth('FileResource.DownloadByVersionName'), controller.downloadByVersionName);
+    router.get('/:id/download-by-version-id/:versionId', auth('FileResource.DownloadByVersionId'), controller.downloadByVersionId);
     router.get('/:id/download', controller.downloadById);
 
     //#endregion
@@ -63,10 +61,10 @@ export const register = (app: express.Application): void => {
     //3. referenceId=<> and optional referenceType=<>
     //4. tag=<>
 
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/:id/versions/:versionId', authenticator.authenticateUser, controller.getVersionById);
-    router.get('/:id/versions', authenticator.authenticateUser, controller.getVersions);
-    router.get('/:id', authenticator.authenticateUser, controller.getResourceInfo);
+    router.get('/search', auth('FileResource.Search'), controller.search);
+    router.get('/:id/versions/:versionId', auth('FileResource.GetVersionById'), controller.getVersionById);
+    router.get('/:id/versions', auth('FileResource.GetVersions'), controller.getVersions);
+    router.get('/:id', auth('FileResource.GetResourceInfo'), controller.getResourceInfo);
 
     //#endregion
 
@@ -75,8 +73,8 @@ export const register = (app: express.Application): void => {
     //Routes to delete resource. These routes will wipe out resources from storage and database.
     //NOTE: Please note that only those resources will be deleted which are owned by requesting user.
 
-    router.delete('/:id/versions/:versionId', authenticator.authenticateUser, controller.deleteVersionByVersionId);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.delete('/:id/versions/:versionId', auth('FileResource.DeleteVersionByVersionId'), controller.deleteVersionByVersionId);
+    router.delete('/:id', auth('FileResource.Delete'), controller.delete);
 
     //#endregion
 

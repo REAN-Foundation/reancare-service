@@ -2,7 +2,7 @@ import express from 'express';
 
 ////////////////////////////////////////////////////////////////////////
 
-export interface IAuthorizer {
+export interface IUserAuthorizer {
 
     authorize(
         request: express.Request,

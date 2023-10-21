@@ -1,14 +1,14 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
 import { DoctorService } from '../../../services/users/doctor.service';
-import { Loader } from '../../../startup/loader';
 import { DoctorValidator } from './doctor.validator';
 import { BaseUserController } from '../base.user.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,21 +29,16 @@ export class DoctorController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.Create';
-
             const doctorDomainModel = await DoctorValidator.create(request);
-
             //Throw an error if doctor with same name and phone number exists
             const doctorExists = await this._service.doctorExists(doctorDomainModel);
             if (doctorExists) {
                 throw new ApiError(400, 'Cannot create doctor! Doctor with same phone number exists.');
             }
-
             const userName = await this._userService.generateUserName(
                 doctorDomainModel.User.Person.FirstName,
                 doctorDomainModel.User.Person.LastName
             );
-
             const displayId = await this._userService.generateUserDisplayId(
                 Roles.Doctor,
                 doctorDomainModel.User.Person.Phone
@@ -106,10 +101,6 @@ export class DoctorController extends BaseUserController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.GetByUserId';
-
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await DoctorValidator.getByUserId(request);
 
             const existingUser = await this._userService.getById(userId);
@@ -132,9 +123,6 @@ export class DoctorController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await DoctorValidator.search(request);
 
             // const extractFull: boolean =
@@ -158,9 +146,6 @@ export class DoctorController extends BaseUserController {
 
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.UpdateByUserId';
-            await this._authorizer.authorize(request, response);
-
             const doctorDomainModel = await DoctorValidator.updateByUserId(request);
 
             const userId: string = await DoctorValidator.getByUserId(request);
@@ -199,11 +184,8 @@ export class DoctorController extends BaseUserController {
         }
     };
 
-    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+    deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.DeleteByUserId';
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await DoctorValidator.delete(request);
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {

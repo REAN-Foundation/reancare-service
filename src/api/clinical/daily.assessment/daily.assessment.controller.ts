@@ -1,10 +1,10 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { DailyAssessmentService } from '../../../services/clinical/daily.assessment/daily.assessment.service';
-import { Loader } from '../../../startup/loader';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ export class DailyAssessmentController extends BaseController{
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 
     constructor() {
-        super();
+        super('DailyAssessment');
         this._service = Loader.container.resolve(DailyAssessmentService);
     }
     //#endregion
@@ -26,8 +26,6 @@ export class DailyAssessmentController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyAssessment.Create', request, response);
 
             const model = await this._validator.create(request);
             const dailyAssessment = await this._service.create(model);
@@ -46,8 +44,6 @@ export class DailyAssessmentController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyAssessment.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);

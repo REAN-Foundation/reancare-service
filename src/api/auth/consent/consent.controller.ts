@@ -1,15 +1,15 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ConsentService } from '../../../services/auth/consent.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
-import { Loader } from '../../../startup/loader';
 import { ConsentValidator } from './consent.validator';
 import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
 import { TenantService } from '../../../services/tenant/tenant.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +30,7 @@ export class ConsentController extends BaseController {
     _validator = new ConsentValidator();
 
     constructor() {
-        super();
+        super('Consent');
         this._service = Loader.container.resolve(ConsentService);
         this._personService = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);
@@ -44,7 +44,6 @@ export class ConsentController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Consent.Create', request, response);
             const model = await this._validator.create(request);
             const record = await this._service.create(model);
             if (record == null) {
@@ -60,7 +59,6 @@ export class ConsentController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Consent.GetById', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const record = await this._service.getById(id);
             if (record == null) {
@@ -76,7 +74,6 @@ export class ConsentController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Consent.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -93,7 +90,6 @@ export class ConsentController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Consent.Update', request, response);
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -114,7 +110,6 @@ export class ConsentController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Consent.Delete', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {

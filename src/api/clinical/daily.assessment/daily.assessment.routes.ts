@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { DailyAssessmentController } from './daily.assessment.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,11 +7,10 @@ import { DailyAssessmentController } from './daily.assessment.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new DailyAssessmentController();
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
+    router.post('/', auth('DailyAssessment.Create'), controller.create);
+    router.get('/search', auth('DailyAssessment.Search'), controller.search);
 
     app.use('/api/v1/clinical/daily-assessments', router);
 };

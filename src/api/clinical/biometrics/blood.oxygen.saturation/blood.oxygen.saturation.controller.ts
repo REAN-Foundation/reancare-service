@@ -1,7 +1,7 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodOxygenSaturationService } from '../../../../services/clinical/biometrics/blood.oxygen.saturation.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
@@ -25,7 +25,7 @@ export class BloodOxygenSaturationController extends BaseController {
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
 
     constructor() {
-        super();
+        super('BloodOxygenSaturation');
         this._service = Loader.container.resolve(BloodOxygenSaturationService);
     }
 
@@ -35,8 +35,6 @@ export class BloodOxygenSaturationController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodOxygenSaturation.Create', request, response);
 
             const model = await this._validator.create(request);
             const bloodOxygenSaturation = await this._service.create(model);
@@ -79,8 +77,6 @@ export class BloodOxygenSaturationController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodOxygenSaturation.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bloodOxygenSaturation = await this._service.getById(id);
             if (bloodOxygenSaturation == null) {
@@ -97,8 +93,6 @@ export class BloodOxygenSaturationController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodOxygenSaturation.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -120,8 +114,6 @@ export class BloodOxygenSaturationController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodOxygenSaturation.Update', request, response);
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -170,8 +162,6 @@ export class BloodOxygenSaturationController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodOxygenSaturation.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

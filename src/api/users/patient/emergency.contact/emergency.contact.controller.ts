@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AddressDomainModel } from '../../../../domain.types/general/address/address.domain.model';
 import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
@@ -40,7 +40,7 @@ export class EmergencyContactController extends BaseController {
     _healthSystemService: HealthSystemService = null;
 
     constructor() {
-        super();
+        super('EmergencyContact');
         this._service = Loader.container.resolve(EmergencyContactService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
@@ -48,7 +48,6 @@ export class EmergencyContactController extends BaseController {
         this._userService = Loader.container.resolve(UserService);
         this._addressService = Loader.container.resolve(AddressService);
         this._healthSystemService = Loader.container.resolve(HealthSystemService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -68,7 +67,6 @@ export class EmergencyContactController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -178,10 +176,6 @@ export class EmergencyContactController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Emergency.Contact.GetById';
-
-            await this._authorizer.authorize(request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const patientEmergencyContact = await this._service.getById(id);
@@ -199,7 +193,6 @@ export class EmergencyContactController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -220,7 +213,6 @@ export class EmergencyContactController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -246,8 +238,6 @@ export class EmergencyContactController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Emergency.Contact.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingEmergencyContact = await this._service.getById(id);
             if (existingEmergencyContact == null) {
@@ -269,7 +259,6 @@ export class EmergencyContactController extends BaseController {
 
     getHealthSystems = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.GetHealthSystems', request, response);
 
             const healthSystems = await this._healthSystemService.getHealthSystems(request.query.planName as string);
             if (healthSystems.length === 0) {
@@ -287,7 +276,6 @@ export class EmergencyContactController extends BaseController {
 
     getHealthSystemHospitals = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.GetHealthSystemHospitals', request, response);
 
             const healthSystemId : uuid = request.params.healthSystemId;
             const healthSystemHospitals = await this._healthSystemService.getHealthSystemHospitals(healthSystemId);

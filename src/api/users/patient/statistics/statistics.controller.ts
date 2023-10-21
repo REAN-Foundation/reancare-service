@@ -1,7 +1,6 @@
 import express from 'express';
 import { PatientService } from '../../../../services/users/patient/patient.service';
-import { Authorizer } from '../../../../auth/authorizer';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
 import { StatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
 import { Loader } from '../../../../startup/loader';
@@ -16,10 +15,11 @@ import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.ty
 import * as path from 'path';
 import { PersonService } from '../../../../services/person/person.service';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
+import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StatisticsController {
+export class StatisticsController extends BaseController {
 
     //#region member variables and constructors
 
@@ -31,19 +31,17 @@ export class StatisticsController {
 
     _documentService: DocumentService = null;
 
-    _authorizer: Authorizer = null;
-
     _validator: StatisticsValidator = new StatisticsValidator();
 
     _personService: PersonService = null;
 
     constructor() {
+        super('Statistics');
         this._service = Loader.container.resolve(StatisticsService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._patientService = Loader.container.resolve(PatientService);
         this._personService = Loader.container.resolve(PersonService);
         this._documentService = Loader.container.resolve(DocumentService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -52,8 +50,6 @@ export class StatisticsController {
 
     getPatientStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientStatistics.GetPatientStats';
-            //await this._authorizer.authorize(request, response);
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const stats = await this._service.getPatientStats(patientUserId);
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
@@ -66,10 +62,6 @@ export class StatisticsController {
 
     getPatientStatsReport = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientStatistics.GetPatientStatsReport';
-
-            await this._authorizer.authorize(request, response);
-
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const clientCode = request.currentClient.ClientCode;
 
@@ -124,12 +116,12 @@ export class StatisticsController {
     };
 
     private sendMessageForReportUpdate = async (url: any, reportModel: any) => {
-        
+
         const patient  = await this._patientService.getByUserId(reportModel.PatientUserId);
         const phoneNumber = patient.User.Person.Phone;
         const person = await this._personService.getById(patient.User.PersonId);
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
-        
+
         var userFirstName = 'user';
         if (person && person.FirstName) {
             userFirstName = person.FirstName;

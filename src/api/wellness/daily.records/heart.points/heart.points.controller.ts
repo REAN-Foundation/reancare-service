@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HeartPointsService } from '../../../../services/wellness/daily.records/heart.points.service';
 import { Loader } from '../../../../startup/loader';
@@ -18,7 +18,7 @@ export class HeartPointController extends BaseController{
     _validator: HeartPointValidator = new HeartPointValidator();
 
     constructor() {
-        super();
+        super('HeartPoints');
         this._service = Loader.container.resolve(HeartPointsService);
     }
 
@@ -28,8 +28,6 @@ export class HeartPointController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.HeartPoints.Create', request, response);
 
             const model = await this._validator.create(request);
             const heartPoint = await this._service.create(model);
@@ -48,8 +46,6 @@ export class HeartPointController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DailyRecords.HeartPoints.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const heartPoint = await this._service.getById(id);
             if (heartPoint == null) {
@@ -66,8 +62,6 @@ export class HeartPointController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.HeartPoints.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -86,8 +80,6 @@ export class HeartPointController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.HeartPoints.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -111,8 +103,6 @@ export class HeartPointController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.HeartPoints.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

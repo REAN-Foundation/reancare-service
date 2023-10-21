@@ -16,6 +16,7 @@ import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
 import { Loader } from '../../../startup/loader';
+import { AuthHandler } from '../../../auth/auth.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -119,7 +120,7 @@ export class PatientService {
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
             };
-            const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
+            const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
             items[0].accessToken = accessToken;
         }
         results.Items = items;

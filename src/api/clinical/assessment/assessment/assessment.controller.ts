@@ -1,7 +1,7 @@
 import express from 'express';
 import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
 import { CareplanService } from '../../../../services/clinical/careplan.service';
 import { UserTaskService } from '../../../../services/users/user/user.task.service';
@@ -32,7 +32,7 @@ export class AssessmentController extends BaseController{
     _validator: AssessmentValidator = new AssessmentValidator();
 
     constructor() {
-        super();
+        super('Assessment');
         this._service = Loader.container.resolve(AssessmentService);
         this._serviceHelperRepo = Loader.container.resolve(AssessmentHelperRepo);
         this._careplanService = Loader.container.resolve(CareplanService);
@@ -45,8 +45,6 @@ export class AssessmentController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Assessment.Create', request, response);
 
             const model = await this._validator.create(request);
             const assessment = await this._service.create(model);
@@ -65,8 +63,6 @@ export class AssessmentController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Assessment.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const assessment = await this._service.getById(id);
             if (assessment == null) {
@@ -83,8 +79,6 @@ export class AssessmentController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Assessment.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -106,8 +100,6 @@ export class AssessmentController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Assessment.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -132,8 +124,6 @@ export class AssessmentController extends BaseController{
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Assessment.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -156,8 +146,6 @@ export class AssessmentController extends BaseController{
     startAssessment = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Assessment.StartAssessment', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const assessment = await this._service.getById(id);
             if (assessment == null) {
@@ -175,8 +163,6 @@ export class AssessmentController extends BaseController{
 
     scoreAssessment = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Assessment.StartAssessment', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const assessment = await this._service.getById(id);
@@ -201,8 +187,6 @@ export class AssessmentController extends BaseController{
 
     getNextQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Assessment.GetNextQuestion', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const assessment = await this._service.getById(id);
@@ -245,8 +229,6 @@ export class AssessmentController extends BaseController{
     getQuestionById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Assessment.GetQuestionById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const assessment = await this._service.getById(id);
             if (assessment == null) {
@@ -267,8 +249,6 @@ export class AssessmentController extends BaseController{
 
     answerQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Assessment.AnswerQuestion', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const questionId: uuid = await this._validator.getParamUuid(request, 'questionId');
@@ -322,8 +302,6 @@ export class AssessmentController extends BaseController{
 
     answerQuestionList = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Assessment.AnswerQuestionList', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const listId: uuid = await this._validator.getParamUuid(request, 'listId');

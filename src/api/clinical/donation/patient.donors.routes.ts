@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { PatientDonorsController } from './patient.donors.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,14 +7,13 @@ import { PatientDonorsController } from './patient.donors.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new PatientDonorsController();
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('PatientDonors.Create'), controller.create);
+    router.get('/search', auth('PatientDonors.Search'), controller.search);
+    router.get('/:id', auth('PatientDonors.GetById'), controller.getById);
+    router.put('/:id', auth('PatientDonors.Update'), controller.update);
+    router.delete('/:id', auth('PatientDonors.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/patient-donors', router);
 };

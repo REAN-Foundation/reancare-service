@@ -1,7 +1,7 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { SleepService } from '../../../../services/wellness/daily.records/sleep.service';
 import { Loader } from '../../../../startup/loader';
 import { SleepValidator } from './sleep.validator';
@@ -22,7 +22,7 @@ export class SleepController extends BaseController{
     _validator: SleepValidator = new SleepValidator();
 
     constructor() {
-        super();
+        super('Sleep');
         this._service = Loader.container.resolve(SleepService);
     }
 
@@ -33,12 +33,10 @@ export class SleepController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DailyRecords.Sleep.Create', request, response);
-
             const model = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
             const patientUserId = request.body.PatientUserId;
-        
+
             var existingRecord = await this._service.getByRecordDate(recordDate, patientUserId);
             if (existingRecord !== null) {
                 var sleep = await this._service.update(existingRecord.id, model);
@@ -83,8 +81,6 @@ export class SleepController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DailyRecords.Sleep.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const sleepRecord = await this._service.getById(id);
             if (sleepRecord == null) {
@@ -101,8 +97,6 @@ export class SleepController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.Sleep.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -121,8 +115,6 @@ export class SleepController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.Sleep.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -146,8 +138,6 @@ export class SleepController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.Sleep.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

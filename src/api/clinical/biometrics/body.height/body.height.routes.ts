@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { BodyHeightController } from './body.height.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,14 +7,13 @@ import { BodyHeightController } from './body.height.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new BodyHeightController();
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Biometrics.BodyHeight.Create'), controller.create);
+    router.get('/search', auth('Biometrics.BodyHeight.Search'), controller.search);
+    router.get('/:id', auth('Biometrics.BodyHeight.GetById'), controller.getById);
+    router.put('/:id', auth('Biometrics.BodyHeight.Update'), controller.update);
+    router.delete('/:id', auth('Biometrics.BodyHeight.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/biometrics/body-heights', router);
 };

@@ -1,8 +1,7 @@
 import express from 'express';
 import { CareplanService } from '../../../services/clinical/careplan.service';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { CareplanValidator } from './careplan.validator';
 import { BaseController } from '../../base.controller';
 import { UserService } from '../../../services/users/user/user.service';
@@ -10,6 +9,7 @@ import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { Logger } from '../../../common/logger';
 import { CommunityNetworkService } from '../../../modules/community.bw/community.network.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +25,7 @@ export class CareplanController extends BaseController {
     _validator: CareplanValidator = new CareplanValidator();
 
     constructor() {
-        super();
+        super('Careplan');
         this._service = Loader.container.resolve(CareplanService);
         this._communityNetworkService = Loader.container.resolve(CommunityNetworkService);
         this._userService = Loader.container.resolve(UserService);
@@ -37,7 +37,6 @@ export class CareplanController extends BaseController {
 
     getAvailableCareplans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Careplan.GetAvailableCareplans', request, response);
 
             var plans = this._service.getAvailableCarePlans(request.query.provider as string);
 
@@ -52,7 +51,6 @@ export class CareplanController extends BaseController {
 
     enroll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Careplan.Enroll', request, response);
 
             const model = await this._validator.enroll(request);
 
@@ -106,7 +104,6 @@ export class CareplanController extends BaseController {
 
     getPatientEligibility = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Careplan.GetPatientEligibility', request, response);
 
             const patientUserId = request.params.patientUserId;
             const provider = request.params.provider;
@@ -124,7 +121,6 @@ export class CareplanController extends BaseController {
 
     getPatientEnrollments = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Careplan.GetPatientEnrollments', request, response);
 
             const patientUserId = request.params.patientUserId;
             var isActive = request.query.isActive === 'true' ? true : false;
@@ -140,7 +136,6 @@ export class CareplanController extends BaseController {
 
     fetchTasks = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Careplan.FetchTasks', request, response);
 
             const careplanId = request.params.id;
             const fetched = await this._service.fetchTasks(careplanId);
@@ -159,7 +154,6 @@ export class CareplanController extends BaseController {
 
     getWeeklyStatus = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Careplan.GetWeeklyStatus', request, response);
 
             const careplanId = request.params.id; // careplan id
             var careplanStatus = await this._service.getWeeklyStatus(careplanId);
@@ -174,7 +168,6 @@ export class CareplanController extends BaseController {
 
     updateRisk = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Careplan.UpdateRisk', request, response);
 
             const model = await this._validator.updateRisk(request);
             var riskDetails = await this._service.updateRisk(model);

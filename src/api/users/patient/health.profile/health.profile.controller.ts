@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../../domain.types/users/patient/health.profile/health.profile.dto';
@@ -21,7 +21,7 @@ export class HealthProfileController extends BaseController{
     _validator: HealthProfileValidator = new HealthProfileValidator();
 
     constructor() {
-        super();
+        super('HealthProfile');
         this._service = Loader.container.resolve(HealthProfileService);
     }
 
@@ -31,8 +31,6 @@ export class HealthProfileController extends BaseController{
 
     getByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthProfile.GetByPatientUserId', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -52,8 +50,6 @@ export class HealthProfileController extends BaseController{
 
     updateByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthProfile.UpdateByPatientUserId', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
             const domainModel: HealthProfileDomainModel = await this._validator.update(request);

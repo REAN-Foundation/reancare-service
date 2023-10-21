@@ -1,7 +1,7 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { MoveMinutesService } from '../../../../services/wellness/daily.records/move.minutes.service';
 import { Loader } from '../../../../startup/loader';
 import { MoveMinutesValidator } from './move.minutes.validator';
@@ -18,7 +18,7 @@ export class MoveMinutesController extends BaseController{
     _validator: MoveMinutesValidator = new MoveMinutesValidator();
 
     constructor() {
-        super();
+        super('MoveMinutes');
         this._service = Loader.container.resolve(MoveMinutesService);
     }
 
@@ -28,8 +28,6 @@ export class MoveMinutesController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.MoveMinutes.Create', request, response);
 
             const model = await this._validator.create(request);
             const moveMinutes = await this._service.create(model);
@@ -48,8 +46,6 @@ export class MoveMinutesController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DailyRecords.MoveMinutes.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const moveMinutes = await this._service.getById(id);
             if (moveMinutes == null) {
@@ -66,8 +62,6 @@ export class MoveMinutesController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.MoveMinutes.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -88,8 +82,6 @@ export class MoveMinutesController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.MoveMinutes.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -113,8 +105,6 @@ export class MoveMinutesController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.MoveMinutes.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

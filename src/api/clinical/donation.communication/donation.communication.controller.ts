@@ -1,11 +1,11 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import { DonationCommunicationValidator } from './donation.communication.validator';
 import { DonationCommunicationService } from '../../../services/clinical/donation/donation.communication.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ export class DonationCommunicationController extends BaseController {
     _validator: DonationCommunicationValidator = new DonationCommunicationValidator();
 
     constructor() {
-        super();
+        super('DonationCommunication');
         this._service = Loader.container.resolve(DonationCommunicationService);
     }
 
@@ -28,8 +28,6 @@ export class DonationCommunicationController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DonationCommunication.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -49,8 +47,6 @@ export class DonationCommunicationController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DonationCommunication.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const donationCommunication = await this._service.getById(id);
@@ -68,8 +64,6 @@ export class DonationCommunicationController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DonationCommunication.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -90,8 +84,6 @@ export class DonationCommunicationController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DonationCommunication.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -117,8 +109,6 @@ export class DonationCommunicationController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DonationCommunication.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const donationCommunication = await this._service.getById(id);

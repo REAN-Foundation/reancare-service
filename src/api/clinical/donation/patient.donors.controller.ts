@@ -1,11 +1,11 @@
 import express from 'express';
 import { PatientDonorsService } from '../../../services/clinical/donation/patient.donors.service';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import { PatientDonorsValidator } from './patient.donors.validator';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ export class PatientDonorsController extends BaseController {
     _validator: PatientDonorsValidator = new PatientDonorsValidator();
 
     constructor() {
-        super();
+        super('PatientDonors');
         this._service = Loader.container.resolve(PatientDonorsService);
     }
 
@@ -28,8 +28,6 @@ export class PatientDonorsController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('PatientDonors.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -49,8 +47,6 @@ export class PatientDonorsController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('PatientDonors.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const doctorNote = await this._service.getById(id);
@@ -68,8 +64,6 @@ export class PatientDonorsController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('PatientDonors.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -90,8 +84,6 @@ export class PatientDonorsController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('PatientDonors.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -117,8 +109,6 @@ export class PatientDonorsController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('PatientDonors.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const doctorNote = await this._service.getById(id);

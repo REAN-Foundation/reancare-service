@@ -1,11 +1,11 @@
 import express from 'express';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { OrderService } from '../../../services/clinical/order.service';
-import { Loader } from '../../../startup/loader';
 import { OrderValidator } from './order.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ export class OrderController extends BaseController{
     _validator: OrderValidator = new OrderValidator();
 
     constructor() {
-        super();
+        super('Order');
         this._service = Loader.container.resolve(OrderService);
     }
 
@@ -28,8 +28,6 @@ export class OrderController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Order.Create', request, response);
 
             const model = await this._validator.create(request);
             const order = await this._service.create(model);
@@ -48,8 +46,6 @@ export class OrderController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Order.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const order = await this._service.getById(id);
             if (order == null) {
@@ -66,8 +62,6 @@ export class OrderController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Order.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -88,8 +82,6 @@ export class OrderController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Order.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -113,8 +105,6 @@ export class OrderController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Order.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

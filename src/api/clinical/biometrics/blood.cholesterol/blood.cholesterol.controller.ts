@@ -1,7 +1,7 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodCholesterolService } from '../../../../services/clinical/biometrics/blood.cholesterol.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodCholesterolValidator } from './blood.cholesterol.validator';
@@ -21,7 +21,7 @@ export class BloodCholesterolController extends BaseController {
     _validator: BloodCholesterolValidator = new BloodCholesterolValidator();
 
     constructor() {
-        super();
+        super('BloodCholesterol');
         this._service = Loader.container.resolve(BloodCholesterolService);
     }
 
@@ -31,8 +31,6 @@ export class BloodCholesterolController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodCholesterol.Create', request, response);
 
             const model = await this._validator.create(request);
             const bloodCholesterol = await this._service.create(model);
@@ -51,8 +49,6 @@ export class BloodCholesterolController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodCholesterol.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bloodCholesterol = await this._service.getById(id);
             if (bloodCholesterol == null) {
@@ -70,7 +66,6 @@ export class BloodCholesterolController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodCholesterol.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
@@ -91,8 +86,6 @@ export class BloodCholesterolController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodCholesterol.Update', request, response);
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -117,8 +110,6 @@ export class BloodCholesterolController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodCholesterol.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

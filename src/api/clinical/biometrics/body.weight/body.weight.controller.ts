@@ -3,7 +3,7 @@ import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analy
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { BodyWeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
 import { Loader } from '../../../../startup/loader';
@@ -25,7 +25,7 @@ export class BodyWeightController extends BaseController {
     _validator: BodyWeightValidator = new BodyWeightValidator();
 
     constructor() {
-        super();
+        super('BodyWeight');
         this._service = Loader.container.resolve(BodyWeightService);
     }
     //#endregion
@@ -34,8 +34,6 @@ export class BodyWeightController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BodyWeight.Create', request, response);
 
             const model = await this._validator.create(request);
             const bodyWeight = await this._service.create(model);
@@ -78,8 +76,6 @@ export class BodyWeightController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BodyWeight.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bodyWeight = await this._service.getById(id);
             if (bodyWeight == null) {
@@ -96,8 +92,6 @@ export class BodyWeightController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BodyWeight.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -117,8 +111,6 @@ export class BodyWeightController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BodyWeight.Update', request, response);
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -165,8 +157,6 @@ export class BodyWeightController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BodyWeight.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

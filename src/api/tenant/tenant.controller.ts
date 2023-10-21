@@ -1,6 +1,6 @@
 import express from 'express';
 import { TenantService } from '../../services/tenant/tenant.service';
-import { ResponseHandler } from '../../common/response.handler';
+import { ResponseHandler } from '../../common/handlers/response.handler';
 import { Loader } from '../../startup/loader';
 import { TenantValidator } from './tenant.validator';
 import { ApiError } from '../../common/api.error';
@@ -37,7 +37,7 @@ export class TenantController extends BaseController{
     _validator: TenantValidator = new TenantValidator();
 
     constructor() {
-        super();
+        super('Tenant');
         this._service = Loader.container.resolve(TenantService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
@@ -49,7 +49,6 @@ export class TenantController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.Create', request, response);
             const model = await this._validator.createOrUpdate(request, false);
             if (model.Code === 'default') {
                 throw new ApiError(400, 'Cannot create tenant with code "default"!');
@@ -101,7 +100,6 @@ export class TenantController extends BaseController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.GetById', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
             if (tenant == null) {
@@ -117,7 +115,6 @@ export class TenantController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -133,7 +130,6 @@ export class TenantController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.Update', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
             if (tenant == null) {
@@ -157,7 +153,6 @@ export class TenantController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.Delete', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
             if (tenant == null) {
@@ -177,7 +172,6 @@ export class TenantController extends BaseController{
 
     promoteTenantUserAsAdmin = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.PromoteTenantUserAsAdmin', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const tenant = await this._service.getById(id);
@@ -200,7 +194,6 @@ export class TenantController extends BaseController{
 
     demoteAdmin = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.DemoteAdmin', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const tenant = await this._service.getById(id);
@@ -223,7 +216,6 @@ export class TenantController extends BaseController{
 
     getTenantStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.GetTenantStats', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
             if (tenant == null) {
@@ -241,7 +233,6 @@ export class TenantController extends BaseController{
 
     getTenantAdmins = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.GetTenantAdmins', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
             if (tenant == null) {
@@ -259,7 +250,6 @@ export class TenantController extends BaseController{
 
     getTenantRegularUsers = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Tenant.GetTenantRegularUsers', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
             if (tenant == null) {

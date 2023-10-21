@@ -1,7 +1,7 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.do.you.feel.service';
 import { Loader } from '../../../../startup/loader';
 import { HowDoYouFeelValidator } from './how.do.you.feel.validator';
@@ -18,7 +18,7 @@ export class HowDoYouFeelController extends BaseController{
     _validator: HowDoYouFeelValidator = new HowDoYouFeelValidator();
 
     constructor() {
-        super();
+        super('HowDoYouFeel');
         this._service = Loader.container.resolve(HowDoYouFeelService);
     }
 
@@ -28,8 +28,6 @@ export class HowDoYouFeelController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HowDoYouFeel.Create', request, response);
 
             const model = await this._validator.create(request);
             const howDoYouFeel = await this._service.create(model);
@@ -48,8 +46,6 @@ export class HowDoYouFeelController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HowDoYouFeel.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const howDoYouFeel = await this._service.getById(id);
             if (howDoYouFeel == null) {
@@ -66,8 +62,6 @@ export class HowDoYouFeelController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HowDoYouFeel.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -86,8 +80,6 @@ export class HowDoYouFeelController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HowDoYouFeel.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -111,8 +103,6 @@ export class HowDoYouFeelController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

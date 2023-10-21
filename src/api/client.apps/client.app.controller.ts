@@ -1,25 +1,23 @@
 import express from 'express';
 
 import { ClientAppService } from '../../services/client.apps/client.app.service';
-import { ResponseHandler } from '../../common/response.handler';
+import { ResponseHandler } from '../../common/handlers/response.handler';
 import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
 import { ClientAppValidator } from './client.app.validator';
 import { ApiError } from '../../common/api.error';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ClientAppController {
+export class ClientAppController extends BaseController {
 
     //#region member variables and constructors
 
     _service: ClientAppService = null;
 
-    _authorizer: Authorizer = null;
-
     constructor() {
+        super('ClientApp');
         this._service = Loader.container.resolve(ClientAppService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -27,8 +25,6 @@ export class ClientAppController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Client.Create';
-            await this._authorizer.authorize(request, response);
-
             const clientDomainModel = await ClientAppValidator.create(request);
 
             const clientApp = await this._service.create(clientDomainModel);
@@ -46,8 +42,6 @@ export class ClientAppController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Client.GetById';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await ClientAppValidator.getById(request);
 
             const clientApp = await this._service.getById(id);
@@ -65,8 +59,6 @@ export class ClientAppController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Client.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await ClientAppValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -86,8 +78,6 @@ export class ClientAppController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Client.Update';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await ClientAppValidator.getById(request);
             const domainModel = await ClientAppValidator.update(request);
             const clientApp = await this._service.update(id, domainModel);
@@ -105,8 +95,6 @@ export class ClientAppController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Client.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await ClientAppValidator.getById(request);
             await this._service.delete(id);
             ResponseHandler.success(request, response, 'Client app deleted successfully!', 200, null);
@@ -118,8 +106,6 @@ export class ClientAppController {
     getCurrentApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Client.GetApiKey';
-
-            //await this._authorizer.authorize(request, response);
 
             const verificationModel = await ClientAppValidator.getOrRenewApiKey(request);
 
@@ -138,9 +124,6 @@ export class ClientAppController {
     renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Client.RenewApiKey';
-
-            //await this._authorizer.authorize(request, response);
-
             const verificationModel = await ClientAppValidator.getOrRenewApiKey(request);
             if (verificationModel.ValidFrom == null) {
                 verificationModel.ValidFrom = new Date();

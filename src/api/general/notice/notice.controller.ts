@@ -1,12 +1,12 @@
 import express from 'express';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { NoticeService } from '../../../services/general/notice.service';
-import { Loader } from '../../../startup/loader';
 import { NoticeValidator } from './notice.validator';
 import { BaseController } from '../../base.controller';
 import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class NoticeController extends BaseController {
     _validator: NoticeValidator = new NoticeValidator();
 
     constructor() {
-        super();
+        super('Notice');
         this._service = Loader.container.resolve(NoticeService);
     }
 
@@ -29,8 +29,6 @@ export class NoticeController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('General.Notice.Create', request, response);
 
             const model = await this._validator.create(request);
             const notice = await this._service.create(model);
@@ -49,8 +47,6 @@ export class NoticeController extends BaseController {
     getNotice = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const notice = await this._service.getNotice(id);
             if (notice == null) {
@@ -68,7 +64,6 @@ export class NoticeController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.Search', request, response);
             const filters = await this._validator.search(request);
             const currentUserId = request.currentUser.UserId;
             const searchResults = await this._service.search(filters, currentUserId);
@@ -90,8 +85,6 @@ export class NoticeController extends BaseController {
 
     updateNotice = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('General.Notice.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -116,8 +109,6 @@ export class NoticeController extends BaseController {
     deleteNotice = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getNotice(id);
             if (existingRecord == null) {
@@ -139,8 +130,6 @@ export class NoticeController extends BaseController {
 
     takeAction = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('General.Notice.TakeAction', request, response);
 
             const userId = request.currentUser.UserId;
             const model = await this._validator.takeAction(request);
@@ -166,7 +155,6 @@ export class NoticeController extends BaseController {
 
     getNoticeActionForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('General.Notice.GetNoticeActionForUser', request, response);
             const noticeId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const noticeAction = await this._service.getNoticeActionForUser(noticeId, userId);
@@ -180,7 +168,6 @@ export class NoticeController extends BaseController {
 
     getAllNoticeActionsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('General.Notice.GetAllNoticeActionsForUser', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const noticeActions = await this._service.getAllNoticeActionsForUser(userId);
             ResponseHandler.success(request, response, 'Notice action retrieved successfully!', 200, {

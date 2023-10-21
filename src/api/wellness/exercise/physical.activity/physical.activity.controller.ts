@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserService } from '../../../../services/users/user/user.service';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
@@ -29,7 +29,7 @@ export class PhysicalActivityController extends BaseController {
     _userService: UserService = null;
 
     constructor() {
-        super();
+        super('PhysicalActivity');
         this._service = Loader.container.resolve(PhysicalActivityService);
         this._userService = Loader.container.resolve(UserService);
     }
@@ -40,7 +40,6 @@ export class PhysicalActivityController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -88,7 +87,6 @@ export class PhysicalActivityController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -107,7 +105,6 @@ export class PhysicalActivityController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -128,7 +125,6 @@ export class PhysicalActivityController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -171,7 +167,6 @@ export class PhysicalActivityController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const physicalActivity = await this._service.getById(id);

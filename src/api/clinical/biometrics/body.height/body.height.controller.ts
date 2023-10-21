@@ -3,26 +3,24 @@ import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analy
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { BodyHeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyHeightValidator } from './body.height.validator';
+import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyHeightController {
+export class BodyHeightController extends BaseController {
 
     //#region member variables and constructors
 
     _service: BodyHeightService = null;
 
-    _authorizer: Authorizer = null;
-
     constructor() {
+        super('BodyHeight');
         this._service = Loader.container.resolve(BodyHeightService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -31,9 +29,6 @@ export class BodyHeightController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.Create";
-            await this._authorizer.authorize(request, response);
-
             const model = await BodyHeightValidator.create(request);
 
             const bodyHeight = await this._service.create(model);
@@ -51,10 +46,6 @@ export class BodyHeightController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.GetById";
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await BodyHeightValidator.getById(request);
 
             const bodyHeight = await this._service.getById(id);
@@ -72,9 +63,6 @@ export class BodyHeightController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.Search";
-            await this._authorizer.authorize(request, response);
-
             const filters = await BodyHeightValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -96,9 +84,6 @@ export class BodyHeightController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.Update";
-            await this._authorizer.authorize(request, response);
-
             const model = await BodyHeightValidator.update(request);
 
             const id: string = await BodyHeightValidator.getById(request);
@@ -122,9 +107,6 @@ export class BodyHeightController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.BodyHeight.Delete";
-            await this._authorizer.authorize(request, response);
-
             const id: string = await BodyHeightValidator.getById(request);
             const existing = await this._service.getById(id);
             if (existing == null) {

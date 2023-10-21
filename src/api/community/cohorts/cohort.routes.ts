@@ -1,26 +1,25 @@
 import express from 'express';
 import { CohortController } from './cohort.controller';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new CohortController();
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
-    router.get('/search', authenticator.authenticateUser, controller.search);
+    router.post('/', auth('Cohort.Create'), controller.create);
+    router.put('/:id', auth('Cohort.Update'), controller.update);
+    router.delete('/:id', auth('Cohort.Delete'), controller.delete);
+    router.get('/search', auth('Cohort.Search'), controller.search);
 
-    router.get('/:id/stats', authenticator.authenticateUser, controller.getCohortStats);
-    router.get('/:id/users', authenticator.authenticateUser, controller.getCohortUsers);
-    router.post('/:id/users/:userId/add', authenticator.authenticateUser, controller.addUserToCohort);
-    router.post('/:id/users/:userId/remove', authenticator.authenticateUser, controller.removeUserFromCohort);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.get('/tenants/:tenantId', authenticator.authenticateUser, controller.getCohortsForTenant);
+    router.get('/:id/stats', auth('Cohort.GetCohortStats'), controller.getCohortStats);
+    router.get('/:id/users', auth('Cohort.GetCohortUsers'), controller.getCohortUsers);
+    router.post('/:id/users/:userId/add', auth('Cohort.AddUserToCohort'), controller.addUserToCohort);
+    router.post('/:id/users/:userId/remove', auth('Cohort.RemoveUserFromCohort'), controller.removeUserFromCohort);
+    router.get('/:id', auth('Cohort.GetById'), controller.getById);
+    router.get('/tenants/:tenantId', auth('Cohort.GetCohortsForTenant'), controller.getCohortsForTenant);
 
     app.use('/api/v1/cohorts', router);
 };

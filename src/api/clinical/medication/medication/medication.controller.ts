@@ -1,9 +1,8 @@
 import express from 'express';
 import fs from 'fs';
 import { Helper } from '../../../../common/helper';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
@@ -17,10 +16,11 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { MedicationValidator } from './medication.validator';
+import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicationController {
+export class MedicationController extends BaseController {
 
     //#region member variables and constructors
 
@@ -36,16 +36,14 @@ export class MedicationController {
 
     _medicationConsumptionService: MedicationConsumptionService = null;
 
-    _authorizer: Authorizer = null;
-
     constructor() {
+        super('Medication');
         this._service = Loader.container.resolve(MedicationService);
         this._patientService = Loader.container.resolve(PatientService);
         this._userService = Loader.container.resolve(UserService);
         this._drugService = Loader.container.resolve(DrugService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -109,9 +107,6 @@ export class MedicationController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Create';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await MedicationValidator.create(request);
 
             const user = await this._userService.getById(domainModel.PatientUserId);
@@ -148,10 +143,6 @@ export class MedicationController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetById';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await MedicationValidator.getParamId(request);
 
             const medication = await this._service.getById(id);
@@ -180,9 +171,6 @@ export class MedicationController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await MedicationValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -202,9 +190,6 @@ export class MedicationController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Update';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await MedicationValidator.update(request);
             const id: string = await MedicationValidator.getParamId(request);
 
@@ -236,17 +221,17 @@ export class MedicationController {
 
                 if (updated.FrequencyUnit !== 'Other') {
                     var stats = await this._medicationConsumptionService.create(updated);
-    
+
                     var consumptionSummary: ConsumptionSummaryDto = {
                         TotalConsumptionCount   : stats.TotalConsumptionCount,
                         TotalDoseCount          : stats.TotalConsumptionCount * updated.Dose,
                         PendingConsumptionCount : stats.PendingConsumptionCount,
                         PendingDoseCount        : stats.PendingConsumptionCount * updated.Dose,
                     };
-    
+
                     updated.ConsumptionSummary = consumptionSummary;
                 }
-                
+
             }
 
             ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
@@ -259,9 +244,6 @@ export class MedicationController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await MedicationValidator.getParamId(request);
             const existingMedication = await this._service.getById(id);
             if (existingMedication == null) {
@@ -285,10 +267,6 @@ export class MedicationController {
 
     getCurrentMedications = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetCurrentMedications';
-
-            await this._authorizer.authorize(request, response);
-
             const patientUserId: string = await MedicationValidator.getPatientUserId(request);
 
             const medications = await this._service.getCurrentMedications(patientUserId);
@@ -303,9 +281,6 @@ export class MedicationController {
 
     getStockMedicationImages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetStockMedicationImages';
-            await this._authorizer.authorize(request, response);
-
             const images = await this._service.getStockMedicationImages();
 
             ResponseHandler.success(request, response, 'Medication stock images retrieved successfully!', 200, {
@@ -319,10 +294,6 @@ export class MedicationController {
 
     getStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetStockMedicationImageById';
-
-            await this._authorizer.authorize(request, response);
-
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
@@ -338,10 +309,6 @@ export class MedicationController {
 
     downloadStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.DownloadStockMedicationImageById';
-
-            await this._authorizer.authorize(request, response);
-
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {

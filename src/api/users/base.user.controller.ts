@@ -1,4 +1,3 @@
-import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { Logger } from '../../common/logger';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
@@ -22,15 +21,12 @@ export class BaseUserController extends BaseController {
 
     _roleService: RoleService = null;
 
-    _authorizer: Authorizer = null;
-
     constructor() {
-        super();
+        super('User');
         this._userService = Loader.container.resolve(UserService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
         this._addressService = Loader.container.resolve(AddressService);
-        this._authorizer = Loader.authorizer;
     }
 
     async createOrUpdateDefaultAddress(request, personId: string): Promise<void> {

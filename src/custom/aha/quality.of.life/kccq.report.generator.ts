@@ -9,13 +9,13 @@ import { DateStringFormat, DurationType } from '../../../domain.types/miscellane
 import { kccqChartHtmlText } from './kccq.chart.html';
 import { KccqScore } from './kccq.types';
 import { FileResourceService } from '../../../services/general/file.resource.service';
-import { Loader } from '../../../startup/loader';
 import { DocumentDomainModel } from '../../../domain.types/users/patient/document/document.domain.model';
 import { DocumentTypes } from '../../../domain.types/users/patient/document/document.types';
 import { DocumentService } from '../../../services/users/patient/document.service';
 import { Logger } from '../../../common/logger';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

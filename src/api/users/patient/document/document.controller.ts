@@ -2,10 +2,9 @@ import express from 'express';
 import fs from 'fs';
 import * as genpass from 'generate-password';
 import path from 'path';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { TimeHelper } from '../../../../common/time.helper';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
 import { FileResourceUploadDomainModel } from '../../../../domain.types/general/file.resource/file.resource.domain.model';
@@ -19,10 +18,11 @@ import { FileResourceService } from '../../../../services/general/file.resource.
 import { DocumentService } from '../../../../services/users/patient/document.service';
 import { Loader } from '../../../../startup/loader';
 import { DocumentValidator } from './document.validator';
+import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DocumentController {
+export class DocumentController extends BaseController {
 
     //#region member variables and constructors
 
@@ -30,16 +30,14 @@ export class DocumentController {
 
     _fileResourceService: FileResourceService = null;
 
-    _authorizer: Authorizer = null;
-
     _validator: DocumentValidator = new DocumentValidator();
 
     _personService: any;
 
     constructor() {
+        super('Document');
         this._service = Loader.container.resolve(DocumentService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -48,7 +46,6 @@ export class DocumentController {
 
     getTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.GetTypes';
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
                 PatientDocumentTypes : DocumentTypesList,
             });
@@ -59,9 +56,6 @@ export class DocumentController {
 
     upload = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Upload';
-            await this._authorizer.authorize(request, response);
-
             const documentDomainModel = await this._validator.upload(request);
 
             var fileResourceDomainModel : FileResourceUploadDomainModel = {
@@ -88,9 +82,6 @@ export class DocumentController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.GetById';
-
-            await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
             const Document = await this._service.getById(id);
@@ -108,10 +99,6 @@ export class DocumentController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Update';
-
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await this._validator.update(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -136,10 +123,6 @@ export class DocumentController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Search';
-
-            await this._authorizer.authorize(request, response);
-
             var filters: DocumentSearchFilters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -158,10 +141,6 @@ export class DocumentController {
 
     rename = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Rename';
-
-            await this._authorizer.authorize(request, response);
-
             const newName = await this._validator.rename(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -196,10 +175,6 @@ export class DocumentController {
 
     download = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Download';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -223,10 +198,6 @@ export class DocumentController {
 
     share = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Share';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             var durationMinutes = await this._validator.getQueryInt(request, 'durationMinutes');
             if (durationMinutes === null) {
@@ -270,10 +241,6 @@ export class DocumentController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.Delete';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {

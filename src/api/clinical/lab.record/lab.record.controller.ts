@@ -1,7 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { BaseController } from '../../base.controller';
 import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
@@ -10,6 +9,7 @@ import { LabRecordValidator } from './lab.record.validator';
 import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
 import { EHRRecordTypes } from '../../../modules/ehr.analytics/ehr.record.types';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +23,7 @@ export class LabRecordController extends BaseController {
     _validator: LabRecordValidator = new LabRecordValidator();
 
     constructor() {
-        super();
+        super('LabRecord');
         this._service = Loader.container.resolve(LabRecordService);
         this._userService = Loader.container.resolve(UserService);
     }
@@ -34,8 +34,6 @@ export class LabRecordController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Create', request, response);
 
             const model = await this._validator.create(request);
             const labRecord = await this._service.create(model);
@@ -53,7 +51,6 @@ export class LabRecordController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('LabRecord.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -71,8 +68,6 @@ export class LabRecordController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -92,8 +87,6 @@ export class LabRecordController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Update', request, response);
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -117,8 +110,6 @@ export class LabRecordController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

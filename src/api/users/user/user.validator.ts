@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserDomainModel, UserExistanceModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserSearchFilters } from '../../../domain.types/users/user/user.search.types';
 import { Gender, uuid } from '../../../domain.types/miscellaneous/system.types';

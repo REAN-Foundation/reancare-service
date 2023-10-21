@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { AssessmentTemplateController } from '../../../clinical/assessment/assessment.template/assessment.template.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,29 +7,28 @@ import { AssessmentTemplateController } from '../../../clinical/assessment/asses
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new AssessmentTemplateController();
 
-    router.post('/:id/nodes', authenticator.authenticateUser, controller.addNode);
-    router.get('/nodes/search', authenticator.authenticateUser, controller.searchNode);
-    router.get('/:id/nodes/:nodeId', authenticator.authenticateUser, controller.getNode);
-    router.put('/:id/nodes/:nodeId', authenticator.authenticateUser, controller.updateNode);
-    router.delete('/:id/nodes/:nodeId', authenticator.authenticateUser, controller.deleteNode);
+    router.post('/:id/nodes', auth('AssessmentTemplate.AddNode'), controller.addNode);
+    router.get('/nodes/search', auth('AssessmentTemplate.SearchNode'), controller.searchNode);
+    router.get('/:id/nodes/:nodeId', auth('AssessmentTemplate.GetNode'), controller.getNode);
+    router.put('/:id/nodes/:nodeId', auth('AssessmentTemplate.UpdateNode'), controller.updateNode);
+    router.delete('/:id/nodes/:nodeId', auth('AssessmentTemplate.DeleteNode'), controller.deleteNode);
 
-    router.post('/:id/scoring-conditions/', authenticator.authenticateUser, controller.addScoringCondition);
-    router.put('/:id/scoring-conditions/:conditionId', authenticator.authenticateUser, controller.updateScoringCondition);
-    router.get('/:id/scoring-conditions/:conditionId', authenticator.authenticateUser, controller.getScoringCondition);
-    router.delete('/:id/scoring-conditions/:conditionId', authenticator.authenticateUser, controller.deleteScoringCondition);
+    router.post('/:id/scoring-conditions/', auth('AssessmentTemplate.AddScoringCondition'), controller.addScoringCondition);
+    router.put('/:id/scoring-conditions/:conditionId', auth('AssessmentTemplate.UpdateScoringCondition'), controller.updateScoringCondition);
+    router.get('/:id/scoring-conditions/:conditionId', auth('AssessmentTemplate.GetScoringCondition'), controller.getScoringCondition);
+    router.delete('/:id/scoring-conditions/:conditionId', auth('AssessmentTemplate.DeleteScoringCondition'), controller.deleteScoringCondition);
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('AssessmentTemplate.Create'), controller.create);
+    router.get('/search', auth('AssessmentTemplate.Search'), controller.search);
+    router.get('/:id', auth('AssessmentTemplate.GetById'), controller.getById);
+    router.put('/:id', auth('AssessmentTemplate.Update'), controller.update);
+    router.delete('/:id', auth('AssessmentTemplate.Delete'), controller.delete);
 
-    router.get('/:id/export', authenticator.authenticateUser, controller.export);
-    router.post('/import-file', authenticator.authenticateUser, controller.importFromFile);
-    router.post('/import-json', authenticator.authenticateUser, controller.importFromJson);
+    router.get('/:id/export', auth('AssessmentTemplate.Export'), controller.export);
+    router.post('/import-file', auth('AssessmentTemplate.ImportFromFile'), controller.importFromFile);
+    router.post('/import-json', auth('AssessmentTemplate.ImportFromJson'), controller.importFromJson);
 
     app.use('/api/v1/clinical/assessment-templates/', router);
 };

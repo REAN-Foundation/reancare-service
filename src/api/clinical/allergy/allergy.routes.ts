@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { AllergyController } from './allergy.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,18 +7,17 @@ import { AllergyController } from './allergy.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new AllergyController();
 
-    router.get('/allergen-categories', controller.getAllergenCategories);
-    router.get('/allergen-exposure-routes', controller.getAllergenExposureRoutes);
+    router.get('/allergen-categories', auth('Allergy.GetAllergenCategories', true), controller.getAllergenCategories);
+    router.get('/allergen-exposure-routes', auth('Allergy.GetAllergenExposureRoutes', true), controller.getAllergenExposureRoutes);
 
-    router.post('/', authenticator.authenticateUser, controller.create);
-    router.get('/for-patient/:patientUserId', authenticator.authenticateUser, controller.getForPatient);
-    router.get('/search', authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Allergy.Create'), controller.create);
+    router.get('/for-patient/:patientUserId', auth('Allergy.GetForPatient'), controller.getForPatient);
+    router.get('/search', auth('Allergy.Search'), controller.search);
+    router.get('/:id', auth('Allergy.GetById'), controller.getById);
+    router.put('/:id', auth('Allergy.Update'), controller.update);
+    router.delete('/:id', auth('Allergy.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/allergies', router);
 };

@@ -1,14 +1,14 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ChatService } from '../../../services/community/chat.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
-import { Loader } from '../../../startup/loader';
 import { ChatValidator } from './chat.validator';
 import { BaseController } from '../../base.controller';
 import { ConversationDomainModel } from '../../../domain.types/community/chat/conversation.domain.model';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +25,7 @@ export class ChatController extends BaseController {
     _validator = new ChatValidator();
 
     constructor() {
-        super();
+        super('Chat');
         this._service = Loader.container.resolve(ChatService);
         this._roleService = Loader.container.resolve(RoleService);
         this._userService = Loader.container.resolve(UserService);
@@ -37,8 +37,6 @@ export class ChatController extends BaseController {
 
     startConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Chat.StartConversation', request, response);
 
             const domainModel = await this._validator.startConversation(request);
             const conversation = await this._service.startConversation(domainModel);
@@ -58,8 +56,6 @@ export class ChatController extends BaseController {
     sendMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.SendMessage', request, response);
-
             const domainModel = await this._validator.sendMessage(request);
             const message = await this._service.sendMessage(domainModel);
             if (message == null) {
@@ -78,8 +74,6 @@ export class ChatController extends BaseController {
     getConversationMessages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.GetConversationMessages', request, response);
-
             const conversationId = await this._validator.getParamUuid(request, 'conversationId');
             const conversationMessages = await this._service.getConversationMessages(conversationId);
             ResponseHandler.success(request, response, 'Conversation messages retrieved successfully!', 200, {
@@ -94,7 +88,6 @@ export class ChatController extends BaseController {
     searchUserConversations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.SearchUserConversations', request, response);
             const userId = request.params.userId;
             const filters = await this._validator.searchUserConversations(request);
             const userConversations = await this._service.searchUserConversations(userId, filters);
@@ -109,8 +102,6 @@ export class ChatController extends BaseController {
 
     getConversationById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Chat.GetConversationById', request, response);
 
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const conversation = await this._service.getConversationById(conversationId);
@@ -129,8 +120,6 @@ export class ChatController extends BaseController {
 
     updateConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Chat.UpdateConversation', request, response);
 
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const updates: ConversationDomainModel = await this._validator.updateConversation(request);
@@ -151,8 +140,6 @@ export class ChatController extends BaseController {
     deleteConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.DeleteConversation', request, response);
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const deleted = await this._service.deleteConversation(conversationId);
             if (!deleted) {
@@ -169,8 +156,6 @@ export class ChatController extends BaseController {
 
     addUserToConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Chat.AddUserToConversation', request, response);
 
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
@@ -191,8 +176,6 @@ export class ChatController extends BaseController {
     removeUserFromConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.RemoveUserFromConversation', request, response);
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
 
@@ -211,8 +194,6 @@ export class ChatController extends BaseController {
 
     getConversationBetweenTwoUsers = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Chat.GetConversationBetweenTwoUsers', request, response);
 
             const firstUserId: uuid = await this._validator.getParamUuid(request, 'firstUserId');
             const secondUserId: uuid = await this._validator.getParamUuid(request, 'secondUserId');
@@ -233,8 +214,6 @@ export class ChatController extends BaseController {
     getMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.GetMessage', request, response);
-
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
             const message = await this._service.getMessage(messageId);
             if (message == null) {
@@ -250,8 +229,6 @@ export class ChatController extends BaseController {
 
     updateMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Chat.UpdateMessage', request, response);
 
             const domainModel = await this._validator.updateMessage(request);
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
@@ -276,8 +253,6 @@ export class ChatController extends BaseController {
     deleteMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.DeleteMessage', request, response);
-
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
             const deleted = await this._service.deleteMessage(messageId);
             if (!deleted) {
@@ -295,7 +270,6 @@ export class ChatController extends BaseController {
 
     getMarkedConversationsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Chat.GetMarkedConversationsForUser', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const conversations = await this._service.getMarkedConversationsForUser(userId);
             ResponseHandler.success(request, response, 'Marked conversations for the user retrieved successfully!', 200, {
@@ -308,7 +282,6 @@ export class ChatController extends BaseController {
 
     getRecentConversationsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Chat.GetRecentConversationsForUser', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const conversations = await this._service.getRecentConversationsForUser(userId);
             ResponseHandler.success(request, response, 'Recent conversations for the user retrieved successfully!', 200, {

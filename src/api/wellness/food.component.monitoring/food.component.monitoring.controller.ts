@@ -1,11 +1,11 @@
 import express from 'express';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { FoodComponentMonitoringService } from '../../../services/wellness/food.component.monitoring/food.component.monitoring.service';
-import { Loader } from '../../../startup/loader';
 import { FoodComponentMonitoringValidator } from './food.component.monitoring.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ export class FoodComponentMonitoringController extends BaseController {
     _validator: FoodComponentMonitoringValidator = new FoodComponentMonitoringValidator();
 
     constructor() {
-        super();
+        super('FoodComponentMonitoring');
         this._service = Loader.container.resolve(FoodComponentMonitoringService);
 
     }
@@ -29,7 +29,6 @@ export class FoodComponentMonitoringController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponentMonitoring.Create', request, response);
 
             const model = await this._validator.create(request);
 
@@ -49,8 +48,6 @@ export class FoodComponentMonitoringController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('FoodComponentMonitoring.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const foodComponentMonitoring = await this._service.getById(id);
@@ -68,8 +65,6 @@ export class FoodComponentMonitoringController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('FoodComponentMonitoring.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -89,7 +84,6 @@ export class FoodComponentMonitoringController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponentMonitoring.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -113,7 +107,6 @@ export class FoodComponentMonitoringController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponentMonitoring.Delete', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {

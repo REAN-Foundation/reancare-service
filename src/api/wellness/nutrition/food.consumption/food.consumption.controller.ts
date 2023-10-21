@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
 import { Loader } from '../../../../startup/loader';
@@ -26,7 +26,7 @@ export class FoodConsumptionController extends BaseController {
     _validator: FoodConsumptionValidator = new FoodConsumptionValidator();
 
     constructor() {
-        super();
+        super('FoodConsumption');
         this._service = Loader.container.resolve(FoodConsumptionService);
     }
 
@@ -36,8 +36,6 @@ export class FoodConsumptionController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.Create', request, response);
 
             const model = await this._validator.create(request);
             const foodConsumption = await this._service.create(model);
@@ -80,8 +78,6 @@ export class FoodConsumptionController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Nutrition.FoodConsumption.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const foodConsumption = await this._service.getById(id);
             if (foodConsumption == null) {
@@ -99,8 +95,6 @@ export class FoodConsumptionController extends BaseController {
 
     getByEvent = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.GetByEvent', request, response);
 
             const consumedAs: string = await this._validator.getParamStr(request, 'consumedAs');
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
@@ -121,8 +115,6 @@ export class FoodConsumptionController extends BaseController {
     getForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Nutrition.FoodConsumption.GetForDay', request, response);
-
             const date: Date = await this._validator.getParamDate(request, 'date');
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
             const foodConsumptionForDay = await this._service.getForDay(date, patientUserId);
@@ -141,7 +133,6 @@ export class FoodConsumptionController extends BaseController {
 
     getNutritionQuestionnaire = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Nutrition.GetNutritionQuestionnaire', request, response, false);
 
             const questionnaire = await this._service.getNutritionQuestionnaire();
             if (questionnaire.length === 0) {
@@ -159,8 +150,6 @@ export class FoodConsumptionController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -181,8 +170,6 @@ export class FoodConsumptionController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Nutrition.FoodConsumption.Update', request, response);
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -200,7 +187,7 @@ export class FoodConsumptionController extends BaseController {
                 }
                 //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
                 //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                
+
                 AwardsFactsService.addOrUpdateNutritionResponseFact({
                     PatientUserId : updated.PatientUserId,
                     Facts         : {
@@ -222,8 +209,6 @@ export class FoodConsumptionController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

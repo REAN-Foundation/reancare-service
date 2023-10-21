@@ -18,7 +18,6 @@ import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto, UserDto } from '../../../domain.types/users/user/user.dto';
-import { Loader } from '../../../startup/loader';
 import { UserLoginSessionDomainModel } from '../../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
@@ -29,6 +28,8 @@ import { IAssessmentRepo } from '../../../database/repository.interfaces/clinica
 import { ITenantRepo } from '../../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { IUserTaskRepo } from '../../../database/repository.interfaces/users/user/user.task.repo.interface';
 import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
+import { Loader } from '../../../startup/loader';
+import { AuthHandler } from '../../../auth/auth.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -147,10 +148,10 @@ export class UserService {
         };
 
         const sessionId = currentUser.SessionId;
-        const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
+        const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
         var refreshToken = null;
         if (ConfigurationManager.UseRefreshToken()) {
-            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId, tenant.id);
+            refreshToken = await AuthHandler.generateRefreshToken(user.id, sessionId, tenant.id);
         }
 
         return {
@@ -281,10 +282,10 @@ export class UserService {
         };
 
         const sessionId = currentUser.SessionId;
-        const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
+        const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
         var refreshToken = null;
         if (ConfigurationManager.UseRefreshToken()) {
-            refreshToken = await Loader.authenticator.generateRefreshToken(user.id, sessionId, tenant.id);
+            refreshToken = await AuthHandler.generateRefreshToken(user.id, sessionId, tenant.id);
         }
 
         return {
@@ -307,7 +308,7 @@ export class UserService {
     };
 
     public rotateUserAccessToken = async (refreshToken: string): Promise<string> => {
-        return await Loader.authenticator.rotateUserSessionToken(refreshToken);
+        return await AuthHandler.rotateUserSessionToken(refreshToken);
     };
 
     public generateUserName = async (firstName, lastName):Promise<string> => {

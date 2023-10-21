@@ -1,24 +1,22 @@
 import express from 'express';
 import { PersonService } from '../../../services/person/person.service';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
-import { Loader } from '../../../startup/loader';
 import { UserDeviceDetailsValidator } from './user.device.details.validator';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
 import { Logger } from '../../../common/logger';
+import { Loader } from '../../../startup/loader';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserDeviceDetailsController {
+export class UserDeviceDetailsController extends BaseController {
 
     //#region member variables and constructors
 
     _service: UserDeviceDetailsService = null;
-
-    _authorizer: Authorizer = null;
 
     _personService: PersonService = null;
 
@@ -27,8 +25,8 @@ export class UserDeviceDetailsController {
     _firebaseNotificationService: FirebaseNotificationService = null;
 
     constructor() {
+        super('UserDeviceDetails');
         this._service = Loader.container.resolve(UserDeviceDetailsService);
-        this._authorizer = Loader.authorizer;
         this._personService = Loader.container.resolve(PersonService);
         this._patientService = Loader.container.resolve(PatientService);
         this._firebaseNotificationService = Loader.container.resolve(FirebaseNotificationService);
@@ -40,8 +38,6 @@ export class UserDeviceDetailsController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Create';
-
             this.addUserDeviceDetails(request);
 
             // TODO - whole of this bussiness logic should get executed in queue.
@@ -55,10 +51,6 @@ export class UserDeviceDetailsController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.GetById';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await UserDeviceDetailsValidator.getById(request);
 
             const UserDeviceDetails = await this._service.getById(id);
@@ -76,10 +68,6 @@ export class UserDeviceDetailsController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.GetByUserId';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await UserDeviceDetailsValidator.getById(request);
 
             const UserDeviceDetails = await this._service.getByUserId(id);
@@ -97,9 +85,6 @@ export class UserDeviceDetailsController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await UserDeviceDetailsValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -122,10 +107,6 @@ export class UserDeviceDetailsController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Update';
-
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await UserDeviceDetailsValidator.update(request);
 
             const id: string = await UserDeviceDetailsValidator.getById(request);
@@ -149,9 +130,6 @@ export class UserDeviceDetailsController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await UserDeviceDetailsValidator.getById(request);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -173,9 +151,6 @@ export class UserDeviceDetailsController {
 
     sendTestNotification = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.SendTestNotification';
-            await this._authorizer.authorize(request, response);
-
             var details = await UserDeviceDetailsValidator.sendTestNotification(request, response);
 
             // get person by phone number
@@ -195,7 +170,8 @@ export class UserDeviceDetailsController {
                 deviceTokens.push(device.Token);
             });
 
-            const message = await this._firebaseNotificationService.formatNotificationMessage(details.Type, details.Title, details.Body);
+            const message = await this._firebaseNotificationService.formatNotificationMessage(
+                details.Type, details.Title, details.Body);
 
             // call notification service to send multiple devices
             await this._firebaseNotificationService.sendNotificationToMultipleDevice(deviceTokens, message);

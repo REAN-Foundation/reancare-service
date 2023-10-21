@@ -18,10 +18,11 @@ import { FileResourceService } from '../../../../services/general/file.resource.
 import { DocumentService } from '../../../../services/users/patient/document.service';
 import { Loader } from '../../../../startup/loader';
 import { DocumentValidator } from './document.validator';
+import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DocumentController {
+export class DocumentController extends BaseController {
 
     //#region member variables and constructors
 
@@ -34,6 +35,7 @@ export class DocumentController {
     _personService: any;
 
     constructor() {
+        super('Document');
         this._service = Loader.container.resolve(DocumentService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
     }

@@ -27,7 +27,7 @@ export class UserGroupController extends BaseController {
     _validator = new UserGroupValidator();
 
     constructor() {
-        super();
+        super('UserGroup');
         this._service = Loader.container.resolve(UserGroupService);
         this._personService = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);

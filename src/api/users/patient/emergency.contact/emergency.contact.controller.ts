@@ -40,7 +40,7 @@ export class EmergencyContactController extends BaseController {
     _healthSystemService: HealthSystemService = null;
 
     constructor() {
-        super();
+        super('EmergencyContact');
         this._service = Loader.container.resolve(EmergencyContactService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);

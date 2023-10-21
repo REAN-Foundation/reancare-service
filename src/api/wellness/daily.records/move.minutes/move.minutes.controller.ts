@@ -18,7 +18,7 @@ export class MoveMinutesController extends BaseController{
     _validator: MoveMinutesValidator = new MoveMinutesValidator();
 
     constructor() {
-        super();
+        super('MoveMinutes');
         this._service = Loader.container.resolve(MoveMinutesService);
     }
 

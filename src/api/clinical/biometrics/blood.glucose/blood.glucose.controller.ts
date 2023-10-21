@@ -24,7 +24,7 @@ export class BloodGlucoseController extends BaseController {
     _validator: BloodGlucoseValidator = new BloodGlucoseValidator();
 
     constructor() {
-        super();
+        super('BloodGlucose');
         this._service = Loader.container.resolve(BloodGlucoseService);
     }
 

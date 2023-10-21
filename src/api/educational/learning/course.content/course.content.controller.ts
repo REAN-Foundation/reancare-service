@@ -18,7 +18,7 @@ export class CourseContentController extends BaseController {
     _validator: CourseContentValidator = new CourseContentValidator();
 
     constructor() {
-        super();
+        super('CourseContent');
         this._service = Loader.container.resolve(CourseContentService);
     }
 

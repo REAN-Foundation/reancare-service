@@ -23,7 +23,7 @@ export class LabRecordController extends BaseController {
     _validator: LabRecordValidator = new LabRecordValidator();
 
     constructor() {
-        super();
+        super('LabRecord');
         this._service = Loader.container.resolve(LabRecordService);
         this._userService = Loader.container.resolve(UserService);
     }

@@ -25,7 +25,7 @@ export class ChatController extends BaseController {
     _validator = new ChatValidator();
 
     constructor() {
-        super();
+        super('Chat');
         this._service = Loader.container.resolve(ChatService);
         this._roleService = Loader.container.resolve(RoleService);
         this._userService = Loader.container.resolve(UserService);

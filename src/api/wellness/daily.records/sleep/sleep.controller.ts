@@ -22,7 +22,7 @@ export class SleepController extends BaseController{
     _validator: SleepValidator = new SleepValidator();
 
     constructor() {
-        super();
+        super('Sleep');
         this._service = Loader.container.resolve(SleepService);
     }
 

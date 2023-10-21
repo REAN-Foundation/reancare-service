@@ -25,7 +25,7 @@ export class BodyWeightController extends BaseController {
     _validator: BodyWeightValidator = new BodyWeightValidator();
 
     constructor() {
-        super();
+        super('BodyWeight');
         this._service = Loader.container.resolve(BodyWeightService);
     }
     //#endregion

@@ -18,7 +18,7 @@ export class GoalController extends BaseController {
     _validator: GoalValidator = new GoalValidator();
 
     constructor() {
-        super();
+        super('Goal');
         this._service = Loader.container.resolve(GoalService);
     }
 

@@ -29,7 +29,7 @@ export class PhysicalActivityController extends BaseController {
     _userService: UserService = null;
 
     constructor() {
-        super();
+        super('PhysicalActivity');
         this._service = Loader.container.resolve(PhysicalActivityService);
         this._userService = Loader.container.resolve(UserService);
     }

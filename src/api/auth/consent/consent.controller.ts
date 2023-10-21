@@ -30,7 +30,7 @@ export class ConsentController extends BaseController {
     _validator = new ConsentValidator();
 
     constructor() {
-        super();
+        super('Consent');
         this._service = Loader.container.resolve(ConsentService);
         this._personService = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);

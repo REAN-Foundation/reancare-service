@@ -23,7 +23,7 @@ export class AllergyController extends BaseController {
     _userService: UserService = null;
 
     constructor() {
-        super();
+        super('Allergy');
         this._service = Loader.container.resolve(AllergyService);
         this._userService = Loader.container.resolve(UserService);
     }

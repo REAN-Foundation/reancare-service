@@ -17,7 +17,7 @@ export class RoleController extends BaseController{
     _validator: RoleValidator = new RoleValidator();
 
     constructor() {
-        super();
+        super('Role');
         this._service = Loader.container.resolve(RoleService);
     }
 

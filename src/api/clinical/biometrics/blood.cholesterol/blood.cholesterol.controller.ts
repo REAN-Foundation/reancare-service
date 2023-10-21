@@ -21,7 +21,7 @@ export class BloodCholesterolController extends BaseController {
     _validator: BloodCholesterolValidator = new BloodCholesterolValidator();
 
     constructor() {
-        super();
+        super('BloodCholesterol');
         this._service = Loader.container.resolve(BloodCholesterolService);
     }
 

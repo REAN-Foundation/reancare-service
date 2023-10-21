@@ -18,7 +18,7 @@ export class StandController extends BaseController {
     _validator: StandValidator = new StandValidator();
 
     constructor() {
-        super();
+        super('Stand');
         this._service = Loader.container.resolve(StandService);
     }
 

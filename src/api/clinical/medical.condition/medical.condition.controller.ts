@@ -18,7 +18,7 @@ export class MedicalConditionController extends BaseController {
     _validator: MedicalConditionValidator = new MedicalConditionValidator();
 
     constructor() {
-        super();
+        super('MedicalCondition');
         this._service = Loader.container.resolve(MedicalConditionService);
 
     }

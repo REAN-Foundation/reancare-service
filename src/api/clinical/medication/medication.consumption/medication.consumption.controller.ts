@@ -18,10 +18,11 @@ import { MedicationConsumptionValidator } from './medication.consumption.validat
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { TimeHelper } from '../../../../common/time.helper';
+import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicationConsumptionController {
+export class MedicationConsumptionController extends BaseController {
 
     //#region member variables and constructors
 
@@ -36,6 +37,7 @@ export class MedicationConsumptionController {
     _drugService: DrugService = null;
 
     constructor() {
+        super('MedicationConsumption');
         this._service = Loader.container.resolve(MedicationConsumptionService);
         this._medicationService = Loader.container.resolve(MedicationService);
         this._patientService = Loader.container.resolve(PatientService);

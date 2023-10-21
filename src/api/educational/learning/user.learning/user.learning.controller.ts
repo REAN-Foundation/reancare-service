@@ -18,7 +18,7 @@ export class UserLearningController extends BaseController {
     _validator: UserLearningValidator = new UserLearningValidator();
 
     constructor() {
-        super();
+        super('UserLearning');
         this._service = Loader.container.resolve(UserLearningService);
     }
 

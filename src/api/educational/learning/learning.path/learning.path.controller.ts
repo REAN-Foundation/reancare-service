@@ -18,7 +18,7 @@ export class LearningPathController extends BaseController {
     _validator: LearningPathValidator = new LearningPathValidator();
 
     constructor() {
-        super();
+        super('LearningPath');
         this._service = Loader.container.resolve(LearningPathService);
     }
 

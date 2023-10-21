@@ -24,7 +24,7 @@ export class ComplaintController extends BaseController {
     _doctorService: DoctorService = null;
 
     constructor() {
-        super();
+        super('Complaint');
         this._service = Loader.container.resolve(ComplaintService);
         this._patientService = Loader.container.resolve(PatientService);
         this._doctorService = Loader.container.resolve(DoctorService);

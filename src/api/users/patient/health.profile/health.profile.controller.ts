@@ -21,7 +21,7 @@ export class HealthProfileController extends BaseController{
     _validator: HealthProfileValidator = new HealthProfileValidator();
 
     constructor() {
-        super();
+        super('HealthProfile');
         this._service = Loader.container.resolve(HealthProfileService);
     }
 

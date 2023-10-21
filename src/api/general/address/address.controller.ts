@@ -27,7 +27,7 @@ export class AddressController extends BaseController {
     _validator = new AddressValidator();
 
     constructor() {
-        super();
+        super('Address');
         this._service = Loader.container.resolve(AddressService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);

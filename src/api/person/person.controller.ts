@@ -7,10 +7,11 @@ import { PersonService } from '../../services/person/person.service';
 import { UserService } from '../../services/users/user/user.service';
 import { Loader } from '../../startup/loader';
 import { PersonValidator } from './person.validator';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PersonController {
+export class PersonController extends BaseController {
 
     //#region member variables and constructors
 
@@ -23,6 +24,7 @@ export class PersonController {
     _organizationService: OrganizationService = null;
 
     constructor() {
+        super('Person');
         this._service = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);
         this._addressService = Loader.container.resolve(AddressService);

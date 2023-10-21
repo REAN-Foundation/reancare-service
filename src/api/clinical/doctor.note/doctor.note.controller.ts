@@ -3,9 +3,9 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DoctorNoteService } from '../../../services/clinical/doctor.note.service';
-import { auth } from '../../../auth/auth.handler';
 import { DoctorNoteValidator } from './doctor.note.validator';
 import { BaseController } from '../../base.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ export class DoctorNoteController extends BaseController {
     _validator: DoctorNoteValidator = new DoctorNoteValidator();
 
     constructor() {
-        super();
+        super('DoctorNote');
         this._service = Loader.container.resolve(DoctorNoteService);
     }
 
@@ -28,7 +28,6 @@ export class DoctorNoteController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.create(request);
 
@@ -48,7 +47,6 @@ export class DoctorNoteController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const doctorNote = await this._service.getById(id);
@@ -66,7 +64,6 @@ export class DoctorNoteController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const filters = await this._validator.search(request);
 
@@ -87,7 +84,6 @@ export class DoctorNoteController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const domainModel = await this._validator.update(request);
 
@@ -113,7 +109,6 @@ export class DoctorNoteController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const doctorNote = await this._service.getById(id);

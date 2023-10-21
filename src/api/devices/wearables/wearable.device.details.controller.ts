@@ -20,7 +20,7 @@ export class WearableDeviceDetailsController extends BaseController {
     _validator: WearableDeviceDetailsValidator = new WearableDeviceDetailsValidator();
 
     constructor() {
-        super();
+        super('WearableDevice');
         this._service = Loader.container.resolve(WearableDeviceDetailsService);
         this._patientService = Loader.container.resolve(PatientService);
     }

@@ -7,7 +7,7 @@ import { Logger } from '../../../common/logger';
 import { IPrimaryDatabaseConnector } from '../../database.connector.interface';
 import { DatabaseSchemaType, databaseConfig } from '../../../common/database.utils/database.config';
 import { DatabaseClient } from '../../../common/database.utils/dialect.clients/database.client';
-import { auth } from '../../../auth/auth.handler';
+import { Loader } from '../../../startup/loader';
 
 //////////////////////////////////////////////////////////////
 

@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from "path";
-import { auth } from '../../../auth/auth.handler';
 import { ApiError } from '../../../common/api.error';
 import { Helper } from "../../../common/helper";
 import { Logger } from '../../../common/logger';
@@ -24,6 +23,7 @@ import {
 import { FileResourceDto } from '../../../domain.types/general/file.resource/file.resource.dto';
 import { DateStringFormat } from '../../../domain.types/miscellaneous/time.types';
 import { FileResourceService } from '../../general/file.resource.service';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////
 

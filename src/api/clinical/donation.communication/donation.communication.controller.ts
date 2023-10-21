@@ -18,7 +18,7 @@ export class DonationCommunicationController extends BaseController {
     _validator: DonationCommunicationValidator = new DonationCommunicationValidator();
 
     constructor() {
-        super();
+        super('DonationCommunication');
         this._service = Loader.container.resolve(DonationCommunicationService);
     }
 

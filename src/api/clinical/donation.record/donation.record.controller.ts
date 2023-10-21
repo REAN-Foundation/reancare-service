@@ -18,7 +18,7 @@ export class DonationRecordController extends BaseController {
     _validator: DonationRecordValidator = new DonationRecordValidator();
 
     constructor() {
-        super();
+        super('DonationRecord');
         this._service = Loader.container.resolve(DonationRecordService);
     }
 

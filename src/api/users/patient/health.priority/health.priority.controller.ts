@@ -20,7 +20,7 @@ export class HealthPriorityController extends BaseController {
     _validator: HealthPriorityValidator = new HealthPriorityValidator();
 
     constructor() {
-        super();
+        super('HealthPriority');
         this._service = Loader.container.resolve(HealthPriorityService);
         this._userService = Loader.container.resolve(UserService);
     }

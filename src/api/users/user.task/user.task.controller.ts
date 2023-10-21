@@ -13,10 +13,11 @@ import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
 import { Loader } from '../../../startup/loader';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserTaskController {
+export class UserTaskController extends BaseController {
 
     //#region member variables and constructors
 
@@ -35,6 +36,7 @@ export class UserTaskController {
     _validator: UserTaskValidator = new UserTaskValidator();
 
     constructor() {
+        super('UserTask');
         this._service = Loader.container.resolve(UserTaskService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);

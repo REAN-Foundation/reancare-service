@@ -8,16 +8,18 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyHeightValidator } from './body.height.validator';
+import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyHeightController {
+export class BodyHeightController extends BaseController {
 
     //#region member variables and constructors
 
     _service: BodyHeightService = null;
 
     constructor() {
+        super('BodyHeight');
         this._service = Loader.container.resolve(BodyHeightService);
     }
 

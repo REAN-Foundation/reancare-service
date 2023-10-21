@@ -21,7 +21,7 @@ export class StepCountController extends BaseController {
     _patientService: PatientService = null;
 
     constructor() {
-        super();
+        super('StepCount');
         this._service = Loader.container.resolve(StepCountService);
         this._patientService = Loader.container.resolve(PatientService);
     }

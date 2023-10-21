@@ -32,7 +32,7 @@ export class AssessmentController extends BaseController{
     _validator: AssessmentValidator = new AssessmentValidator();
 
     constructor() {
-        super();
+        super('Assessment');
         this._service = Loader.container.resolve(AssessmentService);
         this._serviceHelperRepo = Loader.container.resolve(AssessmentHelperRepo);
         this._careplanService = Loader.container.resolve(CareplanService);

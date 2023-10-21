@@ -5,16 +5,18 @@ import { ResponseHandler } from '../../common/handlers/response.handler';
 import { Loader } from '../../startup/loader';
 import { ClientAppValidator } from './client.app.validator';
 import { ApiError } from '../../common/api.error';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ClientAppController {
+export class ClientAppController extends BaseController {
 
     //#region member variables and constructors
 
     _service: ClientAppService = null;
 
     constructor() {
+        super('ClientApp');
         this._service = Loader.container.resolve(ClientAppService);
     }
 

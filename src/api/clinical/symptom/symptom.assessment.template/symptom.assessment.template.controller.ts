@@ -18,7 +18,7 @@ export class SymptomAssessmentTemplateController extends BaseController {
     _validator: SymptomAssessmentTemplateValidator = new SymptomAssessmentTemplateValidator();
 
     constructor() {
-        super();
+        super('SymptomAssessmentTemplate');
         this._service = Loader.container.resolve(SymptomAssessmentTemplateService);
     }
 

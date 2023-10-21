@@ -18,7 +18,7 @@ export class WaterConsumptionController extends BaseController {
     _validator: WaterConsumptionValidator = new WaterConsumptionValidator();
 
     constructor() {
-        super();
+        super('WaterConsumption');
         this._service = Loader.container.resolve(WaterConsumptionService);
 
     }

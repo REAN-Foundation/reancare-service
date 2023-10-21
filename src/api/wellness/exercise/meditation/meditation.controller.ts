@@ -22,7 +22,7 @@ export class MeditationController extends BaseController{
     _validator: MeditationValidator = new MeditationValidator();
 
     constructor() {
-        super();
+        super('Meditation');
         this._service = Loader.container.resolve(MeditationService);
     }
 

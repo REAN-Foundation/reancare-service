@@ -23,7 +23,7 @@ export class RssfeedController extends BaseController {
     _validator: RssfeedValidator = new RssfeedValidator();
 
     constructor() {
-        super();
+        super('Rssfeed');
         this._service = Loader.container.resolve(RssfeedService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
     }

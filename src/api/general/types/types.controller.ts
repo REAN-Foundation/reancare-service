@@ -21,7 +21,7 @@ export class TypesController extends BaseController {
     _validator = new TypesValidator();
 
     constructor() {
-        super();
+        super('Types');
         this._service = Loader.container.resolve(TypesService);
     }
 

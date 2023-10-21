@@ -17,7 +17,7 @@ export class DailyAssessmentController extends BaseController{
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 
     constructor() {
-        super();
+        super('DailyAssessment');
         this._service = Loader.container.resolve(DailyAssessmentService);
     }
     //#endregion

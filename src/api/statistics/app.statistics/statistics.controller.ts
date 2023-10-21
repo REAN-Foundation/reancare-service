@@ -16,7 +16,7 @@ export class StatisticsController extends BaseController {
     _validator = new StatistcsValidator();
 
     constructor() {
-        super();
+        super('Statistics');
         this._service = Loader.container.resolve(StatisticsService);
     }
 

@@ -25,7 +25,7 @@ export class BodyTemperatureController extends BaseController {
     _validator: BodyTemperatureValidator = new BodyTemperatureValidator();
 
     constructor() {
-        super();
+        super('BodyTemperature');
         this._service = Loader.container.resolve(BodyTemperatureService);
 
     }

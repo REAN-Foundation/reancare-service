@@ -20,7 +20,7 @@ export class DiagnosisController extends BaseController {
     _userService: UserService = null;
 
     constructor() {
-        super();
+        super('Diagnosis');
         this._service = Loader.container.resolve(DiagnosisService);
         this._userService = Loader.container.resolve(UserService);
     }

@@ -26,7 +26,7 @@ export class ActionPlanController extends BaseController {
     _validator: ActionPlanValidator = new ActionPlanValidator();
 
     constructor() {
-        super();
+        super('ActionPlan');
         this._service = Loader.container.resolve(ActionPlanService);
         this._userService = Loader.container.resolve(UserService);
         this._goalService = Loader.container.resolve(GoalService);

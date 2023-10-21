@@ -18,7 +18,7 @@ export class HowDoYouFeelController extends BaseController{
     _validator: HowDoYouFeelValidator = new HowDoYouFeelValidator();
 
     constructor() {
-        super();
+        super('HowDoYouFeel');
         this._service = Loader.container.resolve(HowDoYouFeelService);
     }
 

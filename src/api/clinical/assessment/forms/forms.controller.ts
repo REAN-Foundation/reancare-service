@@ -45,7 +45,7 @@ export class FormsController extends BaseController{
     _userHelper: UserHelper = new UserHelper();
 
     constructor() {
-        super();
+        super('Forms');
         this._service = Loader.container.resolve(FormsService);
         this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
         this._assessmentService = Loader.container.resolve(AssessmentService);

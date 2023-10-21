@@ -21,9 +21,8 @@ export class BaseUserController extends BaseController {
 
     _roleService: RoleService = null;
 
-
     constructor() {
-        super();
+        super('User');
         this._userService = Loader.container.resolve(UserService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);

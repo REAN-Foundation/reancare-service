@@ -15,10 +15,11 @@ import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.ty
 import * as path from 'path';
 import { PersonService } from '../../../../services/person/person.service';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
+import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StatisticsController {
+export class StatisticsController extends BaseController {
 
     //#region member variables and constructors
 
@@ -35,6 +36,7 @@ export class StatisticsController {
     _personService: PersonService = null;
 
     constructor() {
+        super('Statistics');
         this._service = Loader.container.resolve(StatisticsService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._patientService = Loader.container.resolve(PatientService);

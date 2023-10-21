@@ -27,7 +27,7 @@ export class CohortController extends BaseController {
     _validator = new CohortValidator();
 
     constructor() {
-        super();
+        super('Cohort');
         this._service = Loader.container.resolve(CohortService);
         this._personService = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);

@@ -25,7 +25,7 @@ export class CareplanController extends BaseController {
     _validator: CareplanValidator = new CareplanValidator();
 
     constructor() {
-        super();
+        super('Careplan');
         this._service = Loader.container.resolve(CareplanService);
         this._communityNetworkService = Loader.container.resolve(CommunityNetworkService);
         this._userService = Loader.container.resolve(UserService);

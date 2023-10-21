@@ -18,7 +18,7 @@ export class CalorieBalanceController extends BaseController{
     _validator: CalorieBalanceValidator = new CalorieBalanceValidator();
 
     constructor() {
-        super();
+        super('CalorieBalance');
         this._service = Loader.container.resolve(CalorieBalanceService);
     }
 

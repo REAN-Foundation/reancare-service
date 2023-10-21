@@ -27,7 +27,7 @@ export class ReminderController extends BaseController {
     _validator = new ReminderValidator();
 
     constructor() {
-        super();
+        super('Reminder');
         this._service = Loader.container.resolve(ReminderService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);

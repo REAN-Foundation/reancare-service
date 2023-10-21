@@ -18,7 +18,7 @@ export class CustomQueryController extends BaseController {
     _validator = new CustomQueryValidator();
 
     constructor() {
-        super();
+        super('CustomQuery');
         this._service = Loader.container.resolve(CustomQueryService);
     }
 

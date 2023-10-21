@@ -31,9 +31,9 @@ import {
     BooleanQueryAnswer,
     CAssessmentListNode } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
-import { auth } from '../../../auth/auth.handler';
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { ConditionProcessor } from './condition.processor';
+import { Loader } from '../../../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

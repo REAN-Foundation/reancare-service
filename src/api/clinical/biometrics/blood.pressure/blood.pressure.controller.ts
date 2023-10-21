@@ -35,7 +35,7 @@ export class BloodPressureController extends BaseController {
     _validator: BloodPressureValidator = new BloodPressureValidator();
 
     constructor() {
-        super();
+        super('BloodPressure');
         this._service = Loader.container.resolve(BloodPressureService);
         this._patientService = Loader.container.resolve(PatientService);
         this._personService = Loader.container.resolve(PersonService);

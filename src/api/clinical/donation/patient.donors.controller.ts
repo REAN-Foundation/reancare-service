@@ -18,7 +18,7 @@ export class PatientDonorsController extends BaseController {
     _validator: PatientDonorsValidator = new PatientDonorsValidator();
 
     constructor() {
-        super();
+        super('PatientDonors');
         this._service = Loader.container.resolve(PatientDonorsService);
     }
 

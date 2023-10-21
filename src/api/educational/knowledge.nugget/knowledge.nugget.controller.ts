@@ -18,7 +18,7 @@ export class KnowledgeNuggetController extends BaseController {
     _validator: KnowledgeNuggetValidator = new KnowledgeNuggetValidator();
 
     constructor() {
-        super();
+        super('KnowledgeNugget');
         this._service = Loader.container.resolve(KnowledgeNuggetService);
 
     }

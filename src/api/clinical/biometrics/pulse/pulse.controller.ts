@@ -25,7 +25,7 @@ export class PulseController extends BaseController{
     _validator: PulseValidator = new PulseValidator();
 
     constructor() {
-        super();
+        super('Pulse');
         this._service = Loader.container.resolve(PulseService);
     }
 

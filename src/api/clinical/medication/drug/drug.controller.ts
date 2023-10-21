@@ -18,7 +18,7 @@ export class DrugController extends BaseController{
     _validator: DrugValidator = new DrugValidator();
 
     constructor() {
-        super();
+        super('Drug');
         this._service = Loader.container.resolve(DrugService);
     }
 

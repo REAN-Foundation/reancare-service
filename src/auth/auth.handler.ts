@@ -4,6 +4,7 @@ import { UserAuthenticator } from './wrappers/user.authenticator';
 import { Injector } from '../startup/injector';
 import { ResponseHandler } from '../common/handlers/response.handler';
 import { ErrorHandler } from '../common/handlers/error.handler';
+import { uuid } from '../domain.types/miscellaneous/system.types';
 
 ////////////////////////////////////////////////////////////////////////
 export type AuthMiddleware =
@@ -69,6 +70,16 @@ export class AuthHandler {
     public static generateUserSessionToken = async (user: any): Promise<string> => {
         var authenticator = Injector.Container.resolve(UserAuthenticator);
         return await authenticator.generateUserSessionToken(user);
+    };
+
+    public static generateRefreshToken = async (userId: uuid, sessionId: uuid, tenantId: string): Promise<string> => {
+        var authenticator = Injector.Container.resolve(UserAuthenticator);
+        return await authenticator.generateRefreshToken(userId, sessionId, tenantId);
+    };
+
+    public static rotateUserSessionToken = async (refreshToken: string): Promise<string> => {
+        var authenticator = Injector.Container.resolve(UserAuthenticator);
+        return await authenticator.rotateUserSessionToken(refreshToken);
     };
 
 }

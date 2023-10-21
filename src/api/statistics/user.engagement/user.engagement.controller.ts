@@ -16,7 +16,7 @@ export class UserEngagementController extends BaseController {
     _validator = new UserEngagementValidator();
 
     constructor() {
-        super();
+        super('UserEngagement');
         this._service = Loader.container.resolve(UserEngagementService);
     }
 

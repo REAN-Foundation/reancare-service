@@ -7,10 +7,11 @@ import { UserService } from '../../../services/users/user/user.service';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Loader } from '../../../startup/loader';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserController {
+export class UserController extends BaseController {
 
     //#region member variables and constructors
 
@@ -19,6 +20,7 @@ export class UserController {
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
     constructor() {
+        super('User');
         this._service = Loader.container.resolve(UserService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }

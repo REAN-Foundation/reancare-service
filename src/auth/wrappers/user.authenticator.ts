@@ -41,4 +41,14 @@ export class UserAuthenticator {
         return token;
     };
 
+    public generateRefreshToken = async (userId: string, sessionId: string, tenantId: string): Promise<string> => {
+        const token = await this._authenticator.generateRefreshToken(userId, sessionId, tenantId);
+        return token;
+    };
+
+    public rotateUserSessionToken = async (refreshToken: string): Promise<string> => {
+        const token = await this._authenticator.rotateUserSessionToken(refreshToken);
+        return token;
+    };
+
 }

@@ -7,10 +7,11 @@ import { RoleService } from '../../../services/role/role.service';
 import { OrganizationValidator } from './organization.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class OrganizationController {
+export class OrganizationController extends BaseController {
 
     //#region member variables and constructors
 
@@ -23,6 +24,7 @@ export class OrganizationController {
     _validator: OrganizationValidator = new OrganizationValidator();
 
     constructor() {
+        super('Organization');
         this._service = Loader.container.resolve(OrganizationService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);

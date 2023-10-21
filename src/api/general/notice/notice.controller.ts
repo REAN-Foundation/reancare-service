@@ -19,7 +19,7 @@ export class NoticeController extends BaseController {
     _validator: NoticeValidator = new NoticeValidator();
 
     constructor() {
-        super();
+        super('Notice');
         this._service = Loader.container.resolve(NoticeService);
     }
 

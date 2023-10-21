@@ -2,10 +2,15 @@ import express from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { ClinicalInterpretationList, ClinicalValidationStatusList } from '../../../domain.types/miscellaneous/clinical.types';
 import { SeverityList } from '../../../domain.types/miscellaneous/system.types';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ClinicalTypesController {
+export class ClinicalTypesController extends BaseController {
+
+    constructor() {
+        super('ClinicalTypes');
+    }
 
     //#region Action methods
 

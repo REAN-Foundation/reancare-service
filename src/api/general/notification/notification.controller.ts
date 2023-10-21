@@ -18,7 +18,7 @@ export class NotificationController extends BaseController {
     _validator: NotificationValidator = new NotificationValidator();
 
     constructor() {
-        super();
+        super('Notification');
         this._service = Loader.container.resolve(NotificationService);
     }
 

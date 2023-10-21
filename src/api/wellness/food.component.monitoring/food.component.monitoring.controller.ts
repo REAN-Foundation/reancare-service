@@ -18,7 +18,7 @@ export class FoodComponentMonitoringController extends BaseController {
     _validator: FoodComponentMonitoringValidator = new FoodComponentMonitoringValidator();
 
     constructor() {
-        super();
+        super('FoodComponentMonitoring');
         this._service = Loader.container.resolve(FoodComponentMonitoringService);
 
     }

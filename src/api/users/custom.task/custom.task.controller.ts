@@ -6,10 +6,11 @@ import { UserTaskService } from '../../../services/users/user/user.task.service'
 import { CustomTaskValidator } from './custom.task.validator';
 import { CommonActions } from '../../../custom/common/common.actions';
 import { Loader } from '../../../startup/loader';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CustomTaskController {
+export class CustomTaskController extends BaseController {
 
     //#region member variables and constructors
 
@@ -22,6 +23,7 @@ export class CustomTaskController {
     _customActions: CommonActions = new CommonActions();
 
     constructor() {
+        super('CustomTask');
         this._service = Loader.container.resolve(CustomTaskService);
         this._userTaskService = Loader.container.resolve(UserTaskService);
     }

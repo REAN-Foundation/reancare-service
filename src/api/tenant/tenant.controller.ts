@@ -37,7 +37,7 @@ export class TenantController extends BaseController{
     _validator: TenantValidator = new TenantValidator();
 
     constructor() {
-        super();
+        super('Tenant');
         this._service = Loader.container.resolve(TenantService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);

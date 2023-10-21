@@ -18,7 +18,7 @@ export class HeartPointController extends BaseController{
     _validator: HeartPointValidator = new HeartPointValidator();
 
     constructor() {
-        super();
+        super('HeartPoints');
         this._service = Loader.container.resolve(HeartPointsService);
     }
 

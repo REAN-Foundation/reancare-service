@@ -18,7 +18,7 @@ export class OrderController extends BaseController{
     _validator: OrderValidator = new OrderValidator();
 
     constructor() {
-        super();
+        super('Order');
         this._service = Loader.container.resolve(OrderService);
     }
 

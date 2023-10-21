@@ -19,7 +19,7 @@ export class SymptomTypeController extends BaseController {
     _validator: SymptomTypeValidator = new SymptomTypeValidator();
 
     constructor() {
-        super();
+        super('SymptomType');
         this._service = Loader.container.resolve(SymptomTypeService);
     }
 

@@ -25,7 +25,7 @@ export class BloodOxygenSaturationController extends BaseController {
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
 
     constructor() {
-        super();
+        super('BloodOxygenSaturation');
         this._service = Loader.container.resolve(BloodOxygenSaturationService);
     }
 

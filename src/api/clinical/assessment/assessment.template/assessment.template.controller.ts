@@ -29,7 +29,7 @@ export class AssessmentTemplateController extends BaseController{
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
-        super();
+        super('AssessmentTemplate');
         this._service = Loader.container.resolve(AssessmentTemplateService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
     }

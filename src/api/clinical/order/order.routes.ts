@@ -10,7 +10,7 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new OrderController();
 
-    router.post('/', auth('Order.Create'),controller.create);
+    router.post('/', auth('Order.Create'), controller.create);
     router.get('/search', auth('Order.Search'), controller.search);
     router.get('/:id', auth('Order.GetById'), controller.getById);
     router.put('/:id', auth('Order.Update'), controller.update);

@@ -1,26 +1,27 @@
 import express from 'express';
-import { DonorService } from '../../../services/users/donor.service';
-import { ApiError } from '../../../common/api.error';
-import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
-import { Roles } from '../../../domain.types/role/role.types';
-import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
-import { DonorValidator } from './donor.validator';
-import { BaseUserController } from '../base.user.controller';
-import { Loader } from '../../../startup/loader';
+import { VolunteerService } from '../../../../services/users/volunteer.service';
+import { ApiError } from '../../../../common/api.error';
+import { Helper } from '../../../../common/helper';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
+import { Roles } from '../../../../domain.types/role/role.types';
+import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
+import { BaseUserController } from '../../../users/base.user.controller';
+import { VolunteerValidator } from './volunteer.validator';
+import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DonorController extends BaseUserController {
+export class VolunteerController extends BaseUserController {
 
     //#region member variables and constructors
 
-    _service: DonorService = null;
+    _service: VolunteerService = null;
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(DonorService);
+        this._resourceName = 'BloodDonation.Volunteer';
+        this._service = Loader.container.resolve(VolunteerService);
     }
 
     //#endregion
@@ -29,40 +30,40 @@ export class DonorController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const donorDomainModel = await DonorValidator.create(request);
+            const volunteerDomainModel = await VolunteerValidator.create(request);
 
             //Throw an error if donor with same name and phone number exists
-            const donorExists = await this._service.donorExists(donorDomainModel);
+            const donorExists = await this._service.volunteerExists(volunteerDomainModel);
             if (donorExists) {
-                throw new ApiError(400, 'Cannot create donor! Donor with same phone number exists.');
+                throw new ApiError(400, 'Cannot create volunteer! Volunteer with same phone number exists.');
             }
 
             const userName = await this._userService.generateUserName(
-                donorDomainModel.User.Person.FirstName,
-                donorDomainModel.User.Person.LastName
+                volunteerDomainModel.User.Person.FirstName,
+                volunteerDomainModel.User.Person.LastName
             );
 
             const displayId = await this._userService.generateUserDisplayId(
-                Roles.Donor,
-                donorDomainModel.User.Person.Phone
+                Roles.Volunteer,
+                volunteerDomainModel.User.Person.Phone
             );
 
             const displayName = Helper.constructPersonDisplayName(
-                donorDomainModel.User.Person.Prefix,
-                donorDomainModel.User.Person.FirstName,
-                donorDomainModel.User.Person.LastName
+                volunteerDomainModel.User.Person.Prefix,
+                volunteerDomainModel.User.Person.FirstName,
+                volunteerDomainModel.User.Person.LastName
             );
 
-            donorDomainModel.User.Person.DisplayName = displayName;
-            donorDomainModel.User.UserName = userName;
-            donorDomainModel.DisplayId = displayId;
+            volunteerDomainModel.User.Person.DisplayName = displayName;
+            volunteerDomainModel.User.UserName = userName;
+            volunteerDomainModel.DisplayId = displayId;
 
-            const userDomainModel = donorDomainModel.User;
+            const userDomainModel = volunteerDomainModel.User;
             const personDomainModel = userDomainModel.Person;
 
             //Create a person first
 
-            let person = await this._personService.getPersonWithPhone(donorDomainModel.User.Person.Phone);
+            let person = await this._personService.getPersonWithPhone(volunteerDomainModel.User.Person.Phone);
             if (person == null) {
                 person = await this._personService.create(personDomainModel);
                 if (person == null) {
@@ -70,8 +71,8 @@ export class DonorController extends BaseUserController {
                 }
             }
 
-            const role = await this._roleService.getByName(Roles.Donor);
-            donorDomainModel.PersonId = person.id;
+            const role = await this._roleService.getByName(Roles.Volunteer);
+            volunteerDomainModel.PersonId = person.id;
             userDomainModel.Person.id = person.id;
             userDomainModel.RoleId = role.id;
 
@@ -79,20 +80,20 @@ export class DonorController extends BaseUserController {
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
-            donorDomainModel.UserId = user.id;
+            volunteerDomainModel.UserId = user.id;
 
             //KK: Note - Please add user to appointment service here...
 
-            donorDomainModel.DisplayId = displayId;
-            const donor = await this._service.create(donorDomainModel);
+            volunteerDomainModel.DisplayId = displayId;
+            const volunteer = await this._service.create(volunteerDomainModel);
             if (user == null) {
-                throw new ApiError(400, 'Cannot create donor!');
+                throw new ApiError(400, 'Cannot create volunteer!');
             }
 
             await this.addAddress(request, person.id);
 
-            ResponseHandler.success(request, response, 'Donor created successfully!', 201, {
-                Donor : donor,
+            ResponseHandler.success(request, response, 'Volunteer created successfully!', 201, {
+                Volunteer : volunteer,
             });
 
         } catch (error) {
@@ -104,20 +105,20 @@ export class DonorController extends BaseUserController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const userId: string = await DonorValidator.getByUserId(request);
+            const userId: string = await VolunteerValidator.getByUserId(request);
 
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
 
-            const donor = await this._service.getByUserId(userId);
-            if (donor == null) {
-                throw new ApiError(404, 'Donor not found.');
+            const volunteer = await this._service.getByUserId(userId);
+            if (volunteer == null) {
+                throw new ApiError(404, 'Volunteer not found.');
             }
 
-            ResponseHandler.success(request, response, 'Donor retrieved successfully!', 200, {
-                Donor : donor,
+            ResponseHandler.success(request, response, 'Volunteer retrieved successfully!', 200, {
+                Volunteer : volunteer,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -126,15 +127,15 @@ export class DonorController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await DonorValidator.search(request);
+            const filters = await VolunteerValidator.search(request);
 
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
-                count === 0 ? 'No records found!' : `Total ${count} donor records retrieved successfully!`;
+                count === 0 ? 'No records found!' : `Total ${count} volunteer records retrieved successfully!`;
 
             ResponseHandler.success(request, response, message, 200, {
-                Donors : searchResults,
+                Volunteers : searchResults,
             });
 
         } catch (error) {
@@ -144,9 +145,9 @@ export class DonorController extends BaseUserController {
 
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const donorDomainModel = await DonorValidator.updateByUserId(request);
+            const donorDomainModel = await VolunteerValidator.updateByUserId(request);
 
-            const userId: string = await DonorValidator.getByUserId(request);
+            const userId: string = await VolunteerValidator.getByUserId(request);
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
@@ -163,18 +164,18 @@ export class DonorController extends BaseUserController {
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
-            const updatedDonor = await this._service.updateByUserId(
+            const updatedVolunteer = await this._service.updateByUserId(
                 donorDomainModel.UserId,
                 donorDomainModel
             );
-            if (updatedDonor == null) {
-                throw new ApiError(400, 'Unable to update donor record!');
+            if (updatedVolunteer == null) {
+                throw new ApiError(400, 'Unable to update volunteer record!');
             }
 
             await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
 
-            ResponseHandler.success(request, response, 'Donor records updated successfully!', 200, {
-                Donor : updatedDonor,
+            ResponseHandler.success(request, response, 'Volunteer records updated successfully!', 200, {
+                Volunteer : updatedVolunteer,
             });
 
         } catch (error) {
@@ -184,7 +185,7 @@ export class DonorController extends BaseUserController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const userId: string = await DonorValidator.delete(request);
+            const userId: string = await VolunteerValidator.delete(request);
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
@@ -196,7 +197,7 @@ export class DonorController extends BaseUserController {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Donor records deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Volunteer records deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

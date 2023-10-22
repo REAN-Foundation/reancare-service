@@ -1,13 +1,13 @@
 import express from 'express';
-import { auth } from '../../../auth/auth.handler';
-import { PatientDonorsController } from './patient.donors.controller';
+import { auth } from '../../../../auth/auth.handler';
+import { BridgeController } from './bridge.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const controller = new PatientDonorsController();
+    const controller = new BridgeController();
 
     router.post('/', auth('PatientDonors.Create'), controller.create);
     router.get('/search', auth('PatientDonors.Search'), controller.search);

@@ -1,11 +1,11 @@
 import express from 'express';
-import { DonationRecordSearchFilters } from '../../../domain.types/clinical/donation.record/donation.record.search.types';
-import { DonationRecordDomainModel } from '../../../domain.types/clinical/donation.record/donation.record.domain.model';
-import { BaseValidator, Where } from '../../base.validator';
+import { DonationRecordSearchFilters } from '../../../../domain.types/clinical/donation.record/donation.record.search.types';
+import { BaseValidator, Where } from '../../../base.validator';
+import { DonationRecordDomainModel } from '../../../../domain.types/clinical/donation.record/donation.record.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DonationRecordValidator extends BaseValidator {
+export class DonationValidator extends BaseValidator {
 
     constructor() {
         super();
@@ -13,7 +13,7 @@ export class DonationRecordValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): DonationRecordDomainModel => {
 
-        const doctorNoteModel: DonationRecordDomainModel = {
+        const model: DonationRecordDomainModel = {
             PatientUserId             : request.body.PatientUserId ?? null,
             NetworkId                 : request.body.NetworkId ?? null,
             EmergencyDonor            : request.body.EmergencyDonor ?? null,
@@ -27,7 +27,7 @@ export class DonationRecordValidator extends BaseValidator {
             DonationType              : request.body.DonationType ?? null,
         };
 
-        return doctorNoteModel;
+        return model;
     };
 
     create = async (request: express.Request): Promise<DonationRecordDomainModel> => {

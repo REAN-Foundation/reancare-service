@@ -1,12 +1,12 @@
 import express from 'express';
-import { auth } from '../../../auth/auth.handler';
-import { DonationCommunicationController } from './donation.communication.controller';
+import { auth } from '../../../../auth/auth.handler';
+import { CommunicationController } from './communication.controller';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const controller = new DonationCommunicationController();
+    const controller = new CommunicationController();
 
     router.post('/', auth('DonationCommunication.Create'), controller.create);
     router.get('/search', auth('DonationCommunication.Search'), controller.search);

@@ -1,11 +1,11 @@
 import express from 'express';
-import { PatientDonorsDomainModel } from '../../../domain.types/clinical/donation/patient.donors.domain.model';
-import { PatientDonorsSearchFilters } from '../../../domain.types/clinical/donation/patient.donors.search.types';
-import { BaseValidator, Where } from '../../base.validator';
+import { PatientDonorsDomainModel } from '../../../../domain.types/clinical/donation/patient.donors.domain.model';
+import { PatientDonorsSearchFilters } from '../../../../domain.types/clinical/donation/patient.donors.search.types';
+import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PatientDonorsValidator extends BaseValidator {
+export class BridgeValidator extends BaseValidator {
 
     constructor() {
         super();
@@ -13,7 +13,7 @@ export class PatientDonorsValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): PatientDonorsDomainModel => {
 
-        const doctorNoteModel: PatientDonorsDomainModel = {
+        const model: PatientDonorsDomainModel = {
             Name             : request.body.Name ?? null,
             PatientUserId    : request.body.PatientUserId ?? null,
             DonorUserId      : request.body.DonorUserId ?? null,
@@ -26,7 +26,7 @@ export class PatientDonorsValidator extends BaseValidator {
             Status           : request.body.Status ?? null,
         };
 
-        return doctorNoteModel;
+        return model;
     };
 
     create = async (request: express.Request): Promise<PatientDonorsDomainModel> => {

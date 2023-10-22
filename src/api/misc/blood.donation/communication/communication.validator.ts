@@ -1,11 +1,11 @@
 import express from 'express';
-import { BaseValidator, Where } from '../../base.validator';
-import { DonationCommunicationDomainModel } from '../../../domain.types/clinical/donation.communication/donation.communication.domain.model';
-import { DonationCommunicationSearchFilters } from '../../../domain.types/clinical/donation.communication/donation.communication.search.types';
+import { BaseValidator, Where } from '../../../base.validator';
+import { DonationCommunicationDomainModel } from '../../../../domain.types/clinical/donation.communication/donation.communication.domain.model';
+import { DonationCommunicationSearchFilters } from '../../../../domain.types/clinical/donation.communication/donation.communication.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DonationCommunicationValidator extends BaseValidator {
+export class CommunicationValidator extends BaseValidator {
 
     constructor() {
         super();
@@ -13,7 +13,7 @@ export class DonationCommunicationValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): DonationCommunicationDomainModel => {
 
-        const doctorNoteModel: DonationCommunicationDomainModel = {
+        const model: DonationCommunicationDomainModel = {
             PatientUserId             : request.body.PatientUserId ?? null,
             DonorUserId               : request.body.DonorUserId ?? null,
             VolunteerUserId           : request.body.VolunteerUserId ?? null,
@@ -24,7 +24,7 @@ export class DonationCommunicationValidator extends BaseValidator {
             IsRemindersLoaded         : request.body.IsRemindersLoaded ?? false,
         };
 
-        return doctorNoteModel;
+        return model;
     };
 
     create = async (request: express.Request): Promise<DonationCommunicationDomainModel> => {

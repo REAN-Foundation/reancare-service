@@ -1,24 +1,24 @@
 import express from 'express';
-import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { BaseController } from '../../base.controller';
-import { DonationCommunicationValidator } from './donation.communication.validator';
-import { DonationCommunicationService } from '../../../services/clinical/donation/donation.communication.service';
-import { Loader } from '../../../startup/loader';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { BaseController } from '../../../base.controller';
+import { CommunicationValidator } from './communication.validator';
+import { DonationCommunicationService } from '../../../../services/clinical/donation/donation.communication.service';
+import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DonationCommunicationController extends BaseController {
+export class CommunicationController extends BaseController {
 
     //#region member variables and constructors
 
     _service: DonationCommunicationService = null;
 
-    _validator: DonationCommunicationValidator = new DonationCommunicationValidator();
+    _validator: CommunicationValidator = new CommunicationValidator();
 
     constructor() {
-        super('DonationCommunication');
+        super('BloodDonation.Communication');
         this._service = Loader.container.resolve(DonationCommunicationService);
     }
 

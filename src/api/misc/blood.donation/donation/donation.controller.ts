@@ -1,25 +1,25 @@
 import express from 'express';
-import { PatientDonorsService } from '../../../services/clinical/donation/patient.donors.service';
-import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { BaseController } from '../../base.controller';
-import { PatientDonorsValidator } from './patient.donors.validator';
-import { Loader } from '../../../startup/loader';
+import { DonationRecordService } from '../../../../services/clinical/donation/donation.record.service';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { BaseController } from '../../../base.controller';
+import { DonationValidator } from './donation.validator';
+import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PatientDonorsController extends BaseController {
+export class DonationController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: PatientDonorsService = null;
+    _service: DonationRecordService = null;
 
-    _validator: PatientDonorsValidator = new PatientDonorsValidator();
+    _validator: DonationValidator = new DonationValidator();
 
     constructor() {
-        super('PatientDonors');
-        this._service = Loader.container.resolve(PatientDonorsService);
+        super('BloodDonation.Donation');
+        this._service = Loader.container.resolve(DonationRecordService);
     }
 
     //#endregion
@@ -31,13 +31,13 @@ export class PatientDonorsController extends BaseController {
 
             const domainModel = await this._validator.create(request);
 
-            const patientDonors = await this._service.create(domainModel);
-            if (patientDonors == null) {
-                throw new ApiError(400, 'Cannot create Blood bridge!');
+            const donationRecord = await this._service.create(domainModel);
+            if (donationRecord == null) {
+                throw new ApiError(400, 'Cannot create donation record!');
             }
 
-            ResponseHandler.success(request, response, 'Blood bridge created successfully!', 201, {
-                PatientDonors : patientDonors,
+            ResponseHandler.success(request, response, 'Donation record created successfully!', 201, {
+                DonationRecord : donationRecord,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -49,13 +49,13 @@ export class PatientDonorsController extends BaseController {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const doctorNote = await this._service.getById(id);
-            if (doctorNote == null) {
-                throw new ApiError(404, 'Blood bridge not found.');
+            const donationRecord = await this._service.getById(id);
+            if (donationRecord == null) {
+                throw new ApiError(404, 'Donation record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Blood bridge retrieved successfully!', 200, {
-                PatientDonors : doctorNote,
+            ResponseHandler.success(request, response, 'Donation record retrieved successfully!', 200, {
+                DonationRecord : donationRecord,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -73,9 +73,9 @@ export class PatientDonorsController extends BaseController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} blood bridge records retrieved successfully!`;
+                    : `Total ${count} donation records retrieved successfully!`;
 
-            ResponseHandler.success(request, response, message, 200, { PatientDonors: searchResults });
+            ResponseHandler.success(request, response, message, 200, { DonationRecord: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -89,18 +89,18 @@ export class PatientDonorsController extends BaseController {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const doctorNote = await this._service.getById(id);
-            if (doctorNote == null) {
-                throw new ApiError(404, 'Blood bridge not found.');
+            const donationRecord = await this._service.getById(id);
+            if (donationRecord == null) {
+                throw new ApiError(404, 'Donation record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update blood bridge record!');
+                throw new ApiError(400, 'Unable to update donation record!');
             }
 
-            ResponseHandler.success(request, response, 'Blood bridge record updated successfully!', 200, {
-                PatientDonors : updated,
+            ResponseHandler.success(request, response, 'Donation record updated successfully!', 200, {
+                DonationRecord : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -111,17 +111,17 @@ export class PatientDonorsController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const doctorNote = await this._service.getById(id);
-            if (doctorNote == null) {
-                throw new ApiError(404, 'Blood bridge not found.');
+            const donationRecord = await this._service.getById(id);
+            if (donationRecord == null) {
+                throw new ApiError(404, 'Donation record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Blood bridge cannot be deleted.');
+                throw new ApiError(400, 'Donation record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Blood bridge record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Donation record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

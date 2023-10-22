@@ -9,23 +9,14 @@ import * as SeededAssessmentTemplates from '../../seed.data/symptom.assessment.t
 import * as SeededSymptomTypes from '../../seed.data/symptom.types.json';
 import * as SeededNutritionQuestionnaire from '../../seed.data/nutrition.questionnaire.json';
 import * as SeededLabRecordTypes from '../../seed.data/lab.record.types.seed.json';
-import * as seededHealthSystemsAndHospitals from '../../seed.data/health.systems.and.hospitals.seed..json';
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
-import { IClientAppRepo } from "../database/repository.interfaces/client.apps/client.app.repo.interface";
 import { IDrugRepo } from "../database/repository.interfaces/clinical/medication/drug.repo.interface";
 import { IMedicationStockImageRepo } from "../database/repository.interfaces/clinical/medication/medication.stock.image.repo.interface";
 import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
 import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
 import { IKnowledgeNuggetRepo } from "../database/repository.interfaces/educational/knowledge.nugget.repo.interface";
 import { IHealthPriorityRepo } from "../database/repository.interfaces/users/patient/health.priority.repo.interface";
-import { IInternalTestUserRepo } from "../database/repository.interfaces/users/user/internal.test.user.repo.interface";
-import { IPersonRepo } from "../database/repository.interfaces/person/person.repo.interface";
-import { IPersonRoleRepo } from "../database/repository.interfaces/person/person.role.repo.interface";
-import { IRolePrivilegeRepo } from "../database/repository.interfaces/role/role.privilege.repo.interface";
-import { IRoleRepo } from "../database/repository.interfaces/role/role.repo.interface";
-import { IUserRepo } from "../database/repository.interfaces/users/user/user.repo.interface";
-import { IHealthSystemRepo } from "../database/repository.interfaces/users/patient/health.system.repo.interface";
 import { DrugDomainModel } from "../domain.types/clinical/medication/drug/drug.domain.model";
 import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
@@ -48,17 +39,13 @@ import { RoleService } from "../services/role/role.service";
 import { UserService } from "../services/users/user/user.service";
 import { FoodConsumptionService } from "../services/wellness/nutrition/food.consumption.service";
 import { Loader } from "./loader";
-import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
 import { LabRecordService } from "../services/clinical/lab.record/lab.record.service";
 import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
 import { IFoodConsumptionRepo }
     from "../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
 import { NutritionQuestionnaireDomainModel }
     from "../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model";
-import { HealthSystemDomainModel } from "../domain.types/users/patient/health.system/health.system.domain.model";
-import { HealthSystemHospitalDomainModel } from "../domain.types/users/patient/health.system/health.system.hospital.domain.model";
 import { HealthSystemService } from "../services/users/patient/health.system.service";
-import { ITenantRepo } from "../database/repository.interfaces/tenant/tenant.repo.interface";
 import { TenantService } from "../services/tenant/tenant.service";
 import { RolePrivilegeService } from "../services/role/role.privilege.service";
 
@@ -81,6 +68,8 @@ export class Seeder {
 
     _rolePrivilegeService: RolePrivilegeService = Loader.container.resolve(RolePrivilegeService);
 
+    _healthSystemService: HealthSystemService = Loader.container.resolve(HealthSystemService);
+
     _patientHealthProfileService: HealthProfileService = null;
 
     _symptomTypeService: SymptomTypeService = null;
@@ -99,28 +88,16 @@ export class Seeder {
 
     _foodConsumptionService: FoodConsumptionService = null;
 
-    _healthSystemService: HealthSystemService = null;
-
     _userHelper = new UserHelper();
 
     constructor(
-        @inject('IRoleRepo') private _roleRepo: IRoleRepo,
-        @inject('IClientAppRepo') private _apiClientRepo: IClientAppRepo,
-        @inject('IUserRepo') private _userRepo: IUserRepo,
-        @inject('IPersonRepo') private _personRepo: IPersonRepo,
-        @inject('IRolePrivilegeRepo') private _rolePrivilegeRepo: IRolePrivilegeRepo,
-        @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IMedicationStockImageRepo') private _medicationStockImageRepo: IMedicationStockImageRepo,
         @inject('ISymptomTypeRepo') private _symptomTypeRepo: ISymptomTypeRepo,
-        @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo,
         @inject('ISymptomAssessmentTemplateRepo') private _symptomAssessmentTemplateRepo: ISymptomAssessmentTemplateRepo,
         @inject('IKnowledgeNuggetRepo') private _knowledgeNuggetRepo: IKnowledgeNuggetRepo,
         @inject('IDrugRepo') private _drugRepo: IDrugRepo,
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
-        @inject('ILabRecordRepo') private _labRecordRepo: ILabRecordRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
-        @inject('IHealthSystemRepo') private _healthSystemRepo: IHealthSystemRepo,
-        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
     ) {
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
@@ -131,7 +108,6 @@ export class Seeder {
         this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
         this._labRecordService = Loader.container.resolve(LabRecordService);
         this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
-        this._healthSystemService = Loader.container.resolve(HealthSystemService);
     }
 
     public init = async (): Promise<void> => {
@@ -151,7 +127,7 @@ export class Seeder {
             await this.seedHealthPriorityTypes();
             await this.seedLabReportTypes();
             await this.seedNutritionQuestionnaire();
-            await this.seedHealthSystemsAndHospitals();
+            await this._healthSystemService.seedHealthSystemsAndHospitals();
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -438,50 +414,6 @@ export class Seeder {
             };
             await this._foodConsumptionService.createNutritionQuestionnaire(model);
         }
-    };
-
-    public seedHealthSystemsAndHospitals = async () => {
-
-        const arr = seededHealthSystemsAndHospitals['default'];
-
-        Logger.instance().log('Seeding health systems and associated hospitals...');
-
-        for (let i = 0; i < arr.length; i++) {
-
-            var t = arr[i];
-
-            const filters = {
-                Name : t['HealthSystem']
-            };
-
-            const existingRecord = await this._healthSystemService.searchType(filters);
-            //console.log(JSON.stringify(existingRecord, null, 2));
-            if (existingRecord.Items.length > 0) {
-                Logger.instance().log(`Health system record ${t['HealthSystem']} already exists!`);
-                continue;
-            }
-
-            const tokens = t['Tags'];
-            var tags: string[] = tokens.map(x => x);
-
-            const model: HealthSystemDomainModel = {
-                Name : t['HealthSystem'],
-                Tags : tags
-            };
-            var healthSystem = await this._healthSystemService.createHealthSystem(model);
-
-            for (let j = 0; j < t['AssociatedHospitals'].length; j++) {
-
-                const entity: HealthSystemHospitalDomainModel = {
-                    HealthSystemId : healthSystem.id,
-                    Tags           : healthSystem.Tags,
-                    Name           : t['AssociatedHospitals'][j]
-                };
-                await this._healthSystemService.createHealthSystemHospital(entity);
-
-            }
-        }
-
     };
 
 }

@@ -1,6 +1,6 @@
-import { VolunteerDomainModel } from "../../../domain.types/users/Volunteer/volunteer.domain.model";
-import { VolunteerDetailsDto } from "../../../domain.types/users/Volunteer/volunteer.dto";
-import { VolunteerSearchFilters, VolunteerSearchResults } from "../../../domain.types/users/Volunteer/volunteer.search.types";
+import { VolunteerDomainModel } from "../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model";
+import { VolunteerDetailsDto } from "../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
+import { VolunteerSearchFilters, VolunteerSearchResults } from "../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types";
 
 export interface IVolunteerRepo {
 
@@ -11,7 +11,7 @@ export interface IVolunteerRepo {
     updateByUserId(userId: string, updateModel: VolunteerDomainModel): Promise<VolunteerDetailsDto>;
 
     search(filters: VolunteerSearchFilters): Promise<VolunteerSearchResults>;
-    
+
     deleteByUserId(userId: string): Promise<boolean>;
 
 }

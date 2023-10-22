@@ -1,17 +1,17 @@
-import { DonationRecordDomainModel } from "../../../../domain.types/clinical/donation.record/donation.record.domain.model";
-import { DonationRecordDto } from "../../../../domain.types/clinical/donation.record/donation.record.dto";
-import { DonationRecordSearchResults, DonationRecordSearchFilters } from "../../../../domain.types/clinical/donation.record/donation.record.search.types";
+import { DonationDomainModel } from "../../../../domain.types/assorted/blood.donation/donation/donation.domain.model";
+import { DonationDto } from "../../../../domain.types/assorted/blood.donation/donation/donation.dto";
+import { DonationSearchFilters, DonationSearchResults } from "../../../../domain.types/assorted/blood.donation/donation/donation.search.types";
 
-export interface IDonationRecordRepo {
+export interface IDonationRepo {
 
-    create(entity: DonationRecordDomainModel): Promise<DonationRecordDto>;
+    create(entity: DonationDomainModel): Promise<DonationDto>;
 
-    getById(userId: string): Promise<DonationRecordDto>;
+    getById(userId: string): Promise<DonationDto>;
 
-    update(userId: string, updateModel: DonationRecordDomainModel): Promise<DonationRecordDto>;
+    update(userId: string, updateModel: DonationDomainModel): Promise<DonationDto>;
 
-    search(filters: DonationRecordSearchFilters): Promise<DonationRecordSearchResults>;
-    
+    search(filters: DonationSearchFilters): Promise<DonationSearchResults>;
+
     delete(userId: string): Promise<boolean>;
 
 }

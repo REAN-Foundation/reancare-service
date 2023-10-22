@@ -1,9 +1,9 @@
 import { Logger } from "../../../../../../common/logger";
 import { ApiError } from "../../../../../../common/api.error";
 import { Op } from 'sequelize';
-import { PatientDonorsDomainModel } from "../../../../../../domain.types/clinical/donation/patient.donors.domain.model";
-import { PatientDonorsDto } from "../../../../../../domain.types/clinical/donation/patient.donors.dto";
-import { PatientDonorsSearchFilters, PatientDonorsSearchResults } from "../../../../../../domain.types/clinical/donation/patient.donors.search.types";
+import { BridgeDomainModel } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.domain.model";
+import { BridgeDto } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.dto";
+import { BridgeSearchFilters, BridgeSearchResults } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.search.types";
 import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
 import { PatientDonorsMapper } from "../../../mappers/clinical/donation/patient.donors.mapper";
 import { IPatientDonorsRepo } from "../../../../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
@@ -12,7 +12,7 @@ import { IPatientDonorsRepo } from "../../../../../../database/repository.interf
 
 export class PatientDonorsRepo implements IPatientDonorsRepo {
 
-    create = async (patientDonorsDomainModel: PatientDonorsDomainModel): Promise<PatientDonorsDto> => {
+    create = async (patientDonorsDomainModel: BridgeDomainModel): Promise<BridgeDto> => {
 
         try {
             const entity = {
@@ -39,7 +39,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
         }
     };
 
-    getById = async (id: string): Promise<PatientDonorsDto> => {
+    getById = async (id: string): Promise<BridgeDto> => {
         try {
             const patientDonors = await PatientDonors.findOne({ where: { id: id } });
             const dto = await PatientDonorsMapper.toDetailsDto(patientDonors);
@@ -51,7 +51,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    update = async (id: string, model: PatientDonorsDomainModel): Promise<PatientDonorsDto> => {
+    update = async (id: string, model: BridgeDomainModel): Promise<BridgeDto> => {
         try {
             const patientDonors = await PatientDonors.findOne({ where: { id: id } });
 
@@ -98,7 +98,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
         }
     };
 
-    search = async (filters: PatientDonorsSearchFilters): Promise<PatientDonorsSearchResults> => {
+    search = async (filters: BridgeSearchFilters): Promise<BridgeSearchResults> => {
         try {
 
             const search: any = { where: {}, include: [] };
@@ -180,7 +180,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
 
             const foundResults = await PatientDonors.findAndCountAll(search);
 
-            const dtos: PatientDonorsDto[] = [];
+            const dtos: BridgeDto[] = [];
             for (const patientDonors of foundResults.rows) {
                 const dto = await PatientDonorsMapper.toDetailsDto(patientDonors);
                 dtos.push(dto);
@@ -189,7 +189,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
             const count = foundResults.count;
             const totalCount = typeof count === "number" ? count : count[0];
 
-            const searchResults: PatientDonorsSearchResults = {
+            const searchResults: BridgeSearchResults = {
                 TotalCount     : totalCount,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,

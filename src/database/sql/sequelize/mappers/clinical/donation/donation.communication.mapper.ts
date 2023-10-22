@@ -1,4 +1,4 @@
-import { DonationCommunicationDto } from "../../../../../../domain.types/clinical/donation.communication/donation.communication.dto";
+import { DonationCommunicationDto } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.dto";
 import DonationCommunication from "../../../models/clinical/donation/donation.communication.model";
 
 ///////////////////////////////////////////////////////////////////////////////////

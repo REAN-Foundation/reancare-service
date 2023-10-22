@@ -1,27 +1,27 @@
 import { inject, injectable } from 'tsyringe';
-import { IDonationRecordRepo } from '../../../database/repository.interfaces/clinical/donation/donation.record.repo.interface';
-import { DonationRecordDomainModel } from '../../../domain.types/clinical/donation.record/donation.record.domain.model';
-import { DonationRecordDto } from '../../../domain.types/clinical/donation.record/donation.record.dto';
-import { DonationRecordSearchFilters } from '../../../domain.types/clinical/donation.record/donation.record.search.types';
-import { DonationRecordSearchResults } from '../../../domain.types/clinical/donation.record/donation.record.search.types';
+import { IDonationRepo } from '../../../database/repository.interfaces/clinical/donation/donation.record.repo.interface';
 import { IPatientDonorsRepo } from '../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface';
 import { IPatientRepo } from '../../../database/repository.interfaces/users/patient/patient.repo.interface';
 import { DonorAcceptance } from '../../../domain.types/miscellaneous/clinical.types';
+import { DonationDomainModel } from '../../../domain.types/assorted/blood.donation/donation/donation.domain.model';
+import { DonationSearchFilters } from '../../../domain.types/assorted/blood.donation/donation/donation.search.types';
+import { DonationSearchResults } from '../../../domain.types/assorted/blood.donation/donation/donation.search.types';
+import { DonationDto } from '../../../domain.types/assorted/blood.donation/donation/donation.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class DonationRecordService {
+export class DonationService {
 
     constructor(
-        @inject('IDonationRecordRepo') private _donationRecordRepo: IDonationRecordRepo,
+        @inject('IDonationRepo') private _donationRecordRepo: IDonationRepo,
         @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 
     //#region Publics
 
-    public create = async (donationRecordDomainModel: DonationRecordDomainModel): Promise<DonationRecordDto> => {
+    public create = async (donationRecordDomainModel: DonationDomainModel): Promise<DonationDto> => {
 
         var dto = await this._donationRecordRepo.create(donationRecordDomainModel);
         if (dto.PatientUserId !== null) {
@@ -31,15 +31,15 @@ export class DonationRecordService {
         return dto;
     };
 
-    public getById = async (id: string): Promise<DonationRecordDto> => {
+    public getById = async (id: string): Promise<DonationDto> => {
         var dto = await this._donationRecordRepo.getById(id);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
 
     public search = async (
-        filters: DonationRecordSearchFilters
-    ): Promise<DonationRecordSearchResults> => {
+        filters: DonationSearchFilters
+    ): Promise<DonationSearchResults> => {
         var items = [];
         var results = await this._donationRecordRepo.search(filters);
         for await (var dto of results.Items) {
@@ -52,8 +52,8 @@ export class DonationRecordService {
 
     public update = async (
         id: string,
-        updateModel: DonationRecordDomainModel
-    ): Promise<DonationRecordDto> => {
+        updateModel: DonationDomainModel
+    ): Promise<DonationDto> => {
         var dto = await this._donationRecordRepo.update(id, updateModel);
         if (updateModel.DonorAcceptedDate !== null) {
             await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Accepted });
@@ -73,7 +73,7 @@ export class DonationRecordService {
 
     //#region Privates
 
-    private updateDetailsDto = async (dto: DonationRecordDto): Promise<DonationRecordDto> => {
+    private updateDetailsDto = async (dto: DonationDto): Promise<DonationDto> => {
         if (dto == null) {
             return null;
         }

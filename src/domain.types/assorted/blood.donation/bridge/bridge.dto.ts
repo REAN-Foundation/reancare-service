@@ -1,9 +1,9 @@
-import { DonorDetailsDto } from "../../../domain.types/users/donor/donor.dto";
-import { uuid } from "../../miscellaneous/system.types";
+import { DonorDetailsDto } from "../donor/donor.dto";
+import { uuid } from "../../../miscellaneous/system.types";
 
 /////////////////////////////////////////////////////////////////////////////
 
-export interface PatientDonorsDto {
+export interface BridgeDto {
     id?                   : uuid;
     Name?                 : string,
     PatientUserId?        : uuid;

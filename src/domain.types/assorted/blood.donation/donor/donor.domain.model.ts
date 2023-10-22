@@ -1,6 +1,6 @@
-import { DonorType } from '../../../domain.types/miscellaneous/clinical.types';
-import { AddressDomainModel } from '../../general/address/address.domain.model';
-import { UserDomainModel } from '../user/user.domain.model';
+import { DonorType } from '../../../miscellaneous/clinical.types';
+import { AddressDomainModel } from '../../../general/address/address.domain.model';
+import { UserDomainModel } from '../../../users/user/user.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

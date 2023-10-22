@@ -1,5 +1,5 @@
-import { DonorType } from "../../../domain.types/miscellaneous/clinical.types";
-import { Gender } from "../../miscellaneous/system.types";
+import { DonorType } from "../../../miscellaneous/clinical.types";
+import { Gender } from "../../../miscellaneous/system.types";
 import { DonorDetailsDto, DonorDto } from "./donor.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////

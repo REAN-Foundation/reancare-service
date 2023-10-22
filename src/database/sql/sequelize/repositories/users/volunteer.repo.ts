@@ -3,11 +3,11 @@ import { ApiError } from "../../../../../common/api.error";
 import { Op } from 'sequelize';
 import Person from "../../models/person/person.model";
 import { IVolunteerRepo } from "../../../../../database/repository.interfaces/users/Volunteer.repo.interface";
-import { VolunteerSearchResults, VolunteerSearchFilters } from "../../../../../domain.types/users/Volunteer/volunteer.search.types";
-import { VolunteerDto, VolunteerDetailsDto } from "../../../../../domain.types/users/Volunteer/volunteer.dto";
+import { VolunteerSearchResults, VolunteerSearchFilters } from "../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types";
+import { VolunteerDto, VolunteerDetailsDto } from "../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
 import { VolunteerMapper } from "../../mappers/users/volunteer.mapper";
 import Volunteer from "../../models/users/volunteer.model";
-import { VolunteerDomainModel } from "../../../../../domain.types/users/Volunteer/volunteer.domain.model";
+import { VolunteerDomainModel } from "../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -75,8 +75,8 @@ export class VolunteerRepo implements IVolunteerRepo {
             if (model.SelectedPhoneNumber != null) {
                 volunteer.SelectedPhoneNumber = model.SelectedPhoneNumber;
             }
-            if (model.LastDonationRecordId != null) {
-                volunteer.LastDonationRecordId = model.LastDonationRecordId;
+            if (model.LastDonationId != null) {
+                volunteer.LastDonationId = model.LastDonationId;
             }
             if (model.IsAvailable != null) {
                 volunteer.IsAvailable = model.IsAvailable;

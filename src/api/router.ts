@@ -73,7 +73,7 @@ import { register as registerChatRoutes } from './community/chat/chat.routes';
 import { register as registerPatientStatisticsRoutes } from './users/patient/statistics/statistics.routes';
 import { register as registerRssfeedRoutes } from './general/rss.feed/rss.feed.routes';
 import { register as registerPatientDonorsRoutes } from './assorted/blood.donation/bridge/bridge.routes';
-import { register as registerDonationRecordRoutes } from './assorted/blood.donation/donation/donation.routes';
+import { register as registerDonationRoutes } from './assorted/blood.donation/donation/donation.routes';
 import { register as registerWearableWebhookTerraRoutes } from './webhooks/providers/terra/terra.webhook.routes';
 import { register as registerWearableDeviceDetailsRoutes } from './devices/wearables/wearable.device.details.routes';
 import { register as registerStatisticsRoutes } from './statistics/app.statistics/statistics.routes';
@@ -181,7 +181,7 @@ export class Router {
                 registerPatientStatisticsRoutes(this._app);
                 registerRssfeedRoutes(this._app);
                 registerPatientDonorsRoutes(this._app);
-                registerDonationRecordRoutes(this._app);
+                registerDonationRoutes(this._app);
                 registerWearableWebhookTerraRoutes(this._app);
                 registerStatisticsRoutes(this._app);
                 registerWearableDeviceDetailsRoutes(this._app);

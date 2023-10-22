@@ -1,17 +1,17 @@
-import { PatientDonorsDto } from "../../../../../../domain.types/clinical/donation/patient.donors.dto";
+import { BridgeDto } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.dto";
 import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class PatientDonorsMapper {
 
-    static toDetailsDto = async (patientDonors: PatientDonors): Promise<PatientDonorsDto> => {
+    static toDetailsDto = async (patientDonors: PatientDonors): Promise<BridgeDto> => {
 
         if (patientDonors == null){
             return null;
         }
 
-        const dto: PatientDonorsDto = {
+        const dto: BridgeDto = {
             id               : patientDonors.id,
             Name             : patientDonors.Name,
             PatientUserId    : patientDonors.PatientUserId,

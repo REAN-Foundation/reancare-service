@@ -9,12 +9,12 @@ import PatientDonors from './patient.donors.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'DonationRecord',
+    modelName       : 'Donation',
     tableName       : 'blood_donations',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class DonationRecord extends Model {
+export default class Donation extends Model {
 
     @IsUUID(4)
     @PrimaryKey

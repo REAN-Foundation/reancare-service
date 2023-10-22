@@ -81,7 +81,7 @@ import { ChatRepo } from './repositories/community/chat.repo';
 import { RssfeedRepo } from './repositories/general/rss.feed/rss.feed.repo';
 import { RssfeedItemRepo } from './repositories/general/rss.feed/rss.feed.item.repo';
 import { PatientDonorsRepo } from './repositories/clinical/donation/patient.donors.repo';
-import { DonationRecordRepo } from './repositories/clinical/donation/donation.record.repo';
+import { DonationRepo } from './repositories/clinical/donation/donation.record.repo';
 import { StatisticsRepo } from './repositories/statistics/statistics.repo';
 import { WearableDeviceDetailsRepo } from './repositories/webhook/webhook.wearable.device.details.repo';
 import { DonationCommunicationRepo } from './repositories/clinical/donation/donation.communication.repo';
@@ -183,7 +183,7 @@ export class SequelizeInjector {
         container.register('IRssfeedRepo', RssfeedRepo);
         container.register('IRssfeedItemRepo', RssfeedItemRepo);
         container.register('IPatientDonorsRepo', PatientDonorsRepo);
-        container.register('IDonationRecordRepo', DonationRecordRepo);
+        container.register('IDonationRepo', DonationRepo);
         container.register('IStatisticsRepo', StatisticsRepo);
         container.register('IWearableDeviceDetailsRepo', WearableDeviceDetailsRepo);
         container.register('IDonationCommunicationRepo', DonationCommunicationRepo);

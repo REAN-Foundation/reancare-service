@@ -2,10 +2,11 @@ import { Logger } from "../../../../../../common/logger";
 import { ApiError } from "../../../../../../common/api.error";
 import DonationCommunication from "../../../models/clinical/donation/donation.communication.model";
 import { IDonationCommunicationRepo } from "../../../../../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
-import { DonationCommunicationDto } from "../../../../../../domain.types/clinical/donation.communication/donation.communication.dto";
-import { DonationCommunicationDomainModel } from "../../../../../../domain.types/clinical/donation.communication/donation.communication.domain.model";
-import { DonationCommunicationSearchFilters, DonationCommunicationSearchResults } from "../../../../../../domain.types/clinical/donation.communication/donation.communication.search.types";
 import { DonationCommunicationMapper } from "../../../mappers/clinical/donation/donation.communication.mapper";
+import { DonationCommunicationDomainModel } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.domain.model";
+import { DonationCommunicationDto } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.dto";
+import { DonationCommunicationSearchFilters } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.search.types";
+import { DonationCommunicationSearchResults } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.search.types";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

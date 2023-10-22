@@ -5,10 +5,10 @@ import { IPersonRoleRepo } from '../../database/repository.interfaces/person/per
 import { IRoleRepo } from '../../database/repository.interfaces/role/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
 import { Roles } from '../../domain.types/role/role.types';
-import { VolunteerDetailsDto, VolunteerDto } from '../../domain.types/users/Volunteer/volunteer.dto';
+import { VolunteerDetailsDto, VolunteerDto } from '../../domain.types/assorted/blood.donation/volunteer/volunteer.dto';
 import { VolunteerDetailsSearchResults, VolunteerSearchFilters,
-    VolunteerSearchResults } from '../../domain.types/users/Volunteer/volunteer.search.types';
-import { VolunteerDomainModel } from '../../domain.types/users/Volunteer/volunteer.domain.model';
+    VolunteerSearchResults } from '../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types';
+import { VolunteerDomainModel } from '../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model';
 import { IVolunteerRepo } from '../../database/repository.interfaces/users/Volunteer.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@ import { IDonorRepo } from "../../database/repository.interfaces/users/donor.rep
 import { DonorNetworkService } from "./donor.management/donor.network.service";
 import { IPatientDonorsRepo } from "../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
 import { VolunteerService } from "../../services/users/volunteer.service";
-import { IDonationRecordRepo } from "../../database/repository.interfaces/clinical/donation/donation.record.repo.interface";
+import { IDonationRepo } from "../../database/repository.interfaces/clinical/donation/donation.record.repo.interface";
 import { PatientService } from "../../services/users/patient/patient.service";
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
 
@@ -48,7 +48,7 @@ export class CommunityNetworkService {
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
-        @inject('IDonationRecordRepo') private _donationRecordRepo: IDonationRecordRepo,
+        @inject('IDonationRepo') private _donationRecordRepo: IDonationRepo,
         @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
     ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
         this._volunteerService = Loader.container.resolve(VolunteerService);
@@ -105,7 +105,7 @@ export class CommunityNetworkService {
         enrollmentDetails.ParticipantId = participant.ParticipantId;
         enrollmentDetails.Gender = patient.User.Person.Gender;
         enrollmentDetails.EnrollmentId = participant.ParticipantId;
-        
+
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
 
         if (enrollmentDetails.PlanCode === 'Patient-Reminders') {
@@ -117,7 +117,7 @@ export class CommunityNetworkService {
                 enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
                 enrollmentDetails.StartDate, enrollmentDetails.EndDate);
         }
-        
+
         Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
 
         const activityModels = activities.map(x => {
@@ -161,7 +161,7 @@ export class CommunityNetworkService {
 
         return dto;
     };
-    
+
     public fetchTasks = async (careplanId: uuid): Promise<boolean> => {
 
         var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
@@ -180,7 +180,7 @@ export class CommunityNetworkService {
 
             var existing: boolean = await this._careplanRepo.activityExists(
                 x.Provider, x.EnrollmentId, x.ProviderActionId, x.Sequence, x.ScheduledAt);
-            
+
             if (existing) {
                 continue;
             }
@@ -212,13 +212,13 @@ export class CommunityNetworkService {
                 enrollment.PatientUserId,
                 enrollmentId,
                 activityModel);
-    
+
             careplanActivities.push(careplanActivity);
 
         }
 
         await this.createScheduledUserTasks(enrollment.PatientUserId, careplanActivities);
-    
+
         return true;
     };
 
@@ -260,7 +260,7 @@ export class CommunityNetworkService {
                         Logger.instance().log(`Successfully whatsapp message send to volunteer ${phoneNumber}`);
                     }
                 }
-                
+
             } else {
                 Logger.instance().log(`Donation request not found or Donor has responded to request.`);
             }
@@ -308,7 +308,7 @@ export class CommunityNetworkService {
                         }
                     }
                 }
-                
+
             } else {
                 Logger.instance().log(`Fifth day reminder not found or Patient has responded to reminder.`);
             }

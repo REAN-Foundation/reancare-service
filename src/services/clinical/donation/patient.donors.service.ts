@@ -1,10 +1,10 @@
 import { inject, injectable } from 'tsyringe';
 import { IPersonRepo } from '../../../database/repository.interfaces/person/person.repo.interface';
 import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
-import { PatientDonorsSearchFilters, PatientDonorsSearchResults } from '../../../domain.types/clinical/donation/patient.donors.search.types';
+import { BridgeSearchFilters, BridgeSearchResults } from '../../../domain.types/assorted/blood.donation/bridge/bridge.search.types';
 import { IPatientDonorsRepo } from '../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface';
-import { PatientDonorsDomainModel } from '../../../domain.types/clinical/donation/patient.donors.domain.model';
-import { PatientDonorsDto } from '../../../domain.types/clinical/donation/patient.donors.dto';
+import { BridgeDomainModel } from '../../../domain.types/assorted/blood.donation/bridge/bridge.domain.model';
+import { BridgeDto } from '../../../domain.types/assorted/blood.donation/bridge/bridge.dto';
 import { TimeHelper } from "../../../common/time.helper";
 import { IDonorRepo } from '../../../database/repository.interfaces/users/donor.repo.interface';
 
@@ -22,7 +22,7 @@ export class PatientDonorsService {
 
     //#region Publics
 
-    public create = async (patientDonorsDomainModel: PatientDonorsDomainModel): Promise<PatientDonorsDto> => {
+    public create = async (patientDonorsDomainModel: BridgeDomainModel): Promise<BridgeDto> => {
 
         var dto = await this._patientDonorsRepo.create(patientDonorsDomainModel);
         dto = await this.updateDetailsDto(dto);
@@ -30,15 +30,15 @@ export class PatientDonorsService {
         return dto;
     };
 
-    public getById = async (id: string): Promise<PatientDonorsDto> => {
+    public getById = async (id: string): Promise<BridgeDto> => {
         var dto = await this._patientDonorsRepo.getById(id);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
 
     public search = async (
-        filters: PatientDonorsSearchFilters
-    ): Promise<PatientDonorsSearchResults> => {
+        filters: BridgeSearchFilters
+    ): Promise<BridgeSearchResults> => {
         var items = [];
         var results = await this._patientDonorsRepo.search(filters);
         for await (var dto of results.Items) {
@@ -59,8 +59,8 @@ export class PatientDonorsService {
 
     public update = async (
         id: string,
-        updateModel: PatientDonorsDomainModel
-    ): Promise<PatientDonorsDto> => {
+        updateModel: BridgeDomainModel
+    ): Promise<BridgeDto> => {
         var dto = await this._patientDonorsRepo.update(id, updateModel);
         dto = await this.updateDetailsDto(dto);
         return dto;
@@ -74,7 +74,7 @@ export class PatientDonorsService {
 
     //#region Privates
 
-    private updateDetailsDto = async (dto: PatientDonorsDto): Promise<PatientDonorsDto> => {
+    private updateDetailsDto = async (dto: BridgeDto): Promise<BridgeDto> => {
         if (dto == null) {
             return null;
         }
@@ -88,7 +88,7 @@ export class PatientDonorsService {
         return dto;
     };
 
-    private elligibleDonors = async (dto: PatientDonorsDto): Promise<PatientDonorsDto > => {
+    private elligibleDonors = async (dto: BridgeDto): Promise<BridgeDto > => {
         if (dto == null) {
             return null;
         }

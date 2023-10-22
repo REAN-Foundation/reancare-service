@@ -1,10 +1,10 @@
-import { uuid } from './../../../domain.types/miscellaneous/system.types';
-import { DonorType } from '../../../domain.types/miscellaneous/clinical.types';
-import { BridgeStatus } from '../../../domain.types/miscellaneous/clinical.types';
+import { uuid } from '../../../miscellaneous/system.types';
+import { DonorType } from '../../../miscellaneous/clinical.types';
+import { BridgeStatus } from '../../../miscellaneous/clinical.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export interface PatientDonorsDomainModel {
+export interface BridgeDomainModel {
     id?               : uuid;
     Name?             : string,
     PatientUserId?    : uuid;

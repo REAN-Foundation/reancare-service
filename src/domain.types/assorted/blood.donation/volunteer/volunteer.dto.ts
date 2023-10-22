@@ -1,6 +1,6 @@
-import { AddressDto } from "../../general/address/address.dto";
-import { Gender } from "../../miscellaneous/system.types";
-import { UserDto } from "../user/user.dto";
+import { AddressDto } from "../../../general/address/address.dto";
+import { Gender } from "../../../miscellaneous/system.types";
+import { UserDto } from "../../../users/user/user.dto";
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export interface VolunteerDetailsDto {
     SelectedBloodGroup?  : string;
     SelectedBridgeId?    : string;
     SelectedPhoneNumber?    : string;
-    LastDonationRecordId?   : string;
+    LastDonationId?   : string;
 }
 
 export interface VolunteerDto {
@@ -36,7 +36,7 @@ export interface VolunteerDto {
     SelectedBloodGroup?  : string;
     SelectedBridgeId?    : string;
     SelectedPhoneNumber?    : string;
-    LastDonationRecordId?   : string;
+    LastDonationId?   : string;
     MedIssues   : string[];
     Gender      : Gender;
     BirthDate   : Date;

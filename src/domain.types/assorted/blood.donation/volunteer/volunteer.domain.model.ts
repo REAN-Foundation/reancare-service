@@ -1,5 +1,5 @@
-import { AddressDomainModel } from '../../general/address/address.domain.model';
-import { UserDomainModel } from '../user/user.domain.model';
+import { AddressDomainModel } from '../../../general/address/address.domain.model';
+import { UserDomainModel } from '../../../users/user/user.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,5 +19,5 @@ export interface VolunteerDomainModel {
     SelectedBloodGroup?  : string;
     SelectedBridgeId?    : string;
     SelectedPhoneNumber?    : string;
-    LastDonationRecordId?   : string;
+    LastDonationId?   : string;
 }

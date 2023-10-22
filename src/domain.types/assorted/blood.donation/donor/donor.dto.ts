@@ -1,7 +1,7 @@
-import { DonorType } from "../../../domain.types/miscellaneous/clinical.types";
-import { AddressDto } from "../../general/address/address.dto";
-import { Gender } from "../../miscellaneous/system.types";
-import { UserDto } from "../user/user.dto";
+import { DonorType } from "../../../miscellaneous/clinical.types";
+import { AddressDto } from "../../../general/address/address.dto";
+import { Gender } from "../../../miscellaneous/system.types";
+import { UserDto } from "../../../users/user/user.dto";
 
 /////////////////////////////////////////////////////////////////////////////
 

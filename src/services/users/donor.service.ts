@@ -5,9 +5,9 @@ import { IPersonRoleRepo } from '../../database/repository.interfaces/person/per
 import { IRoleRepo } from '../../database/repository.interfaces/role/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
 import { Roles } from '../../domain.types/role/role.types';
-import { DonorDomainModel } from '../../domain.types/users/donor/donor.domain.model';
-import { DonorDetailsDto, DonorDto } from '../../domain.types/users/donor/donor.dto';
-import { DonorSearchFilters, DonorDetailsSearchResults, DonorSearchResults } from '../../domain.types/users/donor/donor.search.types';
+import { DonorDomainModel } from '../../domain.types/assorted/blood.donation/donor/donor.domain.model';
+import { DonorDetailsDto, DonorDto } from '../../domain.types/assorted/blood.donation/donor/donor.dto';
+import { DonorSearchFilters, DonorDetailsSearchResults, DonorSearchResults } from '../../domain.types/assorted/blood.donation/donor/donor.search.types';
 import { IDonorRepo } from '../../database/repository.interfaces/users/donor.repo.interface';
 import { TimeHelper } from '../../common/time.helper';
 

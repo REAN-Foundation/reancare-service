@@ -1,29 +1,29 @@
-import { DonationRecordDto } from "../../../../../../domain.types/clinical/donation.record/donation.record.dto";
-import DonationRecord from "../../../models/clinical/donation/donation.record.model";
+import { DonationDto } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.dto";
+import Donation from "../../../models/clinical/donation/donation.record.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class DonationRecordMapper {
+export class DonationMapper {
 
-    static toDetailsDto = async (donationRecord: DonationRecord): Promise<DonationRecordDto> => {
+    static toDetailsDto = async (donation: Donation): Promise<DonationDto> => {
 
-        if (donationRecord == null){
+        if (donation == null){
             return null;
         }
 
-        const dto: DonationRecordDto = {
-            id                        : donationRecord.id,
-            PatientUserId             : donationRecord.PatientUserId,
-            NetworkId                 : donationRecord.NetworkId,
-            EmergencyDonor            : donationRecord.EmergencyDonor,
-            VolunteerOfEmergencyDonor : donationRecord.VolunteerOfEmergencyDonor,
-            RequestedQuantity         : donationRecord.RequestedQuantity,
-            RequestedDate             : donationRecord.RequestedDate,
-            DonorAcceptedDate         : donationRecord.DonorAcceptedDate,
-            DonorRejectedDate         : donationRecord.DonorRejectedDate,
-            DonatedQuantity           : donationRecord.DonatedQuantity,
-            DonationDate              : donationRecord.DonationDate,
-            DonationType              : donationRecord.DonationType
+        const dto: DonationDto = {
+            id                        : donation.id,
+            PatientUserId             : donation.PatientUserId,
+            NetworkId                 : donation.NetworkId,
+            EmergencyDonor            : donation.EmergencyDonor,
+            VolunteerOfEmergencyDonor : donation.VolunteerOfEmergencyDonor,
+            RequestedQuantity         : donation.RequestedQuantity,
+            RequestedDate             : donation.RequestedDate,
+            DonorAcceptedDate         : donation.DonorAcceptedDate,
+            DonorRejectedDate         : donation.DonorRejectedDate,
+            DonatedQuantity           : donation.DonatedQuantity,
+            DonationDate              : donation.DonationDate,
+            DonationType              : donation.DonationType
         };
         return dto;
     };

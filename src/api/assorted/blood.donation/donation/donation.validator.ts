@@ -1,7 +1,7 @@
 import express from 'express';
-import { DonationRecordSearchFilters } from '../../../../domain.types/clinical/donation.record/donation.record.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
-import { DonationRecordDomainModel } from '../../../../domain.types/clinical/donation.record/donation.record.domain.model';
+import { DonationDomainModel } from '../../../../domain.types/assorted/blood.donation/donation/donation.domain.model';
+import { DonationSearchFilters } from '../../../../domain.types/assorted/blood.donation/donation/donation.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -11,9 +11,9 @@ export class DonationValidator extends BaseValidator {
         super();
     }
 
-    getDomainModel = (request: express.Request): DonationRecordDomainModel => {
+    getDomainModel = (request: express.Request): DonationDomainModel => {
 
-        const model: DonationRecordDomainModel = {
+        const model: DonationDomainModel = {
             PatientUserId             : request.body.PatientUserId ?? null,
             NetworkId                 : request.body.NetworkId ?? null,
             EmergencyDonor            : request.body.EmergencyDonor ?? null,
@@ -30,12 +30,12 @@ export class DonationValidator extends BaseValidator {
         return model;
     };
 
-    create = async (request: express.Request): Promise<DonationRecordDomainModel> => {
+    create = async (request: express.Request): Promise<DonationDomainModel> => {
         await this.validateCreateBody(request);
         return this.getDomainModel(request);
     };
 
-    search = async (request: express.Request): Promise<DonationRecordSearchFilters> => {
+    search = async (request: express.Request): Promise<DonationSearchFilters> => {
 
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
         await this.validateUuid(request, 'donorUserId', Where.Query, false, false);
@@ -58,7 +58,7 @@ export class DonationValidator extends BaseValidator {
         return this.getFilter(request);
     };
 
-    update = async (request: express.Request): Promise<DonationRecordDomainModel> => {
+    update = async (request: express.Request): Promise<DonationDomainModel> => {
 
         await this.validateUpdateBody(request);
         const domainModel = this.getDomainModel(request);
@@ -99,9 +99,9 @@ export class DonationValidator extends BaseValidator {
         this.validateRequest(request);
     }
 
-    private getFilter(request): DonationRecordSearchFilters {
+    private getFilter(request): DonationSearchFilters {
 
-        var filters: DonationRecordSearchFilters = {
+        var filters: DonationSearchFilters = {
             PatientUserId             : request.query.patientUserId ?? null,
             VolunteerUserId           : request.query.volunteerUserId ?? null,
             EmergencyDonor            : request.query.emergencyDonor ?? null,

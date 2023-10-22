@@ -1,4 +1,4 @@
-import { VolunteerDto, VolunteerDetailsDto } from "../../../../../domain.types/users/Volunteer/volunteer.dto";
+import { VolunteerDto, VolunteerDetailsDto } from "../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
 import Volunteer from "../../models/users/volunteer.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ export class VolunteerMapper {
             SelectedBridgeId     : volunteer.SelectedBridgeId,
             SelectedBloodGroup   : volunteer.SelectedBloodGroup,
             SelectedPhoneNumber  : volunteer.SelectedPhoneNumber,
-            LastDonationRecordId : volunteer.LastDonationRecordId,
+            LastDonationId : volunteer.LastDonationId,
             IsAvailable          : volunteer.IsAvailable,
             MedIssues            : medIssues,
             Address              : []
@@ -56,7 +56,7 @@ export class VolunteerMapper {
             SelectedBridgeId     : volunteer.SelectedBridgeId,
             SelectedBloodGroup   : volunteer.SelectedBloodGroup,
             SelectedPhoneNumber  : volunteer.SelectedPhoneNumber,
-            LastDonationRecordId : volunteer.LastDonationRecordId,
+            LastDonationId : volunteer.LastDonationId,
             MedIssues            : medIssues,
             DisplayName          : null,
             UserName             : null,

@@ -1,7 +1,7 @@
 import express from 'express';
 import { BaseValidator, Where } from '../../../base.validator';
-import { DonationCommunicationDomainModel } from '../../../../domain.types/clinical/donation.communication/donation.communication.domain.model';
-import { DonationCommunicationSearchFilters } from '../../../../domain.types/clinical/donation.communication/donation.communication.search.types';
+import { DonationCommunicationDomainModel } from '../../../../domain.types/assorted/blood.donation/communication/communication.domain.model';
+import { DonationCommunicationSearchFilters } from '../../../../domain.types/assorted/blood.donation/communication/communication.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

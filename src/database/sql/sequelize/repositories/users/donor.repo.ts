@@ -3,11 +3,11 @@ import { ApiError } from "../../../../../common/api.error";
 import { Op } from 'sequelize';
 import Person from "../../models/person/person.model";
 import { IDonorRepo } from "../../../../repository.interfaces/users/donor.repo.interface";
-import { DonorDomainModel } from "../../../../../domain.types/users/donor/donor.domain.model";
-import { DonorDetailsDto, DonorDto } from "../../../../../domain.types/users/donor/donor.dto";
+import { DonorDomainModel } from "../../../../../domain.types/assorted/blood.donation/donor/donor.domain.model";
+import { DonorDetailsDto, DonorDto } from "../../../../../domain.types/assorted/blood.donation/donor/donor.dto";
 import Donor from "../../models/users/donor.model";
 import { DonorMapper } from "../../mappers/users/donor.mapper";
-import { DonorSearchFilters, DonorSearchResults } from "../../../../../domain.types/users/donor/donor.search.types";
+import { DonorSearchFilters, DonorSearchResults } from "../../../../../domain.types/assorted/blood.donation/donor/donor.search.types";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import { DonationRecordService } from '../../../../services/clinical/donation/donation.record.service';
+import { DonationService } from '../../../../services/clinical/donation/donation.record.service';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -13,13 +13,13 @@ export class DonationController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: DonationRecordService = null;
+    _service: DonationService = null;
 
     _validator: DonationValidator = new DonationValidator();
 
     constructor() {
         super('BloodDonation.Donation');
-        this._service = Loader.container.resolve(DonationRecordService);
+        this._service = Loader.container.resolve(DonationService);
     }
 
     //#endregion
@@ -37,7 +37,7 @@ export class DonationController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Donation record created successfully!', 201, {
-                DonationRecord : donationRecord,
+                Donation : donationRecord,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -55,7 +55,7 @@ export class DonationController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Donation record retrieved successfully!', 200, {
-                DonationRecord : donationRecord,
+                Donation : donationRecord,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -75,7 +75,7 @@ export class DonationController extends BaseController {
                     ? 'No records found!'
                     : `Total ${count} donation records retrieved successfully!`;
 
-            ResponseHandler.success(request, response, message, 200, { DonationRecord: searchResults });
+            ResponseHandler.success(request, response, message, 200, { Donation: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -100,7 +100,7 @@ export class DonationController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Donation record updated successfully!', 200, {
-                DonationRecord : updated,
+                Donation : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

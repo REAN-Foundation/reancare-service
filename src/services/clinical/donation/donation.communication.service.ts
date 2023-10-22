@@ -2,9 +2,9 @@ import { inject, injectable } from 'tsyringe';
 import { IPatientDonorsRepo } from '../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface';
 import { IPatientRepo } from '../../../database/repository.interfaces/users/patient/patient.repo.interface';
 import { IDonationCommunicationRepo } from '../../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface';
-import { DonationCommunicationDto } from '../../../domain.types/clinical/donation.communication/donation.communication.dto';
-import { DonationCommunicationDomainModel } from '../../../domain.types/clinical/donation.communication/donation.communication.domain.model';
-import { DonationCommunicationSearchFilters, DonationCommunicationSearchResults } from '../../../domain.types/clinical/donation.communication/donation.communication.search.types';
+import { DonationCommunicationDomainModel } from '../../../domain.types/assorted/blood.donation/communication/communication.domain.model';
+import { DonationCommunicationDto } from '../../../domain.types/assorted/blood.donation/communication/communication.dto';
+import { DonationCommunicationSearchFilters, DonationCommunicationSearchResults } from '../../../domain.types/assorted/blood.donation/communication/communication.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -103,7 +103,7 @@ export default class Volunteer extends Model {
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    LastDonationRecordId: string;
+    LastDonationId: string;
 
     @BelongsTo(() => User)
     User: User;

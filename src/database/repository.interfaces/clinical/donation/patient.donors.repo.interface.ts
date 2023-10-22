@@ -1,17 +1,17 @@
-import { PatientDonorsDomainModel } from "../../../../domain.types/clinical/donation/patient.donors.domain.model";
-import { PatientDonorsDto } from "../../../../domain.types/clinical/donation/patient.donors.dto";
-import { PatientDonorsSearchFilters, PatientDonorsSearchResults } from "../../../../domain.types/clinical/donation/patient.donors.search.types";
+import { BridgeDomainModel } from "../../../../domain.types/assorted/blood.donation/bridge/bridge.domain.model";
+import { BridgeDto } from "../../../../domain.types/assorted/blood.donation/bridge/bridge.dto";
+import { BridgeSearchFilters, BridgeSearchResults } from "../../../../domain.types/assorted/blood.donation/bridge/bridge.search.types";
 
 export interface IPatientDonorsRepo {
 
-    create(entity: PatientDonorsDomainModel): Promise<PatientDonorsDto>;
+    create(entity: BridgeDomainModel): Promise<BridgeDto>;
 
-    getById(userId: string): Promise<PatientDonorsDto>;
+    getById(userId: string): Promise<BridgeDto>;
 
-    update(userId: string, updateModel: PatientDonorsDomainModel): Promise<PatientDonorsDto>;
+    update(userId: string, updateModel: BridgeDomainModel): Promise<BridgeDto>;
 
-    search(filters: PatientDonorsSearchFilters): Promise<PatientDonorsSearchResults>;
-    
+    search(filters: BridgeSearchFilters): Promise<BridgeSearchResults>;
+
     delete(userId: string): Promise<boolean>;
 
 }

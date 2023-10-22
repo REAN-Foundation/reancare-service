@@ -1,6 +1,6 @@
 import express from 'express';
-import { PatientDonorsDomainModel } from '../../../../domain.types/clinical/donation/patient.donors.domain.model';
-import { PatientDonorsSearchFilters } from '../../../../domain.types/clinical/donation/patient.donors.search.types';
+import { BridgeDomainModel } from '../../../../domain.types/assorted/blood.donation/bridge/bridge.domain.model';
+import { BridgeSearchFilters } from '../../../../domain.types/assorted/blood.donation/bridge/bridge.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -11,9 +11,9 @@ export class BridgeValidator extends BaseValidator {
         super();
     }
 
-    getDomainModel = (request: express.Request): PatientDonorsDomainModel => {
+    getDomainModel = (request: express.Request): BridgeDomainModel => {
 
-        const model: PatientDonorsDomainModel = {
+        const model: BridgeDomainModel = {
             Name             : request.body.Name ?? null,
             PatientUserId    : request.body.PatientUserId ?? null,
             DonorUserId      : request.body.DonorUserId ?? null,
@@ -29,12 +29,12 @@ export class BridgeValidator extends BaseValidator {
         return model;
     };
 
-    create = async (request: express.Request): Promise<PatientDonorsDomainModel> => {
+    create = async (request: express.Request): Promise<BridgeDomainModel> => {
         await this.validateCreateBody(request);
         return this.getDomainModel(request);
     };
 
-    search = async (request: express.Request): Promise<PatientDonorsSearchFilters> => {
+    search = async (request: express.Request): Promise<BridgeSearchFilters> => {
 
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
         await this.validateUuid(request, 'donorUserId', Where.Query, false, false);
@@ -53,7 +53,7 @@ export class BridgeValidator extends BaseValidator {
         return this.getFilter(request);
     };
 
-    update = async (request: express.Request): Promise<PatientDonorsDomainModel> => {
+    update = async (request: express.Request): Promise<BridgeDomainModel> => {
 
         await this.validateUpdateBody(request);
         const domainModel = this.getDomainModel(request);
@@ -94,9 +94,9 @@ export class BridgeValidator extends BaseValidator {
         this.validateRequest(request);
     }
 
-    private getFilter(request): PatientDonorsSearchFilters {
+    private getFilter(request): BridgeSearchFilters {
 
-        var filters: PatientDonorsSearchFilters = {
+        var filters: BridgeSearchFilters = {
             PatientUserId        : request.query.patientUserId ?? null,
             DonorUserId          : request.query.donorUserId ?? null,
             VolunteerUserId      : request.query.volunteerUserId ?? null,

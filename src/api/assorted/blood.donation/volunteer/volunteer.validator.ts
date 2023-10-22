@@ -1,8 +1,8 @@
 import express from 'express';
 import { query, body, validationResult, param } from 'express-validator';
-import { VolunteerSearchFilters } from '../../../../domain.types/users/Volunteer/volunteer.search.types';
+import { VolunteerSearchFilters } from '../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types';
 import { Helper } from '../../../../common/helper';
-import { VolunteerDomainModel } from '../../../../domain.types/users/Volunteer/volunteer.domain.model';
+import { VolunteerDomainModel } from '../../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +39,7 @@ export class VolunteerValidator {
             SelectedBridgeId     : request.body.SelectedBridgeId ?? null,
             SelectedBloodGroup   : request.body.SelectedBloodGroup ?? null,
             SelectedPhoneNumber  : request.body.SelectedPhoneNumber ?? null,
-            LastDonationRecordId : request.body.LastDonationRecordId ?? null,
+            LastDonationId : request.body.LastDonationId ?? null,
             LastDonationDate     : request.body.LastDonationDate ?? null,
             IsAvailable          : request.body.IsAvailable ?? false,
             AddressId            : request.body.AddressId,
@@ -140,7 +140,7 @@ export class VolunteerValidator {
             .escape()
             .run(request);
 
-        await body('LastDonationRecordId').optional()
+        await body('LastDonationId').optional()
             .trim()
             .escape()
             .run(request);

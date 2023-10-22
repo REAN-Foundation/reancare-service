@@ -1,5 +1,5 @@
 import Donor from '../../models/users/donor.model';
-import { DonorDetailsDto, DonorDto } from '../../../../../domain.types/users/donor/donor.dto';
+import { DonorDetailsDto, DonorDto } from '../../../../../domain.types/assorted/blood.donation/donor/donor.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

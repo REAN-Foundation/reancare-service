@@ -1,6 +1,6 @@
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
-import { BaseSearchResults, BaseSearchFilters } from "../../../domain.types/miscellaneous/base.search.types";
-import { DonationCommunicationDto } from "./donation.communication.dto";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { BaseSearchResults, BaseSearchFilters } from "../../../../domain.types/miscellaneous/base.search.types";
+import { DonationCommunicationDto } from "./communication.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

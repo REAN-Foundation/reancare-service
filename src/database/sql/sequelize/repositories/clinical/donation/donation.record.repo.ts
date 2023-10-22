@@ -1,19 +1,20 @@
 import { Logger } from "../../../../../../common/logger";
 import { ApiError } from "../../../../../../common/api.error";
 import { Op } from 'sequelize';
-import { IDonationRecordRepo } from "../../../../../../database/repository.interfaces/clinical/donation/donation.record.repo.interface";
-import { DonationRecordDomainModel } from "../../../../../../domain.types/clinical/donation.record/donation.record.domain.model";
-import { DonationRecordDto } from "../../../../../../domain.types/clinical/donation.record/donation.record.dto";
-import DonationRecord from "../../../models/clinical/donation/donation.record.model";
-import { DonationRecordMapper } from "../../../mappers/clinical/donation/donation.record.mapper";
-import { DonationRecordSearchFilters, DonationRecordSearchResults } from "../../../../../../domain.types/clinical/donation.record/donation.record.search.types";
+import { IDonationRepo } from "../../../../../../database/repository.interfaces/clinical/donation/donation.record.repo.interface";
+import Donation from "../../../models/clinical/donation/donation.record.model";
+import { DonationMapper } from "../../../mappers/clinical/donation/donation.record.mapper";
 import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
+import { DonationDomainModel } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.domain.model";
+import { DonationDto } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.dto";
+import { DonationSearchResults } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.search.types";
+import { DonationSearchFilters } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.search.types";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class DonationRecordRepo implements IDonationRecordRepo {
+export class DonationRepo implements IDonationRepo {
 
-    create = async (donationRecordDomainModel: DonationRecordDomainModel): Promise<DonationRecordDto> => {
+    create = async (donationRecordDomainModel: DonationDomainModel): Promise<DonationDto> => {
 
         try {
             const entity = {
@@ -28,8 +29,8 @@ export class DonationRecordRepo implements IDonationRecordRepo {
                 DonationType              : donationRecordDomainModel.DonationType
             };
 
-            const donationRecord = await DonationRecord.create(entity);
-            const dto = await DonationRecordMapper.toDetailsDto(donationRecord);
+            const donationRecord = await Donation.create(entity);
+            const dto = await DonationMapper.toDetailsDto(donationRecord);
 
             return dto;
 
@@ -39,10 +40,10 @@ export class DonationRecordRepo implements IDonationRecordRepo {
         }
     };
 
-    getById = async (id: string): Promise<DonationRecordDto> => {
+    getById = async (id: string): Promise<DonationDto> => {
         try {
-            const donationRecord = await DonationRecord.findOne({ where: { id: id } });
-            const dto = await DonationRecordMapper.toDetailsDto(donationRecord);
+            const donationRecord = await Donation.findOne({ where: { id: id } });
+            const dto = await DonationMapper.toDetailsDto(donationRecord);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -51,9 +52,9 @@ export class DonationRecordRepo implements IDonationRecordRepo {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    update = async (id: string, model: DonationRecordDomainModel): Promise<DonationRecordDto> => {
+    update = async (id: string, model: DonationDomainModel): Promise<DonationDto> => {
         try {
-            const donationRecord = await DonationRecord.findOne({ where: { id: id } });
+            const donationRecord = await Donation.findOne({ where: { id: id } });
 
             if (model.PatientUserId != null) {
                 donationRecord.PatientUserId = model.PatientUserId;
@@ -91,7 +92,7 @@ export class DonationRecordRepo implements IDonationRecordRepo {
 
             await donationRecord.save();
 
-            const dto = await DonationRecordMapper.toDetailsDto(donationRecord);
+            const dto = await DonationMapper.toDetailsDto(donationRecord);
 
             return dto;
 
@@ -101,7 +102,7 @@ export class DonationRecordRepo implements IDonationRecordRepo {
         }
     };
 
-    search = async (filters: DonationRecordSearchFilters): Promise<DonationRecordSearchResults> => {
+    search = async (filters: DonationSearchFilters): Promise<DonationSearchResults> => {
         try {
 
             const search: any = { where: {}, include: [] };
@@ -211,18 +212,18 @@ export class DonationRecordRepo implements IDonationRecordRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await DonationRecord.findAndCountAll(search);
+            const foundResults = await Donation.findAndCountAll(search);
 
-            const dtos: DonationRecordDto[] = [];
+            const dtos: DonationDto[] = [];
             for (const donationRecord of foundResults.rows) {
-                const dto = await DonationRecordMapper.toDetailsDto(donationRecord);
+                const dto = await DonationMapper.toDetailsDto(donationRecord);
                 dtos.push(dto);
             }
 
             const count = foundResults.count;
             const totalCount = typeof count === "number" ? count : count[0];
 
-            const searchResults: DonationRecordSearchResults = {
+            const searchResults: DonationSearchResults = {
                 TotalCount     : totalCount,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,
@@ -242,7 +243,7 @@ export class DonationRecordRepo implements IDonationRecordRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            const count = await DonationRecord.destroy({
+            const count = await Donation.destroy({
                 where : {
                     id : id
                 }

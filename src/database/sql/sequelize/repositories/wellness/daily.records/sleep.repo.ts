@@ -194,7 +194,7 @@ export class SleepRepo implements ISleepRepo {
                     .split('T')[0];
                 return {
                     SleepDuration : x.SleepDuration,
-                    DayStr    : dayStr,
+                    DayStr        : dayStr,
                 };
             });
             // const dayList = Array.from({ length: numDays }, (_, index) => index + 1);

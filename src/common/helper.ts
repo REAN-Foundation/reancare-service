@@ -643,10 +643,10 @@ export class Helper {
         return serviceName;
     };
 
-    public static convertPrivilegeListToPrivilegeMap = (privileges: string[]): any => {
+    public static convertStringListToJsonObject = (privileges: string[], separator = '.'): any => {
         const privilegeMap = {};
         for (var p of privileges) {
-            var tokens = p.split('.');
+            var tokens = p.split(separator);
             var currentLevel = privilegeMap;
             for (var i = 0; i < tokens.length; i++) {
                 var key = tokens[i];
@@ -671,6 +671,90 @@ export class Helper {
             }
         }
         return privilegeMap;
+    };
+
+    public static convertPrivilegeListToPrivilegeMap = (privileges: string[]): any => {
+        const privilegeMap = {};
+        for (var p of privileges) {
+            var tokens = p.split('.');
+            var currentLevel = privilegeMap;
+            for (var i = 0; i < tokens.length; i++) {
+                var key = tokens[i];
+                if (Helper.hasProperty(currentLevel, key)) {
+                    currentLevel = currentLevel[key];
+                    continue;
+                }
+                else {
+                    if (i === tokens.length - 1) {
+                        currentLevel[key] = {
+                            Enabled : true,
+                        };
+                        currentLevel = currentLevel[key];
+                    }
+                    else {
+                        currentLevel[key] = {};
+                        currentLevel = currentLevel[key];
+                    }
+                }
+            }
+        }
+        return privilegeMap;
+    };
+
+    public static convertPrivilegeMapToPrivilegeList = (privilegeMap) => {
+        const x = (privilegeMap) => {
+            const privileges = [];
+            const keys = Object.keys(privilegeMap);
+            for (var key of keys) {
+                var value = privilegeMap[key];
+                if (typeof value === "object") {
+                    var subPrivileges = x(value);
+                    for (var subPrivilege of subPrivileges) {
+                        privileges.push(key + "." + subPrivilege);
+                    }
+                } else {
+                    privileges.push(key);
+                }
+            }
+            return privileges;
+        };
+
+        const list = x(privilegeMap);
+
+        const tokenValue = (privilegeMap, tokens) => {
+            var currentLevel = privilegeMap;
+            for (var i = 0; i < tokens.length; i++) {
+                var key = tokens[i];
+                if (Helper.hasProperty(currentLevel, key)) {
+                    currentLevel = currentLevel[key];
+                    continue;
+                }
+                else {
+                    return undefined;
+                }
+            }
+            return currentLevel;
+        };
+        const refined = [];
+        for (var i = 0; i < list.length; i++) {
+            var p = list[i];
+            const tokens = p.split('.');
+            var value = tokenValue(privilegeMap, tokens);
+            if (p.endsWith(".Enabled")) {
+                p = p.replace(/\.Enabled$/, '');
+            }
+            refined.push({
+                [p] : value,
+            });
+        }
+        return refined;
+    };
+
+    public static loadJSONSeedFile = (file: string) => {
+        var filepath = path.join(process.cwd(), 'seed.data', file);
+        var fileBuffer = fs.readFileSync(filepath, 'utf8');
+        const obj = JSON.parse(fileBuffer);
+        return obj;
     };
 
 }

@@ -8,6 +8,7 @@ import { Helper } from "../../common/helper";
 import { CurrentClient } from "../../domain.types/miscellaneous/current.client";
 import * as apikeyGenerator from 'uuid-apikey';
 import { ClientAppSearchFilters, ClientAppSearchResults } from "../../domain.types/client.apps/client.app.search.types";
+import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -99,6 +100,34 @@ export class ClientAppService {
 
     delete = async (id: string): Promise<boolean> => {
         return await this._clientAppRepo.delete(id);
+    };
+
+    seedDefaultClients = async (): Promise<boolean> => {
+
+        Logger.instance().log('Seeding internal clients...');
+
+        const arr = Helper.loadJSONSeedFile('internal.clients.seed.json');
+
+        for (let i = 0; i < arr.length; i++) {
+            var c = arr[i];
+            let client = await this._clientAppRepo.getByCode(c.ClientCode);
+            if (client == null) {
+                const model: ClientAppDomainModel = {
+                    ClientName   : c['ClientName'],
+                    ClientCode   : c['ClientCode'],
+                    IsPrivileged : c['IsPrivileged'],
+                    Email        : c['Email'],
+                    Password     : c['Password'],
+                    ValidFrom    : new Date(),
+                    ValidTill    : new Date(2040, 12, 31),
+                    ApiKey       : c['ApiKey'],
+                };
+                client = await this._clientAppRepo.create(model);
+                var str = JSON.stringify(client, null, '  ');
+                Logger.instance().log(str);
+            }
+        }
+        return true;
     };
 
     private getClientCode = async (clientName: string) => {

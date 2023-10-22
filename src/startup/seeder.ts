@@ -5,7 +5,6 @@ import { UserHelper } from "../api/users/user.helper";
 import { inject, injectable } from "tsyringe";
 import * as SeededDrugs from '../../seed.data/drugs.seed.json';
 import * as SeededKnowledgeNuggets from '../../seed.data/knowledge.nuggets.seed.json';
-import * as RolePrivilegesList from '../../seed.data/role.privileges.json';
 import * as SeededAssessmentTemplates from '../../seed.data/symptom.assessment.templates.json';
 import * as SeededSymptomTypes from '../../seed.data/symptom.types.json';
 import * as SeededNutritionQuestionnaire from '../../seed.data/nutrition.questionnaire.json';
@@ -27,7 +26,6 @@ import { IRolePrivilegeRepo } from "../database/repository.interfaces/role/role.
 import { IRoleRepo } from "../database/repository.interfaces/role/role.repo.interface";
 import { IUserRepo } from "../database/repository.interfaces/users/user/user.repo.interface";
 import { IHealthSystemRepo } from "../database/repository.interfaces/users/patient/health.system.repo.interface";
-import { ClientAppDomainModel } from "../domain.types/client.apps/client.app.domain.model";
 import { DrugDomainModel } from "../domain.types/clinical/medication/drug/drug.domain.model";
 import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
@@ -36,8 +34,6 @@ import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/sympt
 import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
 import { HealthPriorityTypeDomainModel } from "../domain.types/users/patient/health.priority.type/health.priority.type.domain.model";
 import { HealthPriorityTypeList } from "../domain.types/users/patient/health.priority.type/health.priority.types";
-import { DefaultRoles, Roles } from "../domain.types/role/role.types";
-import { UserDomainModel } from "../domain.types/users/user/user.domain.model";
 import { ClientAppService } from "../services/client.apps/client.app.service";
 import { DrugService } from "../services/clinical/medication/drug.service";
 import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/symptom.assessment.template.service";
@@ -63,22 +59,27 @@ import { HealthSystemDomainModel } from "../domain.types/users/patient/health.sy
 import { HealthSystemHospitalDomainModel } from "../domain.types/users/patient/health.system/health.system.hospital.domain.model";
 import { HealthSystemService } from "../services/users/patient/health.system.service";
 import { ITenantRepo } from "../database/repository.interfaces/tenant/tenant.repo.interface";
-import { TenantDomainModel } from "../domain.types/tenant/tenant.domain.model";
+import { TenantService } from "../services/tenant/tenant.service";
+import { RolePrivilegeService } from "../services/role/role.privilege.service";
 
 //////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class Seeder {
 
-    _apiClientService: ClientAppService = null;
+    _tenantService = Loader.container.resolve(TenantService);
 
-    _patientService: PatientService = null;
+    _clientAppService: ClientAppService = Loader.container.resolve(ClientAppService);
 
-    _personService: PersonService = null;
+    _patientService: PatientService = Loader.container.resolve(PatientService);
 
-    _userService: UserService = null;
+    _personService: PersonService = Loader.container.resolve(PersonService);
 
-    _roleService: RoleService = null;
+    _userService: UserService = Loader.container.resolve(UserService);
+
+    _roleService: RoleService = Loader.container.resolve(RoleService);
+
+    _rolePrivilegeService: RolePrivilegeService = Loader.container.resolve(RolePrivilegeService);
 
     _patientHealthProfileService: HealthProfileService = null;
 
@@ -121,11 +122,6 @@ export class Seeder {
         @inject('IHealthSystemRepo') private _healthSystemRepo: IHealthSystemRepo,
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
     ) {
-        this._apiClientService = Loader.container.resolve(ClientAppService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._symptomTypeService = Loader.container.resolve(SymptomTypeService);
@@ -141,13 +137,12 @@ export class Seeder {
     public init = async (): Promise<void> => {
         try {
             await this.createTempFolders();
-            await this.seedDefaultTenant();
-            await this.checkUsersWithoutTenants();
-            await this.seedDefaultRoles();
-            await this.seedRolePrivileges();
-            await this.seedInternalClients();
-            await this.seedSystemAdmin();
-            // await this.seedInternalPatients();
+            await this._tenantService.seedDefaultTenant();
+            await this._userService.checkUsersWithoutTenants();
+            await this._roleService.seedDefaultRoles();
+            await this._rolePrivilegeService.seedRolePrivileges();
+            await this._clientAppService.seedDefaultClients();
+            await this._userService.seedSystemAdmin();
             await this.seedMedicationStockImages();
             await this.seedSymptomTypes();
             await this.seedSymptomAsseessmentTemplates();
@@ -166,149 +161,6 @@ export class Seeder {
     private createTempFolders = async () => {
         await Helper.createTempDownloadFolder();
         await Helper.createTempUploadFolder();
-    };
-
-    private seedDefaultTenant = async () => {
-        var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
-        if (defaultTenant == null) {
-            var tenant: TenantDomainModel = {
-                Name        : 'default',
-                Description : 'Default tenant',
-                Code        : 'default',
-                Phone       : '0000000000',
-                Email       : 'support@reanfoundation.org',
-            };
-            var defaultTenant = await this._tenantRepo.create(tenant);
-            return defaultTenant;
-        }
-        else {
-            var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
-            return defaultTenant;
-        }
-    };
-
-    private checkUsersWithoutTenants = async () => {
-        await this._userRepo.checkUsersWithoutTenants();
-    };
-
-    private seedRolePrivileges = async () => {
-        try {
-            const arr = RolePrivilegesList['default'];
-            for (let i = 0; i < arr.length; i++) {
-                const rp = arr[i];
-                const roleName = rp['Role'];
-                const privileges = rp['Privileges'];
-
-                const role = await this._roleRepo.getByName(roleName);
-                if (role == null) {
-                    continue;
-                }
-                for (const privilege of privileges) {
-                    const exists = await this._rolePrivilegeRepo.hasPrivilegeForRole(role.id, privilege);
-                    if (!exists) {
-                        await this._rolePrivilegeRepo.create({
-                            RoleId    : role.id,
-                            Privilege : privilege,
-                        });
-                    }
-                }
-            }
-        } catch (error) {
-            Logger.instance().log('Error occurred while seeding role-privileges!');
-        }
-        Logger.instance().log('Seeded role-privileges successfully!');
-    };
-
-    private seedSystemAdmin = async () => {
-
-        const exists = await this._userRepo.userNameExists('super-admin');
-        if (exists) {
-            return;
-        }
-
-        const SeededSystemAdmin = this.loadJSONSeedFile('system.admin.seed.json');
-        const tenant = await this._tenantRepo.getTenantWithCode('default');
-
-        const role = await this._roleRepo.getByName(Roles.SystemAdmin);
-
-        const userDomainModel: UserDomainModel = {
-            Person : {
-                Phone     : SeededSystemAdmin.Phone,
-                FirstName : SeededSystemAdmin.FirstName,
-            },
-            TenantId        : tenant.id,
-            UserName        : SeededSystemAdmin.UserName,
-            Password        : SeededSystemAdmin.Password,
-            DefaultTimeZone : SeededSystemAdmin.DefaultTimeZone,
-            CurrentTimeZone : SeededSystemAdmin.CurrentTimeZone,
-            RoleId          : role.id,
-        };
-
-        const person = await this._personRepo.create(userDomainModel.Person);
-        userDomainModel.Person.id = person.id;
-        await this._userRepo.create(userDomainModel);
-        await this._personRoleRepo.addPersonRole(person.id, role.id);
-
-        Logger.instance().log('Seeded admin user successfully!');
-    };
-
-    private loadJSONSeedFile(file: string): any {
-        var filepath = path.join(process.cwd(), 'seed.data', file);
-        var fileBuffer = fs.readFileSync(filepath, 'utf8');
-        const obj = JSON.parse(fileBuffer);
-        return obj;
-    }
-
-    private seedInternalClients = async () => {
-
-        Logger.instance().log('Seeding internal clients...');
-
-        const arr = this.loadJSONSeedFile('internal.clients.seed.json');
-
-        for (let i = 0; i < arr.length; i++) {
-            var c = arr[i];
-            let client = await this._apiClientService.getByCode(c.ClientCode);
-            if (client == null) {
-                const model: ClientAppDomainModel = {
-                    ClientName   : c['ClientName'],
-                    ClientCode   : c['ClientCode'],
-                    IsPrivileged : c['IsPrivileged'],
-                    Email        : c['Email'],
-                    Password     : c['Password'],
-                    ValidFrom    : new Date(),
-                    ValidTill    : new Date(2040, 12, 31),
-                    ApiKey       : c['ApiKey'],
-                };
-                client = await this._apiClientService.create(model);
-                var str = JSON.stringify(client, null, '  ');
-                Logger.instance().log(str);
-            }
-        }
-
-    };
-
-    private seedDefaultRoles = async () => {
-
-        const defaultTenant = await this._tenantRepo.getTenantWithCode('default');
-        if (defaultTenant == null) {
-            return;
-        }
-
-        for await (const r of DefaultRoles) {
-            const role = await this._roleRepo.getByName(r.Role);
-            if (role == null) {
-                await this._roleRepo.create({
-                    RoleName      : r.Role,
-                    Description   : r.Description,
-                    TenantId      : defaultTenant.id,
-                    IsSystemRole  : r.IsSystemRole,
-                    IsUserRole    : r.IsUserRole,
-                    IsDefaultRole : true,
-                });
-            }
-        }
-
-        Logger.instance().log('Seeded default roles successfully!');
     };
 
     private seedMedicationStockImages = async () => {
@@ -631,44 +483,5 @@ export class Seeder {
         }
 
     };
-
-    // private seedInternalPatients = async () => {
-    //     try {
-    //         var numInternalTestUsers = parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS);
-    //         var arr = JSON.parse("[" + [...Array(numInternalTestUsers)].map((_, i) => 1000000001 + i * 1) + "]");
-    //         if (arr.length === numInternalTestUsers) {
-    //             for (let i = 0; i < arr.length; i++) {
-    //                 var phone = arr[i];
-    //                 var exists = await this._personRepo.personExistsWithPhone(phone.toString());
-    //                 if (!exists) {
-    //                     var added = await this.createTestPatient(phone.toString());
-    //                     if (added) {
-    //                         await this._internalTestUserRepo.create(phone.toString());
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     catch (error) {
-    //         Logger.instance().log('Error occurred while seeding internal test users!');
-    //     }
-    //     Logger.instance().log('Seeded internal-test-users successfully!');
-    // };
-    //
-    // private createTestPatient = async (phone: string): Promise<boolean> => {
-    //     var createModel: PatientDomainModel = {
-    //         User : {
-    //             Person : {
-    //                 Phone : phone
-    //             }
-    //         },
-    //         Address : null
-    //     };
-    //     var [patient, createdNew ] = await this._userHelper.createPatient(createModel);
-    //     const message = createdNew ?
-    //      `Created new test patient with phone ${phone}!` : `Test patient with phone ${phone} already exists!`;
-    //     Logger.instance().log(message);
-    //     return patient != null;
-    // };
 
 }

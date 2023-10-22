@@ -2,6 +2,9 @@ import { inject, injectable } from "tsyringe";
 import { IRoleRepo } from "../../database/repository.interfaces/role/role.repo.interface";
 import { RoleDto } from "../../domain.types/role/role.dto";
 import { RoleSearchFilters } from "../../domain.types/role/role.domain.model";
+import { Logger } from "../../common/logger";
+import { DefaultRoles } from "../../domain.types/role/role.types";
+import { ITenantRepo } from "../../database/repository.interfaces/tenant/tenant.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -10,6 +13,7 @@ export class RoleService {
 
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
     ) {}
 
     create = async (entity: any): Promise<RoleDto> => {
@@ -38,6 +42,31 @@ export class RoleService {
 
     update = async (id: number, entity: any): Promise<RoleDto> => {
         return await this._roleRepo.update(id, entity);
+    };
+
+    seedDefaultRoles = async (): Promise<boolean> => {
+
+        const defaultTenant = await this._tenantRepo.getTenantWithCode('default');
+        if (defaultTenant == null) {
+            return;
+        }
+
+        for await (const r of DefaultRoles) {
+            const role = await this._roleRepo.getByName(r.Role);
+            if (role == null) {
+                await this._roleRepo.create({
+                    RoleName      : r.Role,
+                    Description   : r.Description,
+                    TenantId      : defaultTenant.id,
+                    IsSystemRole  : r.IsSystemRole,
+                    IsUserRole    : r.IsUserRole,
+                    IsDefaultRole : true,
+                });
+            }
+        }
+
+        Logger.instance().log('Seeded default roles successfully!');
+        return true;
     };
 
 }

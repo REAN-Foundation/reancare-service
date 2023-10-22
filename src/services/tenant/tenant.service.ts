@@ -73,6 +73,25 @@ export class TenantService {
         return await this._tenantRepo.getTenantRegularUsers(id);
     };
 
+    public seedDefaultTenant = async (): Promise<TenantDto> => {
+        var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
+        if (defaultTenant == null) {
+            var tenant: TenantDomainModel = {
+                Name        : 'default',
+                Description : 'Default tenant',
+                Code        : 'default',
+                Phone       : '0000000000',
+                Email       : 'support@reanfoundation.org',
+            };
+            var defaultTenant = await this._tenantRepo.create(tenant);
+            return defaultTenant;
+        }
+        else {
+            var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
+            return defaultTenant;
+        }
+    };
+
     //#endregion
 
 }

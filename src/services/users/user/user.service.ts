@@ -39,7 +39,7 @@ export class UserService {
     constructor(
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
-        @inject('IPersonRoleRepo') private _userRoleRepo: IPersonRoleRepo,
+        @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
         @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo,
@@ -411,6 +411,43 @@ export class UserService {
     public getTenantsForUser = async (userId: uuid): Promise<TenantDto[]> => {
         var tenants = await this._userRepo.getTenantsForUser(userId);
         return tenants;
+    };
+
+    public seedSystemAdmin = async () => {
+
+        const exists = await this._userRepo.userNameExists('super-admin');
+        if (exists) {
+            return;
+        }
+
+        const SeededSystemAdmin = Helper.loadJSONSeedFile('system.admin.seed.json');
+        const tenant = await this._tenantRepo.getTenantWithCode('default');
+
+        const role = await this._roleRepo.getByName(Roles.SystemAdmin);
+
+        const userDomainModel: UserDomainModel = {
+            Person : {
+                Phone     : SeededSystemAdmin.Phone,
+                FirstName : SeededSystemAdmin.FirstName,
+            },
+            TenantId        : tenant.id,
+            UserName        : SeededSystemAdmin.UserName,
+            Password        : SeededSystemAdmin.Password,
+            DefaultTimeZone : SeededSystemAdmin.DefaultTimeZone,
+            CurrentTimeZone : SeededSystemAdmin.CurrentTimeZone,
+            RoleId          : role.id,
+        };
+
+        const person = await this._personRepo.create(userDomainModel.Person);
+        userDomainModel.Person.id = person.id;
+        await this._userRepo.create(userDomainModel);
+        await this._personRoleRepo.addPersonRole(person.id, role.id);
+
+        Logger.instance().log('Seeded admin user successfully!');
+    };
+
+    public checkUsersWithoutTenants = async () => {
+        await this._userRepo.checkUsersWithoutTenants();
     };
 
     //#endregion

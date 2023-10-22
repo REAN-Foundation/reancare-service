@@ -1,10 +1,10 @@
 import express from 'express';
-import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { DailyAssessmentService } from '../../../services/clinical/daily.assessment/daily.assessment.service';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { DailyAssessmentService } from '../../../../services/clinical/daily.assessment/daily.assessment.service';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
-import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { BaseController } from '../../../base.controller';
+import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -12,13 +12,12 @@ export class DailyAssessmentController extends BaseController{
 
     //#region member variables and constructors
 
-    _service: DailyAssessmentService = null;
+    _service: DailyAssessmentService = Loader.container.resolve(DailyAssessmentService);
 
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 
     constructor() {
         super('DailyAssessment');
-        this._service = Loader.container.resolve(DailyAssessmentService);
     }
     //#endregion
 

@@ -1,7 +1,7 @@
 import express from 'express';
-import { DailyAssessmentDomainModel } from '../../../domain.types/clinical/daily.assessment/daily.assessment.domain.model';
-import { DailyAssessmentSearchFilters } from '../../../domain.types/clinical/daily.assessment/daily.assessment.search.types';
-import { BaseValidator, Where } from '../../base.validator';
+import { DailyAssessmentDomainModel } from '../../../../domain.types/clinical/daily.assessment/daily.assessment.domain.model';
+import { DailyAssessmentSearchFilters } from '../../../../domain.types/clinical/daily.assessment/daily.assessment.search.types';
+import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

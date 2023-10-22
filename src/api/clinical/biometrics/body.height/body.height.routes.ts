@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new BodyHeightController();
 
-    router.post('/', auth('Biometrics.BodyHeight.Create'), controller.create);
-    router.get('/search', auth('Biometrics.BodyHeight.Search'), controller.search);
-    router.get('/:id', auth('Biometrics.BodyHeight.GetById'), controller.getById);
-    router.put('/:id', auth('Biometrics.BodyHeight.Update'), controller.update);
-    router.delete('/:id', auth('Biometrics.BodyHeight.Delete'), controller.delete);
+    router.post('/', auth('Clinical.Biometrics.BodyHeight.Create'), controller.create);
+    router.get('/search', auth('Clinical.Biometrics.BodyHeight.Search'), controller.search);
+    router.get('/:id', auth('Clinical.Biometrics.BodyHeight.GetById'), controller.getById);
+    router.put('/:id', auth('Clinical.Biometrics.BodyHeight.Update'), controller.update);
+    router.delete('/:id', auth('Clinical.Biometrics.BodyHeight.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/biometrics/body-heights', router);
 };

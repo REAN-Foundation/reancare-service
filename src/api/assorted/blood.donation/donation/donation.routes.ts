@@ -8,11 +8,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new DonationController();
 
-    router.post('/', auth('Donation.Create'), controller.create);
-    router.get('/search', auth('Donation.Search'), controller.search);
-    router.get('/:id', auth('Donation.GetById'), controller.getById);
-    router.put('/:id', auth('Donation.Update'), controller.update);
-    router.delete('/:id', auth('Donation.Delete'), controller.delete);
+    router.post('/', auth('Assorted.BloodDonation.Donation.Create'), controller.create);
+    router.get('/search', auth('Assorted.BloodDonation.Donation.Search'), controller.search);
+    router.get('/:id', auth('Assorted.BloodDonation.Donation.GetById'), controller.getById);
+    router.put('/:id', auth('Assorted.BloodDonation.Donation.Update'), controller.update);
+    router.delete('/:id', auth('Assorted.BloodDonation.Donation.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/donation-record', router);
 };

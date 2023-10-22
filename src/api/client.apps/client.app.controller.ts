@@ -24,7 +24,6 @@ export class ClientAppController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.Create';
             const clientDomainModel = await ClientAppValidator.create(request);
 
             const clientApp = await this._service.create(clientDomainModel);
@@ -41,7 +40,6 @@ export class ClientAppController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.GetById';
             const id: string = await ClientAppValidator.getById(request);
 
             const clientApp = await this._service.getById(id);
@@ -58,7 +56,6 @@ export class ClientAppController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.Search';
             const filters = await ClientAppValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -77,7 +74,6 @@ export class ClientAppController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.Update';
             const id: string = await ClientAppValidator.getById(request);
             const domainModel = await ClientAppValidator.update(request);
             const clientApp = await this._service.update(id, domainModel);
@@ -94,7 +90,6 @@ export class ClientAppController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.Delete';
             const id: string = await ClientAppValidator.getById(request);
             await this._service.delete(id);
             ResponseHandler.success(request, response, 'Client app deleted successfully!', 200, null);
@@ -105,10 +100,7 @@ export class ClientAppController extends BaseController {
 
     getCurrentApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.GetApiKey';
-
             const verificationModel = await ClientAppValidator.getOrRenewApiKey(request);
-
             const apiKeyDto = await this._service.getApiKey(verificationModel);
             if (apiKeyDto == null) {
                 throw new ApiError(400, 'Unable to retrieve client app api key.');
@@ -123,7 +115,6 @@ export class ClientAppController extends BaseController {
 
     renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.RenewApiKey';
             const verificationModel = await ClientAppValidator.getOrRenewApiKey(request);
             if (verificationModel.ValidFrom == null) {
                 verificationModel.ValidFrom = new Date();

@@ -10,11 +10,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new PulseController();
 
-    router.post('/', auth('Biometrics.Pulse.Create'), controller.create);
-    router.get('/search', auth('Biometrics.Pulse.Search'), controller.search);
-    router.get('/:id', auth('Biometrics.Pulse.GetById'), controller.getById);
-    router.put('/:id', auth('Biometrics.Pulse.Update'), controller.update);
-    router.delete('/:id', auth('Biometrics.Pulse.Delete'), controller.delete);
+    router.post('/', auth('Clinical.Biometrics.Pulse.Create'), controller.create);
+    router.get('/search', auth('Clinical.Biometrics.Pulse.Search'), controller.search);
+    router.get('/:id', auth('Clinical.Biometrics.Pulse.GetById'), controller.getById);
+    router.put('/:id', auth('Clinical.Biometrics.Pulse.Update'), controller.update);
+    router.delete('/:id', auth('Clinical.Biometrics.Pulse.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/biometrics/pulse', router);
 };

@@ -9,17 +9,17 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new DocumentController();
 
-    router.get('/types', auth('PatientDocument.GetTypes', true), controller.getTypes);
-    router.post('/', auth('PatientDocument.Upload'), controller.upload);
-    router.put('/:id/rename', auth('PatientDocument.Rename'), controller.rename);
-    router.put('/:id', auth('PatientDocument.Update'), controller.update);
+    router.get('/types', auth('Users.Patients.Document.GetTypes', true), controller.getTypes);
+    router.post('/', auth('Users.Patients.Document.Upload'), controller.upload);
+    router.put('/:id/rename', auth('Users.Patients.Document.Rename'), controller.rename);
+    router.put('/:id', auth('Users.Patients.Document.Update'), controller.update);
 
-    router.get('/search', auth('PatientDocument.Search'), controller.search);
-    router.get('/:id/download', auth('PatientDocument.Download'), controller.download);
-    router.get('/:id/share', auth('PatientDocument.Share'), controller.share);
+    router.get('/search', auth('Users.Patients.Document.Search'), controller.search);
+    router.get('/:id/download', auth('Users.Patients.Document.Download'), controller.download);
+    router.get('/:id/share', auth('Users.Patients.Document.Share'), controller.share);
 
-    router.get('/:id/', auth('PatientDocument.GetById'), controller.getById);
-    router.delete('/:id', auth('PatientDocument.Delete'), controller.delete);
+    router.get('/:id/', auth('Users.Patients.Document.GetById'), controller.getById);
+    router.delete('/:id', auth('Users.Patients.Document.Delete'), controller.delete);
 
     app.use('/api/v1/patient-documents', router);
 };

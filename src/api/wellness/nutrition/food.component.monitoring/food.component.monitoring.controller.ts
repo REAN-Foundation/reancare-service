@@ -1,11 +1,11 @@
 import express from 'express';
-import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { FoodComponentMonitoringService } from '../../../services/wellness/food.component.monitoring/food.component.monitoring.service';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { FoodComponentMonitoringService } from '../../../../services/wellness/food.component.monitoring/food.component.monitoring.service';
 import { FoodComponentMonitoringValidator } from './food.component.monitoring.validator';
-import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { BaseController } from '../../../base.controller';
+import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,14 +13,12 @@ export class FoodComponentMonitoringController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: FoodComponentMonitoringService = null;
+    _service: FoodComponentMonitoringService = Loader.container.resolve(FoodComponentMonitoringService);
 
     _validator: FoodComponentMonitoringValidator = new FoodComponentMonitoringValidator();
 
     constructor() {
         super('FoodComponentMonitoring');
-        this._service = Loader.container.resolve(FoodComponentMonitoringService);
-
     }
 
     //#endregion

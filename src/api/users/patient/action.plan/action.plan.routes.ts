@@ -9,12 +9,12 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new ActionPlanController();
 
-    router.post('/', auth('ActionPlan.Create'), controller.create);
-    router.get('/search', auth('ActionPlan.Search'), controller.search);
-    router.get('/for-patient/:patientUserId', auth('ActionPlan.GetSelectedActionPlans'), controller.getSelectedActionPlans);
-    router.get('/by-goal/:goalId', auth('ActionPlan.GetActionPlans'), controller.getActionPlans);
-    router.put('/:id', auth('ActionPlan.Update'), controller.update);
-    router.delete('/:id', auth('ActionPlan.Delete'), controller.delete);
+    router.post('/', auth('Users.Patients.ActionPlan.Create'), controller.create);
+    router.get('/search', auth('Users.Patients.ActionPlan.Search'), controller.search);
+    router.get('/for-patient/:patientUserId', auth('Users.Patients.ActionPlan.GetSelectedActionPlans'), controller.getSelectedActionPlans);
+    router.get('/by-goal/:goalId', auth('Users.Patients.ActionPlan.GetActionPlans'), controller.getActionPlans);
+    router.put('/:id', auth('Users.Patients.ActionPlan.Update'), controller.update);
+    router.delete('/:id', auth('Users.Patients.ActionPlan.Delete'), controller.delete);
 
     app.use('/api/v1/action-plans', router);
 };

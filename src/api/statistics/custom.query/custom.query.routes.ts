@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new CustomQueryController();
 
-    router.post('/', auth('CustomQuery.ExecuteQuery'), controller.executeQuery);
-    router.get('/search', auth('CustomQuery.Search'), controller.search);
-    router.get('/:id', auth('CustomQuery.GetById'), controller.getById);
-    router.put('/:id', auth('CustomQuery.Update'), controller.update);
-    router.delete('/:id', auth('CustomQuery.Delete'), controller.delete);
+    router.post('/', auth('Statistics.CustomQuery.ExecuteQuery'), controller.executeQuery);
+    router.get('/search', auth('Statistics.CustomQuery.Search'), controller.search);
+    router.get('/:id', auth('Statistics.CustomQuery.GetById'), controller.getById);
+    router.put('/:id', auth('Statistics.CustomQuery.Update'), controller.update);
+    router.delete('/:id', auth('Statistics.CustomQuery.Delete'), controller.delete);
 
     app.use('/api/v1/custom-query', router);
 };

@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new HealthPriorityController();
 
-    router.post('/', auth('HealthPriority.Create'), controller.create);
-    router.get('/search', auth('HealthPriority.Search'), controller.search);
-    router.get('/for-patient/:patientUserId', auth('HealthPriority.getPatientHealthPriorities'), controller.getPatientHealthPriorities);
-    router.put('/:id', auth('HealthPriority.Update'), controller.update);
-    router.delete('/:id', auth('HealthPriority.Delete'), controller.delete);
+    router.post('/', auth('Users.Patients.HealthPriority.Create'), controller.create);
+    router.get('/search', auth('Users.Patients.HealthPriority.Search'), controller.search);
+    router.get('/for-patient/:patientUserId', auth('Users.Patients.HealthPriority.getPatientHealthPriorities'), controller.getPatientHealthPriorities);
+    router.put('/:id', auth('Users.Patients.HealthPriority.Update'), controller.update);
+    router.delete('/:id', auth('Users.Patients.HealthPriority.Delete'), controller.delete);
 
     app.use('/api/v1/patient-health-priorities', router);
 };

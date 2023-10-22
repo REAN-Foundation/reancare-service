@@ -1,7 +1,7 @@
 import express from 'express';
-import { FoodComponentMonitoringDomainModel } from '../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.domain.model';
-import { FoodComponentMonitoringSearchFilters } from '../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.search.types';
-import { BaseValidator, Where } from '../../base.validator';
+import { FoodComponentMonitoringDomainModel } from '../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.domain.model';
+import { FoodComponentMonitoringSearchFilters } from '../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.search.types';
+import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

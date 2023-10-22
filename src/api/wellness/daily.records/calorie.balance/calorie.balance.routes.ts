@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new CalorieBalanceController();
 
-    router.post('/', auth('DailyRecords.CalorieBalance.Create'), controller.create);
-    router.get('/search', auth('DailyRecords.CalorieBalance.Search'), controller.search);
-    router.get('/:id', auth('DailyRecords.CalorieBalance.GetById'), controller.getById);
-    router.put('/:id', auth('DailyRecords.CalorieBalance.Update'), controller.update);
-    router.delete('/:id', auth('DailyRecords.CalorieBalance.Delete'), controller.delete);
+    router.post('/', auth('Wellness.DailyRecords.CalorieBalance.Create'), controller.create);
+    router.get('/search', auth('Wellness.DailyRecords.CalorieBalance.Search'), controller.search);
+    router.get('/:id', auth('Wellness.DailyRecords.CalorieBalance.GetById'), controller.getById);
+    router.put('/:id', auth('Wellness.DailyRecords.CalorieBalance.Update'), controller.update);
+    router.delete('/:id', auth('Wellness.DailyRecords.CalorieBalance.Delete'), controller.delete);
 
     app.use('/api/v1/wellness/daily-records/calorie-balances', router);
 };

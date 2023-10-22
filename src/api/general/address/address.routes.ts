@@ -9,11 +9,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new AddressController();
 
-    router.post('/', auth('Address.Create'), controller.create);
-    router.get('/search', auth('Address.Search'), controller.search);
-    router.get('/:id', auth('Address.GetById'), controller.getById);
-    router.put('/:id', auth('Address.Update'), controller.update);
-    router.delete('/:id', auth('Address.Delete'), controller.delete);
+    router.post('/', auth('General.Address.Create'), controller.create);
+    router.get('/search', auth('General.Address.Search'), controller.search);
+    router.get('/:id', auth('General.Address.GetById'), controller.getById);
+    router.put('/:id', auth('General.Address.Update'), controller.update);
+    router.delete('/:id', auth('General.Address.Delete'), controller.delete);
 
     app.use('/api/v1/addresses', router);
 };

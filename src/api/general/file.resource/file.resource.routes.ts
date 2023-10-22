@@ -25,12 +25,11 @@ export const register = (app: express.Application): void => {
 
     //Upload a new version of existing resource
 
-    router.post('/:id/upload-version', auth('FileResource.Upload'), controller.uploadVersion);
-    router.post('/upload-binary', auth('FileResource.Upload'), controller.uploadBinary);
-    router.post('/upload', auth('FileResource.Upload'), controller.upload);
-    router.post('/:id/rename/:newFileName', auth('FileResource.Rename'), controller.rename);
-
-    router.put('/:id', auth('FileResource.Update'), controller.update);
+    router.post('/:id/upload-version', auth('General.FileResource.Upload'), controller.uploadVersion);
+    router.post('/upload-binary', auth('General.FileResource.Upload'), controller.uploadBinary);
+    router.post('/upload', auth('General.FileResource.Upload'), controller.upload);
+    router.post('/:id/rename/:newFileName', auth('General.FileResource.Rename'), controller.rename);
+    router.put('/:id', auth('General.FileResource.Update'), controller.update);
 
     //#endregion
 
@@ -44,10 +43,10 @@ export const register = (app: express.Application): void => {
     //3. referenceId=<> and optional referenceType=<>
     //4. tag=<>
 
-    router.get('/search-download', auth('FileResource.SearchAndDownload'), controller.searchAndDownload);
-    router.get('/:id/download-by-version-name/:version', auth('FileResource.DownloadByVersionName'), controller.downloadByVersionName);
-    router.get('/:id/download-by-version-id/:versionId', auth('FileResource.DownloadByVersionId'), controller.downloadByVersionId);
-    router.get('/:id/download', controller.downloadById);
+    router.get('/search-download', auth('General.FileResource.SearchAndDownload'), controller.searchAndDownload);
+    router.get('/:id/download-by-version-name/:version', auth('General.FileResource.DownloadByVersionName'), controller.downloadByVersionName);
+    router.get('/:id/download-by-version-id/:versionId', auth('General.FileResource.DownloadByVersionId'), controller.downloadByVersionId);
+    router.get('/:id/download', auth('General.FileResource.DownloadById'), controller.downloadById);
 
     //#endregion
 
@@ -61,10 +60,10 @@ export const register = (app: express.Application): void => {
     //3. referenceId=<> and optional referenceType=<>
     //4. tag=<>
 
-    router.get('/search', auth('FileResource.Search'), controller.search);
-    router.get('/:id/versions/:versionId', auth('FileResource.GetVersionById'), controller.getVersionById);
-    router.get('/:id/versions', auth('FileResource.GetVersions'), controller.getVersions);
-    router.get('/:id', auth('FileResource.GetResourceInfo'), controller.getResourceInfo);
+    router.get('/search', auth('General.FileResource.Search'), controller.search);
+    router.get('/:id/versions/:versionId', auth('General.FileResource.GetVersionById'), controller.getVersionById);
+    router.get('/:id/versions', auth('General.FileResource.GetVersions'), controller.getVersions);
+    router.get('/:id', auth('General.FileResource.GetResourceInfo'), controller.getResourceInfo);
 
     //#endregion
 
@@ -73,8 +72,8 @@ export const register = (app: express.Application): void => {
     //Routes to delete resource. These routes will wipe out resources from storage and database.
     //NOTE: Please note that only those resources will be deleted which are owned by requesting user.
 
-    router.delete('/:id/versions/:versionId', auth('FileResource.DeleteVersionByVersionId'), controller.deleteVersionByVersionId);
-    router.delete('/:id', auth('FileResource.Delete'), controller.delete);
+    router.delete('/:id/versions/:versionId', auth('General.FileResource.DeleteVersionByVersionId'), controller.deleteVersionByVersionId);
+    router.delete('/:id', auth('General.FileResource.Delete'), controller.delete);
 
     //#endregion
 

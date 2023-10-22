@@ -7,11 +7,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new DoctorController();
 
-    router.post('/', auth('Doctor.Create', true), controller.create);
-    router.get('/search', auth('Doctor.Search'), controller.search);
-    router.get('/:userId', auth('Doctor.GetByUserId'), controller.getByUserId);
-    router.put('/:userId', auth('Doctor.UpdateByUserId'), controller.updateByUserId);
-    router.delete('/:userId', auth('Doctor.DeleteByUserId'), controller.deleteByUserId);
+    router.post('/', auth('Users.Doctor.Create', true), controller.create);
+    router.get('/search', auth('Users.Doctor.Search'), controller.search);
+    router.get('/:userId', auth('Users.Doctor.GetByUserId'), controller.getByUserId);
+    router.put('/:userId', auth('Users.Doctor.UpdateByUserId'), controller.updateByUserId);
+    router.delete('/:userId', auth('Users.Doctor.DeleteByUserId'), controller.deleteByUserId);
 
     app.use('/api/v1/doctors', router);
 };

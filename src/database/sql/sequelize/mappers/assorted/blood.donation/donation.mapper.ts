@@ -1,5 +1,5 @@
 import { DonationDto } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.dto";
-import Donation from "../../../models/clinical/donation/donation.record.model";
+import Donation from "../../../models/assorted/blood.donation/donation.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

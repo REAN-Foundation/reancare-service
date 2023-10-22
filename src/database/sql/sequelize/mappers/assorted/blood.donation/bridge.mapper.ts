@@ -1,11 +1,11 @@
 import { BridgeDto } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.dto";
-import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
+import Bridge from "../../../models/assorted/blood.donation/bridge.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class BridgeMapper {
 
-    static toDetailsDto = async (bridge: PatientDonors): Promise<BridgeDto> => {
+    static toDetailsDto = async (bridge: Bridge): Promise<BridgeDto> => {
 
         if (bridge == null){
             return null;

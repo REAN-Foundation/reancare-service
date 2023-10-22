@@ -6,7 +6,7 @@ import { IVolunteerRepo } from "../../../../../repository.interfaces/assorted/bl
 import { VolunteerSearchResults, VolunteerSearchFilters } from "../../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types";
 import { VolunteerDto, VolunteerDetailsDto } from "../../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
 import { VolunteerMapper } from "../../../mappers/assorted/blood.donation/volunteer.mapper";
-import Volunteer from "../../../models/users/volunteer.model";
+import Volunteer from "../../../models/assorted/blood.donation/volunteer.model";
 import { VolunteerDomainModel } from "../../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model";
 
 ///////////////////////////////////////////////////////////////////////////////////

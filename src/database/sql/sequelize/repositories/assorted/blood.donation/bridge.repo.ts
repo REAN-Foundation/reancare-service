@@ -4,7 +4,7 @@ import { Op } from 'sequelize';
 import { BridgeDomainModel } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.domain.model";
 import { BridgeDto } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.dto";
 import { BridgeSearchFilters, BridgeSearchResults } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.search.types";
-import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
+import Bridge from "../../../models/assorted/blood.donation/bridge.model";
 import { BridgeMapper } from "../../../mappers/assorted/blood.donation/bridge.mapper";
 import { IBridgeRepo } from "../../../../../repository.interfaces/assorted/blood.donation/bridge.repo.interface";
 
@@ -28,7 +28,7 @@ export class BridgeRepo implements IBridgeRepo {
                 Status           : model.Status,
             };
 
-            const patientDonors = await PatientDonors.create(entity);
+            const patientDonors = await Bridge.create(entity);
             const dto = await BridgeMapper.toDetailsDto(patientDonors);
 
             return dto;
@@ -41,7 +41,7 @@ export class BridgeRepo implements IBridgeRepo {
 
     getById = async (id: string): Promise<BridgeDto> => {
         try {
-            const patientDonors = await PatientDonors.findOne({ where: { id: id } });
+            const patientDonors = await Bridge.findOne({ where: { id: id } });
             const dto = await BridgeMapper.toDetailsDto(patientDonors);
             return dto;
         } catch (error) {
@@ -53,7 +53,7 @@ export class BridgeRepo implements IBridgeRepo {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     update = async (id: string, model: BridgeDomainModel): Promise<BridgeDto> => {
         try {
-            const patientDonors = await PatientDonors.findOne({ where: { id: id } });
+            const patientDonors = await Bridge.findOne({ where: { id: id } });
 
             if (model.PatientUserId != null) {
                 patientDonors.PatientUserId = model.PatientUserId;
@@ -178,7 +178,7 @@ export class BridgeRepo implements IBridgeRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await PatientDonors.findAndCountAll(search);
+            const foundResults = await Bridge.findAndCountAll(search);
 
             const dtos: BridgeDto[] = [];
             for (const patientDonors of foundResults.rows) {
@@ -209,7 +209,7 @@ export class BridgeRepo implements IBridgeRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            const count = await PatientDonors.destroy({
+            const count = await Bridge.destroy({
                 where : {
                     id : id
                 }

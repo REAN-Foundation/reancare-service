@@ -4,7 +4,7 @@ import { Op } from 'sequelize';
 import Person from "../../../models/person/person.model";
 import { DonorDomainModel } from "../../../../../../domain.types/assorted/blood.donation/donor/donor.domain.model";
 import { DonorDetailsDto, DonorDto } from "../../../../../../domain.types/assorted/blood.donation/donor/donor.dto";
-import Donor from "../../../models/users/donor.model";
+import Donor from "../../../models/assorted/blood.donation/donor.model";
 import { DonorMapper } from "../../../mappers/assorted/blood.donation/donor.mapper";
 import { DonorSearchFilters, DonorSearchResults } from "../../../../../../domain.types/assorted/blood.donation/donor/donor.search.types";
 import { IDonorRepo } from "../../../../../repository.interfaces/assorted/blood.donation/donor.repo.interface";

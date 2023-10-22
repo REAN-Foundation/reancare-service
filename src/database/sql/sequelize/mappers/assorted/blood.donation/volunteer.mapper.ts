@@ -1,5 +1,5 @@
 import { VolunteerDto, VolunteerDetailsDto } from "../../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
-import Volunteer from "../../../models/users/volunteer.model";
+import Volunteer from "../../../models/assorted/blood.donation/volunteer.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

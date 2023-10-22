@@ -1,20 +1,20 @@
 import {
     BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
+import { BridgeStatus, BridgeStatusList, DonorType, DonorTypeList } from '../../../../../../domain.types/miscellaneous/clinical.types';
 import { v4 } from 'uuid';
-import Person from '../person/person.model';
-import User from './user/user.model';
+import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'Volunteer',
-    tableName       : 'blood_donation_volunteers',
+    modelName       : 'Bridge',
+    tableName       : 'donation_patient_donors',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class Volunteer extends Model {
+export default class Bridge extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -27,34 +27,44 @@ export default class Volunteer extends Model {
     })
     id: string;
 
+    @Column({
+        type      : DataType.STRING(32),
+        allowNull : true,
+    })
+    Name: string;
+
     @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
     })
-    UserId: string;
+    PatientUserId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => Person)
+    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
     })
-    PersonId: string;
+    DonorUserId: string;
 
-    @Length({ min: 4, max: 24 })
+    @Length({ max: 32 })
     @Column({
-        type      : DataType.STRING(24),
-        allowNull : false,
+        type         : DataType.STRING(32),
+        allowNull    : false,
+        values       : DonorTypeList,
+        defaultValue : DonorType.BloodBridge
     })
-    DisplayId: string;
+    DonorType: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => User)
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.UUID,
         allowNull : true,
     })
-    EhrId: string;
+    VolunteerUserId: string;
 
     @Column({
         type      : DataType.STRING(16),
@@ -66,50 +76,30 @@ export default class Volunteer extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
+    NextDonationDate?   : Date;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
     LastDonationDate?  : Date;
 
     @Column({
-        type      : DataType.STRING(1024),
-        allowNull : true,
+        type      : DataType.INTEGER,
+        allowNull : false,
     })
-    MedIssues: string;
+    QuantityRequired: number;
 
     @Column({
-        type         : DataType.BOOLEAN,
+        type         : DataType.STRING(32),
         allowNull    : false,
-        defaultValue : false,
+        values       : BridgeStatusList,
+        defaultValue : BridgeStatus.Inactive
     })
-    IsAvailable: boolean;
-
-    @Column({
-        type      : DataType.STRING(16),
-        allowNull : true,
-    })
-    SelectedBloodGroup: string;
-
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    SelectedBridgeId: string;
-
-    @Column({
-        type      : DataType.STRING(16),
-        allowNull : true,
-    })
-    SelectedPhoneNumber: string;
-
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    LastDonationId: string;
+    Status: string;
 
     @BelongsTo(() => User)
     User: User;
-
-    @BelongsTo(() => Person)
-    Person: Person;
 
     @Column
     @CreatedAt

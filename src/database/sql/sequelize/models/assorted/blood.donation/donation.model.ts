@@ -3,7 +3,7 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
-import PatientDonors from './patient.donors.model';
+import Bridge from './bridge.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,7 +36,7 @@ export default class Donation extends Model {
     PatientUserId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => PatientDonors)
+    @ForeignKey(() => Bridge)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
@@ -102,8 +102,8 @@ export default class Donation extends Model {
     @BelongsTo(() => User)
     User: User;
 
-    @BelongsTo(() => PatientDonors)
-    PatientDonors: PatientDonors;
+    @BelongsTo(() => Bridge)
+    PatientDonors: Bridge;
 
     @Column
     @CreatedAt

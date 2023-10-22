@@ -1,10 +1,10 @@
 import {
     BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-import { DonorType, DonorTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
+import { DonorType, DonorTypeList } from '../../../../../../domain.types/miscellaneous/clinical.types';
 import { v4 } from 'uuid';
-import Person from '../person/person.model';
-import User from './user/user.model';
+import Person from '../../person/person.model';
+import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

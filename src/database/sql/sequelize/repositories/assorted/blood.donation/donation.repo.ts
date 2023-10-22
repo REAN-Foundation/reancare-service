@@ -2,9 +2,9 @@ import { Logger } from "../../../../../../common/logger";
 import { ApiError } from "../../../../../../common/api.error";
 import { Op } from 'sequelize';
 import { IDonationRepo } from "../../../../../repository.interfaces/assorted/blood.donation/donation.repo.interface";
-import Donation from "../../../models/clinical/donation/donation.record.model";
+import Donation from "../../../models/assorted/blood.donation/donation.model";
 import { DonationMapper } from "../../../mappers/assorted/blood.donation/donation.mapper";
-import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
+import Bridge from "../../../models/assorted/blood.donation/bridge.model";
 import { DonationDomainModel } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.domain.model";
 import { DonationDto } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.dto";
 import { DonationSearchResults } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.search.types";
@@ -114,7 +114,7 @@ export class DonationRepo implements IDonationRepo {
 
             const includesObj =
             {
-                model    : PatientDonors,
+                model    : Bridge,
                 required : IsPatientDonorsRequired,
                 where    : {
                 },

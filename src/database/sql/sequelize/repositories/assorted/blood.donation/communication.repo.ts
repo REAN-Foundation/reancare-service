@@ -1,6 +1,6 @@
 import { Logger } from "../../../../../../common/logger";
 import { ApiError } from "../../../../../../common/api.error";
-import DonationCommunication from "../../../models/clinical/donation/donation.communication.model";
+import DonationCommunication from "../../../models/assorted/blood.donation/communication.model";
 import { IDonationCommunicationRepo } from "../../../../../repository.interfaces/assorted/blood.donation/communication.repo.interface";
 import { DonationCommunicationMapper } from "../../../mappers/assorted/blood.donation/communication.mapper";
 import { DonationCommunicationDomainModel } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.domain.model";

@@ -643,4 +643,34 @@ export class Helper {
         return serviceName;
     };
 
+    public static convertPrivilegeListToPrivilegeMap = (privileges: string[]): any => {
+        const privilegeMap = {};
+        for (var p of privileges) {
+            var tokens = p.split('.');
+            var currentLevel = privilegeMap;
+            for (var i = 0; i < tokens.length; i++) {
+                var key = tokens[i];
+                if (i === tokens.length - 1 && Array.isArray(currentLevel)) {
+                    currentLevel.push(key);
+                    continue;
+                }
+                if (Helper.hasProperty(currentLevel, key)) {
+                    currentLevel = currentLevel[key];
+                    continue;
+                }
+                else {
+                    if (i === tokens.length - 2) {
+                        currentLevel[key] = [];
+                        currentLevel = currentLevel[key];
+                    }
+                    else {
+                        currentLevel[key] = {};
+                        currentLevel = currentLevel[key];
+                    }
+                }
+            }
+        }
+        return privilegeMap;
+    };
+
 }

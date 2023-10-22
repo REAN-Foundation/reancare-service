@@ -15,8 +15,8 @@ export const register = (app: express.Application): void => {
     router.put('/:id', auth('Clinical.Assessments.SymptomAssessmentTemplate.Update'), controller.update);
     router.delete('/:id', auth('Clinical.Assessments.SymptomAssessmentTemplate.Delete'), controller.delete);
 
-    router.post("/:id/add-symptom-types", auth('SymptomAssessmentTemplate.AddSymptomTypes'), controller.addSymptomTypes);
-    router.post("/:id/remove-symptom-types", auth('SymptomAssessmentTemplate.RemoveSymptomTypes'), controller.removeSymptomTypes);
+    router.post("/:id/add-symptom-types", auth('Clinical.Assessments.SymptomAssessmentTemplate.AddSymptomTypes'), controller.addSymptomTypes);
+    router.post("/:id/remove-symptom-types", auth('Clinical.Assessments.SymptomAssessmentTemplate.RemoveSymptomTypes'), controller.removeSymptomTypes);
 
     app.use('/api/v1/clinical/symptom-assessment-templates', router);
 };

@@ -4,7 +4,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BaseController } from '../../../base.controller';
 import { CommunicationValidator } from './communication.validator';
-import { DonationCommunicationService } from '../../../../services/clinical/donation/donation.communication.service';
+import { DonationCommunicationService } from '../../../../services/assorted/blood.donation/communication.service';
 import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////

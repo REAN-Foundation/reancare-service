@@ -182,7 +182,7 @@ export class SequelizeInjector {
         container.register('IChatRepo', ChatRepo);
         container.register('IRssfeedRepo', RssfeedRepo);
         container.register('IRssfeedItemRepo', RssfeedItemRepo);
-        container.register('IPatientDonorsRepo', BridgeRepo);
+        container.register('IBridgeRepo', BridgeRepo);
         container.register('IDonationRepo', DonationRepo);
         container.register('IStatisticsRepo', StatisticsRepo);
         container.register('IWearableDeviceDetailsRepo', WearableDeviceDetailsRepo);

@@ -19,7 +19,7 @@ import { HealthProfileService } from "../../services/users/patient/health.profil
 import { Loader } from "../../startup/loader";
 import { DonorNetworkService } from "./donor.management/donor.network.service";
 import { IBridgeRepo } from "../../database/repository.interfaces/assorted/blood.donation/bridge.repo.interface";
-import { VolunteerService } from "../../services/users/volunteer.service";
+import { VolunteerService } from "../../services/assorted/blood.donation/volunteer.service";
 import { IDonationRepo } from "../../database/repository.interfaces/assorted/blood.donation/donation.repo.interface";
 import { PatientService } from "../../services/users/patient/patient.service";
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/assorted/blood.donation/communication.repo.interface";
@@ -47,7 +47,7 @@ export class CommunityNetworkService {
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
+        @inject('IBridgeRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IDonationRepo') private _donationRecordRepo: IDonationRepo,
         @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
     ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);

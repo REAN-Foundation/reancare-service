@@ -1,5 +1,5 @@
 import express from 'express';
-import { VolunteerService } from '../../../../services/users/volunteer.service';
+import { VolunteerService } from '../../../../services/assorted/blood.donation/volunteer.service';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';

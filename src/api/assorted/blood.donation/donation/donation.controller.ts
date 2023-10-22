@@ -1,5 +1,5 @@
 import express from 'express';
-import { DonationService } from '../../../../services/clinical/donation/donation.record.service';
+import { DonationService } from '../../../../services/assorted/blood.donation/donation.service';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';

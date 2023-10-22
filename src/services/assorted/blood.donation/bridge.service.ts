@@ -11,10 +11,10 @@ import { IDonorRepo } from '../../../database/repository.interfaces/assorted/blo
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class PatientDonorsService {
+export class BridgeService {
 
     constructor(
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
+        @inject('IBridgeRepo') private _bridgeRepo: IBridgeRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IDonorRepo') private _donorRepo: IDonorRepo
@@ -22,16 +22,16 @@ export class PatientDonorsService {
 
     //#region Publics
 
-    public create = async (patientDonorsDomainModel: BridgeDomainModel): Promise<BridgeDto> => {
+    public create = async (model: BridgeDomainModel): Promise<BridgeDto> => {
 
-        var dto = await this._patientDonorsRepo.create(patientDonorsDomainModel);
+        var dto = await this._bridgeRepo.create(model);
         dto = await this.updateDetailsDto(dto);
 
         return dto;
     };
 
     public getById = async (id: string): Promise<BridgeDto> => {
-        var dto = await this._patientDonorsRepo.getById(id);
+        var dto = await this._bridgeRepo.getById(id);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
@@ -40,7 +40,7 @@ export class PatientDonorsService {
         filters: BridgeSearchFilters
     ): Promise<BridgeSearchResults> => {
         var items = [];
-        var results = await this._patientDonorsRepo.search(filters);
+        var results = await this._bridgeRepo.search(filters);
         for await (var dto of results.Items) {
             if (filters.OnlyElligible === true) {
                 dto = await this.elligibleDonors(dto);
@@ -61,13 +61,13 @@ export class PatientDonorsService {
         id: string,
         updateModel: BridgeDomainModel
     ): Promise<BridgeDto> => {
-        var dto = await this._patientDonorsRepo.update(id, updateModel);
+        var dto = await this._bridgeRepo.update(id, updateModel);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
 
     public delete = async (id: string): Promise<boolean> => {
-        return await this._patientDonorsRepo.delete(id);
+        return await this._bridgeRepo.delete(id);
     };
 
     //#endregion

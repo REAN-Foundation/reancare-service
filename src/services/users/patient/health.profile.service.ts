@@ -13,7 +13,7 @@ export class HealthProfileService {
 
     constructor(
         @inject('IHealthProfileRepo') private _patientHealthProfileRepo: IHealthProfileRepo,
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
+        @inject('IBridgeRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 

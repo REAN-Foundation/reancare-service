@@ -12,17 +12,17 @@ import { DonationCommunicationSearchFilters, DonationCommunicationSearchResults 
 export class DonationCommunicationService {
 
     constructor(
-        @inject('IDonationCommunicationRepo') private _DonationCommunicationRepo: IDonationCommunicationRepo,
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
+        @inject('IDonationCommunicationRepo') private _communicationRepo: IDonationCommunicationRepo,
+        @inject('IBridgeRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 
     //#region Publics
 
-    public create = async (donationCommunicationDomainModel: DonationCommunicationDomainModel):
+    public create = async (model: DonationCommunicationDomainModel):
         Promise<DonationCommunicationDto> => {
 
-        var dto = await this._DonationCommunicationRepo.create(donationCommunicationDomainModel);
+        var dto = await this._communicationRepo.create(model);
         // if (dto.PatientUserId !== null) {
         //     await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Send });
         // }
@@ -30,7 +30,7 @@ export class DonationCommunicationService {
     };
 
     public getById = async (id: string): Promise<DonationCommunicationDto> => {
-        var dto = await this._DonationCommunicationRepo.getById(id);
+        var dto = await this._communicationRepo.getById(id);
         return dto;
     };
 
@@ -38,7 +38,7 @@ export class DonationCommunicationService {
         filters: DonationCommunicationSearchFilters
     ): Promise<DonationCommunicationSearchResults> => {
         var items = [];
-        var results = await this._DonationCommunicationRepo.search(filters);
+        var results = await this._communicationRepo.search(filters);
         for await (var dto of results.Items) {
             items.push(dto);
         }
@@ -50,7 +50,7 @@ export class DonationCommunicationService {
         id: string,
         updateModel: DonationCommunicationDomainModel
     ): Promise<DonationCommunicationDto> => {
-        var dto = await this._DonationCommunicationRepo.update(id, updateModel);
+        var dto = await this._communicationRepo.update(id, updateModel);
         // if (updateModel.DonorAcceptedDate !== null) {
         //     await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Accepted });
         // }
@@ -58,11 +58,11 @@ export class DonationCommunicationService {
     };
 
     public delete = async (id: string): Promise<boolean> => {
-        return await this._DonationCommunicationRepo.delete(id);
+        return await this._communicationRepo.delete(id);
     };
 
     public getByPatientUserId = async (patientUserId: string): Promise<DonationCommunicationDto> => {
-        var dto = await this._DonationCommunicationRepo.getByPatientUserId(patientUserId);
+        var dto = await this._communicationRepo.getByPatientUserId(patientUserId);
         return dto;
     };
 

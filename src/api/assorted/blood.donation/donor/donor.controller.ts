@@ -1,5 +1,5 @@
 import express from 'express';
-import { DonorService } from '../../../../services/users/donor.service';
+import { DonorService } from '../../../../services/assorted/blood.donation/donor.service';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';

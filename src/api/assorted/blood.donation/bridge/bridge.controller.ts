@@ -1,5 +1,5 @@
 import express from 'express';
-import { PatientDonorsService } from '../../../../services/clinical/donation/patient.donors.service';
+import { BridgeService } from '../../../../services/assorted/blood.donation/bridge.service';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -13,13 +13,13 @@ export class BridgeController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: PatientDonorsService = null;
+    _service: BridgeService = null;
 
     _validator: BridgeValidator = new BridgeValidator();
 
     constructor() {
         super('BloodDonation.Bridge');
-        this._service = Loader.container.resolve(PatientDonorsService);
+        this._service = Loader.container.resolve(BridgeService);
     }
 
     //#endregion

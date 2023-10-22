@@ -14,16 +14,16 @@ import { DonationDto } from '../../../domain.types/assorted/blood.donation/donat
 export class DonationService {
 
     constructor(
-        @inject('IDonationRepo') private _donationRecordRepo: IDonationRepo,
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
+        @inject('IDonationRepo') private _donationRepo: IDonationRepo,
+        @inject('IBridgeRepo') private _bridgeRepo: IBridgeRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 
     //#region Publics
 
-    public create = async (donationRecordDomainModel: DonationDomainModel): Promise<DonationDto> => {
+    public create = async (model: DonationDomainModel): Promise<DonationDto> => {
 
-        var dto = await this._donationRecordRepo.create(donationRecordDomainModel);
+        var dto = await this._donationRepo.create(model);
         if (dto.PatientUserId !== null) {
             await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Send });
         }
@@ -32,7 +32,7 @@ export class DonationService {
     };
 
     public getById = async (id: string): Promise<DonationDto> => {
-        var dto = await this._donationRecordRepo.getById(id);
+        var dto = await this._donationRepo.getById(id);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
@@ -41,7 +41,7 @@ export class DonationService {
         filters: DonationSearchFilters
     ): Promise<DonationSearchResults> => {
         var items = [];
-        var results = await this._donationRecordRepo.search(filters);
+        var results = await this._donationRepo.search(filters);
         for await (var dto of results.Items) {
             dto = await this.updateDetailsDto(dto);
             items.push(dto);
@@ -54,7 +54,7 @@ export class DonationService {
         id: string,
         updateModel: DonationDomainModel
     ): Promise<DonationDto> => {
-        var dto = await this._donationRecordRepo.update(id, updateModel);
+        var dto = await this._donationRepo.update(id, updateModel);
         if (updateModel.DonorAcceptedDate !== null) {
             await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Accepted });
         }
@@ -66,7 +66,7 @@ export class DonationService {
     };
 
     public delete = async (id: string): Promise<boolean> => {
-        return await this._donationRecordRepo.delete(id);
+        return await this._donationRepo.delete(id);
     };
 
     //#endregion
@@ -78,7 +78,7 @@ export class DonationService {
             return null;
         }
         if (dto.NetworkId) {
-            var patientDonors = await this._patientDonorsRepo.getById(dto.NetworkId);
+            var patientDonors = await this._bridgeRepo.getById(dto.NetworkId);
             dto.DonationDetails = patientDonors;
         }
         return dto;

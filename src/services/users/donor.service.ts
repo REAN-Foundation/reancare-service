@@ -8,7 +8,7 @@ import { Roles } from '../../domain.types/role/role.types';
 import { DonorDomainModel } from '../../domain.types/assorted/blood.donation/donor/donor.domain.model';
 import { DonorDetailsDto, DonorDto } from '../../domain.types/assorted/blood.donation/donor/donor.dto';
 import { DonorSearchFilters, DonorDetailsSearchResults, DonorSearchResults } from '../../domain.types/assorted/blood.donation/donor/donor.search.types';
-import { IDonorRepo } from '../../database/repository.interfaces/users/donor.repo.interface';
+import { IDonorRepo } from '../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface';
 import { TimeHelper } from '../../common/time.helper';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

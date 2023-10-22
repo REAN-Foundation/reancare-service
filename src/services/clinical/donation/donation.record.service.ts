@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
-import { IDonationRepo } from '../../../database/repository.interfaces/clinical/donation/donation.record.repo.interface';
-import { IPatientDonorsRepo } from '../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface';
+import { IDonationRepo } from '../../../database/repository.interfaces/assorted/blood.donation/donation.repo.interface';
+import { IBridgeRepo } from '../../../database/repository.interfaces/assorted/blood.donation/bridge.repo.interface';
 import { IPatientRepo } from '../../../database/repository.interfaces/users/patient/patient.repo.interface';
 import { DonorAcceptance } from '../../../domain.types/miscellaneous/clinical.types';
 import { DonationDomainModel } from '../../../domain.types/assorted/blood.donation/donation/donation.domain.model';
@@ -15,7 +15,7 @@ export class DonationService {
 
     constructor(
         @inject('IDonationRepo') private _donationRecordRepo: IDonationRepo,
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 

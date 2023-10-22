@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
-import { IPatientDonorsRepo } from '../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface';
+import { IBridgeRepo } from '../../../database/repository.interfaces/assorted/blood.donation/bridge.repo.interface';
 import { IPatientRepo } from '../../../database/repository.interfaces/users/patient/patient.repo.interface';
-import { IDonationCommunicationRepo } from '../../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface';
+import { IDonationCommunicationRepo } from '../../../database/repository.interfaces/assorted/blood.donation/communication.repo.interface';
 import { DonationCommunicationDomainModel } from '../../../domain.types/assorted/blood.donation/communication/communication.domain.model';
 import { DonationCommunicationDto } from '../../../domain.types/assorted/blood.donation/communication/communication.dto';
 import { DonationCommunicationSearchFilters, DonationCommunicationSearchResults } from '../../../domain.types/assorted/blood.donation/communication/communication.search.types';
@@ -13,7 +13,7 @@ export class DonationCommunicationService {
 
     constructor(
         @inject('IDonationCommunicationRepo') private _DonationCommunicationRepo: IDonationCommunicationRepo,
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 

@@ -1,35 +1,35 @@
-import { Logger } from "../../../../../common/logger";
-import { ApiError } from "../../../../../common/api.error";
+import { Logger } from "../../../../../../common/logger";
+import { ApiError } from "../../../../../../common/api.error";
 import { Op } from 'sequelize';
-import Person from "../../models/person/person.model";
-import { IDonorRepo } from "../../../../repository.interfaces/users/donor.repo.interface";
-import { DonorDomainModel } from "../../../../../domain.types/assorted/blood.donation/donor/donor.domain.model";
-import { DonorDetailsDto, DonorDto } from "../../../../../domain.types/assorted/blood.donation/donor/donor.dto";
-import Donor from "../../models/users/donor.model";
-import { DonorMapper } from "../../mappers/users/donor.mapper";
-import { DonorSearchFilters, DonorSearchResults } from "../../../../../domain.types/assorted/blood.donation/donor/donor.search.types";
+import Person from "../../../models/person/person.model";
+import { DonorDomainModel } from "../../../../../../domain.types/assorted/blood.donation/donor/donor.domain.model";
+import { DonorDetailsDto, DonorDto } from "../../../../../../domain.types/assorted/blood.donation/donor/donor.dto";
+import Donor from "../../../models/users/donor.model";
+import { DonorMapper } from "../../../mappers/assorted/blood.donation/donor.mapper";
+import { DonorSearchFilters, DonorSearchResults } from "../../../../../../domain.types/assorted/blood.donation/donor/donor.search.types";
+import { IDonorRepo } from "../../../../../repository.interfaces/assorted/blood.donation/donor.repo.interface";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class DonorRepo implements IDonorRepo {
 
-    create = async (donorDomainModel: DonorDomainModel): Promise<DonorDetailsDto> => {
+    create = async (model: DonorDomainModel): Promise<DonorDetailsDto> => {
 
-        var medIssues = donorDomainModel.MedIssues && donorDomainModel.MedIssues.length > 0 ?
-            JSON.stringify(donorDomainModel.MedIssues) : '[]';
+        var medIssues = model.MedIssues && model.MedIssues.length > 0 ?
+            JSON.stringify(model.MedIssues) : '[]';
 
         try {
             const entity = {
-                UserId            : donorDomainModel.UserId,
-                PersonId          : donorDomainModel.PersonId,
-                DisplayId         : donorDomainModel.DisplayId,
-                EhrId             : donorDomainModel.EhrId,
-                BloodGroup        : donorDomainModel.BloodGroup,
-                AcceptorUserId    : donorDomainModel.AcceptorUserId,
-                LastDonationDate  : donorDomainModel.LastDonationDate,
-                DonorType         : donorDomainModel.DonorType,
-                IsAvailable       : donorDomainModel.IsAvailable,
-                HasDonatedEarlier : donorDomainModel.HasDonatedEarlier,
+                UserId            : model.UserId,
+                PersonId          : model.PersonId,
+                DisplayId         : model.DisplayId,
+                EhrId             : model.EhrId,
+                BloodGroup        : model.BloodGroup,
+                AcceptorUserId    : model.AcceptorUserId,
+                LastDonationDate  : model.LastDonationDate,
+                DonorType         : model.DonorType,
+                IsAvailable       : model.IsAvailable,
+                HasDonatedEarlier : model.HasDonatedEarlier,
                 MedIssues         : medIssues
             };
 

@@ -9,7 +9,7 @@ import { VolunteerDetailsDto, VolunteerDto } from '../../domain.types/assorted/b
 import { VolunteerDetailsSearchResults, VolunteerSearchFilters,
     VolunteerSearchResults } from '../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types';
 import { VolunteerDomainModel } from '../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model';
-import { IVolunteerRepo } from '../../database/repository.interfaces/users/Volunteer.repo.interface';
+import { IVolunteerRepo } from '../../database/repository.interfaces/assorted/blood.donation/volunteer.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

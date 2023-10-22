@@ -1,9 +1,9 @@
 import { Logger } from "../../../../../../common/logger";
 import { ApiError } from "../../../../../../common/api.error";
 import { Op } from 'sequelize';
-import { IDonationRepo } from "../../../../../../database/repository.interfaces/clinical/donation/donation.record.repo.interface";
+import { IDonationRepo } from "../../../../../repository.interfaces/assorted/blood.donation/donation.repo.interface";
 import Donation from "../../../models/clinical/donation/donation.record.model";
-import { DonationMapper } from "../../../mappers/clinical/donation/donation.record.mapper";
+import { DonationMapper } from "../../../mappers/assorted/blood.donation/donation.mapper";
 import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
 import { DonationDomainModel } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.domain.model";
 import { DonationDto } from "../../../../../../domain.types/assorted/blood.donation/donation/donation.dto";
@@ -14,19 +14,19 @@ import { DonationSearchFilters } from "../../../../../../domain.types/assorted/b
 
 export class DonationRepo implements IDonationRepo {
 
-    create = async (donationRecordDomainModel: DonationDomainModel): Promise<DonationDto> => {
+    create = async (model: DonationDomainModel): Promise<DonationDto> => {
 
         try {
             const entity = {
-                PatientUserId             : donationRecordDomainModel.PatientUserId,
-                NetworkId                 : donationRecordDomainModel.NetworkId,
-                EmergencyDonor            : donationRecordDomainModel.EmergencyDonor,
-                VolunteerOfEmergencyDonor : donationRecordDomainModel.VolunteerOfEmergencyDonor,
-                RequestedQuantity         : donationRecordDomainModel.RequestedQuantity,
-                RequestedDate             : donationRecordDomainModel.RequestedDate,
-                DonatedQuantity           : donationRecordDomainModel.DonatedQuantity,
-                DonationDate              : donationRecordDomainModel.DonationDate,
-                DonationType              : donationRecordDomainModel.DonationType
+                PatientUserId             : model.PatientUserId,
+                NetworkId                 : model.NetworkId,
+                EmergencyDonor            : model.EmergencyDonor,
+                VolunteerOfEmergencyDonor : model.VolunteerOfEmergencyDonor,
+                RequestedQuantity         : model.RequestedQuantity,
+                RequestedDate             : model.RequestedDate,
+                DonatedQuantity           : model.DonatedQuantity,
+                DonationDate              : model.DonationDate,
+                DonationType              : model.DonationType
             };
 
             const donationRecord = await Donation.create(entity);

@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { IHealthProfileRepo } from "../../../database/repository.interfaces/users/patient/health.profile.repo.interface";
 import { HealthProfileDomainModel } from '../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../domain.types/users/patient/health.profile/health.profile.dto';
-import { IPatientDonorsRepo } from "../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
+import { IBridgeRepo } from "../../../database/repository.interfaces/assorted/blood.donation/bridge.repo.interface";
 import { IPatientRepo } from "../../../database/repository.interfaces/users/patient/patient.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ export class HealthProfileService {
 
     constructor(
         @inject('IHealthProfileRepo') private _patientHealthProfileRepo: IHealthProfileRepo,
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 

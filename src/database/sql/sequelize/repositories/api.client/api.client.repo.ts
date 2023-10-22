@@ -13,18 +13,18 @@ import { ClientAppSearchFilters, ClientAppSearchResults } from '../../../../../d
 
 export class ClientAppRepo implements IClientAppRepo {
 
-    create = async (clientDomainModel: ClientAppDomainModel): Promise<ClientAppDto> => {
+    create = async (model: ClientAppDomainModel): Promise<ClientAppDto> => {
         try {
             const entity = {
-                ClientName   : clientDomainModel.ClientName,
-                ClientCode   : clientDomainModel.ClientCode,
-                IsPrivileged : clientDomainModel.IsPrivileged,
-                Phone        : clientDomainModel.Phone,
-                Email        : clientDomainModel.Email,
-                Password     : clientDomainModel.Password ?? null,
-                ApiKey       : clientDomainModel.ApiKey ?? null,
-                ValidFrom    : clientDomainModel.ValidFrom ?? null,
-                ValidTill    : clientDomainModel.ValidTill ?? null,
+                ClientName   : model.ClientName,
+                ClientCode   : model.ClientCode,
+                IsPrivileged : model.IsPrivileged,
+                Phone        : model.Phone,
+                Email        : model.Email,
+                Password     : model.Password ?? null,
+                ApiKey       : model.ApiKey ?? null,
+                ValidFrom    : model.ValidFrom ?? null,
+                ValidTill    : model.ValidTill ?? null,
             };
             const client = await ClientApp.create(entity);
             const dto = await ClientMapper.toDto(client);

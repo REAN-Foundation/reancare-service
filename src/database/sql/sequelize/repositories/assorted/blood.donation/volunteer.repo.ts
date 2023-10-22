@@ -1,32 +1,32 @@
-import { Logger } from "../../../../../common/logger";
-import { ApiError } from "../../../../../common/api.error";
+import { Logger } from "../../../../../../common/logger";
+import { ApiError } from "../../../../../../common/api.error";
 import { Op } from 'sequelize';
-import Person from "../../models/person/person.model";
-import { IVolunteerRepo } from "../../../../../database/repository.interfaces/users/Volunteer.repo.interface";
-import { VolunteerSearchResults, VolunteerSearchFilters } from "../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types";
-import { VolunteerDto, VolunteerDetailsDto } from "../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
-import { VolunteerMapper } from "../../mappers/users/volunteer.mapper";
-import Volunteer from "../../models/users/volunteer.model";
-import { VolunteerDomainModel } from "../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model";
+import Person from "../../../models/person/person.model";
+import { IVolunteerRepo } from "../../../../../repository.interfaces/assorted/blood.donation/volunteer.repo.interface";
+import { VolunteerSearchResults, VolunteerSearchFilters } from "../../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types";
+import { VolunteerDto, VolunteerDetailsDto } from "../../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
+import { VolunteerMapper } from "../../../mappers/assorted/blood.donation/volunteer.mapper";
+import Volunteer from "../../../models/users/volunteer.model";
+import { VolunteerDomainModel } from "../../../../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class VolunteerRepo implements IVolunteerRepo {
 
-    create = async (volunteerDomainModel: VolunteerDomainModel): Promise<VolunteerDetailsDto> => {
+    create = async (model: VolunteerDomainModel): Promise<VolunteerDetailsDto> => {
 
-        var medIssues = volunteerDomainModel.MedIssues && volunteerDomainModel.MedIssues.length > 0 ?
-            JSON.stringify(volunteerDomainModel.MedIssues) : '[]';
+        var medIssues = model.MedIssues && model.MedIssues.length > 0 ?
+            JSON.stringify(model.MedIssues) : '[]';
 
         try {
             const entity = {
-                UserId           : volunteerDomainModel.UserId,
-                PersonId         : volunteerDomainModel.PersonId,
-                DisplayId        : volunteerDomainModel.DisplayId,
-                EhrId            : volunteerDomainModel.EhrId,
-                BloodGroup       : volunteerDomainModel.BloodGroup,
-                LastDonationDate : volunteerDomainModel.LastDonationDate,
-                IsAvailable      : volunteerDomainModel.IsAvailable,
+                UserId           : model.UserId,
+                PersonId         : model.PersonId,
+                DisplayId        : model.DisplayId,
+                EhrId            : model.EhrId,
+                BloodGroup       : model.BloodGroup,
+                LastDonationDate : model.LastDonationDate,
+                IsAvailable      : model.IsAvailable,
                 MedIssues        : medIssues
             };
 

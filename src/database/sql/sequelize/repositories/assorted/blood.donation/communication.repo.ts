@@ -1,8 +1,8 @@
 import { Logger } from "../../../../../../common/logger";
 import { ApiError } from "../../../../../../common/api.error";
 import DonationCommunication from "../../../models/clinical/donation/donation.communication.model";
-import { IDonationCommunicationRepo } from "../../../../../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
-import { DonationCommunicationMapper } from "../../../mappers/clinical/donation/donation.communication.mapper";
+import { IDonationCommunicationRepo } from "../../../../../repository.interfaces/assorted/blood.donation/communication.repo.interface";
+import { DonationCommunicationMapper } from "../../../mappers/assorted/blood.donation/communication.mapper";
 import { DonationCommunicationDomainModel } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.domain.model";
 import { DonationCommunicationDto } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.dto";
 import { DonationCommunicationSearchFilters } from "../../../../../../domain.types/assorted/blood.donation/communication/communication.search.types";
@@ -12,19 +12,19 @@ import { DonationCommunicationSearchResults } from "../../../../../../domain.typ
 
 export class DonationCommunicationRepo implements IDonationCommunicationRepo {
 
-    create = async (donationCommunicationDomainModel: DonationCommunicationDomainModel) :
+    create = async (model: DonationCommunicationDomainModel) :
         Promise<DonationCommunicationDto> => {
 
         try {
             const entity = {
-                PatientUserId             : donationCommunicationDomainModel.PatientUserId,
-                DonorUserId               : donationCommunicationDomainModel.DonorUserId,
-                VolunteerUserId           : donationCommunicationDomainModel.VolunteerUserId,
-                FifthDayReminderFlag      : donationCommunicationDomainModel.FifthDayReminderFlag,
-                DonorNoResponseFirstFlag  : donationCommunicationDomainModel.DonorNoResponseFirstFlag,
-                DonorNoResponseSecondFlag : donationCommunicationDomainModel.DonorNoResponseSecondFlag,
-                DonorAcceptance           : donationCommunicationDomainModel.DonorAcceptance,
-                IsRemindersLoaded         : donationCommunicationDomainModel.IsRemindersLoaded,
+                PatientUserId             : model.PatientUserId,
+                DonorUserId               : model.DonorUserId,
+                VolunteerUserId           : model.VolunteerUserId,
+                FifthDayReminderFlag      : model.FifthDayReminderFlag,
+                DonorNoResponseFirstFlag  : model.DonorNoResponseFirstFlag,
+                DonorNoResponseSecondFlag : model.DonorNoResponseSecondFlag,
+                DonorAcceptance           : model.DonorAcceptance,
+                IsRemindersLoaded         : model.IsRemindersLoaded,
             };
 
             let donationCommunication = null;

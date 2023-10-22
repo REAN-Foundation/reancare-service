@@ -1,6 +1,6 @@
-import { VolunteerDomainModel } from "../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model";
-import { VolunteerDetailsDto } from "../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
-import { VolunteerSearchFilters, VolunteerSearchResults } from "../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types";
+import { VolunteerDomainModel } from "../../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model";
+import { VolunteerDetailsDto } from "../../../../domain.types/assorted/blood.donation/volunteer/volunteer.dto";
+import { VolunteerSearchFilters, VolunteerSearchResults } from "../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types";
 
 export interface IVolunteerRepo {
 

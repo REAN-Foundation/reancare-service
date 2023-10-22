@@ -1,6 +1,6 @@
-import { DonorDomainModel } from '../../../domain.types/assorted/blood.donation/donor/donor.domain.model';
-import { DonorDetailsDto } from '../../../domain.types/assorted/blood.donation/donor/donor.dto';
-import { DonorSearchFilters, DonorSearchResults } from '../../../domain.types/assorted/blood.donation/donor/donor.search.types';
+import { DonorDomainModel } from '../../../../domain.types/assorted/blood.donation/donor/donor.domain.model';
+import { DonorDetailsDto } from '../../../../domain.types/assorted/blood.donation/donor/donor.dto';
+import { DonorSearchFilters, DonorSearchResults } from '../../../../domain.types/assorted/blood.donation/donor/donor.search.types';
 
 export interface IDonorRepo {
 

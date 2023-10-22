@@ -2,7 +2,7 @@ import { BridgeDomainModel } from "../../../../domain.types/assorted/blood.donat
 import { BridgeDto } from "../../../../domain.types/assorted/blood.donation/bridge/bridge.dto";
 import { BridgeSearchFilters, BridgeSearchResults } from "../../../../domain.types/assorted/blood.donation/bridge/bridge.search.types";
 
-export interface IPatientDonorsRepo {
+export interface IBridgeRepo {
 
     create(entity: BridgeDomainModel): Promise<BridgeDto>;
 

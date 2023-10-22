@@ -5,31 +5,31 @@ import { BridgeDomainModel } from "../../../../../../domain.types/assorted/blood
 import { BridgeDto } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.dto";
 import { BridgeSearchFilters, BridgeSearchResults } from "../../../../../../domain.types/assorted/blood.donation/bridge/bridge.search.types";
 import PatientDonors from "../../../models/clinical/donation/patient.donors.model";
-import { PatientDonorsMapper } from "../../../mappers/clinical/donation/patient.donors.mapper";
-import { IPatientDonorsRepo } from "../../../../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface";
+import { BridgeMapper } from "../../../mappers/assorted/blood.donation/bridge.mapper";
+import { IBridgeRepo } from "../../../../../repository.interfaces/assorted/blood.donation/bridge.repo.interface";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class PatientDonorsRepo implements IPatientDonorsRepo {
+export class BridgeRepo implements IBridgeRepo {
 
-    create = async (patientDonorsDomainModel: BridgeDomainModel): Promise<BridgeDto> => {
+    create = async (model: BridgeDomainModel): Promise<BridgeDto> => {
 
         try {
             const entity = {
-                Name             : patientDonorsDomainModel.Name,
-                PatientUserId    : patientDonorsDomainModel.PatientUserId,
-                DonorUserId      : patientDonorsDomainModel.DonorUserId,
-                DonorType        : patientDonorsDomainModel.DonorType,
-                VolunteerUserId  : patientDonorsDomainModel.VolunteerUserId,
-                BloodGroup       : patientDonorsDomainModel.BloodGroup,
-                NextDonationDate : patientDonorsDomainModel.NextDonationDate,
-                LastDonationDate : patientDonorsDomainModel.LastDonationDate,
-                QuantityRequired : patientDonorsDomainModel.QuantityRequired,
-                Status           : patientDonorsDomainModel.Status,
+                Name             : model.Name,
+                PatientUserId    : model.PatientUserId,
+                DonorUserId      : model.DonorUserId,
+                DonorType        : model.DonorType,
+                VolunteerUserId  : model.VolunteerUserId,
+                BloodGroup       : model.BloodGroup,
+                NextDonationDate : model.NextDonationDate,
+                LastDonationDate : model.LastDonationDate,
+                QuantityRequired : model.QuantityRequired,
+                Status           : model.Status,
             };
 
             const patientDonors = await PatientDonors.create(entity);
-            const dto = await PatientDonorsMapper.toDetailsDto(patientDonors);
+            const dto = await BridgeMapper.toDetailsDto(patientDonors);
 
             return dto;
 
@@ -42,7 +42,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
     getById = async (id: string): Promise<BridgeDto> => {
         try {
             const patientDonors = await PatientDonors.findOne({ where: { id: id } });
-            const dto = await PatientDonorsMapper.toDetailsDto(patientDonors);
+            const dto = await BridgeMapper.toDetailsDto(patientDonors);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -88,7 +88,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
 
             await patientDonors.save();
 
-            const dto = await PatientDonorsMapper.toDetailsDto(patientDonors);
+            const dto = await BridgeMapper.toDetailsDto(patientDonors);
 
             return dto;
 
@@ -182,7 +182,7 @@ export class PatientDonorsRepo implements IPatientDonorsRepo {
 
             const dtos: BridgeDto[] = [];
             for (const patientDonors of foundResults.rows) {
-                const dto = await PatientDonorsMapper.toDetailsDto(patientDonors);
+                const dto = await BridgeMapper.toDetailsDto(patientDonors);
                 dtos.push(dto);
             }
 

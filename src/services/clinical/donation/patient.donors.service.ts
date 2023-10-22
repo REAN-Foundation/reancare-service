@@ -2,11 +2,11 @@ import { inject, injectable } from 'tsyringe';
 import { IPersonRepo } from '../../../database/repository.interfaces/person/person.repo.interface';
 import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
 import { BridgeSearchFilters, BridgeSearchResults } from '../../../domain.types/assorted/blood.donation/bridge/bridge.search.types';
-import { IPatientDonorsRepo } from '../../../database/repository.interfaces/clinical/donation/patient.donors.repo.interface';
+import { IBridgeRepo } from '../../../database/repository.interfaces/assorted/blood.donation/bridge.repo.interface';
 import { BridgeDomainModel } from '../../../domain.types/assorted/blood.donation/bridge/bridge.domain.model';
 import { BridgeDto } from '../../../domain.types/assorted/blood.donation/bridge/bridge.dto';
 import { TimeHelper } from "../../../common/time.helper";
-import { IDonorRepo } from '../../../database/repository.interfaces/users/donor.repo.interface';
+import { IDonorRepo } from '../../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -14,7 +14,7 @@ import { IDonorRepo } from '../../../database/repository.interfaces/users/donor.
 export class PatientDonorsService {
 
     constructor(
-        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
+        @inject('IPatientDonorsRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IDonorRepo') private _donorRepo: IDonorRepo

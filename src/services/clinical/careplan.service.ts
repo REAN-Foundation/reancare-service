@@ -29,8 +29,8 @@ import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activi
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
-import { IDonorRepo } from "./../../database/repository.interfaces/users/donor.repo.interface";
-import { IDonationCommunicationRepo } from "../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
+import { IDonorRepo } from "./../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface";
+import { IDonationCommunicationRepo } from "../../database/repository.interfaces/assorted/blood.donation/communication.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -155,7 +155,7 @@ export class CareplanService implements IUserActionService {
                     patient = await this.getPatient(activity.PatientUserId);
                 }
                 const phoneNumber = patient.User.Person.Phone;
-                
+
                 //Set fifth day reminder flag true for patient
                 if (activity.Type === "reminder_three") {
                     await this._donationCommunicationRepo.create(
@@ -618,7 +618,7 @@ export class CareplanService implements IUserActionService {
             careplanStatus.CurrentWeek = currentWeek;
             careplanStatus.DayOfCurrentWeek = dayOfCurrentWeek;
         }
-        
+
         // total weeks
         var duration = Math.abs(end.getTime() - begin.getTime());
         var totalDays = Math.floor(duration / (1000 * 3600 * 24));

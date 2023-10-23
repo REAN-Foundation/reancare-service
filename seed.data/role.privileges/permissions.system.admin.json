@@ -3,10 +3,10 @@
         "BloodDonation": {
             "Bridge": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -15,15 +15,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Communication": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -32,15 +32,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Donation": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -49,15 +49,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Donor": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "DeleteByUserId": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetByUserId": {
                     "Enabled": true
@@ -66,15 +66,15 @@
                     "Enabled": true
                 },
                 "UpdateByUserId": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Volunteer": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "DeleteByUserId": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetByUserId": {
                     "Enabled": true
@@ -83,7 +83,7 @@
                     "Enabled": true
                 },
                 "UpdateByUserId": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             }
         }
@@ -91,10 +91,10 @@
     "Auth": {
         "Consent": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetById": {
                 "Enabled": true
@@ -103,7 +103,7 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         }
     },
@@ -133,10 +133,10 @@
     "Clinical": {
         "Allergy": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetAllergenCategories": {
                 "Enabled": true
@@ -154,22 +154,22 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "Assessments": {
             "Assessment": {
                 "AnswerQuestion": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "AnswerQuestionList": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -190,7 +190,7 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "AssessmentTemplate": {
@@ -264,10 +264,10 @@
             },
             "SymptomAssessment": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -276,7 +276,7 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "SymptomAssessmentTemplate": {
@@ -306,10 +306,10 @@
         "Biometrics": {
             "BloodCholesterol": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -318,15 +318,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "BloodGlucose": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -335,15 +335,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "BloodOxygenSaturation": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -352,15 +352,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "BloodPressure": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -369,15 +369,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "BodyHeight": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -386,15 +386,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "BodyTemperature": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -403,15 +403,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "BodyWeight": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -420,15 +420,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Pulse": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -437,13 +437,13 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             }
         },
         "Careplan": {
             "Enroll": {
-                "Enabled": true
+                "Enabled": false
             },
             "FetchTasks": {
                 "Enabled": true
@@ -461,7 +461,7 @@
                 "Enabled": true
             },
             "UpdateRisk": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "ClinicalTypes": {
@@ -477,10 +477,10 @@
         },
         "Complaint": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetById": {
                 "Enabled": true
@@ -489,15 +489,15 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "Diagnosis": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetById": {
                 "Enabled": true
@@ -506,15 +506,15 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "DoctorNote": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetById": {
                 "Enabled": true
@@ -523,15 +523,15 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "EmergencyEvent": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetById": {
                 "Enabled": true
@@ -540,15 +540,15 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "LabRecord": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetById": {
                 "Enabled": true
@@ -557,15 +557,15 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "MedicalCondition": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetById": {
                 "Enabled": true
@@ -574,16 +574,16 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "Medications": {
             "Drug": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -592,15 +592,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Medication": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "DownloadStockMedicationImageById": {
                     "Enabled": true
@@ -636,7 +636,7 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "MedicationConsumption": {
@@ -659,16 +659,16 @@
                     "Enabled": true
                 },
                 "MarkAsMissed": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "MarkAsTaken": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "MarkListAsMissed": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "MarkListAsTaken": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Search": {
                     "Enabled": true
@@ -677,10 +677,10 @@
         },
         "Order": {
             "Create": {
-                "Enabled": true
+                "Enabled": false
             },
             "Delete": {
-                "Enabled": true
+                "Enabled": false
             },
             "GetById": {
                 "Enabled": true
@@ -689,16 +689,16 @@
                 "Enabled": true
             },
             "Update": {
-                "Enabled": true
+                "Enabled": false
             }
         },
         "Symptoms": {
             "HowDoYouFeel": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -707,15 +707,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Symptom": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -724,7 +724,7 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "SymptomType": {
@@ -846,7 +846,7 @@
                 "Enabled": true
             },
             "TakeAction": {
-                "Enabled": true
+                "Enabled": false
             },
             "Update": {
                 "Enabled": true
@@ -1069,7 +1069,7 @@
                 "Enabled": true
             },
             "UpdateUserLearning": {
-                "Enabled": true
+                "Enabled": false
             }
         }
     },
@@ -1602,10 +1602,10 @@
             },
             "EmergencyContact": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1623,15 +1623,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Goal": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1646,21 +1646,21 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "HealthPriority": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Search": {
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "getPatientHealthPriorities": {
                     "Enabled": true
@@ -1671,7 +1671,7 @@
                     "Enabled": true
                 },
                 "UpdateByPatientUserId": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Patient": {
@@ -1787,10 +1787,10 @@
         "DailyRecords": {
             "CalorieBalance": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1799,15 +1799,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "HeartPoints": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1816,15 +1816,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "MoveMinutes": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1833,15 +1833,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Sleep": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1850,15 +1850,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Stand": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1867,15 +1867,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "StepCount": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1884,17 +1884,17 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             }
         },
         "Exercise": {
             "Meditation": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1903,15 +1903,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "PhysicalActivity": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1920,17 +1920,17 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             }
         },
         "Nutrition": {
             "FoodComponentMonitoring": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1939,15 +1939,15 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "FoodConsumption": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetByEvent": {
                     "Enabled": true
@@ -1962,7 +1962,7 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             },
             "Questionnaire": {
@@ -1972,10 +1972,10 @@
             },
             "WaterConsumption": {
                 "Create": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "Delete": {
-                    "Enabled": true
+                    "Enabled": false
                 },
                 "GetById": {
                     "Enabled": true
@@ -1984,7 +1984,7 @@
                     "Enabled": true
                 },
                 "Update": {
-                    "Enabled": true
+                    "Enabled": false
                 }
             }
         }

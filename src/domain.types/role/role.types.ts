@@ -17,6 +17,13 @@ export enum Roles {
     TenantUser           = 'Tenant user',
 }
 
+export enum PermissionScope {
+    System     = 'System',
+    Tenant     = 'Tenant',
+    User       = 'User',
+    Restricted = 'Restricted',
+}
+
 export const DefaultRoles = [
     {
         Role         : Roles.SystemAdmin,
@@ -24,6 +31,7 @@ export const DefaultRoles = [
         IsSystemRole : true,
         IsUserRole   : true,
         SeederFile   : 'permissions.system.admin.json',
+        Scope        : PermissionScope.System,
     },
     {
         Role         : Roles.SystemUser,
@@ -31,6 +39,7 @@ export const DefaultRoles = [
         IsSystemRole : true,
         IsUserRole   : true,
         SeederFile   : 'permissions.system.user.json',
+        Scope        : PermissionScope.System,
     },
     {
         Role         : Roles.Patient,
@@ -38,6 +47,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : true,
         SeederFile   : 'permissions.patient.json',
+        Scope        : PermissionScope.User,
     },
     {
         Role         : Roles.Doctor,
@@ -45,6 +55,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : true,
         SeederFile   : 'permissions.doctor.json',
+        Scope        : PermissionScope.User,
     },
     {
         Role         : Roles.LabUser,
@@ -52,6 +63,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : false,
         SeederFile   : null,
+        Scope        : PermissionScope.User,
     },
     {
         Role         : Roles.PharmacyUser,
@@ -59,6 +71,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : false,
         SeederFile   : null,
+        Scope        : PermissionScope.User,
     },
     {
         Role         : Roles.Nurse,
@@ -66,6 +79,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : false,
         SeederFile   : null,
+        Scope        : PermissionScope.Restricted,
     },
     {
         Role         : Roles.AmbulanceServiceUser,
@@ -73,6 +87,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : false,
         SeederFile   : null,
+        Scope        : PermissionScope.Restricted,
     },
     {
         Role         : Roles.SocialHealthWorker,
@@ -80,6 +95,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : false,
         SeederFile   : null,
+        Scope        : PermissionScope.Restricted,
     },
     {
         Role         : Roles.PatientFamilyMember,
@@ -87,6 +103,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : false,
         SeederFile   : null,
+        Scope        : PermissionScope.Restricted,
     },
     {
         Role         : Roles.PatientFriend,
@@ -94,6 +111,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : false,
         SeederFile   : null,
+        Scope        : PermissionScope.Restricted,
     },
     {
         Role         : Roles.Donor,
@@ -101,6 +119,7 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : true,
         SeederFile   : null,
+        Scope        : PermissionScope.Restricted,
     },
     {
         Role         : Roles.Volunteer,
@@ -108,20 +127,23 @@ export const DefaultRoles = [
         IsSystemRole : false,
         IsUserRole   : true,
         SeederFile   : null,
+        Scope        : PermissionScope.Restricted,
     },
     {
         Role         : Roles.TenantAdmin,
         Description  : 'An admin specific to a tenant. Capable of managing a tenant.',
         IsSystemRole : false,
         IsUserRole   : true,
-        SeederFile   : 'permissions.tenant.admin.json'
+        SeederFile   : 'permissions.tenant.admin.json',
+        Scope        : PermissionScope.Tenant,
     },
     {
         Role         : Roles.TenantUser,
         Description  : 'A user specific to a tenant.',
         IsSystemRole : false,
         IsUserRole   : true,
-        SeederFile   : 'permissions.tenant.user.json'
+        SeederFile   : 'permissions.tenant.user.json',
+        Scope        : PermissionScope.Tenant,
     }
 
 ];

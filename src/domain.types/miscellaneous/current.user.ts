@@ -11,3 +11,5 @@ export interface CurrentUser {
     CurrentRoleId : number;
     SessionId?    : uuid;
 }
+
+export type RequestType = 'Create' | 'GetById' | 'Update' | 'Delete' | 'Search' | 'Get' | 'Other';

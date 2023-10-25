@@ -246,7 +246,7 @@ export class UserValidator {
 
         const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
         const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
-        const tenantId: uuid = request.tenantId ?? null;
+        const tenantId: uuid = request.currentUserTenantId ?? null;
 
         const filters: UserSearchFilters = {
             TenantId        : tenantId,

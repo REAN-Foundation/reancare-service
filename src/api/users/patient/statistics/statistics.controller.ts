@@ -2,7 +2,7 @@ import express from 'express';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { StatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
+import { PatientStatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
 import { Loader } from '../../../../startup/loader';
 import { StatisticsValidator } from './statistics.validator';
 import { Helper } from '../../../../common/helper';
@@ -23,7 +23,7 @@ export class StatisticsController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: StatisticsService = null;
+    _service: PatientStatisticsService = null;
 
     _fileResourceService: FileResourceService = null;
 
@@ -37,7 +37,7 @@ export class StatisticsController extends BaseController {
 
     constructor() {
         super('Statistics');
-        this._service = Loader.container.resolve(StatisticsService);
+        this._service = Loader.container.resolve(PatientStatisticsService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._patientService = Loader.container.resolve(PatientService);
         this._personService = Loader.container.resolve(PersonService);

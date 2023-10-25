@@ -57,7 +57,7 @@ import { DurationType } from "../../../../domain.types/miscellaneous/time.types"
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class StatisticsService {
+export class PatientStatisticsService {
 
     constructor(
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,

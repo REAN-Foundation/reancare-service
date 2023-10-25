@@ -36,6 +36,7 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
             if (!hasPrivilege) {
                 return false;
             }
+
             const isResourceOwner = await this.isResourceOwner(currentUser, request);
             const hasConsent = await this.hasConsent(currentUser.CurrentRoleId, context);
             if (hasConsent || isResourceOwner) {
@@ -49,6 +50,9 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
     };
 
     private isResourceOwner = async (user: CurrentUser, request: express.Request): Promise<boolean> => {
+        if (request.resourceOwnerUserId == null) {
+            return false;
+        }
         if (request.resourceOwnerUserId === user.UserId) {
             return true;
         }

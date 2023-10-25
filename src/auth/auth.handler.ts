@@ -28,7 +28,6 @@ export class AuthHandler {
                 return;
             }
             request.context = context;
-            request.currentUserTenantId = request.currentUser.TenantId;
             request.resourceType = this.getResourceType(context);
             request.requestType = this.getRequestType(context, request);
             request.resourceId = this.getResourceId(request);

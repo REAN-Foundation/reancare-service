@@ -80,6 +80,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             }
 
             request.currentUser = user as CurrentUser;
+            request.currentUserTenantId = request.currentUser?.TenantId;
             res = {
                 Result        : true,
                 Message       : 'Authenticated',

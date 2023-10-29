@@ -142,6 +142,12 @@ export default class Reminder extends Model {
     })
     NotificationType: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    RawContent: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

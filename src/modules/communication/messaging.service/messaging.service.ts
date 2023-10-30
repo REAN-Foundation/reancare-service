@@ -31,16 +31,24 @@ export class MessagingService {
         type:string, PlanCode:string, payload = null): Promise<boolean> => {
 
         let templateName = null;
+        let channel = "whatsappMeta";
 
         toPhone = toPhone.replace(/\D/g, '');
         message = JSON.parse(message);
         if (message.Variables) {
             templateName = type;
             type = "template";
-            message = JSON.stringify(message);
 
         }
-        await this.sendMessage(provider, "whatsappMeta", toPhone, type, templateName, message, payload);
+        if (message.Variables.includes("Messages")) {
+            provider = "KENYA_MATERNAL";
+            channel = "telegram";
+            type = 'text';
+            const variables = JSON.parse(message.Variables);
+            message = variables.Messages;
+        }
+        message = JSON.stringify(message);
+        await this.sendMessage(provider, channel, toPhone, type, templateName, message, payload);
 
         return true;
     };

@@ -35,12 +35,10 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             const authHeader = request.headers['authorization'];
             const token = authHeader && authHeader.split(' ')[1];
 
-            if (token == null || token === 'null') {
-                const IsPrivileged = request.currentClient.IsPrivileged as boolean;
-                if (IsPrivileged) {
-                    return res;
-                }
+            const missingToken = token == null || token === 'null' || token === undefined;
+            const allowAnonymous = request.allowAnonymous;
 
+            if ( missingToken && !allowAnonymous) {
                 res = {
                     Result        : false,
                     Message       : 'Unauthorized user access',

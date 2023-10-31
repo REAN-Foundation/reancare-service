@@ -6,6 +6,7 @@ import { ResponseHandler } from '../common/handlers/response.handler';
 import { ErrorHandler } from '../common/handlers/error.handler';
 import { uuid } from '../domain.types/miscellaneous/system.types';
 import { RequestType } from '../domain.types/miscellaneous/current.user';
+import { ResourceHandler } from './custom/resource.handler';
 
 ////////////////////////////////////////////////////////////////////////
 export type AuthMiddleware =
@@ -32,6 +33,7 @@ export class AuthHandler {
             request.requestType = this.getRequestType(context, request);
             request.resourceId = this.getResourceId(request);
             request.resourceOwnerUserId = this.getResourceOwner(request);
+            request.allowAnonymous = allowAnonymous;
 
             next();
         };
@@ -45,6 +47,9 @@ export class AuthHandler {
 
         var userAuthenticator = Injector.Container.resolve(UserAuthenticator);
         middlewares.push(userAuthenticator.authenticate);
+
+        var resourceHandler = new ResourceHandler();
+        middlewares.push(resourceHandler.extractResource);
 
         var authorizer = Injector.Container.resolve(UserAuthorizer);
         middlewares.push(authorizer.authorize);

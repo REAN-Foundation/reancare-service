@@ -13,6 +13,7 @@ declare global{
             requestType        : RequestType | null | undefined;
             resourceOwnerUserId: string | null | undefined;
             resourceTenantId   : string | null | undefined;
+            allowAnonymous     : boolean;
         }
     }
 }

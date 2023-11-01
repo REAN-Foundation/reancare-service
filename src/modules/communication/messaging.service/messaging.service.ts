@@ -92,7 +92,7 @@ export class MessagingService {
             "REAN_BOT"       : "REAN_BOT",
             "GMU"            : "GMU",
         };
-        return clientName[provider] ?? "DEFAULT";
+        return clientName[provider] ?? provider;
     }
     
 }

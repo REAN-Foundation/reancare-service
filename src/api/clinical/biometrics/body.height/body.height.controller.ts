@@ -8,18 +8,16 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
 import { Injector } from '../../../../startup/injector';
 import { BodyHeightValidator } from './body.height.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyHeightController extends BaseController {
+export class BodyHeightController {
 
     //#region member variables and constructors
 
     _service: BodyHeightService = null;
 
     constructor() {
-        super('BodyHeight');
         this._service = Injector.Container.resolve(BodyHeightService);
     }
 

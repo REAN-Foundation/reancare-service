@@ -17,11 +17,10 @@ import { FileResourceUploadDomainModel } from '../../../domain.types/general/fil
 import { Logger } from '../../../common/logger';
 import { AuthHandler } from '../../../auth/auth.handler';
 import { Injector } from '../../../startup/injector';
-import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FileResourceController extends BaseController {
+export class FileResourceController {
 
     //#region member variables and constructors
 
@@ -34,7 +33,6 @@ export class FileResourceController extends BaseController {
     _validator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
-        super('FileResource');
         this._service = Injector.Container.resolve(FileResourceService);
         this._roleService = Injector.Container.resolve(RoleService);
         this._personService = Injector.Container.resolve(PersonService);

@@ -7,11 +7,10 @@ import { RoleService } from '../../services/role/role.service';
 import { UserService } from '../../services/users/user/user.service';
 import { Injector } from '../../startup/injector';
 import { AddressValidator } from '../general/address/address.validator';
-import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BaseUserController extends BaseController {
+export class BaseUserController {
 
     _personService: PersonService = null;
 
@@ -22,7 +21,6 @@ export class BaseUserController extends BaseController {
     _roleService: RoleService = null;
 
     constructor() {
-        super('User');
         this._userService = Injector.Container.resolve(UserService);
         this._roleService = Injector.Container.resolve(RoleService);
         this._personService = Injector.Container.resolve(PersonService);

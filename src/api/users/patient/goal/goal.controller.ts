@@ -5,11 +5,10 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { GoalService } from '../../../../services/users/patient/goal.service';
 import { Injector } from '../../../../startup/injector';
 import { GoalValidator } from './goal.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class GoalController extends BaseController {
+export class GoalController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class GoalController extends BaseController {
     _validator: GoalValidator = new GoalValidator();
 
     constructor() {
-        super('Goal');
         this._service = Injector.Container.resolve(GoalService);
     }
 

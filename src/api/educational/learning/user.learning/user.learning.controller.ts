@@ -5,11 +5,10 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { UserLearningService } from '../../../../services/educational/learning/user.learning.service';
 import { Injector } from '../../../../startup/injector';
 import { UserLearningValidator } from './user.learning.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserLearningController extends BaseController {
+export class UserLearningController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class UserLearningController extends BaseController {
     _validator: UserLearningValidator = new UserLearningValidator();
 
     constructor() {
-        super('UserLearning');
         this._service = Injector.Container.resolve(UserLearningService);
     }
 

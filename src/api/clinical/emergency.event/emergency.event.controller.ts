@@ -7,11 +7,10 @@ import { PatientService } from '../../../services/users/patient/patient.service'
 import { RoleService } from '../../../services/role/role.service';
 import { EmergencyEventValidator } from './emergency.event.validator';
 import { Injector } from '../../../startup/injector';
-import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EmergencyEventController extends BaseController {
+export class EmergencyEventController {
 
     //#region member variables and constructors
 
@@ -24,7 +23,6 @@ export class EmergencyEventController extends BaseController {
     _organizationService: OrganizationService = null;
 
     constructor() {
-        super('EmergencyEvent');
         this._service = Injector.Container.resolve(EmergencyEventService);
         this._roleService = Injector.Container.resolve(RoleService);
         this._patientService = Injector.Container.resolve(PatientService);

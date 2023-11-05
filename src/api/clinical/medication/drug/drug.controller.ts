@@ -5,11 +5,10 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { Injector } from '../../../../startup/injector';
 import { DrugValidator } from './drug.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DrugController extends BaseController{
+export class DrugController{
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class DrugController extends BaseController{
     _validator: DrugValidator = new DrugValidator();
 
     constructor() {
-        super('Drug');
         this._service = Injector.Container.resolve(DrugService);
     }
 

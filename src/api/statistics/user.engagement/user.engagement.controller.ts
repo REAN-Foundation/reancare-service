@@ -1,6 +1,5 @@
 import express from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { BaseController } from '../../base.controller';
 import { UserEngagementService } from '../../../services/statistics/user.engagement.service';
 import { UserEngagementValidator } from './user.engagement.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
@@ -8,7 +7,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserEngagementController extends BaseController {
+export class UserEngagementController {
 
     //#region member variables and constructors
     _service: UserEngagementService = null;
@@ -16,7 +15,6 @@ export class UserEngagementController extends BaseController {
     _validator = new UserEngagementValidator();
 
     constructor() {
-        super('UserEngagement');
         this._service = Injector.Container.resolve(UserEngagementService);
     }
 

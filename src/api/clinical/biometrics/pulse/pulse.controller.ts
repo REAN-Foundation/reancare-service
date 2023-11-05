@@ -5,7 +5,6 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { PulseService } from '../../../../services/clinical/biometrics/pulse.service';
 import { Injector } from '../../../../startup/injector';
 import { PulseValidator } from './pulse.validator';
-import { BaseController } from '../../../base.controller';
 import { PulseDomainModel } from '../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
@@ -16,7 +15,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PulseController extends BaseController{
+export class PulseController{
 
     //#region member variables and constructors
 
@@ -25,7 +24,6 @@ export class PulseController extends BaseController{
     _validator: PulseValidator = new PulseValidator();
 
     constructor() {
-        super('Pulse');
         this._service = Injector.Container.resolve(PulseService);
     }
 

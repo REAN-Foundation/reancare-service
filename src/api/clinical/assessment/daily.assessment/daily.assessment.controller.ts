@@ -3,12 +3,11 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DailyAssessmentService } from '../../../../services/clinical/daily.assessment/daily.assessment.service';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
-import { BaseController } from '../../../base.controller';
 import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DailyAssessmentController extends BaseController{
+export class DailyAssessmentController{
 
     //#region member variables and constructors
 
@@ -16,9 +15,6 @@ export class DailyAssessmentController extends BaseController{
 
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 
-    constructor() {
-        super('DailyAssessment');
-    }
     //#endregion
 
     //#region Action methods

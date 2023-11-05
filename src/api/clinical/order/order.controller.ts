@@ -4,12 +4,11 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { OrderService } from '../../../services/clinical/order.service';
 import { OrderValidator } from './order.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class OrderController extends BaseController{
+export class OrderController{
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class OrderController extends BaseController{
     _validator: OrderValidator = new OrderValidator();
 
     constructor() {
-        super('Order');
         this._service = Injector.Container.resolve(OrderService);
     }
 

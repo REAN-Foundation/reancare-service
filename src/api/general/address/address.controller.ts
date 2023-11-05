@@ -7,12 +7,11 @@ import { OrganizationService } from '../../../services/general/organization.serv
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { AddressValidator } from './address.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AddressController extends BaseController {
+export class AddressController {
 
     //#region member variables and constructors
 
@@ -27,7 +26,6 @@ export class AddressController extends BaseController {
     _validator = new AddressValidator();
 
     constructor() {
-        super('Address');
         this._service = Injector.Container.resolve(AddressService);
         this._roleService = Injector.Container.resolve(RoleService);
         this._personService = Injector.Container.resolve(PersonService);

@@ -5,6 +5,7 @@ import { Injector } from "../startup/injector";
 import { ClientAppService } from "../services/client.apps/client.app.service";
 import { ResponseHandler } from "../common/handlers/response.handler";
 import { Logger } from "../common/logger";
+import { ClientAppController } from "../api/client.apps/client.app.controller";
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,16 +19,39 @@ export default class ClientAppAuthMiddleware
     ): Promise<boolean> => {
         try {
             const requestUrl = request.originalUrl;
+
+            // Handle certain endpoints separately
             const isHealthCheck = requestUrl === '/api/v1' && request.method === 'GET';
-            if (!isHealthCheck) {
+            const currApiKey = requestUrl.includes('/api/v1/api-clients/') && requestUrl.includes('/current-api-key');
+            const renewApiKey = requestUrl.includes('/api/v1/api-clients/') && requestUrl.includes('/renew-api-key');
+
+            if (currApiKey || renewApiKey) {
+                const clientAppController = new ClientAppController();
+                const clientApp = await clientAppController.authenticateClientPassword(request);
+                if (clientApp != null) {
+                    const currentClient: CurrentClient = {
+                        ClientCode   : clientApp.ClientCode,
+                        ClientName   : clientApp.ClientName,
+                        IsPrivileged : clientApp.IsPrivileged,
+                    };
+                    request.currentClient = currentClient;
+                    request.clientAppAuth = true;
+                    next();
+                }
+                else {
+                    ResponseHandler.failure(request, response, 'Invalid client credentials', 401);
+                    return false;
+                }
+            }
+            else if (isHealthCheck) {
+                next();
+            }
+            else {
                 const authResult = await this.authenticate(request);
                 if (authResult.Result === false){
                     ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
                     return false;
                 }
-                next();
-            }
-            else {
                 next();
             }
         } catch (error) {

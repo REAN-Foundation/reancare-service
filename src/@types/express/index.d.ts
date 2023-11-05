@@ -14,6 +14,7 @@ declare global{
             resourceOwnerUserId: string | null | undefined;
             resourceTenantId   : string | null | undefined;
             allowAnonymous     : boolean;
+            clientAppAuth      : boolean;
         }
     }
 }

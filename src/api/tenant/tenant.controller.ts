@@ -4,7 +4,6 @@ import { ResponseHandler } from '../../common/handlers/response.handler';
 import { Injector } from '../../startup/injector';
 import { TenantValidator } from './tenant.validator';
 import { ApiError } from '../../common/api.error';
-import { BaseController } from '../base.controller';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { RoleService } from '../../services/role/role.service';
 import { PersonService } from '../../services/person/person.service';
@@ -20,7 +19,7 @@ import { Helper } from '../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class TenantController extends BaseController{
+export class TenantController{
 
     //#region member variables and constructors
 
@@ -37,7 +36,6 @@ export class TenantController extends BaseController{
     _validator: TenantValidator = new TenantValidator();
 
     constructor() {
-        super('Tenant');
         this._service = Injector.Container.resolve(TenantService);
         this._roleService = Injector.Container.resolve(RoleService);
         this._personService = Injector.Container.resolve(PersonService);

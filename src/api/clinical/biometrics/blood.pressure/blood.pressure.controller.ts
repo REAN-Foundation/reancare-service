@@ -5,7 +5,6 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodPressureService } from '../../../../services/clinical/biometrics/blood.pressure.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodPressureValidator } from './blood.pressure.validator';
-import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
@@ -21,7 +20,7 @@ import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodPressureController extends BaseController {
+export class BloodPressureController {
 
     //#region member variables and constructors
 
@@ -36,7 +35,6 @@ export class BloodPressureController extends BaseController {
     _validator: BloodPressureValidator = new BloodPressureValidator();
 
     constructor() {
-        super('BloodPressure');
         this._service = Injector.Container.resolve(BloodPressureService);
         this._patientService = Injector.Container.resolve(PatientService);
         this._personService = Injector.Container.resolve(PersonService);

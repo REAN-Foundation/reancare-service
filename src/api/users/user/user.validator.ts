@@ -293,11 +293,6 @@ export class UserValidator {
                 .isNumeric()
                 .run(request);
 
-            await body('TenantId').exists()
-                .trim()
-                .isUUID()
-                .run(request);
-
             await oneOf([
                 body('TenantId').exists()
                     .trim()

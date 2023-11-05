@@ -5,14 +5,13 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../../domain.types/users/patient/health.profile/health.profile.dto';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { HealthProfileValidator } from './health.profile.validator';
-import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthProfileController extends BaseController{
+export class HealthProfileController{
 
     //#region member variables and constructors
 
@@ -21,7 +20,6 @@ export class HealthProfileController extends BaseController{
     _validator: HealthProfileValidator = new HealthProfileValidator();
 
     constructor() {
-        super('HealthProfile');
         this._service = Injector.Container.resolve(HealthProfileService);
     }
 

@@ -6,13 +6,12 @@ import { UserGroupService } from '../../../services/community/user.group.service
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
 import { UserGroupValidator } from './user.group.validator';
-import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserGroupController extends BaseController {
+export class UserGroupController {
 
     //#region member variables and constructors
 
@@ -27,7 +26,6 @@ export class UserGroupController extends BaseController {
     _validator = new UserGroupValidator();
 
     constructor() {
-        super('UserGroup');
         this._service = Injector.Container.resolve(UserGroupService);
         this._personService = Injector.Container.resolve(PersonService);
         this._userService = Injector.Container.resolve(UserService);

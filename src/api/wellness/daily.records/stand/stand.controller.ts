@@ -5,11 +5,10 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { StandService } from '../../../../services/wellness/daily.records/stand.service';
 import { Injector } from '../../../../startup/injector';
 import { StandValidator } from './stand.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StandController extends BaseController {
+export class StandController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class StandController extends BaseController {
     _validator: StandValidator = new StandValidator();
 
     constructor() {
-        super('Stand');
         this._service = Injector.Container.resolve(StandService);
     }
 

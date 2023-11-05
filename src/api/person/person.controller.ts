@@ -7,11 +7,10 @@ import { PersonService } from '../../services/person/person.service';
 import { UserService } from '../../services/users/user/user.service';
 import { Injector } from '../../startup/injector';
 import { PersonValidator } from './person.validator';
-import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PersonController extends BaseController {
+export class PersonController {
 
     //#region member variables and constructors
 
@@ -24,7 +23,6 @@ export class PersonController extends BaseController {
     _organizationService: OrganizationService = null;
 
     constructor() {
-        super('Person');
         this._service = Injector.Container.resolve(PersonService);
         this._userService = Injector.Container.resolve(UserService);
         this._addressService = Injector.Container.resolve(AddressService);

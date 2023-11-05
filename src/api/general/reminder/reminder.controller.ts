@@ -7,12 +7,11 @@ import { OrganizationService } from '../../../services/general/organization.serv
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { ReminderValidator } from './reminder.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ReminderController extends BaseController {
+export class ReminderController {
 
     //#region member variables and constructors
 
@@ -27,7 +26,6 @@ export class ReminderController extends BaseController {
     _validator = new ReminderValidator();
 
     constructor() {
-        super('Reminder');
         this._service = Injector.Container.resolve(ReminderService);
         this._roleService = Injector.Container.resolve(RoleService);
         this._personService = Injector.Container.resolve(PersonService);

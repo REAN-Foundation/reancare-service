@@ -3,7 +3,6 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, SeverityList, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { TypesService } from '../../../services/general/types.service';
-import { BaseController } from '../../base.controller';
 import { AwardsFactsService } from '../../../modules/awards.facts/awards.facts.service';
 import { ReminderTypeList, RepeatAfterEveryUnitList } from '../../../domain.types/general/reminder/reminder.domain.model';
 import { TypesValidator } from './types.validator';
@@ -12,7 +11,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class TypesController extends BaseController {
+export class TypesController {
 
     //#region member variables and constructors
 
@@ -21,7 +20,6 @@ export class TypesController extends BaseController {
     _validator = new TypesValidator();
 
     constructor() {
-        super('Types');
         this._service = Injector.Container.resolve(TypesService);
     }
 

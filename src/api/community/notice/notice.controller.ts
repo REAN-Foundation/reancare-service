@@ -4,13 +4,12 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { NoticeService } from '../../../services/general/notice.service';
 import { NoticeValidator } from './notice.validator';
-import { BaseController } from '../../base.controller';
 import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class NoticeController extends BaseController {
+export class NoticeController {
 
     //#region member variables and constructors
 
@@ -19,7 +18,6 @@ export class NoticeController extends BaseController {
     _validator: NoticeValidator = new NoticeValidator();
 
     constructor() {
-        super('Notice');
         this._service = Injector.Container.resolve(NoticeService);
     }
 

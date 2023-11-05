@@ -1,6 +1,5 @@
 import express from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { BaseController } from '../../base.controller';
 import { StatisticsService } from '../../../services/statistics/statistics.service';
 import { StatistcsValidator } from './statistics.validator';
 import { ApiError } from '../../../common/api.error';
@@ -8,7 +7,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StatisticsController extends BaseController {
+export class StatisticsController {
 
     //#region member variables and constructors
     _service: StatisticsService = null;
@@ -16,7 +15,6 @@ export class StatisticsController extends BaseController {
     _validator = new StatistcsValidator();
 
     constructor() {
-        super('Statistics');
         this._service = Injector.Container.resolve(StatisticsService);
     }
 

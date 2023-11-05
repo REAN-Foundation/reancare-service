@@ -1,7 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { BaseController } from '../../base.controller';
 import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
@@ -13,7 +12,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class LabRecordController extends BaseController {
+export class LabRecordController {
 
     //#region member variables and constructors
     _service: LabRecordService = null;
@@ -23,7 +22,6 @@ export class LabRecordController extends BaseController {
     _validator: LabRecordValidator = new LabRecordValidator();
 
     constructor() {
-        super('LabRecord');
         this._service = Injector.Container.resolve(LabRecordService);
         this._userService = Injector.Container.resolve(UserService);
     }

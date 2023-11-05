@@ -5,11 +5,10 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.do.you.feel.service';
 import { Injector } from '../../../../startup/injector';
 import { HowDoYouFeelValidator } from './how.do.you.feel.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HowDoYouFeelController extends BaseController{
+export class HowDoYouFeelController{
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class HowDoYouFeelController extends BaseController{
     _validator: HowDoYouFeelValidator = new HowDoYouFeelValidator();
 
     constructor() {
-        super('HowDoYouFeel');
         this._service = Injector.Container.resolve(HowDoYouFeelService);
     }
 

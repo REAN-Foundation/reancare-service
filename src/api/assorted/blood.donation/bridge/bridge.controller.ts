@@ -3,13 +3,12 @@ import { BridgeService } from '../../../../services/assorted/blood.donation/brid
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { BaseController } from '../../../base.controller';
 import { BridgeValidator } from './bridge.validator';
 import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BridgeController extends BaseController {
+export class BridgeController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class BridgeController extends BaseController {
     _validator: BridgeValidator = new BridgeValidator();
 
     constructor() {
-        super('BloodDonation.Bridge');
         this._service = Injector.Container.resolve(BridgeService);
     }
 

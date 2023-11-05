@@ -12,7 +12,6 @@ import { ThirdpartyApiService } from '../../../../services/general/thirdparty.ap
 import { Injector } from '../../../../startup/injector';
 import { FormsValidator } from './forms.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
-import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { PatientDetailsDto } from '../../../../domain.types/users/patient/patient/patient.dto';
 import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
@@ -22,7 +21,7 @@ import { UserHelper } from '../../../users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FormsController extends BaseController {
+export class FormsController {
 
     //#region member variables and constructors
 
@@ -45,7 +44,6 @@ export class FormsController extends BaseController {
     _userHelper: UserHelper = new UserHelper();
 
     constructor() {
-        super('Forms');
         this._service = Injector.Container.resolve(FormsService);
         this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
         this._assessmentService = Injector.Container.resolve(AssessmentService);

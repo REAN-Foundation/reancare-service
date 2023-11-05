@@ -5,11 +5,10 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HeartPointsService } from '../../../../services/wellness/daily.records/heart.points.service';
 import { Injector } from '../../../../startup/injector';
 import { HeartPointValidator } from './heart.points.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HeartPointController extends BaseController{
+export class HeartPointController{
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class HeartPointController extends BaseController{
     _validator: HeartPointValidator = new HeartPointValidator();
 
     constructor() {
-        super('HeartPoints');
         this._service = Injector.Container.resolve(HeartPointsService);
     }
 

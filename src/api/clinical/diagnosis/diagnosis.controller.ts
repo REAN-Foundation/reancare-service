@@ -5,12 +5,11 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { DiagnosisValidator } from './diagnosis.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DiagnosisController extends BaseController {
+export class DiagnosisController {
 
     //#region member variables and constructors
 
@@ -21,7 +20,6 @@ export class DiagnosisController extends BaseController {
     _userService: UserService = null;
 
     constructor() {
-        super('Diagnosis');
         this._service = Injector.Container.resolve(DiagnosisService);
         this._userService = Injector.Container.resolve(UserService);
     }

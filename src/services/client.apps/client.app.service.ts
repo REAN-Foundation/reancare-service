@@ -47,22 +47,24 @@ export class ClientAppService {
         return await this._clientAppRepo.getByCode(clientCode);
     };
 
-    getApiKey = async (verificationModel: ClientAppVerificationDomainModel): Promise<ApiKeyDto> => {
-        const client = await this._clientAppRepo.getByCode(verificationModel.ClientCode);
-        if (client == null) {
-            const message = 'Client does not exist with code (' + verificationModel.ClientCode + ')';
-            throw new ApiError(404, message);
-        }
-        const hashedPassword = await this._clientAppRepo.getClientHashedPassword(client.id);
-        const isPasswordValid = Helper.compare(verificationModel.Password, hashedPassword);
-        if (!isPasswordValid) {
-            throw new ApiError(401, 'Invalid password!');
-        }
+    getApiKey = async (model: ClientAppVerificationDomainModel): Promise<ApiKeyDto> => {
+        const client = await this.authenticateClientPassword(model);
         return await this._clientAppRepo.getApiKey(client.id);
     };
 
     renewApiKey = async (model: ClientAppVerificationDomainModel): Promise<ApiKeyDto> => {
+        const client = await this.authenticateClientPassword(model);
+        const key = apikeyGenerator.default.create();
+        const clientApiKeyDto = await this._clientAppRepo.setApiKey(
+            client.id,
+            key.apiKey,
+            model.ValidFrom,
+            model.ValidTill
+        );
+        return clientApiKeyDto;
+    };
 
+    authenticateClientPassword = async (model: ClientAppVerificationDomainModel) => {
         const client = await this._clientAppRepo.getByCode(model.ClientCode);
         if (client == null) {
             const message = 'Client does not exist for client code (' + model.ClientCode + ')';
@@ -74,16 +76,7 @@ export class ClientAppService {
         if (!isPasswordValid) {
             throw new ApiError(401, 'Invalid password!');
         }
-
-        const key = apikeyGenerator.default.create();
-        const clientApiKeyDto = await this._clientAppRepo.setApiKey(
-            client.id,
-            key.apiKey,
-            model.ValidFrom,
-            model.ValidTill
-        );
-
-        return clientApiKeyDto;
+        return client;
     };
 
     isApiKeyValid = async (apiKey: string): Promise<CurrentClient> => {
@@ -167,3 +160,4 @@ export class ClientAppService {
     }
 
 }
+

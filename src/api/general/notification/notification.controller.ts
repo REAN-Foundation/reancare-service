@@ -4,12 +4,11 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { NotificationService } from '../../../services/general/notification.service';
 import { NotificationValidator } from './notification.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class NotificationController extends BaseController {
+export class NotificationController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class NotificationController extends BaseController {
     _validator: NotificationValidator = new NotificationValidator();
 
     constructor() {
-        super('Notification');
         this._service = Injector.Container.resolve(NotificationService);
     }
 

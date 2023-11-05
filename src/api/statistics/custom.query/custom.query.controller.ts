@@ -1,6 +1,5 @@
 import express from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { BaseController } from '../../base.controller';
 import * as path from 'path';
 import { CustomQueryService } from '../../../services/statistics/custom.query.service';
 import { CustomQueryValidator } from './custom.query.validator';
@@ -10,7 +9,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CustomQueryController extends BaseController {
+export class CustomQueryController {
 
     //#region member variables and constructors
     _service: CustomQueryService = null;
@@ -18,7 +17,6 @@ export class CustomQueryController extends BaseController {
     _validator = new CustomQueryValidator();
 
     constructor() {
-        super('CustomQuery');
         this._service = Injector.Container.resolve(CustomQueryService);
     }
 

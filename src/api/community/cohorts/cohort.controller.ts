@@ -6,13 +6,12 @@ import { CohortService } from '../../../services/community/cohort.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
 import { CohortValidator } from './cohort.validator';
-import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CohortController extends BaseController {
+export class CohortController {
 
     //#region member variables and constructors
 
@@ -27,7 +26,6 @@ export class CohortController extends BaseController {
     _validator = new CohortValidator();
 
     constructor() {
-        super('Cohort');
         this._service = Injector.Container.resolve(CohortService);
         this._personService = Injector.Container.resolve(PersonService);
         this._userService = Injector.Container.resolve(UserService);

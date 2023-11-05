@@ -8,11 +8,10 @@ import { PatientService } from '../../../services/users/patient/patient.service'
 import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
-import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserDeviceDetailsController extends BaseController {
+export class UserDeviceDetailsController {
 
     //#region member variables and constructors
 
@@ -25,7 +24,6 @@ export class UserDeviceDetailsController extends BaseController {
     _firebaseNotificationService: FirebaseNotificationService = null;
 
     constructor() {
-        super('UserDeviceDetails');
         this._service = Injector.Container.resolve(UserDeviceDetailsService);
         this._personService = Injector.Container.resolve(PersonService);
         this._patientService = Injector.Container.resolve(PatientService);

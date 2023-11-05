@@ -4,12 +4,11 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { MedicalConditionService } from '../../../services/clinical/medical.condition.service';
 import { MedicalConditionValidator } from './medical.condition.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicalConditionController extends BaseController {
+export class MedicalConditionController {
 
     //#region member variables and constructors
 
@@ -18,9 +17,7 @@ export class MedicalConditionController extends BaseController {
     _validator: MedicalConditionValidator = new MedicalConditionValidator();
 
     constructor() {
-        super('MedicalCondition');
         this._service = Injector.Container.resolve(MedicalConditionService);
-
     }
 
     //#endregion

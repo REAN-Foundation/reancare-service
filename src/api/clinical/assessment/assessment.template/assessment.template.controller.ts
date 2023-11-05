@@ -12,11 +12,10 @@ import { FileResourceService } from '../../../../services/general/file.resource.
 import { Injector } from '../../../../startup/injector';
 import { AssessmentTemplateValidator } from './assessment.template.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AssessmentTemplateController extends BaseController{
+export class AssessmentTemplateController{
 
     //#region member variables and constructors
 
@@ -29,7 +28,6 @@ export class AssessmentTemplateController extends BaseController{
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
-        super('AssessmentTemplate');
         this._service = Injector.Container.resolve(AssessmentTemplateService);
         this._fileResourceService = Injector.Container.resolve(FileResourceService);
     }

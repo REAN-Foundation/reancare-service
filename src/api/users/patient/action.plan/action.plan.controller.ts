@@ -2,7 +2,6 @@ import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { Injector } from '../../../../startup/injector';
-import { BaseController } from '../../../base.controller';
 import { UserService } from '../../../../services/users/user/user.service';
 import { ActionPlanValidator } from './action.plan.validator';
 import { ActionPlanService } from '../../../../services/users/patient/action.plan.service';
@@ -12,7 +11,7 @@ import { HealthPriorityService } from '../../../../services/users/patient/health
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ActionPlanController extends BaseController {
+export class ActionPlanController {
 
     //#region member variables and constructors
     _service: ActionPlanService = null;
@@ -26,7 +25,6 @@ export class ActionPlanController extends BaseController {
     _validator: ActionPlanValidator = new ActionPlanValidator();
 
     constructor() {
-        super('ActionPlan');
         this._service = Injector.Container.resolve(ActionPlanService);
         this._userService = Injector.Container.resolve(UserService);
         this._goalService = Injector.Container.resolve(GoalService);

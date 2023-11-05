@@ -8,7 +8,6 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
 import { Injector } from '../../../../startup/injector';
 import { BodyWeightValidator } from './body.weight.validator';
-import { BaseController } from '../../../base.controller';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
@@ -16,7 +15,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyWeightController extends BaseController {
+export class BodyWeightController {
 
     //#region member variables and constructors
 
@@ -25,7 +24,6 @@ export class BodyWeightController extends BaseController {
     _validator: BodyWeightValidator = new BodyWeightValidator();
 
     constructor() {
-        super('BodyWeight');
         this._service = Injector.Container.resolve(BodyWeightService);
     }
     //#endregion

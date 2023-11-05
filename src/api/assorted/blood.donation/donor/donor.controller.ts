@@ -20,7 +20,6 @@ export class DonorController extends BaseUserController {
 
     constructor() {
         super();
-        this._resourceName = 'BloodDonation.Donor';
         this._service = Injector.Container.resolve(DonorService);
     }
 

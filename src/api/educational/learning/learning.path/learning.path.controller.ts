@@ -5,11 +5,10 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { LearningPathService } from '../../../../services/educational/learning/learning.path.service';
 import { Injector } from '../../../../startup/injector';
 import { LearningPathValidator } from './learning.path.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class LearningPathController extends BaseController {
+export class LearningPathController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class LearningPathController extends BaseController {
     _validator: LearningPathValidator = new LearningPathValidator();
 
     constructor() {
-        super('LearningPath');
         this._service = Injector.Container.resolve(LearningPathService);
     }
 

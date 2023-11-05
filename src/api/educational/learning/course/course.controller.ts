@@ -5,11 +5,10 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { CourseService } from '../../../../services/educational/learning/course.service';
 import { Injector } from '../../../../startup/injector';
 import { CourseValidator } from './course.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CourseController extends BaseController {
+export class CourseController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class CourseController extends BaseController {
     _validator: CourseValidator = new CourseValidator();
 
     constructor() {
-        super('Course');
         this._service = Injector.Container.resolve(CourseService);
     }
 

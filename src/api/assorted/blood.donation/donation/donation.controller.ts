@@ -3,13 +3,12 @@ import { DonationService } from '../../../../services/assorted/blood.donation/do
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { BaseController } from '../../../base.controller';
 import { DonationValidator } from './donation.validator';
 import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DonationController extends BaseController {
+export class DonationController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class DonationController extends BaseController {
     _validator: DonationValidator = new DonationValidator();
 
     constructor() {
-        super('BloodDonation.Donation');
         this._service = Injector.Container.resolve(DonationService);
     }
 

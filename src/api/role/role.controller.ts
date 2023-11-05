@@ -4,11 +4,10 @@ import { ResponseHandler } from '../../common/handlers/response.handler';
 import { Injector } from '../../startup/injector';
 import { RoleValidator } from './role.validator';
 import { ApiError } from '../../common/api.error';
-import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class RoleController extends BaseController{
+export class RoleController{
 
     //#region member variables and constructors
 
@@ -17,7 +16,6 @@ export class RoleController extends BaseController{
     _validator: RoleValidator = new RoleValidator();
 
     constructor() {
-        super('Role');
         this._service = Injector.Container.resolve(RoleService);
     }
 

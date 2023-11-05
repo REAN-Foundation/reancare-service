@@ -6,11 +6,10 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
 import { Injector } from '../../../../startup/injector';
 import { StepCountValidator } from './step.count.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StepCountController extends BaseController {
+export class StepCountController {
 
     //#region member variables and constructors
 
@@ -21,7 +20,6 @@ export class StepCountController extends BaseController {
     _patientService: PatientService = null;
 
     constructor() {
-        super('StepCount');
         this._service = Injector.Container.resolve(StepCountService);
         this._patientService = Injector.Container.resolve(PatientService);
     }

@@ -5,7 +5,6 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { SleepService } from '../../../../services/wellness/daily.records/sleep.service';
 import { Injector } from '../../../../startup/injector';
 import { SleepValidator } from './sleep.validator';
-import { BaseController } from '../../../base.controller';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
@@ -13,7 +12,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SleepController extends BaseController{
+export class SleepController{
 
     //#region member variables and constructors
 
@@ -22,7 +21,6 @@ export class SleepController extends BaseController{
     _validator: SleepValidator = new SleepValidator();
 
     constructor() {
-        super('Sleep');
         this._service = Injector.Container.resolve(SleepService);
     }
 

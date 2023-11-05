@@ -26,6 +26,16 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
         request: express.Request
     ): Promise<AuthenticationResult> => {
         try {
+            if (request.clientAppAuth) {
+                //This check is applicable only for the client app
+                //specific endpoints. For all other endpoints, this
+                //check is not applicable.
+                return {
+                    Result        : true,
+                    Message       : 'Authenticated',
+                    HttpErrorCode : 200,
+                };
+            }
             var res: AuthenticationResult = {
                 Result        : true,
                 Message       : 'Authenticated',

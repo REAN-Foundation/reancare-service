@@ -2,7 +2,6 @@ import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { Injector } from '../../../../startup/injector';
-import { BaseController } from '../../../base.controller';
 import { UserService } from '../../../../services/users/user/user.service';
 import { HealthPriorityValidator } from './health.priority.validator';
 import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
@@ -10,7 +9,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthPriorityController extends BaseController {
+export class HealthPriorityController {
 
     //#region member variables and constructors
     _service: HealthPriorityService = null;
@@ -20,7 +19,6 @@ export class HealthPriorityController extends BaseController {
     _validator: HealthPriorityValidator = new HealthPriorityValidator();
 
     constructor() {
-        super('HealthPriority');
         this._service = Injector.Container.resolve(HealthPriorityService);
         this._userService = Injector.Container.resolve(UserService);
     }

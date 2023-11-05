@@ -5,7 +5,6 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
 import { Injector } from '../../../../startup/injector';
 import { FoodConsumptionValidator } from './food.consumption.validator';
-import { BaseController } from '../../../base.controller';
 import { FoodConsumptionDomainModel }
     from '../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
@@ -17,7 +16,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FoodConsumptionController extends BaseController {
+export class FoodConsumptionController {
 
     //#region member variables and constructors
 
@@ -26,7 +25,6 @@ export class FoodConsumptionController extends BaseController {
     _validator: FoodConsumptionValidator = new FoodConsumptionValidator();
 
     constructor() {
-        super('FoodConsumption');
         this._service = Injector.Container.resolve(FoodConsumptionService);
     }
 

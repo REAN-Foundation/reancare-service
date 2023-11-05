@@ -5,11 +5,10 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { CalorieBalanceService } from '../../../../services/wellness/daily.records/calorie.balance.service';
 import { Injector } from '../../../../startup/injector';
 import { CalorieBalanceValidator } from './calorie.balance.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CalorieBalanceController extends BaseController{
+export class CalorieBalanceController{
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class CalorieBalanceController extends BaseController{
     _validator: CalorieBalanceValidator = new CalorieBalanceValidator();
 
     constructor() {
-        super('CalorieBalance');
         this._service = Injector.Container.resolve(CalorieBalanceService);
     }
 

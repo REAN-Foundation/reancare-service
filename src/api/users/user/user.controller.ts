@@ -6,24 +6,17 @@ import { UserDetailsDto } from '../../../domain.types/users/user/user.dto';
 import { UserService } from '../../../services/users/user/user.service';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserController extends BaseController {
+export class UserController {
 
     //#region member variables and constructors
 
-    _service: UserService = null;
+    _service: UserService = Injector.Container.resolve(UserService);
 
-    _userDeviceDetailsService: UserDeviceDetailsService = null;
-
-    constructor() {
-        super('User');
-        this._service = Injector.Container.resolve(UserService);
-        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
-    }
+    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
     //#endregion
 
@@ -88,7 +81,7 @@ export class UserController extends BaseController {
         }
     };
 
-    public async loginWithPassword(request: express.Request, response: express.Response): Promise<void> {
+    loginWithPassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const loginObject = await UserValidator.loginWithPassword(request, response);
             const userDetails = await this._service.loginWithPassword(loginObject);
@@ -121,7 +114,7 @@ export class UserController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

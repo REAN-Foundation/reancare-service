@@ -4,12 +4,11 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DoctorNoteService } from '../../../services/clinical/doctor.note.service';
 import { DoctorNoteValidator } from './doctor.note.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DoctorNoteController extends BaseController {
+export class DoctorNoteController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class DoctorNoteController extends BaseController {
     _validator: DoctorNoteValidator = new DoctorNoteValidator();
 
     constructor() {
-        super('DoctorNote');
         this._service = Injector.Container.resolve(DoctorNoteService);
     }
 

@@ -5,7 +5,6 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyTemperatureService } from '../../../../services/clinical/biometrics/body.temperature.service';
 import { Injector } from '../../../../startup/injector';
 import { BodyTemperatureValidator } from './body.temperature.validator';
-import { BaseController } from '../../../base.controller';
 import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
@@ -16,7 +15,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyTemperatureController extends BaseController {
+export class BodyTemperatureController {
 
     //#region member variables and constructors
 
@@ -25,9 +24,7 @@ export class BodyTemperatureController extends BaseController {
     _validator: BodyTemperatureValidator = new BodyTemperatureValidator();
 
     constructor() {
-        super('BodyTemperature');
         this._service = Injector.Container.resolve(BodyTemperatureService);
-
     }
 
     //#endregion

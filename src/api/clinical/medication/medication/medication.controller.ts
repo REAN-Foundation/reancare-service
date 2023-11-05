@@ -16,11 +16,10 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
 import { MedicationValidator } from './medication.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicationController extends BaseController {
+export class MedicationController {
 
     //#region member variables and constructors
 
@@ -37,7 +36,6 @@ export class MedicationController extends BaseController {
     _medicationConsumptionService: MedicationConsumptionService = null;
 
     constructor() {
-        super('Medication');
         this._service = Injector.Container.resolve(MedicationService);
         this._patientService = Injector.Container.resolve(PatientService);
         this._userService = Injector.Container.resolve(UserService);

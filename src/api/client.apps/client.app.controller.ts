@@ -4,19 +4,18 @@ import { ClientAppService } from '../../services/client.apps/client.app.service'
 import { ResponseHandler } from '../../common/handlers/response.handler';
 import { ClientAppValidator } from './client.app.validator';
 import { ApiError } from '../../common/api.error';
-import { BaseController } from '../base.controller';
 import { Injector } from '../../startup/injector';
+import { ClientAppDto } from '../../domain.types/client.apps/client.app.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ClientAppController extends BaseController {
+export class ClientAppController {
 
     //#region member variables and constructors
 
     _service: ClientAppService = null;
 
     constructor() {
-        super('ClientApp');
         this._service = Injector.Container.resolve(ClientAppService);
     }
 
@@ -100,7 +99,7 @@ export class ClientAppController extends BaseController {
 
     getCurrentApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const verificationModel = await ClientAppValidator.getOrRenewApiKey(request);
+            const verificationModel = await ClientAppValidator.authenticateClientPassword(request);
             const apiKeyDto = await this._service.getApiKey(verificationModel);
             if (apiKeyDto == null) {
                 throw new ApiError(400, 'Unable to retrieve client app api key.');
@@ -113,9 +112,15 @@ export class ClientAppController extends BaseController {
         }
     };
 
+    authenticateClientPassword = async (request: express.Request): Promise<ClientAppDto> => {
+        const verificationModel = await ClientAppValidator.authenticateClientPassword(request);
+        const client = await this._service.authenticateClientPassword(verificationModel);
+        return client;
+    };
+
     renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const verificationModel = await ClientAppValidator.getOrRenewApiKey(request);
+            const verificationModel = await ClientAppValidator.authenticateClientPassword(request);
             if (verificationModel.ValidFrom == null) {
                 verificationModel.ValidFrom = new Date();
             }

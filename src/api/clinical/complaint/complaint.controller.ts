@@ -6,12 +6,11 @@ import { ComplaintService } from '../../../services/clinical/complaint.service';
 import { DoctorService } from '../../../services/users/doctor.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { ComplaintValidator } from './complaint.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ComplaintController extends BaseController {
+export class ComplaintController {
 
     //#region member variables and constructors
 
@@ -24,7 +23,6 @@ export class ComplaintController extends BaseController {
     _doctorService: DoctorService = null;
 
     constructor() {
-        super('Complaint');
         this._service = Injector.Container.resolve(ComplaintService);
         this._patientService = Injector.Container.resolve(PatientService);
         this._doctorService = Injector.Container.resolve(DoctorService);

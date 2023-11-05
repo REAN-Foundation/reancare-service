@@ -6,14 +6,13 @@ import { ConsentService } from '../../../services/auth/consent.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
 import { ConsentValidator } from './consent.validator';
-import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
 import { TenantService } from '../../../services/tenant/tenant.service';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ConsentController extends BaseController {
+export class ConsentController {
 
     //#region member variables and constructors
 
@@ -30,7 +29,6 @@ export class ConsentController extends BaseController {
     _validator = new ConsentValidator();
 
     constructor() {
-        super('Consent');
         this._service = Injector.Container.resolve(ConsentService);
         this._personService = Injector.Container.resolve(PersonService);
         this._userService = Injector.Container.resolve(UserService);

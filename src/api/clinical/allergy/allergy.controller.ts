@@ -7,12 +7,11 @@ import { AllergenCategoriesList, AllergenExposureRoutesList } from '../../../dom
 import { AllergyService } from '../../../services/clinical/allergy.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { AllergyValidator } from './allergy.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AllergyController extends BaseController {
+export class AllergyController {
 
     //#region member variables and constructors
 
@@ -23,7 +22,6 @@ export class AllergyController extends BaseController {
     _userService: UserService = null;
 
     constructor() {
-        super('Allergy');
         this._service = Injector.Container.resolve(AllergyService);
         this._userService = Injector.Container.resolve(UserService);
     }

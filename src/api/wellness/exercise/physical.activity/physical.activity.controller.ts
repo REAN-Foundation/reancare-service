@@ -6,7 +6,6 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
 import { Injector } from '../../../../startup/injector';
 import { PhysicalActivityValidator } from './physical.activity.validator';
-import { BaseController } from '../../../base.controller';
 import { PhysicalActivityDomainModel } from
     '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
@@ -18,7 +17,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PhysicalActivityController extends BaseController {
+export class PhysicalActivityController {
 
     //#region member variables and constructors
 
@@ -29,7 +28,6 @@ export class PhysicalActivityController extends BaseController {
     _userService: UserService = null;
 
     constructor() {
-        super('PhysicalActivity');
         this._service = Injector.Container.resolve(PhysicalActivityService);
         this._userService = Injector.Container.resolve(UserService);
     }

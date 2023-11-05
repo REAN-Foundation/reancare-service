@@ -3,7 +3,6 @@ import { CareplanService } from '../../../services/clinical/careplan.service';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { CareplanValidator } from './careplan.validator';
-import { BaseController } from '../../base.controller';
 import { UserService } from '../../../services/users/user/user.service';
 import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
@@ -13,7 +12,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CareplanController extends BaseController {
+export class CareplanController {
 
     //#region member variables and constructors
     _service: CareplanService = null;
@@ -25,7 +24,6 @@ export class CareplanController extends BaseController {
     _validator: CareplanValidator = new CareplanValidator();
 
     constructor() {
-        super('Careplan');
         this._service = Injector.Container.resolve(CareplanService);
         this._communityNetworkService = Injector.Container.resolve(CommunityNetworkService);
         this._userService = Injector.Container.resolve(UserService);

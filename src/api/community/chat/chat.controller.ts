@@ -6,13 +6,12 @@ import { ChatService } from '../../../services/community/chat.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
 import { ChatValidator } from './chat.validator';
-import { BaseController } from '../../base.controller';
 import { ConversationDomainModel } from '../../../domain.types/community/chat/conversation.domain.model';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ChatController extends BaseController {
+export class ChatController {
 
     //#region member variables and constructors
 
@@ -25,7 +24,6 @@ export class ChatController extends BaseController {
     _validator = new ChatValidator();
 
     constructor() {
-        super('Chat');
         this._service = Injector.Container.resolve(ChatService);
         this._roleService = Injector.Container.resolve(RoleService);
         this._userService = Injector.Container.resolve(UserService);

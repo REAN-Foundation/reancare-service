@@ -1,16 +1,14 @@
 import express from 'express';
-
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { Injector } from '../../../../startup/injector';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { SymptomTypeValidator } from './symptom.type.validator';
 import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomTypeController extends BaseController {
+export class SymptomTypeController {
 
     //#region member variables and constructors
 
@@ -19,7 +17,6 @@ export class SymptomTypeController extends BaseController {
     _validator: SymptomTypeValidator = new SymptomTypeValidator();
 
     constructor() {
-        super('SymptomType');
         this._service = Injector.Container.resolve(SymptomTypeService);
     }
 

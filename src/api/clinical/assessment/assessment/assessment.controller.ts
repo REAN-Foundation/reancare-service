@@ -7,7 +7,6 @@ import { CareplanService } from '../../../../services/clinical/careplan.service'
 import { UserTaskService } from '../../../../services/users/user/user.task.service';
 import { Injector } from '../../../../startup/injector';
 import { AssessmentValidator } from './assessment.validator';
-import { BaseController } from '../../../base.controller';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
 import { AssessmentNodeType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.helper.repo';
@@ -17,7 +16,7 @@ import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AssessmentController extends BaseController{
+export class AssessmentController{
 
     //#region member variables and constructors
 
@@ -32,7 +31,6 @@ export class AssessmentController extends BaseController{
     _validator: AssessmentValidator = new AssessmentValidator();
 
     constructor() {
-        super('Assessment');
         this._service = Injector.Container.resolve(AssessmentService);
         this._serviceHelperRepo = Injector.Container.resolve(AssessmentHelperRepo);
         this._careplanService = Injector.Container.resolve(CareplanService);

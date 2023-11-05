@@ -146,7 +146,7 @@ export class ClientAppValidator {
         return ClientAppValidator.getFilter(request);
     };
 
-    static getOrRenewApiKey = async (
+    static authenticateClientPassword = async (
         request: express.Request
     ): Promise<ClientAppVerificationDomainModel> => {
 

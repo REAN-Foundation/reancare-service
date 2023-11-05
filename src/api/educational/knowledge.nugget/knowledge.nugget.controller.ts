@@ -4,12 +4,11 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { KnowledgeNuggetService } from '../../../services/educational/knowledge.nugget.service';
 import { KnowledgeNuggetValidator } from './knowledge.nugget.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class KnowledgeNuggetController extends BaseController {
+export class KnowledgeNuggetController {
 
     //#region member variables and constructors
 
@@ -18,9 +17,7 @@ export class KnowledgeNuggetController extends BaseController {
     _validator: KnowledgeNuggetValidator = new KnowledgeNuggetValidator();
 
     constructor() {
-        super('KnowledgeNugget');
         this._service = Injector.Container.resolve(KnowledgeNuggetService);
-
     }
 
     //#endregion

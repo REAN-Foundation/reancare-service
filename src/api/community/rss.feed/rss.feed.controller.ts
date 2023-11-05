@@ -4,7 +4,6 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { RssfeedService } from '../../../services/general/rss.feed.service';
 import { RssfeedValidator } from './rss.feed.validator';
-import { BaseController } from '../../base.controller';
 import { Logger } from '../../../common/logger';
 import { FileResourceService } from '../../../services/general/file.resource.service';
 import fs from 'fs';
@@ -12,7 +11,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class RssfeedController extends BaseController {
+export class RssfeedController {
 
     //#region member variables and constructors
 
@@ -23,7 +22,6 @@ export class RssfeedController extends BaseController {
     _validator: RssfeedValidator = new RssfeedValidator();
 
     constructor() {
-        super('Rssfeed');
         this._service = Injector.Container.resolve(RssfeedService);
         this._fileResourceService = Injector.Container.resolve(FileResourceService);
     }

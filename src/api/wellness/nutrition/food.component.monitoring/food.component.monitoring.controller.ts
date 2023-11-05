@@ -4,22 +4,17 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FoodComponentMonitoringService } from '../../../../services/wellness/food.component.monitoring/food.component.monitoring.service';
 import { FoodComponentMonitoringValidator } from './food.component.monitoring.validator';
-import { BaseController } from '../../../base.controller';
 import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FoodComponentMonitoringController extends BaseController {
+export class FoodComponentMonitoringController {
 
     //#region member variables and constructors
 
     _service: FoodComponentMonitoringService = Injector.Container.resolve(FoodComponentMonitoringService);
 
     _validator: FoodComponentMonitoringValidator = new FoodComponentMonitoringValidator();
-
-    constructor() {
-        super('FoodComponentMonitoring');
-    }
 
     //#endregion
 

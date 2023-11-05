@@ -5,11 +5,10 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { WaterConsumptionService } from '../../../../services/wellness/nutrition/water.consumption.service';
 import { Injector } from '../../../../startup/injector';
 import { WaterConsumptionValidator } from './water.consumption.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class WaterConsumptionController extends BaseController {
+export class WaterConsumptionController {
 
     //#region member variables and constructors
 
@@ -18,9 +17,7 @@ export class WaterConsumptionController extends BaseController {
     _validator: WaterConsumptionValidator = new WaterConsumptionValidator();
 
     constructor() {
-        super('WaterConsumption');
         this._service = Injector.Container.resolve(WaterConsumptionService);
-
     }
 
     //#endregion

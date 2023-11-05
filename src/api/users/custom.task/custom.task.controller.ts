@@ -6,11 +6,10 @@ import { UserTaskService } from '../../../services/users/user/user.task.service'
 import { CustomTaskValidator } from './custom.task.validator';
 import { CommonActions } from '../../../custom/common/common.actions';
 import { Injector } from '../../../startup/injector';
-import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CustomTaskController extends BaseController {
+export class CustomTaskController {
 
     //#region member variables and constructors
 
@@ -23,7 +22,6 @@ export class CustomTaskController extends BaseController {
     _customActions: CommonActions = new CommonActions();
 
     constructor() {
-        super('CustomTask');
         this._service = Injector.Container.resolve(CustomTaskService);
         this._userTaskService = Injector.Container.resolve(UserTaskService);
     }

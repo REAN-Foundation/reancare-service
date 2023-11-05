@@ -21,6 +21,12 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
 
     public authorize = async (request: express.Request): Promise<boolean> => {
         try {
+            if (request.clientAppAuth) {
+                //This check is applicable only for the client app
+                //specific endpoints. For all other endpoints, this
+                //check is not applicable.
+                return true;
+            }
             const currentUser = request.currentUser;
             const context = request.context;
             if (context == null || context === 'undefined') {

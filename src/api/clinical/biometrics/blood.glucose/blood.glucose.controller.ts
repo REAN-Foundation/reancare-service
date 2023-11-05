@@ -6,7 +6,6 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BloodGlucoseService } from '../../../../services/clinical/biometrics/blood.glucose.service';
 import { Injector } from '../../../../startup/injector';
 import { BloodGlucoseValidator } from './blood.glucose.validator';
-import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
@@ -16,7 +15,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodGlucoseController extends BaseController {
+export class BloodGlucoseController {
 
     //#region member variables and constructors
     _service: BloodGlucoseService = null;
@@ -24,7 +23,6 @@ export class BloodGlucoseController extends BaseController {
     _validator: BloodGlucoseValidator = new BloodGlucoseValidator();
 
     constructor() {
-        super('BloodGlucose');
         this._service = Injector.Container.resolve(BloodGlucoseService);
     }
 

@@ -5,11 +5,10 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { MoveMinutesService } from '../../../../services/wellness/daily.records/move.minutes.service';
 import { Injector } from '../../../../startup/injector';
 import { MoveMinutesValidator } from './move.minutes.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MoveMinutesController extends BaseController{
+export class MoveMinutesController{
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class MoveMinutesController extends BaseController{
     _validator: MoveMinutesValidator = new MoveMinutesValidator();
 
     constructor() {
-        super('MoveMinutes');
         this._service = Injector.Container.resolve(MoveMinutesService);
     }
 

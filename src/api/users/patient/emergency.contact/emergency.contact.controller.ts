@@ -13,13 +13,12 @@ import { RoleService } from '../../../../services/role/role.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
 import { EmergencyContactValidator } from './emergency.contact.validator';
-import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthSystemService } from '../../../../services/users/patient/health.system.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EmergencyContactController extends BaseController {
+export class EmergencyContactController {
 
     //#region member variables and constructors
 
@@ -40,7 +39,6 @@ export class EmergencyContactController extends BaseController {
     _healthSystemService: HealthSystemService = null;
 
     constructor() {
-        super('EmergencyContact');
         this._service = Injector.Container.resolve(EmergencyContactService);
         this._roleService = Injector.Container.resolve(RoleService);
         this._personService = Injector.Container.resolve(PersonService);

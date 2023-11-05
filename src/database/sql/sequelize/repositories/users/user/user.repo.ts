@@ -250,7 +250,7 @@ export class UserRepo implements IUserRepo {
             for await (const user of users) {
                 var record = await User.findOne({
                     where : {
-                        UserId : user.id
+                        id : user.id
                     }
                 });
                 record.TenantId = tentant.id;
@@ -267,7 +267,7 @@ export class UserRepo implements IUserRepo {
         try {
             var user = await User.findOne({
                 where : {
-                    UserId   : userId,
+                    id       : userId,
                     TenantId : tenantId
                 }
             });
@@ -283,7 +283,7 @@ export class UserRepo implements IUserRepo {
         try {
             var tenantUsers = await User.findAll({
                 where : {
-                    UserId : userId
+                    id : userId
                 },
                 include : [
                     {

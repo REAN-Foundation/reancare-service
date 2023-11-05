@@ -2,14 +2,13 @@ import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { BaseController } from '../../../base.controller';
 import { CommunicationValidator } from './communication.validator';
 import { DonationCommunicationService } from '../../../../services/assorted/blood.donation/communication.service';
 import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CommunicationController extends BaseController {
+export class CommunicationController {
 
     //#region member variables and constructors
 
@@ -18,7 +17,6 @@ export class CommunicationController extends BaseController {
     _validator: CommunicationValidator = new CommunicationValidator();
 
     constructor() {
-        super('BloodDonation.Communication');
         this._service = Injector.Container.resolve(DonationCommunicationService);
     }
 

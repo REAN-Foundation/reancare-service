@@ -5,7 +5,6 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodOxygenSaturationService } from '../../../../services/clinical/biometrics/blood.oxygen.saturation.service';
 import { Injector } from '../../../../startup/injector';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
-import { BaseController } from '../../../base.controller';
 import { BloodOxygenSaturationDomainModel } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
@@ -16,7 +15,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodOxygenSaturationController extends BaseController {
+export class BloodOxygenSaturationController {
 
     //#region member variables and constructors
 
@@ -25,7 +24,6 @@ export class BloodOxygenSaturationController extends BaseController {
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
 
     constructor() {
-        super('BloodOxygenSaturation');
         this._service = Injector.Container.resolve(BloodOxygenSaturationService);
     }
 

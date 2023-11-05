@@ -5,7 +5,6 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { MeditationService } from '../../../../services/wellness/exercise/meditation.service';
 import { Injector } from '../../../../startup/injector';
 import { MeditationValidator } from './meditation.validator';
-import { BaseController } from '../../../base.controller';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
@@ -13,7 +12,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MeditationController extends BaseController{
+export class MeditationController{
 
     //#region member variables and constructors
 
@@ -22,7 +21,6 @@ export class MeditationController extends BaseController{
     _validator: MeditationValidator = new MeditationValidator();
 
     constructor() {
-        super('Meditation');
         this._service = Injector.Container.resolve(MeditationService);
     }
 

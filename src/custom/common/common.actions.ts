@@ -1,4 +1,4 @@
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
@@ -26,10 +26,10 @@ export class CommonActions {
     _assessmentTemplateService: AssessmentTemplateService = null;
 
     constructor() {
-        this._customTaskService = Loader.container.resolve(CustomTaskService);
-        this._assessmentService = Loader.container.resolve(AssessmentService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
-        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
+        this._customTaskService = Injector.Container.resolve(CustomTaskService);
+        this._assessmentService = Injector.Container.resolve(AssessmentService);
+        this._userTaskService = Injector.Container.resolve(UserTaskService);
+        this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
     }
 
     //#region Public

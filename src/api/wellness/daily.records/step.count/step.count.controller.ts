@@ -4,7 +4,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { StepCountValidator } from './step.count.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -22,8 +22,8 @@ export class StepCountController extends BaseController {
 
     constructor() {
         super('StepCount');
-        this._service = Loader.container.resolve(StepCountService);
-        this._patientService = Loader.container.resolve(PatientService);
+        this._service = Injector.Container.resolve(StepCountService);
+        this._patientService = Injector.Container.resolve(PatientService);
     }
 
     //#endregion

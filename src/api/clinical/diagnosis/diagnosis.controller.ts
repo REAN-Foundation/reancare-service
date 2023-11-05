@@ -6,7 +6,8 @@ import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { DiagnosisValidator } from './diagnosis.validator';
 import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class DiagnosisController extends BaseController {
@@ -21,8 +22,8 @@ export class DiagnosisController extends BaseController {
 
     constructor() {
         super('Diagnosis');
-        this._service = Loader.container.resolve(DiagnosisService);
-        this._userService = Loader.container.resolve(UserService);
+        this._service = Injector.Container.resolve(DiagnosisService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     //#endregion

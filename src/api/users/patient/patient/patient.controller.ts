@@ -8,7 +8,7 @@ import { UserDomainModel } from '../../../../domain.types/users/user/user.domain
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { CohortService } from '../../../../services/community/cohort.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { PatientValidator } from './patient.validator';
 import { BaseUserController } from '../../base.user.controller';
 import { UserHelper } from '../../user.helper';
@@ -47,12 +47,12 @@ export class PatientController extends BaseUserController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(PatientService);
-        this._userService = Loader.container.resolve(UserService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
-        this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
-        this._cohortService = Loader.container.resolve(CohortService);
+        this._service = Injector.Container.resolve(PatientService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
+        this._cohortService = Injector.Container.resolve(CohortService);
     }
 
     //#endregion

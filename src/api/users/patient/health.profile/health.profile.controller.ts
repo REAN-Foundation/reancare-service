@@ -22,7 +22,7 @@ export class HealthProfileController extends BaseController{
 
     constructor() {
         super('HealthProfile');
-        this._service = Loader.container.resolve(HealthProfileService);
+        this._service = Injector.Container.resolve(HealthProfileService);
     }
 
     //#endregion

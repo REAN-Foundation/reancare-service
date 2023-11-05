@@ -16,7 +16,7 @@ import { Helper } from '../../../common/helper';
 import { FileResourceUploadDomainModel } from '../../../domain.types/general/file.resource/file.resource.domain.model';
 import { Logger } from '../../../common/logger';
 import { AuthHandler } from '../../../auth/auth.handler';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -35,9 +35,9 @@ export class FileResourceController extends BaseController {
 
     constructor() {
         super('FileResource');
-        this._service = Loader.container.resolve(FileResourceService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
+        this._service = Injector.Container.resolve(FileResourceService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
     }
 
     //#endregion

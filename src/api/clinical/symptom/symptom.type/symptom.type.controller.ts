@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { SymptomTypeValidator } from './symptom.type.validator';
@@ -20,7 +20,7 @@ export class SymptomTypeController extends BaseController {
 
     constructor() {
         super('SymptomType');
-        this._service = Loader.container.resolve(SymptomTypeService);
+        this._service = Injector.Container.resolve(SymptomTypeService);
     }
 
     //#endregion

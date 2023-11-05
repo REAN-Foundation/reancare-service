@@ -3,7 +3,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomService } from '../../../../services/clinical/symptom/symptom.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { SymptomValidator } from './symptom.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class SymptomController extends BaseController {
 
     constructor() {
         super('Symptom');
-        this._service = Loader.container.resolve(SymptomService);
+        this._service = Injector.Container.resolve(SymptomService);
 
     }
 

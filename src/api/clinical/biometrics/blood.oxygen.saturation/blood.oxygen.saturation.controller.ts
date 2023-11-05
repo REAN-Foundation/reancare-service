@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodOxygenSaturationService } from '../../../../services/clinical/biometrics/blood.oxygen.saturation.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
 import { BaseController } from '../../../base.controller';
 import { BloodOxygenSaturationDomainModel } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
@@ -26,7 +26,7 @@ export class BloodOxygenSaturationController extends BaseController {
 
     constructor() {
         super('BloodOxygenSaturation');
-        this._service = Loader.container.resolve(BloodOxygenSaturationService);
+        this._service = Injector.Container.resolve(BloodOxygenSaturationService);
     }
 
     //#endregion

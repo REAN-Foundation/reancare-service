@@ -1,5 +1,5 @@
 import { BiometricsHeightStore } from "../../../modules/ehr/services/biometrics.height.store";
-import { Loader } from "../../../startup/loader";
+import { Injector } from "../../../startup/injector";
 import { inject, injectable } from "tsyringe";
 import { IBodyHeightRepo } from "../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { BodyHeightDomainModel } from '../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
@@ -18,7 +18,7 @@ export class BodyHeightService {
         @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBiometricsHeightStore = Loader.container.resolve(BiometricsHeightStore);
+            this._ehrBiometricsHeightStore = Injector.Container.resolve(BiometricsHeightStore);
         }
     }
 

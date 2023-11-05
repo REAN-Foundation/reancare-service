@@ -15,7 +15,7 @@ import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 import { AuthHandler } from '../../../auth/auth.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ export class PatientService {
         @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrPatientStore = Loader.container.resolve(PatientStore);
+            this._ehrPatientStore = Injector.Container.resolve(PatientStore);
         }
     }
 

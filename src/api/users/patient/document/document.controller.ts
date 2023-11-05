@@ -16,7 +16,7 @@ import { SharedDocumentDetailsDomainModel } from '../../../../domain.types/users
 import { SharedDocumentDetailsDto } from '../../../../domain.types/users/patient/document/shared.document.details.dto';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
 import { DocumentService } from '../../../../services/users/patient/document.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { DocumentValidator } from './document.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -36,8 +36,8 @@ export class DocumentController extends BaseController {
 
     constructor() {
         super('Document');
-        this._service = Loader.container.resolve(DocumentService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._service = Injector.Container.resolve(DocumentService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
     }
 
     //#endregion

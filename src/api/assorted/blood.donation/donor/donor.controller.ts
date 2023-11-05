@@ -8,7 +8,7 @@ import { Roles } from '../../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { DonorValidator } from './donor.validator';
 import { BaseUserController } from '../../../users/base.user.controller';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +21,7 @@ export class DonorController extends BaseUserController {
     constructor() {
         super();
         this._resourceName = 'BloodDonation.Donor';
-        this._service = Loader.container.resolve(DonorService);
+        this._service = Injector.Container.resolve(DonorService);
     }
 
     //#endregion

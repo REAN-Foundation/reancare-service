@@ -8,7 +8,7 @@ import { RoleService } from '../../../services/role/role.service';
 import { UserGroupValidator } from './user.group.validator';
 import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,10 +28,10 @@ export class UserGroupController extends BaseController {
 
     constructor() {
         super('UserGroup');
-        this._service = Loader.container.resolve(UserGroupService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
+        this._service = Injector.Container.resolve(UserGroupService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._roleService = Injector.Container.resolve(RoleService);
     }
 
     //#endregion

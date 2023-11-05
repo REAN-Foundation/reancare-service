@@ -3,7 +3,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { StandService } from '../../../../services/wellness/daily.records/stand.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { StandValidator } from './stand.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class StandController extends BaseController {
 
     constructor() {
         super('Stand');
-        this._service = Loader.container.resolve(StandService);
+        this._service = Injector.Container.resolve(StandService);
     }
 
     //#endregion

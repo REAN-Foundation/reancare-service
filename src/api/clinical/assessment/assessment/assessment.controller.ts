@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
 import { CareplanService } from '../../../../services/clinical/careplan.service';
 import { UserTaskService } from '../../../../services/users/user/user.task.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { AssessmentValidator } from './assessment.validator';
 import { BaseController } from '../../../base.controller';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
@@ -33,10 +33,10 @@ export class AssessmentController extends BaseController{
 
     constructor() {
         super('Assessment');
-        this._service = Loader.container.resolve(AssessmentService);
-        this._serviceHelperRepo = Loader.container.resolve(AssessmentHelperRepo);
-        this._careplanService = Loader.container.resolve(CareplanService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
+        this._service = Injector.Container.resolve(AssessmentService);
+        this._serviceHelperRepo = Injector.Container.resolve(AssessmentHelperRepo);
+        this._careplanService = Injector.Container.resolve(CareplanService);
+        this._userTaskService = Injector.Container.resolve(UserTaskService);
     }
 
     //#endregion

@@ -9,7 +9,7 @@ import { LabRecordValidator } from './lab.record.validator';
 import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
 import { EHRRecordTypes } from '../../../modules/ehr.analytics/ehr.record.types';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,8 +24,8 @@ export class LabRecordController extends BaseController {
 
     constructor() {
         super('LabRecord');
-        this._service = Loader.container.resolve(LabRecordService);
-        this._userService = Loader.container.resolve(UserService);
+        this._service = Injector.Container.resolve(LabRecordService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     //#endregion

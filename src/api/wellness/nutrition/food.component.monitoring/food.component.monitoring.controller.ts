@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FoodComponentMonitoringService } from '../../../../services/wellness/food.component.monitoring/food.component.monitoring.service';
 import { FoodComponentMonitoringValidator } from './food.component.monitoring.validator';
 import { BaseController } from '../../../base.controller';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +13,7 @@ export class FoodComponentMonitoringController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: FoodComponentMonitoringService = Loader.container.resolve(FoodComponentMonitoringService);
+    _service: FoodComponentMonitoringService = Injector.Container.resolve(FoodComponentMonitoringService);
 
     _validator: FoodComponentMonitoringValidator = new FoodComponentMonitoringValidator();
 

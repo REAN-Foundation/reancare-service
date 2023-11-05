@@ -8,7 +8,7 @@ import { Roles } from '../../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { BaseUserController } from '../../../users/base.user.controller';
 import { VolunteerValidator } from './volunteer.validator';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +21,7 @@ export class VolunteerController extends BaseUserController {
     constructor() {
         super();
         this._resourceName = 'BloodDonation.Volunteer';
-        this._service = Loader.container.resolve(VolunteerService);
+        this._service = Injector.Container.resolve(VolunteerService);
     }
 
     //#endregion

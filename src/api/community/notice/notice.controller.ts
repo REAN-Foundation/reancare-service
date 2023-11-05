@@ -6,7 +6,7 @@ import { NoticeService } from '../../../services/general/notice.service';
 import { NoticeValidator } from './notice.validator';
 import { BaseController } from '../../base.controller';
 import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ export class NoticeController extends BaseController {
 
     constructor() {
         super('Notice');
-        this._service = Loader.container.resolve(NoticeService);
+        this._service = Injector.Container.resolve(NoticeService);
     }
 
     //#endregion

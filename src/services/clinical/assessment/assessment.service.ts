@@ -33,7 +33,7 @@ import {
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { ConditionProcessor } from './condition.processor';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +47,7 @@ export class AssessmentService {
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
     ) {
-        this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
+        this._conditionProcessor = Injector.Container.resolve(ConditionProcessor);
     }
 
     public create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
@@ -822,7 +822,7 @@ export class AssessmentService {
 
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         if (answerDto.ResponseType === QueryResponseType.Biometrics) {
-            const biometricsHelper = Loader.container.resolve(AssessmentBiometricsHelper);
+            const biometricsHelper = Injector.Container.resolve(AssessmentBiometricsHelper);
             await biometricsHelper.persistBiometrics(assessment.PatientUserId, answerDto);
         }
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);

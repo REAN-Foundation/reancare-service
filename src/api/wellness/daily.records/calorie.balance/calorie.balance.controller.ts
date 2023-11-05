@@ -3,7 +3,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { CalorieBalanceService } from '../../../../services/wellness/daily.records/calorie.balance.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { CalorieBalanceValidator } from './calorie.balance.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class CalorieBalanceController extends BaseController{
 
     constructor() {
         super('CalorieBalance');
-        this._service = Loader.container.resolve(CalorieBalanceService);
+        this._service = Injector.Container.resolve(CalorieBalanceService);
     }
 
     //#endregion

@@ -5,7 +5,7 @@ import { CustomTaskService } from '../../../services/users/user/custom.task.serv
 import { UserTaskService } from '../../../services/users/user/user.task.service';
 import { CustomTaskValidator } from './custom.task.validator';
 import { CommonActions } from '../../../custom/common/common.actions';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ export class CustomTaskController extends BaseController {
 
     constructor() {
         super('CustomTask');
-        this._service = Loader.container.resolve(CustomTaskService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
+        this._service = Injector.Container.resolve(CustomTaskService);
+        this._userTaskService = Injector.Container.resolve(UserTaskService);
     }
 
     //#endregion

@@ -4,7 +4,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserService } from '../../../../services/users/user/user.service';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { PhysicalActivityValidator } from './physical.activity.validator';
 import { BaseController } from '../../../base.controller';
 import { PhysicalActivityDomainModel } from
@@ -30,8 +30,8 @@ export class PhysicalActivityController extends BaseController {
 
     constructor() {
         super('PhysicalActivity');
-        this._service = Loader.container.resolve(PhysicalActivityService);
-        this._userService = Loader.container.resolve(UserService);
+        this._service = Injector.Container.resolve(PhysicalActivityService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     //#endregion

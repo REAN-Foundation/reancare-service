@@ -8,7 +8,7 @@ import { UserDomainModel } from '../../../domain.types/users/user/user.domain.mo
 import { DoctorService } from '../../../services/users/doctor.service';
 import { DoctorValidator } from './doctor.validator';
 import { BaseUserController } from '../base.user.controller';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ export class DoctorController extends BaseUserController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(DoctorService);
+        this._service = Injector.Container.resolve(DoctorService);
     }
 
     //#endregion

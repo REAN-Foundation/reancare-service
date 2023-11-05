@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyTemperatureService } from '../../../../services/clinical/biometrics/body.temperature.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BodyTemperatureValidator } from './body.temperature.validator';
 import { BaseController } from '../../../base.controller';
 import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
@@ -26,7 +26,7 @@ export class BodyTemperatureController extends BaseController {
 
     constructor() {
         super('BodyTemperature');
-        this._service = Loader.container.resolve(BodyTemperatureService);
+        this._service = Injector.Container.resolve(BodyTemperatureService);
 
     }
 

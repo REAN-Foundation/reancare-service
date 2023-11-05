@@ -3,7 +3,7 @@ import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/sys
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { UserLearningService } from '../../../../services/educational/learning/user.learning.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { UserLearningValidator } from './user.learning.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class UserLearningController extends BaseController {
 
     constructor() {
         super('UserLearning');
-        this._service = Loader.container.resolve(UserLearningService);
+        this._service = Injector.Container.resolve(UserLearningService);
     }
 
     //#endregion

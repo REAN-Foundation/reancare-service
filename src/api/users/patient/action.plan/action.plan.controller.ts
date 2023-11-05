@@ -1,7 +1,7 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BaseController } from '../../../base.controller';
 import { UserService } from '../../../../services/users/user/user.service';
 import { ActionPlanValidator } from './action.plan.validator';
@@ -27,10 +27,10 @@ export class ActionPlanController extends BaseController {
 
     constructor() {
         super('ActionPlan');
-        this._service = Loader.container.resolve(ActionPlanService);
-        this._userService = Loader.container.resolve(UserService);
-        this._goalService = Loader.container.resolve(GoalService);
-        this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
+        this._service = Injector.Container.resolve(ActionPlanService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._goalService = Injector.Container.resolve(GoalService);
+        this._healthPriorityService = Injector.Container.resolve(HealthPriorityService);
     }
 
     //#endregion

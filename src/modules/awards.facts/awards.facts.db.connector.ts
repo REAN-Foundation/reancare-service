@@ -5,7 +5,7 @@ import { MedicationFact } from './models/medication.fact.model';
 import { Logger } from "../../common/logger";
 import { DatabaseDialect } from '../../domain.types/miscellaneous/system.types';
 import { NutritionChoiceFact } from "./models/nutrition.choice.fact.model";
-import { Loader } from "../../startup/loader";
+import { Injector } from '../../startup/injector';
 import { DatabaseClient } from "../../common/database.utils/dialect.clients/database.client";
 import { DatabaseSchemaType } from "../../common/database.utils/database.config";
 import { ExercisePhysicalActivityFact } from "./models/exercise.physical.activity.fact.model";
@@ -38,7 +38,7 @@ class AwardsFactsDatabaseConnector {
 
     static connect = async (): Promise<boolean> => {
 
-        const databaseClient = Loader.container.resolve(DatabaseClient);
+        const databaseClient = Injector.Container.resolve(DatabaseClient);
         await databaseClient.createDb(DatabaseSchemaType.AwardsFacts);
 
         return new Promise((resolve, reject) => {

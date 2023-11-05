@@ -6,7 +6,7 @@ import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { OrganizationValidator } from './organization.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -25,9 +25,9 @@ export class OrganizationController extends BaseController {
 
     constructor() {
         super('Organization');
-        this._service = Loader.container.resolve(OrganizationService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
+        this._service = Injector.Container.resolve(OrganizationService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
     }
 
     //#endregion

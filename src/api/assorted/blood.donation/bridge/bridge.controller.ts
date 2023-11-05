@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BaseController } from '../../../base.controller';
 import { BridgeValidator } from './bridge.validator';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class BridgeController extends BaseController {
 
     constructor() {
         super('BloodDonation.Bridge');
-        this._service = Loader.container.resolve(BridgeService);
+        this._service = Injector.Container.resolve(BridgeService);
     }
 
     //#endregion

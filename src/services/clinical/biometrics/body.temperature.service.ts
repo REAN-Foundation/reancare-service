@@ -5,7 +5,7 @@ import { BodyTemperatureDomainModel } from '../../../domain.types/clinical/biome
 import { BodyTemperatureDto } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto';
 import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.search.types';
 import { TemperatureStore } from "../../../modules/ehr/services/body.temperature.store";
-import { Loader } from "../../../startup/loader";
+import { Injector } from "../../../startup/injector";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ export class BodyTemperatureService {
         @inject('IBodyTemperatureRepo') private _bodyTemperatureRepo: IBodyTemperatureRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrTemperatureStore = Loader.container.resolve(TemperatureStore);
+            this._ehrTemperatureStore = Injector.Container.resolve(TemperatureStore);
         }
     }
 

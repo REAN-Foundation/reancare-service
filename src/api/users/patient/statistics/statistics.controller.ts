@@ -16,6 +16,7 @@ import * as path from 'path';
 import { PersonService } from '../../../../services/person/person.service';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,11 +38,11 @@ export class StatisticsController extends BaseController {
 
     constructor() {
         super('Statistics');
-        this._service = Loader.container.resolve(PatientStatisticsService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._documentService = Loader.container.resolve(DocumentService);
+        this._service = Injector.Container.resolve(PatientStatisticsService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._documentService = Injector.Container.resolve(DocumentService);
     }
 
     //#endregion
@@ -99,7 +100,7 @@ export class StatisticsController extends BaseController {
                 MimeType         : mimeType,
             }
         };
-        const patientDocumentService = Loader.container.resolve(DocumentService);
+        const patientDocumentService = Injector.Container.resolve(DocumentService);
         const documentDto = await patientDocumentService.upload(documentModel);
         Logger.instance().log(`Document Id: ${documentDto.id}`);
         return url;

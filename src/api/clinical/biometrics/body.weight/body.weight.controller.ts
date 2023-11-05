@@ -6,7 +6,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BodyWeightValidator } from './body.weight.validator';
 import { BaseController } from '../../../base.controller';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
@@ -26,7 +26,7 @@ export class BodyWeightController extends BaseController {
 
     constructor() {
         super('BodyWeight');
-        this._service = Loader.container.resolve(BodyWeightService);
+        this._service = Injector.Container.resolve(BodyWeightService);
     }
     //#endregion
 

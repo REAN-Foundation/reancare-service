@@ -6,7 +6,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BodyHeightValidator } from './body.height.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -20,7 +20,7 @@ export class BodyHeightController extends BaseController {
 
     constructor() {
         super('BodyHeight');
-        this._service = Loader.container.resolve(BodyHeightService);
+        this._service = Injector.Container.resolve(BodyHeightService);
     }
 
     //#endregion

@@ -19,7 +19,7 @@ export class BloodOxygenSaturationService {
         @inject('IBloodOxygenSaturationRepo') private _bloodOxygenSaturationRepo: IBloodOxygenSaturationRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBloodOxygenSaturationStore = Loader.container.resolve(BloodOxygenSaturationStore);
+            this._ehrBloodOxygenSaturationStore = Injector.Container.resolve(BloodOxygenSaturationStore);
         }
     }
 

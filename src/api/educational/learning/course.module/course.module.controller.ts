@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { CourseModuleService } from '../../../../services/educational/learning/course.module.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { CourseModuleValidator } from './course.module.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class CourseModuleController extends BaseController {
 
     constructor() {
         super('CourseModule');
-        this._service = Loader.container.resolve(CourseModuleService);
+        this._service = Injector.Container.resolve(CourseModuleService);
     }
 
     //#endregion

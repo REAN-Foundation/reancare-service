@@ -14,7 +14,7 @@ export class ResourceHandler {
 
     _rolePrivilegeService: any = Injector.Container.resolve(RolePrivilegeService);
 
-    public extractResource = async (
+    public extractResourceInfo = async (
         request: express.Request,
         response: express.Response,
         next: express.NextFunction

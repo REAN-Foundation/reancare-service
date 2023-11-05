@@ -5,7 +5,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BaseController } from '../../../base.controller';
 import { CommunicationValidator } from './communication.validator';
 import { DonationCommunicationService } from '../../../../services/assorted/blood.donation/communication.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class CommunicationController extends BaseController {
 
     constructor() {
         super('BloodDonation.Communication');
-        this._service = Loader.container.resolve(DonationCommunicationService);
+        this._service = Injector.Container.resolve(DonationCommunicationService);
     }
 
     //#endregion

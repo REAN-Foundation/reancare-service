@@ -6,7 +6,7 @@ import { BaseController } from '../../base.controller';
 import { WearableDeviceDetailsService } from '../../../services/webhook/wearable.device.details.service';
 import { WearableDeviceDetailsValidator } from './wearable.device.details.validator';
 import { PatientService } from '../../../services/users/patient/patient.service';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,8 +21,8 @@ export class WearableDeviceDetailsController extends BaseController {
 
     constructor() {
         super('WearableDevice');
-        this._service = Loader.container.resolve(WearableDeviceDetailsService);
-        this._patientService = Loader.container.resolve(PatientService);
+        this._service = Injector.Container.resolve(WearableDeviceDetailsService);
+        this._patientService = Injector.Container.resolve(PatientService);
     }
 
     //#endregion

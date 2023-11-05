@@ -6,8 +6,8 @@ import { UserDetailsDto } from '../../../domain.types/users/user/user.dto';
 import { UserService } from '../../../services/users/user/user.service';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
-import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,8 +21,8 @@ export class UserController extends BaseController {
 
     constructor() {
         super('User');
-        this._service = Loader.container.resolve(UserService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._service = Injector.Container.resolve(UserService);
+        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion

@@ -23,7 +23,7 @@ import {
 import { FileResourceDto } from '../../../domain.types/general/file.resource/file.resource.dto';
 import { DateStringFormat } from '../../../domain.types/miscellaneous/time.types';
 import { FileResourceService } from '../../general/file.resource.service';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -35,7 +35,7 @@ export class AssessmentTemplateFileConverter {
         const { dateFolder, filename, sourceFileLocation }
             = await AssessmentTemplateFileConverter.storeTemplateToFileLocally(templateObj);
         const storageKey = `resources/${dateFolder}/${filename}`;
-        const fileResourceService = Loader.container.resolve(FileResourceService);
+        const fileResourceService = Injector.Container.resolve(FileResourceService);
         return await fileResourceService.uploadLocal(sourceFileLocation, storageKey, false);
     };
 

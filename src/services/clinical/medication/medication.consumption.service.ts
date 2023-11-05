@@ -24,6 +24,7 @@ import { ConfigurationManager } from "../../../config/configuration.manager";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
 import { MedicationConsumptionSearchFilters } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types";
+import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +41,7 @@ export class MedicationConsumptionService implements IUserActionService {
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrMedicationConsumptionStore = Loader.container.resolve(MedicationConsumptionStore);
+            this._ehrMedicationConsumptionStore = Injector.Container.resolve(MedicationConsumptionStore);
         }
     }
 

@@ -12,7 +12,7 @@ import { UserTaskService } from '../../../services/users/user/user.task.service'
 import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -37,12 +37,12 @@ export class UserTaskController extends BaseController {
 
     constructor() {
         super('UserTask');
-        this._service = Loader.container.resolve(UserTaskService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
-        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
-        this._careplanService = Loader.container.resolve(CareplanService);
+        this._service = Injector.Container.resolve(UserTaskService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._organizationService = Injector.Container.resolve(OrganizationService);
+        this._medicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
+        this._careplanService = Injector.Container.resolve(CareplanService);
     }
 
     //#endregion

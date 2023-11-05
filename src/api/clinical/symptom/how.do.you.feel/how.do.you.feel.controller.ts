@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.do.you.feel.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { HowDoYouFeelValidator } from './how.do.you.feel.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class HowDoYouFeelController extends BaseController{
 
     constructor() {
         super('HowDoYouFeel');
-        this._service = Loader.container.resolve(HowDoYouFeelService);
+        this._service = Injector.Container.resolve(HowDoYouFeelService);
     }
 
     //#endregion

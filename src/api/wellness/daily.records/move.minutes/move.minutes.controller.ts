@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { MoveMinutesService } from '../../../../services/wellness/daily.records/move.minutes.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { MoveMinutesValidator } from './move.minutes.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class MoveMinutesController extends BaseController{
 
     constructor() {
         super('MoveMinutes');
-        this._service = Loader.container.resolve(MoveMinutesService);
+        this._service = Injector.Container.resolve(MoveMinutesService);
     }
 
     //#endregion

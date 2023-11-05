@@ -8,7 +8,7 @@ import { BaseController } from '../../base.controller';
 import { Logger } from '../../../common/logger';
 import { FileResourceService } from '../../../services/general/file.resource.service';
 import fs from 'fs';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,8 +24,8 @@ export class RssfeedController extends BaseController {
 
     constructor() {
         super('Rssfeed');
-        this._service = Loader.container.resolve(RssfeedService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._service = Injector.Container.resolve(RssfeedService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
     }
 
     //#endregion

@@ -1,7 +1,7 @@
 import express from 'express';
 import { TenantService } from '../../services/tenant/tenant.service';
 import { ResponseHandler } from '../../common/handlers/response.handler';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { TenantValidator } from './tenant.validator';
 import { ApiError } from '../../common/api.error';
 import { BaseController } from '../base.controller';
@@ -38,11 +38,11 @@ export class TenantController extends BaseController{
 
     constructor() {
         super('Tenant');
-        this._service = Loader.container.resolve(TenantService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._personRoleService = Loader.container.resolve(PersonRoleService);
+        this._service = Injector.Container.resolve(TenantService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._personRoleService = Injector.Container.resolve(PersonRoleService);
     }
 
     //#endregion

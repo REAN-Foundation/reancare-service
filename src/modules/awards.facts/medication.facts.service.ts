@@ -3,7 +3,7 @@ import { AwardsFactsSource } from './awards.facts.db.connector';
 import { AwardsFact } from './awards.facts.service';
 import { MedicationFact } from './models/medication.fact.model';
 import { MedicationConsumptionService } from '../../services/clinical/medication/medication.consumption.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
@@ -14,7 +14,7 @@ import { DurationType } from '../../domain.types/miscellaneous/time.types';
 export const updateMedicationFact = async (model: AwardsFact) => {
 
     const medfactRepository: Repository<MedicationFact> = AwardsFactsSource.getRepository(MedicationFact);
-    const medConsumptionService = Loader.container.resolve(MedicationConsumptionService);
+    const medConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
     const lastRecords = await medfactRepository.find({
         where : {

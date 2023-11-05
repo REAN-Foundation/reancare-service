@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodCholesterolService } from '../../../../services/clinical/biometrics/blood.cholesterol.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BloodCholesterolValidator } from './blood.cholesterol.validator';
 import { BaseController } from '../../../base.controller';
 import { BloodCholesterolDomainModel } from '../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.domain.model';
@@ -22,7 +22,7 @@ export class BloodCholesterolController extends BaseController {
 
     constructor() {
         super('BloodCholesterol');
-        this._service = Loader.container.resolve(BloodCholesterolService);
+        this._service = Injector.Container.resolve(BloodCholesterolService);
     }
 
     //#endregion

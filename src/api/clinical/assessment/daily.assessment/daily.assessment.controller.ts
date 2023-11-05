@@ -4,7 +4,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DailyAssessmentService } from '../../../../services/clinical/daily.assessment/daily.assessment.service';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { BaseController } from '../../../base.controller';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +12,7 @@ export class DailyAssessmentController extends BaseController{
 
     //#region member variables and constructors
 
-    _service: DailyAssessmentService = Loader.container.resolve(DailyAssessmentService);
+    _service: DailyAssessmentService = Injector.Container.resolve(DailyAssessmentService);
 
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 

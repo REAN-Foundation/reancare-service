@@ -13,7 +13,7 @@ import { MedicationConsumptionService } from '../../../../services/clinical/medi
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { MedicationConsumptionValidator } from './medication.consumption.validator';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
@@ -38,10 +38,10 @@ export class MedicationConsumptionController extends BaseController {
 
     constructor() {
         super('MedicationConsumption');
-        this._service = Loader.container.resolve(MedicationConsumptionService);
-        this._medicationService = Loader.container.resolve(MedicationService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._drugService = Loader.container.resolve(DrugService);
+        this._service = Injector.Container.resolve(MedicationConsumptionService);
+        this._medicationService = Injector.Container.resolve(MedicationService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._drugService = Injector.Container.resolve(DrugService);
     }
 
     //#endregion

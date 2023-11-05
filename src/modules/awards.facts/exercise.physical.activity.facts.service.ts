@@ -1,7 +1,7 @@
 import { LessThanOrEqual, Repository } from 'typeorm';
 import { AwardsFactsSource } from './awards.facts.db.connector';
 import { AwardsFact } from './awards.facts.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
 import { ExercisePhysicalActivityFact } from './models/exercise.physical.activity.fact.model';
 import { PhysicalActivityService } from '../../services/wellness/exercise/physical.activity.service';
@@ -15,7 +15,7 @@ export const updatePhysicalActivityFact = async (model: AwardsFact) => {
 
     const physicalActivityfactRepository: Repository<ExercisePhysicalActivityFact> =
         AwardsFactsSource.getRepository(ExercisePhysicalActivityFact);
-    const physicalActivityService = Loader.container.resolve(PhysicalActivityService);
+    const physicalActivityService = Injector.Container.resolve(PhysicalActivityService);
 
     const lastRecords = await physicalActivityfactRepository.find({
         where : {

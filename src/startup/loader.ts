@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { CareplanHandler } from '../modules/careplan/careplan.handler';
-import { container, DependencyContainer } from 'tsyringe';
+import { container } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { MessagingService } from '../modules/communication/messaging.service/messaging.service';
 import { NotificationService } from '../modules/communication/notification.service/notification.service';
@@ -24,8 +24,6 @@ export class Loader {
 
     private static _ehrStore: StorageService = null;
 
-    private static _container: DependencyContainer = container;
-
     public static get seeder() {
         return Loader._seeder;
     }
@@ -44,10 +42,6 @@ export class Loader {
 
     public static get notificationService() {
         return Loader._notificationService;
-    }
-
-    public static get container() {
-        return Loader._container;
     }
 
     public static init = async (): Promise<boolean> => {

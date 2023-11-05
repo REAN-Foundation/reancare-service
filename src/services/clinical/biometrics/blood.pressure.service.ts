@@ -12,6 +12,7 @@ import { Logger } from "../../../common/logger";
 import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
+import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +28,7 @@ export class BloodPressureService {
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBloodPressureStore = Loader.container.resolve(BloodPressureStore);
+            this._ehrBloodPressureStore = Injector.Container.resolve(BloodPressureStore);
         }
     }
 

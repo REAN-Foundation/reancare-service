@@ -6,7 +6,7 @@ import { CustomQueryService } from '../../../services/statistics/custom.query.se
 import { CustomQueryValidator } from './custom.query.validator';
 import { ApiError } from '../../../common/api.error';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class CustomQueryController extends BaseController {
 
     constructor() {
         super('CustomQuery');
-        this._service = Loader.container.resolve(CustomQueryService);
+        this._service = Injector.Container.resolve(CustomQueryService);
     }
 
     executeQuery = async (request: express.Request, response: express.Response): Promise<void> => {

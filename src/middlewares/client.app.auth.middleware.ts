@@ -1,7 +1,7 @@
 import express from "express";
 import { AuthenticationResult } from "../domain.types/auth/auth.domain.types";
 import { CurrentClient } from "../domain.types/miscellaneous/current.client";
-import { Loader } from "../startup/loader";
+import { Injector } from "../startup/injector";
 import { ClientAppService } from "../services/client.apps/client.app.service";
 import { ResponseHandler } from "../common/handlers/response.handler";
 import { Logger } from "../common/logger";
@@ -17,12 +17,19 @@ export default class ClientAppAuthMiddleware
         next: express.NextFunction
     ): Promise<boolean> => {
         try {
-            const authResult = await this.authenticate(request);
-            if (authResult.Result === false){
-                ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
-                return false;
+            const requestUrl = request.originalUrl;
+            const isHealthCheck = requestUrl === '/api/v1' && request.method === 'GET';
+            if (!isHealthCheck) {
+                const authResult = await this.authenticate(request);
+                if (authResult.Result === false){
+                    ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
+                    return false;
+                }
+                next();
             }
-            next();
+            else {
+                next();
+            }
         } catch (error) {
             Logger.instance().log(error.message);
             ResponseHandler.failure(request, response, 'Client authentication error: ' + error.message, 401);
@@ -48,7 +55,7 @@ export default class ClientAppAuthMiddleware
             }
             apiKey = apiKey.trim();
 
-            const clientService = Loader.container.resolve(ClientAppService);
+            const clientService = Injector.Container.resolve(ClientAppService);
             const client: CurrentClient = await clientService.isApiKeyValid(apiKey);
             if (!client) {
                 res = {

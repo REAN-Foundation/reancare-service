@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BaseUserController } from '../../../users/base.user.controller';
 import { TeraWebhookValidator } from './terra.webhook.validator';
 import { TeraWebhookService } from '../../../../services/webhook/wearable.webhook.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { TeraWebhookActivityService } from '../../../../services/webhook/wearable.webhook.activity.service';
 import { IWebhooksService } from '../../interfaces/webhooks.service.interface';
 import { TerraCache } from './terra.webhook.cache';
@@ -20,7 +20,7 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
     constructor() {
 
         super();
-        this._service = Loader.container.resolve(TeraWebhookService);
+        this._service = Injector.Container.resolve(TeraWebhookService);
     }
 
     //#endregion
@@ -45,7 +45,7 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                 // break;
                 case 'activity': {
                     const activityDomainModel = await TeraWebhookValidator.activity(request);
-                    const activityService = Loader.container.resolve(TeraWebhookActivityService);
+                    const activityService = Injector.Container.resolve(TeraWebhookActivityService);
                     await activityService.activity(activityDomainModel);
                     Logger.instance().log(`Tera user activity request ${JSON.stringify(activityDomainModel)}`);
                 }
@@ -69,7 +69,7 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                     break;
                 case 'sleep': {
                     const sleepDomainModel = await TeraWebhookValidator.sleep(request);
-                    const activityService = Loader.container.resolve(TeraWebhookActivityService);
+                    const activityService = Injector.Container.resolve(TeraWebhookActivityService);
                     await activityService.sleep(sleepDomainModel);
                     Logger.instance().log(`Tera user sleep request ${JSON.stringify(sleepDomainModel)}`);
                 }

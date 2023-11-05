@@ -8,7 +8,7 @@ import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { AddressValidator } from './address.validator';
 import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,10 +28,10 @@ export class AddressController extends BaseController {
 
     constructor() {
         super('Address');
-        this._service = Loader.container.resolve(AddressService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
+        this._service = Injector.Container.resolve(AddressService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._organizationService = Injector.Container.resolve(OrganizationService);
     }
 
     //#endregion

@@ -14,7 +14,7 @@ import { MedicationService } from '../../../../services/clinical/medication/medi
 import { FileResourceService } from '../../../../services/general/file.resource.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { MedicationValidator } from './medication.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -38,12 +38,12 @@ export class MedicationController extends BaseController {
 
     constructor() {
         super('Medication');
-        this._service = Loader.container.resolve(MedicationService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._userService = Loader.container.resolve(UserService);
-        this._drugService = Loader.container.resolve(DrugService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
+        this._service = Injector.Container.resolve(MedicationService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._drugService = Injector.Container.resolve(DrugService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
+        this._medicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
     }
 
     //#endregion

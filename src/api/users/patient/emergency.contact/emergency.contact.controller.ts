@@ -11,7 +11,7 @@ import { EmergencyContactService } from '../../../../services/users/patient/emer
 import { PersonService } from '../../../../services/person/person.service';
 import { RoleService } from '../../../../services/role/role.service';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { EmergencyContactValidator } from './emergency.contact.validator';
 import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
@@ -41,13 +41,13 @@ export class EmergencyContactController extends BaseController {
 
     constructor() {
         super('EmergencyContact');
-        this._service = Loader.container.resolve(EmergencyContactService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._orgService = Loader.container.resolve(OrganizationService);
-        this._userService = Loader.container.resolve(UserService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._healthSystemService = Loader.container.resolve(HealthSystemService);
+        this._service = Injector.Container.resolve(EmergencyContactService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._orgService = Injector.Container.resolve(OrganizationService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._addressService = Injector.Container.resolve(AddressService);
+        this._healthSystemService = Injector.Container.resolve(HealthSystemService);
     }
 
     //#endregion

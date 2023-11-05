@@ -4,7 +4,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BloodGlucoseService } from '../../../../services/clinical/biometrics/blood.glucose.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BloodGlucoseValidator } from './blood.glucose.validator';
 import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
@@ -25,7 +25,7 @@ export class BloodGlucoseController extends BaseController {
 
     constructor() {
         super('BloodGlucose');
-        this._service = Loader.container.resolve(BloodGlucoseService);
+        this._service = Injector.Container.resolve(BloodGlucoseService);
     }
 
     //#endregion

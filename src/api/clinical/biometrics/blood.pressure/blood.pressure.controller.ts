@@ -17,6 +17,7 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,10 +37,10 @@ export class BloodPressureController extends BaseController {
 
     constructor() {
         super('BloodPressure');
-        this._service = Loader.container.resolve(BloodPressureService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._service = Injector.Container.resolve(BloodPressureService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion

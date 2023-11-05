@@ -5,7 +5,7 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { KnowledgeNuggetService } from '../../../services/educational/knowledge.nugget.service';
 import { KnowledgeNuggetValidator } from './knowledge.nugget.validator';
 import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class KnowledgeNuggetController extends BaseController {
 
     constructor() {
         super('KnowledgeNugget');
-        this._service = Loader.container.resolve(KnowledgeNuggetService);
+        this._service = Injector.Container.resolve(KnowledgeNuggetService);
 
     }
 

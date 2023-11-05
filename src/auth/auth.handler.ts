@@ -49,7 +49,7 @@ export class AuthHandler {
         middlewares.push(userAuthenticator.authenticate);
 
         var resourceHandler = new ResourceHandler();
-        middlewares.push(resourceHandler.extractResource);
+        middlewares.push(resourceHandler.extractResourceInfo);
 
         var authorizer = Injector.Container.resolve(UserAuthorizer);
         middlewares.push(authorizer.authorize);

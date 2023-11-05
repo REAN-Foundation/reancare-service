@@ -5,7 +5,7 @@ import { BodyWeightDomainModel } from '../../../domain.types/clinical/biometrics
 import { BodyWeightDto } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.dto';
 import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types';
 import { BodyWeightStore } from "../../../modules/ehr/services/body.weight.store";
-import { Loader } from "../../../startup/loader";
+import { Injector } from "../../../startup/injector";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ export class BodyWeightService {
         @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
+            this._ehrBodyWeightStore = Injector.Container.resolve(BodyWeightStore);
         }
     }
 

@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BaseController } from '../../../base.controller';
 import { DonationValidator } from './donation.validator';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class DonationController extends BaseController {
 
     constructor() {
         super('BloodDonation.Donation');
-        this._service = Loader.container.resolve(DonationService);
+        this._service = Injector.Container.resolve(DonationService);
     }
 
     //#endregion

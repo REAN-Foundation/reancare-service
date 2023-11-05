@@ -6,7 +6,7 @@ import { UserTaskDomainModel } from '../../../domain.types/users/user.task/user.
 import { UserTaskSearchFilters } from '../../../domain.types/users/user.task/user.task.search.types';
 import { UserService } from '../../../services/users/user/user.service';
 import { BaseValidator, Where } from '../../base.validator';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -157,7 +157,7 @@ export class UserTaskValidator extends BaseValidator {
             userId = request.query.userId as uuid;
         }
 
-        var userService = Loader.container.resolve(UserService);
+        var userService = Injector.Container.resolve(UserService);
 
         var scheduledFrom: Date = null;
         if (request.query.scheduledFrom) {

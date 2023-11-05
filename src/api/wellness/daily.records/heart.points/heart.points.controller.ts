@@ -3,7 +3,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HeartPointsService } from '../../../../services/wellness/daily.records/heart.points.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { HeartPointValidator } from './heart.points.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class HeartPointController extends BaseController{
 
     constructor() {
         super('HeartPoints');
-        this._service = Loader.container.resolve(HeartPointsService);
+        this._service = Injector.Container.resolve(HeartPointsService);
     }
 
     //#endregion

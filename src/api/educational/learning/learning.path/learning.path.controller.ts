@@ -3,7 +3,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { LearningPathService } from '../../../../services/educational/learning/learning.path.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { LearningPathValidator } from './learning.path.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class LearningPathController extends BaseController {
 
     constructor() {
         super('LearningPath');
-        this._service = Loader.container.resolve(LearningPathService);
+        this._service = Injector.Container.resolve(LearningPathService);
     }
 
     //#endregion

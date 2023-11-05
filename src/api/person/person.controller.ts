@@ -5,7 +5,7 @@ import { AddressService } from '../../services/general/address.service';
 import { OrganizationService } from '../../services/general/organization.service';
 import { PersonService } from '../../services/person/person.service';
 import { UserService } from '../../services/users/user/user.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { PersonValidator } from './person.validator';
 import { BaseController } from '../base.controller';
 
@@ -25,10 +25,10 @@ export class PersonController extends BaseController {
 
     constructor() {
         super('Person');
-        this._service = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
+        this._service = Injector.Container.resolve(PersonService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._addressService = Injector.Container.resolve(AddressService);
+        this._organizationService = Injector.Container.resolve(OrganizationService);
     }
 
     //#endregion

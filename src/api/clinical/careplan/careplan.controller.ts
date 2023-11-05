@@ -9,7 +9,7 @@ import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { Logger } from '../../../common/logger';
 import { CommunityNetworkService } from '../../../modules/community.bw/community.network.service';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,9 +26,9 @@ export class CareplanController extends BaseController {
 
     constructor() {
         super('Careplan');
-        this._service = Loader.container.resolve(CareplanService);
-        this._communityNetworkService = Loader.container.resolve(CommunityNetworkService);
-        this._userService = Loader.container.resolve(UserService);
+        this._service = Injector.Container.resolve(CareplanService);
+        this._communityNetworkService = Injector.Container.resolve(CommunityNetworkService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     //#endregion

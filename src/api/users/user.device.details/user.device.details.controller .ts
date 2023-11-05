@@ -7,7 +7,7 @@ import { UserDeviceDetailsValidator } from './user.device.details.validator';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
 import { Logger } from '../../../common/logger';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -26,10 +26,10 @@ export class UserDeviceDetailsController extends BaseController {
 
     constructor() {
         super('UserDeviceDetails');
-        this._service = Loader.container.resolve(UserDeviceDetailsService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._firebaseNotificationService = Loader.container.resolve(FirebaseNotificationService);
+        this._service = Injector.Container.resolve(UserDeviceDetailsService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._firebaseNotificationService = Injector.Container.resolve(FirebaseNotificationService);
     }
 
     //#endregion

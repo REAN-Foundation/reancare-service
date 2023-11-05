@@ -9,7 +9,7 @@ import { ConsentValidator } from './consent.validator';
 import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
 import { TenantService } from '../../../services/tenant/tenant.service';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,11 +31,11 @@ export class ConsentController extends BaseController {
 
     constructor() {
         super('Consent');
-        this._service = Loader.container.resolve(ConsentService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._tenantService = Loader.container.resolve(TenantService);
+        this._service = Injector.Container.resolve(ConsentService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._tenantService = Injector.Container.resolve(TenantService);
     }
 
     //#endregion

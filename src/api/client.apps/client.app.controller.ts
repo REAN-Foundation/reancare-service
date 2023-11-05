@@ -2,10 +2,10 @@ import express from 'express';
 
 import { ClientAppService } from '../../services/client.apps/client.app.service';
 import { ResponseHandler } from '../../common/handlers/response.handler';
-import { Loader } from '../../startup/loader';
 import { ClientAppValidator } from './client.app.validator';
 import { ApiError } from '../../common/api.error';
 import { BaseController } from '../base.controller';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ export class ClientAppController extends BaseController {
 
     constructor() {
         super('ClientApp');
-        this._service = Loader.container.resolve(ClientAppService);
+        this._service = Injector.Container.resolve(ClientAppService);
     }
 
     //#endregion

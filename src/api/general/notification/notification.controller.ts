@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { NotificationService } from '../../../services/general/notification.service';
 import { NotificationValidator } from './notification.validator';
 import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class NotificationController extends BaseController {
 
     constructor() {
         super('Notification');
-        this._service = Loader.container.resolve(NotificationService);
+        this._service = Injector.Container.resolve(NotificationService);
     }
 
     //#endregion

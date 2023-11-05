@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { PulseService } from '../../../../services/clinical/biometrics/pulse.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { PulseValidator } from './pulse.validator';
 import { BaseController } from '../../../base.controller';
 import { PulseDomainModel } from '../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
@@ -26,7 +26,7 @@ export class PulseController extends BaseController{
 
     constructor() {
         super('Pulse');
-        this._service = Loader.container.resolve(PulseService);
+        this._service = Injector.Container.resolve(PulseService);
     }
 
     //#endregion

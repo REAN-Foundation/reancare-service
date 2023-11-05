@@ -4,7 +4,7 @@ import { BaseController } from '../../base.controller';
 import { StatisticsService } from '../../../services/statistics/statistics.service';
 import { StatistcsValidator } from './statistics.validator';
 import { ApiError } from '../../../common/api.error';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ export class StatisticsController extends BaseController {
 
     constructor() {
         super('Statistics');
-        this._service = Loader.container.resolve(StatisticsService);
+        this._service = Injector.Container.resolve(StatisticsService);
     }
 
     //#endregion

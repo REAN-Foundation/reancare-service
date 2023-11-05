@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { GoalService } from '../../../../services/users/patient/goal.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { GoalValidator } from './goal.validator';
 import { BaseController } from '../../../base.controller';
 
@@ -19,7 +19,7 @@ export class GoalController extends BaseController {
 
     constructor() {
         super('Goal');
-        this._service = Loader.container.resolve(GoalService);
+        this._service = Injector.Container.resolve(GoalService);
     }
 
     //#endregion

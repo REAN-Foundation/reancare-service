@@ -3,7 +3,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { MeditationService } from '../../../../services/wellness/exercise/meditation.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { MeditationValidator } from './meditation.validator';
 import { BaseController } from '../../../base.controller';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
@@ -23,7 +23,7 @@ export class MeditationController extends BaseController{
 
     constructor() {
         super('Meditation');
-        this._service = Loader.container.resolve(MeditationService);
+        this._service = Injector.Container.resolve(MeditationService);
     }
 
     //#endregion

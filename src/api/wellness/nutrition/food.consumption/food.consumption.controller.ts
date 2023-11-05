@@ -3,7 +3,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { FoodConsumptionValidator } from './food.consumption.validator';
 import { BaseController } from '../../../base.controller';
 import { FoodConsumptionDomainModel }
@@ -27,7 +27,7 @@ export class FoodConsumptionController extends BaseController {
 
     constructor() {
         super('FoodConsumption');
-        this._service = Loader.container.resolve(FoodConsumptionService);
+        this._service = Injector.Container.resolve(FoodConsumptionService);
     }
 
     //#endregion

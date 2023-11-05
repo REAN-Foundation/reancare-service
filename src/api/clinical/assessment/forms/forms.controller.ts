@@ -9,7 +9,7 @@ import { AssessmentService } from '../../../../services/clinical/assessment/asse
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { FormsService } from '../../../../services/clinical/assessment/forms.service';
 import { ThirdpartyApiService } from '../../../../services/general/thirdparty.api.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { FormsValidator } from './forms.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
 import { BaseController } from '../../../base.controller';
@@ -22,7 +22,7 @@ import { UserHelper } from '../../../users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FormsController extends BaseController{
+export class FormsController extends BaseController {
 
     //#region member variables and constructors
 
@@ -46,12 +46,12 @@ export class FormsController extends BaseController{
 
     constructor() {
         super('Forms');
-        this._service = Loader.container.resolve(FormsService);
-        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
-        this._assessmentService = Loader.container.resolve(AssessmentService);
-        this._thirdpartyApiService = Loader.container.resolve(ThirdpartyApiService);
-        this._userService = Loader.container.resolve(UserService);
-        this._personService = Loader.container.resolve(PersonService);
+        this._service = Injector.Container.resolve(FormsService);
+        this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
+        this._assessmentService = Injector.Container.resolve(AssessmentService);
+        this._thirdpartyApiService = Injector.Container.resolve(ThirdpartyApiService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._personService = Injector.Container.resolve(PersonService);
     }
 
     //#endregion

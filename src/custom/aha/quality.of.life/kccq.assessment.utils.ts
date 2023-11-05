@@ -8,25 +8,25 @@ import { TimeHelper } from '../../../common/time.helper';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { PatientDetailsDto } from '../../../domain.types/users/patient/patient/patient.dto';
 import { generateReportPDF } from './kccq.report.generator';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class KccqAssessmentUtils {
 
-    // this._patientService = Loader.container.resolve(PatientService);
-    // this._assessmentService = Loader.container.resolve(AssessmentService);
-    // this._userTaskService = Loader.container.resolve(UserTaskService);
-    // this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
-    // this._careplanService = Loader.container.resolve(CareplanService);
-    // this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+    // this._patientService = Injector.Container.resolve(PatientService);
+    // this._assessmentService = Injector.Container.resolve(AssessmentService);
+    // this._userTaskService = Injector.Container.resolve(UserTaskService);
+    // this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
+    // this._careplanService = Injector.Container.resolve(CareplanService);
+    // this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
     public static triggerAssessmentTask = async (
         patientUserId: uuid,
         assessmentTemplateName: string): Promise<void> => {
 
         const commonActions: CommonActions = new CommonActions();
-        const userTaskService: UserTaskService = Loader.container.resolve(UserTaskService);
+        const userTaskService: UserTaskService = Injector.Container.resolve(UserTaskService);
 
         const filters: UserTaskSearchFilters = {
             UserId       : patientUserId,

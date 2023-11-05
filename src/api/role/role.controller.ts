@@ -1,7 +1,7 @@
 import express from 'express';
 import { RoleService } from '../../services/role/role.service';
 import { ResponseHandler } from '../../common/handlers/response.handler';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { RoleValidator } from './role.validator';
 import { ApiError } from '../../common/api.error';
 import { BaseController } from '../base.controller';
@@ -18,7 +18,7 @@ export class RoleController extends BaseController{
 
     constructor() {
         super('Role');
-        this._service = Loader.container.resolve(RoleService);
+        this._service = Injector.Container.resolve(RoleService);
     }
 
     //#endregion

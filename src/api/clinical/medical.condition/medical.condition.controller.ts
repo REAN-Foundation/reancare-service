@@ -5,7 +5,7 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { MedicalConditionService } from '../../../services/clinical/medical.condition.service';
 import { MedicalConditionValidator } from './medical.condition.validator';
 import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class MedicalConditionController extends BaseController {
 
     constructor() {
         super('MedicalCondition');
-        this._service = Loader.container.resolve(MedicalConditionService);
+        this._service = Injector.Container.resolve(MedicalConditionService);
 
     }
 

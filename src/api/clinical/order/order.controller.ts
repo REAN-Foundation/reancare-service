@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { OrderService } from '../../../services/clinical/order.service';
 import { OrderValidator } from './order.validator';
 import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class OrderController extends BaseController{
 
     constructor() {
         super('Order');
-        this._service = Loader.container.resolve(OrderService);
+        this._service = Injector.Container.resolve(OrderService);
     }
 
     //#endregion

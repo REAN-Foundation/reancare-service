@@ -7,7 +7,7 @@ import {
     MedicationAdministrationRoutes, MedicationFrequencyUnits
 } from "../../../../domain.types/clinical/medication/medication/medication.types";
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +15,7 @@ export class MedicationValidator {
 
     static getCreateDomainModel = async (request: express.Request): Promise<MedicationDomainModel> => {
 
-        var userService = Loader.container.resolve(UserService);
+        var userService = Injector.Container.resolve(UserService);
         var startDate = await userService.getDateInUserTimeZone(request.body.PatientUserId, request.body.StartDate);
 
         const model: MedicationDomainModel = {

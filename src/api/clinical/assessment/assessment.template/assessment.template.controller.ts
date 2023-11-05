@@ -9,7 +9,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AssessmentTemplateFileConverter } from '../../../../services/clinical/assessment/assessment.template.file.converter';
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { AssessmentTemplateValidator } from './assessment.template.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
 import { BaseController } from '../../../base.controller';
@@ -30,8 +30,8 @@ export class AssessmentTemplateController extends BaseController{
 
     constructor() {
         super('AssessmentTemplate');
-        this._service = Loader.container.resolve(AssessmentTemplateService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._service = Injector.Container.resolve(AssessmentTemplateService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
     }
 
     //#endregion

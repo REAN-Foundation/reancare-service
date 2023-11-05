@@ -8,7 +8,7 @@ import { AllergyService } from '../../../services/clinical/allergy.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { AllergyValidator } from './allergy.validator';
 import { BaseController } from '../../base.controller';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,8 +24,8 @@ export class AllergyController extends BaseController {
 
     constructor() {
         super('Allergy');
-        this._service = Loader.container.resolve(AllergyService);
-        this._userService = Loader.container.resolve(UserService);
+        this._service = Injector.Container.resolve(AllergyService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     //#endregion

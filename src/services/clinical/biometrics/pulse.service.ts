@@ -5,7 +5,7 @@ import { PulseDomainModel } from '../../../domain.types/clinical/biometrics/puls
 import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.dto';
 import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/clinical/biometrics/pulse/pulse.search.types';
 import { PulseStore } from "../../../modules/ehr/services/pulse.store";
-import { Loader } from "../../../startup/loader";
+import { Injector } from "../../../startup/injector";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ export class PulseService {
         @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrPulseStore = Loader.container.resolve(PulseStore);
+            this._ehrPulseStore = Injector.Container.resolve(PulseStore);
         }
     }
 

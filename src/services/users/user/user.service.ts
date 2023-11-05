@@ -144,6 +144,7 @@ export class UserService {
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRole   : user.Role.RoleName,
             SessionId     : loginSessionDetails.id,
         };
 
@@ -278,6 +279,7 @@ export class UserService {
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRole   : user.Role.RoleName,
             SessionId     : loginSessionDetails.id
         };
 

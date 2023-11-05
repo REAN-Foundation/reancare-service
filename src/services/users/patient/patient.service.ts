@@ -79,19 +79,6 @@ export class PatientService {
             dto = await this.updateDto(dto);
             items.push(dto);
         }
-
-        // if (items.length > 0) {
-        //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        //     const currentUser: CurrentUser = {
-        //         UserId        : items[0].id,
-        //         DisplayName   : items[0].DisplayName,
-        //         Phone         : items[0].Phone,
-        //         Email         : items[0].Email,
-        //         UserName      : items[0].UserName,
-        //         CurrentRoleId : 2,
-        //     };
-        // }
-
         results.Items = items;
         return results;
     };
@@ -119,6 +106,7 @@ export class PatientService {
                 Email         : items[0].Email,
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
+                CurrentRole   : 'Patient',
             };
             const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
             items[0].accessToken = accessToken;

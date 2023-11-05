@@ -134,6 +134,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : user.RoleId,
+            CurrentRole   : user.Role.RoleName,
             SessionId     : sessionId
         };
         const accessToken = await this.generateUserSessionToken(currentUser);

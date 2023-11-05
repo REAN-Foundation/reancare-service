@@ -43,9 +43,30 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
                 return false;
             }
 
-            const isResourceOwner = await this.isResourceOwner(currentUser, request);
+            const isSingleResourceRequest =
+                request.requestType === 'Create' ||
+                request.requestType === 'Update' ||
+                request.requestType === 'Delete' ||
+                request.requestType === 'GetById';
+
+            // const specificToSingleUser =
+            //     request.params.userId ||
+            //     request.params.patientUserId ||
+            //     request.params.resourceUserId ||
+            //     request.body.ResourceUserId ||
+            //     request.body.UserId ||
+            //     request.body.PatientUserId;
+
+            // If this request is specific to single resource
+            if (isSingleResourceRequest) {
+                const isResourceOwner = await this.isResourceOwner(currentUser, request);
+                if (isResourceOwner) {
+                    return true;
+                }
+                return false;
+            }
             const hasConsent = await this.hasConsent(currentUser.CurrentRoleId, context);
-            if (hasConsent || isResourceOwner) {
+            if (hasConsent) {
                 return true;
             }
             return false;
@@ -71,7 +92,7 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
         Logger.instance().log('Context: ' + context);
 
         //for time being, return true always
-        return true;
+        return false;
     };
 
 }

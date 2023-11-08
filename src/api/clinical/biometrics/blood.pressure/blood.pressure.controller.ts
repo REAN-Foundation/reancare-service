@@ -17,6 +17,7 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +57,20 @@ export class BloodPressureController extends BaseController {
             if (bloodPressure == null) {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(bloodPressure.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(bloodPressure.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodPressure.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             /*if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
@@ -156,7 +170,20 @@ export class BloodPressureController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(updated.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             // Adding record to award service
             if (updated.Systolic || updated.Diastolic) {
@@ -219,6 +246,7 @@ export class BloodPressureController extends BaseController {
     //#region Privates
 
     private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodPressureDomainModel) => {
+
         if (model.Systolic) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
@@ -257,6 +285,16 @@ export class BloodPressureController extends BaseController {
         }
 
         return true;
+    };
+
+    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
+
+        const eligibleToAddInEhrRecords =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
+        userAppRegistrations.indexOf('HF Helper') >= 0;
+
+        return eligibleToAddInEhrRecords;
     };
 
     //#endregion

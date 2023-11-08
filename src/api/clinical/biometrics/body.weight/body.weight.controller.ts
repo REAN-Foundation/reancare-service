@@ -13,6 +13,9 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { Logger } from '../../../../common/logger';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,9 +27,16 @@ export class BodyWeightController extends BaseController {
 
     _validator: BodyWeightValidator = new BodyWeightValidator();
 
+    _patientService: PatientService = null;
+    
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(BodyWeightService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+
     }
     //#endregion
 
@@ -42,7 +52,19 @@ export class BodyWeightController extends BaseController {
             if (bodyWeight == null) {
                 throw new ApiError(400, 'Cannot create weight record!');
             }
-            this.addEHRRecord(model.PatientUserId, bodyWeight.id, model);
+            const userDetails = await this._patientService.getByUserId(bodyWeight.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(bodyWeight.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, bodyWeight.id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyWeight.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             // Adding record to award service
             if (bodyWeight.BodyWeight) {
@@ -131,7 +153,19 @@ export class BodyWeightController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update weight record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(updated.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             if (updated.BodyWeight) {
                 var timestamp = updated.RecordDate;
@@ -196,6 +230,16 @@ export class BodyWeightController extends BaseController {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit);
         }
+    };
+
+    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
+
+        const eligibleToAddInEhrRecords =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
+        userAppRegistrations.indexOf('HF Helper') >= 0;
+
+        return eligibleToAddInEhrRecords;
     };
 
     //#endregion

@@ -6,6 +6,10 @@ import { StandService } from '../../../../services/wellness/daily.records/stand.
 import { Loader } from '../../../../startup/loader';
 import { StandValidator } from './stand.validator';
 import { BaseController } from '../../../base.controller';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { StandDomainModel } from '../../../../domain.types/wellness/daily.records/stand/stand.domain.model';
+import { PatientService } from '../../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,9 +21,13 @@ export class StandController extends BaseController {
 
     _validator: StandValidator = new StandValidator();
 
+    _patientService: PatientService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(StandService);
+        this._patientService = Loader.container.resolve(PatientService);
+
     }
 
     //#endregion
@@ -35,6 +43,12 @@ export class StandController extends BaseController {
             const stand = await this._service.create(domainModel);
             if (stand == null) {
                 throw new ApiError(400, 'Cannot create stand record!');
+            }
+
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(stand.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(domainModel.PatientUserId, stand.id, domainModel);
             }
 
             ResponseHandler.success(request, response, 'Stand record created successfully!', 201, {
@@ -102,6 +116,11 @@ export class StandController extends BaseController {
                 throw new ApiError(400, 'Unable to update stand record!');
             }
 
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            }
+
             ResponseHandler.success(request, response, 'Stand record updated successfully!', 200, {
                 Stand : updated,
             });
@@ -130,6 +149,19 @@ export class StandController extends BaseController {
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: StandDomainModel) => {
+        if (model.Stand) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.PhysicalActivity,
+                model.Stand,
+                model.Unit,
+                'Stand'
+            );
         }
     };
 

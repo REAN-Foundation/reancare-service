@@ -13,6 +13,9 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { Logger } from '../../../../common/logger';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,9 +26,17 @@ export class BloodGlucoseController extends BaseController {
 
     _validator: BloodGlucoseValidator = new BloodGlucoseValidator();
 
+    _patientService: PatientService = null;
+
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
+
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodGlucoseService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+
     }
 
     //#endregion
@@ -42,7 +53,20 @@ export class BloodGlucoseController extends BaseController {
             if (bloodGlucose == null) {
                 throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodGlucose.id, model);
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(bloodGlucose.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(bloodGlucose.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, bloodGlucose.id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodGlucose.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             // Adding record to award service
             if (bloodGlucose.BloodGlucose) {
@@ -133,7 +157,19 @@ export class BloodGlucoseController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood glucose record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(updated.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             if (updated.BloodGlucose) {
                 var timestamp = updated.RecordDate;
@@ -202,6 +238,17 @@ export class BloodGlucoseController extends BaseController {
                 model.Unit);
         }
     };
+
+    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
+
+        const eligibleToAddInEhrRecords =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
+        userAppRegistrations.indexOf('HF Helper') >= 0;
+
+        return eligibleToAddInEhrRecords;
+    };
+
 
     //#endregion
 

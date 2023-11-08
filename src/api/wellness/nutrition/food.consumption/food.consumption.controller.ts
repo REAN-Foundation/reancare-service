@@ -14,6 +14,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { PatientService } from '../../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,9 +26,12 @@ export class FoodConsumptionController extends BaseController {
 
     _validator: FoodConsumptionValidator = new FoodConsumptionValidator();
 
+    _patientService: PatientService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(FoodConsumptionService);
+        this._patientService = Loader.container.resolve(PatientService);
     }
 
     //#endregion
@@ -45,8 +49,11 @@ export class FoodConsumptionController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for nutrition!');
             }
 
-            this.addEHRRecord(model.PatientUserId, foodConsumption.id, model);
-
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(foodConsumption.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(model.PatientUserId, foodConsumption.id, model);
+            }
             if (foodConsumption.UserResponse) {
                 var timestamp = foodConsumption.EndTime ?? foodConsumption.StartTime;
                 if (!timestamp) {
@@ -251,7 +258,9 @@ export class FoodConsumptionController extends BaseController {
                 patientUserId,
                 recordId,
                 EHRRecordTypes.Nutrition,
-                model.UserResponse);
+                model.UserResponse,
+                'Were most of your food choices healthy today?'
+            );
         }
         if (model.FoodTypes[0] === "Fruit") {
             EHRAnalyticsHandler.addFloatRecord(

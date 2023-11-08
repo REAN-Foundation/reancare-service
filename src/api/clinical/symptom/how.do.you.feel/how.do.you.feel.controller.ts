@@ -6,6 +6,10 @@ import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.d
 import { Loader } from '../../../../startup/loader';
 import { HowDoYouFeelValidator } from './how.do.you.feel.validator';
 import { BaseController } from '../../../base.controller';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { HowDoYouFeelDomainModel } from '../../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,9 +21,13 @@ export class HowDoYouFeelController extends BaseController{
 
     _validator: HowDoYouFeelValidator = new HowDoYouFeelValidator();
 
+    _patientService: PatientService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(HowDoYouFeelService);
+        this._patientService = Loader.container.resolve(PatientService);
+
     }
 
     //#endregion
@@ -35,6 +43,12 @@ export class HowDoYouFeelController extends BaseController{
             const howDoYouFeel = await this._service.create(model);
             if (howDoYouFeel == null) {
                 throw new ApiError(400, 'Cannot create record for how do you feel!');
+            }
+
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(howDoYouFeel.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(model.PatientUserId, howDoYouFeel.id, model);
             }
 
             ResponseHandler.success(request, response, 'How do you feel record created successfully!', 201, {
@@ -130,6 +144,38 @@ export class HowDoYouFeelController extends BaseController{
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: HowDoYouFeelDomainModel) => {
+        if (model.Feeling === 'Better') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                'Better'
+            );
+        }
+
+        if (model.Feeling === 'Same') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                'Same'
+            );
+        }
+
+        if (model.Feeling === 'Worse') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                'Worse'
+            );
         }
     };
 

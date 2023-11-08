@@ -13,6 +13,9 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,9 +27,16 @@ export class PulseController extends BaseController{
 
     _validator: PulseValidator = new PulseValidator();
 
+    _patientService: PatientService = null;
+
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(PulseService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+
     }
 
     //#endregion
@@ -43,7 +53,19 @@ export class PulseController extends BaseController{
             if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
-            this.addEHRRecord(model.PatientUserId, pulse.id, model);
+            const userDetails = await this._patientService.getByUserId(pulse.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(pulse.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, pulse.id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${pulse.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             // Adding record to award service
             if (pulse.Pulse) {
@@ -134,7 +156,19 @@ export class PulseController extends BaseController{
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(updated.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             if (updated.Pulse) {
                 var timestamp = updated.RecordDate;
@@ -199,6 +233,16 @@ export class PulseController extends BaseController{
             EHRAnalyticsHandler.addIntegerRecord(
                 patientUserId, recordId, EHRRecordTypes.Pulse, model.Pulse, model.Unit);
         }
+    };
+
+    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
+
+        const eligibleToAddInEhrRecords =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
+        userAppRegistrations.indexOf('HF Helper') >= 0;
+
+        return eligibleToAddInEhrRecords;
     };
 
     //#endregion

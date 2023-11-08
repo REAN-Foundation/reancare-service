@@ -15,6 +15,7 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { PatientService } from '../../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,10 +29,13 @@ export class PhysicalActivityController extends BaseController {
 
     _userService: UserService = null;
 
+    _patientService: PatientService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(PhysicalActivityService);
         this._userService = Loader.container.resolve(UserService);
+        this._patientService = Loader.container.resolve(PatientService);
     }
 
     //#endregion
@@ -55,8 +59,11 @@ export class PhysicalActivityController extends BaseController {
             if (physicalActivity == null) {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
-            this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, domainModel);
-
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(physicalActivity.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, domainModel);
+            }
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
                 var timestamp = physicalActivity.EndTime ?? physicalActivity.StartTime;
@@ -143,6 +150,11 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Unable to update physical activity record!');
             }
 
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            }
+
             if (updated.PhysicalActivityQuestionAns !== null) {
                 var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
                 if (!timestamp) {
@@ -198,7 +210,19 @@ export class PhysicalActivityController extends BaseController {
                 patientUserId,
                 recordId,
                 EHRRecordTypes.PhysicalActivity,
-                model.PhysicalActivityQuestionAns);
+                model.PhysicalActivityQuestionAns,
+                'Did you add movement to your day today?'
+            );
+        }
+
+        if (model.DurationInMin !== undefined) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.PhysicalActivity,
+                model.DurationInMin,
+                model.Exercise
+            );
         }
 
     };

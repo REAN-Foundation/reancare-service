@@ -143,8 +143,11 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
 
-            await this.addEHRRecord(dto.PatientUserId, dto.id, dto);
-
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(dto.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                await this.addEHRRecord(dto.PatientUserId, dto.id, dto);
+            }
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
@@ -180,6 +183,12 @@ export class MedicationConsumptionController {
             const dto = await this._service.markAsMissed(consumptionId);
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
+            }
+
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(dto.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                await this.addEHRRecord(dto.PatientUserId, dto.id, dto);
             }
 
             const patientUserId = dto.PatientUserId;
@@ -398,8 +407,19 @@ export class MedicationConsumptionController {
             EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
                 recordId,
-                EHRRecordTypes.Medication,
+                EHRRecordTypes.MedicationIsTaken,
                 model.IsTaken,
+                model.Dose.toString(),
+                model.DrugName,
+                model.DrugName);
+        }
+
+        if (model.IsMissed) {
+            EHRAnalyticsHandler.addBooleanRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.MedicationIsMissed,
+                model.IsMissed,
                 model.Dose.toString(),
                 model.DrugName,
                 model.DrugName);

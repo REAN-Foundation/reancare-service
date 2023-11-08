@@ -13,6 +13,9 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,9 +27,15 @@ export class BloodOxygenSaturationController extends BaseController {
 
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
 
+    _patientService: PatientService = null;
+
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodOxygenSaturationService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion
@@ -43,7 +52,19 @@ export class BloodOxygenSaturationController extends BaseController {
             if (bloodOxygenSaturation == null) {
                 throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, model);
+            const userDetails = await this._patientService.getByUserId(bloodOxygenSaturation.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(bloodOxygenSaturation.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodOxygenSaturation.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             // Adding record to award service
             if (bloodOxygenSaturation.BloodOxygenSaturation) {
@@ -135,7 +156,20 @@ export class BloodOxygenSaturationController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(updated.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             // Adding record to award service
             if (updated.BloodOxygenSaturation) {
@@ -205,6 +239,16 @@ export class BloodOxygenSaturationController extends BaseController {
                 model.BloodOxygenSaturation,
                 model.Unit);
         }
+    };
+
+    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
+
+        const eligibleToAddInEhrRecords =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
+        userAppRegistrations.indexOf('HF Helper') >= 0;
+
+        return eligibleToAddInEhrRecords;
     };
 
     //#endregion

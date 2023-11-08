@@ -10,6 +10,10 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { MeditationDomainModel } from '../../../../domain.types/wellness/exercise/meditation/meditation.domain.model';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { PatientService } from '../../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,9 +25,12 @@ export class MeditationController extends BaseController{
 
     _validator: MeditationValidator = new MeditationValidator();
 
+    _patientService: PatientService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(MeditationService);
+        this._patientService = Loader.container.resolve(PatientService);
     }
 
     //#endregion
@@ -39,6 +46,12 @@ export class MeditationController extends BaseController{
             const meditation = await this._service.create(model);
             if (meditation == null) {
                 throw new ApiError(400, 'Cannot create record for meditation!');
+            }
+
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(meditation.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(model.PatientUserId, meditation.id, model);
             }
 
             if (meditation.DurationInMins) {
@@ -130,6 +143,11 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Unable to update meditation record!');
             }
 
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            }
+
             ResponseHandler.success(request, response, 'Meditation record updated successfully!', 200, {
                 Meditation : updated,
             });
@@ -159,6 +177,18 @@ export class MeditationController extends BaseController{
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: MeditationDomainModel) => {
+        if (model.DurationInMins) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.MentalWellBeing,
+                model.DurationInMins,
+                'Meditation'
+            );
         }
     };
 

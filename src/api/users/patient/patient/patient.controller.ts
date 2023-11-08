@@ -72,9 +72,21 @@ export class PatientController extends BaseUserController {
 
             const clientCode = request.currentClient.ClientCode;
             await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
+            //await this.checkUserEligibiltyToAddEHRRecord(patient.UserId);
 
-            this.addPatientToEHRRecords(patient.UserId);
-
+            const userDetails = await this._service.getByUserId(patient.UserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(patient.UserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addPatientToEHRRecords(patient.UserId, userDevice.AppName);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patient.UserId}`);
+                        }
+                    });
+                }
+            }
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
                     Patient : patient,
@@ -195,7 +207,7 @@ export class PatientController extends BaseUserController {
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
-            await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
+            const updatedHealthProfile = await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
@@ -215,8 +227,23 @@ export class PatientController extends BaseUserController {
             if (addresses.length >= 1) {
                 location = addresses[0].Location;
             }
-            this.addEHRRecord(userId, personDomainModel, updatedPatient, location);
 
+            const userDetails = await this._service.getByUserId(userId);
+            if (userDetails.User.IsTestUser == false) {
+                //this.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile);       
+
+                var userDevices = await this._userDeviceDetailsService.getByUserId(userId);
+                if (userDevices.length > 0) {
+                    for await (var userDevice of userDevices) {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            await this.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, userDevice.AppName);       
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
+                        }
+                    }
+                }
+                
+            }
             const patient = await this._service.getByUserId(userId);
 
             ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
@@ -288,57 +315,65 @@ export class PatientController extends BaseUserController {
 
     //#region Privates
 
-    private addPatientToEHRRecords = (patientUserId: uuid) => {
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {});
+    private addPatientToEHRRecords = (patientUserId: uuid, appName?: string) => {
+        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {}, appName,);
     };
 
     private addEHRRecord = (patientUserId: uuid,
-        model: PersonDomainModel, updatedModel: any, location: string) => {
+        model: PersonDomainModel, updatedModel: any, location: string, updatedHealthProfile: any, appName?: string) => {
+        var details = {}
         if (model.BirthDate) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                BirthDate : model.BirthDate
-            });
+            details['BirthDate'] = model.BirthDate;
         }
         if (updatedModel.User.Person.Age) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                Age : updatedModel.User.Person.Age
-            });
+            details['Age'] = updatedModel.User.Person.Age;
         }
-        if (model.Gender) {
+        /*if (model.id) {
             EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                Gender : model.Gender
+                PersonId : model.id
             });
+        }*/
+        if (model.Gender) {
+            details['Gender'] = model.Gender;
+        }
+        if (model.SelfIdentifiedGender) {
+            details['SelfIdentifiedGender'] = model.SelfIdentifiedGender;
         }
         if (model.MaritalStatus) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                MaritalStatus : model.MaritalStatus
-            });
+            details['MaritalStatus'] = model.MaritalStatus;
         }
         if (model.Ethnicity) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                Ethnicity : model.Ethnicity
-            });
+            details['Ethnicity'] = model.Ethnicity;
         }
         if (model.Race) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                Race : model.Race
-            });
+            details['Race'] = model.Race;
         }
         if (updatedModel.HealthSystem) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                HealthSystem : updatedModel.HealthSystem
-            });
+            details['HealthSystem'] = updatedModel.HealthSystem;
         }
         if (updatedModel.AssociatedHospital) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                AssociatedHospital : updatedModel.AssociatedHospital
-            });
+            details['AssociatedHospital'] = updatedModel.AssociatedHospital;
+        }
+        if (updatedHealthProfile.HasHeartAilment) {
+            details['HasHeartAilment'] = updatedHealthProfile.HasHeartAilment;
+        }
+        if (updatedHealthProfile.HasHighBloodPressure) {
+            details['HasHighBloodPressure'] = updatedHealthProfile.HasHighBloodPressure;
+        }
+        if (updatedHealthProfile.HasHighCholesterol) {
+            details['HasHighCholesterol'] = updatedHealthProfile.HasHighCholesterol;
+        }
+        if (updatedHealthProfile.Occupation) {
+            details['Occupation'] = updatedHealthProfile.Occupation;
         }
         if (location) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                Location : location
-            });
+            details['Location'] = location;
         }
+        if (updatedHealthProfile.OtherConditions) {
+            details['OtherConditions'] = updatedHealthProfile.OtherConditions;
+        }
+
+        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
     };
 
     private addPatientToCohort = async (patientUserId: uuid, cohortId: uuid) => {
@@ -371,6 +406,17 @@ export class PatientController extends BaseUserController {
             }
         }
     }
+
+    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
+
+        const eligibleToAddInEhrRecords =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
+        userAppRegistrations.indexOf('HF Helper') >= 0;
+
+        return eligibleToAddInEhrRecords;
+    };
+
 
     //#endregion
 

@@ -10,6 +10,10 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { SleepDomainModel } from '../../../../domain.types/wellness/daily.records/sleep/sleep.domain.model';
+import { PatientService } from '../../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,9 +25,13 @@ export class SleepController extends BaseController{
 
     _validator: SleepValidator = new SleepValidator();
 
+    _patientService: PatientService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(SleepService);
+        this._patientService = Loader.container.resolve(PatientService);
+
     }
 
     //#endregion
@@ -47,6 +55,12 @@ export class SleepController extends BaseController{
             }
             if (sleep == null) {
                 throw new ApiError(400, 'Cannot create record for sleep!');
+            }
+
+            // get user details to add records in ehr database
+            const userDetails = await this._patientService.getByUserId(sleep.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(model.PatientUserId, sleep.id, model);
             }
 
             if (sleep.SleepDuration) {
@@ -136,6 +150,11 @@ export class SleepController extends BaseController{
                 throw new ApiError(400, 'Unable to update sleep record!');
             }
 
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            }
+
             ResponseHandler.success(request, response, 'Sleep record updated successfully!', 200, {
                 SleepRecord : updated,
             });
@@ -167,6 +186,20 @@ export class SleepController extends BaseController{
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: SleepDomainModel) => {
+        if (model.SleepDuration) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.MentalWellBeing,
+                model.SleepDuration,
+                model.Unit,
+                'Sleep'
+            );
+        }
+    };
+
 
     //#endregion
 

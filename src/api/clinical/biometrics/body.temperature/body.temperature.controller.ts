@@ -13,6 +13,9 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,10 +27,15 @@ export class BodyTemperatureController extends BaseController {
 
     _validator: BodyTemperatureValidator = new BodyTemperatureValidator();
 
+    _patientService: PatientService = null;
+
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(BodyTemperatureService);
-
+        this._patientService = Loader.container.resolve(PatientService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion
@@ -44,7 +52,19 @@ export class BodyTemperatureController extends BaseController {
             if (bodyTemperature == null) {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
-            this.addEHRRecord(model.PatientUserId, bodyTemperature.id, model);
+            const userDetails = await this._patientService.getByUserId(bodyTemperature.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(bodyTemperature.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, bodyTemperature.id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyTemperature.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             // Adding record to award service
             if (bodyTemperature.BodyTemperature) {
@@ -133,7 +153,19 @@ export class BodyTemperatureController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update body temperature record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
+            if (userDetails.User.IsTestUser == false) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(updated.PatientUserId);
+                if (userDevices.length > 0) {
+                    userDevices.forEach(userDevice => {
+                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
+                            this.addEHRRecord(model.PatientUserId, id, model);
+                        } else {
+                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+                        }
+                    });
+                }
+            }
 
             // Adding record to award service
             if (updated.BodyTemperature) {
@@ -200,6 +232,17 @@ export class BodyTemperatureController extends BaseController {
                 patientUserId, recordId, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit);
         }
     };
+
+    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
+
+        const eligibleToAddInEhrRecords =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
+        userAppRegistrations.indexOf('HF Helper') >= 0;
+
+        return eligibleToAddInEhrRecords;
+    };
+
 
     //#endregion
 

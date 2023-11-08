@@ -46,13 +46,14 @@ export class EHRAnalyticsHandler {
 
     static addOrUpdatePatient = async (
         patientUserId: uuid,
-        details: EHRStaticRecordDomainModel
+        details: EHRStaticRecordDomainModel,
+        appName?: string,
     ) => {
         if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
             return;
         }
         await EHRAnalyticsHandler._ehrDatasetRepo.addOrUpdatePatient(
-            patientUserId, details);
+            patientUserId, details, appName);
     };
 
     //#region Add records
@@ -65,6 +66,7 @@ export class EHRAnalyticsHandler {
         primaryUnit?: string,
         primaryName?: string,
         name?: string,
+        appName?: string,
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -74,6 +76,8 @@ export class EHRAnalyticsHandler {
             ValueString   : primaryValue,
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
+            AppName       : appName ?? null,
+
         };
         EHRAnalyticsHandler.add(model);
     };
@@ -86,6 +90,7 @@ export class EHRAnalyticsHandler {
         primaryUnit?: string,
         primaryName?: string,
         name?: string,
+        appName?: string,
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -95,6 +100,8 @@ export class EHRAnalyticsHandler {
             ValueDate     : primaryValue,
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
+            AppName       : appName ?? null,
+
         };
         EHRAnalyticsHandler.add(model);
     };
@@ -107,6 +114,8 @@ export class EHRAnalyticsHandler {
         primaryUnit?: string,
         primaryName?: string,
         name?: string,
+        appName?: string,
+
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -116,6 +125,8 @@ export class EHRAnalyticsHandler {
             ValueInt      : primaryValue,
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
+            AppName       : appName ?? null,
+
         };
         EHRAnalyticsHandler.add(model);
     };
@@ -128,6 +139,8 @@ export class EHRAnalyticsHandler {
         primaryUnit?: string,
         primaryName?: string,
         name?: string,
+        appName?: string,
+
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -137,6 +150,8 @@ export class EHRAnalyticsHandler {
             ValueFloat    : primaryValue,
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
+            AppName       : appName ?? null,
+
         };
         EHRAnalyticsHandler.add(model);
     };
@@ -149,6 +164,8 @@ export class EHRAnalyticsHandler {
         primaryUnit?: string,
         primaryName?: string,
         name?: string,
+        appName?: string,
+
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -158,6 +175,8 @@ export class EHRAnalyticsHandler {
             ValueBoolean  : primaryValue,
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
+            AppName       : appName ?? null,
+
         };
         EHRAnalyticsHandler.add(model);
     };

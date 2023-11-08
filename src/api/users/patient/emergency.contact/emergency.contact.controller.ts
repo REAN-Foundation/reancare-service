@@ -15,7 +15,8 @@ import { Loader } from '../../../../startup/loader';
 import { EmergencyContactValidator } from './emergency.contact.validator';
 import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { HealthSystemService } from '../../../../services/users/patient/health.system.service';
+import { HospitalService } from '../../../../services/hospitals/hospital.service';
+import { HealthSystemService } from '../../../../services/hospitals/health.system.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +40,8 @@ export class EmergencyContactController extends BaseController {
 
     _healthSystemService: HealthSystemService = null;
 
+    _hospitalService: HospitalService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(EmergencyContactService);
@@ -48,6 +51,7 @@ export class EmergencyContactController extends BaseController {
         this._userService = Loader.container.resolve(UserService);
         this._addressService = Loader.container.resolve(AddressService);
         this._healthSystemService = Loader.container.resolve(HealthSystemService);
+        this._hospitalService = Loader.container.resolve(HospitalService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -271,7 +275,7 @@ export class EmergencyContactController extends BaseController {
         try {
             await this.setContext('Emergency.Contact.GetHealthSystems', request, response);
 
-            const healthSystems = await this._healthSystemService.getHealthSystems(request.query.planName as string);
+            const healthSystems = await this._healthSystemService.getHealthSystemsForTags(request.query.planName as string);
             if (healthSystems.length === 0) {
                 throw new ApiError(400, 'Cannot fetch health systems!');
             }
@@ -290,7 +294,7 @@ export class EmergencyContactController extends BaseController {
             await this.setContext('Emergency.Contact.GetHealthSystemHospitals', request, response);
 
             const healthSystemId : uuid = request.params.healthSystemId;
-            const healthSystemHospitals = await this._healthSystemService.getHealthSystemHospitals(healthSystemId);
+            const healthSystemHospitals = await this._hospitalService.getHospitalsForHealthSystem(healthSystemId);
             if (healthSystemHospitals.length === 0) {
                 throw new ApiError(400, 'Cannot fetch hospitals associated with health system!');
             }

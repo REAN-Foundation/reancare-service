@@ -8,12 +8,12 @@ import HealthSystem from './health.system.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'HealthSystemHospital',
+    modelName       : 'Hospital',
     tableName       : 'health_system_hospitals',
     paranoid        : true,
     freezeTableName : true
 })
-export default class HealthSystemHospital extends Model {
+export default class Hospital extends Model {
 
     @IsUUID(4)
     @PrimaryKey

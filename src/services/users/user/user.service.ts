@@ -388,8 +388,8 @@ export class UserService {
                 var entity : UserDomainModel = {
                     CurrentTimeZone : extractedResult,
                     DefaultTimeZone : extractedResult
-                }
-                const updateUser = await this._userRepo.update(u.id, entity)
+                };
+                const updateUser = await this._userRepo.update(u.id, entity);
                 Logger.instance().log(`CurrentTimezone :: ${updateUser.CurrentTimeZone} and DefualtTimezone :: ${updateUser.CurrentTimeZone}  for ${u.id}`);
             }
         }

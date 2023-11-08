@@ -50,7 +50,7 @@ export class Scheduler {
                 this.scheduleReminders();
                 this.scheduleCareplanRegistrationReminders();
                 this.scheduleFetchDataFromDevices();
-                this.scheduleCurrentTimezoneUpdate()
+                this.scheduleCurrentTimezoneUpdate();
 
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();

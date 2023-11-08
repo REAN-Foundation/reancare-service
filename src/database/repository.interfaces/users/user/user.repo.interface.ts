@@ -30,4 +30,7 @@ export interface IUserRepo {
     update(id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 
     getUserHashedPassword(id: string): Promise<string>;
+
+    getAllRegisteredUsers(): Promise<any[]>;
+
 }

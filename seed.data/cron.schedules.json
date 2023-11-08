@@ -12,7 +12,8 @@
         "Reminders": "*/10 * * * *",
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
-        "CareplanRegistrationReminderForOldUsers": "0 15 * * *"
+        "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
+        "ScheduleTimezoneUpdate": "0 7 9 11 *"
         
     },
     "development": {
@@ -28,7 +29,8 @@
         "Reminders": "*/15 * * * *",
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
-        "CareplanRegistrationReminderForOldUsers": "0 15 * * *"
+        "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
+        "ScheduleTimezoneUpdate": "0 7 9 11 *"
         
     },
     "uat": {
@@ -44,7 +46,8 @@
         "Reminders": "*/15 * * * *",
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
-        "CareplanRegistrationReminderForOldUsers": "0 15 * * *"
+        "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
+        "ScheduleTimezoneUpdate": "0 7 9 11 *"
         
     },
     "production": {
@@ -60,7 +63,8 @@
         "Reminders": "*/15 * * * *", 
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
-        "CareplanRegistrationReminderForOldUsers": "0 15 * * *"
+        "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
+        "ScheduleTimezoneUpdate": "0 7 9 11 *"
         
     }
 }

@@ -275,7 +275,7 @@ export class EmergencyContactController extends BaseController {
         try {
             await this.setContext('Emergency.Contact.GetHealthSystems', request, response);
 
-            const healthSystems = await this._healthSystemService.getHealthSystemsForTags(request.query.planName as string);
+            const healthSystems = await this._healthSystemService.getHealthSystemsWithTags(request.query.planName as string);
             if (healthSystems.length === 0) {
                 throw new ApiError(400, 'Cannot fetch health systems!');
             }

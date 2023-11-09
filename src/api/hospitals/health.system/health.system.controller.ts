@@ -91,7 +91,7 @@ export class HealthSystemController extends BaseController {
                     ? 'No records found!'
                     : `Total ${count} hospitalSystem records retrieved successfully!`;
 
-            ResponseHandler.success(request, response, message, 200, { HealthSystemes: searchResults });
+            ResponseHandler.success(request, response, message, 200, { HealthSystems: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -140,6 +140,23 @@ export class HealthSystemController extends BaseController {
 
             ResponseHandler.success(request, response, 'HealthSystem record deleted successfully!', 200, {
                 Deleted : true,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getHealthSystemsWithTags = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('HealthSystem.GetHealthSystemsWithTags', request, response);
+
+            const tags = request.query.tags as string;
+            const hospitalSystems = await this._service.getHealthSystemsWithTags(tags);
+
+            ResponseHandler.success(request, response, 'HealthSystem records retrieved successfully!', 200, {
+                HealthSystems : hospitalSystems,
             });
 
         } catch (error) {

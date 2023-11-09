@@ -132,7 +132,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
         }
     };
 
-    getHealthSystemsForTags = async (tag?: string): Promise<HealthSystemDto[]> => {
+    getHealthSystemsWithTags = async (tag?: string): Promise<HealthSystemDto[]> => {
         try {
             const filter = tag ? {
                 where : {

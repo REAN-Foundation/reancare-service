@@ -11,6 +11,7 @@ export const register = (app: express.Application): void => {
     const controller = new HospitalController();
 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
+    router.get('/health-systems/:healthSystemId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getHospitalsForHealthSystem);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);

@@ -14,6 +14,6 @@ export interface IHealthSystemRepo {
 
     delete(id: string): Promise<boolean>;
 
-    getHealthSystemsForTags(tags?: string): Promise<HealthSystemDto[]>;
+    getHealthSystemsWithTags(tags?: string): Promise<HealthSystemDto[]>;
 
 }

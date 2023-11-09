@@ -33,8 +33,8 @@ export class HealthSystemService {
         return await this._hospitalSystemRepo.delete(id);
     };
 
-    getHealthSystemsForTags = async (tags?: string): Promise<HealthSystemDto[]> => {
-        return await this._hospitalSystemRepo.getHealthSystemsForTags(tags);
+    getHealthSystemsWithTags = async (tags?: string): Promise<HealthSystemDto[]> => {
+        return await this._hospitalSystemRepo.getHealthSystemsWithTags(tags);
     };
 
 }

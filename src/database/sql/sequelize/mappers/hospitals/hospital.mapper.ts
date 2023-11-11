@@ -12,10 +12,12 @@ export class HospitalMapper {
             return null;
         }
         const dto: HospitalDto = {
-            id             : model.id,
-            HealthSystemId : model.HealthSystemId,
-            Name           : model.Name,
-            Tags           : model.Tags ? JSON.parse(model.Tags) : [],
+            id               : model.id,
+            HealthSystemId   : model.HealthSystemId,
+            HealthSystemName : model.HealthSystem?.Name ?? null,
+            Name             : model.Name,
+            Tags             : model.Tags ? JSON.parse(model.Tags) : [],
+            CreatedAt        : model.CreatedAt,
         };
         return dto;
     };

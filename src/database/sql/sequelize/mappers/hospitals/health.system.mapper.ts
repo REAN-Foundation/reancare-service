@@ -11,9 +11,10 @@ export class HealthSystemMapper {
             return null;
         }
         const dto: HealthSystemDto = {
-            id   : model.id,
-            Name : model.Name,
-            Tags : model.Tags ? JSON.parse(model.Tags) : [],
+            id        : model.id,
+            Name      : model.Name,
+            Tags      : model.Tags ? JSON.parse(model.Tags) : [],
+            CreatedAt : model.CreatedAt,
         };
         return dto;
     };

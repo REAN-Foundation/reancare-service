@@ -44,7 +44,7 @@ export class HealthSystemRepo implements IHealthSystemRepo {
             const search = { where: {} };
 
             if (filters.Name != null) {
-                search.where['Name'] = filters.Name;
+                search.where['Name'] = { [Op.like]: '%' + filters.Name + '%' };
             }
 
             let orderByColum = 'CreatedAt';

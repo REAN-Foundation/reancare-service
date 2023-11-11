@@ -6,6 +6,7 @@ import { HospitalDomainModel } from "../../../../../domain.types/hospitals/hospi
 import { HospitalMapper } from "../../mappers/hospitals/hospital.mapper";
 import { Logger } from "../../../../../common/logger";
 import { ApiError } from "../../../../../common/api.error";
+import HealthSystem from "../../models/hospitals/health.system.model";
 import { HospitalSearchFilters, HospitalSearchResults } from "../../../../../domain.types/hospitals/hospital/hospital.search.types";
 import { Op } from "sequelize";
 
@@ -31,7 +32,16 @@ export class HospitalRepo implements IHospitalRepo {
 
     getById = async (id: uuid): Promise<HospitalDto> => {
         try {
-            const record = await Hospital.findByPk(id);
+            const record = await Hospital.findOne({
+                where   : { id: id },
+                include : [
+                    {
+                        model    : HealthSystem,
+                        as       : 'HealthSystem',
+                        required : true,
+                    }
+                ]
+            });
             return HospitalMapper.toDto(record);
         }
         catch (error) {
@@ -50,10 +60,9 @@ export class HospitalRepo implements IHospitalRepo {
             if (model.Tags != null) {
                 record.Tags = model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null;
             }
-
             await record.save();
 
-            return HospitalMapper.toDto(record);
+            return await this.getById(id);
         }
         catch (error) {
             Logger.instance().log(error.message);
@@ -75,7 +84,17 @@ export class HospitalRepo implements IHospitalRepo {
 
     search = async (filters: HospitalSearchFilters): Promise<HospitalSearchResults> => {
         try {
-            const search = { where: {} };
+            const search = {
+                where : {
+                },
+                include : [
+                    {
+                        model    : HealthSystem,
+                        as       : 'HealthSystem',
+                        required : true,
+                    }
+                ],
+            };
 
             if (filters.Name != null) {
                 search.where['Name'] = { [Op.like]: '%' + filters.Name + '%' };
@@ -88,13 +107,7 @@ export class HospitalRepo implements IHospitalRepo {
             }
 
             const searchResults = await Hospital.findAndCountAll(search);
-
-            const dtos: HospitalDto[] = [];
-            for (const record of searchResults.rows) {
-                const dto = await HospitalMapper.toDto(record);
-                dtos.push(dto);
-            }
-
+            const dtos = searchResults.rows.map(x => HospitalMapper.toDto(x));
             const searchResult: HospitalSearchResults = {
                 Items          : dtos,
                 Order          : filters.Order,

@@ -10,8 +10,10 @@ export const register = (app: express.Application): void => {
     const controller = new EmergencyContactController();
 
     router.get('/roles', auth('Users.Patients.EmergencyContact.GetContactRoles', true), controller.getContactRoles);
+
     router.get('/health-systems', auth('Users.Patients.EmergencyContact.GetHealthSystems'), controller.getHealthSystems);
     router.get('/health-systems/:healthSystemId', auth('Users.Patients.EmergencyContact.GetHealthSystemHospitals'), controller.getHealthSystemHospitals);
+
     router.post('/', auth('Users.Patients.EmergencyContact.Create'), controller.create);
     router.get('/search', auth('Users.Patients.EmergencyContact.Search'), controller.search);
     router.get('/:id', auth('Users.Patients.EmergencyContact.GetById'), controller.getById);

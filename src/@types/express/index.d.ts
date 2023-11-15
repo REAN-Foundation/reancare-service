@@ -4,17 +4,19 @@ import { CurrentUser, RequestType } from "../../domain.types/miscellaneous/curre
 declare global{
     namespace Express {
         interface Request {
-            currentUser        : CurrentUser;
-            currentClient      : CurrentClient;
-            currentUserTenantId: string;
-            context            : string;
-            resourceType       : string;
-            resourceId         : string | number | null | undefined;
-            requestType        : RequestType | null | undefined;
-            resourceOwnerUserId: string | null | undefined;
-            resourceTenantId   : string | null | undefined;
-            allowAnonymous     : boolean;
-            clientAppAuth      : boolean;
+            currentUser          : CurrentUser;
+            currentClient        : CurrentClient;
+            currentUserTenantId  : string;
+            context              : string;
+            resourceType         : string;
+            resourceId           : string | number | null | undefined;
+            requestType          : RequestType | null | undefined;
+            resourceOwnerUserId  : string | null | undefined;
+            resourceTenantId     : string | null | undefined;
+            allowAnonymous       : boolean;
+            clientAppRoutes      : boolean; //This flag indicates that the request is for the client app specific endpoints
+            singleResourceRequest: boolean;
+            patientOwnedResource : boolean;
         }
     }
 }

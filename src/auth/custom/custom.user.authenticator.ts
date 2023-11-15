@@ -26,7 +26,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
         request: express.Request
     ): Promise<AuthenticationResult> => {
         try {
-            if (request.clientAppAuth) {
+            if (request.clientAppRoutes) {
                 //This check is applicable only for the client app
                 //specific endpoints. For all other endpoints, this
                 //check is not applicable.

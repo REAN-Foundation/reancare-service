@@ -32,8 +32,9 @@ export class AuthHandler {
             request.resourceType = this.getResourceType(context);
             request.requestType = this.getRequestType(context, request);
             request.resourceId = this.getResourceId(request);
-            request.resourceOwnerUserId = this.getResourceOwner(request);
             request.allowAnonymous = allowAnonymous;
+            request.singleResourceRequest = this.isSingleResourceRequest(request);
+            request.patientOwnedResource = false;
 
             next();
         };
@@ -62,13 +63,13 @@ export class AuthHandler {
         var userAuthenticator = Injector.Container.resolve(UserAuthenticator);
         const userVerified = await userAuthenticator.verify(request);
         if (userVerified === false){
-            ErrorHandler.throwUnauthorizedUserError('Unauthorized access');
+            ErrorHandler.throwUnauthorizedUserError('Unauthorized user');
         }
 
         var userAuthorizer = Injector.Container.resolve(UserAuthorizer);
         const authorized = await userAuthorizer.verify(request);
         if (authorized === false){
-            ErrorHandler.throwForebiddenAccessError('Unauthorized access');
+            ErrorHandler.throwForebiddenAccessError('Forebidden access');
         }
         return true;
     };
@@ -145,22 +146,11 @@ export class AuthHandler {
         return resourceId;
     };
 
-    private static getResourceOwner = (request: Request): string => {
-        var resourceOwnerUserId = null;
-        if (request.requestType === 'Create') {
-            //By default, any resource associated with patient is owned by the patient
-            //This includes clinical entities, wellness entities, etc.
-            if (request.body.PatientUserId != null || request.body.PatientUserId !== 'undefined') {
-                resourceOwnerUserId = request.body.PatientUserId;
-                return resourceOwnerUserId;
-            }
-            //By default, any resource associated with user is owned by the user
-            if (request.body.UserId != null || request.body.UserId !== 'undefined') {
-                resourceOwnerUserId = request.body.UserId;
-                return resourceOwnerUserId;
-            }
-        }
-        return resourceOwnerUserId;
+    private static isSingleResourceRequest = (request: Request) => {
+        return request.requestType === 'Create' ||
+            request.requestType === 'Update' ||
+            request.requestType === 'Delete' ||
+            request.requestType === 'GetById';
     };
 
 }

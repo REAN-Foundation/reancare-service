@@ -35,7 +35,7 @@ export default class ClientAppAuthMiddleware
                         IsPrivileged : clientApp.IsPrivileged,
                     };
                     request.currentClient = currentClient;
-                    request.clientAppAuth = true;
+                    request.clientAppRoutes = true;
                     next();
                 }
                 else {

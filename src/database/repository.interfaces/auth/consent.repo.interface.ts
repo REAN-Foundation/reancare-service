@@ -1,3 +1,4 @@
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import {
     ConsentCreateModel,
     ConsentSearchFilters,
@@ -12,12 +13,14 @@ export interface IConsentRepo {
 
     create(model: ConsentCreateModel): Promise<ConsentDto>;
 
-    getById(id: string): Promise<ConsentDto>;
+    getById(id: uuid): Promise<ConsentDto>;
 
-    update(id: string, model: ConsentUpdateModel): Promise<ConsentDto>;
+    update(id: uuid, model: ConsentUpdateModel): Promise<ConsentDto>;
 
     search(filters: ConsentSearchFilters): Promise<ConsentSearchResults>;
 
-    delete(id: string): Promise<boolean>;
+    delete(id: uuid): Promise<boolean>;
+
+    getActiveConsents(consenterId: uuid, consenteeId: uuid, context: string): Promise<ConsentDto[]>;
 
 }

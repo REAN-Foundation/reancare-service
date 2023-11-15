@@ -5,8 +5,9 @@ import { UserService } from '../../services/users/user/user.service';
 import { RolePrivilegeService } from '../../services/role/role.privilege.service';
 import ResourceService from '../../services/resource.service';
 import { ResponseHandler } from '../../common/handlers/response.handler';
+import { Roles } from '../../domain.types/role/role.types';
 
-//////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 export class ResourceHandler {
 
@@ -20,18 +21,28 @@ export class ResourceHandler {
         next: express.NextFunction
     ): Promise<void> => {
         try {
-            var resourceOwnerUserId = request.resourceOwnerUserId;
-            var resourceTenantId = request.resourceTenantId;
+            var resourceOwnerUserId = request.resourceOwnerUserId ?? null;
+            var resourceTenantId = request.resourceTenantId ?? null;
+            var patientOwnedResource = false;
+
             const resource = await ResourceService.getResource(request);
             if (resource != null) {
-                resourceOwnerUserId = resource.PatientUserId ?? (resource.UserId ?? null);
-                if (resourceOwnerUserId) {
+                resourceOwnerUserId = resource.PatientUserId ?? resource.UserId ?? resource.OwnerId ?? null;
+                resourceTenantId = resource.TenantId ?? null;
+                const getFromUser = resourceOwnerUserId && !resourceTenantId;
+                if (getFromUser) {
                     const user = await this._userService.getById(resourceOwnerUserId);
                     resourceTenantId = user.TenantId;
+                    if (user.Role.RoleName === Roles.Patient) {
+                        patientOwnedResource = true;
+                    }
                 }
             }
+
             request.resourceOwnerUserId = resourceOwnerUserId;
             request.resourceTenantId = resourceTenantId;
+            request.patientOwnedResource = patientOwnedResource;
+
             next();
         }
         catch (error) {

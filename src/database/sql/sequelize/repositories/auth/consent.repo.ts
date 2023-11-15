@@ -7,6 +7,7 @@ import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
 import { ConsentDto } from '../../../../../domain.types/auth/consent.types';
 import { ConsentSearchFilters, ConsentSearchResults } from '../../../../../domain.types/auth/consent.types';
+import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -173,6 +174,37 @@ export class ConsentRepo implements IConsentRepo {
         try {
             const result = await Consent.destroy({ where: { id: id } });
             return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public getActiveConsents = async (consenterId: uuid, consenteeId: uuid, context: string): Promise<ConsentDto[]> => {
+        try {
+            const consents = await Consent.findAll({
+                where : {
+                    OwnerUserId         : consenterId,
+                    ConsentHolderUserId : consenteeId,
+                    Revoked             : false,
+                    ResourceName        : context,
+                    [Op.or]             : [
+                        {
+                            ConsentValidFrom : { [Op.lte]: new Date() },
+                            ConsentValidTill : { [Op.gte]: new Date() },
+                        },
+                        {
+                            Perpetual : true
+                        }
+                    ]
+                }
+            });
+            const dtos: ConsentDto[] = [];
+            for (const consent of consents) {
+                const dto = await ConsentMapper.toDto(consent);
+                dtos.push(dto);
+            }
+            return dtos;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

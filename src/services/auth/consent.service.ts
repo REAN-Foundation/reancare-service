@@ -7,6 +7,7 @@ import {
     ConsentUpdateModel
 } from "../../domain.types/auth/consent.types";
 import { IConsentRepo } from "../../database/repository.interfaces/auth/consent.repo.interface";
+import { uuid } from "../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,15 +16,15 @@ export class ConsentService {
 
     constructor(@inject('IConsentRepo') private _consentRepo: IConsentRepo) {}
 
-    create = async (model: ConsentCreateModel): Promise<ConsentDto> => {
+    public create = async (model: ConsentCreateModel): Promise<ConsentDto> => {
         return await this._consentRepo.create(model);
     };
 
-    getById = async (id: string): Promise<ConsentDto> => {
+    public getById = async (id: string): Promise<ConsentDto> => {
         return await this._consentRepo.getById(id);
     };
 
-    update = async (id: string, model: ConsentUpdateModel): Promise<ConsentDto> => {
+    public update = async (id: string, model: ConsentUpdateModel): Promise<ConsentDto> => {
         return await this._consentRepo.update(id, model);
     };
 
@@ -31,8 +32,12 @@ export class ConsentService {
         return await this._consentRepo.search(filters);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    public delete = async (id: string): Promise<boolean> => {
         return await this._consentRepo.delete(id);
+    };
+
+    public getActiveConsents = async (consenterId: uuid, consenteeId: uuid, context: string): Promise<ConsentDto[]> => {
+        return await this._consentRepo.getActiveConsents(consenterId, consenteeId, context);
     };
 
 }

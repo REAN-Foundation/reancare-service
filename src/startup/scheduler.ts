@@ -9,6 +9,7 @@ import { CustomActionsHandler } from '../custom/custom.actions.handler';
 import { CommunityNetworkService } from '../modules/community.bw/community.network.service';
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
 import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
+import { UserService } from '../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -49,6 +50,7 @@ export class Scheduler {
                 this.scheduleReminders();
                 this.scheduleCareplanRegistrationReminders();
                 this.scheduleFetchDataFromDevices();
+                this.scheduleCurrentTimezoneUpdate();
 
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
@@ -191,6 +193,15 @@ export class Scheduler {
         });
     };
 
+    private scheduleCurrentTimezoneUpdate = () => {
+        cron.schedule(Scheduler._schedules['ScheduleTimezoneUpdate'], () => {
+            (async () => {
+                Logger.instance().log('Running scheducled jobs: Update Current timezone...');
+                var service = Loader.container.resolve(UserService);
+                await service.updateCurrentTimezone();
+            })();
+        });
+    };
     // private scheduleDaillyPatientTasks = () => {
     //     cron.schedule(Scheduler._schedules['PatientDailyTasks'], () => {
     //         (async () => {

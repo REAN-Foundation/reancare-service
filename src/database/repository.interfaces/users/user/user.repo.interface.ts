@@ -39,4 +39,8 @@ export interface IUserRepo {
 
     getTenantsForUser(userId: uuid): Promise<TenantDto[]>;
 
+    getUserHashedPassword(id: string): Promise<string>;
+
+    getAllRegisteredUsers(): Promise<any[]>;
+
 }

@@ -7,7 +7,7 @@ import { PersonDomainModel } from '../../person/person.domain.model';
 
 export interface UserDomainModel {
     id              ?: string;
-    Person           : PersonDomainModel;
+    Person          ?: PersonDomainModel;
     TenantId        ?: uuid;
     UserName        ?: string;
     Password        ?: string;

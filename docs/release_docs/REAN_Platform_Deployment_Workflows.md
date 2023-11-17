@@ -1,112 +1,129 @@
-# REAN Platform Deployment workflows
+# REAN Platform Deployment Workflows
 
-## PR-CI-CD
-Mode of trigger: ```Automated```
+## PR-CI-CD Release Workflow
 
- PR Workflow is triggered automatically whenever a PR with source branch as a feature/* branch is created against the target branch as develop branch.
- 
- Release Process Workflow Diagram.
- ![PR-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/pr-ci-cd_workflow.png?raw=true)
- 
- GitHub Action Workflow run.
- ![pr](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Pr-ci-cd_example.png?raw=true)
- 
-### JOBS
+**Trigger Mode:** Automated
 
- The PR workflow uses TWO jobs:
- 
- #### CodeScan-ESLint
-  In this job, we analyse the code developer wrote against some rules for stylistic or programmatic errors.
- 
-  * This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job. 
-  * This job uses a static code analysis tool which identifies problematic patterns found in application source code.
- 
- #### Build-Docker-Image
- In this job, we validate the Dockerfile and test the image build process to identify any issues incurred in the build process to recent code changes.
- 
- * This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).  
- * This job create a docker image with image tag using branch name and short SHA of commit for example ```feature/test_5e38e33```
+The PR Workflow is triggered automatically whenever a pull request (PR) with a source branch as a `feature/*` branch is created against the target branch as the `develop` branch.
 
+### PR-CI-CD Release Workflow Overview
 
+Release Process Workflow Diagram:
+![PR-CI-CD Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/pr-ci-cd_workflow.png?raw=true)
 
-## Dev-CI-CD
-Mode of trigger: ```Automated```
+GitHub Action Workflow Execution:
+![PR-CI-CD Example](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Pr-ci-cd_example.png?raw=true)
 
-Dev Workflow is triggered automatically whenever any PR is merged into the develop branch. The workflow builds the applications and deploys the changes to the RF Platform Development environment.
+### Workflow Jobs
 
-Release Process Workflow Diagram.
-![Dev-ci-cd_workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/dev-ci-cd_workflow.png?raw=true)
+#### Job: CodeScan-ESLint
 
-GitHub Action Workflow run.
-![dev](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Dev-ci-cd_example.png?raw=true)
+In this job, we analyze the code written by developers against specific rules for stylistic or programmatic errors.
 
-### JOBS
+- Utilizes the [Super-linter](https://github.com/marketplace/actions/super-linter) action.
+- Performs static code analysis to identify problematic patterns in the application's source code.
 
-#### Deploy-ECS
-The Deploy ECS will be performing the following steps
+#### Job: Build-Docker-Image
 
-* This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
-* This job uses 'dev' environment and login to ECR using creds and build a new ECR docker image with image tag using branch name and short SHA of commit for example ``` /reancare-service-dev-uat:develop_5e38e33 ```
-* Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
+In this job, we validate the Dockerfile and test the image build process to identify issues incurred during the build process due to recent code changes.
 
+- Utilizes [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images) action.
+- Creates a Docker image with a tag using the branch name and short SHA of commit, for example `feature/test_5e38e33`.
 
-## UAT-CI-CD
-Mode of trigger: ```Automated```
+## Dev-CI-CD Release Workflow
 
-There are two ways to use or trigger uat-CI-CD workflow
-1. By creating a Pull Request to merge into MAIN branch
-2. Whenever a Branch with prefix of 'release/' create a pull request
+**Trigger Mode:** Automated
 
-Release Process Workflow Diagram.
-![uat-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/uat-ci-cd_workflow.png?raw=true)
+The Dev Workflow is triggered automatically whenever a pull request is merged into the `develop` branch. The workflow builds the application and deploys the changes to the REAN Platform Development environment.
 
-GitHub Action Workflow run.
-![uat](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Uat-ci-cd_example.png?raw=true)
+### Dev-CI-CD Release Workflow Overview
 
-### JOBS
+Release Process Workflow Diagram:
+![Dev-CI-CD Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/dev-ci-cd_workflow.png?raw=true)
 
-#### CodeScan-ESLint
-The CodeScan ESLint will be performing the following steps.
+GitHub Action Workflow Execution:
+![Dev-CI-CD Example](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Dev-ci-cd_example.png?raw=true)
 
-* This job uses [Super-linter](https://github.com/marketplace/actions/super-linter) action to run this job.
-* This job use static code analysis tool which identify problematic patterns found in application source code.
+### Workflow Jobs
 
-#### Label_Checks
-The Label Checks will be performing the following steps.
+#### Job: Deploy-ECS
 
-* This job uses [pull-request-label-checker](https://github.com/marketplace/actions/label-checker-for-pull-requests).
-* On event Pull Request this job will check wheter the Pull Request have one of major, minor , patch label or not. 
+The Deploy-ECS job performs the following steps:
 
-#### Deploy-ECS
-The Deploy ECS will be performing the following steps.
+- Utilizes [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images) action.
+- Operates within the `dev` environment, logs into ECR using credentials, and builds a new ECR Docker image with an image tag based on the branch name and short SHA of commit, for example `/reancare-service-dev-uat:develop_5e38e33`.
+- Creates a new version of the Amazon ECS task definition with the updated Docker image.
+- Deploys the updated Amazon ECS task definition using the Duplo API.
 
-* This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
-* This job uses 'UAT' environment and login to ECR using creds and build a new ECR docker image with image tag using branch name and short SHA of commit for example ``` /reancare-service-dev-uat:develop_5e38e33 ```. 
-* Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
+## UAT-CI-CD Release Workflow
 
+**Trigger Mode:** Automated
 
-## PROD-CI-CD
-Mode of trigger: ```Automated```
+The UAT-CI-CD Workflow can be triggered in two ways:
+1. By creating a pull request to merge into the `main` branch.
+2. Whenever a branch with the prefix `release/` creates a pull request.
 
-Prod Workflow is triggered automatically whenever any PR is merged into the main branch. The workflow builds the applications and deploys the changes to the RF Platform Production environment.
+### UAT-CI-CD Release Workflow Overview
 
-Release Process Workflow Diagram.
-![prod-ci-cd_Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/PROD-ci-cd_workflow.png?raw=true)
+Release Process Workflow Diagram:
+![UAT-CI-CD Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/uat-ci-cd_workflow.png?raw=true)
 
-GitHub Action Workflow run.
-![prod](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/prod-ci-cd_example.png?raw=true)
+GitHub Action Workflow Execution:
+![UAT-CI-CD Example](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/Uat-ci-cd_example.png?raw=true)
 
-### JOBS
+### Workflow Jobs
 
-#### Publish-Release
-The Publish-Release will be performing the following steps.
+#### Job: CodeScan-ESLint
 
-* This job uses [release-drafter](https://github.com/release-drafter/release-drafter).
-* This job will create a new GitHub release and the versioning will be based on what label developer gave for the pull request.
+The CodeScan ESLint job performs the following steps:
 
-#### Deploy-ECS
-The Deploy-ECS will be performing the following steps.
+- Utilizes [Super-linter](https://github.com/marketplace/actions/super-linter) action.
+- Performs static code analysis to identify problematic patterns in the application's source code.
 
-* This job uses [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images).
-* This job login to ECR using creds and build a new ECR docker image with image tag using ID of release whcih Publish-Release job created for example ``` reancare:97777323 ```.
-* Then it will create new version of Amazon ECS task definition with new docker image and deploy Amazon ECS task definition using Duplo API.
+#### Job: Label_Checks
+
+The Label Checks job performs the following steps:
+
+- Utilizes [pull-request-label-checker](https://github.com/marketplace/actions/label-checker-for-pull-requests) action.
+- On a Pull Request event, checks whether the PR has labels such as major, minor, or patch.
+
+#### Job: Deploy-ECS
+
+The Deploy-ECS job performs the following steps:
+
+- Utilizes [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images) action.
+- Operates within the 'UAT' environment, logs into ECR using credentials, and builds a new ECR Docker image with an image tag using the ID of the release created by the Publish-Release job, for example `reancare:97777323`.
+- Creates a new version of the Amazon ECS task definition with the updated Docker image.
+- Deploys the updated Amazon ECS task definition using the Duplo API.
+
+## PROD-CI-CD Release Workflow
+
+**Trigger Mode:** Automated
+
+The Prod Workflow is triggered automatically whenever a pull request is merged into the `main` branch. The workflow builds the application and deploys the changes to the REAN Platform Production environment.
+
+### PROD-CI-CD Release Workflow Overview
+
+Release Process Workflow Diagram:
+![PROD-CI-CD Workflow](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/PROD-ci-cd_workflow.png?raw=true)
+
+GitHub Action Workflow Execution:
+![PROD-CI-CD Example](https://github.com/REAN-Foundation/reancare-service/blob/develop/assets/images/prod-ci-cd_example.png?raw=true)
+
+### Workflow Jobs
+
+#### Job: Publish-Release
+
+The Publish-Release job performs the following steps:
+
+- Utilizes [release-drafter](https://github.com/release-drafter/release-drafter) action.
+- Creates a new GitHub release with versioning based on the label assigned to the pull request by the developer.
+
+#### Job: Deploy-ECS
+
+The Deploy-ECS job performs the following steps:
+
+- Utilizes [docker/build-push-action](https://github.com/marketplace/actions/build-and-push-docker-images) action.
+- Logs into ECR using credentials and builds a new ECR Docker image with an image tag using the ID of the release created by the Publish-Release job, for example `reancare:97777323`.
+- Creates a new version of the Amazon ECS task definition with the updated Docker image.
+- Deploys the updated Amazon ECS task definition using the Duplo API.

@@ -28,6 +28,7 @@ export class ReminderMapper {
             RepeatAfterEvery      : reminder.RepeatAfterEvery,
             RepeatAfterEveryNUnit : reminder.RepeatAfterEveryNUnit as RepeatAfterEveryNUnit,
             HookUrl               : reminder.HookUrl,
+            RawContent            : reminder.RawContent ?? null,
             CreatedAt             : reminder.createdAt,
             UpdatedAt             : reminder.updatedAt,
         };

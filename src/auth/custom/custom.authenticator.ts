@@ -94,7 +94,7 @@ export class CustomAuthenticator implements IAuthenticator {
             Logger.instance().log(err.message);
             res = {
                 Result        : false,
-                Message       : 'Forbidden user access: ' + err.message,
+                Message       : 'Forbidden user access: ' + err.message, // Please do not change this and if needed to change then check with app developer
                 HttpErrorCode : 403,
             };
             return res;

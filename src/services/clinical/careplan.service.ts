@@ -160,7 +160,13 @@ export class CareplanService implements IUserActionService {
                 } else {
                     patient = await this.getPatient(activity.PatientUserId);
                 }
-                const phoneNumber = patient.User.Person.Phone;
+                let phoneNumber = null;
+                if (message.includes("Messages")) {
+                    phoneNumber = patient.User.Person.TelegramChatId;
+                } else {
+                    phoneNumber = patient.User.Person.Phone;
+                }
+                const payload = { PersonName: patient.User.Person.DisplayName };
                 
                 //Set fifth day reminder flag true for patient
                 if (activity.Type === "reminder_three") {
@@ -170,7 +176,7 @@ export class CareplanService implements IUserActionService {
 
                 let response = null;
                 response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
-                    activity.Provider, activity.Type, activity.PlanCode);
+                    activity.Provider, activity.Type, activity.PlanCode, payload);
                 if (response === true) {
                     await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
                     Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);

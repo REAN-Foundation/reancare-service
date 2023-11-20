@@ -1,4 +1,5 @@
 import {
+    BelongsTo,
     Column, CreatedAt, DataType, DeletedAt, ForeignKey,IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
@@ -8,12 +9,12 @@ import HealthSystem from './health.system.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'HealthSystemHospital',
+    modelName       : 'Hospital',
     tableName       : 'health_system_hospitals',
     paranoid        : true,
     freezeTableName : true
 })
-export default class HealthSystemHospital extends Model {
+export default class Hospital extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -31,6 +32,9 @@ export default class HealthSystemHospital extends Model {
         allowNull : true,
     })
     HealthSystemId: string;
+
+    @BelongsTo(() => HealthSystem)
+    HealthSystem: HealthSystem;
 
     @Column({
         type      : DataType.STRING(256),

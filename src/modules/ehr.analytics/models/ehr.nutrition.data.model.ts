@@ -14,12 +14,12 @@ import { v4 } from 'uuid';
 
 @Table({
     timestamps      : true,
-    modelName       : 'DynamicEHRData',
-    tableName       : 'dynamic_ehr_data',
+    modelName       : 'EHRNutritionData',
+    tableName       : 'ehr_nutritions_data',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class DynamicEHRData extends Model {
+export default class EHRNutritionData extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -51,6 +51,12 @@ export default class DynamicEHRData extends Model {
         allowNull : true,
     })
     RecordId: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    Provider: string;
 
     @Length({ max: 256 })
     @Column({
@@ -117,6 +123,12 @@ export default class DynamicEHRData extends Model {
         allowNull : true,
     })
     ValueUnit: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    AdditionalInfo: string;
 
     @Length({ max: 64 })
     @Column({

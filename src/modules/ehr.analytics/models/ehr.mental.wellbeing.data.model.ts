@@ -14,12 +14,12 @@ import { v4 } from 'uuid';
 
 @Table({
     timestamps      : true,
-    modelName       : 'EHRLabData',
-    tableName       : 'ehr_labs_data',
+    modelName       : 'EHRMentalWellBeingData',
+    tableName       : 'ehr_mental_wellbeing_data',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class EHRLabData extends Model {
+export default class EHRMentalWellBeingData extends Model {
 
     @IsUUID(4)
     @PrimaryKey

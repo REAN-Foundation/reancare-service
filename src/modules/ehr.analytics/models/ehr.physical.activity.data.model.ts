@@ -14,12 +14,12 @@ import { v4 } from 'uuid';
 
 @Table({
     timestamps      : true,
-    modelName       : 'EHRLabData',
-    tableName       : 'ehr_labs_data',
+    modelName       : 'EHRPhysicalActivityData',
+    tableName       : 'ehr_physical_activity_data',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class EHRLabData extends Model {
+export default class EHRPhysicalActivityData extends Model {
 
     @IsUUID(4)
     @PrimaryKey

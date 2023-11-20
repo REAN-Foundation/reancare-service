@@ -52,6 +52,12 @@ export default class EHRVitalData extends Model {
     })
     RecordId: string;
 
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    Provider: string;
+
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
@@ -117,6 +123,12 @@ export default class EHRVitalData extends Model {
         allowNull : true,
     })
     ValueUnit: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    AdditionalInfo: string;
 
     @Length({ max: 64 })
     @Column({

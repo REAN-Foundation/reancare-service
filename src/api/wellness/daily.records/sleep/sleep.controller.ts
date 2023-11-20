@@ -13,7 +13,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { SleepDomainModel } from '../../../../domain.types/wellness/daily.records/sleep/sleep.domain.model';
-import { PatientService } from '../../../../services/users/patient/patient.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,13 +25,11 @@ export class SleepController extends BaseController{
 
     _validator: SleepValidator = new SleepValidator();
 
-    _patientService: PatientService = null;
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(SleepService);
-        this._patientService = Loader.container.resolve(PatientService);
-
     }
 
     //#endregion
@@ -58,11 +56,14 @@ export class SleepController extends BaseController{
             }
 
             // get user details to add records in ehr database
-            const userDetails = await this._patientService.getByUserId(sleep.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(model.PatientUserId, sleep.id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(sleep.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, sleep.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${sleep.PatientUserId}`);
             }
-
             if (sleep.SleepDuration) {
                 var timestamp = sleep.RecordDate;
                 if (!timestamp) {
@@ -150,9 +151,14 @@ export class SleepController extends BaseController{
                 throw new ApiError(400, 'Unable to update sleep record!');
             }
 
-            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Sleep record updated successfully!', 200, {
@@ -187,19 +193,21 @@ export class SleepController extends BaseController{
         }
     };
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: SleepDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: SleepDomainModel, appName?: string) => {
         if (model.SleepDuration) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.MentalWellBeing,
                 model.SleepDuration,
                 model.Unit,
-                'Sleep'
+                'Sleep',
+                null,
+                appName
             );
         }
     };
-
 
     //#endregion
 

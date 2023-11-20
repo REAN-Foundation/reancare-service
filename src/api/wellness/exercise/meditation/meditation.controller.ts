@@ -13,7 +13,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { MeditationDomainModel } from '../../../../domain.types/wellness/exercise/meditation/meditation.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
-import { PatientService } from '../../../../services/users/patient/patient.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,12 +25,11 @@ export class MeditationController extends BaseController{
 
     _validator: MeditationValidator = new MeditationValidator();
 
-    _patientService: PatientService = null;
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(MeditationService);
-        this._patientService = Loader.container.resolve(PatientService);
+        this._service = Loader.container.resolve(MeditationService); 
     }
 
     //#endregion
@@ -48,10 +47,13 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Cannot create record for meditation!');
             }
 
-            // get user details to add records in ehr database
-            const userDetails = await this._patientService.getByUserId(meditation.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(model.PatientUserId, meditation.id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(meditation.PatientUserId)
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, meditation.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${meditation.PatientUserId}`);
             }
 
             if (meditation.DurationInMins) {
@@ -143,9 +145,13 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Unable to update meditation record!');
             }
 
-            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId)
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Meditation record updated successfully!', 200, {
@@ -180,14 +186,18 @@ export class MeditationController extends BaseController{
         }
     };
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: MeditationDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: MeditationDomainModel, appName?: string) => {
         if (model.DurationInMins) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.MentalWellBeing,
                 model.DurationInMins,
-                'Meditation'
+                'mins',
+                'Meditation',
+                null,
+                appName
             );
         }
     };

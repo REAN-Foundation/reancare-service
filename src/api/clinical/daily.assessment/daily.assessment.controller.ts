@@ -44,11 +44,6 @@ export class DailyAssessmentController extends BaseController{
             if (dailyAssessment == null) {
                 throw new ApiError(400, 'Cannot create record for daily assessment!');
             }
-            /*const userDetails = await this._patientService.getByUserId(dailyAssessment.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(model.PatientUserId, dailyAssessment.id, model);
-            }*/
-
             ResponseHandler.success(request, response, 'Daily assessment record created successfully!', 201, {
                 DailyAssessment : dailyAssessment,
             });
@@ -74,39 +69,6 @@ export class DailyAssessmentController extends BaseController{
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: DailyAssessmentDomainModel) => {
-
-        if (model.Mood) {
-            EHRAnalyticsHandler.addStringRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.Mood,
-                model.Mood,
-                'Mood',
-                'Daily Assessment');
-        }
-        if (model.Feeling) {
-            EHRAnalyticsHandler.addStringRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.Feeling,
-                model.Feeling,
-                'Feeling',
-                'Daily Assessment');
-        }
-        if (model.EnergyLevels) {
-            model.EnergyLevels.forEach(EnergyLevel => {
-                EHRAnalyticsHandler.addStringRecord(
-                    patientUserId,
-                    recordId,
-                    EHRRecordTypes.EnergyLevel,
-                    EnergyLevel,
-                    'EnergyLevel',
-                    'Daily Assessment');
-            });    
         }
     };
 

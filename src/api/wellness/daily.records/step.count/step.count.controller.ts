@@ -2,7 +2,6 @@ import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { PatientService } from '../../../../services/users/patient/patient.service';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
 import { Loader } from '../../../../startup/loader';
 import { StepCountValidator } from './step.count.validator';
@@ -10,6 +9,7 @@ import { BaseController } from '../../../base.controller';
 import { StepCountDomainModel } from '../../../../domain.types/wellness/daily.records/step.count/step.count.domain.model';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,12 +21,11 @@ export class StepCountController extends BaseController {
 
     _validator: StepCountValidator = new StepCountValidator();
 
-    _patientService: PatientService = null;
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(StepCountService);
-        this._patientService = Loader.container.resolve(PatientService);
     }
 
     //#endregion
@@ -56,13 +55,15 @@ export class StepCountController extends BaseController {
             if (stepCount == null) {
                 throw new ApiError(400, 'Cannot create Step Count!');
             }
-
             // get user details to add records in ehr database
-            const userDetails = await this._patientService.getByUserId(stepCount.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(domainModel.PatientUserId, stepCount.id, domainModel);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stepCount.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(domainModel.PatientUserId, stepCount.id, stepCount.Provider, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${stepCount.PatientUserId}`);
             }
-
 
             ResponseHandler.success(request, response, 'Step count created successfully!', 201, {
                 StepCount : stepCount,
@@ -129,9 +130,14 @@ export class StepCountController extends BaseController {
                 throw new ApiError(400, 'Unable to update Step ount record!');
             }
 
-            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(domainModel.PatientUserId, id, updated.Provider, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Step Count record updated successfully!', 200, {
@@ -165,15 +171,18 @@ export class StepCountController extends BaseController {
         }
     };
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: StepCountDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: StepCountDomainModel, appName?: string) => {
         if (model.StepCount) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.PhysicalActivity,
                 model.StepCount,
                 model.Unit,
-                'Step-count'
+                'Step-count',
+                null,
+                appName
             );
         }
     };

@@ -62,7 +62,7 @@ export enum EHRModels {
     'Cholesterol-Triglyceride-Level' = 'EHRLabData',
     'Cholesterol-Ratio' = 'EHRLabData',
     'Cholesterol-A1C-Level' = 'EHRLabData',
-    'Symptom' = 'EHRSymptomsData',
+    'Symptom' = 'EHRSymptomData',
     'Medication-IsTaken ' = 'EHRMedicationData',
     'Medication-IsMissed ' = 'EHRMedicationData',
     'Lab-Record' = 'EHRLabData',

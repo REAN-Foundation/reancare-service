@@ -14,12 +14,12 @@ import { v4 } from 'uuid';
 
 @Table({
     timestamps      : true,
-    modelName       : 'EHRLabData',
-    tableName       : 'ehr_labs_data',
+    modelName       : 'EHRMedicationData',
+    tableName       : 'ehr_medications_data',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class EHRLabData extends Model {
+export default class EHRMedicationData extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -52,90 +52,71 @@ export default class EHRLabData extends Model {
     })
     RecordId: string;
 
+    @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    Provider: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.STRING(128),
         allowNull : false,
     })
-    Type: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    Name: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    ValueString: string;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    ValueInt: number;
+    DrugName: string; //This is brand-name
 
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueFloat: number;
-
-    @Column({
-        type      : DataType.BOOLEAN,
-        allowNull : true,
-    })
-    ValueBoolean: boolean;
-
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    ValueDate: Date;
+    Dose: number;
 
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    ValueName: string;
+    Details: string;
 
-    @Length({ max: 64 })
     @Column({
-        type      : DataType.STRING(64),
+        type      : DataType.DATE,
         allowNull : true,
     })
-    ValueDataType: string;
+    TimeScheduleStart: Date;
 
-    @Length({ max: 64 })
     @Column({
-        type      : DataType.STRING(64),
+        type      : DataType.DATE,
         allowNull : true,
     })
-    ValueUnit: string;
+    TimeScheduleEnd: Date;
+
+    @Column({
+        type         : DataType.DATE,
+        allowNull    : true,
+        defaultValue : null
+    })
+    TakenAt: Date;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    IsTaken: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    IsMissed: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    IsCancelled: boolean;
 
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
     AdditionalInfo: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    RecordDate: Date;
 
     @Column
     @CreatedAt

@@ -5,6 +5,7 @@ export interface EHRDynamicRecordDomainModel {
     AppName?      : string;
     PatientUserId?: uuid;
     RecordId?     : uuid;
+    Provider?     : string;
     Type          : EHRRecordTypes;
     Name          : string;
 

@@ -16,6 +16,8 @@ import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { PatientService } from '../../../../services/users/patient/patient.service';
+import { Logger } from '../../../../common/logger';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,13 +31,12 @@ export class PhysicalActivityController extends BaseController {
 
     _userService: UserService = null;
 
-    _patientService: PatientService = null;
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(PhysicalActivityService);
         this._userService = Loader.container.resolve(UserService);
-        this._patientService = Loader.container.resolve(PatientService);
     }
 
     //#endregion
@@ -60,10 +61,15 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
             // get user details to add records in ehr database
-            const userDetails = await this._patientService.getByUserId(physicalActivity.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, domainModel);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(physicalActivity.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${physicalActivity.PatientUserId}`);
             }
+
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
                 var timestamp = physicalActivity.EndTime ?? physicalActivity.StartTime;
@@ -150,9 +156,13 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Unable to update physical activity record!');
             }
 
-            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(updated.PatientUserId, id, updated.Provider, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }
 
             if (updated.PhysicalActivityQuestionAns !== null) {
@@ -204,24 +214,32 @@ export class PhysicalActivityController extends BaseController {
         }
     };
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PhysicalActivityDomainModel) => {
-        if (model.PhysicalActivityQuestionAns !== undefined) {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PhysicalActivityDomainModel, appName?: string) => {
+        if (model.PhysicalActivityQuestionAns !== null) {
             EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.PhysicalActivity,
                 model.PhysicalActivityQuestionAns,
-                'Did you add movement to your day today?'
+                null,
+                null,
+                'Did you add movement to your day today?',
+                appName
             );
         }
 
-        if (model.DurationInMin !== undefined) {
+        if (model.DurationInMin) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.PhysicalActivity,
                 model.DurationInMin,
-                model.Exercise
+                'mins',   
+                model.Category,
+                'Exercise',
+                appName
             );
         }
 

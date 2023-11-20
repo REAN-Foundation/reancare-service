@@ -5,10 +5,19 @@ import { EHRDynamicRecordDomainModel, EHRStaticRecordDomainModel } from './ehr.a
 import { Logger } from "../../common/logger";
 import StaticEHRData from "./models/static.ehr.data.model";
 import { uuid } from '../../domain.types/miscellaneous/system.types';
-import DynamicEHRData from './models/dynamic.ehr.data.model';
 import EHRVitalData from './models/ehr.vital.data.model';
 import EHRLabData from './models/ehr.lab.data.model';
+import EHRMedicationData from './models/ehr.medication.data.model';
 import { EHRModels } from './ehr.record.types';
+import EHRNutritionData from './models/ehr.nutrition.data.model';
+import EHRPhysicalActivityData from './models/ehr.physical.activity.data.model';
+import EHRSymptomData from './models/ehr.symptom.data.model';
+import EHRMentalWellBeingData from './models/ehr.mental.wellbeing.data.model';
+import { EHRMedicationDomainModel } from './ehr.medication.domain.model';
+import { EHRCareplanActivityDomainModel } from './ehr.careplan.activity.domain.model';
+import EHRCareplanActivityData from './models/ehr.careplan.activity.data.model';
+import { EHRAssessmentDomainModel } from './ehr.assessment.domain.model';
+import EHRAssessmentData from './models/ehr.assessment.data.model';
 
 // import { Op } from 'sequelize';
 
@@ -20,7 +29,11 @@ export class EHRAnalyticsRepo {
     constructor() {
         this._modelResolver = {
             'EHRVitalData': EHRVitalData,
-            'EHRLabData': EHRLabData
+            'EHRLabData': EHRLabData,
+            'EHRNutritionData': EHRNutritionData,
+            'EHRPhysicalActivityData': EHRPhysicalActivityData,
+            'EHRSymptomData': EHRSymptomData,
+            'EHRMentalWellBeingData': EHRMentalWellBeingData,
         };
     }
 
@@ -66,6 +79,7 @@ export class EHRAnalyticsRepo {
 
             if (existing) {
                 existing.AppName       = model.AppName;
+                existing.Provider      = model.Provider;
                 existing.ValueInt      = model.ValueInt;
                 existing.ValueFloat    = model.ValueFloat;
                 existing.ValueString   = model.ValueString;
@@ -83,6 +97,7 @@ export class EHRAnalyticsRepo {
                 AppName       : model.AppName,
                 PatientUserId : model.PatientUserId,
                 RecordId      : model.RecordId,
+                Provider      : model.Provider,
                 Type          : model.Type,
                 Name          : model.Name,
                 ValueInt      : model.ValueInt,
@@ -96,6 +111,129 @@ export class EHRAnalyticsRepo {
                 RecordDate    : model.RecordDate,
             };
             const record = await this._modelResolver[targetModel].create(entity);
+            return record != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    createMedication = async (model: EHRMedicationDomainModel): Promise<boolean> => {
+        try {
+
+            const entity = {
+                AppName          : model.AppName,
+                PatientUserId    : model.PatientUserId,
+                RecordId         : model.RecordId,
+                DrugName         : model.DrugName,
+                Dose             : model.Dose,
+                Details          : model.Details,
+                TimeScheduleStart: model.TimeScheduleStart,
+                TimeScheduleEnd  : model.TimeScheduleEnd,
+                TakenAt          : model.TakenAt,
+                IsTaken          : model.IsTaken,
+                IsMissed         : model.IsMissed,
+                IsCancelled      : model.IsCancelled,
+            };
+            const record = await EHRMedicationData.create(entity);
+            return record != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    createCareplanActivity = async (model: EHRCareplanActivityDomainModel): Promise<boolean> => {
+        try {
+
+            const existing = await EHRCareplanActivityData.findOne({
+                where : {
+                    PatientUserId : model.PatientUserId,
+                    RecordId      : model.RecordId,
+                }
+            });
+
+            if (existing) {  
+                existing.AppName            = model.AppName,
+                existing.PatientUserId      = model.PatientUserId,
+                existing.RecordId           = model.RecordId,
+                existing.EnrollmentId       = model.EnrollmentId.toString(),
+                existing.Provider           = model.Provider,
+                existing.PlanName           = model.PlanName,
+                existing.PlanCode           = model.PlanCode,
+                existing.Type               = model.Type,
+                existing.Category           = model.Category,
+                existing.ProviderActionId   = model.ProviderActionId,
+                existing.Title              = model.Title,
+                existing.Description        = model.Description,
+                existing.Url                = model.Url,
+                existing.Language           = 'English',
+                existing.ScheduledAt        = model.ScheduledAt,
+                existing.CompletedAt        = model.CompletedAt,
+                existing.Sequence           = model.Sequence,
+                existing.ScheduledDay       = model.ScheduledDay,
+                existing.Status             = model.Status,
+                existing.HealthSystem       = model.HealthSystem,
+                existing.AssociatedHospital = model.AssociatedHospital,
+
+                await existing.save();
+
+                return true;
+            }
+
+            const entity = {
+                AppName            : model.AppName,
+                PatientUserId      : model.PatientUserId,
+                RecordId           : model.RecordId,
+                EnrollmentId       : model.EnrollmentId,
+                Provider           : model.Provider,
+                PlanName           : model.PlanName,
+                PlanCode           : model.PlanCode,
+                Type               : model.Type,
+                Category           : model.Category,
+                ProviderActionId   : model.ProviderActionId,
+                Title              : model.Title,
+                Description        : model.Description,
+                Url                : model.Url,
+                Language           : 'English',
+                ScheduledAt        : model.ScheduledAt,
+                CompletedAt        : model.CompletedAt,
+                Sequence           : model.Sequence,
+                ScheduledDay       : model.ScheduledDay,
+                Status             : model.Status,
+                HealthSystem       : model.HealthSystem,
+                AssociatedHospital : model.AssociatedHospital,
+            };
+            const record = await EHRCareplanActivityData.create(entity);
+            return record != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    createAssessment = async (model: EHRAssessmentDomainModel): Promise<boolean> => {
+        try { 
+
+            const entity = {
+                AppName          : model.AppName,
+                PatientUserId    : model.PatientUserId,
+                AssessmentId     : model.AssessmentId,
+                TemplateId       : model.TemplateId,
+                NodeId           : model.NodeId,
+                Title            : model.Title,
+                Question         : model.Question,
+                SubQuestion      : model.SubQuestion,
+                QuestionType     : model.QuestionType,
+                AnswerOptions    : model.AnswerOptions,
+                AnswerValue      : model.AnswerValue,
+                AnswerReceived   : model.AnswerReceived,
+                AnsweredOn       : model.AnsweredOn,
+                Status           : model.Status,
+                Score            : model.Score,
+                AdditionalInfo   : model.AdditionalInfo,
+                StartedAt        : model.StartedAt,
+                FinishedAt       : model.FinishedAt,
+        
+            };
+            const record = await EHRAssessmentData.create(entity);
             return record != null;
         } catch (error) {
             Logger.instance().log(error.message);

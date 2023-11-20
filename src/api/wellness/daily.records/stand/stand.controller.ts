@@ -9,7 +9,7 @@ import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { StandDomainModel } from '../../../../domain.types/wellness/daily.records/stand/stand.domain.model';
-import { PatientService } from '../../../../services/users/patient/patient.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,13 +21,11 @@ export class StandController extends BaseController {
 
     _validator: StandValidator = new StandValidator();
 
-    _patientService: PatientService = null;
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(StandService);
-        this._patientService = Loader.container.resolve(PatientService);
-
     }
 
     //#endregion
@@ -46,9 +44,13 @@ export class StandController extends BaseController {
             }
 
             // get user details to add records in ehr database
-            const userDetails = await this._patientService.getByUserId(stand.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(domainModel.PatientUserId, stand.id, domainModel);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stand.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(domainModel.PatientUserId, stand.id, null, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${stand.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Stand record created successfully!', 201, {
@@ -116,9 +118,14 @@ export class StandController extends BaseController {
                 throw new ApiError(400, 'Unable to update stand record!');
             }
 
-            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                this.addEHRRecord(domainModel.PatientUserId, id, domainModel);
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Stand record updated successfully!', 200, {
@@ -152,15 +159,18 @@ export class StandController extends BaseController {
         }
     };
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: StandDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: StandDomainModel, appName?: string) => {
         if (model.Stand) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.PhysicalActivity,
                 model.Stand,
                 model.Unit,
-                'Stand'
+                'Stand',
+                null,
+                appName
             );
         }
     };

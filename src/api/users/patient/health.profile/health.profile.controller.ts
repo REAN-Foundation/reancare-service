@@ -103,7 +103,7 @@ export class HealthProfileController extends BaseController{
     //#region Privates
 
     private addEHRRecord = (patientUserId: uuid, model: HealthProfileDomainModel, appName?: string) => {
-        var details = {}
+        var details = {};
         if (model.Race) {
             details['Race'] = model.Race;
         }

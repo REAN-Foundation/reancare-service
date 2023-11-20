@@ -226,22 +226,15 @@ export class PatientController extends BaseUserController {
                 location = addresses[0].Location;
             }
 
-            const userDetails = await this._service.getByUserId(userId);
-            if (userDetails.User.IsTestUser == false) {
-                //this.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile);       
-
-                var userDevices = await this._userDeviceDetailsService.getByUserId(userId);
-                if (userDevices.length > 0) {
-                    for await (var userDevice of userDevices) {
-                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
-                            await this.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, userDevice.AppName);       
-                        } else {
-                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
-                        }
-                    }
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(userId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) {
+                    await this.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, appName);       
                 }
-                
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
             }
+
             const patient = await this._service.getByUserId(userId);
 
             ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
@@ -326,11 +319,6 @@ export class PatientController extends BaseUserController {
         if (updatedModel.User.Person.Age) {
             details['Age'] = updatedModel.User.Person.Age;
         }
-        /*if (model.id) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                PersonId : model.id
-            });
-        }*/
         if (model.Gender) {
             details['Gender'] = model.Gender;
         }
@@ -404,17 +392,6 @@ export class PatientController extends BaseUserController {
             }
         }
     }
-
-    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
-
-        const eligibleToAddInEhrRecords =
-        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
-        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
-        userAppRegistrations.indexOf('HF Helper') >= 0;
-
-        return eligibleToAddInEhrRecords;
-    };
-
 
     //#endregion
 

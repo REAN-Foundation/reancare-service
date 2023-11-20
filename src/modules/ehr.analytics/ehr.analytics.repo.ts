@@ -50,11 +50,11 @@ export class EHRAnalyticsRepo {
         });
 
         if (!model) {
-            var entity = this.createModel(model, details, appName)
-            entity.PatientUserId = patientUserId
+            var entity = this.createModel(model, details, appName);
+            entity.PatientUserId = patientUserId;
             model = await StaticEHRData.create(entity);
         } else {
-            model = this.createModel(model, details, appName)
+            model = this.createModel(model, details, appName);
             model = await model.save();
         }
 
@@ -336,5 +336,5 @@ export class EHRAnalyticsRepo {
         }
 
         return model;
-    }
+    };
 }

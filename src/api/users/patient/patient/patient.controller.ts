@@ -39,6 +39,8 @@ export class PatientController extends BaseUserController {
 
     _userHelper: UserHelper = new UserHelper();
 
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
     _cohortService: CohortService = null;
@@ -72,21 +74,17 @@ export class PatientController extends BaseUserController {
 
             const clientCode = request.currentClient.ClientCode;
             await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
-            //await this.checkUserEligibiltyToAddEHRRecord(patient.UserId);
 
-            const userDetails = await this._service.getByUserId(patient.UserId);
-            if (userDetails.User.IsTestUser == false) {
-                var userDevices = await this._userDeviceDetailsService.getByUserId(patient.UserId);
-                if (userDevices.length > 0) {
-                    userDevices.forEach(userDevice => {
-                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
-                            this.addPatientToEHRRecords(patient.UserId, userDevice.AppName);
-                        } else {
-                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patient.UserId}`);
-                        }
-                    });
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patient.UserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addPatientToEHRRecords(patient.UserId, appName);
                 }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patient.UserId}`);
             }
+
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
                     Patient : patient,
@@ -321,7 +319,7 @@ export class PatientController extends BaseUserController {
 
     private addEHRRecord = (patientUserId: uuid,
         model: PersonDomainModel, updatedModel: any, location: string, updatedHealthProfile: any, appName?: string) => {
-        var details = {}
+        var details = {};
         if (model.BirthDate) {
             details['BirthDate'] = model.BirthDate;
         }

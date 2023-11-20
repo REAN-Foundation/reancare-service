@@ -47,7 +47,7 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Cannot create record for meditation!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(meditation.PatientUserId)
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(meditation.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, meditation.id, null, model, appName);
@@ -145,7 +145,7 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Unable to update meditation record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId)
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
                     this.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);

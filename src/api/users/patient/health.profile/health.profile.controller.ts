@@ -27,6 +27,8 @@ export class HealthProfileController extends BaseController{
 
     _validator: HealthProfileValidator = new HealthProfileValidator();
 
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(HealthProfileService);
@@ -77,19 +79,16 @@ export class HealthProfileController extends BaseController{
                 throw new ApiError(400, 'Unable to update Patient health profile record!');
             }
 
-            const userDetails = await this._patientService.getByUserId(updated.PatientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
-                if (userDevices.length > 0) {
-                    userDevices.forEach(userDevice => {
-                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
-                            this.addEHRRecord(patientUserId, domainModel, userDevice.AppName);
-                        } else {
-                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patientUserId}`);
-                        }
-                    });
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(patientUserId, domainModel, appName);
                 }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patientUserId}`);
             }
+
             ResponseHandler.success(request, response, 'Patient health profile record updated successfully!', 200, {
                 HealthProfile : updated,
             });
@@ -151,16 +150,6 @@ export class HealthProfileController extends BaseController{
         EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
 
     
-    };
-
-    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
-
-        const eligibleToAddInEhrRecords =
-        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
-        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
-        userAppRegistrations.indexOf('HF Helper') >= 0;
-
-        return eligibleToAddInEhrRecords;
     };
 
     //#endregion

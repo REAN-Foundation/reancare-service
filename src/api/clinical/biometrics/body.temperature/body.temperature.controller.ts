@@ -46,7 +46,7 @@ export class BodyTemperatureController extends BaseController {
             if (bodyTemperature == null) {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyTemperature.PatientUserId)
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyTemperature.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, bodyTemperature.id, bodyTemperature.Provider, model, appName);
@@ -141,7 +141,7 @@ export class BodyTemperatureController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update body temperature record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId)
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);

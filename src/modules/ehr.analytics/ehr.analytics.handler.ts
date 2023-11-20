@@ -388,7 +388,7 @@ export class EHRAnalyticsHandler {
                 }
                 return appNames; 
             }
-        }
+        };
 
     //#endregion
 

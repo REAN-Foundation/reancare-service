@@ -375,20 +375,21 @@ export class EHRAnalyticsHandler {
 
     public getEligibleAppNames = async (patientUserId: uuid) => {
         const userDetails = await this._patientService.getByUserId(patientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
-                var appNames = [];
-                if (userDevices.length > 0) {
-                    userDevices.forEach(userDevice => {
-                        var deviceEligibility = this.eligibleToAddInEhrRecords(userDevice.AppName);
-                        if (deviceEligibility) {
-                            appNames.push(userDevice.AppName);
-                        }
-                    });
-                }
-                return appNames; 
+        var appNames = [];
+        if (userDetails.User.IsTestUser == false) {
+            var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
+            if (userDevices.length > 0) {
+                userDevices.forEach(userDevice => {
+                    var deviceEligibility = this.eligibleToAddInEhrRecords(userDevice.AppName);
+                    if (deviceEligibility) {
+                        appNames.push(userDevice.AppName);
+                    }
+                });
             }
-        };
+        }
+
+        return appNames;
+    };
 
     //#endregion
 

@@ -13,6 +13,7 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +23,8 @@ export class BloodGlucoseController extends BaseController {
     _service: BloodGlucoseService = null;
 
     _validator: BloodGlucoseValidator = new BloodGlucoseValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
@@ -42,8 +45,15 @@ export class BloodGlucoseController extends BaseController {
             if (bloodGlucose == null) {
                 throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodGlucose.id, model);
-
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodGlucose.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, bloodGlucose.id, bloodGlucose.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodGlucose.PatientUserId}`);
+            }
             // Adding record to award service
             if (bloodGlucose.BloodGlucose) {
                 var timestamp = bloodGlucose.RecordDate;
@@ -133,7 +143,14 @@ export class BloodGlucoseController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood glucose record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
 
             if (updated.BloodGlucose) {
                 var timestamp = updated.RecordDate;
@@ -192,14 +209,19 @@ export class BloodGlucoseController extends BaseController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodGlucoseDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BloodGlucoseDomainModel, appName?: string) => {
         if (model.BloodGlucose) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.BloodGlucose,
                 model.BloodGlucose,
-                model.Unit);
+                model.Unit,
+                null,
+                null,
+                appName
+            );
         }
     };
 

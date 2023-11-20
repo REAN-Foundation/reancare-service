@@ -2,8 +2,10 @@ import { Gender, uuid } from "../../domain.types/miscellaneous/system.types";
 import { DataTypes, EHRRecordTypes } from "./ehr.record.types";
 
 export interface EHRDynamicRecordDomainModel {
+    AppName?      : string;
     PatientUserId?: uuid;
     RecordId?     : uuid;
+    Provider?     : string;
     Type          : EHRRecordTypes;
     Name          : string;
 
@@ -21,12 +23,14 @@ export interface EHRDynamicRecordDomainModel {
 }
 
 export interface EHRStaticRecordDomainModel {
+    AppName?            : string;
     DoctorPersonId?     : uuid;
     OtherDoctorPersonId?: uuid;
     ProviderCode?       : string;
     HealthSystem?       : string;
     AssociatedHospital? : string;
     Gender?             : Gender;
+    SelfIdentifiedGender?: string;
     BirthDate?          : Date;
     Age?                : string;
     BodyHeight?         : number;
@@ -34,10 +38,14 @@ export interface EHRStaticRecordDomainModel {
     Race?               : string;
     Nationality?        : string;
     HasHeartAilment?    : boolean;
+    HasHighBloodPressure?: boolean;
+    HasHighCholesterol?: boolean;
+    Occupation?        : string;
     IsDiabetic?         : boolean;
     MaritalStatus?      : string;
     BloodGroup?         : string;
     MajorAilment?       : string;
     IsSmoker?           : boolean;
     Location?           : string;
+    OtherConditions?     : string;
 }

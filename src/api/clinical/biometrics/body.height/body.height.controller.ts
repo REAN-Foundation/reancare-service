@@ -9,6 +9,7 @@ import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyHeightValidator } from './body.height.validator';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +20,8 @@ export class BodyHeightController {
     _service: BodyHeightService = null;
 
     _authorizer: Authorizer = null;
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         this._service = Loader.container.resolve(BodyHeightService);
@@ -40,7 +43,15 @@ export class BodyHeightController {
             if (bodyHeight == null) {
                 throw new ApiError(400, 'Cannot create record for height!');
             }
-            this.addEHRRecord(model.PatientUserId, bodyHeight.id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyHeight.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, bodyHeight.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyHeight.PatientUserId}`);
+            }
+
             ResponseHandler.success(request, response, 'Height record created successfully!', 201, {
                 BodyHeight : bodyHeight
             });
@@ -111,7 +122,15 @@ export class BodyHeightController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update height record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
+
             ResponseHandler.success(request, response, 'Height record updated successfully!', 200, {
                 BodyHeight : updated
             });
@@ -148,15 +167,15 @@ export class BodyHeightController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BodyHeightDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyHeightDomainModel, appName?: string) => {
         if (model.BodyHeight) {
             EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.BodyHeight, model.BodyHeight, model.Unit);
+                patientUserId, recordId, provider, EHRRecordTypes.BodyHeight, model.BodyHeight, model.Unit, null, null, appName);
 
             //Also add it to the static record
             EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
                 BodyHeight : model.BodyHeight
-            });
+            }, appName);
         }
     };
 

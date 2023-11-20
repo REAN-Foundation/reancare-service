@@ -10,13 +10,12 @@ import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
-import { PatientService } from '../../../../services/users/patient/patient.service';
-import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 import { PersonService } from '../../../../services/person/person.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,20 +25,20 @@ export class BloodPressureController extends BaseController {
 
     _service: BloodPressureService = null;
 
-    _patientService: PatientService = null;
-
     _personService: PersonService = null;
 
-    _userDeviceDetailsService: UserDeviceDetailsService = null;
+    _patientService: PatientService = null;
 
     _validator: BloodPressureValidator = new BloodPressureValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodPressureService);
-        this._patientService = Loader.container.resolve(PatientService);
         this._personService = Loader.container.resolve(PersonService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._patientService = Loader.container.resolve(PatientService);
+
     }
 
     //#endregion
@@ -56,7 +55,16 @@ export class BloodPressureController extends BaseController {
             if (bloodPressure == null) {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
+
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodPressure.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, bloodPressure.id, bloodPressure.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodPressure.PatientUserId}`);
+            }
 
             /*if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
@@ -156,7 +164,15 @@ export class BloodPressureController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (updated.Systolic || updated.Diastolic) {
@@ -218,26 +234,33 @@ export class BloodPressureController extends BaseController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodPressureDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BloodPressureDomainModel, appName?: string) => {
+
         if (model.Systolic) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.BloodPressure,
                 model.Systolic,
                 model.Unit,
                 'Systolic Blood Pressure',
-                'Blood Pressure');
+                'Blood Pressure',
+                appName
+            );
         }
         if (model.Diastolic) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.BloodPressure,
                 model.Diastolic,
                 model.Unit,
                 'Distolic Blood Pressure',
-                'Blood Pressure');
+                'Blood Pressure',
+                appName
+            );
         }
     };
 

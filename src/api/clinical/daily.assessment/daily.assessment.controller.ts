@@ -5,6 +5,11 @@ import { DailyAssessmentService } from '../../../services/clinical/daily.assessm
 import { Loader } from '../../../startup/loader';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { BaseController } from '../../base.controller';
+import { PatientService } from '../../../services/users/patient/patient.service';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { DailyAssessmentDomainModel } from '../../../domain.types/clinical/daily.assessment/daily.assessment.domain.model';
+import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../modules/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,9 +21,13 @@ export class DailyAssessmentController extends BaseController{
 
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 
+    _patientService: PatientService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(DailyAssessmentService);
+        this._patientService = Loader.container.resolve(PatientService);
+
     }
     //#endregion
 
@@ -35,7 +44,6 @@ export class DailyAssessmentController extends BaseController{
             if (dailyAssessment == null) {
                 throw new ApiError(400, 'Cannot create record for daily assessment!');
             }
-
             ResponseHandler.success(request, response, 'Daily assessment record created successfully!', 201, {
                 DailyAssessment : dailyAssessment,
             });

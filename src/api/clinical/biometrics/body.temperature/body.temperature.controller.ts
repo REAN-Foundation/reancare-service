@@ -13,6 +13,7 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,10 +25,11 @@ export class BodyTemperatureController extends BaseController {
 
     _validator: BodyTemperatureValidator = new BodyTemperatureValidator();
 
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(BodyTemperatureService);
-
     }
 
     //#endregion
@@ -44,8 +46,14 @@ export class BodyTemperatureController extends BaseController {
             if (bodyTemperature == null) {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
-            this.addEHRRecord(model.PatientUserId, bodyTemperature.id, model);
-
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyTemperature.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, bodyTemperature.id, bodyTemperature.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyTemperature.PatientUserId}`);
+            }
             // Adding record to award service
             if (bodyTemperature.BodyTemperature) {
                 var timestamp = bodyTemperature.RecordDate;
@@ -133,8 +141,14 @@ export class BodyTemperatureController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update body temperature record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
-
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
             // Adding record to award service
             if (updated.BodyTemperature) {
                 var timestamp = updated.RecordDate;
@@ -194,13 +208,14 @@ export class BodyTemperatureController extends BaseController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BodyTemperatureDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyTemperatureDomainModel, appName?: string) => {
         if (model.BodyTemperature) {
             EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit);
+                patientUserId, recordId, provider, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit, null, null, appName
+            );
         }
     };
-
+    
     //#endregion
 
 }

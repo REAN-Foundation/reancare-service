@@ -13,7 +13,8 @@
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
-        "ScheduleTimezoneUpdate": "0 7 9 11 *"
+        "ScheduleTimezoneUpdate": "0 7 9 11 *",
+        "ScheduleExistingDataToEHR": "*/2 * * * *"
         
     },
     "development": {
@@ -30,7 +31,8 @@
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
-        "ScheduleTimezoneUpdate": "0 7 9 11 *"
+        "ScheduleTimezoneUpdate": "0 7 9 11 *",
+        "ScheduleExistingDataToEHR": "*/2 * * * *"
         
     },
     "uat": {

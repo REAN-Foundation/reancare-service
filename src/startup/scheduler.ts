@@ -6,6 +6,7 @@ import { FileResourceService } from '../services/general/file.resource.service';
 import { Loader } from './loader';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
+import { EHRAnalyticsHandler } from '../modules/ehr.analytics/ehr.analytics.handler';
 import { CommunityNetworkService } from '../modules/community.bw/community.network.service';
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
 import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
@@ -54,6 +55,7 @@ export class Scheduler {
 
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
+                this.scheduleExistingDataToEHR();
 
                 resolve(true);
             } catch (error) {
@@ -199,6 +201,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheducled jobs: Update Current timezone...');
                 var service = Loader.container.resolve(UserService);
                 await service.updateCurrentTimezone();
+            })();
+        });
+    };
+
+    private scheduleExistingDataToEHR = () => {
+        cron.schedule(Scheduler._schedules['ScheduleExistingDataToEHR'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule to populate existing data in EHR database...');
+                var _ehrAnalyticsHandler = new EHRAnalyticsHandler();
+                await _ehrAnalyticsHandler.scheduleExistingDataToEHR("BloodGlucose");
             })();
         });
     };

@@ -15,6 +15,7 @@ import { EHRAssessmentDomainModel } from "./ehr.assessment.domain.model";
 import { PatientService } from "../../services/users/patient/patient.service";
 import { UserDeviceDetailsService } from "../../services/users/user/user.device.details.service";
 import { Loader } from "../../startup/loader";
+import { BloodGlucoseService } from "../../services/clinical/biometrics/blood.glucose.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,9 +27,12 @@ export class EHRAnalyticsHandler {
 
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
+    _bloodGlucoseService: BloodGlucoseService = null;
+
     constructor() {
         this._patientService = Loader.container.resolve(PatientService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._bloodGlucoseService = Loader.container.resolve(BloodGlucoseService);
     }
 
     static _ehrDatasetRepo: EHRAnalyticsRepo = new EHRAnalyticsRepo();
@@ -375,20 +379,65 @@ export class EHRAnalyticsHandler {
 
     public getEligibleAppNames = async (patientUserId: uuid) => {
         const userDetails = await this._patientService.getByUserId(patientUserId);
-            if (userDetails.User.IsTestUser == false) {
-                var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
-                var appNames = [];
-                if (userDevices.length > 0) {
-                    userDevices.forEach(userDevice => {
-                        var deviceEligibility = this.eligibleToAddInEhrRecords(userDevice.AppName);
-                        if (deviceEligibility) {
-                            appNames.push(userDevice.AppName);
-                        }
-                    });
-                }
-                return appNames; 
+        var appNames = [];
+        if (userDetails.User.IsTestUser == false) {
+            var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
+            if (userDevices.length > 0) {
+                userDevices.forEach(userDevice => {
+                    var deviceEligibility = this.eligibleToAddInEhrRecords(userDevice.AppName);
+                    if (deviceEligibility) {
+                        appNames.push(userDevice.AppName);
+                    }
+                });
             }
-        };
+        }
+
+        return appNames;
+    };
+
+    public scheduleExistingDataToEHR = async (model : string) => {
+        try {
+
+            var moreItems = true;
+            var pageIndex = 0;
+            while (moreItems) {
+                const filters = {
+                    PageIndex    : pageIndex,
+                    ItemsPerPage : 1000,
+                };
+
+                var searchResults = null;
+                switch (model) {
+                    case "BloodGlucose" :
+                        searchResults = await this._bloodGlucoseService.search(filters);
+                        for await (var r of searchResults.Items) {
+                            var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                            if (eligibleAppNames.length > 0) {
+                                for (var appName of eligibleAppNames) { 
+                                    this._bloodGlucoseService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                                }
+                            } else {
+                                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                            }     
+                        }
+                        break;
+
+                    
+                }
+                pageIndex++;
+                Logger.instance().log(`Processed :${searchResults.Items.length} records for ${model}`);
+
+                if (searchResults.Items.length < 1000) {
+                    moreItems = false;
+                }
+
+            }
+            
+        }
+        catch (error) {
+            Logger.instance().log(`Error population existing data in ehr insights database.`);
+        }
+    };
 
     //#endregion
 

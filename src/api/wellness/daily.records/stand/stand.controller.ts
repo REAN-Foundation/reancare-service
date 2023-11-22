@@ -46,7 +46,7 @@ export class StandController extends BaseController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stand.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(domainModel.PatientUserId, stand.id, null, domainModel, appName);
                 }
             } else {
@@ -121,7 +121,7 @@ export class StandController extends BaseController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
                 }
             } else {

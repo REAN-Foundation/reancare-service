@@ -44,7 +44,7 @@ export class LabRecordController extends BaseController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(labRecord.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, labRecord.id, null, model, appName);
                 }
             } else {
@@ -118,7 +118,7 @@ export class LabRecordController extends BaseController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
                 }
             } else {
@@ -168,16 +168,6 @@ export class LabRecordController extends BaseController {
                 provider,
                 EHRRecordTypes.LabRecord, model.PrimaryValue, model.Unit, model.DisplayName, model.DisplayName, appName);
         }
-    };
-
-    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
-
-        const eligibleToAddInEhrRecords =
-        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
-        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
-        userAppRegistrations.indexOf('HF Helper') >= 0;
-
-        return eligibleToAddInEhrRecords;
     };
 
     //#endregion

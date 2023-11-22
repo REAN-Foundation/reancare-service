@@ -197,7 +197,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['ScheduleTimezoneUpdate'], () => {
             (async () => {
                 Logger.instance().log('Running scheducled jobs: Update Current timezone...');
-                var service = Loader.container.resolve(UserService);
+                var service = Injector.Container.resolve(UserService);
                 await service.updateCurrentTimezone();
             })();
         });

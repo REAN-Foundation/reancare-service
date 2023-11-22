@@ -30,6 +30,8 @@ import { MeditationService } from "../../services/wellness/exercise/meditation.s
 import { PhysicalActivityService } from "../../services/wellness/exercise/physical.activity.service";
 import { FoodConsumptionService } from "../../services/wellness/nutrition/food.consumption.service";
 import { HowDoYouFeelService } from "../../services/clinical/symptom/how.do.you.feel.service";
+import { MedicationConsumptionService } from "../../services/clinical/medication/medication.consumption.service";
+import { CareplanService } from "../../services/clinical/careplan.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,54 +43,61 @@ export class EHRAnalyticsHandler {
 
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
-    _bloodGlucoseService: BloodGlucoseService = null;
+    // _bloodGlucoseService: BloodGlucoseService = null;
 
-    _bloodPressureService: BloodPressureService = null;
+    // _bloodPressureService: BloodPressureService = null;
 
-    _pulseService: PulseService = null;
+    // _pulseService: PulseService = null;
 
-    _bodyWeightService: BodyWeightService = null;
+    // _bodyWeightService: BodyWeightService = null;
 
-    _bodyHeightService: BodyHeightService = null;
+    // _bodyHeightService: BodyHeightService = null;
 
-    _bodyTemperatureService: BodyTemperatureService = null;
+    // _bodyTemperatureService: BodyTemperatureService = null;
 
-    _bloodOxygenSaturationService: BloodOxygenSaturationService = null;
+    // _bloodOxygenSaturationService: BloodOxygenSaturationService = null;
 
-    _labRecordService: LabRecordService = null;
+    // _labRecordService: LabRecordService = null;
 
-    _standService: StandService = null;
+    // _standService: StandService = null;
 
-    _stepCountService: StepCountService = null;
+    // _stepCountService: StepCountService = null;
 
-    _sleepService: SleepService = null;
+    // _sleepService: SleepService = null;
 
-    _meditationService: MeditationService = null;
+    // _meditationService: MeditationService = null;
 
-    _physicalActivityService: PhysicalActivityService = null;
+    // _physicalActivityService: PhysicalActivityService = null;
 
-    _foodConsumptionService: FoodConsumptionService = null;
+    // _foodConsumptionService: FoodConsumptionService = null;
 
-    _howDoYouFeelService: HowDoYouFeelService = null;
+    // _howDoYouFeelService: HowDoYouFeelService = null;
+
+    // _medicationConsumptionService: MedicationConsumptionService = null;
+
+    //_careplanService: CareplanService = null;
 
     constructor() {
         this._patientService = Loader.container.resolve(PatientService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
-        this._bloodGlucoseService = Loader.container.resolve(BloodGlucoseService);
-        this._bloodPressureService = Loader.container.resolve(BloodPressureService);
-        this._pulseService = Loader.container.resolve(PulseService);
-        this._bodyWeightService = Loader.container.resolve(BodyWeightService);
-        this._bodyHeightService = Loader.container.resolve(BodyHeightService);
-        this._bodyTemperatureService = Loader.container.resolve(BodyTemperatureService);
-        this._bloodOxygenSaturationService = Loader.container.resolve(BloodOxygenSaturationService);
-        this._labRecordService = Loader.container.resolve(LabRecordService);
-        this._standService = Loader.container.resolve(StandService);
-        this._stepCountService = Loader.container.resolve(StepCountService);
-        this._sleepService = Loader.container.resolve(SleepService);
-        this._meditationService = Loader.container.resolve(MeditationService);
-        this._physicalActivityService = Loader.container.resolve(PhysicalActivityService);
-        this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
-        this._howDoYouFeelService = Loader.container.resolve(HowDoYouFeelService);
+        // this._bloodGlucoseService = Loader.container.resolve(BloodGlucoseService);
+        // this._bloodPressureService = Loader.container.resolve(BloodPressureService);
+        // this._pulseService = Loader.container.resolve(PulseService);
+        // this._bodyWeightService = Loader.container.resolve(BodyWeightService);
+        // this._bodyHeightService = Loader.container.resolve(BodyHeightService);
+        // this._bodyTemperatureService = Loader.container.resolve(BodyTemperatureService);
+        // this._bloodOxygenSaturationService = Loader.container.resolve(BloodOxygenSaturationService);
+        // this._labRecordService = Loader.container.resolve(LabRecordService);
+        // this._standService = Loader.container.resolve(StandService);
+        // this._stepCountService = Loader.container.resolve(StepCountService);
+        // this._sleepService = Loader.container.resolve(SleepService);
+        // this._meditationService = Loader.container.resolve(MeditationService);
+        // this._physicalActivityService = Loader.container.resolve(PhysicalActivityService);
+        // this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
+        // this._howDoYouFeelService = Loader.container.resolve(HowDoYouFeelService);
+        // this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
+        //this._careplanService = Loader.container.resolve(CareplanService);
+
     }
 
     static _ehrDatasetRepo: EHRAnalyticsRepo = new EHRAnalyticsRepo();
@@ -474,215 +483,252 @@ export class EHRAnalyticsHandler {
 
                 var searchResults = null;
                 switch (model) {
-                    case "BloodGlucose" :
-                        searchResults = await this._bloodGlucoseService.search(filters);
-                        for await (var r of searchResults.Items) {
-                            var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                            if (eligibleAppNames.length > 0) {
-                                for (var appName of eligibleAppNames) { 
-                                    this._bloodGlucoseService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                }
-                            } else {
-                                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                            }     
-                        }
-                        break;
+                    // case "BloodGlucose" :
+                    //     searchResults = await this._bloodGlucoseService.search(filters);
+                    //     for await (var r of searchResults.Items) {
+                    //         var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //         if (eligibleAppNames.length > 0) {
+                    //             for await (var appName of eligibleAppNames) { 
+                    //                 this._bloodGlucoseService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //             }
+                    //         } else {
+                    //             Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //         }     
+                    //     }
+                    //     break;
                     
-                        case "BloodPressure" :
-                            searchResults = await this._bloodPressureService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._bloodPressureService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "BloodPressure" :
+                    //         searchResults = await this._bloodPressureService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._bloodPressureService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "Pulse" :
-                            searchResults = await this._pulseService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._pulseService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "Pulse" :
+                    //         searchResults = await this._pulseService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._pulseService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "BodyWeight" :
-                            searchResults = await this._bodyWeightService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._bodyWeightService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "BodyWeight" :
+                    //         searchResults = await this._bodyWeightService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._bodyWeightService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "BodyHeight" :
-                            searchResults = await this._bodyHeightService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._bodyHeightService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "BodyHeight" :
+                    //         searchResults = await this._bodyHeightService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._bodyHeightService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "BodyTemperature" :
-                            searchResults = await this._bodyTemperatureService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._bodyTemperatureService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "BodyTemperature" :
+                    //         searchResults = await this._bodyTemperatureService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._bodyTemperatureService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "BloodOxygenSaturation" :
-                            searchResults = await this._bloodOxygenSaturationService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._bloodOxygenSaturationService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "BloodOxygenSaturation" :
+                    //         searchResults = await this._bloodOxygenSaturationService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._bloodOxygenSaturationService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "LabValues" :
-                            searchResults = await this._labRecordService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._labRecordService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "LabValues" :
+                    //         searchResults = await this._labRecordService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._labRecordService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "Stand" :
-                            searchResults = await this._standService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._standService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "Stand" :
+                    //         searchResults = await this._standService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._standService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "StepCount" :
-                            searchResults = await this._stepCountService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._stepCountService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "StepCount" :
+                    //         searchResults = await this._stepCountService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._stepCountService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "PhysicalActivity" :
-                            searchResults = await this._physicalActivityService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._physicalActivityService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "PhysicalActivity" :
+                    //         searchResults = await this._physicalActivityService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._physicalActivityService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "Sleep" :
-                            searchResults = await this._sleepService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._sleepService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "Sleep" :
+                    //         searchResults = await this._sleepService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._sleepService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "Meditation" :
-                            searchResults = await this._meditationService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._meditationService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "Meditation" :
+                    //         searchResults = await this._meditationService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._meditationService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "Nutrition" :
-                            searchResults = await this._foodConsumptionService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._foodConsumptionService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "Nutrition" :
+                    //         searchResults = await this._foodConsumptionService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._foodConsumptionService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
 
-                        case "Symptom" :
-                            searchResults = await this._howDoYouFeelService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
-                                if (eligibleAppNames.length > 0) {
-                                    for (var appName of eligibleAppNames) { 
-                                        this._howDoYouFeelService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
-                                    }
-                                } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
-                                }     
-                            }
-                        break;
+                    //     case "Symptom" :
+                    //         searchResults = await this._howDoYouFeelService.search(filters);
+                    //         for await (var r of searchResults.Items) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(r.PatientUserId);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     this._howDoYouFeelService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                    //             }     
+                    //         }
+                    //     break;
+
+                    //     case "Medication" :
+                    //         var patientUserIds = await this._patientService.getAllPatientUserIds();
+                    //         for await (var p of patientUserIds) {
+                    //             var eligibleAppNames = await this.getEligibleAppNames(p);
+                    //             if (eligibleAppNames.length > 0) {
+                    //                 for await (var appName of eligibleAppNames) { 
+                    //                     searchResults = await this._medicationConsumptionService.search({"PatientUserId" : p});
+                    //                     for await (var m of searchResults.Items) {
+                    //                         this._medicationConsumptionService.addEHRRecord(m.PatientUserId, m.id, m, appName);
+
+                    //                     }
+                    //                 }
+                    //             } else {
+                    //                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${p}`);
+                    //             }      
+                    //         }
+                    //     break;
+
+                        // case "CareplanActivity" :
+                        //     var patientUserIds = await this._patientService.getAllPatientUserIds();
+                        //     for await (var p of patientUserIds) {
+                        //         var eligibleAppNames = await this.getEligibleAppNames(p);
+                        //         var healthSystemHospitalDetails = await this._patientService.getByUserId(p);
+                        //         if (eligibleAppNames.length > 0) {
+                        //             for await (var appName of eligibleAppNames) { 
+                        //                 searchResults = await this._careplanService.getActivities(p, null, null);
+                        //                 for await (var m of searchResults.Items) {
+                        //                     this._careplanService.addEHRRecord(m.PlanName, m.PlanCode, m, appName, healthSystemHospitalDetails);
+
+                        //                 }
+                        //             }
+                        //         } else {
+                        //             Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${p}`);
+                        //         }      
+                        //     }
+                        // break;
                     
                 }
                 pageIndex++;

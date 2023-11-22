@@ -61,6 +61,7 @@ export class HowDoYouFeelService {
                 model.Feeling,
                 null,
                 'Same',
+                null,
                 appName,
                 model.RecordDate ? model.RecordDate.toString() : null
             );
@@ -75,6 +76,7 @@ export class HowDoYouFeelService {
                 model.Feeling,
                 null,
                 'Worse',
+                null,
                 appName,
                 model.RecordDate ? model.RecordDate.toString() : null
 

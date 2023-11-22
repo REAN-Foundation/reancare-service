@@ -77,6 +77,9 @@ export class BodyHeightRepo implements IBodyHeightRepo {
                     [Op.gte] : filters.CreatedDateFrom,
                 };
             }
+            if (filters.RecordedByUserId != null) {
+                search.where['RecordedByUserId'] = filters.RecordedByUserId;
+            }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

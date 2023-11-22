@@ -48,7 +48,7 @@ export class BloodGlucoseService {
         return dto;
     };
 
-    search = async (filters: BloodGlucoseSearchFilters): Promise<BloodGlucoseSearchResults> => {
+    search = async (filters: BloodGlucoseSearchFilters, fetchDeleted?: boolean): Promise<BloodGlucoseSearchResults> => {
         return await this._bloodGlucoseRepo.search(filters);
         
     };
@@ -78,7 +78,8 @@ export class BloodGlucoseService {
                 model.Unit,
                 null,
                 null,
-                appName
+                appName,
+                model.RecordDate ? model.RecordDate.toString() : null
             );
         }
     };

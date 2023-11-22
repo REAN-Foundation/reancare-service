@@ -7,17 +7,13 @@ import { PhysicalActivityService } from '../../../../services/wellness/exercise/
 import { Loader } from '../../../../startup/loader';
 import { PhysicalActivityValidator } from './physical.activity.validator';
 import { BaseController } from '../../../base.controller';
-import { PhysicalActivityDomainModel } from
-    '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { PatientService } from '../../../../services/users/patient/patient.service';
 import { Logger } from '../../../../common/logger';
-import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +60,7 @@ export class PhysicalActivityController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(physicalActivity.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, domainModel, appName);
+                    this._service.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, domainModel, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${physicalActivity.PatientUserId}`);
@@ -159,7 +155,7 @@ export class PhysicalActivityController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(updated.PatientUserId, id, updated.Provider, domainModel, appName);
+                    this._service.addEHRRecord(updated.PatientUserId, id, updated.Provider, domainModel, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
@@ -212,37 +208,6 @@ export class PhysicalActivityController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    };
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PhysicalActivityDomainModel, appName?: string) => {
-        if (model.PhysicalActivityQuestionAns !== null) {
-            EHRAnalyticsHandler.addBooleanRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.PhysicalActivityQuestionAns,
-                null,
-                null,
-                'Did you add movement to your day today?',
-                appName
-            );
-        }
-
-        if (model.DurationInMin) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.DurationInMin,
-                'mins',   
-                model.Category,
-                'Exercise',
-                appName
-            );
-        }
-
     };
 
     //#endregion

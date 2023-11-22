@@ -4,6 +4,8 @@ import { IHowDoYouFeelRepo } from "../../../database/repository.interfaces/clini
 import { HowDoYouFeelDomainModel } from '../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
 import { HowDoYouFeelDto } from '../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.dto';
 import { HowDoYouFeelSearchFilters, HowDoYouFeelSearchResults } from '../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.search.types';
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +34,52 @@ export class HowDoYouFeelService {
 
     delete = async (id: uuid): Promise<boolean> => {
         return await this._howDoYouFeelRepo.delete(id);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: HowDoYouFeelDomainModel, appName?: string) => {
+        if (model.Feeling == '1') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                null,
+                'Better',
+                null,
+                appName,
+                model.RecordDate ? model.RecordDate.toString() : null
+            );
+        }
+
+        if (model.Feeling == '0') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                null,
+                'Same',
+                appName,
+                model.RecordDate ? model.RecordDate.toString() : null
+            );
+        }
+
+        if (model.Feeling == '-1') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                null,
+                'Worse',
+                appName,
+                model.RecordDate ? model.RecordDate.toString() : null
+
+            );
+        }
     };
 
 }

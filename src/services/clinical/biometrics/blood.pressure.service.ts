@@ -12,6 +12,8 @@ import { Logger } from "../../../common/logger";
 import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -97,6 +99,38 @@ export class BloodPressureService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bloodPressureRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BloodPressureDomainModel, appName?: string) => {
+
+        if (model.Systolic) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.BloodPressure,
+                model.Systolic,
+                model.Unit,
+                'Systolic Blood Pressure',
+                'Blood Pressure',
+                appName,
+                model.RecordDate ? model.RecordDate.toString() : null
+            );
+        }
+        if (model.Diastolic) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.BloodPressure,
+                model.Diastolic,
+                model.Unit,
+                'Distolic Blood Pressure',
+                'Blood Pressure',
+                appName,
+                model.RecordDate ? model.RecordDate.toString() : null
+            );
+        }
     };
 
 }

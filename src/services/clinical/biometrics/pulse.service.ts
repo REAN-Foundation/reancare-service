@@ -7,6 +7,8 @@ import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/cl
 import { PulseStore } from "../../../modules/ehr/services/pulse.store";
 import { Loader } from "../../../startup/loader";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +41,7 @@ export class PulseService {
         return await this._pulseRepo.getById(id);
     };
 
-    search = async (filters: PulseSearchFilters): Promise<PulseSearchResults> => {
+    search = async (filters: PulseSearchFilters, fetchDeleted?: boolean ): Promise<PulseSearchResults> => {
         return await this._pulseRepo.search(filters);
     };
 
@@ -64,6 +66,15 @@ export class PulseService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._pulseRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PulseDomainModel, appName?: string) => {
+        if (model.Pulse) {
+            EHRAnalyticsHandler.addIntegerRecord(
+                patientUserId, recordId, provider, EHRRecordTypes.Pulse, model.Pulse, model.Unit, null, null, appName, 
+                model.RecordDate ? model.RecordDate.toString() : null
+            );
+        }
     };
 
 }

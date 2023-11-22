@@ -18,7 +18,7 @@ export class BloodGlucoseValidator extends BaseValidator {
             BloodGlucose     : request.body.BloodGlucose,
             Unit             : request.body.Unit,
             RecordDate       : request.body.RecordDate ?? new Date(),
-            RecordedByUserId : request.body.RecordedByUserId ?? null
+            RecordedByUserId : request.body.RecordedByUserId ?? request.currentUser.UserId
         };
 
         return bloodGlucoseDomainModel;

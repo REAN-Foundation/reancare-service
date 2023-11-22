@@ -22,6 +22,7 @@ export class BloodGlucoseMapper {
             RecordDate       : bloodGlucose.RecordDate,
             RecordedByUserId : bloodGlucose.RecordedByUserId ?? null,
         };
+
         return dto;
     };
 

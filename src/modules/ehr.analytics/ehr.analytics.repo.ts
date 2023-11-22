@@ -88,6 +88,7 @@ export class EHRAnalyticsRepo {
                 existing.ValueDataType = model.ValueDataType;
                 existing.ValueName     = model.ValueName;
                 existing.ValueUnit     = model.ValueUnit;
+                existing.RecordDate    = model.RecordDate;
 
                 await existing.save();
 

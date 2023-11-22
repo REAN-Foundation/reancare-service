@@ -3,7 +3,7 @@ export interface MeditationDto {
     id?             : string,
     EhrId?          : string;
     PatientUserId   : string;
-    Meditation?      : string;
+    Meditation?     : string;
     Description?    : string;
     Category?       : string;
     DurationInMins? : number;

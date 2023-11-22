@@ -210,7 +210,22 @@ export class Scheduler {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule to populate existing data in EHR database...');
                 var _ehrAnalyticsHandler = new EHRAnalyticsHandler();
-                await _ehrAnalyticsHandler.scheduleExistingDataToEHR("BloodGlucose");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("BloodGlucose");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("BloodPressure");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("Pulse");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("BodyWeight");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("BodyHeight");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("BloodOxygenSaturation");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("BodyTemperature");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("LabValues");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("Stand");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("StepCount");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("Sleep");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("Meditation");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("Symptom");
+                // await _ehrAnalyticsHandler.scheduleExistingDataToEHR("Nutrition");
+                await _ehrAnalyticsHandler.scheduleExistingDataToEHR("PhysicalActivity");
+
             })();
         });
     };

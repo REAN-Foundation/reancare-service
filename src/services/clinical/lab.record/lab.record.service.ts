@@ -10,6 +10,8 @@ import { LabRecordSearchFilters } from "../../../domain.types/clinical/lab.recor
 import { LabRecordSearchResults } from "../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
 import { LabRecordTypeSearchFilters, LabRecordTypeSearchResults }
     from "../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,6 +59,18 @@ export class LabRecordService {
 
     delete = async (id: uuid): Promise<boolean> => {
         return await this._labRecordRepo.delete(id);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: LabRecordDomainModel, appName?: string) => {
+        if (model) {
+            EHRAnalyticsHandler.addIntegerRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.LabRecord, model.PrimaryValue, model.Unit, model.DisplayName, model.DisplayName, appName, 
+                model.RecordedAt ? model.RecordedAt.toString() : null
+                );
+        }
     };
 
 }

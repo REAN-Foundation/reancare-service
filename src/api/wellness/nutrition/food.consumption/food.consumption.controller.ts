@@ -51,7 +51,7 @@ export class FoodConsumptionController extends BaseController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(foodConsumption.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, foodConsumption.id, foodConsumption.Provider, model, appName);
                 }
             } else {

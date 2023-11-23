@@ -1,6 +1,8 @@
 import express from 'express';
 import { Loader } from '../../../../startup/loader';
 import { AssessmentTemplateController } from '../../../clinical/assessment/assessment.template/assessment.template.controller';
+import { Multer } from '../../../../startup/multer';
+const upload = Multer.getMulterInstance();
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +30,7 @@ export const register = (app: express.Application): void => {
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
     router.get('/:id/export', authenticator.authenticateClient, authenticator.authenticateUser, controller.export);
-    router.post('/import-file', authenticator.authenticateClient, authenticator.authenticateUser, controller.importFromFile);
+    router.post('/import-file', authenticator.authenticateClient, authenticator.authenticateUser,upload.single('name'), controller.importFromFile);
     router.post('/import-json', authenticator.authenticateClient, authenticator.authenticateUser, controller.importFromJson);
 
     app.use('/api/v1/clinical/assessment-templates/', router);

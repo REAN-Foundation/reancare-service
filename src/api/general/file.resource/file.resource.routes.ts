@@ -1,7 +1,7 @@
 import express from 'express';
 import { Loader } from '../../../startup/loader';
 import { FileResourceController } from './file.resource.controller';
-
+import { ExpressFileUpload } from '../../../startup/express.file.upload';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
@@ -27,12 +27,28 @@ export const register = (app: express.Application): void => {
     //Upload a new version of existing resource
 
     router.post('/:id/upload-version',
-        authenticator.authenticateClient, authenticator.authenticateUser, controller.uploadVersion);
-    router.post('/upload-binary', authenticator.authenticateClient, authenticator.authenticateUser, controller.uploadBinary);
-    router.post('/upload', authenticator.authenticateClient, authenticator.authenticateUser, controller.upload);
+        authenticator.authenticateClient,
+        authenticator.authenticateUser,
+        ExpressFileUpload.getExpressFileUpload(),
+        controller.uploadVersion);
+    router.post('/upload-binary',
+        authenticator.authenticateClient,
+        authenticator.authenticateUser,
+        ExpressFileUpload.getExpressFileUpload(),
+        controller.uploadBinary);
+    router.post('/upload',
+        authenticator.authenticateClient,
+        authenticator.authenticateUser,
+        ExpressFileUpload.getExpressFileUpload(),
+        controller.upload);
+    
     router.post('/:id/rename/:newFileName', authenticator.authenticateClient, authenticator.authenticateUser, controller.rename);
 
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
+    router.put('/:id',
+        authenticator.authenticateClient,
+        authenticator.authenticateUser,
+        ExpressFileUpload.getExpressFileUpload(),
+        controller.update);
 
     //#endregion
 

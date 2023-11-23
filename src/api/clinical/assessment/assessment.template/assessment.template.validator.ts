@@ -5,6 +5,10 @@ import { AssessmentTemplateSearchFilters } from '../../../../domain.types/clinic
 import { BaseValidator, Where } from '../../../base.validator';
 import { Helper } from '../../../../common/helper';
 import { AssessmentNodeSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.node.search.types';
+import { FileResourceUploadDomainModel } from '../../../../domain.types/general/file.resource/file.resource.domain.model';
+import { ConfigurationManager } from '../../../../config/configuration.manager';
+import { FileResourceMetadata } from '../../../../domain.types/general/file.resource/file.resource.types';
+import path from 'path';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +32,27 @@ export class AssessmentTemplateValidator extends BaseValidator {
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
         };
 
+        return model;
+    };
+
+    getUploadDomainModel = (request: express.Request): FileResourceUploadDomainModel => {
+
+        var currentUserId = request.currentUser.UserId;
+        var fileMetadata = this.getFileMetadata(request);
+
+        var mimeType = null;
+        if (fileMetadata) {
+            mimeType = fileMetadata.MimeType;
+        }
+
+        const model: FileResourceUploadDomainModel = {
+            FileMetadata           : fileMetadata,
+            OwnerUserId            : request.body.OwnerUserId ?? currentUserId,
+            UploadedByUserId       : currentUserId,
+            IsPublicResource       : request.body.IsPublicResource && request.body.IsPublicResource === 'true' ? true : false,
+            IsMultiResolutionImage : request.body.IsMultiResolutionImage && request.body.IsMultiResolutionImage === 'true' ? true : false,
+            MimeType               : mimeType,
+        };
         return model;
     };
 
@@ -262,4 +287,19 @@ export class AssessmentTemplateValidator extends BaseValidator {
         return this.updateBaseSearchFilters(request, filters);
     }
 
+    private getFileMetadata(request) {
+        var file = request.file;
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        
+        var metadata: FileResourceMetadata = {
+            FileName       : file.filename,
+            OriginalName   : file.originalname,
+            SourceFilePath : path.join(tempUploadFolder,file.filename),
+            MimeType       : file.mimetype,
+            Size           : file.size,
+            StorageKey     : null
+        };
+        return metadata;
+    }
+    
 }

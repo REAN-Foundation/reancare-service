@@ -182,17 +182,15 @@ export class AssessmentTemplateController extends BaseController{
 
             await this.setContext('AssessmentTemplate.ImportFromFile', request, response);
 
-            const uploadModels = this._fileResourceValidator.getUploadDomainModel(request);
-            if (uploadModels.length === 0) {
+            const uploadModel = this._validator.getUploadDomainModel(request);
+            if (!uploadModel) {
                 throw new ApiError(422, 'Cannot find valid file to import!');
             }
 
-            const uploadModel = uploadModels[0];
             const metadata = uploadModel.FileMetadata;
             const sourceFilePath = metadata.SourceFilePath;
             const originalFileName = metadata.OriginalName;
 
-            Helper.sleep(1000);
             const fileContent = fs.readFileSync(sourceFilePath, 'utf8');
             const extension = Helper.getFileExtension(originalFileName);
             if (extension.toLowerCase() !== 'json') {

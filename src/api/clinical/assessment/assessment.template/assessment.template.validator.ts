@@ -9,6 +9,8 @@ import { FileResourceUploadDomainModel } from '../../../../domain.types/general/
 import { ConfigurationManager } from '../../../../config/configuration.manager';
 import { FileResourceMetadata } from '../../../../domain.types/general/file.resource/file.resource.types';
 import path from 'path';
+import { TimeHelper } from '../../../../common/time.helper';
+import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -289,17 +291,19 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     private getFileMetadata(request) {
         var file = request.file;
-        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
-        
+        const uploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        var dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+        var fileFolder = path.join(uploadFolder, dateFolder);
+
         var metadata: FileResourceMetadata = {
             FileName       : file.filename,
             OriginalName   : file.originalname,
-            SourceFilePath : path.join(tempUploadFolder,file.filename),
+            SourceFilePath : path.join(fileFolder, file.filename),
             MimeType       : file.mimetype,
             Size           : file.size,
             StorageKey     : null
         };
         return metadata;
     }
-    
+
 }

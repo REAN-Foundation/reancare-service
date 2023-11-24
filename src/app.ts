@@ -1,6 +1,5 @@
 import cors from 'cors';
 import express from 'express';
-import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
 import "reflect-metadata";
 import { Router } from './api/router';
@@ -92,17 +91,6 @@ export default class Application {
                 this._app.use(express.json( { limit: '50mb' }));
                 this._app.use(helmet());
                 this._app.use(cors());
-
-                // const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
-
-                // this._app.use(fileUpload({
-                //     limits            : { fileSize: MAX_UPLOAD_FILE_SIZE },
-                //     preserveExtension : true,
-                //     createParentPath  : true,
-                //     parseNested       : true,
-                //     useTempFiles      : true,
-                //     tempFileDir       : '/tmp/uploads/'
-                // }));
                 resolve(true);
             }
             catch (error) {

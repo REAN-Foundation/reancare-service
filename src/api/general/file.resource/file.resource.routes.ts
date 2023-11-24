@@ -31,17 +31,19 @@ export const register = (app: express.Application): void => {
         authenticator.authenticateUser,
         ExpressFileUpload.getExpressFileUpload(),
         controller.uploadVersion);
+
     router.post('/upload-binary',
         authenticator.authenticateClient,
         authenticator.authenticateUser,
         ExpressFileUpload.getExpressFileUpload(),
         controller.uploadBinary);
+        
     router.post('/upload',
         authenticator.authenticateClient,
         authenticator.authenticateUser,
         ExpressFileUpload.getExpressFileUpload(),
         controller.upload);
-    
+
     router.post('/:id/rename/:newFileName', authenticator.authenticateClient, authenticator.authenticateUser, controller.rename);
 
     router.put('/:id',

@@ -1,11 +1,11 @@
 import fileUpload from "express-fileupload";
 import { ConfigurationManager } from "../config/configuration.manager";
 
-export class ExpressFileUpload{
+export class ExpressFileUpload {
 
     static options:fileUpload.Options = null;
 
-    static setFileUploadOptions = ()=>{
+    static setFileUploadOptions = () => {
         const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
         return ExpressFileUpload.options = {
             limits            : { fileSize: MAX_UPLOAD_FILE_SIZE },
@@ -17,7 +17,7 @@ export class ExpressFileUpload{
         };
     };
 
-    static getExpressFileUpload = ()=>{
+    static getExpressFileUpload = () => {
         return fileUpload(ExpressFileUpload.setFileUploadOptions());
     };
 

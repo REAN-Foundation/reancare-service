@@ -15,16 +15,11 @@ export class AllergyController {
 
     //#region member variables and constructors
 
-    _service: AllergyService = null;
+    _service: AllergyService = Injector.Container.resolve(AllergyService);
 
     _validator: AllergyValidator = new AllergyValidator();
 
-    _userService: UserService = null;
-
-    constructor() {
-        this._service = Injector.Container.resolve(AllergyService);
-        this._userService = Injector.Container.resolve(UserService);
-    }
+    _userService: UserService = Injector.Container.resolve(UserService);
 
     //#endregion
 

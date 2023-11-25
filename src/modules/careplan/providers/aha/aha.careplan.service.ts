@@ -369,6 +369,7 @@ export class AhaCareplanService implements ICareplanService {
 
         var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActivityId}`;
 
+        // need to fixed here for expired enrollments
         var headerOptions = await this.getHeaderOptions();
         var response = await needle("patch", url, updates, headerOptions);
 

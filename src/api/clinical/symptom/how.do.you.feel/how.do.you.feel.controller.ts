@@ -5,20 +5,22 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.do.you.feel.service';
 import { Injector } from '../../../../startup/injector';
 import { HowDoYouFeelValidator } from './how.do.you.feel.validator';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { HowDoYouFeelDomainModel } from '../../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HowDoYouFeelController{
+export class HowDoYouFeelController {
 
     //#region member variables and constructors
 
-    _service: HowDoYouFeelService = null;
+    _service: HowDoYouFeelService = Injector.Container.resolve(HowDoYouFeelService);
 
     _validator: HowDoYouFeelValidator = new HowDoYouFeelValidator();
 
-    constructor() {
-        this._service = Injector.Container.resolve(HowDoYouFeelService);
-    }
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     //#endregion
 
@@ -31,6 +33,15 @@ export class HowDoYouFeelController{
             const howDoYouFeel = await this._service.create(model);
             if (howDoYouFeel == null) {
                 throw new ApiError(400, 'Cannot create record for how do you feel!');
+            }
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(howDoYouFeel.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) {
+                    this.addEHRRecord(model.PatientUserId, howDoYouFeel.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${howDoYouFeel.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'How do you feel record created successfully!', 201, {
@@ -91,6 +102,15 @@ export class HowDoYouFeelController{
                 throw new ApiError(400, 'Unable to update how do you feel record!');
             }
 
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) {
+                    this.addEHRRecord(domainModel.PatientUserId, updated.id, null, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
             ResponseHandler.success(request, response, 'How do you feel record updated successfully!', 200, {
                 HowDoYouFeel : updated,
             });
@@ -118,6 +138,54 @@ export class HowDoYouFeelController{
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    private addEHRRecord = (
+        patientUserId: uuid,
+        recordId: uuid,
+        provider: string,
+        model: HowDoYouFeelDomainModel,
+        appName?: string) => {
+
+        if (model.Feeling === '1') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                null,
+                'Better',
+                null,
+                appName
+            );
+        }
+
+        if (model.Feeling === '0') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                null,
+                'Same',
+                appName
+            );
+        }
+
+        if (model.Feeling === '-1') {
+            EHRAnalyticsHandler.addStringRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.Symptom,
+                model.Feeling,
+                null,
+                'Worse',
+                appName
+            );
         }
     };
 

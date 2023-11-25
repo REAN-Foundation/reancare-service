@@ -14,7 +14,8 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
 import { EmergencyContactValidator } from './emergency.contact.validator';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { HealthSystemService } from '../../../../services/users/patient/health.system.service';
+import { HospitalService } from '../../../../services/hospitals/hospital.service';
+import { HealthSystemService } from '../../../../services/hospitals/health.system.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,31 +23,23 @@ export class EmergencyContactController {
 
     //#region member variables and constructors
 
-    _service: EmergencyContactService = null;
-
-    _roleService: RoleService = null;
-
     _validator: EmergencyContactValidator = new EmergencyContactValidator();
 
-    _orgService: OrganizationService = null;
+    _service: EmergencyContactService = Injector.Container.resolve(EmergencyContactService);
 
-    _personService: PersonService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _userService: UserService = null;
+    _orgService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
-    _addressService: AddressService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _healthSystemService: HealthSystemService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    constructor() {
-        this._service = Injector.Container.resolve(EmergencyContactService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._orgService = Injector.Container.resolve(OrganizationService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._addressService = Injector.Container.resolve(AddressService);
-        this._healthSystemService = Injector.Container.resolve(HealthSystemService);
-    }
+    _addressService: AddressService = Injector.Container.resolve(AddressService);
+
+    _healthSystemService: HealthSystemService = Injector.Container.resolve(HealthSystemService);
+
+    _hospitalService: HospitalService = Injector.Container.resolve(HospitalService);
 
     //#endregion
 
@@ -258,7 +251,7 @@ export class EmergencyContactController {
     getHealthSystems = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const healthSystems = await this._healthSystemService.getHealthSystems(request.query.planName as string);
+            const healthSystems = await this._healthSystemService.getHealthSystemsWithTags(request.query.planName as string);
             if (healthSystems.length === 0) {
                 throw new ApiError(400, 'Cannot fetch health systems!');
             }
@@ -276,7 +269,7 @@ export class EmergencyContactController {
         try {
 
             const healthSystemId : uuid = request.params.healthSystemId;
-            const healthSystemHospitals = await this._healthSystemService.getHealthSystemHospitals(healthSystemId);
+            const healthSystemHospitals = await this._hospitalService.getHospitalsForHealthSystem(healthSystemId);
             if (healthSystemHospitals.length === 0) {
                 throw new ApiError(400, 'Cannot fetch hospitals associated with health system!');
             }

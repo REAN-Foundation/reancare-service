@@ -14,6 +14,9 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { Logger } from '../../../../common/logger';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +29,8 @@ export class PhysicalActivityController {
     _validator: PhysicalActivityValidator = new PhysicalActivityValidator();
 
     _userService: UserService = null;
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         this._service = Injector.Container.resolve(PhysicalActivityService);
@@ -52,7 +57,15 @@ export class PhysicalActivityController {
             if (physicalActivity == null) {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
-            this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, domainModel);
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(physicalActivity.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${physicalActivity.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
@@ -137,6 +150,15 @@ export class PhysicalActivityController {
                 throw new ApiError(400, 'Unable to update physical activity record!');
             }
 
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(updated.PatientUserId, id, updated.Provider, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
+
             if (updated.PhysicalActivityQuestionAns !== null) {
                 var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
                 if (!timestamp) {
@@ -185,13 +207,33 @@ export class PhysicalActivityController {
         }
     };
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PhysicalActivityDomainModel) => {
-        if (model.PhysicalActivityQuestionAns !== undefined) {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PhysicalActivityDomainModel, appName?: string) => {
+        if (model.PhysicalActivityQuestionAns !== null) {
             EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.PhysicalActivity,
-                model.PhysicalActivityQuestionAns);
+                model.PhysicalActivityQuestionAns,
+                null,
+                null,
+                'Did you add movement to your day today?',
+                appName
+            );
+        }
+
+        if (model.DurationInMin) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.PhysicalActivity,
+                model.DurationInMin,
+                'mins',   
+                model.Category,
+                'Exercise',
+                appName
+            );
         }
 
     };

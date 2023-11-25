@@ -12,6 +12,7 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +23,8 @@ export class BodyWeightController {
     _service: BodyWeightService = null;
 
     _validator: BodyWeightValidator = new BodyWeightValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         this._service = Injector.Container.resolve(BodyWeightService);
@@ -38,8 +41,14 @@ export class BodyWeightController {
             if (bodyWeight == null) {
                 throw new ApiError(400, 'Cannot create weight record!');
             }
-            this.addEHRRecord(model.PatientUserId, bodyWeight.id, model);
-
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyWeight.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, bodyWeight.id, null , model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyWeight.PatientUserId}`);
+            }
             // Adding record to award service
             if (bodyWeight.BodyWeight) {
                 var timestamp = bodyWeight.RecordDate;
@@ -121,7 +130,14 @@ export class BodyWeightController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update weight record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
 
             if (updated.BodyWeight) {
                 var timestamp = updated.RecordDate;
@@ -179,10 +195,10 @@ export class BodyWeightController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BodyWeightDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyWeightDomainModel, appName?: string) => {
         if (model.BodyWeight) {
             EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit);
+                patientUserId, recordId, provider, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit, null, null, appName);
         }
     };
 

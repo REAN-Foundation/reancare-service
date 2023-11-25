@@ -5,7 +5,7 @@ export interface HowDoYouFeelDomainModel {
     id?           : uuid,
     EhrId?        : string;
     PatientUserId?: uuid;
-    Feeling?      : SymptomsProgress;
+    Feeling?      : SymptomsProgress | string;
     Comments?     : string;
     RecordDate?   : Date;
 }

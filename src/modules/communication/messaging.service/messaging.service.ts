@@ -22,25 +22,40 @@ export class MessagingService {
         return await this._service.sendWhatsappMessage(toPhone, message);
     };
 
+    sendTelegramMessage = async (telegramChatId: string, message: string, clientName: string): Promise<boolean> => {
+        await this.sendMessage(clientName, "telegram", telegramChatId, "text", null, message, null);
+        return true;
+    };
+
     sendWhatsappWithReanBot = async (toPhone: string, message: any, provider:string,
-        type:string, PlanCode:string, buttonIds = null): Promise<boolean> => {
+        type:string, PlanCode:string, payload = null): Promise<boolean> => {
 
-        const reanBotBaseUrl = process.env.REANBOT_BACKEND_BASE_URL;
-        const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
         let templateName = null;
+        let channel = "whatsappMeta";
 
-        const countryCode = toPhone.split("-")[0];
-        const num = toPhone.split("-")[1];
-        const code =  countryCode.substring(1);
-        toPhone = code.concat(num);
+        toPhone = toPhone.replace(/\D/g, '');
         message = JSON.parse(message);
         if (message.Variables) {
             templateName = type;
             type = "template";
-            buttonIds = message.ButtonIds ? message.ButtonIds : null;
-            message = JSON.stringify(message);
         }
-        const client = provider === "REAN_BW" ? "BLOOD_WARRIORS" : "MATERNAL_BOT";
+        if (message.Variables.includes("Messages")) {
+            provider = "KENYA_MATERNAL";
+            channel = "telegram";
+            type = 'text';
+            const variables = JSON.parse(message.Variables);
+            message = variables.Messages;
+        }
+        message = JSON.stringify(message);
+        await this.sendMessage(provider, channel, toPhone, type, templateName, message, payload);
+
+        return true;
+    };
+
+    private async sendMessage (provider, channel, toPhone, type, templateName, message, payload) {
+        const reanBotBaseUrl = process.env.REANBOT_BACKEND_BASE_URL;
+        const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
+        const client = await this.getClientByProvider(provider);
         const headers = {
             'authentication' : process.env.REANBOT_WEBHOOK_CLIENT_HEADER_TOKEN,
         };
@@ -48,17 +63,17 @@ export class MessagingService {
             headers : headers
         };
 
-        const url = `${reanBotBaseUrl}${client}/whatsappMeta/${urlToken}/send`;
+        const url = `${reanBotBaseUrl}${client}/${channel}/${urlToken}/send`;
         Logger.instance().log(`URL: ${url}`);
         Logger.instance().log(`Phone: ${toPhone}`);
         const obj = {
             userId       : toPhone,
-            agentName    : "ReanCare",
+            agentName    : "Reancare",
             provider     : provider,
             type         : type,
             templateName : templateName,
             message      : message,
-            payload      : buttonIds
+            payload      : payload
         };
         Logger.instance().log(`Body of request: ${JSON.stringify(obj)}`);
         const resp1 = await needle('post', url, obj, options);
@@ -66,7 +81,17 @@ export class MessagingService {
             Logger.instance().log(`Failed to send message to phone number: ${toPhone}`);
             return false;
         }
-        return true;
-    };
+    }
+
+    private getClientByProvider (provider) {
+        const clientName = {
+            "REAN_BW"        : "BLOOD_WARRIORS",
+            "REAN"           : "MATERNAL_BOT",
+            "KENYA_MATERNAL" : "KENYA_MATERNAL",
+            "REAN_BOT"       : "REAN_BOT",
+            "GMU"            : "GMU",
+        };
+        return clientName[provider] ?? provider;
+    }
 
 }

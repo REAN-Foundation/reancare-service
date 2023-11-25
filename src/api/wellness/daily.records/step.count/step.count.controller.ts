@@ -2,10 +2,13 @@ import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { PatientService } from '../../../../services/users/patient/patient.service';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
 import { Injector } from '../../../../startup/injector';
 import { StepCountValidator } from './step.count.validator';
+import { StepCountDomainModel } from '../../../../domain.types/wellness/daily.records/step.count/step.count.domain.model';
+import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,16 +16,11 @@ export class StepCountController {
 
     //#region member variables and constructors
 
-    _service: StepCountService = null;
+    _service: StepCountService = Injector.Container.resolve(StepCountService);
 
     _validator: StepCountValidator = new StepCountValidator();
 
-    _patientService: PatientService = null;
-
-    constructor() {
-        this._service = Injector.Container.resolve(StepCountService);
-        this._patientService = Injector.Container.resolve(PatientService);
-    }
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     //#endregion
 
@@ -49,6 +47,15 @@ export class StepCountController {
 
             if (stepCount == null) {
                 throw new ApiError(400, 'Cannot create Step Count!');
+            }
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stepCount.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) {
+                    this.addEHRRecord(domainModel.PatientUserId, stepCount.id, stepCount.Provider, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${stepCount.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Step count created successfully!', 201, {
@@ -113,6 +120,16 @@ export class StepCountController {
                 throw new ApiError(400, 'Unable to update Step ount record!');
             }
 
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) {
+                    this.addEHRRecord(domainModel.PatientUserId, id, updated.Provider, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
+
             ResponseHandler.success(request, response, 'Step Count record updated successfully!', 200, {
                 StepCount : updated,
             });
@@ -140,6 +157,28 @@ export class StepCountController {
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    private addEHRRecord = (
+        patientUserId: uuid,
+        recordId: uuid,
+        provider: string,
+        model: StepCountDomainModel,
+        appName?: string) => {
+
+        if (model.StepCount) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.PhysicalActivity,
+                model.StepCount,
+                model.Unit,
+                'Step-count',
+                null,
+                appName
+            );
         }
     };
 

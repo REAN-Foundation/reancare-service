@@ -67,6 +67,14 @@
                     "DisplayName": "Stroke",
                     "DefaultDurationDays": 91,
                     "Description": "A stroke occurs when a blood vessel that carries oxygen and nutrients to the brain is either blocked by a clot or bursts (or ruptures).\nWhen that happens, part of the brain cannot get the blood (and oxygen) it needs, so it and brain cells die.\nThe HCA Healthcare Foundation is proud to be a national supporter of the American Stroke Association’s Together to End Stroke™.\nFor more information, visit: https://www.stroke.org."
+                },
+                {
+                    "Provider" : "AHA",
+                    "Name": "SMBP",
+                    "Code": "SMBP",
+                    "DisplayName": "SMBP",
+                    "DefaultDurationDays": 84,
+                    "Description": "SMBP plus clinical support can improve access to care and quality of care for people with hypertension while making blood pressure control more convenient and accessible across the population. Clinical support includes regular one-on-one counseling, web-based or telephonic support tools, and educational classes."
                 }
             ]
         },
@@ -134,6 +142,6 @@
         }
     ],
     "Gamification": true,
-    "EHRAnalytics": false,
+    "EHRAnalytics": true,
     "MaxUploadFileSize": 104857600
 }

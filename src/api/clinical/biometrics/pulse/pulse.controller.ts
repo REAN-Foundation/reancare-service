@@ -12,6 +12,7 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +23,8 @@ export class PulseController{
     _service: PulseService = null;
 
     _validator: PulseValidator = new PulseValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         this._service = Injector.Container.resolve(PulseService);
@@ -39,7 +42,14 @@ export class PulseController{
             if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
-            this.addEHRRecord(model.PatientUserId, pulse.id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(pulse.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, pulse.id, pulse.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${pulse.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (pulse.Pulse) {
@@ -124,7 +134,14 @@ export class PulseController{
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
 
             if (updated.Pulse) {
                 var timestamp = updated.RecordDate;
@@ -182,13 +199,13 @@ export class PulseController{
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PulseDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PulseDomainModel, appName?: string) => {
         if (model.Pulse) {
             EHRAnalyticsHandler.addIntegerRecord(
-                patientUserId, recordId, EHRRecordTypes.Pulse, model.Pulse, model.Unit);
+                patientUserId, recordId, provider, EHRRecordTypes.Pulse, model.Pulse, model.Unit, null, null, appName);
         }
     };
-
+    
     //#endregion
 
 }

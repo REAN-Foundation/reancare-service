@@ -4,16 +4,19 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DailyAssessmentService } from '../../../../services/clinical/daily.assessment/daily.assessment.service';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { Injector } from '../../../../startup/injector';
+import { PatientService } from '../../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DailyAssessmentController{
+export class DailyAssessmentController {
 
     //#region member variables and constructors
 
     _service: DailyAssessmentService = Injector.Container.resolve(DailyAssessmentService);
 
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
+
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
 
     //#endregion
 
@@ -28,7 +31,6 @@ export class DailyAssessmentController{
             if (dailyAssessment == null) {
                 throw new ApiError(400, 'Cannot create record for daily assessment!');
             }
-
             ResponseHandler.success(request, response, 'Daily assessment record created successfully!', 201, {
                 DailyAssessment : dailyAssessment,
             });

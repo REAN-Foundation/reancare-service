@@ -5,9 +5,6 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodCholesterolService } from '../../../../services/clinical/biometrics/blood.cholesterol.service';
 import { Injector } from '../../../../startup/injector';
 import { BloodCholesterolValidator } from './blood.cholesterol.validator';
-import { BloodCholesterolDomainModel } from '../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.domain.model';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,13 +12,9 @@ export class BloodCholesterolController {
 
     //#region member variables and constructors
 
-    _service: BloodCholesterolService = null;
+    _service: BloodCholesterolService = Injector.Container.resolve(BloodCholesterolService);
 
     _validator: BloodCholesterolValidator = new BloodCholesterolValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(BloodCholesterolService);
-    }
 
     //#endregion
 
@@ -35,7 +28,6 @@ export class BloodCholesterolController {
             if (bloodCholesterol == null) {
                 throw new ApiError(400, 'Cannot create record for blood cholesterol!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodCholesterol.id, model);
             ResponseHandler.success(request, response, 'Blood cholesterol record created successfully!', 201, {
                 BloodCholesterol : bloodCholesterol,
             });
@@ -96,7 +88,6 @@ export class BloodCholesterolController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood cholesterol record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
 
             ResponseHandler.success(request, response, 'Blood cholesterol record updated successfully!', 200, {
                 BloodCholesterol : updated,
@@ -125,36 +116,6 @@ export class BloodCholesterolController {
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodCholesterolDomainModel) => {
-        if (model.A1CLevel) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.Cholesterol_A1CLevel, model.A1CLevel);
-        }
-        if (model.HDL) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.Cholesterol_HDL, model.HDL, model.Unit);
-        }
-        if (model.LDL) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.Cholesterol_LDL, model.LDL, model.Unit);
-        }
-        if (model.Ratio) {
-            EHRAnalyticsHandler.addFloatRecord(patientUserId, recordId, EHRRecordTypes.Cholesterol_Ratio, model.Ratio);
-        }
-        if (model.TotalCholesterol) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.Cholesterol_Total, model.TotalCholesterol, model.Unit);
-        }
-        if (model.TriglycerideLevel) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.Cholesterol_TriglycerideLevel, model.TriglycerideLevel);
         }
     };
 

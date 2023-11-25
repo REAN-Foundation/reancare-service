@@ -45,7 +45,7 @@ import { IFoodConsumptionRepo }
     from "../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
 import { NutritionQuestionnaireDomainModel }
     from "../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model";
-import { HealthSystemService } from "../services/users/patient/health.system.service";
+import { HealthSystemService } from "../services/hospitals/health.system.service";
 import { TenantService } from "../services/tenant/tenant.service";
 import { RolePrivilegeService } from "../services/role/role.privilege.service";
 

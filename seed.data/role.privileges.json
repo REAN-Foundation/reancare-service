@@ -322,17 +322,18 @@
             "CustomQuery.Search",
             "CustomQuery.Delete",
             "CustomQuery.Update",
-            "Consent.Create",
-            "Consent.GetById",
-            "Consent.Search",
-            "Consent.Update",
-            "Consent.Delete",
-            "Devices.Wearables.Create",
-            "Devices.Wearables.Search",
-            "Devices.Wearables.GetById",
-            "Devices.Wearables.Update",
-            "Devices.Wearables.Delete",
-            "Devices.Wearables.GetUserWearables"
+            "HealthSystem.Create",
+            "HealthSystem.GetById",
+            "HealthSystem.Search",
+            "HealthSystem.Update",
+            "HealthSystem.Delete",
+            "HealthSystem.GetHealthSystemsWithTags",
+            "Hospital.Create",
+            "Hospital.GetById",
+            "Hospital.Search",
+            "Hospital.Update",
+            "Hospital.Delete",
+            "Hospital.GetHospitalsForHealthSystem"
         ]
     },
     {
@@ -805,7 +806,15 @@
             "Devices.Wearables.GetById",
             "Devices.Wearables.Update",
             "Devices.Wearables.Delete",
-            "Devices.Wearables.GetUserWearables"
+            "Devices.Wearables.GetUserWearables",
+            "HealthSystem.GetById",
+            "HealthSystem.Search",
+            "HealthSystem.Delete",
+            "HealthSystem.GetHealthSystemsWithTags",
+            "Hospital.GetById",
+            "Hospital.Search",
+            "Hospital.Delete",
+            "Hospital.GetHospitalsForHealthSystem"
         ]
     },
     {

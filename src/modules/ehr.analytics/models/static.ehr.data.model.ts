@@ -36,6 +36,12 @@ export default class StaticEHRData extends Model {
     })
     id: string;
 
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    AppName: string;
+
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
@@ -73,6 +79,12 @@ export default class StaticEHRData extends Model {
     Gender: string;
 
     @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    SelfIdentifiedGender: string;
+
+    @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
@@ -107,7 +119,6 @@ export default class StaticEHRData extends Model {
     @Column({
         type         : DataType.STRING(128),
         allowNull    : true,
-        defaultValue : ''
     })
     Race: string;
 
@@ -120,15 +131,25 @@ export default class StaticEHRData extends Model {
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
-        defaultValue : false,
+        allowNull    : true,
     })
     HasHeartAilment: boolean;
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
-        defaultValue : false,
+        allowNull    : true,
+    })
+    HasHighCholesterol: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+    })
+    HasHighBloodPressure: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
     })
     IsDiabetic: boolean;
 
@@ -141,7 +162,6 @@ export default class StaticEHRData extends Model {
     @Column({
         type         : DataType.STRING(16),
         allowNull    : true,
-        defaultValue : ''
     })
     BloodGroup: string;
 
@@ -149,14 +169,12 @@ export default class StaticEHRData extends Model {
     @Column({
         type         : DataType.STRING(128),
         allowNull    : true,
-        defaultValue : ''
     })
     MajorAilment: string;
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
-        defaultValue : false,
+        allowNull    : true,
     })
     IsSmoker: boolean;
 
@@ -171,6 +189,18 @@ export default class StaticEHRData extends Model {
         allowNull : true,
     })
     BodyHeight: number;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    OtherConditions: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    Occupation: string;
 
     @Column
     @CreatedAt

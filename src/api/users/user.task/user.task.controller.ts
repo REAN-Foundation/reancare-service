@@ -13,6 +13,7 @@ import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
 import { Injector } from '../../../startup/injector';
+import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,28 +21,21 @@ export class UserTaskController {
 
     //#region member variables and constructors
 
-    _service: UserTaskService = null;
+    _service: UserTaskService = Injector.Container.resolve(UserTaskService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _organizationService: OrganizationService = null;
+    _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
-    _medicationConsumptionService: MedicationConsumptionService = null;
+    _medicationConsumptionService: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
-    _careplanService: CareplanService = null;
+    _careplanService: CareplanService = Injector.Container.resolve(CareplanService);
 
     _validator: UserTaskValidator = new UserTaskValidator();
 
-    constructor() {
-        this._service = Injector.Container.resolve(UserTaskService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._organizationService = Injector.Container.resolve(OrganizationService);
-        this._medicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
-        this._careplanService = Injector.Container.resolve(CareplanService);
-    }
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     //#endregion
 
@@ -230,6 +224,15 @@ export class UserTaskController {
                 if (action) {
                     updated['Action'] = action;
                 }
+                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(action.PatientUserId);
+                if (eligibleAppNames.length > 0) {
+                    for (var appName of eligibleAppNames) {
+                        this.addEHRRecord(action, appName);
+                    }
+                } else {
+                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${action.PatientUserId}`);
+                }
+
             }
 
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
@@ -405,6 +408,30 @@ export class UserTaskController {
         }
 
         return dto;
+    };
+
+    private addEHRRecord = (action: any, appName?: string) => {
+        EHRAnalyticsHandler.addCareplanActivityRecord(
+            appName,
+            action.PatientUserId,
+            action.id,
+            action.EnrollmentId,
+            action.Provider,
+            action.PlanName,
+            action.PlanCode,
+            action.Type,
+            action.Category,
+            action.ProviderActionId,
+            action.Title,
+            action.Description,
+            action.Url,
+            'English',
+            action.ScheduledAt,
+            action.CompletedAt,
+            action.Sequence,
+            action.Frequency,
+            action.Status,
+        );
     };
 
     //#endregion

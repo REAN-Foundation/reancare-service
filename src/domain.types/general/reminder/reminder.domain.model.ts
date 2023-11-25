@@ -117,6 +117,7 @@ export interface ReminderDomainModel {
     RepeatAfterEveryNUnit?: RepeatAfterEveryNUnit;
     HookUrl              ?: string;
     NotificationType     ?: NotificationType;
+    RawContent            : string;
 }
 
 export interface ReminderDto {
@@ -138,6 +139,7 @@ export interface ReminderDto {
     PendingSchedules     ?: number;
     AcknowledgedSchedules?: number;
     NotificationType     ?: NotificationType;
+    RawContent            : string;
     CreatedAt             : Date;
     UpdatedAt             : Date;
 }

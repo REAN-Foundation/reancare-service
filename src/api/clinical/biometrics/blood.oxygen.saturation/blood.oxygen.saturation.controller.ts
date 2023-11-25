@@ -12,6 +12,7 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +23,8 @@ export class BloodOxygenSaturationController {
     _service: BloodOxygenSaturationService = null;
 
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         this._service = Injector.Container.resolve(BloodOxygenSaturationService);
@@ -39,7 +42,14 @@ export class BloodOxygenSaturationController {
             if (bloodOxygenSaturation == null) {
                 throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodOxygenSaturation.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, bloodOxygenSaturation.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodOxygenSaturation.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (bloodOxygenSaturation.BloodOxygenSaturation) {
@@ -125,7 +135,15 @@ export class BloodOxygenSaturationController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (updated.BloodOxygenSaturation) {
@@ -184,14 +202,19 @@ export class BloodOxygenSaturationController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodOxygenSaturationDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BloodOxygenSaturationDomainModel, appName?: string) => {
         if (model.BloodOxygenSaturation) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
                 recordId,
+                provider,
                 EHRRecordTypes.BloodOxygenSaturation,
                 model.BloodOxygenSaturation,
-                model.Unit);
+                model.Unit,
+                null,
+                null,
+                appName
+            );
         }
     };
 

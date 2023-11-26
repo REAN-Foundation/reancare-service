@@ -49,7 +49,7 @@ export class MeditationController extends BaseController{
 
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(meditation.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, meditation.id, null, model, appName);
                 }
             } else {
@@ -147,7 +147,7 @@ export class MeditationController extends BaseController{
 
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
                 }
             } else {

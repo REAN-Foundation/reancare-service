@@ -47,7 +47,7 @@ export class BodyWeightController extends BaseController {
             }
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyWeight.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, bodyWeight.id, null , model, appName);
                 }
             } else {
@@ -142,7 +142,7 @@ export class BodyWeightController extends BaseController {
             }
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addEHRRecord(model.PatientUserId, id, null, model, appName);
                 }
             } else {

@@ -387,8 +387,9 @@ export class EHRAnalyticsHandler {
                 });
             }
         }
-
-        return appNames;
+        // app is not invalidating old devices, hence considering only unique devices
+        var uniqueAppNames = appNames.filter((item, i, ar) => ar.indexOf(item) === i);
+        return uniqueAppNames;
     };
 
     //#endregion

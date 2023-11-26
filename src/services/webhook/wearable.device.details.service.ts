@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { HealthAppStatus, WearableDeviceDetailsDomainModel } from "../../domain.types/webhook/wearable.device.details/webhook.wearable.device.details.domain.model";
+import { HealthAppStatus, WearableDeviceDetailsDomainModel, WearableDeviceNames } from "../../domain.types/webhook/wearable.device.details/webhook.wearable.device.details.domain.model";
 import { IWearableDeviceDetailsRepo } from "../../database/repository.interfaces/webhook/webhook.wearable.device.details.repo.interface";
 import { WearableDeviceDetailsDto } from "../../domain.types/webhook/wearable.device.details/webhook.wearable.device.details.dto";
 import { WearableDeviceDetailsSearchFilters } from "../../domain.types/webhook/wearable.device.details/webhook.wearable.device.details.search.types";
@@ -43,14 +43,7 @@ export class WearableDeviceDetailsService {
         const terra = new Terra(process.env.TERRA_DEV_ID, process.env.TERRA_API_KEY, process.env.TERRA_SIGNING_SECRET);
         const terraUsers = await terra.getUsers();
         const connectedDevices = terraUsers.users.filter( user => user.reference_id === patientUserId);
-        const allTerraApps = ["BIOSTRAP","CARDIOMOOD","CONCEPT2","COROS","CRONOMETER","DEXCOM","EATTHISMUCH",
-            "EIGHT","FATSECRET","FINALSURGE","FITBIT","FREESTYLELIBRE","GARMIN","GOOGLE","HAMMERHEAD",
-            "HUAWEI","IFIT","INBODY","KOMOOT","LIVEROWING","LEZYNE","MOXY",
-            "NUTRACHECK","OMRON","OMRONUS","OURA","PELOTON","POLAR","PUL","RENPHO","RIDEWITHGPS",
-            "ROUVY","SUUNTO","TECHNOGYM","TEMPO","TRIDOT","TREDICT","TRAININGPEAKS","TRAINASONE","TRAINERROAD",
-            "UNDERARMOUR","VIRTUAGYM","WAHOO","WEAROS","WHOOP","WITHINGS","XOSS","ZWIFT","XERT","BRYTONSPORT",
-            "TODAYSPLAN","WGER","VELOHERO","CYCLINGANALYTICS","NOLIO","TRAINXHALE","KETOMOJOUS","KETOMOJOEU",
-            "STRAVA","CLUE","HEALTHGAUGE","MACROSFIRST","SOMNOFY"];
+        const allTerraApps = Object.values(WearableDeviceNames).sort();
         const healthAppStatuses = [];
         for (const device of allTerraApps) {
             const healthAppStatus : HealthAppStatus = {
@@ -71,6 +64,8 @@ export class WearableDeviceDetailsService {
                 }
             }
         }
+
+        healthAppStatuses.sort((a, b) => (a.Status === b.Status ? 0 : a.Status === "Connected" ? -1 : 1));
         return healthAppStatuses;
     };
 

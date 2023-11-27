@@ -6,9 +6,7 @@ import { BodyTemperatureService } from '../../../../services/clinical/biometrics
 import { Loader } from '../../../../startup/loader';
 import { BodyTemperatureValidator } from './body.temperature.validator';
 import { BaseController } from '../../../base.controller';
-import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
@@ -49,7 +47,7 @@ export class BodyTemperatureController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyTemperature.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(model.PatientUserId, bodyTemperature.id, bodyTemperature.Provider, model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, bodyTemperature.id, bodyTemperature.Provider, model, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyTemperature.PatientUserId}`);
@@ -143,8 +141,8 @@ export class BodyTemperatureController extends BaseController {
             }
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                for await (var appName of eligibleAppNames) {
+                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
@@ -204,18 +202,6 @@ export class BodyTemperatureController extends BaseController {
         }
     };
 
-    //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyTemperatureDomainModel, appName?: string) => {
-        if (model.BodyTemperature) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, provider, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit, null, null, appName
-            );
-        }
-    };
-    
     //#endregion
 
 }

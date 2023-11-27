@@ -83,7 +83,7 @@ export class HealthProfileController extends BaseController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(patientUserId, domainModel, appName);
+                    this.addEHRRecord(patientUserId, updated, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patientUserId}`);
@@ -102,7 +102,7 @@ export class HealthProfileController extends BaseController{
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, model: HealthProfileDomainModel, appName?: string) => {
+    private addEHRRecord = (patientUserId: uuid, model: HealthProfileDto, appName?: string) => {
         var details = {};
         if (model.Race) {
             details['Race'] = model.Race;
@@ -146,6 +146,10 @@ export class HealthProfileController extends BaseController{
         if (model.MaritalStatus) {
             details['MaritalStatus'] = model.MaritalStatus;
         }
+        if (model.CreatedAt) {
+            details['RecordDate'] = new Date(model.CreatedAt).toISOString().split('T')[0];
+        }
+
 
         EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
 

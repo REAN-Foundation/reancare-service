@@ -412,6 +412,9 @@ export class CareplanService implements IUserActionService {
         return template;
     };
 
+    public getActivities = async (patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]> => {
+        return await this._careplanRepo.getActivities(patientUserId, startTime, endTime);
+    };
     private getAssessment = async (
         activity: CareplanActivityDto,
         template: AssessmentTemplateDto,
@@ -681,7 +684,7 @@ export class CareplanService implements IUserActionService {
         return await this._handler.scheduleDailyHighRiskCareplan(provider);
     };
 
-    private addEHRRecord = (planName: string, planCode : string, model: CareplanActivityDto, appName?: string, healthSystemHospitalDetails?: PatientDetailsDto) => {
+    public addEHRRecord = (planName: string, planCode : string, model: CareplanActivityDto, appName?: string, healthSystemHospitalDetails?: PatientDetailsDto) => {
             EHRAnalyticsHandler.addCareplanActivityRecord(
                 appName,
                 model.PatientUserId,
@@ -703,7 +706,8 @@ export class CareplanService implements IUserActionService {
                 model.Frequency,       
                 model.Status,
                 healthSystemHospitalDetails.HealthSystem,
-                healthSystemHospitalDetails.AssociatedHospital
+                healthSystemHospitalDetails.AssociatedHospital,
+                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
             );
     };
 

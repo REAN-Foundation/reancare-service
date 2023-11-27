@@ -7,8 +7,6 @@ import { Loader } from '../../../../startup/loader';
 import { HowDoYouFeelValidator } from './how.do.you.feel.validator';
 import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { HowDoYouFeelDomainModel } from '../../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +44,7 @@ export class HowDoYouFeelController extends BaseController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(howDoYouFeel.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(model.PatientUserId, howDoYouFeel.id, null, model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, howDoYouFeel.id, null, model, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${howDoYouFeel.PatientUserId}`);
@@ -120,7 +118,7 @@ export class HowDoYouFeelController extends BaseController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(domainModel.PatientUserId, updated.id, null, domainModel, appName);
+                    this._service.addEHRRecord(domainModel.PatientUserId, updated.id, null, domainModel, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
@@ -154,48 +152,6 @@ export class HowDoYouFeelController extends BaseController{
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: HowDoYouFeelDomainModel, appName?: string) => {
-        if (model.Feeling == '1') {
-            EHRAnalyticsHandler.addStringRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.Symptom,
-                model.Feeling,
-                null,
-                'Better',
-                null,
-                appName
-            );
-        }
-
-        if (model.Feeling == '0') {
-            EHRAnalyticsHandler.addStringRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.Symptom,
-                model.Feeling,
-                null,
-                'Same',
-                appName
-            );
-        }
-
-        if (model.Feeling == '-1') {
-            EHRAnalyticsHandler.addStringRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.Symptom,
-                model.Feeling,
-                null,
-                'Worse',
-                appName
-            );
         }
     };
 

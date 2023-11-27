@@ -202,6 +202,12 @@ export default class StaticEHRData extends Model {
     })
     Occupation: string;
 
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    RecordDate: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

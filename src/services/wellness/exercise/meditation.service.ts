@@ -4,6 +4,8 @@ import { IMeditationRepo } from "../../../database/repository.interfaces/wellnes
 import { MeditationDomainModel } from '../../../domain.types/wellness/exercise/meditation/meditation.domain.model';
 import { MeditationDto } from '../../../domain.types/wellness/exercise/meditation/meditation.dto';
 import { MeditationSearchResults, MeditationSearchFilters } from '../../../domain.types/wellness/exercise/meditation/meditation.search.types';
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,6 +46,23 @@ export class MeditationService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._meditationRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: MeditationDto, appName?: string) => {
+        if (model.DurationInMins) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.MentalWellBeing,
+                model.DurationInMins,
+                'mins',
+                'Meditation',
+                null,
+                appName,
+                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
+            );
+        }
     };
 
 }

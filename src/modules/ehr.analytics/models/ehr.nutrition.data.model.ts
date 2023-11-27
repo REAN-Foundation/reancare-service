@@ -130,9 +130,8 @@ export default class EHRNutritionData extends Model {
     })
     AdditionalInfo: string;
 
-    @Length({ max: 64 })
     @Column({
-        type      : DataType.STRING(64),
+        type      : DataType.STRING(256),
         allowNull : true,
     })
     RecordDate: Date;

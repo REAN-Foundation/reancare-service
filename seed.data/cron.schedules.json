@@ -13,7 +13,17 @@
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
-        "ScheduleTimezoneUpdate": "0 7 9 11 *"
+        "ScheduleTimezoneUpdate": "0 7 9 11 *",
+        "ScheduleExistingCareplanActivityDataToEHR": "0 0 28 11 *",
+        "ScheduleExistingAssessmentDataToEHR": "0 1 28 11 *",
+        "ScheduleExistingStaticDataToEHR": "0 2 28 11 *",
+        "ScheduleExistingVitalDataToEHR": "0 3 28 11 *",
+        "ScheduleExistingLabDataToEHR": "30 3 28 11 *",
+        "ScheduleExistingPhysicalActivityDataToEHR": "0 4 28 11 *",
+        "ScheduleExistingMentalWellBeingDataToEHR": "30 4 28 11 *",
+        "ScheduleExistingNutritionDataToEHR": "0 5 28 11 *",
+        "ScheduleExistingSymptomDataToEHR": "30 5 28 11 *",  
+        "ScheduleExistingMedicationDataToEHR": "0 6 28 11 *"
         
     },
     "development": {
@@ -30,8 +40,18 @@
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
-        "ScheduleTimezoneUpdate": "0 7 9 11 *"
-        
+        "ScheduleTimezoneUpdate": "0 7 9 11 *",
+        "ScheduleExistingCareplanActivityDataToEHR": "0 0 28 11 *",
+        "ScheduleExistingAssessmentDataToEHR": "0 1 28 11 *",
+        "ScheduleExistingStaticDataToEHR": "0 2 28 11 *",
+        "ScheduleExistingVitalDataToEHR": "0 3 28 11 *",
+        "ScheduleExistingLabDataToEHR": "30 3 28 11 *",
+        "ScheduleExistingPhysicalActivityDataToEHR": "0 4 28 11 *",
+        "ScheduleExistingMentalWellBeingDataToEHR": "30 4 28 11 *",
+        "ScheduleExistingNutritionDataToEHR": "0 5 28 11 *",
+        "ScheduleExistingSymptomDataToEHR": "30 5 28 11 *" ,
+        "ScheduleExistingMedicationDataToEHR": "0 6 28 11 *"
+             
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",
@@ -47,7 +67,17 @@
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
-        "ScheduleTimezoneUpdate": "0 7 9 11 *"
+        "ScheduleTimezoneUpdate": "0 7 9 11 *",
+        "ScheduleExistingCareplanActivityDataToEHR": "0 0 28 11 *",
+        "ScheduleExistingAssessmentDataToEHR": "0 1 28 11 *",
+        "ScheduleExistingStaticDataToEHR": "0 2 28 11 *",
+        "ScheduleExistingVitalDataToEHR": "0 3 28 11 *",
+        "ScheduleExistingLabDataToEHR": "30 3 28 11 *",
+        "ScheduleExistingPhysicalActivityDataToEHR": "0 4 28 11 *",
+        "ScheduleExistingMentalWellBeingDataToEHR": "30 4 28 11 *",
+        "ScheduleExistingNutritionDataToEHR": "0 5 28 11 *",
+        "ScheduleExistingSymptomDataToEHR": "30 5 28 11 *" ,
+        "ScheduleExistingMedicationDataToEHR": "0 6 28 11 *"
         
     },
     "production": {

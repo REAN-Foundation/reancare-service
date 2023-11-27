@@ -7,8 +7,6 @@ import { Loader } from '../../../../startup/loader';
 import { StandValidator } from './stand.validator';
 import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
-import { StandDomainModel } from '../../../../domain.types/wellness/daily.records/stand/stand.domain.model';
 import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +45,7 @@ export class StandController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stand.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(domainModel.PatientUserId, stand.id, null, domainModel, appName);
+                    this._service.addEHRRecord(domainModel.PatientUserId, stand.id, null, domainModel, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${stand.PatientUserId}`);
@@ -122,7 +120,7 @@ export class StandController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
+                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
@@ -156,22 +154,6 @@ export class StandController extends BaseController {
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: StandDomainModel, appName?: string) => {
-        if (model.Stand) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.Stand,
-                model.Unit,
-                'Stand',
-                null,
-                appName
-            );
         }
     };
 

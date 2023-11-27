@@ -1,7 +1,5 @@
 import express from 'express';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
-import { BodyWeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -48,7 +46,7 @@ export class BodyWeightController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyWeight.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(model.PatientUserId, bodyWeight.id, null , model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, bodyWeight.id, null , model, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyWeight.PatientUserId}`);
@@ -143,7 +141,7 @@ export class BodyWeightController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(model.PatientUserId, id, null, model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, id, null, model, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
@@ -200,17 +198,6 @@ export class BodyWeightController extends BaseController {
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyWeightDomainModel, appName?: string) => {
-        if (model.BodyWeight) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, provider, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit, null, null, appName);
         }
     };
 

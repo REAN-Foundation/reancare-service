@@ -26,4 +26,5 @@ export interface EHRCareplanActivityDomainModel {
     AdditionalInfo? : string;
     HealthSystem?   : string;
     AssociatedHospital? : string;
+    RecordDate?     : string;
 }

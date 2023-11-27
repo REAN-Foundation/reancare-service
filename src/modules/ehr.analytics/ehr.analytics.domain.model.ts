@@ -48,4 +48,6 @@ export interface EHRStaticRecordDomainModel {
     IsSmoker?           : boolean;
     Location?           : string;
     OtherConditions?     : string;
+    RecordDate?          : string;
+
 }

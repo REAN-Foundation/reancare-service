@@ -60,7 +60,7 @@ export class BloodPressureController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodPressure.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(model.PatientUserId, bloodPressure.id, bloodPressure.Provider, model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, bloodPressure.id, bloodPressure.Provider, model, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodPressure.PatientUserId}`);
@@ -168,7 +168,7 @@ export class BloodPressureController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);

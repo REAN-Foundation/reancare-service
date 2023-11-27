@@ -99,7 +99,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
                     [Op.gte] : filters.CreatedDateFrom,
                 };
             }
-            if (filters.RecordedByUserId !== null) {
+            if (filters.RecordedByUserId != null) {
                 search.where['RecordedByUserId'] = filters.RecordedByUserId;
             }
 

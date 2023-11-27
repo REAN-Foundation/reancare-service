@@ -19,7 +19,9 @@ export class MeditationMapper {
             Category       : meditation.Category,
             DurationInMins : meditation.DurationInMins,
             StartTime      : meditation.StartTime,
-            EndTime        : meditation.EndTime
+            EndTime        : meditation.EndTime,
+            CreatedAt      : meditation.CreatedAt,
+            UpdatedAt      : meditation.UpdatedAt
 
         };
         return dto;

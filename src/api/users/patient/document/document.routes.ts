@@ -1,6 +1,7 @@
 import express from 'express';
 import { Loader } from '../../../../startup/loader';
 import { DocumentController } from './document.controller';
+import { ExpressFileUpload } from '../../../../startup/express.file.upload';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +12,7 @@ export const register = (app: express.Application): void => {
     const controller = new DocumentController();
 
     router.get('/types', authenticator.authenticateClient, authenticator.authenticateUser, controller.getTypes);
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.upload);
+    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, ExpressFileUpload.getExpressFileUpload(), controller.upload);
     router.put('/:id/rename', authenticator.authenticateClient, authenticator.authenticateUser, controller.rename);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
 

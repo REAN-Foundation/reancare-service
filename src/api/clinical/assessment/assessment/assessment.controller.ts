@@ -1,4 +1,4 @@
-import express, { response } from 'express';
+import express from 'express';
 import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
@@ -298,8 +298,8 @@ export class AssessmentController extends BaseController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(answerResponse.Parent.PatientUserId);
             var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
             if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(answerResponse, assessment, options, appName);   
+                for await (var appName of eligibleAppNames) {
+                    this.addEHRRecord(answerResponse, assessment, options, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
@@ -319,7 +319,7 @@ export class AssessmentController extends BaseController{
                 }
                 if (eligibleAppNames.length > 0) {
                     var updatedAssessment = await this._service.getById(assessment.id);
-                    for await (var appName of eligibleAppNames) { 
+                    for await (var appName of eligibleAppNames) {
                         this.addEHRRecord(null, updatedAssessment, null, appName);
                     }
                 } else {
@@ -528,8 +528,6 @@ export class AssessmentController extends BaseController{
 
         }
 
-    
-        
     };
 
     //#endregion

@@ -170,4 +170,13 @@ export class EHRVitalService {
         }
     };
 
+    deleteVitalEHRRecord = async (id: string ) => {
+        try {
+            const result = await EHRVitalData.destroy({ where: { RecordId: id } });
+            Logger.instance().log(`EHR vital record deleted : ${JSON.stringify(result)}`);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
 }

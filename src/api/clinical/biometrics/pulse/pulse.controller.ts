@@ -12,6 +12,7 @@ import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { Logger } from '../../../../common/logger';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,9 +26,12 @@ export class PulseController extends BaseController{
 
     _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
+    _ehrVitalService: EHRVitalService = new EHRVitalService();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(PulseService);
+        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -196,6 +200,9 @@ export class PulseController extends BaseController{
             if (!deleted) {
                 throw new ApiError(400, 'Pulse record cannot be deleted.');
             }
+
+            // delete ehr record
+            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
 
             ResponseHandler.success(request, response, 'Pulse rate record deleted successfully!', 200, {
                 Deleted : true,

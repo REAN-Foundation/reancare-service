@@ -8,6 +8,7 @@ import { LabRecordService } from '../../../services/clinical/lab.record/lab.reco
 import { LabRecordValidator } from './lab.record.validator';
 import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 import { Logger } from '../../../common/logger';
+import { EHRLabService } from '../../../modules/ehr.analytics/ehr.lab.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,9 +21,12 @@ export class LabRecordController extends BaseController {
 
     _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
+    _ehrLabService: EHRLabService = new EHRLabService();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(LabRecordService);
+        this._ehrLabService = Loader.container.resolve(EHRLabService);
     }
 
     //#endregion
@@ -145,6 +149,9 @@ export class LabRecordController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, `${existingRecord.DisplayName} record cannot be deleted.`);
             }
+
+            // delete ehr record
+            this._ehrLabService.deleteLabEHRRecord(existingRecord.id);
 
             ResponseHandler.success(request, response, `${existingRecord.DisplayName} record deleted successfully!`, 200, {
                 Deleted : true,

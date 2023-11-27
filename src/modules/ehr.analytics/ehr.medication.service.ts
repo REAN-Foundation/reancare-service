@@ -4,6 +4,8 @@ import { EHRAnalyticsHandler } from "./ehr.analytics.handler";
 import { PatientService } from "../../services/users/patient/patient.service";
 import { Loader } from "../../startup/loader";
 import { MedicationConsumptionService } from "../../services/clinical/medication/medication.consumption.service";
+import MedicationConsumption from "../../database/sql/sequelize/models/clinical/medication/medication.consumption.model";
+import EHRMedicationData from "./models/ehr.medication.data.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +47,18 @@ export class EHRMedicationService {
         }
         catch (error) {
             Logger.instance().log(`Error population existing medication data in ehr insights database :: ${JSON.stringify(error)}`);
+        }
+    };
+
+    deleteMedicationEHRRecord = async (id: string ) => {
+        try {
+            const results = await MedicationConsumption.findAll({ where: { MedicationId: id} });
+            for await (var r of results) {
+                var deleted = await EHRMedicationData.destroy({ where: { RecordId: r.id } });
+            }
+            Logger.instance().log(`EHR medication record deleted : ${JSON.stringify(deleted)}`);
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

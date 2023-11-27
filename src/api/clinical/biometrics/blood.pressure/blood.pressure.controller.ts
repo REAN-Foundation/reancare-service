@@ -16,6 +16,7 @@ import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,12 +34,14 @@ export class BloodPressureController extends BaseController {
 
     _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
+    _ehrVitalService: EHRVitalService = new EHRVitalService();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodPressureService);
         this._personService = Loader.container.resolve(PersonService);
         this._patientService = Loader.container.resolve(PatientService);
-
+        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -221,6 +224,9 @@ export class BloodPressureController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Blood pressure record cannot be deleted.');
             }
+
+            // delete ehr record
+            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
 
             ResponseHandler.success(request, response, 'Blood pressure record deleted successfully!', 200, {
                 Deleted : true,

@@ -48,7 +48,7 @@ export class BloodGlucoseService {
         return dto;
     };
 
-    search = async (filters: BloodGlucoseSearchFilters, fetchDeleted?: boolean): Promise<BloodGlucoseSearchResults> => {
+    search = async (filters: BloodGlucoseSearchFilters): Promise<BloodGlucoseSearchResults> => {
         return await this._bloodGlucoseRepo.search(filters);
         
     };

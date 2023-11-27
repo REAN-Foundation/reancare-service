@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../common/logger";
 import { EHRAnalyticsHandler } from "./ehr.analytics.handler";
-import { Loader } from "../../startup/loader";;
+import { Loader } from "../../startup/loader";
 import { SleepService } from "../../services/wellness/daily.records/sleep.service";
 import { MeditationService } from "../../services/wellness/exercise/meditation.service";
 

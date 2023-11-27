@@ -3,9 +3,9 @@ import {
 } from "./medication.consumption.types";
 
 export interface MedicationConsumptionDetailsDto {
-    id                : string,
+    id?               : string,
     EhrId?            : string;
-    PatientUserId     : string;
+    PatientUserId?    : string;
     MedicationId?     : string;
     DrugName?         : string;
     DrugId?           : string;

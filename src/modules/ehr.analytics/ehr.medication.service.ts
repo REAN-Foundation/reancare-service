@@ -24,40 +24,27 @@ export class EHRMedicationService {
 
     public scheduleExistingMedicationDataToEHR = async () => {
         try {
+            var patientUserIds = await this._patientService.getAllPatientUserIds();
+            for await (var p of patientUserIds) {
+                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
+                if (eligibleAppNames.length > 0) {
+                    for await (var appName of eligibleAppNames) { 
+                        var searchResults = await this._medicationConsumptionService.search({"PatientUserId" : p});
+                        for await (var m of searchResults.Items) {
+                            this._medicationConsumptionService.addEHRRecord(m.PatientUserId, m.id, m, appName);
 
-            var moreItems = true;
-            var pageIndex = 0;
-            while (moreItems) {
-                
-                var searchResults = null
-                var patientUserIds = await this._patientService.getAllPatientUserIds();
-                for await (var p of patientUserIds) {
-                    var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
-                    if (eligibleAppNames.length > 0) {
-                        for await (var appName of eligibleAppNames) { 
-                            searchResults = await this._medicationConsumptionService.search({"PatientUserId" : p});
-                            for await (var m of searchResults.Items) {
-                                this._medicationConsumptionService.addEHRRecord(m.PatientUserId, m.id, m, appName);
-
-                            }
                         }
-                    } else {
-                        Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${p}`);
-                    }      
-                }
-
-                pageIndex++;
-                Logger.instance().log(`Processed :${searchResults.Items.length} records for careplan activity`);
-
-                if (searchResults.Items.length < 1000) {
-                    moreItems = false;
-                }
-
+                    }
+                } else {
+                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${p}`);
+                }      
             }
+
+            Logger.instance().log(`Processed :${searchResults.Items.length} records for medication`);
             
         }
         catch (error) {
-            Logger.instance().log(`Error population existing assessment data in ehr insights database :: ${JSON.stringify(error)}`);
+            Logger.instance().log(`Error population existing medication data in ehr insights database :: ${JSON.stringify(error)}`);
         }
     };
 

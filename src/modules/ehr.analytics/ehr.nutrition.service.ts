@@ -54,7 +54,7 @@ export class EHRNutritionService {
             
         }
         catch (error) {
-            Logger.instance().log(`Error population existing data in ehr insights database: ${JSON.stringify(error)}`);
+            Logger.instance().log(`Error population existing nutrition data in ehr insights database: ${JSON.stringify(error)}`);
         }
     };
 

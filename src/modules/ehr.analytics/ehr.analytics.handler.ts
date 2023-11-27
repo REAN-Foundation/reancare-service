@@ -446,7 +446,7 @@ export class EHRAnalyticsHandler {
 
     deleteStaticEHRRecord = async (id: string ) => {
         try {
-            const results = await StaticEHRData.destroy({ where: { PatientUserId: id} })
+            const results = await StaticEHRData.destroy({ where: { PatientUserId: id} });
             Logger.instance().log(`EHR static record deleted : ${JSON.stringify(id)}`);
         } catch (error) {
             Logger.instance().log(error.message);

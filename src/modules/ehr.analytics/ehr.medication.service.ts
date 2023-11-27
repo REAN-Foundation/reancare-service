@@ -52,7 +52,7 @@ export class EHRMedicationService {
 
     deleteMedicationEHRRecord = async (id: string ) => {
         try {
-            const results = await MedicationConsumption.findAll({ where: { MedicationId: id} })
+            const results = await MedicationConsumption.findAll({ where: { MedicationId: id} });
             for await (var r of results) {
                 var deleted = await EHRMedicationData.destroy({ where: { RecordId: r.id } });
             }

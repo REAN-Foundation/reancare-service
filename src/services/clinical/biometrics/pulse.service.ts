@@ -41,7 +41,7 @@ export class PulseService {
         return await this._pulseRepo.getById(id);
     };
 
-    search = async (filters: PulseSearchFilters, fetchDeleted?: boolean ): Promise<PulseSearchResults> => {
+    search = async (filters: PulseSearchFilters): Promise<PulseSearchResults> => {
         return await this._pulseRepo.search(filters);
     };
 

@@ -49,7 +49,7 @@ export class DailyAssessmentController extends BaseController{
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dailyAssessment.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(model.PatientUserId, dailyAssessment.id, null, model, appName);
                 }
             } else {

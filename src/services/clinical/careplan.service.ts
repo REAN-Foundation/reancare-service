@@ -592,8 +592,8 @@ export class CareplanService implements IUserActionService {
         var healthSystemHospitalDetails = await this._patientRepo.getByUserId(dto.PatientUserId);
         var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
         if (eligibleAppNames.length > 0) {
-            for (var appName of eligibleAppNames) {
-                for (var careplanActivity of careplanActivities) {
+            for await (var appName of eligibleAppNames) {
+                for await (var careplanActivity of careplanActivities) {
                     this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
                 }
             }

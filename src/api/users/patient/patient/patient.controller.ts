@@ -78,7 +78,7 @@ export class PatientController extends BaseUserController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patient.UserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this.addPatientToEHRRecords(patient.UserId, appName);
                 }
             } else {
@@ -231,8 +231,10 @@ export class PatientController extends BaseUserController {
                 for await (var appName of eligibleAppNames) {
                     await this._service.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, appName);       
                 }
-                
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
             }
+
             const patient = await this._service.getByUserId(userId);
 
             ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
@@ -338,17 +340,6 @@ export class PatientController extends BaseUserController {
             }
         }
     }
-
-    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
-
-        const eligibleToAddInEhrRecords =
-        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
-        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
-        userAppRegistrations.indexOf('HF Helper') >= 0;
-
-        return eligibleToAddInEhrRecords;
-    };
-
 
     //#endregion
 

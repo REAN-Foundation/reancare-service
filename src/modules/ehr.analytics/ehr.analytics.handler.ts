@@ -440,6 +440,7 @@ export class EHRAnalyticsHandler {
         } catch (error) {
             Logger.instance().log(`Error population existing static data in ehr insights database: ${JSON.stringify(error)}`);
         }
+          
     };
 
     //#endregion

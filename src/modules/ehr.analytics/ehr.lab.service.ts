@@ -3,6 +3,7 @@ import { Logger } from "../../common/logger";
 import { EHRAnalyticsHandler } from "./ehr.analytics.handler";
 import { Loader } from "../../startup/loader";
 import { LabRecordService } from "../../services/clinical/lab.record/lab.record.service";
+import EHRLabData from "./models/ehr.lab.data.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,6 +56,15 @@ export class EHRLabService {
         }
         catch (error) {
             Logger.instance().log(`Error population existing data in ehr insights database: ${JSON.stringify(error)}`);
+        }
+    };
+
+    deleteLabEHRRecord = async (id: string ) => {
+        try {
+            const result = await EHRLabData.destroy({ where: { RecordId: id } });
+            Logger.instance().log(`EHR lab record deleted : ${JSON.stringify(result)}`);
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

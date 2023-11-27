@@ -294,6 +294,9 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(400, 'User sessions cannot be deleted.');
             }
 
+            // delete static ehr record
+            this._ehrAnalyticsHandler.deleteStaticEHRRecord(userId);
+
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,
             });

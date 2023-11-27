@@ -17,6 +17,7 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { MedicationValidator } from './medication.validator';
+import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.medication.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +39,8 @@ export class MedicationController {
 
     _authorizer: Authorizer = null;
 
+    _ehrMedicationService: EHRMedicationService = new EHRMedicationService();
+
     constructor() {
         this._service = Loader.container.resolve(MedicationService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -46,6 +49,7 @@ export class MedicationController {
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
         this._authorizer = Loader.authorizer;
+        this._ehrMedicationService = Loader.container.resolve(EHRMedicationService);
     }
 
     //#endregion
@@ -274,6 +278,9 @@ export class MedicationController {
             }
 
             await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+
+            // delete ehr record
+            this._ehrMedicationService.deleteMedicationEHRRecord(id);
 
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
                 Deleted : true,

@@ -20,7 +20,7 @@ import { v4 } from 'uuid';
     timestamps      : true,
     modelName       : 'StaticEHRData',
     tableName       : 'static_ehr_data',
-    paranoid        : false,
+    paranoid        : true,
     freezeTableName : true,
 })
 export default class StaticEHRData extends Model {
@@ -210,6 +210,6 @@ export default class StaticEHRData extends Model {
 
     @Column
     @CreatedAt
-    CreatedAt: Date;
+    TimeStamp: Date;
 
 }

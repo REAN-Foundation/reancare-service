@@ -16,6 +16,7 @@ import { PatientService } from "../../services/users/patient/patient.service";
 import { UserDeviceDetailsService } from "../../services/users/user/user.device.details.service";
 import { Loader } from "../../startup/loader";
 import { EmergencyContactService } from "../../services/users/patient/emergency.contact.service";
+import StaticEHRData from "./models/static.ehr.data.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -442,6 +443,16 @@ export class EHRAnalyticsHandler {
         }
           
     };
+
+    deleteStaticEHRRecord = async (id: string ) => {
+        try {
+            const results = await StaticEHRData.destroy({ where: { PatientUserId: id} })
+            Logger.instance().log(`EHR static record deleted : ${JSON.stringify(id)}`);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
 
     //#endregion
 

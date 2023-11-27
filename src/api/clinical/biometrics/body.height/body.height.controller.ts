@@ -7,6 +7,7 @@ import { BodyHeightService } from '../../../../services/clinical/biometrics/body
 import { Loader } from '../../../../startup/loader';
 import { BodyHeightValidator } from './body.height.validator';
 import { Logger } from '../../../../common/logger';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,9 +21,12 @@ export class BodyHeightController {
 
     _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
+    _ehrVitalService: EHRVitalService = new EHRVitalService();
+
     constructor() {
         this._service = Loader.container.resolve(BodyHeightService);
         this._authorizer = Loader.authorizer;
+        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -151,6 +155,9 @@ export class BodyHeightController {
             if (!deleted) {
                 throw new ApiError(400, 'Height record cannot be deleted.');
             }
+
+            // delete ehr record
+            this._ehrVitalService.deleteVitalEHRRecord(existing.id);
 
             ResponseHandler.success(request, response, 'Height record deleted successfully!', 200, {
                 Deleted : true,

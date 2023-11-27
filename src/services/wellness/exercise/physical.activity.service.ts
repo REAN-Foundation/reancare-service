@@ -47,7 +47,7 @@ export class PhysicalActivityService {
         return await this._physicalActivityRepo.getAllUserResponsesBefore(patientUserId, date);
     };
 
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PhysicalActivityDomainModel, appName?: string) => {
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PhysicalActivityDto, appName?: string) => {
         if (model.PhysicalActivityQuestionAns !== null) {
             EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
@@ -59,7 +59,7 @@ export class PhysicalActivityService {
                 null,
                 'Did you add movement to your day today?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? model.CreatedAt.toString() : null
             );
         }
 
@@ -74,7 +74,7 @@ export class PhysicalActivityService {
                 model.Category,
                 'Exercise',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
             );
         }
 

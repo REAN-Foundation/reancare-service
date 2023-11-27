@@ -9,8 +9,8 @@ export interface BodyHeightSearchFilters {
     RecordedByUserId?: string;
     OrderBy?: string;
     Order?: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+    PageIndex?: number;
+    ItemsPerPage?: number;
 }
 
 export interface BodyHeightSearchResults {

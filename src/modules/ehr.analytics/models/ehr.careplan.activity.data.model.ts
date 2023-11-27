@@ -196,6 +196,12 @@ export default class EHRCareplanActivityData extends Model {
     })
     AssociatedHospital : string;
 
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    RecordDate : string;
+
     @Column
     @CreatedAt
     TimeStamp: Date;

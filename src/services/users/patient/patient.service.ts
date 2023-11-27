@@ -15,6 +15,9 @@ import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
 import { Loader } from '../../../startup/loader';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
+import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,6 +59,9 @@ export class PatientService {
     public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
         var dto = await this._patientRepo.getByUserId(id);
         dto = await this.updateDetailsDto(dto);
+        if (dto == null) {
+            return null;
+        }
         var healthProfile = await this._healthProfileRepo.getByPatientUserId(id);
         dto.HealthProfile = healthProfile;
         return dto;
@@ -189,6 +195,75 @@ export class PatientService {
         dto.LastName = user.Person.LastName;
         dto.ImageResourceId = user.Person.ImageResourceId;
         return dto;
+    };
+
+    public addEHRRecord = (patientUserId: uuid,
+        model: PersonDomainModel, updatedModel: any, location: string, updatedHealthProfile: any, appName?: string) => {
+        var details = {};
+        if (model.BirthDate) {
+            details['BirthDate'] = model.BirthDate;
+        }
+        if (updatedModel.User.Person.Age) {
+            details['Age'] = updatedModel.User.Person.Age;
+        }
+        /*if (model.id) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                PersonId : model.id
+            });
+        }*/
+        if (model.Gender) {
+            details['Gender'] = model.Gender;
+        }
+        if (model.SelfIdentifiedGender) {
+            details['SelfIdentifiedGender'] = model.SelfIdentifiedGender;
+        }
+        if (updatedHealthProfile.MaritalStatus) {
+            details['MaritalStatus'] = updatedHealthProfile.MaritalStatus;
+        }
+        if (updatedHealthProfile.Ethnicity) {
+            details['Ethnicity'] = updatedHealthProfile.Ethnicity;
+        }
+        if (updatedHealthProfile.Race) {
+            details['Race'] = updatedHealthProfile.Race;
+        }
+        if (updatedModel.HealthSystem) {
+            details['HealthSystem'] = updatedModel.HealthSystem;
+        }
+        if (updatedModel.AssociatedHospital) {
+            details['AssociatedHospital'] = updatedModel.AssociatedHospital;
+        }
+        if (updatedHealthProfile.HasHeartAilment != null ) {
+            details['HasHeartAilment'] = updatedHealthProfile.HasHeartAilment;
+        }
+        if (updatedHealthProfile.HasHighBloodPressure != null ) {
+            details['HasHighBloodPressure'] = updatedHealthProfile.HasHighBloodPressure;
+        }
+        if (updatedHealthProfile.HasHighCholesterol != null ) {
+            details['HasHighCholesterol'] = updatedHealthProfile.HasHighCholesterol;
+        }
+        if (updatedHealthProfile.IsDiabetic != null ) {
+            details['IsDiabetic'] = updatedHealthProfile.IsDiabetic;
+        }
+        if (updatedHealthProfile.Occupation) {
+            details['Occupation'] = updatedHealthProfile.Occupation;
+        }
+        if (location) {
+            details['Location'] = location;
+        }
+        if (updatedHealthProfile.OtherConditions) {
+            details['OtherConditions'] = updatedHealthProfile.OtherConditions;
+        }
+        if (updatedModel.DoctorPersonId_1) {
+            details['DoctorPersonId_1'] = updatedModel.DoctorPersonId_1;
+        }
+        if (updatedModel.DoctorPersonId_2) {
+            details['DoctorPersonId_2'] = updatedModel.DoctorPersonId_2;
+        }
+        if (updatedHealthProfile.CreatedAt) {
+            details['RecordDate'] = new Date(updatedHealthProfile.CreatedAt).toISOString().split('T')[0];
+        }
+
+        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
     };
 
     //#endregion

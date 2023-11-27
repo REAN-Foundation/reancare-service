@@ -20,6 +20,8 @@ export interface MedicationConsumptionDetailsDto {
     CancelledOn?      : Date;
     Note?             : string;
     Status?           : MedicationConsumptionStatus;
+    CreatedAt?        : Date;
+    UpdatedAt?        : Date;
 }
 
 export interface MedicationConsumptionDto {

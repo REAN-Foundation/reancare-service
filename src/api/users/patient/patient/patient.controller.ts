@@ -228,13 +228,11 @@ export class PatientController extends BaseUserController {
 
             const userDetails = await this._service.getByUserId(userId);
             if (userDetails.User.IsTestUser == false) {
-                //this.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile);       
-
                 var userDevices = await this._userDeviceDetailsService.getByUserId(userId);
                 if (userDevices.length > 0) {
                     for await (var userDevice of userDevices) {
                         if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
-                            await this.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, userDevice.AppName);       
+                            await this._service.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, userDevice.AppName);       
                         } else {
                             Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
                         }
@@ -315,63 +313,6 @@ export class PatientController extends BaseUserController {
 
     private addPatientToEHRRecords = (patientUserId: uuid, appName?: string) => {
         EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {}, appName,);
-    };
-
-    private addEHRRecord = (patientUserId: uuid,
-        model: PersonDomainModel, updatedModel: any, location: string, updatedHealthProfile: any, appName?: string) => {
-        var details = {};
-        if (model.BirthDate) {
-            details['BirthDate'] = model.BirthDate;
-        }
-        if (updatedModel.User.Person.Age) {
-            details['Age'] = updatedModel.User.Person.Age;
-        }
-        /*if (model.id) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                PersonId : model.id
-            });
-        }*/
-        if (model.Gender) {
-            details['Gender'] = model.Gender;
-        }
-        if (model.SelfIdentifiedGender) {
-            details['SelfIdentifiedGender'] = model.SelfIdentifiedGender;
-        }
-        if (model.MaritalStatus) {
-            details['MaritalStatus'] = model.MaritalStatus;
-        }
-        if (model.Ethnicity) {
-            details['Ethnicity'] = model.Ethnicity;
-        }
-        if (model.Race) {
-            details['Race'] = model.Race;
-        }
-        if (updatedModel.HealthSystem) {
-            details['HealthSystem'] = updatedModel.HealthSystem;
-        }
-        if (updatedModel.AssociatedHospital) {
-            details['AssociatedHospital'] = updatedModel.AssociatedHospital;
-        }
-        if (updatedHealthProfile.HasHeartAilment) {
-            details['HasHeartAilment'] = updatedHealthProfile.HasHeartAilment;
-        }
-        if (updatedHealthProfile.HasHighBloodPressure) {
-            details['HasHighBloodPressure'] = updatedHealthProfile.HasHighBloodPressure;
-        }
-        if (updatedHealthProfile.HasHighCholesterol) {
-            details['HasHighCholesterol'] = updatedHealthProfile.HasHighCholesterol;
-        }
-        if (updatedHealthProfile.Occupation) {
-            details['Occupation'] = updatedHealthProfile.Occupation;
-        }
-        if (location) {
-            details['Location'] = location;
-        }
-        if (updatedHealthProfile.OtherConditions) {
-            details['OtherConditions'] = updatedHealthProfile.OtherConditions;
-        }
-
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
     };
 
     private addPatientToCohort = async (patientUserId: uuid, cohortId: uuid) => {

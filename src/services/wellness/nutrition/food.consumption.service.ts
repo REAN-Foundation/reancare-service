@@ -71,7 +71,7 @@ export class FoodConsumptionService {
         return await this._foodConsumptionRepo.getAllUserResponsesBefore(patientUserId, date);
     };
 
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: FoodConsumptionDomainModel, appName?: string) => {
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: FoodConsumptionDto, appName?: string) => {
         if (model.FoodTypes[0] === "GenericNutrition") {
             EHRAnalyticsHandler.addBooleanRecord(
                 patientUserId,
@@ -83,7 +83,7 @@ export class FoodConsumptionService {
                 null,
                 'Were most of your food choices healthy today?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? model.CreatedAt.toString() : null
             );
         }
         if (model.FoodTypes[0] === "Fruit") {
@@ -97,7 +97,7 @@ export class FoodConsumptionService {
                 'How many servings of fruit did you eat today?',
                 'How many servings of fruit did you eat today?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? model.CreatedAt.toString() : null
             );
         }
         if (model.FoodTypes[0] === "Vegetables") {
@@ -111,7 +111,7 @@ export class FoodConsumptionService {
                 'How many servings of vegetables did you eat today?',
                 'How many servings of vegetables did you eat today?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? model.CreatedAt.toString() : null
             );
         }
         if (model.FoodTypes[0] === "Sugary drinks") {
@@ -125,7 +125,7 @@ export class FoodConsumptionService {
                 'How many servings of sugary drinks did you drink today?',
                 'How many servings of sugary drinks did you drink today?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? model.CreatedAt.toString() : null
             );
         }
         if (model.FoodTypes[0] === "Salt") {
@@ -139,7 +139,7 @@ export class FoodConsumptionService {
                 'Did you choose or prepare foods with little or no salt today?',
                 'Did you choose or prepare foods with little or no salt today?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? model.CreatedAt.toString() : null
 
             );
         }
@@ -154,7 +154,7 @@ export class FoodConsumptionService {
                 'How many servings of fish or shellfish/seafood did you eat today?',
                 'How many servings of fish or shellfish/seafood did you eat today?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? model.CreatedAt.toString() : null
 
             );
         }
@@ -169,7 +169,7 @@ export class FoodConsumptionService {
                 'How many servings of whole grains do you consume per day?',
                 'How many servings of whole grains do you consume per day?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? model.CreatedAt.toString() : null
 
             );
         }
@@ -184,7 +184,7 @@ export class FoodConsumptionService {
                 'Did you select healthy sources of protein today?',
                 'Did you select healthy sources of protein today?',
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
 
             );
         }

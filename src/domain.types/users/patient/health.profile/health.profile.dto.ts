@@ -33,4 +33,7 @@ export interface HealthProfileDto {
     StrokeSurvivorOrCaregiver? : string;
     LivingAlone?               : boolean;
     WorkedPriorToStroke?       : boolean;
+    CreatedAt?                 : Date;
+    UpdatedAt?                 : Date;
+
 }

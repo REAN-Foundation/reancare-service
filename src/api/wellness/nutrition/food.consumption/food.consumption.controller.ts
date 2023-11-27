@@ -49,7 +49,7 @@ export class FoodConsumptionController extends BaseController {
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(foodConsumption.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, foodConsumption.id, foodConsumption.Provider, model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, foodConsumption.id, foodConsumption.Provider, foodConsumption, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${foodConsumption.PatientUserId}`);

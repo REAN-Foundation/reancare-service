@@ -48,7 +48,7 @@ export class MeditationController extends BaseController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(meditation.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, meditation.id, null, model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, meditation.id, null, meditation, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${meditation.PatientUserId}`);
@@ -146,7 +146,7 @@ export class MeditationController extends BaseController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
+                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, updated, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);

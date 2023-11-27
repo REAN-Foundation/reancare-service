@@ -118,6 +118,12 @@ export default class EHRMedicationData extends Model {
     })
     AdditionalInfo: string;
 
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    RecordDate: string;
+
     @Column
     @CreatedAt
     TimeStamp: Date;

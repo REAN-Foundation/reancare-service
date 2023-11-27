@@ -706,7 +706,8 @@ export class CareplanService implements IUserActionService {
                 model.Frequency,       
                 model.Status,
                 healthSystemHospitalDetails.HealthSystem,
-                healthSystemHospitalDetails.AssociatedHospital
+                healthSystemHospitalDetails.AssociatedHospital,
+                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
             );
     };
 

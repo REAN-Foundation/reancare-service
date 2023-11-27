@@ -9,6 +9,9 @@ export interface MeditationDto {
     DurationInMins? : number;
     StartTime       : Date;
     EndTime?        : Date;
+    CreatedAt?      : Date;
+    UpdatedAt?      : Date;
+
 }
 
 export interface MeditationForDayDto {

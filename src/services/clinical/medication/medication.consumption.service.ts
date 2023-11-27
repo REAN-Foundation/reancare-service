@@ -788,7 +788,7 @@ export class MedicationConsumptionService implements IUserActionService {
 
     };
 
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, model: MedicationConsumptionDomainModel, appName?: string) => {
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, model: MedicationConsumptionDetailsDto, appName?: string) => {
         if (model.IsTaken) {
             EHRAnalyticsHandler.addMedicationRecord(
                 appName,
@@ -803,6 +803,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 model.IsTaken,
                 model.IsMissed,
                 model.IsCancelled,
+                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
             );
         }
 
@@ -820,6 +821,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 model.IsTaken,
                 model.IsMissed,
                 model.IsCancelled,
+                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
             );
         }
     };

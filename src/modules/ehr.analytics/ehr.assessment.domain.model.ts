@@ -20,5 +20,5 @@ export interface EHRAssessmentDomainModel {
     AdditionalInfo?: string
     StartedAt?     : Date
     FinishedAt?    : Date
-    TimeStamp?     : Date;
+    RecordDate?    : string;
 }

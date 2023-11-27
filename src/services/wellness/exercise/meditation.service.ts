@@ -48,7 +48,7 @@ export class MeditationService {
         return await this._meditationRepo.getAllUserResponsesBefore(patientUserId, date);
     };
 
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: MeditationDomainModel, appName?: string) => {
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: MeditationDto, appName?: string) => {
         if (model.DurationInMins) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
@@ -60,7 +60,7 @@ export class MeditationService {
                 'Meditation',
                 null,
                 appName,
-                model.StartTime ? model.StartTime.toString() : null
+                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
             );
         }
     };

@@ -134,6 +134,8 @@ export class EHRAnalyticsRepo {
                 IsTaken          : model.IsTaken,
                 IsMissed         : model.IsMissed,
                 IsCancelled      : model.IsCancelled,
+                RecordDate        : model.RecordDate,
+
             };
             const record = await EHRMedicationData.create(entity);
             return record != null;
@@ -174,6 +176,7 @@ export class EHRAnalyticsRepo {
                 existing.Status             = model.Status,
                 existing.HealthSystem       = model.HealthSystem,
                 existing.AssociatedHospital = model.AssociatedHospital,
+                existing.RecordDate         = model.RecordDate,
 
                 await existing.save();
 
@@ -202,6 +205,8 @@ export class EHRAnalyticsRepo {
                 Status             : model.Status,
                 HealthSystem       : model.HealthSystem,
                 AssociatedHospital : model.AssociatedHospital,
+                RecordDate         : model.RecordDate,
+
             };
             const record = await EHRCareplanActivityData.create(entity);
             return record != null;
@@ -232,6 +237,7 @@ export class EHRAnalyticsRepo {
                 AdditionalInfo   : model.AdditionalInfo,
                 StartedAt        : model.StartedAt,
                 FinishedAt       : model.FinishedAt,
+                RecordDate       : model.RecordDate
         
             };
             const record = await EHRAssessmentData.create(entity);
@@ -246,10 +252,13 @@ export class EHRAnalyticsRepo {
         if (!model) {
             model = {};
         }
-        if (model.DoctorPersonId_1 === null) {
-            model.DoctorPersonId_1 = details.DoctorPersonId;
+        if (details.DoctorPersonId_1) {
+            model.DoctorPersonId_1 = details.DoctorPersonId_1;
         }
-        else if (model.DoctorPersonId_2 === null) {
+        if (details.DoctorPersonId_2) {
+            model.DoctorPersonId_2 = details.DoctorPersonId_2;
+        }
+        /*else if (model.DoctorPersonId_2 === null) {
             model.DoctorPersonId_2 = details.DoctorPersonId;
         }
         else if (details.OtherDoctorPersonId !== null) {
@@ -259,7 +268,7 @@ export class EHRAnalyticsRepo {
             if (model.DoctorPersonId_2 === details.OtherDoctorPersonId) {
                 model.DoctorPersonId_2 = details.DoctorPersonId;
             }
-        }
+        }*/
         if (details.ProviderCode) {
             model.ProviderCode = details.ProviderCode;
         }
@@ -334,6 +343,15 @@ export class EHRAnalyticsRepo {
         }
         if (details.BodyHeight) {
             model.BodyHeight = details.BodyHeight;
+        }
+        if (details.DoctorPersonId_1) {
+            model.DoctorPersonId_1 = details.DoctorPersonId_1;
+        }
+        if (details.DoctorPersonId_2) {
+            model.DoctorPersonId_2 = details.DoctorPersonId_2;
+        }
+        if (details.RecordDate) {
+            model.RecordDate = details.RecordDate;
         }
 
         return model;

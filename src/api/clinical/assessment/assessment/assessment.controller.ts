@@ -299,7 +299,7 @@ export class AssessmentController extends BaseController{
             var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
             if (eligibleAppNames.length > 0) {
                 for (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(answerResponse, assessment, options, appName);   
+                    this._service.addEHRRecord(answerResponse, assessment, options, appName);   
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
@@ -320,7 +320,7 @@ export class AssessmentController extends BaseController{
                 if (eligibleAppNames.length > 0) {
                     var updatedAssessment = await this._service.getById(assessment.id);
                     for (var appName of eligibleAppNames) { 
-                        this.addEHRRecord(null, updatedAssessment, null, appName);
+                        this._service.addEHRRecord(null, updatedAssessment, null, appName);
                     }
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
@@ -388,7 +388,7 @@ export class AssessmentController extends BaseController{
                         ar = JSON.parse(JSON.stringify(ar));
                         ar.Answer['SubQuestion']  = ar.Answer.Title;
                         ar.Answer.Title = listNode.Title;
-                        this.addEHRRecord(ar, assessment, ar.Parent, appName);
+                        this._service.addEHRRecord(ar, assessment, ar.Parent, appName);
                     }
                 }
             } else {
@@ -413,7 +413,7 @@ export class AssessmentController extends BaseController{
                     var updatedAssessment = await this._service.getById(assessment.id);
                     updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore']);
                     for (var appName of eligibleAppNames) {
-                        this.addEHRRecord(null, updatedAssessment, null, appName);
+                        this._service.addEHRRecord(null, updatedAssessment, null, appName);
                     }
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
@@ -482,55 +482,6 @@ export class AssessmentController extends BaseController{
 
         return { score, reportUrl };
     }
-
-    private addEHRRecord = async (answerResponse: any, assessment?: any, options?: any, appName?: string ) => {
-
-        Logger.instance().log(`AnswerResponse: ${JSON.stringify(answerResponse)}`);
-        Logger.instance().log(`Assessment: ${JSON.stringify(assessment, null, 2)}`);
-
-        var assessmentRecord = {
-            AppName        : appName,
-            PatientUserId  : assessment.PatientUserId,
-            AssessmentId   : assessment.id,
-            TemplateId     : assessment.AssessmentTemplateId,
-            NodeId         : answerResponse ? answerResponse.Answer.NodeId                                           : null,
-            Title          : assessment.Title,
-            Question       : answerResponse ? answerResponse.Answer.Title                                            : null,
-            SubQuestion    : answerResponse && answerResponse.Answer.SubQuestion ? answerResponse.Answer.SubQuestion : null,
-            QuestionType   : answerResponse ? answerResponse.Answer.ResponseType                                     : null,
-            AnswerOptions  : options ? JSON.stringify(options.Options)                                               : null,
-            AnswerValue    : null,
-            AnswerReceived : null,
-            AnsweredOn     : assessment.CreatedAt,
-            Status         : assessment.Status ?? null,
-            Score          : assessment.Score ?? null,
-            AdditionalInfo : null,
-            StartedAt      : assessment.StartedAt ?? null,
-            FinishedAt     : assessment.FinishedAt ?? null,
-        };
-
-        Logger.instance().log(`AssessmentRecord: ${JSON.stringify(assessmentRecord, null, 2)}`);
-
-        if (answerResponse && answerResponse.Answer.ResponseType === 'Single Choice Selection') {
-            assessmentRecord['AnswerValue'] = answerResponse.Answer.ChosenOption.Sequence;
-            assessmentRecord['AnswerReceived'] = answerResponse.Answer.ChosenOption.Text;
-            EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-        } else if (answerResponse && answerResponse.Answer.ResponseType === 'Multi Choice Selection') {
-            var responses = answerResponse.Answer.ChosenOptions;
-            for await (var r of responses) {
-                assessmentRecord['AnswerValue'] = r.Sequence;
-                assessmentRecord['AnswerReceived'] = r.Text;
-                var a = JSON.parse(JSON.stringify(assessmentRecord));
-                EHRAnalyticsHandler.addAssessmentRecord(a);
-            }
-        } else {
-            EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-
-        }
-
-    
-        
-    };
 
     //#endregion
 

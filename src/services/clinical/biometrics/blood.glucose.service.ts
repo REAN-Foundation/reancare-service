@@ -83,6 +83,4 @@ export class BloodGlucoseService {
             );
         }
     };
-
-
 }

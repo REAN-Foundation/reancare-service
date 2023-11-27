@@ -46,7 +46,7 @@ export class BodyTemperatureController extends BaseController {
             }
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyTemperature.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(model.PatientUserId, bodyTemperature.id, bodyTemperature.Provider, model, appName);
                 }
             } else {
@@ -141,7 +141,7 @@ export class BodyTemperatureController extends BaseController {
             }
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) {
                     this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
                 }
             } else {

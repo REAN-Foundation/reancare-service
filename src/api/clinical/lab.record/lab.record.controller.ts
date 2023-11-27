@@ -42,7 +42,7 @@ export class LabRecordController extends BaseController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(labRecord.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(model.PatientUserId, labRecord.id, null, model, appName);
                 }
             } else {
@@ -116,7 +116,7 @@ export class LabRecordController extends BaseController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
                 }
             } else {
@@ -155,5 +155,4 @@ export class LabRecordController extends BaseController {
     };
 
     //#endregion
-
 }

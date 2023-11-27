@@ -42,7 +42,7 @@ export class BodyHeightController {
             }
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyHeight.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(model.PatientUserId, bodyHeight.id, null, model, appName);
                 }
             } else {
@@ -121,7 +121,7 @@ export class BodyHeightController {
             }
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
                 }
             } else {

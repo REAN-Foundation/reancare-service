@@ -226,17 +226,10 @@ export class PatientController extends BaseUserController {
                 location = addresses[0].Location;
             }
 
-            const userDetails = await this._service.getByUserId(userId);
-            if (userDetails.User.IsTestUser == false) {
-                var userDevices = await this._userDeviceDetailsService.getByUserId(userId);
-                if (userDevices.length > 0) {
-                    for await (var userDevice of userDevices) {
-                        if (this.eligibleToAddInEhrRecords(userDevice.AppName)) {
-                            await this._service.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, userDevice.AppName);       
-                        } else {
-                            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
-                        }
-                    }
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(userId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) {
+                    await this._service.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, appName);       
                 }
                 
             }

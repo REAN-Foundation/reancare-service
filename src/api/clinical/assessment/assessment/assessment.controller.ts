@@ -298,7 +298,7 @@ export class AssessmentController extends BaseController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(answerResponse.Parent.PatientUserId);
             var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(answerResponse, assessment, options, appName);   
                 }
             } else {
@@ -319,7 +319,7 @@ export class AssessmentController extends BaseController{
                 }
                 if (eligibleAppNames.length > 0) {
                     var updatedAssessment = await this._service.getById(assessment.id);
-                    for (var appName of eligibleAppNames) { 
+                    for await (var appName of eligibleAppNames) { 
                         this._service.addEHRRecord(null, updatedAssessment, null, appName);
                     }
                 } else {
@@ -383,7 +383,7 @@ export class AssessmentController extends BaseController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(answerResponse.Parent.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 var updatedAssessment = await this._service.getById(assessment.id);
-                for (var appName of eligibleAppNames) {
+                for await (var appName of eligibleAppNames) {
                     for await (var ar of answerResponse.Answer) {
                         ar = JSON.parse(JSON.stringify(ar));
                         ar.Answer['SubQuestion']  = ar.Answer.Title;
@@ -412,7 +412,7 @@ export class AssessmentController extends BaseController{
                 if (eligibleAppNames.length > 0) {
                     var updatedAssessment = await this._service.getById(assessment.id);
                     updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore']);
-                    for (var appName of eligibleAppNames) {
+                    for await (var appName of eligibleAppNames) {
                         this._service.addEHRRecord(null, updatedAssessment, null, appName);
                     }
                 } else {

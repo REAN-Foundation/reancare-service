@@ -56,7 +56,7 @@ export class SleepController extends BaseController{
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(sleep.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(model.PatientUserId, sleep.id, null, model, appName);
                 }
             } else {
@@ -152,7 +152,7 @@ export class SleepController extends BaseController{
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
                 }
             } else {

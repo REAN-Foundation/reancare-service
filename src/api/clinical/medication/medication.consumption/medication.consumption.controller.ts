@@ -63,7 +63,7 @@ export class MedicationConsumptionController {
             for (var dto of dtos) {
                 var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
                 if (eligibleAppNames.length > 0) {
-                    for (var appName of eligibleAppNames) { 
+                    for await (var appName of eligibleAppNames) { 
                         this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
                     }
                 } else {
@@ -114,7 +114,7 @@ export class MedicationConsumptionController {
             for (var dto of dtos) {
                 var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
                 if (eligibleAppNames.length > 0) {
-                    for (var appName of eligibleAppNames) { 
+                    for await (var appName of eligibleAppNames) { 
                         this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
                     }
                 } else {
@@ -163,7 +163,7 @@ export class MedicationConsumptionController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
                 }
             } else {
@@ -209,7 +209,7 @@ export class MedicationConsumptionController {
             // get user details to add records in ehr database
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
             if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
+                for await (var appName of eligibleAppNames) { 
                     this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
                 }
             } else {

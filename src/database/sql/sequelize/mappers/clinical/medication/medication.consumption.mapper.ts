@@ -64,6 +64,9 @@ export class MedicationConsumptionMapper {
             TimeScheduleStart : consumption.TimeScheduleStart,
             TimeScheduleEnd   : consumption.TimeScheduleEnd,
             Status            : status,
+            CreatedAt         : consumption.CreatedAt,
+            UpdatedAt         : consumption.UpdatedAt,
+
         };
         
         return dto;
@@ -97,6 +100,7 @@ export class MedicationConsumptionMapper {
             Status            : status,
             CreatedAt         : consumption.CreatedAt,
             UpdatedAt         : consumption.UpdatedAt,
+
         };
 
         return dto;

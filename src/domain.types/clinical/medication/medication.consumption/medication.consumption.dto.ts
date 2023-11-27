@@ -25,13 +25,15 @@ export interface MedicationConsumptionDetailsDto {
 }
 
 export interface MedicationConsumptionDto {
-    id                : string,
-    PatientUserId     : string;
+    id?               : string,
+    PatientUserId?    : string;
     DrugName?         : string;
     Details?          : string;
     TimeScheduleStart?: Date;
     TimeScheduleEnd?  : Date;
     Status?           : MedicationConsumptionStatus;
+    CreatedAt?        : Date;
+    UpdatedAt?        : Date;
 }
 
 export interface MedicationConsumptionStatsDto {

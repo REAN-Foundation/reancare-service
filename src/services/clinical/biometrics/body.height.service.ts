@@ -60,7 +60,7 @@ export class BodyHeightService {
         if (model.BodyHeight) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, provider, EHRRecordTypes.BodyHeight, model.BodyHeight, model.Unit, null, null, appName, 
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
 
             //Also add it to the static record

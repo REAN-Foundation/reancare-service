@@ -57,7 +57,7 @@ export class StepCountService {
                 'Step-count',
                 null,
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };

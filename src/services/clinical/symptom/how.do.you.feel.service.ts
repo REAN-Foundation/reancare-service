@@ -48,7 +48,7 @@ export class HowDoYouFeelService {
                 'Better',
                 null,
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
 
@@ -63,7 +63,7 @@ export class HowDoYouFeelService {
                 'Same',
                 null,
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
 
@@ -78,7 +78,7 @@ export class HowDoYouFeelService {
                 'Worse',
                 null,
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
 
             );
         }

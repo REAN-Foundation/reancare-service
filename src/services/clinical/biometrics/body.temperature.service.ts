@@ -72,7 +72,7 @@ export class BodyTemperatureService {
         if (model.BodyTemperature) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, provider, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit, null, null, appName, 
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };

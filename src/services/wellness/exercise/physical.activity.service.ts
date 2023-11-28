@@ -59,7 +59,7 @@ export class PhysicalActivityService {
                 null,
                 'Did you add movement to your day today?',
                 appName,
-                model.CreatedAt ? model.CreatedAt.toString() : null
+                model.CreatedAt ? model.CreatedAt : null
             );
         }
 
@@ -74,7 +74,7 @@ export class PhysicalActivityService {
                 model.Category,
                 'Exercise',
                 appName,
-                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
+                model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
 

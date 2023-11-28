@@ -803,7 +803,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 model.IsTaken,
                 model.IsMissed,
                 model.IsCancelled,
-                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
+                model.CreatedAt ? new Date (model.CreatedAt) : null
             );
         }
 
@@ -821,7 +821,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 model.IsTaken,
                 model.IsMissed,
                 model.IsCancelled,
-                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
+                model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
     };

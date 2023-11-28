@@ -15,7 +15,7 @@ export interface EHRMedicationDomainModel {
     TakenAt?          : Date;
     IsMissed?         : boolean;
     IsCancelled?      : boolean;
-    RecordDate?       : string;
+    RecordDate?       : Date;
     TimeStamp?        : Date;
     AdditionalInfo?   : string;
 }

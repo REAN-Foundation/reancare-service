@@ -70,7 +70,7 @@ export class BodyWeightService {
         if (model.BodyWeight) {
             EHRAnalyticsHandler.addFloatRecord(
                 patientUserId, recordId, provider, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit, null, null, appName, 
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };

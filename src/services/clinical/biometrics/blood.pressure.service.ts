@@ -114,7 +114,7 @@ export class BloodPressureService {
                 'Systolic Blood Pressure',
                 'Blood Pressure',
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
         if (model.Diastolic) {
@@ -128,7 +128,7 @@ export class BloodPressureService {
                 'Distolic Blood Pressure',
                 'Blood Pressure',
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };

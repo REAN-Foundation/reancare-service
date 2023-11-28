@@ -62,7 +62,7 @@ export class SleepService {
                 'Sleep',
                 null,
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };

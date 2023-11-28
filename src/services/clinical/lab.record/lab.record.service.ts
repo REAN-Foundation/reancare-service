@@ -68,7 +68,7 @@ export class LabRecordService {
                 recordId,
                 provider,
                 EHRRecordTypes.LabRecord, model.PrimaryValue, model.Unit, model.DisplayName, model.DisplayName, appName, 
-                model.RecordedAt ? model.RecordedAt.toString() : null
+                model.RecordedAt ? model.RecordedAt : null
                 );
         }
     };

@@ -131,10 +131,10 @@ export default class EHRVitalData extends Model {
     AdditionalInfo: string;
 
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.DATE,
         allowNull : true,
     })
-    RecordDate: string;
+    RecordDate: Date;
 
     @Column
     @CreatedAt

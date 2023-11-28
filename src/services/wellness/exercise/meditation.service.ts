@@ -60,7 +60,7 @@ export class MeditationService {
                 'Meditation',
                 null,
                 appName,
-                model.CreatedAt ? new Date(model.CreatedAt).toISOString().split('T')[0] : null
+                model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
     };

@@ -226,7 +226,7 @@ export class Scheduler {
     private scheduleExistingVitalDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingVitalDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing vitals data in EHR database...');
+                Logger.instance().log('[ScheduleExistingVitalDataToEHR]: Running scheduled jobs: Schedule to populate existing vitals data in EHR database...');
                 var _ehrVitalService = new EHRVitalService();   
                 await _ehrVitalService.scheduleExistingVitalDataToEHR("BloodPressure");
                 await _ehrVitalService.scheduleExistingVitalDataToEHR("BloodGlucose");
@@ -235,6 +235,7 @@ export class Scheduler {
                 await _ehrVitalService.scheduleExistingVitalDataToEHR("BodyTemperature");
                 await _ehrVitalService.scheduleExistingVitalDataToEHR("BloodOxygenSaturation");
                 await _ehrVitalService.scheduleExistingVitalDataToEHR("Pulse");
+                Logger.instance().log('[ScheduleExistingVitalDataToEHR] : Cron schedule completed successfully');
 
             })();
         });
@@ -243,9 +244,10 @@ export class Scheduler {
     private scheduleExistingLabDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingLabDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing labs data in EHR database...');
+                Logger.instance().log('[ScheduleExistingLabDataToEHR]: Running scheduled jobs: Schedule to populate existing labs data in EHR database...');
                 var _ehrLabService = new EHRLabService();   
                 await _ehrLabService.scheduleExistingLabDataToEHR();
+                Logger.instance().log('[ScheduleExistingLabDataToEHR]: Cron schedule completed successfully');
             })();
         });
     };
@@ -253,12 +255,12 @@ export class Scheduler {
     private scheduleExistingPhysicalActivityDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingPhysicalActivityDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing physical activities data in EHR database...');
+                Logger.instance().log('[ScheduleExistingPhysicalActivityDataToEHR]: Running scheduled jobs: Schedule to populate existing physical activities data in EHR database...');
                 var _ehrPhysicalActivityService = new EHRPhysicalActivityService();   
                 await _ehrPhysicalActivityService.scheduleExistingPhysicalActivityDataToEHR("PhysicalActivity");
                 await _ehrPhysicalActivityService.scheduleExistingPhysicalActivityDataToEHR("Stand");
                 await _ehrPhysicalActivityService.scheduleExistingPhysicalActivityDataToEHR("StepCount");
-
+                Logger.instance().log('[ScheduleExistingPhysicalActivityDataToEHR]: Cron schedule completed successfully');
             })();
         });
     };
@@ -266,10 +268,11 @@ export class Scheduler {
     private scheduleExistingMentalWellBeingDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingMentalWellBeingDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing mental wellbeing data in EHR database...');
+                Logger.instance().log('[ScheduleExistingMentalWellBeingDataToEHR]: Running scheduled jobs: Schedule to populate existing mental wellbeing data in EHR database...');
                 var _ehrMentalWellBeingService = new EHRMentalWellBeingService();   
                 await _ehrMentalWellBeingService.scheduleExistingMentalWellBeingDataToEHR("Meditation");
                 await _ehrMentalWellBeingService.scheduleExistingMentalWellBeingDataToEHR("Sleep");
+                Logger.instance().log('[ScheduleExistingMentalWellBeingDataToEHR]: Cron schedule completed successfully');
 
             })();
         });
@@ -278,9 +281,10 @@ export class Scheduler {
     private scheduleExistingNutritionDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingNutritionDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing nutritions data in EHR database...');
+                Logger.instance().log('[ScheduleExistingNutritionDataToEHR]: Running scheduled jobs: Schedule to populate existing nutritions data in EHR database...');
                 var _ehrNutritionService = new EHRNutritionService();   
                 await _ehrNutritionService.scheduleExistingNutritionDataToEHR();
+                Logger.instance().log('[ScheduleExistingNutritionDataToEHR]: Cron schedule completed successfully');
             })();
         });
     };
@@ -288,9 +292,10 @@ export class Scheduler {
     private scheduleExistingMedicationDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingMedicationDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing medication data in EHR database...');
+                Logger.instance().log('[ScheduleExistingMedicationDataToEHR]: Running scheduled jobs: Schedule to populate existing medication data in EHR database...');
                 var _ehrMedicationService = new EHRMedicationService();   
                 await _ehrMedicationService.scheduleExistingMedicationDataToEHR();
+                Logger.instance().log('[ScheduleExistingMedicationDataToEHR]: Cron schedule completed successfully');
             })();
         });
     };
@@ -298,9 +303,10 @@ export class Scheduler {
     private scheduleExistingSymptomDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingSymptomDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing symptoms data in EHR database...');
+                Logger.instance().log('[ScheduleExistingSymptomDataToEHR]: Running scheduled jobs: Schedule to populate existing symptoms data in EHR database...');
                 var _ehrSymptomService = new EHRSymptomService();   
                 await _ehrSymptomService.scheduleExistingSymptomDataToEHR();
+                Logger.instance().log('[ScheduleExistingSymptomDataToEHR]: Cron schedule completed successfully');
             })();
         });
     };
@@ -308,9 +314,10 @@ export class Scheduler {
     private scheduleExistingAssessmentDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingAssessmentDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing vitals data in EHR database...');
+                Logger.instance().log('[ScheduleExistingAssessmentDataToEHR]: Running scheduled jobs: Schedule to populate existing assessment data in EHR database...');
                 var _ehrAssessmentService = new EHRAssessmentService();   
                 await _ehrAssessmentService.scheduleExistingAssessmentDataToEHR();
+                Logger.instance().log('[ScheduleExistingAssessmentDataToEHR]: Cron schedule completed successfully');
             })();
         });
     };
@@ -318,9 +325,10 @@ export class Scheduler {
     private scheduleExistingCareplanActivityDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingCareplanActivityDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing careplan activity data in EHR database...');
+                Logger.instance().log('[ScheduleExistingCareplanActivityDataToEHR]: Running scheduled jobs: Schedule to populate existing careplan activity data in EHR database...');
                 var _ehrCareplanActivityService = new EHRCareplanActivityService();   
                 await _ehrCareplanActivityService.scheduleExistingCareplanActivityDataToEHR();
+                Logger.instance().log('[ScheduleExistingCareplanActivityDataToEHR]: Cron schedule completed successfully');
             })();
         });
     };
@@ -328,9 +336,10 @@ export class Scheduler {
     private scheduleExistingStaticDataToEHR = () => {
         cron.schedule(Scheduler._schedules['ScheduleExistingStaticDataToEHR'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule to populate existing vitals data in EHR database...');
+                Logger.instance().log('[ScheduleExistingStaticDataToEHR]: Running scheduled jobs: Schedule to populate existing static data in EHR database...');
                 var _ehrAnalyticsHandler = new EHRAnalyticsHandler();   
                 await _ehrAnalyticsHandler.scheduleExistingStaticDataToEHR();
+                Logger.instance().log('[ScheduleExistingStaticDataToEHR]: Cron schedule completed successfully');
             })();
         });
     };

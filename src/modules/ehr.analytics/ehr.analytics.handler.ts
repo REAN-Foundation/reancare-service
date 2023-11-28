@@ -397,7 +397,7 @@ export class EHRAnalyticsHandler {
             return appNames;
         }
         
-        if (userDetails.User.IsTestUser == false) {
+        if (userDetails.User && userDetails.User.IsTestUser == false) {
             var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
             if (userDevices.length > 0) {
                 userDevices.forEach(userDevice => {

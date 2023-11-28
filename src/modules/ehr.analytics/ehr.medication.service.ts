@@ -27,26 +27,27 @@ export class EHRMedicationService {
     public scheduleExistingMedicationDataToEHR = async () => {
         try {
             var patientUserIds = await this._patientService.getAllPatientUserIds();
+            Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Patient User Ids :${JSON.stringify(patientUserIds)}`);
+
             for await (var p of patientUserIds) {
                 var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
                 if (eligibleAppNames.length > 0) {
                     for await (var appName of eligibleAppNames) { 
                         var searchResults = await this._medicationConsumptionService.search({"PatientUserId" : p});
+                        Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Consumption records for ${p} :: ${searchResults.Items.length}`);
                         for await (var m of searchResults.Items) {
                             this._medicationConsumptionService.addEHRRecord(m.PatientUserId, m.id, m, appName);
-
                         }
                     }
                 } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${p}`);
-                }      
+                    Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`);
+                }
             }
 
-            Logger.instance().log(`Processed :${searchResults.Items.length} records for medication`);
-            
+            Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Processed :${searchResults.Items.length} records for medication`);   
         }
         catch (error) {
-            Logger.instance().log(`Error population existing medication data in ehr insights database :: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Error population existing medication data in ehr insights database :: ${JSON.stringify(error)}`);
         }
     };
 

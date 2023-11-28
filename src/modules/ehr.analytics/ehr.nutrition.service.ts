@@ -39,12 +39,12 @@ export class EHRNutritionService {
                             this._foodConsumptionService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                         }
                     } else {
-                        Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                        Logger.instance().log(`[ScheduleExistingNutritionDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                     }     
                 }
                 
                 pageIndex++;
-                Logger.instance().log(`Processed :${searchResults.Items.length} records for Nutrition`);
+                Logger.instance().log(`[ScheduleExistingNutritionDataToEHR] Processed :${searchResults.Items.length} records for Nutrition`);
 
                 if (searchResults.Items.length < 1000) {
                     moreItems = false;
@@ -54,7 +54,7 @@ export class EHRNutritionService {
             
         }
         catch (error) {
-            Logger.instance().log(`Error population existing nutrition data in ehr insights database: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingNutritionDataToEHR] Error population existing nutrition data in ehr insights database: ${JSON.stringify(error)}`);
         }
     };
 

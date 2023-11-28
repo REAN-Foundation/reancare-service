@@ -26,6 +26,7 @@ export class EHRCareplanActivityService {
     public scheduleExistingCareplanActivityDataToEHR = async () => {
         try {    
             var patientUserIds = await this._patientService.getAllPatientUserIds();
+            Logger.instance().log(`[ScheduleExistingCareplanActivityDataToEHR] Patient User Ids :${JSON.stringify(patientUserIds)}`);
             for await (var p of patientUserIds) {
                 var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
                 var healthSystemHospitalDetails = await this._patientService.getByUserId(p);
@@ -40,13 +41,13 @@ export class EHRCareplanActivityService {
                     }
                     
                 } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${p}`);
+                    Logger.instance().log(`[ScheduleExistingCareplanActivityDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`);
                 }      
             }
-            Logger.instance().log(`Processed :${searchResults.length} records for careplan activity`);
+            Logger.instance().log(`[ScheduleExistingCareplanActivityDataToEHR] Processed :${searchResults.length} records for careplan activity`);
             
         } catch (error) {
-            Logger.instance().log(`Error population existing assessment data in ehr insights database :: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingCareplanActivityDataToEHR] Error population existing assessment data in ehr insights database :: ${JSON.stringify(error)}`);
         }
     };
 

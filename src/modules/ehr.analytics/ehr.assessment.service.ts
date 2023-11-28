@@ -30,6 +30,7 @@ export class EHRAssessmentService {
         try {
 
             var patientUserIds = await this._patientService.getAllPatientUserIds();
+            Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Patient User Ids :${JSON.stringify(patientUserIds)}`);
             for await (var p of patientUserIds) {
                 var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
                 if (eligibleAppNames.length > 0) {
@@ -51,14 +52,14 @@ export class EHRAssessmentService {
                     }
                     
                 } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${p}`);
+                    Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`);
                 }      
             }
             
-            Logger.instance().log(`Processed :${searchResults.Items.length} records for Assessment`);
+            Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Processed :${searchResults.Items.length} records for Assessment`);
 
         } catch (error) {
-            Logger.instance().log(`Error population existing assessment data in ehr insights database :: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Error population existing assessment data in ehr insights database :: ${JSON.stringify(error)}`);
         }
     };
 

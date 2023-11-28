@@ -43,12 +43,12 @@ export class EHRSymptomService {
                             this._howDoYouFeelService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                         }
                     } else {
-                        Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                        Logger.instance().log(`[ScheduleExistingSymptomDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                     }     
                 }
 
                 pageIndex++;
-                Logger.instance().log(`Processed :${searchResults.Items.length} records for symptoms`);
+                Logger.instance().log(`[ScheduleExistingSymptomDataToEHR] Processed :${searchResults.Items.length} records for symptoms`);
 
                 if (searchResults.Items.length < 1000) {
                     moreItems = false;
@@ -74,12 +74,12 @@ export class EHRSymptomService {
                             this._dailyAssessmentService.addEHRRecord(dr.PatientUserId, dr.id, null, dr, appName);
                         }
                     } else {
-                        Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                        Logger.instance().log(`[ScheduleExistingSymptomDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                     }     
                 }
                 
                 pageIndex++;
-                Logger.instance().log(`Processed :${dailyAssessmentSearchResults.Items.length} records for daily assessment`);
+                Logger.instance().log(`[ScheduleExistingSymptomDataToEHR] Processed :${dailyAssessmentSearchResults.Items.length} records for daily assessment`);
 
                 if (dailyAssessmentSearchResults.Items.length < 1000) {
                     moreItems = false;
@@ -88,7 +88,7 @@ export class EHRSymptomService {
             }
         }
         catch (error) {
-            Logger.instance().log(`Error population existing symptoms data in ehr insights database: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingSymptomDataToEHR] Error population existing symptoms data in ehr insights database: ${JSON.stringify(error)}`);
         }
     };
 

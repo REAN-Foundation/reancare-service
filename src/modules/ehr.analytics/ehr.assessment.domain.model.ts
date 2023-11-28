@@ -16,9 +16,9 @@ export interface EHRAssessmentDomainModel {
     AnswerReceived?: string;
     AnsweredOn?    : Date;
     Status?        : string;
-    Score?         : string
-    AdditionalInfo?: string
-    StartedAt?     : Date
-    FinishedAt?    : Date
-    RecordDate?    : string;
+    Score?         : string;
+    AdditionalInfo?: string;
+    StartedAt?     : Date;
+    FinishedAt?    : Date;
+    RecordDate?    : Date;
 }

@@ -36,7 +36,7 @@ export class DailyAssessmentService {
                 'Mood',
                 null,
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
 
@@ -51,7 +51,7 @@ export class DailyAssessmentService {
                 'Feeling',
                 null,
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
 
@@ -67,7 +67,7 @@ export class DailyAssessmentService {
                     'EnergyLevels',
                     null,
                     appName,
-                    model.RecordDate ? model.RecordDate.toString() : null
+                    model.RecordDate ? model.RecordDate : null
     
                 );
 

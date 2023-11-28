@@ -132,10 +132,10 @@ export default class EHRLabData extends Model {
 
     @Length({ max: 64 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.DATE,
         allowNull : true,
     })
-    RecordDate: string;
+    RecordDate: Date;
 
     @Column
     @CreatedAt

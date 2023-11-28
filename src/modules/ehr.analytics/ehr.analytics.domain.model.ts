@@ -8,7 +8,6 @@ export interface EHRDynamicRecordDomainModel {
     Provider?     : string;
     Type          : EHRRecordTypes;
     Name          : string;
-
     ValueInt?     : number;
     ValueFloat?   : number;
     ValueString?  : string;
@@ -17,9 +16,8 @@ export interface EHRDynamicRecordDomainModel {
     ValueDataType?: DataTypes;
     ValueName?    : string;
     ValueUnit?    : string;
-
-    TimeStamp? : Date;
-    RecordDate?: string;
+    TimeStamp?    : Date;
+    RecordDate?   : Date;
 }
 
 export interface EHRStaticRecordDomainModel {
@@ -48,6 +46,6 @@ export interface EHRStaticRecordDomainModel {
     IsSmoker?           : boolean;
     Location?           : string;
     OtherConditions?     : string;
-    RecordDate?          : string;
+    RecordDate?          : Date;
 
 }

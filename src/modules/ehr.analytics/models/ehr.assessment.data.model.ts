@@ -148,10 +148,10 @@ export default class EHRAssessmentData extends Model {
     FinishedAt: Date;
 
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.DATE,
         allowNull : true,
     })
-    RecordDate: string;
+    RecordDate: Date;
 
     @Column
     @CreatedAt

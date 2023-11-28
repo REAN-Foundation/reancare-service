@@ -42,8 +42,7 @@ export class EHRAnalyticsHandler {
 
     static _q = asyncLib.queue((model: EHRDynamicRecordDomainModel, onCompleted) => {
         (async () => {
-            model.RecordDate = model.RecordDate ? new Date((model.RecordDate)).toISOString()
-                .split('T')[0] : null;
+            model.RecordDate = model.RecordDate ? new Date(model.RecordDate) : null;
             await EHRAnalyticsHandler._ehrDatasetRepo.create(model);
             onCompleted(model);
         })();
@@ -158,7 +157,7 @@ export class EHRAnalyticsHandler {
         primaryName?: string,
         name?: string,
         appName?: string,
-        recordDate?: string
+        recordDate?: Date
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -212,7 +211,7 @@ export class EHRAnalyticsHandler {
         primaryName?: string,
         name?: string,
         appName?: string,
-        recordDate?: string,
+        recordDate?: Date,
 
     ) => {
         var model:EHRDynamicRecordDomainModel = {
@@ -241,7 +240,7 @@ export class EHRAnalyticsHandler {
         primaryName?: string,
         name?: string,
         appName?: string,
-        recordDate?: string,
+        recordDate?: Date,
 
     ) => {
         var model:EHRDynamicRecordDomainModel = {
@@ -271,7 +270,7 @@ export class EHRAnalyticsHandler {
         primaryName?: string,
         name?: string,
         appName?: string,
-        recordDate?: string,
+        recordDate?: Date,
 
     ) => {
         var model:EHRDynamicRecordDomainModel = {
@@ -303,7 +302,7 @@ export class EHRAnalyticsHandler {
         isTaken?          : boolean,
         isMissed?         : boolean,
         isCancelled?      : boolean,
-        recordDate?       : string
+        recordDate?       : Date
     ) => {
         var model:EHRMedicationDomainModel = {
             AppName          : appName,
@@ -346,7 +345,7 @@ export class EHRAnalyticsHandler {
         status             : string,
         healthSystem?      : string,
         associatedHospital?: string,
-        recordDate?        : string
+        recordDate?        : Date
     ) => {
         var model:EHRCareplanActivityDomainModel = {
             AppName           : appName,
@@ -415,7 +414,7 @@ export class EHRAnalyticsHandler {
     };
 
     public scheduleExistingStaticDataToEHR = async () => {
-        try {     
+        try {
             var patientUserIds = await this._patientService.getAllPatientUserIds();
             for await (var p of patientUserIds) {
                 var eligibleAppNames = await this.getEligibleAppNames(p);

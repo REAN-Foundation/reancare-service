@@ -17,12 +17,15 @@ import { UserDeviceDetailsService } from "../../services/users/user/user.device.
 import { Loader } from "../../startup/loader";
 import { EmergencyContactService } from "../../services/users/patient/emergency.contact.service";
 import StaticEHRData from "./models/static.ehr.data.model";
+import { UserService } from "../../services/users/user/user.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class EHRAnalyticsHandler {
 
     //#region Publics
+
+    _userService: UserService = null;
 
     _patientService: PatientService = null;
 
@@ -31,6 +34,7 @@ export class EHRAnalyticsHandler {
     _emergencyContactService: EmergencyContactService = null;
 
     constructor() {
+        this._userService = Loader.container.resolve(UserService);
         this._patientService = Loader.container.resolve(PatientService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
         this._emergencyContactService = Loader.container.resolve(EmergencyContactService);
@@ -391,13 +395,13 @@ export class EHRAnalyticsHandler {
     };
 
     public getEligibleAppNames = async (patientUserId: uuid) => {
-        const userDetails = await this._patientService.getByUserId(patientUserId);
+        const userDetails = await this._userService.getById(patientUserId);
         var appNames = [];
         if (userDetails == null) {
             return appNames;
         }
-        
-        if (userDetails.User && userDetails.User.IsTestUser == false) {
+
+        if (userDetails && userDetails.IsTestUser == false) {
             var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
             if (userDevices.length > 0) {
                 userDevices.forEach(userDevice => {
@@ -416,29 +420,35 @@ export class EHRAnalyticsHandler {
     public scheduleExistingStaticDataToEHR = async () => {
         try {
             var patientUserIds = await this._patientService.getAllPatientUserIds();
+            Logger.instance().log(`[ScheduleExistingStaticDataToEHR] Patient User Ids: ${JSON.stringify(patientUserIds)}`);
+
             for await (var p of patientUserIds) {
                 var eligibleAppNames = await this.getEligibleAppNames(p);
                 if (eligibleAppNames.length > 0) {
                     for await (var appName of eligibleAppNames) { 
                         var patientDetails = await this._patientService.getByUserId(p);
-                        var emergencyDetails = await this._emergencyContactService.search({"PatientUserId": p});
-                        var i = 1;
-                        for await (var e of emergencyDetails.Items) {
-                            if (e.ContactRelation === 'Doctor') {
-                                patientDetails[`DoctorPersonId_${i}`] = e.ContactPersonId;
-                                i++;
+                        if (patientDetails != null) {
+                            var emergencyDetails = await this._emergencyContactService.search({"PatientUserId": p});
+                            var i = 1;
+                            for await (var e of emergencyDetails.Items) {
+                                if (e.ContactRelation === 'Doctor') {
+                                    patientDetails[`DoctorPersonId_${i}`] = e.ContactPersonId;
+                                    i++;
+                                }
                             }
+                            this._patientService.addEHRRecord(patientDetails.UserId, patientDetails.User.Person, patientDetails, null, patientDetails.HealthProfile, appName);
+                        } else {
+                            Logger.instance().log(`[ScheduleExistingStaticDataToEHR] Skip adding details to EHR database as Patient details not found:${p}`);
                         }
-                        this._patientService.addEHRRecord(patientDetails.UserId, patientDetails.User.Person, patientDetails, null, patientDetails.HealthProfile, appName);
                     }
                 } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${p}`);
+                    Logger.instance().log(`[ScheduleExistingStaticDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`);
                 }      
             }
-            Logger.instance().log(`Processed ${patientDetails.UserId} for static data`);
+            Logger.instance().log(`[ScheduleExistingStaticDataToEHR] Processed ${patientDetails.UserId} for static data`);
             
         } catch (error) {
-            Logger.instance().log(`Error population existing static data in ehr insights database: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingStaticDataToEHR] Error population existing static data in ehr insights database: ${JSON.stringify(error)}`);
         }
           
     };

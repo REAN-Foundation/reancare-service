@@ -48,7 +48,7 @@ export class EHRPhysicalActivityService {
                                     this._standService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                 }
                             } else {
-                                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                Logger.instance().log(`[ScheduleExistingPhysicalActivityDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                             }     
                         }
                     break;
@@ -62,7 +62,7 @@ export class EHRPhysicalActivityService {
                                     this._stepCountService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                 }
                             } else {
-                                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                Logger.instance().log(`[ScheduleExistingPhysicalActivityDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                             }     
                         }
                     break;
@@ -76,14 +76,14 @@ export class EHRPhysicalActivityService {
                                     this._physicalActivityService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                 }
                             } else {
-                                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                Logger.instance().log(`[ScheduleExistingPhysicalActivityDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                             }     
                         }
                     break;     
                     
                 }
                 pageIndex++;
-                Logger.instance().log(`Processed :${searchResults.Items.length} records for ${model}`);
+                Logger.instance().log(`[ScheduleExistingPhysicalActivityDataToEHR] Processed :${searchResults.Items.length} records for ${model}`);
 
                 if (searchResults.Items.length < 1000) {
                     moreItems = false;
@@ -93,7 +93,7 @@ export class EHRPhysicalActivityService {
             
         }
         catch (error) {
-            Logger.instance().log(`Error population existing physical activity data in ehr insights database:  ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingPhysicalActivityDataToEHR] Error population existing physical activity data in ehr insights database:  ${JSON.stringify(error)}`);
         }
     };
 

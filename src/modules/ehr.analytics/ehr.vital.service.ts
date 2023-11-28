@@ -65,7 +65,7 @@ export class EHRVitalService {
                                     this._bloodGlucoseService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                 }
                             } else {
-                                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                             }     
                         }
                         break;
@@ -79,7 +79,7 @@ export class EHRVitalService {
                                         this._bloodPressureService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                     }
                                 } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                    Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                                 }     
                             }
                         break;
@@ -93,7 +93,7 @@ export class EHRVitalService {
                                         this._pulseService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                     }
                                 } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                    Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                                 }     
                             }
                         break;
@@ -107,7 +107,7 @@ export class EHRVitalService {
                                         this._bodyWeightService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                     }
                                 } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                    Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                                 }     
                             }
                         break;
@@ -121,7 +121,7 @@ export class EHRVitalService {
                                         this._bodyHeightService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                     }
                                 } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                    Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                                 }     
                             }
                         break;
@@ -135,7 +135,7 @@ export class EHRVitalService {
                                         this._bodyTemperatureService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                     }
                                 } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                    Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                                 }     
                             }
                         break;
@@ -149,14 +149,14 @@ export class EHRVitalService {
                                         this._bloodOxygenSaturationService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                     }
                                 } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                    Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                                 }     
                             }
                         break;        
                     
                 }
                 pageIndex++;
-                Logger.instance().log(`Processed :${searchResults.Items.length} records for ${model}`);
+                Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Processed :${searchResults.Items.length} records for ${model}`);
 
                 if (searchResults.Items.length < 1000) {
                     moreItems = false;
@@ -166,7 +166,7 @@ export class EHRVitalService {
             
         }
         catch (error) {
-            Logger.instance().log(`Error population existing vitals data in ehr insights database: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Error population existing vitals data in ehr insights database: ${JSON.stringify(error)}`);
         }
     };
 

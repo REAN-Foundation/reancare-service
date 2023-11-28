@@ -44,7 +44,7 @@ export class EHRMentalWellBeingService {
                                         this._sleepService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                     }
                                 } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                    Logger.instance().log(`[ScheduleExistingMentalWellBeingDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                                 }     
                             }
                         break;
@@ -58,14 +58,14 @@ export class EHRMentalWellBeingService {
                                         this._meditationService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                                     }
                                 } else {
-                                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                                    Logger.instance().log(`[ScheduleExistingMentalWellBeingDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                                 }     
                             }
                         break;     
                     
                 }
                 pageIndex++;
-                Logger.instance().log(`Processed :${searchResults.Items.length} records for ${model}`);
+                Logger.instance().log(`[ScheduleExistingMentalWellBeingDataToEHR] Processed :${searchResults.Items.length} records for ${model}`);
 
                 if (searchResults.Items.length < 1000) {
                     moreItems = false;
@@ -75,7 +75,7 @@ export class EHRMentalWellBeingService {
             
         }
         catch (error) {
-            Logger.instance().log(`Error population existing data in ehr insights database: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingMentalWellBeingDataToEHR] Error population existing data in ehr insights database: ${JSON.stringify(error)}`);
         }
     };
 

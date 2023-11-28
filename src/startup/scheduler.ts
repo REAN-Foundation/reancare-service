@@ -236,7 +236,6 @@ export class Scheduler {
                 await _ehrVitalService.scheduleExistingVitalDataToEHR("BloodOxygenSaturation");
                 await _ehrVitalService.scheduleExistingVitalDataToEHR("Pulse");
                 Logger.instance().log('[ScheduleExistingVitalDataToEHR] : Cron schedule completed successfully');
-
             })();
         });
     };

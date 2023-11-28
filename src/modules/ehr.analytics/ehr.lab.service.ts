@@ -40,12 +40,12 @@ export class EHRLabService {
                             this._labRecordService.addEHRRecord(r.PatientUserId, r.id, r.Provider, r, appName);
                         }
                     } else {
-                        Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
+                        Logger.instance().log(`[ScheduleExistingLabDataToEHR] Skip adding details to EHR database as device is not eligible:${r.PatientUserId}`);
                     }     
                 }
                 
                 pageIndex++;
-                Logger.instance().log(`Processed :${searchResults.Items.length} records for lab`);
+                Logger.instance().log(`[ScheduleExistingLabDataToEHR] Processed :${searchResults.Items.length} records for lab`);
 
                 if (searchResults.Items.length < 1000) {
                     moreItems = false;
@@ -55,7 +55,7 @@ export class EHRLabService {
             
         }
         catch (error) {
-            Logger.instance().log(`Error population existing data in ehr insights database: ${JSON.stringify(error)}`);
+            Logger.instance().log(`[ScheduleExistingLabDataToEHR] Error population existing data in ehr insights database: ${JSON.stringify(error)}`);
         }
     };
 

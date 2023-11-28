@@ -166,7 +166,12 @@ export class PatientService {
         if (dto == null) {
             return null;
         }
+
         var user = await this._userRepo.getById(dto.UserId);
+        if (user == null) {
+            return null;
+        }
+
         if (user.Person == null) {
             user.Person = await this._personRepo.getById(user.PersonId);
         }

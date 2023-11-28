@@ -37,12 +37,16 @@ export class EHRAssessmentService {
                     for await (var a of searchResults.Items) {
                         var assessment = await this._assessmentService.getById(a.id);
                         Logger.instance().log(`AnswerResponse :${JSON.stringify(assessment)}`);
-        
-                        var options = await this._assessmentService.getQuestionById(a.id, a.CurrentNodeId);
-                        Logger.instance().log(`Options :${JSON.stringify(options)}`);
 
-                        for await (var appName of eligibleAppNames) {
-                            this.mapAssessmentResponseToEHR(assessment, options, appName);  
+                        if (assessment.Status == 'Pending') {
+                            this.mapAssessmentResponseToEHR(assessment, null, appName);
+                        } else {
+                            var options = await this._assessmentService.getQuestionById(a.id, a.CurrentNodeId);
+                            Logger.instance().log(`Options :${JSON.stringify(options)}`);
+    
+                            for await (var appName of eligibleAppNames) {
+                                this.mapAssessmentResponseToEHR(assessment, options, appName);  
+                            }
                         }
                     }
                     
@@ -86,44 +90,43 @@ export class EHRAssessmentService {
 
         Logger.instance().log(`AssessmentRecord: ${JSON.stringify(assessmentRecord, null, 2)}`);
 
-        for await (var ur of assessment.UserResponses) {
-            
-            if (ur.Node && ur.Node.QueryResponseType === 'Single Choice Selection') {
-                ur.Additional = JSON.parse(ur.Additional);
-                assessmentRecord['AnswerValue'] = ur.Additional.Sequence;
-                assessmentRecord['AnswerReceived'] = ur.Additional.Text;
-                assessmentRecord['NodeId'] = ur.NodeId;
-                assessmentRecord['Question'] = ur.Node.Title;
-                assessmentRecord['QuestionType'] = ur.Node.QueryResponseType;
-                assessmentRecord['SubQuestion']  = null;
-
-                var listNode = await this._assessmentTemplateService.getNode(ur.Node.ParentNodeId);
-                if (listNode && listNode.ServeListNodeChildrenAtOnce) {
-                    assessmentRecord['SubQuestion']  = ur.Node.Title;
-                    assessmentRecord['Question']  = listNode.Title;
-                }
-
-                EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-            } else if (ur && ur.Node.QueryResponseType === 'Multi Choice Selection') {
-                ur.Additional = JSON.parse(ur.Additional);
-                for await (var i of ur.Additional) {
-                    assessmentRecord['AnswerValue'] = i.Sequence;
-                    assessmentRecord['AnswerReceived'] = i.Text;
+        if (assessment.Status == 'Pending') {
+            EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
+        } else {
+            for await (var ur of assessment.UserResponses) {
+                
+                if (ur.Node && ur.Node.QueryResponseType === 'Single Choice Selection') {
+                    ur.Additional = JSON.parse(ur.Additional);
+                    assessmentRecord['AnswerValue'] = ur.Additional.Sequence;
+                    assessmentRecord['AnswerReceived'] = ur.Additional.Text;
                     assessmentRecord['NodeId'] = ur.NodeId;
                     assessmentRecord['Question'] = ur.Node.Title;
                     assessmentRecord['QuestionType'] = ur.Node.QueryResponseType;
-                    var a = JSON.parse(JSON.stringify(assessmentRecord));
-                    EHRAnalyticsHandler.addAssessmentRecord(a);
+                    assessmentRecord['SubQuestion']  = null;
+    
+                    var listNode = await this._assessmentTemplateService.getNode(ur.Node.ParentNodeId);
+                    if (listNode && listNode.ServeListNodeChildrenAtOnce) {
+                        assessmentRecord['SubQuestion']  = ur.Node.Title;
+                        assessmentRecord['Question']  = listNode.Title;
+                    }
+    
+                    EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
+                } else if (ur && ur.Node.QueryResponseType === 'Multi Choice Selection') {
+                    ur.Additional = JSON.parse(ur.Additional);
+                    for await (var i of ur.Additional) {
+                        assessmentRecord['AnswerValue'] = i.Sequence;
+                        assessmentRecord['AnswerReceived'] = i.Text;
+                        assessmentRecord['NodeId'] = ur.NodeId;
+                        assessmentRecord['Question'] = ur.Node.Title;
+                        assessmentRecord['QuestionType'] = ur.Node.QueryResponseType;
+                        var a = JSON.parse(JSON.stringify(assessmentRecord));
+                        EHRAnalyticsHandler.addAssessmentRecord(a);
+                    }
+                } else {
+                    EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
                 }
-            } else {
-                EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-    
             }
-
-        }
-
-    
-        
+        }   
     };
 
 

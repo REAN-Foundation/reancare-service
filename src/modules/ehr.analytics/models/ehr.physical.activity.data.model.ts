@@ -131,7 +131,7 @@ export default class EHRPhysicalActivityData extends Model {
     AdditionalInfo: string;
 
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.DATE,
         allowNull : true,
     })
     RecordDate: Date;

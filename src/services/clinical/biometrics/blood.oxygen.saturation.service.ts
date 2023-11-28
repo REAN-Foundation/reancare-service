@@ -80,7 +80,7 @@ export class BloodOxygenSaturationService {
                 null,
                 null,
                 appName,
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };

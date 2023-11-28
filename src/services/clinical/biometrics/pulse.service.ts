@@ -72,7 +72,7 @@ export class PulseService {
         if (model.Pulse) {
             EHRAnalyticsHandler.addIntegerRecord(
                 patientUserId, recordId, provider, EHRRecordTypes.Pulse, model.Pulse, model.Unit, null, null, appName, 
-                model.RecordDate ? model.RecordDate.toString() : null
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };

@@ -18,6 +18,8 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { MedicationValidator } from './medication.validator';
 import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.medication.service';
+import { Logger } from '../../../../common/logger';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +42,8 @@ export class MedicationController {
     _authorizer: Authorizer = null;
 
     _ehrMedicationService: EHRMedicationService = new EHRMedicationService();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         this._service = Loader.container.resolve(MedicationService);
@@ -140,6 +144,20 @@ export class MedicationController {
                 };
 
                 medication.ConsumptionSummary = consumptionSummary;
+            }
+
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(medication.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                var medicationConsumptions = await this._medicationConsumptionService.getByMedicationId(medication.id);
+                for await (var mc of medicationConsumptions) {
+                    for await (var appName of eligibleAppNames) {
+                        this._medicationConsumptionService.addEHRRecord(mc.PatientUserId, mc.id, mc, appName);
+                    
+                    }
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${medication.PatientUserId}`);
             }
             ResponseHandler.success(request, response, 'Medication created successfully!', 201, {
                 Medication : medication,

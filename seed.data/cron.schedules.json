@@ -15,7 +15,7 @@
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
         "ScheduleTimezoneUpdate": "0 7 9 11 *",
         "ScheduleExistingCareplanActivityDataToEHR": "30 6 29 11 *",
-        "ScheduleExistingAssessmentDataToEHR": "0 7 29 11 *",
+        "ScheduleExistingAssessmentDataToEHR": "0 18 29 11 *",
         "ScheduleExistingStaticDataToEHR": "30 7 29 11 *",
         "ScheduleExistingVitalDataToEHR": "0 8 29 11 *",
         "ScheduleExistingLabDataToEHR": "30 8 29 11 *",
@@ -23,7 +23,7 @@
         "ScheduleExistingMentalWellBeingDataToEHR": "30 9 29 11 *",
         "ScheduleExistingNutritionDataToEHR": "0 10 29 11 *",
         "ScheduleExistingSymptomDataToEHR": "30 10 29 11 *" ,
-        "ScheduleExistingMedicationDataToEHR": "0 11 29 11 *" 
+        "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *" 
     },
     "development": {
         "FileCleanup": "*/55 * * * *",
@@ -41,7 +41,7 @@
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
         "ScheduleTimezoneUpdate": "0 7 9 11 *",
         "ScheduleExistingCareplanActivityDataToEHR": "30 6 29 11 *",
-        "ScheduleExistingAssessmentDataToEHR": "0 7 29 11 *",
+        "ScheduleExistingAssessmentDataToEHR": "0 18 29 11 *",
         "ScheduleExistingStaticDataToEHR": "30 7 29 11 *",
         "ScheduleExistingVitalDataToEHR": "0 8 29 11 *",
         "ScheduleExistingLabDataToEHR": "30 8 29 11 *",
@@ -49,7 +49,7 @@
         "ScheduleExistingMentalWellBeingDataToEHR": "30 9 29 11 *",
         "ScheduleExistingNutritionDataToEHR": "0 10 29 11 *",
         "ScheduleExistingSymptomDataToEHR": "30 10 29 11 *" ,
-        "ScheduleExistingMedicationDataToEHR": "0 11 29 11 *"
+        "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *"
              
     },
     "uat": {

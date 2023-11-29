@@ -121,6 +121,33 @@ export class EHRAnalyticsRepo {
     createMedication = async (model: EHRMedicationDomainModel): Promise<boolean> => {
         try {
 
+            const existing = await EHRMedicationData.findOne({
+                where : {
+                    PatientUserId : model.PatientUserId,
+                    RecordId      : model.RecordId,
+                }
+            });
+
+            if (existing) {  
+                existing.AppName            = model.AppName,
+                existing.PatientUserId      = model.PatientUserId,
+                existing.RecordId           = model.RecordId,
+                existing.DrugName           = model.DrugName
+                existing.Dose               = model.Dose,
+                existing.Details            = model.Details,
+                existing.TimeScheduleStart  = model.TimeScheduleStart,
+                existing.TimeScheduleEnd    = model.TimeScheduleEnd,
+                existing.TakenAt            = model.TakenAt,
+                existing.IsTaken            = model.IsTaken,
+                existing.IsMissed           = model.IsMissed,
+                existing.IsCancelled        = model.IsCancelled,
+                existing.RecordDate         = model.RecordDate,
+        
+                await existing.save();
+
+                return true;
+            }
+
             const entity = {
                 AppName          : model.AppName,
                 PatientUserId    : model.PatientUserId,
@@ -134,7 +161,7 @@ export class EHRAnalyticsRepo {
                 IsTaken          : model.IsTaken,
                 IsMissed         : model.IsMissed,
                 IsCancelled      : model.IsCancelled,
-                RecordDate        : model.RecordDate,
+                RecordDate       : model.RecordDate,
 
             };
             const record = await EHRMedicationData.create(entity);
@@ -216,8 +243,7 @@ export class EHRAnalyticsRepo {
     };
 
     createAssessment = async (model: EHRAssessmentDomainModel): Promise<boolean> => {
-        try { 
-
+        try {
             const entity = {
                 AppName          : model.AppName,
                 PatientUserId    : model.PatientUserId,

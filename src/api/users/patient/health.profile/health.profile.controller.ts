@@ -147,7 +147,7 @@ export class HealthProfileController extends BaseController{
             details['MaritalStatus'] = model.MaritalStatus;
         }
         if (model.CreatedAt) {
-            details['RecordDate'] = new Date(model.CreatedAt).toISOString().split('T')[0];
+            details['RecordDate'] = new Date(model.CreatedAt);
         }
 
 

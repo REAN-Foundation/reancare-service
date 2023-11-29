@@ -86,7 +86,7 @@ export class EHRAssessmentService {
             AdditionalInfo : null,
             StartedAt      : assessment.StartedAt ?? null,
             FinishedAt     : assessment.FinishedAt ?? null,
-            RecordDate     : assessment.CreatedAt ? new Date((assessment.CreatedAt)).toISOString().split('T')[0] : null
+            RecordDate     : assessment.CreatedAt ? new Date(assessment.CreatedAt) : null
         };
 
         Logger.instance().log(`AssessmentRecord: ${JSON.stringify(assessmentRecord, null, 2)}`);

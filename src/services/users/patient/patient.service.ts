@@ -265,7 +265,7 @@ export class PatientService {
             details['DoctorPersonId_2'] = updatedModel.DoctorPersonId_2;
         }
         if (updatedHealthProfile.CreatedAt) {
-            details['RecordDate'] = new Date(updatedHealthProfile.CreatedAt).toISOString().split('T')[0];
+            details['RecordDate'] = new Date(updatedHealthProfile.CreatedAt);
         }
 
         EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);

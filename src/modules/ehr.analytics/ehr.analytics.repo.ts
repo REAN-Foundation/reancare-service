@@ -132,7 +132,7 @@ export class EHRAnalyticsRepo {
                 existing.AppName            = model.AppName,
                 existing.PatientUserId      = model.PatientUserId,
                 existing.RecordId           = model.RecordId,
-                existing.DrugName           = model.DrugName
+                existing.DrugName           = model.DrugName,
                 existing.Dose               = model.Dose,
                 existing.Details            = model.Details,
                 existing.TimeScheduleStart  = model.TimeScheduleStart,

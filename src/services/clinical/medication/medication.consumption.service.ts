@@ -286,6 +286,10 @@ export class MedicationConsumptionService implements IUserActionService {
         return await this._medicationConsumptionRepo.getById(id);
     };
 
+    getByMedicationId = async (id: string): Promise<MedicationConsumptionDetailsDto[]> => {
+        return await this._medicationConsumptionRepo.getByMedicationId(id);
+    };
+
     search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationSearchResults> => {
         return await this._medicationConsumptionRepo.search(filters);
     };
@@ -789,6 +793,25 @@ export class MedicationConsumptionService implements IUserActionService {
     };
 
     public addEHRRecord = (patientUserId: uuid, recordId: uuid, model: MedicationConsumptionDetailsDto, appName?: string) => {
+        
+        if (model.IsTaken == false &&  model.IsMissed == false) {
+            EHRAnalyticsHandler.addMedicationRecord(
+                appName,
+                model.id,
+                patientUserId,
+                model.DrugName,
+                model.Dose,
+                model.Details,
+                model.TimeScheduleStart,
+                model.TimeScheduleEnd,
+                model.TakenAt,
+                model.IsTaken,
+                model.IsMissed,
+                model.IsCancelled,
+                model.CreatedAt ? new Date (model.CreatedAt) : null
+            );
+        }
+
         if (model.IsTaken) {
             EHRAnalyticsHandler.addMedicationRecord(
                 appName,

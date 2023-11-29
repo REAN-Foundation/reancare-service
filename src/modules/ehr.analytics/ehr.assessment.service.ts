@@ -28,35 +28,48 @@ export class EHRAssessmentService {
 
     public scheduleExistingAssessmentDataToEHR = async () => {
         try {
+                var patientUserIds = await this._patientService.getAllPatientUserIds();
+                Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Patient User Ids :${JSON.stringify(patientUserIds)}`);
+                for await (var p of patientUserIds) {
+                    var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
+                    if (eligibleAppNames.length > 0) {
+                        var moreItems = true;
+                        var pageIndex = 0;
+                        while (moreItems) {
+                            var filters = {
+                                PageIndex     : pageIndex,
+                                ItemsPerPage  : 1000,
+                                PatientUserId : p,
+                            };
+                            var searchResults = await this._assessmentService.search(filters);
+                            for await (var a of searchResults.Items) {
+                                var assessment = await this._assessmentService.getById(a.id);
+                                Logger.instance().log(`AnswerResponse :${JSON.stringify(assessment)}`);
 
-            var patientUserIds = await this._patientService.getAllPatientUserIds();
-            Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Patient User Ids :${JSON.stringify(patientUserIds)}`);
-            for await (var p of patientUserIds) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
-                if (eligibleAppNames.length > 0) {
-                    var searchResults = await this._assessmentService.search({"PatientUserId" : p});
-                    for await (var a of searchResults.Items) {
-                        var assessment = await this._assessmentService.getById(a.id);
-                        Logger.instance().log(`AnswerResponse :${JSON.stringify(assessment)}`);
-
-                        if (assessment.Status == 'Pending') {
-                            this.mapAssessmentResponseToEHR(assessment, null, appName);
-                        } else {
-                            var options = await this._assessmentService.getQuestionById(a.id, a.CurrentNodeId);
-                            Logger.instance().log(`Options :${JSON.stringify(options)}`);
-    
-                            for await (var appName of eligibleAppNames) {
-                                this.mapAssessmentResponseToEHR(assessment, options, appName);  
+                                if (assessment.Status == 'Pending') {
+                                    for await (var appName of eligibleAppNames) {
+                                        this.mapAssessmentResponseToEHR(assessment, null, appName);
+                                    }
+                                } else {
+                                    var options = await this._assessmentService.getQuestionById(a.id, a.CurrentNodeId);
+                                    Logger.instance().log(`Options :${JSON.stringify(options)}`);
+            
+                                    for await (var appName of eligibleAppNames) {
+                                        this.mapAssessmentResponseToEHR(assessment, options, appName);  
+                                    }
+                                }
+                            }
+                            pageIndex++;
+                            if (searchResults.Items.length < 1000) {
+                                moreItems = false;
                             }
                         }
-                    }
-                    
-                } else {
-                    Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`);
-                }      
-            }
-            
-            Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Processed :${searchResults.Items.length} records for Assessment`);
+                    } else {
+                        Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`);
+                    }      
+                }
+
+                Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Processed :${searchResults.Items.length} records for Assessment`);
 
         } catch (error) {
             Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Error population existing assessment data in ehr insights database :: ${JSON.stringify(error)}`);

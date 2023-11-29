@@ -32,21 +32,32 @@ export class EHRMedicationService {
             for await (var p of patientUserIds) {
                 var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
                 if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) { 
-                        var searchResults = await this._medicationConsumptionService.search({"PatientUserId" : p});
+                    var moreItems = true;
+                    var pageIndex = 0;   
+                    while (moreItems) {
+                        var filters = {
+                            PageIndex     : pageIndex,
+                            ItemsPerPage  : 1000,
+                            PatientUserId : p,
+                        };
+                        var searchResults = await this._medicationConsumptionService.search(filters);
                         Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Consumption records for ${p} :: ${searchResults.Items.length}`);
-                        for await (var m of searchResults.Items) {
-                            this._medicationConsumptionService.addEHRRecord(m.PatientUserId, m.id, m, appName);
+                        for await (var appName of eligibleAppNames) {
+                            for await (var m of searchResults.Items) {
+                                this._medicationConsumptionService.addEHRRecord(m.PatientUserId, m.id, m, appName);
+                            }
+                        }
+                        pageIndex++;
+                        if (searchResults.Items.length < 1000) {
+                            moreItems = false;
                         }
                     }
                 } else {
                     Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`);
-                }
+                }   
             }
-
-            Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Processed :${searchResults.Items.length} records for medication`);   
-        }
-        catch (error) {
+                Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Processed :${searchResults.Items.length} records for medication`);       
+            } catch (error) {
             Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Error population existing medication data in ehr insights database :: ${JSON.stringify(error)}`);
         }
     };

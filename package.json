@@ -59,7 +59,7 @@
     "mysql2": "^2.2.5",
     "needle": "^3.2.0",
     "node-cron": "^3.0.0",
-    "node-html-to-image": "^3.3.0",
+    "node-html-to-image": "^4.0.0",
     "node-xlsx": "^0.4.0",
     "nodemailer": "^6.9.4",
     "pdfkit": "^0.13.0",

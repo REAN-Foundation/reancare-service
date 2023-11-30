@@ -1,14 +1,13 @@
 import express from 'express';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
-import { BodyHeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyHeightValidator } from './body.height.validator';
+import { Logger } from '../../../../common/logger';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,9 +19,14 @@ export class BodyHeightController {
 
     _authorizer: Authorizer = null;
 
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+
+    _ehrVitalService: EHRVitalService = new EHRVitalService();
+
     constructor() {
         this._service = Loader.container.resolve(BodyHeightService);
         this._authorizer = Loader.authorizer;
+        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -40,7 +44,15 @@ export class BodyHeightController {
             if (bodyHeight == null) {
                 throw new ApiError(400, 'Cannot create record for height!');
             }
-            this.addEHRRecord(model.PatientUserId, bodyHeight.id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyHeight.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, bodyHeight.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyHeight.PatientUserId}`);
+            }
+
             ResponseHandler.success(request, response, 'Height record created successfully!', 201, {
                 BodyHeight : bodyHeight
             });
@@ -111,7 +123,15 @@ export class BodyHeightController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update height record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
+
             ResponseHandler.success(request, response, 'Height record updated successfully!', 200, {
                 BodyHeight : updated
             });
@@ -136,27 +156,14 @@ export class BodyHeightController {
                 throw new ApiError(400, 'Height record cannot be deleted.');
             }
 
+            // delete ehr record
+            this._ehrVitalService.deleteVitalEHRRecord(existing.id);
+
             ResponseHandler.success(request, response, 'Height record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BodyHeightDomainModel) => {
-        if (model.BodyHeight) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, EHRRecordTypes.BodyHeight, model.BodyHeight, model.Unit);
-
-            //Also add it to the static record
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                BodyHeight : model.BodyHeight
-            });
         }
     };
 

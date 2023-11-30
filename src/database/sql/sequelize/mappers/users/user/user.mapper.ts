@@ -20,6 +20,7 @@ export class UserMapper {
             PersonId        : user.PersonId,
             TenantId        : tenant?.id,
             Person          : personDto,
+            IsTestUser      : user.IsTestUser,
             LastLogin       : user.LastLogin,
             DefaultTimeZone : user.DefaultTimeZone,
             CurrentTimeZone : user.CurrentTimeZone,

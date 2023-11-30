@@ -20,8 +20,9 @@ export class BloodGlucoseMapper {
             BloodGlucose     : bloodGlucose.BloodGlucose,
             Unit             : bloodGlucose.Unit,
             RecordDate       : bloodGlucose.RecordDate,
-            RecordedByUserId : bloodGlucose.RecordedByUserId,
+            RecordedByUserId : bloodGlucose.RecordedByUserId ?? null,
         };
+
         return dto;
     };
 

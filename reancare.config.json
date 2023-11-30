@@ -142,6 +142,6 @@
         }
     ],
     "Gamification": true,
-    "EHRAnalytics": false,
+    "EHRAnalytics": true,
     "MaxUploadFileSize": 104857600
 }

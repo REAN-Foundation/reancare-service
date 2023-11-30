@@ -7,6 +7,8 @@ import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults 
 import { Loader } from "../../../startup/loader";
 import { BloodOxygenSaturationStore } from "../../../modules/ehr/services/blood.oxygen.saturation.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +66,23 @@ export class BloodOxygenSaturationService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bloodOxygenSaturationRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BloodOxygenSaturationDomainModel, appName?: string) => {
+        if (model.BloodOxygenSaturation) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                provider,
+                EHRRecordTypes.BloodOxygenSaturation,
+                model.BloodOxygenSaturation,
+                model.Unit,
+                null,
+                null,
+                appName,
+                model.RecordDate ? model.RecordDate : null
+            );
+        }
     };
 
 }

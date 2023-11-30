@@ -24,6 +24,7 @@ import { ConfigurationManager } from "../../../config/configuration.manager";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
 import { MedicationConsumptionSearchFilters } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -283,6 +284,10 @@ export class MedicationConsumptionService implements IUserActionService {
 
     getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
         return await this._medicationConsumptionRepo.getById(id);
+    };
+
+    getByMedicationId = async (id: string): Promise<MedicationConsumptionDetailsDto[]> => {
+        return await this._medicationConsumptionRepo.getByMedicationId(id);
     };
 
     search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationSearchResults> => {
@@ -785,6 +790,63 @@ export class MedicationConsumptionService implements IUserActionService {
             await Loader.notificationService.sendNotificationToDevice(device.Token, message);
         }
 
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, model: MedicationConsumptionDetailsDto, appName?: string) => {
+        
+        if (model.IsTaken == false &&  model.IsMissed == false) {
+            EHRAnalyticsHandler.addMedicationRecord(
+                appName,
+                model.id,
+                patientUserId,
+                model.DrugName,
+                model.Dose,
+                model.Details,
+                model.TimeScheduleStart,
+                model.TimeScheduleEnd,
+                model.TakenAt,
+                model.IsTaken,
+                model.IsMissed,
+                model.IsCancelled,
+                model.CreatedAt ? new Date (model.CreatedAt) : null
+            );
+        }
+
+        if (model.IsTaken) {
+            EHRAnalyticsHandler.addMedicationRecord(
+                appName,
+                model.id,
+                patientUserId,
+                model.DrugName,
+                model.Dose,
+                model.Details,
+                model.TimeScheduleStart,
+                model.TimeScheduleEnd,
+                model.TakenAt,
+                model.IsTaken,
+                model.IsMissed,
+                model.IsCancelled,
+                model.CreatedAt ? new Date (model.CreatedAt) : null
+            );
+        }
+
+        if (model.IsMissed) {
+            EHRAnalyticsHandler.addMedicationRecord(
+                appName,
+                model.id,
+                patientUserId,
+                model.DrugName,
+                model.Dose,
+                model.Details,
+                model.TimeScheduleStart,
+                model.TimeScheduleEnd,
+                model.TakenAt,
+                model.IsTaken,
+                model.IsMissed,
+                model.IsCancelled,
+                model.CreatedAt ? new Date(model.CreatedAt) : null
+            );
+        }
     };
 
     //#endregion

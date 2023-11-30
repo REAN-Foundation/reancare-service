@@ -10,6 +10,7 @@ export interface UserDetailsDto {
     RoleId         : number;
     Role           : RoleDto;
     UserName       : string;
+    IsTestUser     ?: boolean;
     DefaultTimeZone: string;
     CurrentTimeZone: string;
     LastLogin      : Date;

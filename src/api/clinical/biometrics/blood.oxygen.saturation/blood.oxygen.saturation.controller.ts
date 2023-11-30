@@ -6,13 +6,13 @@ import { BloodOxygenSaturationService } from '../../../../services/clinical/biom
 import { Loader } from '../../../../startup/loader';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
 import { BaseController } from '../../../base.controller';
-import { BloodOxygenSaturationDomainModel } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Logger } from '../../../../common/logger';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,9 +24,14 @@ export class BloodOxygenSaturationController extends BaseController {
 
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
 
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+
+    _ehrVitalService: EHRVitalService = new EHRVitalService();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodOxygenSaturationService);
+        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -43,7 +48,14 @@ export class BloodOxygenSaturationController extends BaseController {
             if (bloodOxygenSaturation == null) {
                 throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodOxygenSaturation.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, bloodOxygenSaturation.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodOxygenSaturation.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (bloodOxygenSaturation.BloodOxygenSaturation) {
@@ -135,7 +147,15 @@ export class BloodOxygenSaturationController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (updated.BloodOxygenSaturation) {
@@ -184,26 +204,14 @@ export class BloodOxygenSaturationController extends BaseController {
                 throw new ApiError(400, 'Blood oxygen saturation record cannot be deleted.');
             }
 
+            // delete ehr record
+            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+
             ResponseHandler.success(request, response, 'Blood oxygen saturation record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodOxygenSaturationDomainModel) => {
-        if (model.BloodOxygenSaturation) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.BloodOxygenSaturation,
-                model.BloodOxygenSaturation,
-                model.Unit);
         }
     };
 

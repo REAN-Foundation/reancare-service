@@ -7,14 +7,13 @@ import { PhysicalActivityService } from '../../../../services/wellness/exercise/
 import { Loader } from '../../../../startup/loader';
 import { PhysicalActivityValidator } from './physical.activity.validator';
 import { BaseController } from '../../../base.controller';
-import { PhysicalActivityDomainModel } from
-    '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +26,8 @@ export class PhysicalActivityController extends BaseController {
     _validator: PhysicalActivityValidator = new PhysicalActivityValidator();
 
     _userService: UserService = null;
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
@@ -55,7 +56,15 @@ export class PhysicalActivityController extends BaseController {
             if (physicalActivity == null) {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
-            this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, domainModel);
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(physicalActivity.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, physicalActivity, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${physicalActivity.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
@@ -143,6 +152,15 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Unable to update physical activity record!');
             }
 
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(updated.PatientUserId, id, updated.Provider, updated, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
+
             if (updated.PhysicalActivityQuestionAns !== null) {
                 var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
                 if (!timestamp) {
@@ -190,17 +208,6 @@ export class PhysicalActivityController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    };
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PhysicalActivityDomainModel) => {
-        if (model.PhysicalActivityQuestionAns !== undefined) {
-            EHRAnalyticsHandler.addBooleanRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.PhysicalActivity,
-                model.PhysicalActivityQuestionAns);
-        }
-
     };
 
     //#endregion

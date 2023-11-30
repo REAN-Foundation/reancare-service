@@ -6,6 +6,8 @@ import { StandService } from '../../../../services/wellness/daily.records/stand.
 import { Loader } from '../../../../startup/loader';
 import { StandValidator } from './stand.validator';
 import { BaseController } from '../../../base.controller';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +18,8 @@ export class StandController extends BaseController {
     _service: StandService = null;
 
     _validator: StandValidator = new StandValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
@@ -35,6 +39,16 @@ export class StandController extends BaseController {
             const stand = await this._service.create(domainModel);
             if (stand == null) {
                 throw new ApiError(400, 'Cannot create stand record!');
+            }
+
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stand.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(domainModel.PatientUserId, stand.id, null, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${stand.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Stand record created successfully!', 201, {
@@ -100,6 +114,16 @@ export class StandController extends BaseController {
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update stand record!');
+            }
+
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Stand record updated successfully!', 200, {

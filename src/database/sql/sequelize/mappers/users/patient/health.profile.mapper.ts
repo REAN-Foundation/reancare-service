@@ -46,6 +46,8 @@ export class HealthProfileMapper {
             StrokeSurvivorOrCaregiver : patientHealthProfile.StrokeSurvivorOrCaregiver,
             LivingAlone               : patientHealthProfile.LivingAlone,
             WorkedPriorToStroke       : patientHealthProfile.WorkedPriorToStroke,
+            CreatedAt                 : patientHealthProfile.CreatedAt,
+            UpdatedAt                 : patientHealthProfile.UpdatedAt,
 
         };
 

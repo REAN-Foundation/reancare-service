@@ -1,5 +1,4 @@
 import express from 'express';
-import { BloodGlucoseDomainModel } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -8,11 +7,12 @@ import { Loader } from '../../../../startup/loader';
 import { BloodGlucoseValidator } from './blood.glucose.validator';
 import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Logger } from '../../../../common/logger';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,9 +23,14 @@ export class BloodGlucoseController extends BaseController {
 
     _validator: BloodGlucoseValidator = new BloodGlucoseValidator();
 
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+
+    _ehrVitalService: EHRVitalService = new EHRVitalService();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodGlucoseService);
+        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -42,8 +47,15 @@ export class BloodGlucoseController extends BaseController {
             if (bloodGlucose == null) {
                 throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
-            this.addEHRRecord(model.PatientUserId, bloodGlucose.id, model);
-
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodGlucose.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, bloodGlucose.id, bloodGlucose.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodGlucose.PatientUserId}`);
+            }
             // Adding record to award service
             if (bloodGlucose.BloodGlucose) {
                 var timestamp = bloodGlucose.RecordDate;
@@ -133,7 +145,14 @@ export class BloodGlucoseController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood glucose record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
 
             if (updated.BloodGlucose) {
                 var timestamp = updated.RecordDate;
@@ -180,6 +199,9 @@ export class BloodGlucoseController extends BaseController {
                 throw new ApiError(400, 'Blood glucose record cannot be deleted.');
             }
 
+            // delete ehr record
+            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+
             ResponseHandler.success(request, response, 'Blood glucose record deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -191,18 +213,4 @@ export class BloodGlucoseController extends BaseController {
     //#endregion
 
     //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodGlucoseDomainModel) => {
-        if (model.BloodGlucose) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.BloodGlucose,
-                model.BloodGlucose,
-                model.Unit);
-        }
-    };
-
-    //#endregion
-
 }

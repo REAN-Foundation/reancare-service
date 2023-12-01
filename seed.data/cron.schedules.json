@@ -94,16 +94,16 @@
         "ScheduleFetchDataFromDevices": "0 * * * *",
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
         "ScheduleTimezoneUpdate": "0 7 9 11 *",
-        "ScheduleExistingCareplanActivityDataToEHR": "0 4 2 12 *",
-        "ScheduleExistingAssessmentDataToEHR": "0 5 2 12 *",
-        "ScheduleExistingStaticDataToEHR": "0 6 2 12 *",
-        "ScheduleExistingVitalDataToEHR": "0 7 2 12 *",
-        "ScheduleExistingLabDataToEHR": "0 8 2 12 *",
-        "ScheduleExistingPhysicalActivityDataToEHR": "0 9 2 12 *",
-        "ScheduleExistingMentalWellBeingDataToEHR": "0 10 2 12 *",
-        "ScheduleExistingNutritionDataToEHR": "0 11 2 12 *",
-        "ScheduleExistingSymptomDataToEHR": "0 12 2 12 *" ,
-        "ScheduleExistingMedicationDataToEHR": "0 13 2 12 *" 
+        "ScheduleExistingCareplanActivityDataToEHR": "10 4 2 12 *",
+        "ScheduleExistingAssessmentDataToEHR": "10 5 2 12 *",
+        "ScheduleExistingStaticDataToEHR": "10 6 2 12 *",
+        "ScheduleExistingVitalDataToEHR": "10 7 2 12 *",
+        "ScheduleExistingLabDataToEHR": "10 8 2 12 *",
+        "ScheduleExistingPhysicalActivityDataToEHR": "20 9 2 12 *",
+        "ScheduleExistingMentalWellBeingDataToEHR": "10 10 2 12 *",
+        "ScheduleExistingNutritionDataToEHR": "20 11 2 12 *",
+        "ScheduleExistingSymptomDataToEHR": "10 12 2 12 *" ,
+        "ScheduleExistingMedicationDataToEHR": "20 13 2 12 *" 
         
     }
 }

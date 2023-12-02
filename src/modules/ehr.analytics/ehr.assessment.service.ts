@@ -48,14 +48,11 @@ export class EHRAssessmentService {
 
                                 if (assessment.Status == 'Pending') {
                                     for await (var appName of eligibleAppNames) {
-                                        this.mapAssessmentResponseToEHR(assessment, null, appName);
+                                        this.mapAssessmentResponseToEHR(assessment, appName);
                                     }
                                 } else {
-                                    var options = await this._assessmentService.getQuestionById(a.id, a.CurrentNodeId);
-                                    Logger.instance().log(`Options :${JSON.stringify(options)}`);
-            
                                     for await (var appName of eligibleAppNames) {
-                                        this.mapAssessmentResponseToEHR(assessment, options, appName);  
+                                        this.mapAssessmentResponseToEHR(assessment, appName);  
                                     }
                                 }
                             }
@@ -76,7 +73,7 @@ export class EHRAssessmentService {
         }
     };
 
-    private mapAssessmentResponseToEHR = async (assessment: any, options?: any, appName?: string ) => {
+    private mapAssessmentResponseToEHR = async (assessment: any, appName?: string ) => {
 
         Logger.instance().log(`AnswerResponse: ${JSON.stringify(assessment)}`);
 
@@ -90,10 +87,10 @@ export class EHRAssessmentService {
             Question       : null,
             SubQuestion    : null,
             QuestionType   : null,
-            AnswerOptions  : options ? JSON.stringify(options.Options) : null,
+            AnswerOptions  : null,
             AnswerValue    : null,
             AnswerReceived : null,
-            AnsweredOn     : assessment.CreatedAt,
+            AnsweredOn     : null,
             Status         : assessment.Status ?? null,
             Score          : JSON.stringify(assessment.ScoreDetails) ?? null,
             AdditionalInfo : null,
@@ -117,14 +114,17 @@ export class EHRAssessmentService {
                     assessmentRecord['Question'] = ur.Node.Title;
                     assessmentRecord['QuestionType'] = ur.Node.QueryResponseType;
                     assessmentRecord['SubQuestion']  = null;
-    
+                    assessmentRecord['AnswerOptions']  = JSON.stringify(ur.Additional);
+                    assessmentRecord['AnsweredOn']  = ur.CreatedAt;
+
                     var listNode = await this._assessmentTemplateService.getNode(ur.Node.ParentNodeId);
                     if (listNode && listNode.ServeListNodeChildrenAtOnce) {
                         assessmentRecord['SubQuestion']  = ur.Node.Title;
                         assessmentRecord['Question']  = listNode.Title;
                     }
     
-                    EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
+                    var a = JSON.parse(JSON.stringify(assessmentRecord));
+                    EHRAnalyticsHandler.addAssessmentRecord(a);
                 } else if (ur && ur.Node.QueryResponseType === 'Multi Choice Selection') {
                     ur.Additional = JSON.parse(ur.Additional);
                     for await (var i of ur.Additional) {
@@ -133,11 +133,22 @@ export class EHRAssessmentService {
                         assessmentRecord['NodeId'] = ur.NodeId;
                         assessmentRecord['Question'] = ur.Node.Title;
                         assessmentRecord['QuestionType'] = ur.Node.QueryResponseType;
+                        assessmentRecord['AnswerOptions']  = JSON.stringify(ur.Additional);
+                        assessmentRecord['AnsweredOn']  = ur.CreatedAt;
                         var a = JSON.parse(JSON.stringify(assessmentRecord));
                         EHRAnalyticsHandler.addAssessmentRecord(a);
                     }
                 } else {
-                    EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
+                    assessmentRecord['AnswerValue'] = ur.TextValue;
+                    assessmentRecord['AnswerReceived'] = ur.TextValue;
+                    assessmentRecord['NodeId'] = ur.NodeId;
+                    assessmentRecord['Question'] = ur.Node.Title;
+                    assessmentRecord['QuestionType'] = ur.Node.QueryResponseType;
+                    assessmentRecord['SubQuestion']  = null;
+                    assessmentRecord['AnswerOptions']  = null;
+                    assessmentRecord['AnsweredOn']  = ur.CreatedAt;
+                    var a = JSON.parse(JSON.stringify(assessmentRecord));
+                    EHRAnalyticsHandler.addAssessmentRecord(a);
                 }
             }
         }   

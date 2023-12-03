@@ -46,6 +46,7 @@ export class EHRAnalyticsRepo {
         var model = await StaticEHRData.findOne({
             where : {
                 PatientUserId : patientUserId,
+                AppName       : appName
             }
         });
 
@@ -73,7 +74,8 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
-                    Type          : model.Type
+                    Type          : model.Type,
+                    AppName       : model.AppName
                 }
             });
 
@@ -125,6 +127,7 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
+                    AppName       : model.AppName
                 }
             });
 
@@ -178,6 +181,7 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
+                    AppName       : model.AppName
                 }
             });
 

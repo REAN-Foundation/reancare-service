@@ -173,6 +173,7 @@ export class AssessmentHelperMapper {
         responseDto.ResponseType = responseType;
         responseDto.Sequence = response.Sequence;
         responseDto.Additional = response.Additional;
+        responseDto.CreatedAt = response.CreatedAt;
 
         if (response.Node) {
             responseDto.Node = this.toNodeDto(response.Node);

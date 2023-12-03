@@ -96,14 +96,14 @@
         "ScheduleTimezoneUpdate": "0 7 9 11 *",
         "ScheduleExistingCareplanActivityDataToEHR": "10 7 3 12 *",
         "ScheduleExistingAssessmentDataToEHR": "10 6 3 12 *",
-        "ScheduleExistingStaticDataToEHR": "10 5 3 12 *",
+        "ScheduleExistingStaticDataToEHR": "10 5 4 12 *",
         "ScheduleExistingVitalDataToEHR": "10 7 2 12 *",
         "ScheduleExistingLabDataToEHR": "10 8 2 12 *",
         "ScheduleExistingPhysicalActivityDataToEHR": "20 9 2 12 *",
         "ScheduleExistingMentalWellBeingDataToEHR": "10 10 2 12 *",
         "ScheduleExistingNutritionDataToEHR": "20 11 2 12 *",
         "ScheduleExistingSymptomDataToEHR": "10 12 2 12 *" ,
-        "ScheduleExistingMedicationDataToEHR": "20 13 2 12 *" 
+        "ScheduleExistingMedicationDataToEHR": "40 5 4 12 *" 
         
     }
 }

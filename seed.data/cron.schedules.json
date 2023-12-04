@@ -103,7 +103,7 @@
         "ScheduleExistingMentalWellBeingDataToEHR": "10 10 2 12 *",
         "ScheduleExistingNutritionDataToEHR": "20 11 2 12 *",
         "ScheduleExistingSymptomDataToEHR": "10 12 2 12 *" ,
-        "ScheduleExistingMedicationDataToEHR": "40 5 4 12 *" 
+        "ScheduleExistingMedicationDataToEHR": "50 12 4 12 *" 
         
     }
 }

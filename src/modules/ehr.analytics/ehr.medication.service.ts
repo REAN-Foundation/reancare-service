@@ -39,6 +39,7 @@ export class EHRMedicationService {
                             PageIndex     : pageIndex,
                             ItemsPerPage  : 1000,
                             PatientUserId : p,
+                            DateTo        : new Date(),
                         };
                         var searchResults = await this._medicationConsumptionService.search(filters);
                         Logger.instance().log(`[ScheduleExistingMedicationDataToEHR] Consumption records for ${p} :: ${searchResults.Items.length}`);

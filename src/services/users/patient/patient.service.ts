@@ -252,6 +252,18 @@ export class PatientService {
         if (updatedHealthProfile && updatedHealthProfile.Occupation) {
             details['Occupation'] = updatedHealthProfile.Occupation;
         }
+        if (updatedHealthProfile && updatedHealthProfile.MajorAilment) {
+            details['MajorAilment'] = updatedHealthProfile.MajorAilment;
+        }
+        if (updatedHealthProfile && updatedHealthProfile.IsSmoker) {
+            details['IsSmoker'] = updatedHealthProfile.IsSmoker;
+        }
+        if (updatedHealthProfile && updatedHealthProfile.BloodGroup) {
+            details['BloodGroup'] = updatedHealthProfile.BloodGroup;
+        }
+        if (updatedHealthProfile && updatedHealthProfile.Nationality) {
+            details['Nationality'] = updatedHealthProfile.Nationality;
+        }
         if (location) {
             details['Location'] = location;
         }

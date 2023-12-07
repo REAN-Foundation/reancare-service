@@ -21,30 +21,31 @@ export interface EHRDynamicRecordDomainModel {
 }
 
 export interface EHRStaticRecordDomainModel {
-    AppName?            : string;
-    DoctorPersonId?     : uuid;
-    OtherDoctorPersonId?: uuid;
-    ProviderCode?       : string;
-    HealthSystem?       : string;
-    AssociatedHospital? : string;
-    Gender?             : Gender;
+    AppName?             : string;
+    DoctorPersonId_1?    : uuid;
+    DoctorPersonId_2?    : uuid;
+    OtherDoctorPersonId? : uuid;
+    ProviderCode?        : string;
+    HealthSystem?        : string;
+    AssociatedHospital?  : string;
+    Gender?              : Gender;
     SelfIdentifiedGender?: string;
-    BirthDate?          : Date;
-    Age?                : string;
-    BodyHeight?         : number;
-    Ethnicity?          : string;
-    Race?               : string;
-    Nationality?        : string;
-    HasHeartAilment?    : boolean;
+    BirthDate?           : Date;
+    Age?                 : string;
+    BodyHeight?          : number;
+    Ethnicity?           : string;
+    Race?                : string;
+    Nationality?         : string;
+    HasHeartAilment?     : boolean;
     HasHighBloodPressure?: boolean;
-    HasHighCholesterol?: boolean;
-    Occupation?        : string;
-    IsDiabetic?         : boolean;
-    MaritalStatus?      : string;
-    BloodGroup?         : string;
-    MajorAilment?       : string;
-    IsSmoker?           : boolean;
-    Location?           : string;
+    HasHighCholesterol?  : boolean;
+    Occupation?          : string;
+    IsDiabetic?          : boolean;
+    MaritalStatus?       : string;
+    BloodGroup?          : string;
+    MajorAilment?        : string;
+    IsSmoker?            : boolean;
+    Location?            : string;
     OtherConditions?     : string;
     RecordDate?          : Date;
 

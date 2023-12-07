@@ -35,8 +35,14 @@ export class EHRCareplanActivityService {
                     var endTime = new Date("2024-12-01");
                     var searchResults = await this._careplanService.getActivities(p, startTime, endTime);
                     for await (var m of searchResults) {
-                        for await (var appName of eligibleAppNames) { 
-                            this._careplanService.addEHRRecord(m.PlanName, m.PlanCode, m, appName, healthSystemHospitalDetails);
+                        for await (var appName of eligibleAppNames) {
+                            if (appName == 'HF Helper' && m.PlanCode == 'HFMotivator') {
+                                this._careplanService.addEHRRecord(m.PlanName, m.PlanCode, m, appName, healthSystemHospitalDetails);
+                            } else if (appName == 'Heart &amp; Stroke Helper™' && (m.PlanCode == 'Cholesterol' || m.PlanCode == 'Stroke')) {
+                                this._careplanService.addEHRRecord(m.PlanName, m.PlanCode, m, appName, healthSystemHospitalDetails);
+                            } else if (appName == 'REAN HealthGuru' && (m.PlanCode == 'Cholesterol' || m.PlanCode == 'Stroke' || m.PlanCode == 'HFMotivator')) {
+                                this._careplanService.addEHRRecord(m.PlanName, m.PlanCode, m, appName, healthSystemHospitalDetails);
+                            }
                         }
                     }
                     

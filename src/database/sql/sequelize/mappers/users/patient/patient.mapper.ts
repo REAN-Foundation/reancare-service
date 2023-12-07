@@ -27,6 +27,8 @@ export class PatientMapper {
             HealthProfile      : null, //PatientMedicalProfileDto;
             Insurances         : [], //PatientInsuranceDto[];
             EmergencyContacts  : [], // PatientEmergencyContactDto[];
+            CreatedAt          : patient.CreatedAt,
+            UpdatedAt          : patient.UpdatedAt,
         };
         return dto;
     };

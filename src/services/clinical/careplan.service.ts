@@ -593,8 +593,22 @@ export class CareplanService implements IUserActionService {
         var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
         if (eligibleAppNames.length > 0) {
             for await (var appName of eligibleAppNames) {
-                for await (var careplanActivity of careplanActivities) {
-                    this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                if (appName == 'HF Helper' && enrollmentDetails.PlanCode == 'HFMotivator') {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else if (appName == 'Heart &amp; Stroke Helper™' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke')) {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else if (appName == 'REAN HealthGuru' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke' || enrollmentDetails.PlanCode == 'HFMotivator')) {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
                 }
             }
         } else {

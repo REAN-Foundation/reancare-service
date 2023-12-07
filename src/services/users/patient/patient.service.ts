@@ -222,13 +222,13 @@ export class PatientService {
         if (model.SelfIdentifiedGender) {
             details['SelfIdentifiedGender'] = model.SelfIdentifiedGender;
         }
-        if (updatedHealthProfile.MaritalStatus) {
+        if (updatedHealthProfile && updatedHealthProfile.MaritalStatus) {
             details['MaritalStatus'] = updatedHealthProfile.MaritalStatus;
         }
-        if (updatedHealthProfile.Ethnicity) {
+        if (updatedHealthProfile && updatedHealthProfile.Ethnicity) {
             details['Ethnicity'] = updatedHealthProfile.Ethnicity;
         }
-        if (updatedHealthProfile.Race) {
+        if (updatedHealthProfile && updatedHealthProfile.Race) {
             details['Race'] = updatedHealthProfile.Race;
         }
         if (updatedModel.HealthSystem) {
@@ -237,25 +237,37 @@ export class PatientService {
         if (updatedModel.AssociatedHospital) {
             details['AssociatedHospital'] = updatedModel.AssociatedHospital;
         }
-        if (updatedHealthProfile.HasHeartAilment != null ) {
+        if (updatedHealthProfile && updatedHealthProfile.HasHeartAilment != null ) {
             details['HasHeartAilment'] = updatedHealthProfile.HasHeartAilment;
         }
-        if (updatedHealthProfile.HasHighBloodPressure != null ) {
+        if (updatedHealthProfile && updatedHealthProfile.HasHighBloodPressure != null ) {
             details['HasHighBloodPressure'] = updatedHealthProfile.HasHighBloodPressure;
         }
-        if (updatedHealthProfile.HasHighCholesterol != null ) {
+        if (updatedHealthProfile && updatedHealthProfile.HasHighCholesterol != null ) {
             details['HasHighCholesterol'] = updatedHealthProfile.HasHighCholesterol;
         }
-        if (updatedHealthProfile.IsDiabetic != null ) {
+        if (updatedHealthProfile && updatedHealthProfile.IsDiabetic != null ) {
             details['IsDiabetic'] = updatedHealthProfile.IsDiabetic;
         }
-        if (updatedHealthProfile.Occupation) {
+        if (updatedHealthProfile && updatedHealthProfile.Occupation) {
             details['Occupation'] = updatedHealthProfile.Occupation;
+        }
+        if (updatedHealthProfile && updatedHealthProfile.MajorAilment) {
+            details['MajorAilment'] = updatedHealthProfile.MajorAilment;
+        }
+        if (updatedHealthProfile && updatedHealthProfile.IsSmoker) {
+            details['IsSmoker'] = updatedHealthProfile.IsSmoker;
+        }
+        if (updatedHealthProfile && updatedHealthProfile.BloodGroup) {
+            details['BloodGroup'] = updatedHealthProfile.BloodGroup;
+        }
+        if (updatedHealthProfile && updatedHealthProfile.Nationality) {
+            details['Nationality'] = updatedHealthProfile.Nationality;
         }
         if (location) {
             details['Location'] = location;
         }
-        if (updatedHealthProfile.OtherConditions) {
+        if (updatedHealthProfile && updatedHealthProfile.OtherConditions) {
             details['OtherConditions'] = updatedHealthProfile.OtherConditions;
         }
         if (updatedModel.DoctorPersonId_1) {
@@ -264,10 +276,11 @@ export class PatientService {
         if (updatedModel.DoctorPersonId_2) {
             details['DoctorPersonId_2'] = updatedModel.DoctorPersonId_2;
         }
-        if (updatedHealthProfile.CreatedAt) {
+        details['RecordDate'] = new Date(updatedModel.CreatedAt);
+        if (updatedHealthProfile && updatedHealthProfile.CreatedAt) {
             details['RecordDate'] = new Date(updatedHealthProfile.CreatedAt);
         }
-
+        
         EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
     };
 

@@ -3,9 +3,9 @@ import { BaseSearchFilters, BaseSearchResults } from "../../miscellaneous/base.s
 import { DailyStatisticsDto } from "./daily.statistics.dto";
 
 export interface DailyStatisticsSearchFilters extends BaseSearchFilters {
-    id?:uuid
-    StatisticsReportedDate?          : Date;
-    CronSchedulerTime?               :Date;
+    id?                             : uuid
+    ReportDate?                     : Date;
+    ReportTimestamp?                : Date;
    }
 
 export interface DailyStatisticsSearchResults extends BaseSearchResults {

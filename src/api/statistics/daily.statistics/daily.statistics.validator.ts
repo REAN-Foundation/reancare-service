@@ -12,13 +12,11 @@ export class DailyStatisticsValidator extends BaseValidator {
     }
 
     getCreateDomainModel = (requestBody: any): DailyStatisticsDomainModel => {
-
         const createModel: DailyStatisticsDomainModel = {
-            StatisticsReportedDate : requestBody.StatisticsReportedDate ?? new Date(),
-            CronSchedulerTime      : requestBody.CronSchedulerTime ?? new Date(),
-            StatisticsData         : JSON.stringify(requestBody.StatisticsData) ?? null
+            ReportDate      : requestBody.ReportDate ?? new Date(),
+            ReportTimestamp : requestBody.ReportTimestamp ?? new Date(),
+            Statistics      : JSON.stringify(requestBody.Statistics) ?? null
         };
-
         return createModel;
     };
 
@@ -28,11 +26,10 @@ export class DailyStatisticsValidator extends BaseValidator {
     };
 
     search = async (request: express.Request): Promise<DailyStatisticsSearchFilters> => {
-
         await this.validateUuid(request, 'id', Where.Query, false, false);
-        await this.validateDate(request,'StatisticsReportedDate',Where.Query,false,false);
-        await this.validateDate(request,'CronSchedulerTime',Where.Query,false,false);
-
+        await this.validateDate(request,'ReportDate',Where.Query,false,false);
+        await this.validateDate(request,'ReportTimestamp',Where.Query,false,false);
+        
         await this.validateBaseSearchFilters(request);
 
         this.validateRequest(request);
@@ -41,18 +38,17 @@ export class DailyStatisticsValidator extends BaseValidator {
     };
 
     private async validateCreateBody(request) {
-        await this.validateDate(request,'StatisticsReportedDate',Where.Body,false,false);
-        await this.validateDate(request,'CronSchedulerTime',Where.Body,false,false);
-        await this.validateString(request,'StatisticsData',Where.Body,true,false);
+        await this.validateDate(request,'ReportDate',Where.Body,false,false);
+        await this.validateDate(request,'ReportTimestamp',Where.Body,false,false);
+        await this.validateString(request,'Statistics',Where.Body,true,false);
         await this.validateRequest(request);
     }
 
     private getFilter(request): DailyStatisticsSearchFilters {
-
         const filters: DailyStatisticsSearchFilters = {
-            id                     : request.query.id ?? null,
-            StatisticsReportedDate : request.query.statisticsReportedDate ?? null,
-            CronSchedulerTime      : request.query.cronSchedulerTime ?? null,
+            id              : request.query.id ?? null,
+            ReportDate      : request.query.ReportDate ?? null,
+            ReportTimestamp : request.query.ReportTimestamp ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

@@ -5,7 +5,6 @@ import { DailyStatisticsController } from './daily.statistics.controller';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
-
     const router = express.Router();
     const authenticator = Loader.authenticator;
     const controller = new DailyStatisticsController();

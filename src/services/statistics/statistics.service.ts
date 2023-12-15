@@ -86,7 +86,7 @@ export class StatisticsService {
         return await this._statisticsRepo.getAllYears();
     };
 
-    createDailyStatistics = async()=>{
+    createDailyStatistics = async () => {
         try {
             const filter = {};
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
@@ -118,64 +118,63 @@ export class StatisticsService {
                     MajorAilmentDistribution : majorAilmentDistribution,
                     AddictionDistribution    : addictionDistribution
                 },
-                CareplanStatistics : {}
             };
     
-            const dailyStatisticsDomainModel:DailyStatisticsDomainModel = {
-                StatisticsReportedDate : new Date(),
-                CronSchedulerTime      : new Date(),
-                StatisticsData         : JSON.stringify(statisticsData)
+            const dailyStatisticsDomainModel: DailyStatisticsDomainModel = {
+                ReportDate      : new Date(),
+                ReportTimestamp : new Date(),
+                Statistics      : JSON.stringify(statisticsData)
             };
     
             const dailyStatistics = await this._dailyStatisticsRepo.create(dailyStatisticsDomainModel);
-            if (dailyStatistics){
+            if (dailyStatistics) {
                 Logger.instance().log('Daily users stattistics created successfully.');
             } else {
                 Logger.instance().log('Error in creating daily users stattistics.');
             }
-        } catch (error){
+        } catch (error) {
             Logger.instance().log(`Error in creating daily users stattistics:${error.message}`);
         }
     };
 
-    private getYearWiseUserCount = async (allYears)=>{
+    private getYearWiseUserCount = async (allYears) => {
         const yearWiseUserCount:YearWiseUsers[] = [];
-        for (let i = 0; i < allYears.length;i++){
-            const user:YearWiseUsers = {};
+        for (let i = 0; i < allYears.length; i++) {
+            const user: YearWiseUsers = {};
             user.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-            if (user.Year){
+            if (user.Year) {
                 const yearWiseUserCount = await this._statisticsRepo.getUsersCount({ Year: user.Year });
                 user.UserCount = yearWiseUserCount.TotalUsers.Count;
             }
-            if (user.Year){
+            if (user.Year) {
                 yearWiseUserCount.push(user);
             }
         }
         return yearWiseUserCount;
     };
 
-    private getYearWiseDeviceDetails = async(allYears)=>{
-        const yearWiseDeviceDetails:YearWiseDeviceDetails[] = [];
-        for (let i = 0; i < allYears.length;i++){
-            const deviceDetails:YearWiseDeviceDetails = {};
+    private getYearWiseDeviceDetails = async(allYears) => {
+        const yearWiseDeviceDetails: YearWiseDeviceDetails[] = [];
+        for (let i = 0; i < allYears.length; i++) {
+            const deviceDetails: YearWiseDeviceDetails = {};
             deviceDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-            if (deviceDetails.Year){
+            if (deviceDetails.Year) {
                 const yearWiseDeviceDetails =
                 await this._statisticsRepo.getUsersByDeviceDetail({ Year: deviceDetails.Year });
                 deviceDetails.DeviceDetails = yearWiseDeviceDetails;
             }
-            if (deviceDetails.Year){
+            if (deviceDetails.Year) {
                 yearWiseDeviceDetails.push(deviceDetails);
             }
         }
         return yearWiseDeviceDetails;
     };
     
-    private compare = (a,b)=>{
-        if ( a.Year < b.Year ){
+    private compare = (a,b) => {
+        if ( a.Year < b.Year ) {
             return -1;
         }
-        if ( a.Year > b.Year ){
+        if ( a.Year > b.Year ) {
             return 1;
         }
         return 0;

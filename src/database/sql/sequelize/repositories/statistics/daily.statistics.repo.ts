@@ -13,12 +13,12 @@ export class DailyStatisticsRepo implements IDailyStatisticsRepo {
     create = async (dailyStatisticsDomainModel: DailyStatisticsDomainModel): Promise<DailyStatisticsDto> => {
         try {
             const entity = {
-                StatisticsReportedDate : dailyStatisticsDomainModel.StatisticsReportedDate ?? null,
-                CronSchedulerTime      : dailyStatisticsDomainModel.CronSchedulerTime ?? null,
-                StatisticsData         : dailyStatisticsDomainModel.StatisticsData ?? null
+                ReportDate      : dailyStatisticsDomainModel.ReportDate ?? null,
+                ReportTimestamp : dailyStatisticsDomainModel.ReportTimestamp ?? null,
+                Statistics      : dailyStatisticsDomainModel.Statistics ?? null
             };
             const dailyStatistics = await DailyStatistics.create(entity);
-            const dto = await DailyStatisticsMapper.toDto(dailyStatistics);
+            const dto = DailyStatisticsMapper.toDto(dailyStatistics);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -28,11 +28,10 @@ export class DailyStatisticsRepo implements IDailyStatisticsRepo {
 
     getLatestStatistics = async (): Promise<DailyStatisticsDto> => {
         try {
-            
             const latestStatistics = await DailyStatistics.findOne({
                 order : [['CreatedAt', 'DESC']],
             });
-            const dto = await DailyStatisticsMapper.toDto(latestStatistics);
+            const dto = DailyStatisticsMapper.toDto(latestStatistics);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);

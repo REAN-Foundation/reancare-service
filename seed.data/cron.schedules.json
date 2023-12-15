@@ -24,7 +24,7 @@
         "ScheduleExistingNutritionDataToEHR": "0 10 29 11 *",
         "ScheduleExistingSymptomDataToEHR": "30 10 29 11 *",
         "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *",
-        "DailyStatistics": "*/15 * * * *"
+        "DailyStatistics": "*/45 * * * *"
     },
     "development": {
         "FileCleanup": "*/55 * * * *",

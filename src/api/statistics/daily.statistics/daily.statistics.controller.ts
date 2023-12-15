@@ -27,18 +27,14 @@ export class DailyStatisticsController extends BaseController {
     
     getLatestStatistics = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             await this.setContext('DailyStatistics.GetLatestStatistics', request, response);
-
             const latestStatistics = await this._service.getLatestStatistics();
-            if (latestStatistics == null) {
+            if (latestStatistics === null) {
                 throw new ApiError(404, 'Daily Statistics not found.');
             }
-
             ResponseHandler.success(request, response, 'Latest statistics retrieved successfully!', 200, {
                 DailyStatistics : latestStatistics,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

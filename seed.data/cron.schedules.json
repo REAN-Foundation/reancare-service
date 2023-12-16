@@ -22,8 +22,9 @@
         "ScheduleExistingPhysicalActivityDataToEHR": "0 9 29 11 *",
         "ScheduleExistingMentalWellBeingDataToEHR": "30 9 29 11 *",
         "ScheduleExistingNutritionDataToEHR": "0 10 29 11 *",
-        "ScheduleExistingSymptomDataToEHR": "30 10 29 11 *" ,
-        "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *" 
+        "ScheduleExistingSymptomDataToEHR": "30 10 29 11 *",
+        "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *",
+        "DailyStatistics": "*/45 * * * *"
     },
     "development": {
         "FileCleanup": "*/55 * * * *",
@@ -48,9 +49,9 @@
         "ScheduleExistingPhysicalActivityDataToEHR": "0 9 29 11 *",
         "ScheduleExistingMentalWellBeingDataToEHR": "30 9 29 11 *",
         "ScheduleExistingNutritionDataToEHR": "0 10 29 11 *",
-        "ScheduleExistingSymptomDataToEHR": "30 10 29 11 *" ,
-        "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *"
-             
+        "ScheduleExistingSymptomDataToEHR": "30 10 29 11 *",
+        "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *",
+        "DailyStatistics": "0 0 * * *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",
@@ -75,9 +76,9 @@
         "ScheduleExistingPhysicalActivityDataToEHR": "30 16 30 11 *",
         "ScheduleExistingMentalWellBeingDataToEHR": "0 17 30 11 *",
         "ScheduleExistingNutritionDataToEHR": "30 17 30 11 *",
-        "ScheduleExistingSymptomDataToEHR": "0 18 30 11 *" ,
-        "ScheduleExistingMedicationDataToEHR": "30 18 30 11 *" 
-        
+        "ScheduleExistingSymptomDataToEHR": "0 18 30 11 *",
+        "ScheduleExistingMedicationDataToEHR": "30 18 30 11 *",
+        "DailyStatistics": "0 0 * * *"
     },
     "production": {
         "FileCleanup": "*/30 * * * *",
@@ -89,7 +90,7 @@
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleHsSurvey": "0 11 * * *",
         "ReminderOnNoActionToDonationRequest": "30 12 * * *",
-        "Reminders": "*/15 * * * *", 
+        "Reminders": "*/15 * * * *",
         "CareplanRegistrationReminder": "0 13 * * *",
         "ScheduleFetchDataFromDevices": "0 * * * *",
         "CareplanRegistrationReminderForOldUsers": "0 15 * * *",
@@ -102,8 +103,8 @@
         "ScheduleExistingPhysicalActivityDataToEHR": "20 9 2 12 *",
         "ScheduleExistingMentalWellBeingDataToEHR": "10 10 2 12 *",
         "ScheduleExistingNutritionDataToEHR": "20 11 2 12 *",
-        "ScheduleExistingSymptomDataToEHR": "10 12 2 12 *" ,
-        "ScheduleExistingMedicationDataToEHR": "50 12 4 12 *" 
-        
+        "ScheduleExistingSymptomDataToEHR": "10 12 2 12 *",
+        "ScheduleExistingMedicationDataToEHR": "50 12 4 12 *",
+        "DailyStatistics": "0 0 * * *"
     }
 }

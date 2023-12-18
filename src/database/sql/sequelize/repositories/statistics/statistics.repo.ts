@@ -141,8 +141,8 @@ export class StatisticsRepo implements IStatisticsRepo {
     getUsersByGender = async (filters): Promise<any> => {
         try {
             const totalUsers = await this.getTotalUsers(filters);
-
-            const totalUsers_ = totalUsers.rows.map(x => x.Person.Gender);
+            
+            const totalUsers_ = totalUsers.rows.map(x => x.User.Person.Gender);
 
             const totalMaleUsers = totalUsers_.filter(x => x === "Male");
 
@@ -201,7 +201,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     getUsersByAge = async (filters): Promise<any> => {
         try {
             const totalUsers_ = await this.getTotalUsers(filters);
-            const totalUsers = totalUsers_.rows.map(x => x.Person.BirthDate);
+            const totalUsers = totalUsers_.rows.map(x => x.User.Person.BirthDate);
 
             const usersWithBirthDate = totalUsers.filter(x => x != null);
 
@@ -297,8 +297,10 @@ export class StatisticsRepo implements IStatisticsRepo {
             {
                 model    : User,
                 required : true,
-                where    : {},
-                include  : [{
+                where    : {
+                    IsTestUser : false
+                },
+                include : [{
                     model    : Person,
                     required : true,
                     where    : {
@@ -382,8 +384,10 @@ export class StatisticsRepo implements IStatisticsRepo {
             {
                 model    : User,
                 required : true,
-                where    : {},
-                include  : [{
+                where    : {
+                    IsTestUser : false
+                },
+                include : [{
                     model    : Person,
                     required : true,
                     where    : {
@@ -567,7 +571,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
             const usersCountryCodes = [];
             for (const u of totalUsers.rows) {
-                var phone = u.Person.Phone;
+                var phone = u.User.Person.Phone;
                 const countryCode = phone.split("-")[0];
                 usersCountryCodes.push(countryCode);
             }
@@ -621,8 +625,10 @@ export class StatisticsRepo implements IStatisticsRepo {
             {
                 model    : User,
                 required : true,
-                where    : {},
-                include  : [{
+                where    : {
+                    IsTestUser : false
+                },
+                include : [{
                     model    : Person,
                     required : true,
                     where    : {
@@ -889,8 +895,10 @@ export class StatisticsRepo implements IStatisticsRepo {
             {
                 model    : User,
                 required : true,
-                where    : {},
-                include  : [{
+                where    : {
+                    IsTestUser : false
+                },
+                include : [{
                     model    : Person,
                     required : true,
                     where    : {
@@ -1145,13 +1153,23 @@ export class StatisticsRepo implements IStatisticsRepo {
             const search: any = { where: {}, include: [], paranoid: false };
             const includesObj =
              {
-                 model    : Person,
+                 model    : User,
                  required : true,
-                 where    : {},
+                 where    : {
+                     IsTestUser : false
+                 },
                  paranoid : false,
+                 include  : [
+                     {
+                         model    : Person,
+                         required : true,
+                         where    : {},
+                         paranoid : false,
+                     }
+                 ]
              };
 
-            includesObj.where['Phone'] = {
+            includesObj.include[0].where['Phone'] = {
                 [Op.notBetween] : [1000000000, 1000000100],
             };
 
@@ -1164,7 +1182,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
 
-                    includesObj.where['CreatedAt'] = {
+                    includesObj.include[0].where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
                     search.include.push(includesObj);
@@ -1183,18 +1201,18 @@ export class StatisticsRepo implements IStatisticsRepo {
             {
                 const { minDate, maxDate } = getMinMaxDatesForYear(filters);
                 if (filters.Year != null)  {
-                    includesObj.where['CreatedAt'] = {
+                    includesObj.include[0].where['CreatedAt'] = {
                         [Op.between] : [minDate, maxDate],
                     };
                 }
                 const maxCreatedDate = getMaxDate(filters);
                 if (filters.Year != null && filters.Month != null)  {
-                    includesObj.where['CreatedAt'] = {
+                    includesObj.include[0].where['CreatedAt'] = {
                         [Op.lt] : maxCreatedDate,
                     };
                 }
                 if (filters.From != null && filters.To != null)  {
-                    includesObj.where['CreatedAt'] = {
+                    includesObj.include[0].where['CreatedAt'] = {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
@@ -1224,18 +1242,28 @@ export class StatisticsRepo implements IStatisticsRepo {
            const search: any = { where: {}, include: [], paranoid: false };
 
            const includesObj =
-             {
-                 model    : Person,
-                 required : true,
-                 where    : {},
-                 paranoid : false
-             };
+           {
+               model    : User,
+               required : true,
+               where    : {
+                   IsTestUser : false
+               },
+               paranoid : false,
+               include  : [
+                   {
+                       model    : Person,
+                       required : true,
+                       where    : {},
+                       paranoid : false,
+                   }
+               ]
+           };
 
-           includesObj.where['Phone'] = {
+           includesObj.include[0].where['Phone'] = {
                [Op.notBetween] : [1000000000, 1000000100],
            };
 
-           includesObj.where['DeletedAt'] = {
+           includesObj.include[0].where['DeletedAt'] = {
                [Op.eq] : null
            };
 
@@ -1247,7 +1275,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                    var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                    var monthName = TimeHelper.format(date, 'MMMM, YYYY');
 
-                   includesObj.where['CreatedAt'] = {
+                   includesObj.include[0].where['CreatedAt'] = {
                        [Op.between] : [startOfMonth, endOfMonth],
                    };
                    search.include.push(includesObj);
@@ -1266,17 +1294,17 @@ export class StatisticsRepo implements IStatisticsRepo {
            else
            {
                if (filters.Year != null)  {
-                   includesObj.where['CreatedAt'] = {
+                   includesObj.include[0].where['CreatedAt'] = {
                        [Op.between] : [minDate, maxDate],
                    };
                }
                if (filters.Year != null && filters.Month != null)  {
-                   includesObj.where['CreatedAt'] = {
+                   includesObj.include[0].where['CreatedAt'] = {
                        [Op.lt] : maxCreatedDate,
                    };
                }
                if (filters.From != null && filters.To != null)  {
-                   includesObj.where['CreatedAt'] = {
+                   includesObj.include[0].where['CreatedAt'] = {
                        [Op.between] : [filters.From, filters.To],
                    };
                }
@@ -1572,28 +1600,39 @@ export class StatisticsRepo implements IStatisticsRepo {
 
             const includesObj =
              {
-                 model    : Person,
+                 model    : User,
                  required : true,
-                 where    : {},
+                 where    : {
+                     IsTestUser : false
+                 },
                  paranoid : false,
+                 include  : [
+                     {
+                         model    : Person,
+                         required : true,
+                         where    : {},
+                         paranoid : false,
+                     }
+                 ]
+                 
              };
 
-            includesObj.where['Phone'] = {
+            includesObj.include[0].where['Phone'] = {
                 [Op.notBetween] : [1000000000, 1000000100],
             };
 
             if (filters.Year != null)  {
-                includesObj.where['CreatedAt'] = {
+                includesObj.include[0].where['CreatedAt'] = {
                     [Op.between] : [minDate, maxDate],
                 };
             }
             if (filters.Year != null && filters.Month != null)  {
-                includesObj.where['CreatedAt'] = {
+                includesObj.include[0].where['CreatedAt'] = {
                     [Op.lt] : maxCreatedDate,
                 };
             }
             if (filters.From != null && filters.To != null)  {
-                includesObj.where['CreatedAt'] = {
+                includesObj.include[0].where['CreatedAt'] = {
                     [Op.between] : [filters.From, filters.To],
                 };
             }

@@ -1013,6 +1013,7 @@ export class AssessmentService {
             Title                : questionNode.Title,
             Description          : questionNode.Description,
             ExpectedResponseType : questionNode.QueryResponseType as QueryResponseType,
+            RawData              : questionNode.RawData,
             Options              : questionNode.Options,
             ProviderGivenCode    : questionNode.ProviderGivenCode,
             CorrectAnswer        : questionNode.CorrectAnswer ? JSON.parse(questionNode.CorrectAnswer) : null,
@@ -1154,8 +1155,6 @@ export class AssessmentService {
             EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
 
         }
-
-    
         
     };
 

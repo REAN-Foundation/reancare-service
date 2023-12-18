@@ -15,9 +15,6 @@ import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
 import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
-import { CareplanActivityDto } from '../../../domain.types/clinical/careplan/activity/careplan.activity.dto';
-import { PatientService } from '../../../services/users/patient/patient.service';
-import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -258,10 +255,12 @@ export class UserTaskController {
                 if (action) {
                     updated['Action'] = action;
                 }
+
+                var healthSystemHospitalDetails = await this._service.getHealthSystem(updated.UserId);
                 var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(action.PatientUserId);
                 if (eligibleAppNames.length > 0) {
                     for (var appName of eligibleAppNames) {
-                        this.addEHRRecord(action, appName);
+                        this.addEHRRecord(action, appName, healthSystemHospitalDetails, updated);
                     }
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${action.PatientUserId}`);
@@ -457,7 +456,7 @@ export class UserTaskController {
         return dto;
     };
 
-    private addEHRRecord = (action: any, appName?: string) => {
+    private addEHRRecord = (action: any, appName?: string, healthSystemHospitalDetails?: any , updated?: UserTaskDto) => {
         EHRAnalyticsHandler.addCareplanActivityRecord(
             appName,
             action.PatientUserId,
@@ -477,7 +476,10 @@ export class UserTaskController {
             action.CompletedAt,     
             action.Sequence,        
             action.Frequency,       
-            action.Status,             
+            action.Status,
+            healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
+            healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
+            updated.CreatedAt ? new Date(updated.CreatedAt) : null           
         );
 };
 

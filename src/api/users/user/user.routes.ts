@@ -10,7 +10,7 @@ export const register = (app: express.Application): void => {
     const controller = new UserController();
 
     router.get('/by-phone/:phone/role/:roleId',
-        auth('Users.User.GetTenantUserByRoleAndPhone', true), controller.getTenantUserByRoleAndPhone);
+        auth('Users.User.GetTenantUserByRoleAndPhone', false), controller.getTenantUserByRoleAndPhone);
     router.get('/by-email/:email/role/:roleId',
         auth('Users.User.GetTenantUserByRoleAndPhone', true), controller.getTenantUserByRoleAndEmail);
 

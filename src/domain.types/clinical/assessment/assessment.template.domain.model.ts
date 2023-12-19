@@ -11,4 +11,5 @@ export interface AssessmentTemplateDomainModel {
     FileResourceId?             : uuid;
     ServeListNodeChildrenAtOnce : boolean;
     TotalNumberOfQuestions?     : number;
+    TenantId?                   : uuid;
 }

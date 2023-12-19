@@ -40,7 +40,7 @@
     },
     "Careplans" : [
         {
-            "Enabled" : false,
+            "Enabled" : true,
             "Provider": "AHA",
             "Service": "AhaCarePlanService",
             "Plans": [

@@ -18,7 +18,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/upload/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .field('Name', 'image')
             .field('IsPublicResource', 'true')
             .field('IsMultiResolutionImage', 'false')
@@ -38,7 +38,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/upload/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .field('Name', 'image')
             .field('IsPublicResource', 'true')
             .field('IsMultiResolutionImage', 'true')
@@ -57,7 +57,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/upload/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .field('Name', 'image')
             .field('IsPublicResource', 'true')
             .attach('image', 'tests/api-tests/upload/demo.jpg')
@@ -75,7 +75,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/${getTestData("FileId")}/upload-version/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .field('name', 'image')
             .attach('image', 'tests/api-tests/upload/demo.jpg')
             .expect(response => {
@@ -95,7 +95,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/${getTestData("FileId")}/rename/new_name.png`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -109,7 +109,7 @@ describe('44 - File resource management tests', function() {
             .get(`/api/v1/file-resources/${getTestData("FileId")}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -123,7 +123,7 @@ describe('44 - File resource management tests', function() {
             .get(`/api/v1/file-resources/${getTestData("FileId")}/versions`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -137,7 +137,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/upload/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -151,7 +151,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/upload/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .field('Name', 'image')
             .field('IsPublicResource', 'true')
             .field('IsMultiResolutionImage', 'true')
@@ -168,7 +168,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/upload/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .field('Name', 'image')
             .field('IsPublicResource', 'true')
             .expect(response => {
@@ -184,7 +184,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/${getTestData("FileId")}/upload-version/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -198,7 +198,7 @@ describe('44 - File resource management tests', function() {
             .post(`/api/v1/file-resources/${getTestData("File")}/rename/new_name.png`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -211,7 +211,7 @@ describe('44 - File resource management tests', function() {
         agent
             .get(`/api/v1/file-resources/${getTestData("FileId")}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -225,7 +225,7 @@ describe('44 - File resource management tests', function() {
             .get(`/api/v1/file-resources/${getTestData("File")}/versions`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

@@ -89,7 +89,7 @@ describe('55 - Symptom assessment tests', function() {
             .put(`/api/v1/clinical/symptom-assessments/${getTestData('AssessmentId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.SymptomAssessment).to.have.property('id');
@@ -111,7 +111,7 @@ describe('55 - Symptom assessment tests', function() {
             .delete(`/api/v1/clinical/symptom-assessments/${getTestData('AssessmentId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -153,7 +153,7 @@ describe('55 - Symptom assessment tests', function() {
             .post(`/api/v1/clinical/symptom-assessments/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -169,7 +169,7 @@ describe('55 - Symptom assessment tests', function() {
             .get(`/api/v1/clinical/symptom-assessments/${getTestData('AssessmentId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

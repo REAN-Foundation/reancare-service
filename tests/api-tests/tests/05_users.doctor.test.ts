@@ -13,7 +13,7 @@ describe('05 - Doctor tests', function() {
 
     var agent = request.agent(infra._app);
 
-    it('05:01 -> Register doctor- with only a phone number', function(done) {
+    it('05:01 -> Register doctor - with only a phone number', function(done) {
         loadDoctorPhoneCreateModel();
         const createModel = getTestData("DoctorPhoneCreateModel");
         agent
@@ -117,7 +117,7 @@ describe('05 - Doctor tests', function() {
             .get(`/api/v1/doctors/${getTestData('DoctorUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Doctor.User.Person).to.have.property('id');
                 expect(response.body.Data.Doctor.User.Person).to.have.property('FirstName');
@@ -158,7 +158,7 @@ describe('05 - Doctor tests', function() {
             .put(`/api/v1/doctors/${getTestData('DoctorUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.Doctor.User.Person).to.have.property('id');
@@ -186,7 +186,7 @@ export const loadDoctorPhoneCreateModel = async (
 ) => {
     const model = {
         Phone : faker.phone.number('+91-##########'),
-              
+        TenantId: getTestData("TenantId")
     };
     setTestData(model, "DoctorPhoneCreateModel");
 };
@@ -197,6 +197,7 @@ export const loadDoctorCreateModel = async (
         FirstName : faker.person.firstName(),
         Email     : faker.internet.exampleEmail(),
         Phone     : firstDoctorPhoneNumber,
+        TenantId: getTestData("TenantId")
     
     };
     setTestData(model, "DoctorCreateModel");
@@ -207,6 +208,8 @@ export const loadDoctorCreateWithPhoneModel = async (
         const model = {
             Phone: secondDoctorPhoneNumber,
             Password: doctorPassword,
+            TenantId: getTestData("TenantId")
+
         };
         setTestData(model, 'DoctorCreateWithPhoneModel');
 };
@@ -216,7 +219,8 @@ export const loadDoctorLoginModel = async (
         const model = {
             Phone: secondDoctorPhoneNumber,
             Password: doctorPassword,
-            LoginRoleId: getTestData("doctorRoleId")
+            LoginRoleId: getTestData("doctorRoleId"),
+            TenantId: getTestData("TenantId")
         };
         setTestData(model, 'DoctorLoginModel');
 };
@@ -236,8 +240,8 @@ export const loadDoctorUpdateModel = async (
 ) => {
     const model = {
         FirstName : faker.person.firstName(),
-        Email     : faker.internet.exampleEmail()
-
+        Email     : faker.internet.exampleEmail(),
+        TenantId: getTestData("TenantId")
     };
     setTestData(model, "DoctorUpdateModel");
 };

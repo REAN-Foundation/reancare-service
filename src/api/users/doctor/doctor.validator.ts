@@ -33,6 +33,7 @@ export class DoctorValidator {
                 DefaultTimeZone  : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
                 GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
+                TenantId         : request.body.TenantId ?? null,
             },
             NationalDigiDoctorId   : request.body.NationalDigiDoctorId ?? null,
             Qualifications         : request.body.Qualifications ?? null,

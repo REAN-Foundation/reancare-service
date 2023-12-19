@@ -22,6 +22,7 @@ describe('06 - Organization tests', function() {
             .post(`/api/v1/organizations/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Organization.id, 'OrganizationId_1');
@@ -52,7 +53,7 @@ describe('06 - Organization tests', function() {
             .get(`/api/v1/organizations/${getTestData('OrganizationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Organization).to.have.property('id');
                 expect(response.body.Data.Organization).to.have.property('Type');
@@ -80,7 +81,7 @@ describe('06 - Organization tests', function() {
             .get(`/api/v1/organizations/search${loadOrganizationQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Organizations).to.have.property('TotalCount');
                 expect(response.body.Data.Organizations).to.have.property('RetrievedCount');
@@ -144,7 +145,7 @@ describe('06 - Organization tests', function() {
             .post(`/api/v1/organizations/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Organization.id, 'OrganizationId');
@@ -177,7 +178,7 @@ describe('06 - Organization tests', function() {
             .post(`/api/v1/organizations/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -192,7 +193,7 @@ describe('06 - Organization tests', function() {
         agent
             .get(`/api/v1/organizations/search${loadOrganizationQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

@@ -344,14 +344,14 @@ export class UserValidator {
                 .escape(),
         ]).run(request);
 
-        await oneOf([
-            body('TenantId').exists()
-                .trim()
-                .isUUID(),
-            body('TenantCode').exists()
-                .trim()
-                .escape(),
-        ]).run(request);
+        // await oneOf([
+        //     body('TenantId').exists()
+        //         .trim()
+        //         .isUUID(),
+        //     body('TenantCode').exists()
+        //         .trim()
+        //         .escape(),
+        // ]).run(request);
 
         await param('roleId').exists()
             .trim()

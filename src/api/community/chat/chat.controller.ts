@@ -198,6 +198,7 @@ export class ChatController {
 
             const conversation = await this._service.getConversationBetweenTwoUsers(firstUserId, secondUserId);
             if (!conversation) {
+                
                 throw new ApiError(404, 'Conversation cannot be found.');
             }
             ResponseHandler.success(request, response, 'Conversation between users retrieved successfully!', 200, {

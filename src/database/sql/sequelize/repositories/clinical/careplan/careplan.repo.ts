@@ -110,6 +110,8 @@ export class CareplanRepo implements ICareplanRepo {
             var where_clause = { PatientUserId: patientUserId };
             if (isActive) {
                 where_clause['EndDate'] = { [Op.gte]: new Date() };
+            } else {
+                where_clause['EndDate'] = { [Op.lte]: new Date() };
             }
 
             const enrollments = await CareplanEnrollment.findAll({

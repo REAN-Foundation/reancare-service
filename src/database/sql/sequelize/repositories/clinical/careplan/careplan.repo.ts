@@ -143,6 +143,26 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
+    public getEnrollmentByEnrollmentId = async (enrollmentId: string): Promise<EnrollmentDto> => {
+        try {
+            var enrollment = await CareplanEnrollment.findOne({
+                where : {
+                    [Op.or] : [
+                        {
+                            EnrollmentStringId : enrollmentId,
+                        },
+                        {
+                            EnrollmentId : enrollmentId,
+                        },
+                    ]
+                },
+            });
+            return EnrollmentMapper.toDto(enrollment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
     public getCompletedEnrollments = async (daysPassed: number, planNames: string[]): Promise<EnrollmentDto[]> => {
         try {
             var today = new Date();

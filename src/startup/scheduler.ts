@@ -76,6 +76,8 @@ export class Scheduler {
                 this.scheduleExistingAssessmentDataToEHR();
                 this.scheduleExistingStaticDataToEHR();
                 this.scheduleDailyStatistics();
+                this.scheduleStrokeSurvey();
+
 
                 resolve(true);
             } catch (error) {
@@ -199,6 +201,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Custom HS Survey Tasks...');
                 var customActionHandler = new CustomActionsHandler();
                 await customActionHandler.scheduleHsSurvey();
+            })();
+        });
+    };
+
+    private scheduleStrokeSurvey = () => {
+        cron.schedule(Scheduler._schedules['ScheduleStrokeSurvey'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Stroke Survey notification...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleStrokeSurvey();
             })();
         });
     };

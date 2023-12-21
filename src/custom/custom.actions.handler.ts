@@ -102,6 +102,15 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleStrokeSurvey = async () => {
+        try {
+            await this._ahaActions.scheduleStrokeSurvey();
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending stroke survey notification.`);
+        }
+    };
+
     //#endregion
 
     //#region Privates

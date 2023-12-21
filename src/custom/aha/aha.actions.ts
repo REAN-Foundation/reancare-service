@@ -325,6 +325,36 @@ export class AHAActions {
         }
     };
 
+    public scheduleStrokeSurvey = async () => {
+        try {
+            const daysPassed = 6;
+            var careplanEnrollments = await this._careplanService.getCompletedEnrollments(daysPassed, ["Stroke"]);
+            for await (var careplanEnrollment of careplanEnrollments) {
+                Logger.instance().log(`[StrokeCron] Enrollment details:${JSON.stringify(careplanEnrollment)}`);
+                var patient = await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
+
+                var userDevices = await this._userDeviceDetailsService.getByUserId(patient.UserId);
+                var userAppRegistrations = [];
+                var userDeviceTokens = [];
+                userDevices.forEach(userDevice => {
+                    userAppRegistrations.push(userDevice.AppName);
+                    userDeviceTokens.push(userDevice.Token);
+                });
+
+                if (userAppRegistrations.length > 0 && this.eligibleForStrokeSurvey(userAppRegistrations)) {
+                    Logger.instance().log(`[StrokeCron] Sending Stroke survey notification to user:${patient.UserId}`);
+                    await this.sendStrokeSurveyNotification(userDeviceTokens);        
+                } else {
+                    Logger.instance().log(`[StrokeCron] Skip sending Stroke survey notification as device is not eligible:${patient.UserId}`);
+                }  
+            }
+            Logger.instance().log(`[StrokeCron] Cron completed successfully.`);
+        }
+        catch (error) {
+            Logger.instance().log(`[StrokeCron] Error occured while sending Stroke survey notification`);
+        }
+    };
+
     //#endregion
 
     //#region Privates
@@ -426,6 +456,15 @@ export class AHAActions {
         return eligibleForCareplanRegistartionReminder;
     };
 
+    private eligibleForStrokeSurvey = (userAppRegistrations) => {
+
+        const eligibleForStrokeSurvey =
+        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
+
+        return eligibleForStrokeSurvey;
+    };
+
     private sendCareplanRegistrationReminder = async (userDeviceTokens) => {
 
         var title = MessageTemplates['CareplanRegistrationReminder'].Title;
@@ -439,6 +478,28 @@ export class AHAActions {
         var message = Loader.notificationService.formatNotificationMessage(
             MessageTemplates['CareplanRegistrationReminder'].NotificationType, title, body
         );
+        for await (var deviceToken of userDeviceTokens) {
+            await Loader.notificationService.sendNotificationToDevice(deviceToken, message);
+        }
+
+    };
+
+    private sendStrokeSurveyNotification = async (userDeviceTokens) => {
+
+        var title = MessageTemplates['StrokeSurveyNotification'].Title;
+        var body = MessageTemplates['StrokeSurveyNotification'].Body;
+        var url = MessageTemplates['StrokeSurveyNotification'].Url;
+
+        Logger.instance().log(`Notification Title: ${title}`);
+        Logger.instance().log(`Notification Body: ${body}`);
+        Logger.instance().log(`Notification URL: ${url}`);
+
+        Logger.instance().log(`Notification template: ${JSON.stringify(MessageTemplates['StrokeSurveyNotification'])}`);
+
+        var message = Loader.notificationService.formatNotificationMessage(
+            MessageTemplates['StrokeSurveyNotification'].NotificationType, title, body, url
+        );
+        Logger.instance().log(`[StrokeCron] Notification Paylod: ${JSON.stringify(message)}`);
         for await (var deviceToken of userDeviceTokens) {
             await Loader.notificationService.sendNotificationToDevice(deviceToken, message);
         }

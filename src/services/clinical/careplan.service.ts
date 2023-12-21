@@ -363,6 +363,12 @@ export class CareplanService implements IUserActionService {
             activity['ActionDetails'] = actionDetails as AssessmentDto;
         }
 
+        // fetch careplan for given activity and check for expiration
+        var careplanDetails = await this._careplanRepo.getEnrollmentByEnrollmentId(activity.EnrollmentId.toString());
+        if (careplanDetails.EndAt < new Date()) {
+            return true;
+        }
+
         var updatedActivity = await this._handler.updateActivity(
             activity.PatientUserId, activity.Provider, activity.PlanCode,
             activity.EnrollmentId, activity.ProviderActionId, activity);
@@ -724,7 +730,6 @@ export class CareplanService implements IUserActionService {
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
     };
-
 
     //#endregion
 

@@ -460,7 +460,7 @@ export class AHAActions {
 
         const eligibleForStrokeSurvey =
         userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
-        userAppRegistrations.indexOf('REAN HealthGuru') >= 0
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
 
         return eligibleForStrokeSurvey;
     };

@@ -144,7 +144,7 @@ export class BloodCholesterolRepo implements IBloodCholesterolRepo {
                     [Op.gte] : filters.CreatedDateFrom,
                 };
             }
-            if (filters.RecordedByUserId !== null) {
+            if (filters.RecordedByUserId) {
                 search.where['RecordedByUserId'] = filters.RecordedByUserId;
             }
 

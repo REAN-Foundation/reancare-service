@@ -16,7 +16,8 @@ import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.ty
 import * as path from 'path';
 import { PersonService } from '../../../../services/person/person.service';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
-
+import { ApiError } from '../../../../common/api.error';
+import { UserService } from '../../../../services/users/user/user.service';
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class StatisticsController {
@@ -28,6 +29,8 @@ export class StatisticsController {
     _fileResourceService: FileResourceService = null;
 
     _patientService: PatientService = null;
+    
+    _userService: UserService = null;
 
     _documentService: DocumentService = null;
 
@@ -39,6 +42,7 @@ export class StatisticsController {
 
     constructor() {
         this._service = Loader.container.resolve(StatisticsService);
+        this._userService = Loader.container.resolve(UserService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._patientService = Loader.container.resolve(PatientService);
         this._personService = Loader.container.resolve(PersonService);
@@ -59,6 +63,29 @@ export class StatisticsController {
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
                 Statistics : stats,
             });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPatientHealthSummary = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'PatientStatistics.getPatientHealthSummary';
+
+            const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
+            const existingUser = await this._userService.getById(patientUserId);
+            if (existingUser == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+
+            const patientHealthSummary =  await this._service.getHealthSummary(patientUserId);
+            ResponseHandler.success(
+                request,
+                response,
+                'Patient health summary retrieved successfully!',
+                200,
+                patientHealthSummary
+            );
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

@@ -14,6 +14,7 @@ import { Loader } from '../../../startup/loader';
 import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
+import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +37,8 @@ export class UserTaskController {
     _authorizer: Authorizer = null;
 
     _validator: UserTaskValidator = new UserTaskValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         this._service = Loader.container.resolve(UserTaskService);
@@ -252,6 +255,17 @@ export class UserTaskController {
                 if (action) {
                     updated['Action'] = action;
                 }
+
+                var healthSystemHospitalDetails = await this._service.getHealthSystem(updated.UserId);
+                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(action.PatientUserId);
+                if (eligibleAppNames.length > 0) {
+                    for (var appName of eligibleAppNames) {
+                        this.addEHRRecord(action, appName, healthSystemHospitalDetails, updated);
+                    }
+                } else {
+                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${action.PatientUserId}`);
+                }
+
             }
 
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
@@ -441,6 +455,33 @@ export class UserTaskController {
 
         return dto;
     };
+
+    private addEHRRecord = (action: any, appName?: string, healthSystemHospitalDetails?: any , updated?: UserTaskDto) => {
+        EHRAnalyticsHandler.addCareplanActivityRecord(
+            appName,
+            action.PatientUserId,
+            action.id,
+            action.EnrollmentId,     
+            action.Provider,               
+            action.PlanName,      
+            action.PlanCode,                
+            action.Type,            
+            action.Category,        
+            action.ProviderActionId,
+            action.Title,           
+            action.Description,     
+            action.Url,
+            'English',       
+            action.ScheduledAt,
+            action.CompletedAt,     
+            action.Sequence,        
+            action.Frequency,       
+            action.Status,
+            healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
+            healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
+            updated.CreatedAt ? new Date(updated.CreatedAt) : null           
+        );
+};
 
     //#endregion
 

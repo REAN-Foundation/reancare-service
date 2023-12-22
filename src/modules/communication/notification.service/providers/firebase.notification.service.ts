@@ -2,6 +2,7 @@ import * as admin from 'firebase-admin';
 import { Logger } from '../../../../common/logger';
 import { INotificationService } from '../notification.service.interface';
 import fs from 'fs';
+import { url } from 'inspector';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +68,7 @@ export class FirebaseNotificationService implements INotificationService {
         }
     };
     
-    formatNotificationMessage = (notificationType: string, title: string, body: any): any => {
+    formatNotificationMessage = (notificationType: string, title: string, body: any, url = null): any => {
         var message = {
             data : { 
                 type         : notificationType,
@@ -108,6 +109,11 @@ export class FirebaseNotificationService implements INotificationService {
                 },
             },
         };
+
+        if (url) {
+            message.data["url"] = url;
+        }
+        Logger.instance().log(`Notification Payload: ${JSON.stringify(message)}`);
         return message;
     };
     

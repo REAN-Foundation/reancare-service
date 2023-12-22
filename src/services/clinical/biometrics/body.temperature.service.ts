@@ -7,6 +7,8 @@ import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from '../.
 import { TemperatureStore } from "../../../modules/ehr/services/body.temperature.store";
 import { Loader } from "../../../startup/loader";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +66,15 @@ export class BodyTemperatureService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bodyTemperatureRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyTemperatureDomainModel, appName?: string) => {
+        if (model.BodyTemperature) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId, recordId, provider, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit, null, null, appName, 
+                model.RecordDate ? model.RecordDate : null
+            );
+        }
     };
 
 }

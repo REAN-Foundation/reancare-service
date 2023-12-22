@@ -6,13 +6,13 @@ import { PulseService } from '../../../../services/clinical/biometrics/pulse.ser
 import { Loader } from '../../../../startup/loader';
 import { PulseValidator } from './pulse.validator';
 import { BaseController } from '../../../base.controller';
-import { PulseDomainModel } from '../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Logger } from '../../../../common/logger';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,9 +24,14 @@ export class PulseController extends BaseController{
 
     _validator: PulseValidator = new PulseValidator();
 
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+
+    _ehrVitalService: EHRVitalService = new EHRVitalService();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(PulseService);
+        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -43,7 +48,14 @@ export class PulseController extends BaseController{
             if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
-            this.addEHRRecord(model.PatientUserId, pulse.id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(pulse.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, pulse.id, pulse.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${pulse.PatientUserId}`);
+            }
 
             // Adding record to award service
             if (pulse.Pulse) {
@@ -134,7 +146,14 @@ export class PulseController extends BaseController{
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
-            this.addEHRRecord(model.PatientUserId, id, model);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
+            }
 
             if (updated.Pulse) {
                 var timestamp = updated.RecordDate;
@@ -182,6 +201,9 @@ export class PulseController extends BaseController{
                 throw new ApiError(400, 'Pulse record cannot be deleted.');
             }
 
+            // delete ehr record
+            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+
             ResponseHandler.success(request, response, 'Pulse rate record deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -191,16 +213,4 @@ export class PulseController extends BaseController{
     };
 
     //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PulseDomainModel) => {
-        if (model.Pulse) {
-            EHRAnalyticsHandler.addIntegerRecord(
-                patientUserId, recordId, EHRRecordTypes.Pulse, model.Pulse, model.Unit);
-        }
-    };
-
-    //#endregion
-
 }

@@ -317,7 +317,7 @@ export class CAssessmentQueryResponse {
     Additional?          : string;
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
-    CreatedAt            : Date;
+    CreatedAt?           : Date;
 
     constructor() {
         this.ResponseType = QueryResponseType.None;

@@ -124,7 +124,7 @@ export class UserRepo implements IUserRepo {
                 IsTestUser      : model.IsTestUser ?? false,
                 Password        : model.Password ? Helper.hash(model.Password) : null,
                 DefaultTimeZone : model.DefaultTimeZone ?? '+05:30',
-                CurrentTimeZone : model.DefaultTimeZone ?? '+05:30',
+                CurrentTimeZone : model.CurrentTimeZone ?? model.DefaultTimeZone ?? '+05:30',
             };
             const user = await User.create(entity);
 
@@ -241,5 +241,17 @@ export class UserRepo implements IUserRepo {
         }
         return user.Password;
     };
+
+    getAllRegisteredUsers = async (): Promise<any[]> => {
+        try {
+            var users = await User.findAll();
+            return users;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 
 }

@@ -51,13 +51,25 @@ export class UserService {
 
     //#region Publics
 
-    public create = async (userDomainModel: UserDomainModel) => {
-        var dto = await this._userRepo.create(userDomainModel);
+    public create = async (model: UserDomainModel) => {
+
+        // timezone sanitization
+        if (model.DefaultTimeZone) {
+            const defaultTimezone = this.sanitizeTimezone(model.DefaultTimeZone); 
+            model.DefaultTimeZone = defaultTimezone;
+            model.CurrentTimeZone = defaultTimezone;
+        }
+        if (model.CurrentTimeZone) {
+            const currentTimezone = model.CurrentTimeZone ?? model.DefaultTimeZone;
+            model.CurrentTimeZone = this.sanitizeTimezone(currentTimezone); 
+        }
+    
+        var dto = await this._userRepo.create(model);
         if (dto == null) {
             return null;
         }
         dto = await this.updateDetailsDto(dto);
-        await this.generateLoginOtp(userDomainModel, dto);
+        await this.generateLoginOtp(model, dto);
         return dto;
     };
 
@@ -90,8 +102,18 @@ export class UserService {
         return dto;
     };
 
-    public update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
-        var dto = await this._userRepo.update(id, userDomainModel);
+    public update = async (id: string, model: UserDomainModel): Promise<UserDetailsDto> => {
+
+        // timezone sanitization
+
+        if (model.DefaultTimeZone != null) {
+            model.DefaultTimeZone = this.sanitizeTimezone(model.DefaultTimeZone); 
+            model.CurrentTimeZone = model.DefaultTimeZone;
+        }
+        if (model.CurrentTimeZone != null) {
+            model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone); 
+        }  
+        var dto = await this._userRepo.update(id, model);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
@@ -357,6 +379,25 @@ export class UserService {
         return displayId;
     };
 
+    public updateCurrentTimezone = async () => {
+        try {
+            const users = await this._userRepo.getAllRegisteredUsers();
+            for await (var u of users) {
+                var extractedResult = await this.sanitizeTimezone(u.DefaultTimeZone);
+                u.CurrentTimeZone = extractedResult;
+                var entity : UserDomainModel = {
+                    CurrentTimeZone : extractedResult,
+                    DefaultTimeZone : extractedResult
+                };
+                const updateUser = await this._userRepo.update(u.id, entity);
+                Logger.instance().log(`CurrentTimezone :: ${updateUser.CurrentTimeZone} and DefualtTimezone :: ${updateUser.CurrentTimeZone}  for ${u.id}`);
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Error updating the current timezone.`);
+        }
+    };
+
     getDateInUserTimeZone = async(userId, dateStr: string, useCurrent = true) => {
 
         var user = await this.getById(userId);
@@ -487,6 +528,17 @@ export class UserService {
             isTestUser = true;
         }
         return isTestUser;
+    };
+
+    private sanitizeTimezone = (inputString) => {
+        const parts = inputString.split(':');
+        
+        if (parts.length < 3) {
+          return inputString;
+        }
+        
+        const extractedString = parts.slice(0, 2).join(':');
+        return extractedString;
     };
 
     //#endregion

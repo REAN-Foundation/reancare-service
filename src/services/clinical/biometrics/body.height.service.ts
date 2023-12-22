@@ -6,6 +6,9 @@ import { BodyHeightDomainModel } from '../../../domain.types/clinical/biometrics
 import { BodyHeightDto } from '../../../domain.types/clinical/biometrics/body.height/body.height.dto';
 import { BodyHeightSearchFilters, BodyHeightSearchResults } from '../../../domain.types/clinical/biometrics/body.height/body.height.search.types';
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,6 +54,20 @@ export class BodyHeightService {
 
     delete = async (id: string): Promise<boolean> => {
         return await this._bodyHeightRepo.delete(id);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyHeightDomainModel, appName?: string) => {
+        if (model.BodyHeight) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId, recordId, provider, EHRRecordTypes.BodyHeight, model.BodyHeight, model.Unit, null, null, appName, 
+                model.RecordDate ? model.RecordDate : null
+            );
+
+            //Also add it to the static record
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                BodyHeight : model.BodyHeight
+            }, appName);
+        }
     };
 
 }

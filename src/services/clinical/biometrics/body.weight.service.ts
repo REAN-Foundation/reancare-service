@@ -7,6 +7,8 @@ import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../domai
 import { BodyWeightStore } from "../../../modules/ehr/services/body.weight.store";
 import { Loader } from "../../../startup/loader";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +64,15 @@ export class BodyWeightService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bodyWeightRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyWeightDomainModel, appName?: string) => {
+        if (model.BodyWeight) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId, recordId, provider, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit, null, null, appName, 
+                model.RecordDate ? model.RecordDate : null
+            );
+        }
     };
 
 }

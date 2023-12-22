@@ -70,7 +70,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 search.where['Category'] = { [Op.like]: '%' + filters.Category + '%' };
             }
 
-            let orderByColum = 'PhysicalActivity';
+            let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }

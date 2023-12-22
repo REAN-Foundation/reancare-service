@@ -315,7 +315,21 @@
             "CustomQuery.GetById",
             "CustomQuery.Search",
             "CustomQuery.Delete",
-            "CustomQuery.Update"
+            "CustomQuery.Update",
+            "HealthSystem.Create",
+            "HealthSystem.GetById",
+            "HealthSystem.Search",
+            "HealthSystem.Update",
+            "HealthSystem.Delete",
+            "HealthSystem.GetHealthSystemsWithTags",
+            "Hospital.Create",
+            "Hospital.GetById",
+            "Hospital.Search",
+            "Hospital.Update",
+            "Hospital.Delete",
+            "Hospital.GetHospitalsForHealthSystem",
+            "DailyStatistics.Create",
+            "DailyStatistics.GetLatestStatistics"
         ]
     },
     {
@@ -776,7 +790,15 @@
             "Cohort.RemoveUserFromCohort",
             "Cohort.GetCohortUsers",
             "Cohort.GetCohortsForTenant",
-            "Cohort.GetCohortStats"
+            "Cohort.GetCohortStats",
+            "HealthSystem.GetById",
+            "HealthSystem.Search",
+            "HealthSystem.Delete",
+            "HealthSystem.GetHealthSystemsWithTags",
+            "Hospital.GetById",
+            "Hospital.Search",
+            "Hospital.Delete",
+            "Hospital.GetHospitalsForHealthSystem"
         ]
     },
     {
@@ -1149,12 +1171,10 @@
     },
     {
         "Role": "Lab user",
-        "Privileges": [
-        ]
+        "Privileges": []
     },
     {
         "Role": "Pharmacy user",
-        "Privileges": [
-        ]
+        "Privileges": []
     }
 ]

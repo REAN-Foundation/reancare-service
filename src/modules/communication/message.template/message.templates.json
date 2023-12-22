@@ -13,5 +13,11 @@
         "NotificationType": "Alert",
         "Title"           : "Dear {{PatientName}},",
         "Body"            : "Your recent systolic blood pressure is {{Systolic}} and diastolic blood pressure is {{Diastolic}}, it is Elevated.\nPlease consult your doctor.\nBlood pressure category will change based on systolic and diastolic."
+    },
+    "StrokeSurveyNotification": {
+        "NotificationType": "Web",
+        "Title"           : "Heart & Stroke Helper Survey",
+        "Body"            : "Please take a moment to complete our Heart & Stroke Helper Survey form.",
+        "Url"             : "https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk"
     }
 }    

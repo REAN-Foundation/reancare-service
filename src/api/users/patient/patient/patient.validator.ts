@@ -46,6 +46,7 @@ export class PatientValidator extends BaseValidator {
                 },
                 id              : request.params.userId,
                 Password        : request.body.Password ?? null,
+                UserName        : request.body.UserName ?? null,
                 DefaultTimeZone : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone : request.body.CurrentTimeZone ?? null,
                 TenantId        : request.body.TenantId ?? null,
@@ -126,6 +127,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateDateString(request, 'birthdateFrom', Where.Query, false, false);
         await this.validateDateString(request, 'birthdateTo', Where.Query, false, false);
         await this.validateUuid(request, 'birthdateTo', Where.Query, false, false);
+        await this.validateString(request, 'userName', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
@@ -143,6 +145,7 @@ export class PatientValidator extends BaseValidator {
             DonorAcceptance : request.query.donorAcceptance ?? null,
             BirthdateFrom   : request.query.birthdateFrom ?? null,
             BirthdateTo     : request.query.birthdateTo ?? null,
+            UserName        : request.query.userName ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -177,6 +180,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateUuid(request, 'TenantId', Where.Body, false, true);
         await this.validateUuid(request, 'CohortId', Where.Body, false, true);
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);
+        await this.validateString(request, 'UserName', Where.Body, false, true);
 
         await body('AddressIds').optional()
             .isArray()

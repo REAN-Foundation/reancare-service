@@ -116,6 +116,7 @@ export class AssessmentHelperMapper {
         dto.Sequence = node.Sequence;
         dto.Score = node.Score;
         dto.ServeListNodeChildrenAtOnce = node.ServeListNodeChildrenAtOnce;
+        dto.RawData = node.RawData;
     }
 
     static toNodeDto = (

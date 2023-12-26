@@ -94,6 +94,7 @@ import { CohortRepo } from './repositories/community/cohort.repo';
 import { UserEngagementRepo } from './repositories/statistics/user.engagement.repo';
 import { CustomQueryRepo } from './repositories/statistics/custom.query.repo';
 import { DailyStatisticsRepo } from './repositories/statistics/daily.statistics.repo';
+import { AhaStatisticsRepo } from './repositories/statistics/aha.statistics.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -197,6 +198,7 @@ export class SequelizeInjector {
         container.register('IUserEngagementRepo', UserEngagementRepo);
         container.register('ICustomQueryRepo', CustomQueryRepo);
         container.register('IDailyStatisticsRepo', DailyStatisticsRepo);
+        container.register('IAhaStatisticsRepo', AhaStatisticsRepo);
     }
 
 }

@@ -1,5 +1,5 @@
 import StatisticsCustomQueries from '../../models/statistics/custom.query.model';
-import { BloodCholesterolSummaryDto, BloodGlucoseSummaryDto, BloodOxygenSaturationSummaryDto, BloodPressureSummaryDto, BodyHeightSummaryDto, BodyWeightSummaryDto, CustomQueryDto, EmergencyEventSummaryDto, HealthProfileSummaryDto, LabRecordSummaryDto, MedicationConsumptionSummaryDto, PulseSummaryDto } from '../../../../../domain.types/statistics/custom.query/custom.query.dto';
+import { CustomQueryDto } from '../../../../../domain.types/statistics/custom.query/custom.query.dto';
 import { HealthProfileDto } from '../../../../../domain.types/users/patient/health.profile/health.profile.dto';
 import { MedicationConsumptionDto } from '../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { BloodCholesterolDto } from '../../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.dto';
@@ -36,11 +36,11 @@ export class CustomQueryMapper {
         return dto;
     };
 
-    static toHealthProfileSummaryDto = (healthProfile: HealthProfileDto): HealthProfileSummaryDto => {
+    static toHealthProfileSummaryDto = (healthProfile: HealthProfileDto): HealthProfileDto => {
         if (healthProfile === null) {
             return null;
         }
-        const dto: HealthProfileSummaryDto = {
+        const dto: HealthProfileDto = {
             BloodGroup            : healthProfile.BloodGroup,
             MajorAilment          : healthProfile.MajorAilment,
             OtherConditions       : healthProfile.OtherConditions,
@@ -53,9 +53,9 @@ export class CustomQueryMapper {
             Ethnicity             : healthProfile.Ethnicity,
             Race                  : healthProfile.Race,
             SedentaryLifestyle    : healthProfile.SedentaryLifestyle,
-            Tobacco               : healthProfile.IsSmoker,
-            IsAlcoholic           : healthProfile.IsDrinker,
-            SubstanceAbuser       : healthProfile.SubstanceAbuse,
+            IsSmoker              : healthProfile.IsSmoker,
+            IsDrinker             : healthProfile.IsDrinker,
+            SubstanceAbuse        : healthProfile.SubstanceAbuse,
             ProcedureHistory      : healthProfile.ProcedureHistory,
             ObstetricHistory      : healthProfile.ObstetricHistory,
             OtherInformation      : healthProfile.OtherInformation,
@@ -65,12 +65,12 @@ export class CustomQueryMapper {
     };
     
     static toMedicationConsumptionSummaryDto =
-    (medicationConsumption: MedicationConsumptionDto): MedicationConsumptionSummaryDto => {
+    (medicationConsumption: MedicationConsumptionDto): MedicationConsumptionDto => {
         if (medicationConsumption === null) {
             return null;
         }
 
-        const dto: MedicationConsumptionSummaryDto = {
+        const dto: MedicationConsumptionDto = {
             DrugName          : medicationConsumption.DrugName,
             Details           : medicationConsumption.Details,
             TimeScheduleStart : medicationConsumption.TimeScheduleStart,
@@ -80,11 +80,11 @@ export class CustomQueryMapper {
         return dto;
     };
 
-    static toBloodCholesterolSummaryDto = (bloodCholesterol: BloodCholesterolDto): BloodCholesterolSummaryDto => {
+    static toBloodCholesterolSummaryDto = (bloodCholesterol: BloodCholesterolDto): BloodCholesterolDto => {
         if (bloodCholesterol === null) {
             return null;
         }
-        const dto: BloodCholesterolSummaryDto = {
+        const dto: BloodCholesterolDto = {
             TotalCholesterol  : bloodCholesterol.TotalCholesterol,
             HDL               : bloodCholesterol.HDL,
             LDL               : bloodCholesterol.LDL,
@@ -98,12 +98,12 @@ export class CustomQueryMapper {
         return dto;
     };
 
-    static toBloodGlucoseSummaryDto = (bloodGlucose: BloodGlucoseDto): BloodGlucoseSummaryDto => {
+    static toBloodGlucoseSummaryDto = (bloodGlucose: BloodGlucoseDto): BloodGlucoseDto => {
         if (bloodGlucose === null) {
             return null;
         }
 
-        const dto: BloodGlucoseSummaryDto = {
+        const dto: BloodGlucoseDto = {
             BloodGlucose : bloodGlucose.BloodGlucose,
             Unit         : bloodGlucose.Unit,
             RecordDate   : bloodGlucose.RecordDate
@@ -113,12 +113,12 @@ export class CustomQueryMapper {
     };
 
     static toBloodOxygenSaturationSummaryDto =
-     (bloodOxygenSaturation: BloodOxygenSaturationDto): BloodOxygenSaturationSummaryDto => {
+     (bloodOxygenSaturation: BloodOxygenSaturationDto): BloodOxygenSaturationDto => {
          if (bloodOxygenSaturation === null) {
              return null;
          }
 
-         const dto: BloodOxygenSaturationSummaryDto = {
+         const dto: BloodOxygenSaturationDto = {
              BloodOxygenSaturation : bloodOxygenSaturation.BloodOxygenSaturation,
              Unit                  : bloodOxygenSaturation.Unit,
              RecordDate            : bloodOxygenSaturation.RecordDate
@@ -127,12 +127,12 @@ export class CustomQueryMapper {
          return dto;
      };
 
-     static toBloodPressureSummaryDto = (bloodPressure: BloodPressureDto): BloodPressureSummaryDto => {
+     static toBloodPressureSummaryDto = (bloodPressure: BloodPressureDto): BloodPressureDto => {
          if (bloodPressure === null) {
              return null;
          }
 
-         const dto: BloodPressureSummaryDto = {
+         const dto: BloodPressureDto = {
              Systolic   : bloodPressure.Systolic,
              Diastolic  : bloodPressure.Diastolic,
              Unit       : bloodPressure.Unit,
@@ -142,12 +142,12 @@ export class CustomQueryMapper {
          return dto;
      };
 
-     static toBodyHeightSummaryDto = (bodyHeight:BodyHeightDto): BodyHeightSummaryDto => {
+     static toBodyHeightSummaryDto = (bodyHeight:BodyHeightDto): BodyHeightDto => {
          if (bodyHeight === null){
              return null;
          }
 
-         const dto: BodyHeightSummaryDto = {
+         const dto: BodyHeightDto = {
              BodyHeight : bodyHeight.BodyHeight,
              Unit       : bodyHeight.Unit,
              RecordDate : bodyHeight.RecordDate
@@ -156,12 +156,12 @@ export class CustomQueryMapper {
          return dto;
      };
 
-     static toBodyWeightSummaryDto = (bodyWeight: BodyWeightDto): BodyWeightSummaryDto => {
+     static toBodyWeightSummaryDto = (bodyWeight: BodyWeightDto): BodyWeightDto => {
          if (bodyWeight === null) {
              return null;
          }
 
-         const dto: BodyWeightSummaryDto = {
+         const dto: BodyWeightDto = {
              BodyWeight : bodyWeight.BodyWeight,
              Unit       : bodyWeight.Unit,
              RecordDate : bodyWeight.RecordDate
@@ -170,12 +170,12 @@ export class CustomQueryMapper {
          return dto;
      };
 
-     static toPulseSummaryDto = (pulse:PulseDto): PulseSummaryDto => {
+     static toPulseSummaryDto = (pulse:PulseDto): PulseDto => {
          if (pulse === null) {
              return null;
          }
 
-         const dto: PulseSummaryDto = {
+         const dto: PulseDto = {
              Pulse      : pulse.Pulse,
              Unit       : pulse.Unit,
              RecordDate : pulse.RecordDate
@@ -184,12 +184,12 @@ export class CustomQueryMapper {
          return dto;
      };
 
-     static toLabRecordSummaryDto = (labRecord:LabRecordDto): LabRecordSummaryDto => {
+     static toLabRecordSummaryDto = (labRecord:LabRecordDto): LabRecordDto => {
          if (labRecord === null) {
              return null;
          }
 
-         const dto: LabRecordSummaryDto = {
+         const dto: LabRecordDto = {
              TypeName       : labRecord.TypeName,
              DisplayName    : labRecord.DisplayName,
              PrimaryValue   : labRecord.PrimaryValue,
@@ -201,12 +201,12 @@ export class CustomQueryMapper {
          return dto;
      };
 
-     static toEmergencyEventSummaryDto = (emergencyEvent: EmergencyEventDto): EmergencyEventSummaryDto => {
+     static toEmergencyEventSummaryDto = (emergencyEvent: EmergencyEventDto): EmergencyEventDto => {
          if (emergencyEvent === null) {
              return null;
          }
 
-         const dto: EmergencyEventSummaryDto = {
+         const dto: EmergencyEventDto = {
              Details       : emergencyEvent.Details,
              EmergencyDate : emergencyEvent.EmergencyDate
          };

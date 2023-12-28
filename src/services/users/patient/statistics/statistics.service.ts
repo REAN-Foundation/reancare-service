@@ -42,8 +42,18 @@ import { IBloodOxygenSaturationRepo } from "../../../../database/repository.inte
 import { IBodyTemperatureRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface";
 import { IPulseRepo } from "../../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
 import { IEmergencyEventRepo } from "../../../../database/repository.interfaces/clinical/emergency.event.repo.interface";
-import { BloodCholesterolSummaryDto, BloodGlucoseSummaryDto, BloodOxygenSaturationSummaryDto, BloodPressureSummaryDto, BodyHeightSummaryDto, BodyWeightSummaryDto, EmergencyEventSummaryDto, HealthSummaryDto, LabRecordSummaryDto, MedicationConsumptionSummaryDto, PulseSummaryDto } from "../../../../domain.types/statistics/custom.query/custom.query.dto";
+import { HealthSummaryDto } from "../../../../domain.types/statistics/custom.query/custom.query.dto";
 import { CustomQueryMapper } from "../../../../database/sql/sequelize/mappers/statistics/custom.query.mapper";
+import { MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { BloodCholesterolDto } from "../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.dto";
+import { BloodGlucoseDto } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
+import { BloodOxygenSaturationDto } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
+import { BloodPressureDto } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
+import { BodyHeightDto } from "../../../../domain.types/clinical/biometrics/body.height/body.height.dto";
+import { BodyWeightDto } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.dto";
+import { PulseDto } from "../../../../domain.types/clinical/biometrics/pulse/pulse.dto";
+import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
+import { EmergencyEventDto } from "../../../../domain.types/clinical/emergency.event/emergency.event.dto";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -140,58 +150,58 @@ export class StatisticsService {
         
         const patientCurrentMedication = await this._medicationConsumptionRepo.search(filter);
         if (patientCurrentMedication.TotalCount > 0) {
-            const currentMedicationSummary: MedicationConsumptionSummaryDto[] = [];
+            const currentMedicationSummary: MedicationConsumptionDto[] = [];
             for (const medication of patientCurrentMedication.Items) {
                 const dto = CustomQueryMapper.toMedicationConsumptionSummaryDto(medication);
                 currentMedicationSummary.push(dto);
             }
             healthSummary.CurrentMedication = currentMedicationSummary;
         }
-        
+
         const patientBloodCholesterol = await this._bloodCholesterolRepo.search(filter);
         if (patientBloodCholesterol.TotalCount > 0) {
-            const bloodCholesterolSummary: BloodCholesterolSummaryDto[] = [];
+            const bloodCholesterolSummary: BloodCholesterolDto[] = [];
             for (const bloodCholesterol of patientBloodCholesterol.Items) {
                 const dto = CustomQueryMapper.toBloodCholesterolSummaryDto(bloodCholesterol);
                 bloodCholesterolSummary.push(dto);
             }
             healthSummary.BloodCholesterol = bloodCholesterolSummary;
         }
-        
+       
         const patientBloodGlucose = await this._bloodGlucoseRepo.search(filter);
         if (patientBloodGlucose.TotalCount > 0) {
-            const bloodGlucoseSummary: BloodGlucoseSummaryDto[] = [];
+            const bloodGlucoseSummary: BloodGlucoseDto[] = [];
             for (const bloodGlucose of patientBloodGlucose.Items) {
                 const dto = CustomQueryMapper.toBloodGlucoseSummaryDto(bloodGlucose);
                 bloodGlucoseSummary.push(dto);
             }
             healthSummary.BloodGlucose = bloodGlucoseSummary;
         }
-        
+
         const patientBloodOxygenSaturation =
         await this._bloodOxygenSaturationRepo.search(filter);
         if (patientBloodOxygenSaturation.TotalCount > 0) {
-            const bloodOxygenSaturationSummary: BloodOxygenSaturationSummaryDto[] = [];
+            const bloodOxygenSaturationSummary: BloodOxygenSaturationDto[] = [];
             for (const oxygenSaturation of patientBloodOxygenSaturation.Items) {
                 const dto = CustomQueryMapper.toBloodOxygenSaturationSummaryDto(oxygenSaturation);
                 bloodOxygenSaturationSummary.push(dto);
             }
             healthSummary.BloodOxygenSaturation = bloodOxygenSaturationSummary;
         }
-        
+
         const patientBloodPressure = await this._bloodPressureRepo.search(filter);
         if (patientBloodPressure.TotalCount > 0) {
-            const bloodPressureSummary: BloodPressureSummaryDto[] = [];
+            const bloodPressureSummary: BloodPressureDto[] = [];
             for (const bloodPressure of patientBloodPressure.Items) {
                 const dto = CustomQueryMapper.toBloodPressureSummaryDto(bloodPressure);
                 bloodPressureSummary.push(dto);
             }
             healthSummary.BloodPressure = bloodPressureSummary;
         }
-        
+
         const patientBodyHeight =  await this._bodyHeightRepo.search(filter);
         if (patientBodyHeight.TotalCount > 0) {
-            const bodyHeightSummary: BodyHeightSummaryDto[] = [];
+            const bodyHeightSummary: BodyHeightDto[] = [];
             for (const bodyHeight of patientBodyHeight.Items) {
                 const dto = CustomQueryMapper.toBodyHeightSummaryDto(bodyHeight);
                 bodyHeightSummary.push(dto);
@@ -201,17 +211,17 @@ export class StatisticsService {
         
         const patientBodyWeight = await this._bodyWeightRepo.search(filter);
         if (patientBodyWeight.TotalCount > 0) {
-            const bodyWeightSummary: BodyWeightSummaryDto[] = [];
+            const bodyWeightSummary: BodyWeightDto[] = [];
             for (const bodyWeight of patientBodyWeight.Items) {
                 const dto = CustomQueryMapper.toBodyWeightSummaryDto(bodyWeight);
                 bodyWeightSummary.push(dto);
             }
             healthSummary.BodyWeight = bodyWeightSummary;
         }
-
+        
         const patientPulse = await this._pulseRepo.search(filter);
         if (patientPulse.TotalCount > 0) {
-            const pulseSummary: PulseSummaryDto[] = [];
+            const pulseSummary: PulseDto[] = [];
             for (const pulse of patientPulse.Items) {
                 const dto = CustomQueryMapper.toPulseSummaryDto(pulse);
                 pulseSummary.push(dto);
@@ -221,7 +231,7 @@ export class StatisticsService {
 
         const patientLabRecord = await this._labRecordsRepo.search(filter);
         if (patientLabRecord.TotalCount > 0) {
-            const labRecordSummary: LabRecordSummaryDto[] = [];
+            const labRecordSummary: LabRecordDto[] = [];
             for (const labRecord of patientLabRecord.Items) {
                 const dto = CustomQueryMapper.toLabRecordSummaryDto(labRecord);
                 labRecordSummary.push(dto);
@@ -231,7 +241,7 @@ export class StatisticsService {
 
         const patientEmergencyEvent = await this._emergencyEventRepo.search(filter);
         if (patientEmergencyEvent.TotalCount > 0) {
-            const emergencyEventSummary: EmergencyEventSummaryDto[] = [];
+            const emergencyEventSummary: EmergencyEventDto[] = [];
             for (const emergencyEvent of patientEmergencyEvent.Items) {
                 const dto = CustomQueryMapper.toEmergencyEventSummaryDto(emergencyEvent);
                 emergencyEventSummary.push(dto);

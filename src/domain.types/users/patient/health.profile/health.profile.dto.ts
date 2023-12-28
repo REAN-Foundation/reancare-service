@@ -1,5 +1,5 @@
 export interface HealthProfileDto {
-    id                         : string;
+    id?                        : string;
     PatientUserId?             : string;
     BloodGroup?                : string;
     BloodTransfusionDate?      : Date;

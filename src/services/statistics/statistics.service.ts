@@ -133,7 +133,7 @@ export class StatisticsService {
                 Logger.instance().log('Error in creating daily users stattistics.');
             }
         } catch (error) {
-            Logger.instance().log(`Error in creating daily users stattistics:${error.message}`);
+            Logger.instance().log(`Error in creating daily users statistics:${error.message}`);
         }
     };
 

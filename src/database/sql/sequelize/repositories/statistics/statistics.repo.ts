@@ -303,11 +303,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 include : [{
                     model    : Person,
                     required : true,
-                    where    : {
-                        Phone : {
-                            [Op.notBetween] : [1000000000, 1000000100]
-                        }
-                    },
+                    where    : {},
                 }]
             };
 
@@ -390,11 +386,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 include : [{
                     model    : Person,
                     required : true,
-                    where    : {
-                        Phone : {
-                            [Op.notBetween] : [1000000000, 1000000100]
-                        }
-                    },
+                    where    : {},
                 }]
             };
 
@@ -631,11 +623,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 include : [{
                     model    : Person,
                     required : true,
-                    where    : {
-                        Phone : {
-                            [Op.notBetween] : [1000000000, 1000000100]
-                        }
-                    },
+                    where    : {},
                 }]
             };
 
@@ -901,11 +889,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 include : [{
                     model    : Person,
                     required : true,
-                    where    : {
-                        Phone : {
-                            [Op.notBetween] : [1000000000, 1000000100]
-                        }
-                    },
+                    where    : {},
                 }]
             };
 
@@ -1159,18 +1143,15 @@ export class StatisticsRepo implements IStatisticsRepo {
                      IsTestUser : false
                  },
                  paranoid : false,
-                 include  : [
-                     {
-                         model    : Person,
-                         required : true,
-                         where    : {},
-                         paranoid : false,
-                     }
-                 ]
+                 include  : []
              };
 
-            includesObj.include[0].where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
+            const includePerson = {
+                model    : Person,
+                required : true,
+                where    : {},
+                paranoid : false,
+                
             };
 
             if (filters.PastMonths != null)  {
@@ -1182,9 +1163,10 @@ export class StatisticsRepo implements IStatisticsRepo {
                     var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                     var monthName = TimeHelper.format(date, 'MMMM, YYYY');
 
-                    includesObj.include[0].where['CreatedAt'] = {
+                    includePerson.where['CreatedAt'] = {
                         [Op.between] : [startOfMonth, endOfMonth],
                     };
+                    includesObj.include.push(includePerson);
                     search.include.push(includesObj);
 
                     const totalUsers = await Patient.findAndCountAll(search);
@@ -1201,22 +1183,22 @@ export class StatisticsRepo implements IStatisticsRepo {
             {
                 const { minDate, maxDate } = getMinMaxDatesForYear(filters);
                 if (filters.Year != null)  {
-                    includesObj.include[0].where['CreatedAt'] = {
+                    includePerson.where['CreatedAt'] = {
                         [Op.between] : [minDate, maxDate],
                     };
                 }
                 const maxCreatedDate = getMaxDate(filters);
                 if (filters.Year != null && filters.Month != null)  {
-                    includesObj.include[0].where['CreatedAt'] = {
+                    includePerson.where['CreatedAt'] = {
                         [Op.lt] : maxCreatedDate,
                     };
                 }
                 if (filters.From != null && filters.To != null)  {
-                    includesObj.include[0].where['CreatedAt'] = {
+                    includePerson.where['CreatedAt'] = {
                         [Op.between] : [filters.From, filters.To],
                     };
                 }
-
+                includesObj.include.push(includePerson);
                 search.include.push(includesObj);
 
                 const totalUsers = await Patient.findAndCountAll(search);
@@ -1249,21 +1231,21 @@ export class StatisticsRepo implements IStatisticsRepo {
                    IsTestUser : false
                },
                paranoid : false,
-               include  : [
-                   {
-                       model    : Person,
-                       required : true,
-                       where    : {},
-                       paranoid : false,
-                   }
-               ]
+               include  : []
            };
 
-           includesObj.include[0].where['Phone'] = {
-               [Op.notBetween] : [1000000000, 1000000100],
+           const includePerson =  {
+               model    : Person,
+               required : true,
+               where    : {},
+               paranoid : false,
            };
 
-           includesObj.include[0].where['DeletedAt'] = {
+           includePerson.where['DeletedAt'] = {
+               [Op.eq] : null
+           };
+
+           includePerson.where['DeletedAt'] = {
                [Op.eq] : null
            };
 
@@ -1275,9 +1257,10 @@ export class StatisticsRepo implements IStatisticsRepo {
                    var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
                    var monthName = TimeHelper.format(date, 'MMMM, YYYY');
 
-                   includesObj.include[0].where['CreatedAt'] = {
+                   includePerson.where['CreatedAt'] = {
                        [Op.between] : [startOfMonth, endOfMonth],
                    };
+                   includesObj.include.push(includePerson);
                    search.include.push(includesObj);
 
                    const nonDeletedUsers = await Patient.findAndCountAll(search);
@@ -1294,20 +1277,21 @@ export class StatisticsRepo implements IStatisticsRepo {
            else
            {
                if (filters.Year != null)  {
-                   includesObj.include[0].where['CreatedAt'] = {
+                   includePerson.where['CreatedAt'] = {
                        [Op.between] : [minDate, maxDate],
                    };
                }
                if (filters.Year != null && filters.Month != null)  {
-                   includesObj.include[0].where['CreatedAt'] = {
+                   includePerson.where['CreatedAt'] = {
                        [Op.lt] : maxCreatedDate,
                    };
                }
                if (filters.From != null && filters.To != null)  {
-                   includesObj.include[0].where['CreatedAt'] = {
+                   includePerson.where['CreatedAt'] = {
                        [Op.between] : [filters.From, filters.To],
                    };
                }
+               includesObj.include.push(includePerson);
                search.include.push(includesObj);
 
                const nonDeletedUsers = await Patient.findAndCountAll(search);
@@ -1338,10 +1322,6 @@ export class StatisticsRepo implements IStatisticsRepo {
                  where    : {},
                  paranoid : false
              };
-
-           includesObj.where['Phone'] = {
-               [Op.notBetween] : [1000000000, 1000000100],
-           };
 
            includesObj.where['DeletedAt'] = {
                [Op.not] : null
@@ -1606,37 +1586,32 @@ export class StatisticsRepo implements IStatisticsRepo {
                      IsTestUser : false
                  },
                  paranoid : false,
-                 include  : [
-                     {
-                         model    : Person,
-                         required : true,
-                         where    : {},
-                         paranoid : false,
-                     }
-                 ]
+                 include  : []
                  
              };
-
-            includesObj.include[0].where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
+            const includePerson = {
+                model    : Person,
+                required : true,
+                where    : {},
+                paranoid : false,
             };
 
             if (filters.Year != null)  {
-                includesObj.include[0].where['CreatedAt'] = {
+                includePerson.where['CreatedAt'] = {
                     [Op.between] : [minDate, maxDate],
                 };
             }
             if (filters.Year != null && filters.Month != null)  {
-                includesObj.include[0].where['CreatedAt'] = {
+                includePerson.where['CreatedAt'] = {
                     [Op.lt] : maxCreatedDate,
                 };
             }
             if (filters.From != null && filters.To != null)  {
-                includesObj.include[0].where['CreatedAt'] = {
+                includePerson.where['CreatedAt'] = {
                     [Op.between] : [filters.From, filters.To],
                 };
             }
-
+            includesObj.include.push(includePerson);
             search.include.push(includesObj);
 
             const totalUsers = await Patient.findAndCountAll(search);
@@ -2283,9 +2258,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             {
                 model    : Person,
                 required : true,
-                where    : {
-
-                },
+                where    : {},
                 paranoid : false
             };
 

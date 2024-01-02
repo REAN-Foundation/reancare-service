@@ -644,9 +644,9 @@ export class Helper {
           const parsedInt = digitRegex.test(input) ? parseInt(input, 10) : null;
           return parsedInt;
         } catch (error: any) {
-          console.error(`Error: ${error.message}`);
+          Logger.instance().log(`Error: ${error.message}`);
           return null;
         }
-    }
+    };
 
 }

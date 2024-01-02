@@ -135,12 +135,13 @@ export class MedicationController {
             }
             if (medication.FrequencyUnit !== 'Other') {
                 var stats = await this._medicationConsumptionService.create(medication);
+                var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
                 var consumptionSummary: ConsumptionSummaryDto = {
                     TotalConsumptionCount   : stats.TotalConsumptionCount,
-                    TotalDoseCount          : stats.TotalConsumptionCount * medication.Dose,
+                    TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
                     PendingConsumptionCount : stats.PendingConsumptionCount,
-                    PendingDoseCount        : stats.PendingConsumptionCount * medication.Dose,
+                    PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
                 };
 
                 medication.ConsumptionSummary = consumptionSummary;
@@ -182,12 +183,13 @@ export class MedicationController {
             }
 
             var stats = await this._medicationConsumptionService.getConsumptionStatusForMedication(id);
+            var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
             var consumptionSummary: ConsumptionSummaryDto = {
                 TotalConsumptionCount   : stats.TotalConsumptionCount,
-                TotalDoseCount          : stats.TotalConsumptionCount * medication.Dose,
+                TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
                 PendingConsumptionCount : stats.PendingConsumptionCount,
-                PendingDoseCount        : stats.PendingConsumptionCount * medication.Dose,
+                PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
             };
 
             medication.ConsumptionSummary = consumptionSummary;
@@ -258,12 +260,13 @@ export class MedicationController {
 
                 if (updated.FrequencyUnit !== 'Other') {
                     var stats = await this._medicationConsumptionService.create(updated);
+                    var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
     
                     var consumptionSummary: ConsumptionSummaryDto = {
                         TotalConsumptionCount   : stats.TotalConsumptionCount,
-                        TotalDoseCount          : stats.TotalConsumptionCount * updated.Dose,
+                        TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
                         PendingConsumptionCount : stats.PendingConsumptionCount,
-                        PendingDoseCount        : stats.PendingConsumptionCount * updated.Dose,
+                        PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
                     };
     
                     updated.ConsumptionSummary = consumptionSummary;

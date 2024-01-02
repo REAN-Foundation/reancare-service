@@ -63,7 +63,7 @@ export class MedicationConsumptionService implements IUserActionService {
         var durationUnit = medication.DurationUnit;
         var frequency = medication.Frequency;
         var frequencyUnit = medication.FrequencyUnit;
-        var dose = medication.Dose;
+        var dose = medication.Dose.toString();
         var dosageUnit = medication.DosageUnit;
         var refills = medication.RefillCount;
 
@@ -583,7 +583,7 @@ export class MedicationConsumptionService implements IUserActionService {
     };
 
     private getMedicationDetails = (drugName, dose, dosageUnit, schedule) => {
-        return drugName + ': ' + dose.toFixed(1).toString() + ' ' + dosageUnit + ', ' + schedule;
+        return drugName + ': ' + dose.toString() + ' ' + dosageUnit + ', ' + schedule;
     };
 
     private getScheduleSlots = (medication) => {
@@ -800,7 +800,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 model.id,
                 patientUserId,
                 model.DrugName,
-                model.Dose,
+                model.Dose.toString(),
                 model.Details,
                 model.TimeScheduleStart,
                 model.TimeScheduleEnd,
@@ -818,7 +818,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 model.id,
                 patientUserId,
                 model.DrugName,
-                model.Dose,
+                model.Dose.toString(),
                 model.Details,
                 model.TimeScheduleStart,
                 model.TimeScheduleEnd,
@@ -836,7 +836,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 model.id,
                 patientUserId,
                 model.DrugName,
-                model.Dose,
+                model.Dose.toString(),
                 model.Details,
                 model.TimeScheduleStart,
                 model.TimeScheduleEnd,

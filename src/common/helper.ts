@@ -636,4 +636,17 @@ export class Helper {
         return sorted;
     };
 
+    public static parseIntegerFromString = (input: string): number | null => {
+        try {
+          // Attempt to parse the integer from the input string
+          const digitRegex = /^[0-9]+$/;
+          digitRegex.test(input);
+          const parsedInt = digitRegex.test(input) ? parseInt(input, 10) : null;
+          return parsedInt;
+        } catch (error: any) {
+          console.error(`Error: ${error.message}`);
+          return null;
+        }
+    }
+
 }

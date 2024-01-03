@@ -1,4 +1,4 @@
-import { CareplanCode } from "../../../domain.types/statistics/aha/aha.type";
+import { AppName, CareplanCode } from "../../../domain.types/statistics/aha/aha.type";
 
 ////////////////////////////////////////////////////////////////////
 export interface IAhaStatisticsRepo {
@@ -13,18 +13,28 @@ export interface IAhaStatisticsRepo {
     /////////////////////////////////////////
     getTotalUsersWithMissingDeviceDetail();
     getTotalUniqueUsersInDeviceDetail();
-    //////////////////////////////////////////
-    getTotalHSUsers();
+    //////////////////////////////////////////////////////////////////
+    // getTotalHSUsers();
+    getAppSpecificTotalUsers(appName : AppName);
     getTotalUsersLoggedToHSAndHF();
-    getHSpatientHealthProfileData();
-    getTotalHSPatients();
-    getTotalHSPerson();
-    getHSDailyAssessmentCount();
-    getHSBodyWeightDataCount();
-    getHSLabRecordCount();
-    getHSCareplanActivityCount();
-    getHSMedicationConsumptionCount();
-    ////////////////////////////////////////
+    // getHSpatientHealthProfileData();
+    getAppSpecificpatientHealthProfileData(appName : AppName);
+    // getTotalHSPatients();
+    getAppSpecificTotalPatients(appName : AppName);
+    // getTotalHSPerson();
+    getAppSpecificTotalPerson(appName : AppName);
+    // getHSDailyAssessmentCount();
+    getAppSpecificDailyAssessmentCount(appName : AppName);
+    // getHSBodyWeightDataCount();
+    getAppSpecificBodyWeightDataCount(appName : AppName);
+    // getHSLabRecordCount();
+    getAppSpecificLabRecordCount(appName : AppName);
+    // getHSCareplanActivityCount();
+    getAppSpecificMedicationConsumptionCount(appName : AppName);
+    // getHSMedicationConsumptionCount();
+    getAppSpecificMedicationConsumptionCount(appName : AppName);
+    getAppSpecificCareplanActivityCount(appName : AppName)
+    ///////////////////////////////////////////////////////////////////
     getUserAssessmentCount();
     //////////////////////////////
     getTotalUsers();

@@ -4,3 +4,8 @@ export enum CareplanCode {
     CholesterolMini = 'CholesterolMini',
     HeartFailure = 'HeartFailure'
 }
+
+export enum AppName {
+   HS = 'Heart &amp; Stroke Helper™',
+   HF = 'HF Helper'
+}

@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IAhaStatisticsRepo } from "../../database/repository.interfaces/statistics/aha.statistics.repo.interface";
-import { CareplanCode } from "../../domain.types/statistics/aha/aha.type";
+import { AppName, CareplanCode } from "../../domain.types/statistics/aha/aha.type";
 import { PDFGenerator } from "../../modules/reports/pdf.generator";
 import fs from 'fs';
 import { addBottom, addFooter, addTop } from "../users/patient/statistics/stat.report.commons";
@@ -103,17 +103,24 @@ export class AhaStatisticsService {
         
         const usersWithMissingDeviceDetails = await this._ahaStatisticsRepo.getTotalUsersWithMissingDeviceDetail();
         const uniqueUsersInDeviceDetails = await this._ahaStatisticsRepo.getTotalUniqueUsersInDeviceDetail();
-        const hsUserCount = await this._ahaStatisticsRepo.getTotalHSUsers();
+        
+        ///////////////////////////////////////////////////////////////////////////////////////
+        //APP - HS
+        const hsUserCount = await this._ahaStatisticsRepo.getAppSpecificTotalUsers(AppName.HS);
         const usersLoggedCountToHSAndHF = await this._ahaStatisticsRepo.getTotalUsersLoggedToHSAndHF();
         // For Heart &amp; Stroke Helper™
-        const patientHealthProfileDataCount = await this._ahaStatisticsRepo.getHSpatientHealthProfileData();
-        const hsPatientCount = await this._ahaStatisticsRepo.getTotalHSPatients();
-        const hsPersonCount = await this._ahaStatisticsRepo.getTotalHSPerson();
-        const hsDailyAssessmentCount = await this._ahaStatisticsRepo.getHSDailyAssessmentCount();
-        const hsBodyWeightDataCount = await this._ahaStatisticsRepo.getHSBodyWeightDataCount();
-        const hsLabRecordCount = await this._ahaStatisticsRepo.getHSLabRecordCount();
-        const hsCareplanActivityCount = await this._ahaStatisticsRepo.getHSCareplanActivityCount();
-        const hsMedicationConsumptionCount = await this._ahaStatisticsRepo.getHSMedicationConsumptionCount();
+        const patientHealthProfileDataCount =
+        await this._ahaStatisticsRepo.getAppSpecificpatientHealthProfileData(AppName.HS);
+        const hsPatientCount = await this._ahaStatisticsRepo.getAppSpecificTotalPatients(AppName.HS);
+        const hsPersonCount = await this._ahaStatisticsRepo.getAppSpecificTotalPerson(AppName.HS);
+        const hsDailyAssessmentCount = await this._ahaStatisticsRepo.getAppSpecificDailyAssessmentCount(AppName.HS);
+        const hsBodyWeightDataCount = await this._ahaStatisticsRepo.getAppSpecificBodyWeightDataCount(AppName.HS);
+        const hsLabRecordCount = await this._ahaStatisticsRepo. getAppSpecificLabRecordCount(AppName.HS)();
+        const hsCareplanActivityCount = await this._ahaStatisticsRepo.getAppSpecificCareplanActivityCount(AppName.HS);
+        const hsMedicationConsumptionCount =
+        await this._ahaStatisticsRepo.getAppSpecificMedicationConsumptionCount(AppName.HS);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
         const userAssessmentCount = await this._ahaStatisticsRepo.getUserAssessmentCount();
         const reportModel = {
             TotalPatientCount                               : totalPatientCount,

@@ -2,7 +2,7 @@ import { IAhaStatisticsRepo } from '../../../../../database/repository.interface
 import mysql, { Connection } from 'mysql2/promise';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
-import { CareplanCode } from '../../../../../domain.types/statistics/aha/aha.type';
+import { AppName, CareplanCode } from '../../../../../domain.types/statistics/aha/aha.type';
 
 export class AhaStatisticsRepo implements IAhaStatisticsRepo {
 
@@ -171,12 +171,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalHSUsers = async () => {
+    getAppSpecificTotalUsers = async (appName : AppName) => {
+    // getTotalHSUsers = async () => {
         const query =   `SELECT distinct(ud.UserId), AppName FROM user_device_details as ud
                         JOIN patients as pp ON pp.UserId = ud.UserId
                         JOIN users as u ON u.id = pp.UserId
                         JOIN persons as p ON p.id = u.PersonId
-                        where p.Phone not between "1000000000" and "1000000100" and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        where p.Phone not between "1000000000" and "1000000100" and ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -218,7 +219,8 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getHSpatientHealthProfileData = async () => {
+    getAppSpecificpatientHealthProfileData = async (appName : AppName) => {
+    // getHSpatientHealthProfileData = async (appName : AppName) => {
         const query =  `SELECT ph.id, ph.PatientUserId, ud.AppName,
                         ph.MaritalStatus, ph.HasHeartAilment, ph.OtherConditions, ph.Occupation, 
                         ph. IsDiabetic, ph.BloodGroup, ph.MajorAilment, ph.IsSmoker, ph.HasHighBloodPressure, ph.HasHighCholesterol, ph.HasHeartAilment, ph.CreatedAt, 
@@ -226,7 +228,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
                         FROM patient_health_profiles as ph
                         JOIN users as u ON u.id = ph.PatientUserId
                         LEFT JOIN  user_device_details as ud ON ud.UserId = ph.PatientUserId
-                        WHERE u.IsTestUser = 0 and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        WHERE u.IsTestUser = 0 and ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -241,12 +243,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalHSPatients = async () => {
+    // getTotalHSPatients = async () => {
+    getAppSpecificTotalPatients = async (appName : AppName) => {
         const query =  `SELECT p.id, p.UserId, p.HealthSystem, p.AssociatedHospital, p.CreatedAt, p.UpdatedAt, p.DeletedAt
                         FROM patients as p
                         JOIN users as u ON u.id = p.UserId
                         LEFT JOIN  user_device_details as ud ON ud.UserId = p.UserId
-                        WHERE u.IsTestUser = 0 and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        WHERE u.IsTestUser = 0 and ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -261,12 +264,12 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalHSPerson = async () => {
+    getAppSpecificTotalPerson = async (appName : AppName) => {
         const query =  `SELECT p.id, p.Phone, p.Gender, p.SelfIdentifiedGender, p.CreatedAt, p.UpdatedAt, p.DeletedAt
                         FROM persons as p
                         JOIN users as u ON u.PersonId = p.id
                         LEFT JOIN  user_device_details as ud ON ud.UserId = u.id
-                        WHERE u.IsTestUser = 0 and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        WHERE u.IsTestUser = 0 and ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -281,12 +284,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getHSDailyAssessmentCount = async () => {
+    // getHSDailyAssessmentCount = async () => {
+    getAppSpecificDailyAssessmentCount = async (appName : AppName) => {
         const query =  `SELECT d.id, d.PatientUserId, d.Feeling, d.Mood, d.EnergyLevels, d.CreatedAt, d.UpdatedAt, d.DeletedAt
                         FROM daily_assessments as d
                         JOIN users as u ON u.id = d.PatientUserId
                         LEFT JOIN  user_device_details as ud ON ud.UserId = u.id
-                        WHERE u.IsTestUser = 0 and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        WHERE u.IsTestUser = 0 and ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -301,12 +305,12 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getHSBodyWeightDataCount = async () => {
+    getAppSpecificBodyWeightDataCount = async (appName : AppName) => {
         const query =  `SELECT bw.id, bw.PatientUserId, bw.BodyWeight,bw.Unit, bw.CreatedAt, bw.UpdatedAt, bw.DeletedAt
                         FROM biometrics_body_weight as bw
                         JOIN users as u ON u.id = bw.PatientUserId
                         LEFT JOIN  user_device_details as ud ON ud.UserId = u.id
-                        WHERE u.IsTestUser = 0 and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        WHERE u.IsTestUser = 0 and ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -321,12 +325,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getHSLabRecordCount = async () => {
+    // getHSLabRecordCount = async () => {
+    getAppSpecificLabRecordCount = async (appName : AppName) => {
         const query =  `SELECT lr.id, lr.PatientUserId, lr.TypeName, lr.DisplayName, lr.PrimaryValue,lr.SecondaryValue, lr.RecordedAt, lr.Unit, lr.CreatedAt, lr.UpdatedAt, lr.DeletedAt
                         FROM lab_records as lr
                         JOIN users as u ON u.id = lr.PatientUserId
                         LEFT JOIN  user_device_details as ud ON ud.UserId = u.id
-                        WHERE u.IsTestUser = 0 and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        WHERE u.IsTestUser = 0 and ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -341,12 +346,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getHSCareplanActivityCount = async () => {
+    getAppSpecificCareplanActivityCount = async (appName : AppName) => {
+    // getHSCareplanActivityCount = async () => {
         const query =  `SELECT ca.id, ca.PatientUserId, ca.PlanName, ca.PlanCode, ca.CreatedAt, ca.UpdatedAt, ca.DeletedAt
                         FROM careplan_activities as ca
                         JOIN users as u ON u.id = ca.PatientUserId
                         LEFT JOIN  user_device_details as ud ON ud.UserId = u.id
-                        WHERE  u.IsTestUser = 0 and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        WHERE  u.IsTestUser = 0 and ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -361,12 +367,19 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getHSMedicationConsumptionCount = async () => {
+    getAppSpecificMedicationConsumptionCount = async (appName : AppName) => {
+    // getHSMedicationConsumptionCount = async () => {
         const query =  `SELECT mc.id, mc.PatientUserId, mc.Dose, mc.DrugName, mc.TimeScheduleStart, mc.TimeScheduleEnd, mc.TakenAt, mc.IsTaken, mc.IsMissed, mc.CancelledOn, mc.CreatedAt, mc.UpdatedAt, mc.DeletedAt
                         FROM medication_consumptions as mc
                         JOIN users as u ON u.id = mc.PatientUserId
                         LEFT JOIN  user_device_details as ud ON ud.UserId = u.id
-                        WHERE u.IsTestUser = 0 and ud.AppName = 'Heart &amp; Stroke Helper™'`;
+                        WHERE u.IsTestUser = 0 and ud.AppName = '${appName}'`;
+        // const query =   `SELECT distinct(ud.UserId), AppName FROM user_device_details as ud
+        //                 JOIN patients as pp ON pp.UserId = ud.UserId
+        //                 JOIN users as u ON u.id = pp.UserId
+        //                 WHERE u.IsTestUser = 0
+        //                 JOIN persons as p ON p.id = u.PersonId
+        //                 WHERE ud.AppName = 'Heart &amp; Stroke Helper™'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();

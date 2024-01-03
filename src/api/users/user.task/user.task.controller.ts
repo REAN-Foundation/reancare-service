@@ -238,7 +238,7 @@ export class UserTaskController {
             if (existing.ActionId != null && existing.ActionType !== null) {
                 const result = await actionResolver.completeAction(
                     existing.ActionType, existing.ActionId, true, finishedAt);
-                Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
+                Logger.instance().log(`${existing.ActionType} - Action result : ${result}`);
 
                 if (userResponse) {
                     await this._careplanService.updateActivityUserResponse(existing.ActionId, userResponse );

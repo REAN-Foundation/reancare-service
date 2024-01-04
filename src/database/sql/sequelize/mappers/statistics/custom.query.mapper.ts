@@ -2,7 +2,6 @@ import StatisticsCustomQueries from '../../models/statistics/custom.query.model'
 import { CustomQueryDto } from '../../../../../domain.types/statistics/custom.query/custom.query.dto';
 import { HealthProfileDto } from '../../../../../domain.types/users/patient/health.profile/health.profile.dto';
 import { MedicationConsumptionDto } from '../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
-import { BloodCholesterolDto } from '../../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.dto';
 import { BloodGlucoseDto } from '../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto';
 import { BloodOxygenSaturationDto } from '../../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto';
 import { BloodPressureDto } from '../../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto';
@@ -77,24 +76,6 @@ export class CustomQueryMapper {
             TimeScheduleEnd   : medicationConsumption.TimeScheduleEnd,
             Status            : medicationConsumption.Status
         };
-        return dto;
-    };
-
-    static toBloodCholesterolSummaryDto = (bloodCholesterol: BloodCholesterolDto): BloodCholesterolDto => {
-        if (bloodCholesterol === null) {
-            return null;
-        }
-        const dto: BloodCholesterolDto = {
-            TotalCholesterol  : bloodCholesterol.TotalCholesterol,
-            HDL               : bloodCholesterol.HDL,
-            LDL               : bloodCholesterol.LDL,
-            TriglycerideLevel : bloodCholesterol.TriglycerideLevel,
-            Ratio             : bloodCholesterol.Ratio,
-            A1CLevel          : bloodCholesterol.A1CLevel,
-            Unit              : bloodCholesterol.Unit,
-            RecordDate        : bloodCholesterol.RecordDate
-        };
-
         return dto;
     };
 

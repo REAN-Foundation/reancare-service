@@ -45,7 +45,6 @@ import { IEmergencyEventRepo } from "../../../../database/repository.interfaces/
 import { HealthSummaryDto } from "../../../../domain.types/statistics/custom.query/custom.query.dto";
 import { CustomQueryMapper } from "../../../../database/sql/sequelize/mappers/statistics/custom.query.mapper";
 import { MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
-import { BloodCholesterolDto } from "../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.dto";
 import { BloodGlucoseDto } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
 import { BloodOxygenSaturationDto } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
 import { BloodPressureDto } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
@@ -158,16 +157,6 @@ export class StatisticsService {
             healthSummary.CurrentMedication = currentMedicationSummary;
         }
 
-        const patientBloodCholesterol = await this._bloodCholesterolRepo.search(filter);
-        if (patientBloodCholesterol.TotalCount > 0) {
-            const bloodCholesterolSummary: BloodCholesterolDto[] = [];
-            for (const bloodCholesterol of patientBloodCholesterol.Items) {
-                const dto = CustomQueryMapper.toBloodCholesterolSummaryDto(bloodCholesterol);
-                bloodCholesterolSummary.push(dto);
-            }
-            healthSummary.BloodCholesterol = bloodCholesterolSummary;
-        }
-       
         const patientBloodGlucose = await this._bloodGlucoseRepo.search(filter);
         if (patientBloodGlucose.TotalCount > 0) {
             const bloodGlucoseSummary: BloodGlucoseDto[] = [];

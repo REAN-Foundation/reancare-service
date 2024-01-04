@@ -1,6 +1,5 @@
 import { uuid } from "../../miscellaneous/system.types";
 import { MedicationConsumptionDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
-import { BloodCholesterolDto } from "../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.dto";
 import { BloodGlucoseDto } from "../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
 import { BloodOxygenSaturationDto } from "../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
 import { BloodPressureDto } from "../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
@@ -25,7 +24,6 @@ export interface CustomQueryDto {
 export interface HealthSummaryDto {
     HealthProfile?          :HealthProfileDto,
     CurrentMedication?      :MedicationConsumptionDto[],
-    BloodCholesterol?       :BloodCholesterolDto[],
     BloodGlucose?           :BloodGlucoseDto[],
     BloodOxygenSaturation?  :BloodOxygenSaturationDto[],
     BloodPressure?          :BloodPressureDto[],

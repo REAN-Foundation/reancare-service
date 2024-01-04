@@ -7,7 +7,7 @@ import { ResponseHandler } from '../../../../common/response.handler';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
-import { ConsumptionSummaryDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
+import { ConsumptionSummaryDto, MedicationDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
 import { MedicationAdministrationRoutesList, MedicationDosageUnitsList, MedicationDurationUnitsList, MedicationFrequencyUnitsList, MedicationTimeSchedulesList } from '../../../../domain.types/clinical/medication/medication/medication.types';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
@@ -269,36 +269,10 @@ export class MedicationController {
                 throw new ApiError(400, 'Unable to update medication record!');
             }
 
-            if (domainModel.DrugId !== null ||
-                domainModel.RefillCount !== null ||
-                domainModel.RefillNeeded !== null ||
-                domainModel.Duration !== null ||
-                domainModel.DurationUnit !== null ||
-                domainModel.Frequency !== null ||
-                domainModel.FrequencyUnit !== null ||
-                domainModel.TimeSchedules !== null ||
-                domainModel.StartDate !== null) {
-
-                await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
-
-                if (updated.FrequencyUnit !== 'Other') {
-                    var stats = await this._medicationConsumptionService.create(updated);
-                    var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
-    
-                    var consumptionSummary: ConsumptionSummaryDto = {
-                        TotalConsumptionCount   : stats.TotalConsumptionCount,
-                        TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
-                        PendingConsumptionCount : stats.PendingConsumptionCount,
-                        PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
-                    };
-    
-                    updated.ConsumptionSummary = consumptionSummary;
-                }
-                
-            }
+            this.updateMedicationConsumption(domainModel, id, updated);
 
             Logger.instance().log(`[MedicationTime] Update - medication response returned`);
-            ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Medication record updated successfully! Updates will be available shortly.', 200, {
                 Medication : updated,
             });
         } catch (error) {
@@ -451,6 +425,37 @@ export class MedicationController {
             }
             domainModel.DrugName = drug.DrugName;
         }
+    }
+
+    private async updateMedicationConsumption(domainModel: MedicationDomainModel, id: string, updated: MedicationDto) {
+        if (domainModel.DrugId !== null ||
+            domainModel.RefillCount !== null ||
+            domainModel.RefillNeeded !== null ||
+            domainModel.Duration !== null ||
+            domainModel.DurationUnit !== null ||
+            domainModel.Frequency !== null ||
+            domainModel.FrequencyUnit !== null ||
+            domainModel.TimeSchedules !== null ||
+            domainModel.StartDate !== null) {
+
+            await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+
+            if (updated.FrequencyUnit !== 'Other') {
+                await this._medicationConsumptionService.create(updated);
+                /*var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
+
+                var consumptionSummary: ConsumptionSummaryDto = {
+                    TotalConsumptionCount   : stats.TotalConsumptionCount,
+                    TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
+                    PendingConsumptionCount : stats.PendingConsumptionCount,
+                    PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
+                };
+
+                updated.ConsumptionSummary = consumptionSummary;*/
+            }
+            
+        }
+
     }
 
     //#endregion

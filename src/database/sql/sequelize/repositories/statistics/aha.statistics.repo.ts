@@ -2,7 +2,7 @@ import { IAhaStatisticsRepo } from '../../../../../database/repository.interface
 import mysql, { Connection } from 'mysql2/promise';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
-import { AppName, CareplanCode } from '../../../../../domain.types/statistics/aha/aha.type';
+import { AppName, CareplanCode, HealthSystem } from '../../../../../domain.types/statistics/aha/aha.type';
 
 export class AhaStatisticsRepo implements IAhaStatisticsRepo {
 
@@ -826,6 +826,33 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         } catch (error) {
             Logger.instance().log(`Unable to retrieved deleted test users for ${careplanCode} careplan: ${error.message}`);
             throw new ApiError(500, `Unable to retrieved deleted test users for ${careplanCode} careplan: ${error.message}`);
+        } finally {
+            connection.end();
+        }
+    };
+    
+    getHealthSystemSpecificUserCareplanEnrollmentCount = async (healthSystem : HealthSystem) => {
+        const query =  `select distinct (ce.PatientUserId), p.Phone, p.FirstName, p.LastName, ce.Plancode, ce.StartDate,
+                        ce.EndDate, pt.HealthSystem, pt.AssociatedHospital, p.DeletedAt from careplan_enrollments as ce 
+                        JOIN users as u ON ce.PatientUserId = u.id
+                        JOIN patients as pt ON u.id = pt.UserId
+                        JOIN persons as p ON u.PersonId = p.id
+                        where ce.PlanCode = "Cholesterol" 
+                        AND ce.PatientUserId IN 
+                        (
+                            SELECT distinct (u.id) from users as u
+                            Join patients as pt on pt.UserId = u.id
+                            WHERE u.IsTestUser = 0 AND pt.HealthSystem = '${healthSystem}'
+                        )`;
+        let connection: Connection = null;
+        try {
+            connection = await this.createDbConnection();
+            const [rows] = await connection.execute(query);
+            const userCareplanEnrollmentCount: any = rows;
+            return userCareplanEnrollmentCount.length;
+        } catch (error) {
+            Logger.instance().log(`Unable to retrieved deleted test users for ${healthSystem} careplan: ${error.message}`);
+            throw new ApiError(500, `Unable to retrieved deleted test users for ${healthSystem} careplan: ${error.message}`);
         } finally {
             connection.end();
         }

@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IAhaStatisticsRepo } from "../../database/repository.interfaces/statistics/aha.statistics.repo.interface";
-import { AppName, CareplanCode } from "../../domain.types/statistics/aha/aha.type";
+import { AppName, CareplanCode, HealthSystem } from "../../domain.types/statistics/aha/aha.type";
 import { PDFGenerator } from "../../modules/reports/pdf.generator";
 import fs from 'fs';
 import { addBottom, addFooter, addTop } from "../users/patient/statistics/stat.report.commons";
@@ -115,12 +115,26 @@ export class AhaStatisticsService {
         const hsPersonCount = await this._ahaStatisticsRepo.getAppSpecificTotalPerson(AppName.HS);
         const hsDailyAssessmentCount = await this._ahaStatisticsRepo.getAppSpecificDailyAssessmentCount(AppName.HS);
         const hsBodyWeightDataCount = await this._ahaStatisticsRepo.getAppSpecificBodyWeightDataCount(AppName.HS);
-        const hsLabRecordCount = await this._ahaStatisticsRepo. getAppSpecificLabRecordCount(AppName.HS)();
+        const hsLabRecordCount = await this._ahaStatisticsRepo. getAppSpecificLabRecordCount(AppName.HS);
         const hsCareplanActivityCount = await this._ahaStatisticsRepo.getAppSpecificCareplanActivityCount(AppName.HS);
         const hsMedicationConsumptionCount =
         await this._ahaStatisticsRepo.getAppSpecificMedicationConsumptionCount(AppName.HS);
-
+        
         ////////////////////////////////////////////////////////////////////////////////////////////
+        const userEnrollmentForWellstarHealthSystem =
+        await this._ahaStatisticsRepo.getHealthSystemSpecificUserCareplanEnrollmentCount(HealthSystem.WellstarHealthSystem);
+        const userEnrollmentForUCSanDiegoHealth =
+        await this._ahaStatisticsRepo.getHealthSystemSpecificUserCareplanEnrollmentCount(HealthSystem.UCSanDiegoHealth);
+        const userEnrollmentForAtriumHealth =
+        await this._ahaStatisticsRepo.getHealthSystemSpecificUserCareplanEnrollmentCount(HealthSystem.AtriumHealth);
+        const userEnrollmentForMHealthFairview =
+        await this._ahaStatisticsRepo.getHealthSystemSpecificUserCareplanEnrollmentCount(HealthSystem.MHealthFairview);
+        const userEnrollmentForKaiserPermanente =
+        await this._ahaStatisticsRepo.getHealthSystemSpecificUserCareplanEnrollmentCount(HealthSystem.KaiserPermanente);
+        const userEnrollmentForNebraskaHealthSystem =
+        await this._ahaStatisticsRepo.getHealthSystemSpecificUserCareplanEnrollmentCount(HealthSystem.NebraskaHealthSystem);
+        const userEnrollmentForHCAHealthcare =
+        await this._ahaStatisticsRepo.getHealthSystemSpecificUserCareplanEnrollmentCount(HealthSystem.HCAHealthcare);
         const userAssessmentCount = await this._ahaStatisticsRepo.getUserAssessmentCount();
         const reportModel = {
             TotalPatientCount                               : totalPatientCount,
@@ -184,6 +198,14 @@ export class AhaStatisticsService {
             TotalDeletedHeartFailureEnrollments             : totalDeletedHeartFailureCareplanEnrollments,
             TotalTestUsersForHeartFailureCareplan           : totalTestUsersForHeartFailureCareplan,
             TotalDeletedTestUsersForHeartFailureCareplan    : totalDeletedTestUsersForHeartFailureCareplan,
+            ///////////////////////////////////////////////////////////////////////////////////////////////
+            UserEnrollmentForWellstarHealthSystem           : userEnrollmentForWellstarHealthSystem,
+            UserEnrollmentForUCSanDiegoHealth               : userEnrollmentForUCSanDiegoHealth,
+            UserEnrollmentForAtriumHealth                   : userEnrollmentForAtriumHealth,
+            UserEnrollmentForMHealthFairview                : userEnrollmentForMHealthFairview,
+            UserEnrollmentForKaiserPermanente               : userEnrollmentForKaiserPermanente,
+            UserEnrollmentForNebraskaHealthSystem           : userEnrollmentForNebraskaHealthSystem,
+            UserEnrollmentForHCAHealthcare                  : userEnrollmentForHCAHealthcare
         };
         this.generateReport(reportModel);
         // var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('AHA-weekly-statistics');

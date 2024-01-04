@@ -1,4 +1,4 @@
-import { AppName, CareplanCode } from "../../../domain.types/statistics/aha/aha.type";
+import { AppName, CareplanCode, HealthSystem } from "../../../domain.types/statistics/aha/aha.type";
 
 ////////////////////////////////////////////////////////////////////
 export interface IAhaStatisticsRepo {
@@ -61,4 +61,6 @@ export interface IAhaStatisticsRepo {
     getTotalDeletedEnrollments(careplanCode:CareplanCode);
     getTotalTestUsersForCareplanEnrollments(careplanCode:CareplanCode);
     getTotalDeletedTestUsersForCareplanEnrollments(careplanCode:CareplanCode);
+    ////////////////////////////////////
+    getHealthSystemSpecificUserCareplanEnrollmentCount(healthSystem : HealthSystem);
 }

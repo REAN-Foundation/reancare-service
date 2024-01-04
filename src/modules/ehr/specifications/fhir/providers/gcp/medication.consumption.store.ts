@@ -2,6 +2,7 @@ import { MedicationConsumptionDomainModel } from '../../../../../../domain.types
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { IMedicationConsumptionStore } from '../../../../interfaces/medication.consumption.store.interface';
+import { Helper } from '../../../../../../common/helper';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +73,7 @@ export class GcpMedicationConsumptionStore implements IMedicationConsumptionStor
             resource.contained.push(drug);
         }
 
+        var doseValue = Helper.parseIntegerFromString(model.Dose.toString()) ?? 1;
         if (model.Dose != null) {
             resource['dosage'] = {
                 "text"  : model.Details,
@@ -88,7 +90,7 @@ export class GcpMedicationConsumptionStore implements IMedicationConsumptionStor
                     "text" : "Oral Route"
                 },
                 "dose" : {
-                    "value"  : model.Dose,
+                    "value"  : doseValue,
                     "unit"   : "mg",
                     "system" : "http://unitsofmeasure.org",
                     "code"   : "mg"
@@ -145,6 +147,7 @@ export class GcpMedicationConsumptionStore implements IMedicationConsumptionStor
             existingResource.contained.push(drug);
         }
 
+        var doseValue = Helper.parseIntegerFromString(updates.Dose.toString()) ?? 1;
         if (updates.Dose != null) {
             existingResource['dosage'] = {
                 "text"  : updates.Details,
@@ -161,7 +164,7 @@ export class GcpMedicationConsumptionStore implements IMedicationConsumptionStor
                     "text" : "Oral Route"
                 },
                 "dose" : {
-                    "value"  : updates.Dose,
+                    "value"  : doseValue,
                     "unit"   : "mg",
                     "system" : "http://unitsofmeasure.org",
                     "code"   : "mg"

@@ -7,6 +7,8 @@ import { YearWiseDeviceDetails, YearWiseUsers } from "../../domain.types/statist
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
 import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { Logger } from "../../common/logger";
+import { TimeHelper } from "../../common/time.helper";
+import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,9 +123,9 @@ export class StatisticsService {
             };
     
             const dailyStatisticsDomainModel: DailyStatisticsDomainModel = {
-                ReportDate      : new Date(),
+                ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),
                 ReportTimestamp : new Date(),
-                Statistics      : JSON.stringify(statisticsData)
+                DashboardStats  : statisticsData ? JSON.stringify(statisticsData) : null,
             };
     
             const dailyStatistics = await this._dailyStatisticsRepo.create(dailyStatisticsDomainModel);

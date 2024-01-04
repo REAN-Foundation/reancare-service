@@ -15,7 +15,9 @@ export class DailyStatisticsValidator extends BaseValidator {
         const createModel: DailyStatisticsDomainModel = {
             ReportDate      : requestBody.ReportDate ?? new Date(),
             ReportTimestamp : requestBody.ReportTimestamp ?? new Date(),
-            Statistics      : JSON.stringify(requestBody.Statistics) ?? null
+            DashboardStats  : requestBody.DashboardStats ? JSON.stringify(requestBody.DashboardStats) : null,
+            UserStats       : requestBody.UserStats ? JSON.stringify(requestBody.UserStats) : null,
+            AhaStats        : requestBody.AhaStats ? JSON.stringify(requestBody.AhaStats) : null,
         };
         return createModel;
     };

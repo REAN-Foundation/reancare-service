@@ -5,10 +5,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
 import { Injector } from '../../../../startup/injector';
 import { StepCountValidator } from './step.count.validator';
-import { StepCountDomainModel } from '../../../../domain.types/wellness/daily.records/step.count/step.count.domain.model';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../../common/logger';
+import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +17,7 @@ export class StepCountController {
 
     _validator: StepCountValidator = new StepCountValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrPhysicalActivityService: EHRPhysicalActivityService = Injector.Container.resolve(EHRPhysicalActivityService);
 
     //#endregion
 
@@ -48,15 +45,8 @@ export class StepCountController {
             if (stepCount == null) {
                 throw new ApiError(400, 'Cannot create Step Count!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stepCount.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(domainModel.PatientUserId, stepCount.id, stepCount.Provider, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${stepCount.PatientUserId}`);
-            }
+            
+            await this._ehrPhysicalActivityService.addEHRRecordStepCountForAppNames(stepCount);
 
             ResponseHandler.success(request, response, 'Step count created successfully!', 201, {
                 StepCount : stepCount,
@@ -120,15 +110,7 @@ export class StepCountController {
                 throw new ApiError(400, 'Unable to update Step ount record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(domainModel.PatientUserId, id, updated.Provider, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrPhysicalActivityService.addEHRRecordStepCountForAppNames(updated);
 
             ResponseHandler.success(request, response, 'Step Count record updated successfully!', 200, {
                 StepCount : updated,
@@ -159,29 +141,5 @@ export class StepCountController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
-    private addEHRRecord = (
-        patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        model: StepCountDomainModel,
-        appName?: string) => {
-
-        if (model.StepCount) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.StepCount,
-                model.Unit,
-                'Step-count',
-                null,
-                appName
-            );
-        }
-    };
-
-    //#endregion
 
 }

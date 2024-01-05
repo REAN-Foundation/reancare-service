@@ -9,6 +9,9 @@ import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto }
 import { FoodConsumptionSearchResults,
     FoodConsumptionSearchFilters
 } from '../../../domain.types/wellness/nutrition/food.consumption/food.consumption.search.types';
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.domain.models/ehr.record.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

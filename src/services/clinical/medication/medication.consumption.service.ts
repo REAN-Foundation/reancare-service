@@ -63,7 +63,7 @@ export class MedicationConsumptionService implements IUserActionService {
         var durationUnit = medication.DurationUnit;
         var frequency = medication.Frequency;
         var frequencyUnit = medication.FrequencyUnit;
-        var dose = medication.Dose;
+        var dose = medication.Dose.toString();
         var dosageUnit = medication.DosageUnit;
         var refills = medication.RefillCount;
 
@@ -284,6 +284,10 @@ export class MedicationConsumptionService implements IUserActionService {
 
     getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
         return await this._medicationConsumptionRepo.getById(id);
+    };
+
+    getByMedicationId = async (id: string): Promise<MedicationConsumptionDetailsDto[]> => {
+        return await this._medicationConsumptionRepo.getByMedicationId(id);
     };
 
     search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationSearchResults> => {
@@ -579,7 +583,7 @@ export class MedicationConsumptionService implements IUserActionService {
     };
 
     private getMedicationDetails = (drugName, dose, dosageUnit, schedule) => {
-        return drugName + ': ' + dose.toFixed(1).toString() + ' ' + dosageUnit + ', ' + schedule;
+        return drugName + ': ' + dose.toString() + ' ' + dosageUnit + ', ' + schedule;
     };
 
     private getScheduleSlots = (medication) => {

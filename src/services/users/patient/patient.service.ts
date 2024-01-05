@@ -59,6 +59,9 @@ export class PatientService {
     public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
         var dto = await this._patientRepo.getByUserId(id);
         dto = await this.updateDetailsDto(dto);
+        if (dto == null) {
+            return null;
+        }
         var healthProfile = await this._healthProfileRepo.getByPatientUserId(id);
         dto.HealthProfile = healthProfile;
         return dto;
@@ -156,7 +159,12 @@ export class PatientService {
         if (dto == null) {
             return null;
         }
+
         var user = await this._userRepo.getById(dto.UserId);
+        if (user == null) {
+            return null;
+        }
+
         if (user.Person == null) {
             user.Person = await this._personRepo.getById(user.PersonId);
         }

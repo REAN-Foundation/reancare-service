@@ -1,4 +1,4 @@
-import { Gender, uuid } from "../../domain.types/miscellaneous/system.types";
+import { Gender, uuid } from "../../../domain.types/miscellaneous/system.types";
 import { DataTypes, EHRRecordTypes } from "./ehr.record.types";
 
 export interface EHRMedicationDomainModel {
@@ -7,7 +7,7 @@ export interface EHRMedicationDomainModel {
     RecordId?         : uuid;
     DrugName?         : string;
     DrugId?           : string;
-    Dose?             : number;
+    Dose?             : string;
     Details?          : string;
     TimeScheduleStart?: Date;
     TimeScheduleEnd?  : Date;
@@ -15,7 +15,7 @@ export interface EHRMedicationDomainModel {
     TakenAt?          : Date;
     IsMissed?         : boolean;
     IsCancelled?      : boolean;
-    RecordDate?       :Date;
+    RecordDate?       : Date;
     TimeStamp?        : Date;
     AdditionalInfo?   : string;
 }

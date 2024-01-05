@@ -7,6 +7,8 @@ import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from '../.
 import { TemperatureStore } from "../../../modules/ehr/services/body.temperature.store";
 import { Injector } from "../../../startup/injector";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.domain.models/ehr.record.types";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

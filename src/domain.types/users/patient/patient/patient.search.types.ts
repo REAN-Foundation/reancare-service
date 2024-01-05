@@ -13,6 +13,7 @@ export interface PatientSearchFilters extends BaseSearchFilters {
     DonorAcceptance?: string;
     BirthdateFrom?  : Date;
     BirthdateTo?    : Date;
+    UserName?       : string;
 }
 
 export interface PatientSearchResults extends BaseSearchResults {

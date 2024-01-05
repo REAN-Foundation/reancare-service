@@ -17,3 +17,16 @@ export interface HealthAppStatus {
   Status          : string;
   AuthenticatedAt : Date;
 }
+
+export enum WearableDeviceNames {
+  Cronometer = 'CRONOMETER',
+  Fitbit = 'FITBIT',
+  Garmin = 'GARMIN',
+  Huawei = 'HUAWEI',
+  Omron = 'OMRON',
+  Polar = 'POLAR',
+  TrainingPeaks = 'TRAININGPEAKS',
+  UnderArmour = 'UNDERARMOUR',
+  Whoop = 'WHOOP',
+  Withings = 'WITHINGS',
+}

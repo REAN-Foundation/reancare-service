@@ -1,9 +1,5 @@
 import express from 'express';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { MedicationConsumptionDomainModel }
-    from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { SchedulesForDayDto } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
@@ -16,8 +12,8 @@ import { MedicationConsumptionValidator } from './medication.consumption.validat
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { TimeHelper } from '../../../../common/time.helper';
-import { Logger } from '../../../../common/logger';
 import { PatientService } from '../../../../services/users/patient/patient.service';
+import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,7 +31,7 @@ export class MedicationConsumptionController {
 
     _patientService: PatientService = Injector.Container.resolve(PatientService);
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrMedicationService: EHRMedicationService = Injector.Container.resolve(EHRMedicationService);
 
     //#endregion
 
@@ -54,14 +50,7 @@ export class MedicationConsumptionController {
 
             // get user details to add records in ehr database
             for (var dto of dtos) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) {
-                        this.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                    }
-                } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-                }
+                await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
             }
             const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
@@ -102,14 +91,7 @@ export class MedicationConsumptionController {
             }
 
             for (var dto of dtos) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) {
-                        this.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                    }
-                } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-                }
+                await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
             }
 
             const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
@@ -146,16 +128,8 @@ export class MedicationConsumptionController {
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
+            await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-            }
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
@@ -189,16 +163,7 @@ export class MedicationConsumptionController {
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
-
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-            }
+            await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
 
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
@@ -357,47 +322,6 @@ export class MedicationConsumptionController {
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    private addEHRRecord = (
-        patientUserId: uuid,
-        recordId: uuid, model:
-        MedicationConsumptionDomainModel,
-        appName?: string) => {
-
-        if (model.IsTaken) {
-            EHRAnalyticsHandler.addMedicationRecord(
-                appName,
-                model.id,
-                patientUserId,
-                model.DrugName,
-                model.Dose,
-                model.Details,
-                model.TimeScheduleStart,
-                model.TimeScheduleEnd,
-                model.TakenAt,
-                model.IsTaken,
-                model.IsMissed,
-                model.IsCancelled,
-            );
-        }
-
-        if (model.IsMissed) {
-            EHRAnalyticsHandler.addMedicationRecord(
-                appName,
-                model.id,
-                patientUserId,
-                model.DrugName,
-                model.Dose,
-                model.Details,
-                model.TimeScheduleStart,
-                model.TimeScheduleEnd,
-                model.TakenAt,
-                model.IsTaken,
-                model.IsMissed,
-                model.IsCancelled,
-            );
         }
     };
 

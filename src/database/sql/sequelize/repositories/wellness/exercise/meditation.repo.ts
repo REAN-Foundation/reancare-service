@@ -55,10 +55,10 @@ export class MeditationRepo implements IMeditationRepo {
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = filters.PatientUserId;
             }
-            if (filters.Meditation !== null) {
+            if (filters.Meditation != null) {
                 search.where['Meditation'] = filters.Meditation;
             }
-            if (filters.DurationInMins !== null) {
+            if (filters.DurationInMins != null) {
                 search.where['DurationInMins'] = filters.DurationInMins;
             }
             let orderByColum = 'CreatedAt';

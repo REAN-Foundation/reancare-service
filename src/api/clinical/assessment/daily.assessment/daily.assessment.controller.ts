@@ -5,6 +5,8 @@ import { DailyAssessmentService } from '../../../../services/clinical/daily.asse
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { Injector } from '../../../../startup/injector';
 import { PatientService } from '../../../../services/users/patient/patient.service';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +19,8 @@ export class DailyAssessmentController {
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 
     _patientService: PatientService = Injector.Container.resolve(PatientService);
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = Injector.Container.resolve(EHRAnalyticsHandler);
 
     //#endregion
 
@@ -31,6 +35,16 @@ export class DailyAssessmentController {
             if (dailyAssessment == null) {
                 throw new ApiError(400, 'Cannot create record for daily assessment!');
             }
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dailyAssessment.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, dailyAssessment.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dailyAssessment.PatientUserId}`);
+            }
+
             ResponseHandler.success(request, response, 'Daily assessment record created successfully!', 201, {
                 DailyAssessment : dailyAssessment,
             });

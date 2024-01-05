@@ -6,6 +6,9 @@ import { BodyHeightDomainModel } from '../../../domain.types/clinical/biometrics
 import { BodyHeightDto } from '../../../domain.types/clinical/biometrics/body.height/body.height.dto';
 import { BodyHeightSearchFilters, BodyHeightSearchResults } from '../../../domain.types/clinical/biometrics/body.height/body.height.search.types';
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.domain.models/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

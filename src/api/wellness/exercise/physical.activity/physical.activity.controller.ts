@@ -6,17 +6,11 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
 import { Injector } from '../../../../startup/injector';
 import { PhysicalActivityValidator } from './physical.activity.validator';
-import { PhysicalActivityDomainModel } from
-    '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { PatientService } from '../../../../services/users/patient/patient.service';
-import { Logger } from '../../../../common/logger';
-import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,18 +18,13 @@ export class PhysicalActivityController {
 
     //#region member variables and constructors
 
-    _service: PhysicalActivityService = null;
-
     _validator: PhysicalActivityValidator = new PhysicalActivityValidator();
 
-    _userService: UserService = null;
+    _service = Injector.Container.resolve(PhysicalActivityService);
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _userService = Injector.Container.resolve(UserService);
 
-    constructor() {
-        this._service = Injector.Container.resolve(PhysicalActivityService);
-        this._userService = Injector.Container.resolve(UserService);
-    }
+    _ehrPhysicalActivityService: EHRPhysicalActivityService = Injector.Container.resolve(EHRPhysicalActivityService);
 
     //#endregion
 
@@ -57,15 +46,8 @@ export class PhysicalActivityController {
             if (physicalActivity == null) {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(physicalActivity.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${physicalActivity.PatientUserId}`);
-            }
+            
+            await this._ehrPhysicalActivityService.addEHRRecordPhysicalActivityForAppNames(physicalActivity);
 
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
@@ -150,14 +132,7 @@ export class PhysicalActivityController {
                 throw new ApiError(400, 'Unable to update physical activity record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(updated.PatientUserId, id, updated.Provider, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrPhysicalActivityService.addEHRRecordPhysicalActivityForAppNames(physicalActivity);
 
             if (updated.PhysicalActivityQuestionAns !== null) {
                 var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
@@ -205,37 +180,6 @@ export class PhysicalActivityController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    };
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PhysicalActivityDomainModel, appName?: string) => {
-        if (model.PhysicalActivityQuestionAns !== null) {
-            EHRAnalyticsHandler.addBooleanRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.PhysicalActivityQuestionAns,
-                null,
-                null,
-                'Did you add movement to your day today?',
-                appName
-            );
-        }
-
-        if (model.DurationInMin) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.DurationInMin,
-                'mins',   
-                model.Category,
-                'Exercise',
-                appName
-            );
-        }
-
     };
 
     //#endregion

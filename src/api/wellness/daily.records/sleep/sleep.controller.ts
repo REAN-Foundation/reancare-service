@@ -10,8 +10,6 @@ import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
-import { SleepDomainModel } from '../../../../domain.types/wellness/daily.records/sleep/sleep.domain.model';
 import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +53,7 @@ export class SleepController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(sleep.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(model.PatientUserId, sleep.id, null, model, appName);
+                    this._service.addEHRRecord(model.PatientUserId, sleep.id, null, model, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${sleep.PatientUserId}`);
@@ -145,7 +143,7 @@ export class SleepController{
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
+                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
@@ -178,22 +176,6 @@ export class SleepController{
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: SleepDomainModel, appName?: string) => {
-        if (model.SleepDuration) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.MentalWellBeing,
-                model.SleepDuration,
-                model.Unit,
-                'Sleep',
-                null,
-                appName
-            );
         }
     };
 

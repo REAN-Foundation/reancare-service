@@ -3,7 +3,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AddressDomainModel } from '../../../../domain.types/general/address/address.domain.model';
-import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
+import { EmergencyContactRoleList } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { AddressService } from '../../../../services/general/address.service';
 import { OrganizationService } from '../../../../services/general/organization.service';
@@ -13,9 +13,9 @@ import { RoleService } from '../../../../services/role/role.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
 import { EmergencyContactValidator } from './emergency.contact.validator';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HospitalService } from '../../../../services/hospitals/hospital.service';
 import { HealthSystemService } from '../../../../services/hospitals/health.system.service';
+import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,9 +37,11 @@ export class EmergencyContactController {
 
     _addressService: AddressService = Injector.Container.resolve(AddressService);
 
-    _healthSystemService: HealthSystemService = Injector.Container.resolve(HealthSystemService);
+    _healthSystemService = Injector.Container.resolve(HealthSystemService);
 
-    _hospitalService: HospitalService = Injector.Container.resolve(HospitalService);
+    _hospitalService = Injector.Container.resolve(HospitalService);
+
+    _ehrPatientService = Injector.Container.resolve(EHRPatientService);
 
     //#endregion
 
@@ -148,14 +150,7 @@ export class EmergencyContactController {
                 throw new ApiError(400, 'Cannot create patientEmergencyContact!');
             }
 
-            if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
-                await EHRAnalyticsHandler.addOrUpdatePatient(
-                    domainModel.PatientUserId,
-                    {
-                        DoctorPersonId : patientEmergencyContact.ContactPersonId
-                    }
-                );
-            }
+            await this._ehrPatientService.addEHRRecordEmergencyContactForAppNames(patientEmergencyContact);
 
             ResponseHandler.success(request, response, 'Emergency contact created successfully!', 201, {
                 EmergencyContact : patientEmergencyContact,

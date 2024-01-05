@@ -28,6 +28,8 @@ export interface ICareplanRepo {
 
     getPatientEnrollment(patientUserId: uuid, provider: string, enrollmentId): Promise<EnrollmentDto>;
 
+    getEnrollmentByEnrollmentId(enrollmentId : string): Promise<EnrollmentDto>;
+
     addActivities(
         provider: string,
         planName: string,

@@ -7,6 +7,8 @@ import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/cl
 import { PulseStore } from "../../../modules/ehr/services/pulse.store";
 import { Injector } from "../../../startup/injector";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.domain.models/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

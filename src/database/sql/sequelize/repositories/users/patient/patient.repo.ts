@@ -10,6 +10,7 @@ import Patient from "../../../models/users/patient/patient.model";
 import Person from "../../../models/person/person.model";
 import { AuthDomainModel } from '../../../../../../domain.types/webhook/auth.domain.model';
 import { ReAuthDomainModel } from '../../../../../../domain.types/webhook/reauth.domain.model';
+import User from '../../../models/users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -116,6 +117,17 @@ export class PatientRepo implements IPatientRepo {
                 includesObj.where['TenantId'] = filters.TenantId;
             }
 
+            const userIncludesObj =
+            {
+                model    : User,
+                required : true,
+                where    : {
+                },
+            };
+
+            if (filters.UserName != null) {
+                userIncludesObj.where['UserName'] = filters.UserName;
+            }
             if (filters.Phone != null) {
                 includesObj.where['Phone'] = { [Op.like]: '%' + filters.Phone + '%' };
             }
@@ -175,6 +187,7 @@ export class PatientRepo implements IPatientRepo {
             }
 
             search.include.push(includesObj);
+            search.include.push(userIncludesObj);
 
             //Reference: https://sequelize.org/v5/manual/querying.html#ordering
             const orderByColum = 'CreatedAt';

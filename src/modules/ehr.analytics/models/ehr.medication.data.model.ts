@@ -60,10 +60,10 @@ export default class EHRMedicationData extends Model {
     DrugName: string; //This is brand-name
 
     @Column({
-        type      : DataType.FLOAT,
+        type      : DataType.STRING(128),
         allowNull : true,
     })
-    Dose: number;
+    Dose: string;
 
     @Length({ max: 256 })
     @Column({
@@ -117,6 +117,12 @@ export default class EHRMedicationData extends Model {
         allowNull : true,
     })
     AdditionalInfo: string;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    RecordDate: Date;
 
     @Column
     @CreatedAt

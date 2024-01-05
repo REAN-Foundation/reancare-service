@@ -362,6 +362,12 @@ export class CareplanService implements IUserActionService {
             activity['ActionDetails'] = actionDetails as AssessmentDto;
         }
 
+        // fetch careplan for given activity and check for expiration
+        var careplanDetails = await this._careplanRepo.getEnrollmentByEnrollmentId(activity.EnrollmentId.toString());
+        if (careplanDetails.EndAt < new Date()) {
+            return true;
+        }
+
         var updatedActivity = await this._handler.updateActivity(
             activity.PatientUserId, activity.Provider, activity.PlanCode,
             activity.EnrollmentId, activity.ProviderActionId, activity);
@@ -411,6 +417,9 @@ export class CareplanService implements IUserActionService {
         return template;
     };
 
+    public getActivities = async (patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]> => {
+        return await this._careplanRepo.getActivities(patientUserId, startTime, endTime);
+    };
     private getAssessment = async (
         activity: CareplanActivityDto,
         template: AssessmentTemplateDto,
@@ -534,7 +543,7 @@ export class CareplanService implements IUserActionService {
         }
     }
 
-    public async enrollAndCreateTask(enrollmentDetails ) {
+    public async enrollAndCreateTask(enrollmentDetails) {
 
         var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
         if (!enrollmentId) {
@@ -585,20 +594,24 @@ export class CareplanService implements IUserActionService {
 
         Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
 
-        var healthSystemHospitalDetails = await this._patientRepo.getByUserId(dto.PatientUserId);
-        var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-        if (eligibleAppNames.length > 0) {
-            for await (var appName of eligibleAppNames) {
-                for await (var careplanActivity of careplanActivities) {
-                    this.addEHRRecord(
-                        enrollmentDetails.PlanName,
-                        enrollmentDetails.PlanCode,
-                        careplanActivity, appName,
-                        healthSystemHospitalDetails);
-                }
+        var patientDetails = await this._patientRepo.getByUserId(dto.PatientUserId);
+
+        if (appName == 'HF Helper' && enrollmentDetails.PlanCode == 'HFMotivator') {
+            for await (var careplanActivity of careplanActivities) {
+                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, patientDetails);
+            }
+        } else if (appName == 'Heart &amp; Stroke Helper™' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke')) {
+            for await (var careplanActivity of careplanActivities) {
+                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, patientDetails);
+            }
+        } else if (appName == 'REAN HealthGuru' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke' || enrollmentDetails.PlanCode == 'HFMotivator')) {
+            for await (var careplanActivity of careplanActivities) {
+                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, patientDetails);
             }
         } else {
-            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
+            for await (var careplanActivity of careplanActivities) {
+                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, patientDetails);
+            }
         }
 
         //task scheduling
@@ -682,38 +695,6 @@ export class CareplanService implements IUserActionService {
 
         const provider = "REAN";
         return await this._handler.scheduleDailyHighRiskCareplan(provider);
-    };
-
-    private addEHRRecord = (
-        planName: string,
-        planCode : string,
-        model: CareplanActivityDto,
-        appName?: string,
-        healthSystemHospitalDetails?: PatientDetailsDto) => {
-
-        EHRAnalyticsHandler.addCareplanActivityRecord(
-            appName,
-            model.PatientUserId,
-            model.id,
-            model.EnrollmentId,
-            model.Provider,
-            planName,
-            planCode,
-            model.Type,
-            model.Category,
-            model.ProviderActionId,
-            model.Title,
-            model.Description,
-            model.Url,
-            'English',
-            model.ScheduledAt,
-            model.CompletedAt,
-            model.Sequence,
-            model.Frequency,
-            model.Status,
-            healthSystemHospitalDetails.HealthSystem,
-            healthSystemHospitalDetails.AssociatedHospital
-        );
     };
 
     //#endregion

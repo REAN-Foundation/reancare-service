@@ -4,6 +4,8 @@ import { IMeditationRepo } from "../../../database/repository.interfaces/wellnes
 import { MeditationDomainModel } from '../../../domain.types/wellness/exercise/meditation/meditation.domain.model';
 import { MeditationDto } from '../../../domain.types/wellness/exercise/meditation/meditation.dto';
 import { MeditationSearchResults, MeditationSearchFilters } from '../../../domain.types/wellness/exercise/meditation/meditation.search.types';
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.domain.models/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

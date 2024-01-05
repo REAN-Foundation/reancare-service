@@ -7,6 +7,8 @@ import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults 
 import { Injector } from "../../../startup/injector";
 import { BloodOxygenSaturationStore } from "../../../modules/ehr/services/blood.oxygen.saturation.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.domain.models/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

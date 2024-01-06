@@ -137,6 +137,58 @@ export class StatisticsService {
         }
     };
 
+    createDashboardStats = async () => {
+        try {
+            const filter = {};
+            const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
+            const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
+            const appDownload = await this._statisticsRepo.getAppDownlodCount();
+            const allYears = await this._statisticsRepo.getAllYears();
+            const yearWiseUserCount = await this.getYearWiseUserCount(allYears);
+            yearWiseUserCount.sort(this.compare);
+            const yearWiseDeviceDetails = await this.getYearWiseDeviceDetails(allYears);
+            yearWiseDeviceDetails.sort(this.compare);
+            const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
+            const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
+            const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
+            const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
+            const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
+            const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
+           
+            const dashboardStats = {
+                UserStatistics : {
+                    UsersCountStats          : usersCountStats,
+                    DeviceDetailWiseUsers    : deviceDetailWiseUsers,
+                    AppDownload              : appDownload,
+                    YearWiseUserCount        : yearWiseUserCount,
+                    YearWiseDeviceDetails    : yearWiseDeviceDetails,
+                    AgeWiseUsers             : ageWiseUsers,
+                    GenderWiseUsers          : genderWiseUsers,
+                    MaritalStatusWiseUsers   : maritalStatusWiseUsers,
+                    CountryWiseUsers         : countryWiseUsers,
+                    MajorAilmentDistribution : majorAilmentDistribution,
+                    AddictionDistribution    : addictionDistribution
+                },
+            };
+    
+            return dashboardStats;
+            // const dailyStatisticsDomainModel: DailyStatisticsDomainModel = {
+            //     ReportDate      : new Date(),
+            //     ReportTimestamp : new Date(),
+            //     Statistics      : JSON.stringify(statisticsData)
+            // };
+    
+            // const dailyStatistics = await this._dailyStatisticsRepo.create(dailyStatisticsDomainModel);
+            // if (dailyStatistics) {
+            //     Logger.instance().log('Daily users stattistics created successfully.');
+            // } else {
+            //     Logger.instance().log('Error in creating daily users stattistics.');
+            // }
+        } catch (error) {
+            Logger.instance().log(`Error in creating daily users stattistics:${error.message}`);
+        }
+    };
+
     private getYearWiseUserCount = async (allYears) => {
         const yearWiseUserCount:YearWiseUsers[] = [];
         for (let i = 0; i < allYears.length; i++) {

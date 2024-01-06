@@ -14,7 +14,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     //        return rows;
     //    };
 
-    getTotalPatients = async () => {
+    getTotalPatients = async (): Promise<number> => {
         const query = `SELECT * FROM patients`;
         let connection: Connection = null;
         try {
@@ -30,14 +30,14 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalActivePatients = async () => {
+    getTotalActivePatients = async (): Promise<number> => {
         const query =   `SELECT count(distinct (pt.UserId)) as totalActivePatients from patients as pt
                         JOIN users as u ON pt.UserId = u.id
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null`;
-        // const query =   `SELECT count(distinct (pt.UserId)) from patients as pt
+        // const query =   `SELECT count(distinct (pt.UserId)) as totalActivePatients from patients as pt
         //                 JOIN users as u ON pt.UserId = u.id
-        //                 WHERE u.IsTestUser=0
+        //                 WHERE u.IsTestUser = 0
         //                 JOIN persons as p ON u.PersonId = p.id
         //                 WHERE p.DeletedAt is null`;
         let connection: Connection = null;
@@ -56,13 +56,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedPatients = async () => {
+    getTotalDeletedPatients = async (): Promise<number> => {
         const query = `SELECT count(distinct (pt.UserId)) as totalDeletedPatients from patients as pt
                         JOIN users as u ON pt.UserId = u.id
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
 
-        // const query = `SELECT count(distinct (pt.UserId)) from reancare_new.patients as pt
+        // const query = `SELECT count(distinct (pt.UserId)) as totalDeletedPatients from patients as pt
         //                 JOIN users as u ON pt.UserId = u.id
         //                 WHERE u.IsTestUser = 0
         //                 JOIN persons as p ON u.PersonId = p.id
@@ -83,12 +83,12 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalTestPatients = async () => {
+    getTotalTestPatients = async (): Promise<number> => {
         const query = `SELECT count(distinct (pt.UserId)) as totalTestPatients from patients as pt
                         JOIN users as u ON pt.UserId = u.id
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is null`;
-        // const query = `SELECT count(distinct (pt.UserId)) from patients as pt
+        // const query = `SELECT count(distinct (pt.UserId)) as totalTestPatients from patients as pt
         //                 JOIN users as u ON pt.UserId = u.id
         //                 WHERE u.IsTestUser = 1
         //                 JOIN persons as p ON u.PersonId = p.id
@@ -109,12 +109,12 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedTestPatients = async () => {
+    getTotalDeletedTestPatients = async (): Promise<number> => {
         const query = `SELECT count(distinct (pt.UserId)) as totalDeletedTestPatients from patients as pt
                     JOIN users as u ON pt.UserId = u.id
                     JOIN persons as p ON u.PersonId = p.id
                     WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
-        // const query = `SELECT count(distinct (pt.UserId)) from patients as pt
+        // const query = `SELECT count(distinct (pt.UserId)) as totalDeletedTestPatients from patients as pt
         //             JOIN users as u ON pt.UserId = u.id
         //             WHERE u.IsTestUser = 1
         //             JOIN persons as p ON u.PersonId = p.id
@@ -135,7 +135,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalUsersWithMissingDeviceDetail = async () => {
+    getTotalUsersWithMissingDeviceDetail = async (): Promise<number> => {
         const query =   `SELECT u.id, u.username
                         FROM users as u
                         JOIN patients p ON u.id = p.UserId
@@ -155,7 +155,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalUniqueUsersInDeviceDetail = async () => {
+    getTotalUniqueUsersInDeviceDetail = async (): Promise<number> => {
         const query =   `SELECT distinct(UserId) FROM user_device_details`;
         let connection: Connection = null;
         try {
@@ -171,13 +171,18 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getAppSpecificTotalUsers = async (appName : AppName) => {
-    // getTotalHSUsers = async () => {
+    getAppSpecificTotalUsers = async (appName : AppName): Promise<number> => {
         const query =   `SELECT distinct(ud.UserId), AppName FROM user_device_details as ud
                         JOIN patients as pp ON pp.UserId = ud.UserId
                         JOIN users as u ON u.id = pp.UserId
                         JOIN persons as p ON p.id = u.PersonId
                         where p.Phone not between "1000000000" and "1000000100" and ud.AppName = '${appName}'`;
+        // const query =   `SELECT distinct(ud.UserId), AppName FROM user_device_details as ud
+        //                 JOIN patients as pp ON pp.UserId = ud.UserId
+        //                 JOIN users as u ON u.id = pp.UserId
+        //                 WHERE u.IsTestUser = 0
+        //                 JOIN persons as p ON p.id = u.PersonId
+        //                 where ud.AppName = '${appName}'`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -192,7 +197,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalUsersLoggedToHSAndHF = async () => {
+    getTotalUsersLoggedToHSAndHF = async (): Promise<number> => {
         const query =  `SELECT distinct(ud.UserId)
                         FROM user_device_details as ud
                         JOIN users as u ON u.id = ud.UserId
@@ -205,6 +210,20 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
                             JOIN persons as p ON p.id = u.PersonId
                             WHERE ud.AppName = 'HF Helper' and p.Phone not between "1000000000" and "1000000100"
                         )`;
+        // const query =  `SELECT distinct(ud.UserId)
+        //                 FROM user_device_details as ud
+        //                 JOIN users as u ON u.id = ud.UserId
+        //                 WHERE u.IsTestUser = 0
+        //                 JOIN persons as p ON p.id = u.PersonId
+        //                 WHERE ud.AppName = 'Heart &amp; Stroke Helper™'
+        //                 AND UserId IN (
+        //                     SELECT distinct(ud.UserId)
+        //                     FROM user_device_details ud
+        //                     JOIN users as u ON u.id = ud.UserId
+        //                     WHERE u.IsTestUser = 0
+        //                     JOIN persons as p ON p.id = u.PersonId
+        //                     WHERE ud.AppName = 'HF Helper'
+        //                 )`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -219,8 +238,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getAppSpecificpatientHealthProfileData = async (appName : AppName) => {
-    // getHSpatientHealthProfileData = async (appName : AppName) => {
+    getAppSpecificPatientHealthProfileData = async (appName : AppName): Promise<number> => {
         const query =  `SELECT ph.id, ph.PatientUserId, ud.AppName,
                         ph.MaritalStatus, ph.HasHeartAilment, ph.OtherConditions, ph.Occupation, 
                         ph. IsDiabetic, ph.BloodGroup, ph.MajorAilment, ph.IsSmoker, ph.HasHighBloodPressure, ph.HasHighCholesterol, ph.HasHeartAilment, ph.CreatedAt, 
@@ -243,8 +261,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    // getTotalHSPatients = async () => {
-    getAppSpecificTotalPatients = async (appName : AppName) => {
+    getAppSpecificTotalPatients = async (appName : AppName): Promise<number> => {
         const query =  `SELECT p.id, p.UserId, p.HealthSystem, p.AssociatedHospital, p.CreatedAt, p.UpdatedAt, p.DeletedAt
                         FROM patients as p
                         JOIN users as u ON u.id = p.UserId
@@ -264,7 +281,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getAppSpecificTotalPerson = async (appName : AppName) => {
+    getAppSpecificTotalPerson = async (appName : AppName): Promise<number> => {
         const query =  `SELECT p.id, p.Phone, p.Gender, p.SelfIdentifiedGender, p.CreatedAt, p.UpdatedAt, p.DeletedAt
                         FROM persons as p
                         JOIN users as u ON u.PersonId = p.id
@@ -284,8 +301,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    // getHSDailyAssessmentCount = async () => {
-    getAppSpecificDailyAssessmentCount = async (appName : AppName) => {
+    getAppSpecificDailyAssessmentCount = async (appName : AppName): Promise<number> => {
         const query =  `SELECT d.id, d.PatientUserId, d.Feeling, d.Mood, d.EnergyLevels, d.CreatedAt, d.UpdatedAt, d.DeletedAt
                         FROM daily_assessments as d
                         JOIN users as u ON u.id = d.PatientUserId
@@ -305,7 +321,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getAppSpecificBodyWeightDataCount = async (appName : AppName) => {
+    getAppSpecificBodyWeightDataCount = async (appName : AppName): Promise<number> => {
         const query =  `SELECT bw.id, bw.PatientUserId, bw.BodyWeight,bw.Unit, bw.CreatedAt, bw.UpdatedAt, bw.DeletedAt
                         FROM biometrics_body_weight as bw
                         JOIN users as u ON u.id = bw.PatientUserId
@@ -325,8 +341,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    // getHSLabRecordCount = async () => {
-    getAppSpecificLabRecordCount = async (appName : AppName) => {
+    getAppSpecificLabRecordCount = async (appName : AppName): Promise<number> => {
         const query =  `SELECT lr.id, lr.PatientUserId, lr.TypeName, lr.DisplayName, lr.PrimaryValue,lr.SecondaryValue, lr.RecordedAt, lr.Unit, lr.CreatedAt, lr.UpdatedAt, lr.DeletedAt
                         FROM lab_records as lr
                         JOIN users as u ON u.id = lr.PatientUserId
@@ -346,8 +361,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getAppSpecificCareplanActivityCount = async (appName : AppName) => {
-    // getHSCareplanActivityCount = async () => {
+    getAppSpecificCareplanActivityCount = async (appName : AppName): Promise<number> => {
         const query =  `SELECT ca.id, ca.PatientUserId, ca.PlanName, ca.PlanCode, ca.CreatedAt, ca.UpdatedAt, ca.DeletedAt
                         FROM careplan_activities as ca
                         JOIN users as u ON u.id = ca.PatientUserId
@@ -367,8 +381,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getAppSpecificMedicationConsumptionCount = async (appName : AppName) => {
-    // getHSMedicationConsumptionCount = async () => {
+    getAppSpecificMedicationConsumptionCount = async (appName : AppName): Promise<number> => {
         const query =  `SELECT mc.id, mc.PatientUserId, mc.Dose, mc.DrugName, mc.TimeScheduleStart, mc.TimeScheduleEnd, mc.TakenAt, mc.IsTaken, mc.IsMissed, mc.CancelledOn, mc.CreatedAt, mc.UpdatedAt, mc.DeletedAt
                         FROM medication_consumptions as mc
                         JOIN users as u ON u.id = mc.PatientUserId
@@ -394,7 +407,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getUserAssessmentCount = async () => {
+    getUserAssessmentCount = async (): Promise<number> => {
         const query =  `SELECT a.id, a.PatientUserId, ce.PlanCode, a.Title, a.Status, a.StartedAt, a.FinishedAt, a.CreatedAt, a.UpdatedAt, a.DeletedAt
                         FROM assessments as a
                         JOIN careplan_enrollments as ce ON a.PatientUserId = ce.PatientUserId
@@ -415,7 +428,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalUsers = async () => {
+    getTotalUsers = async (): Promise<number> => {
         const query =  `SELECT * FROM users`;
         let connection: Connection = null;
         try {
@@ -431,10 +444,14 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedUsers = async () => {
+    getTotalDeletedUsers = async (): Promise<number> => {
         const query =  `SELECT count(*) as totalDeletedUsers from users as u
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+        // const query =  `SELECT count(*) as totalDeletedUsers from users as u
+        //                 WHERE u.IsTestUser = 0
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 WHERE p.DeletedAt is not null`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -451,10 +468,14 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalTestUsers = async () => {
+    getTotalTestUsers = async (): Promise<number> => {
         const query =  `SELECT count(*) as totalTestUsers from users as u
                         JOIN persons as p ON u.PersonId = p.id
-                        WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+                        WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is null`;
+        // const query =  `SELECT count(*) as totalTestUsers from users as u
+        //                 WHERE u.IsTestUser = 1
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 WHERE p.DeletedAt is null`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -471,10 +492,14 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedTestUsers = async () => {
+    getTotalDeletedTestUsers = async (): Promise<number> => {
         const query =  `SELECT count(*) as totalDeletedTestUsers from users as u
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+        // const query =  `SELECT count(*) as totalDeletedTestUsers from users as u
+        //                 WHERE u.IsTestUser = 1
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 WHERE p.DeletedAt is not null`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -491,13 +516,15 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalActiveUsers = async () => {
+    getTotalActiveUsers = async (): Promise<number> => {
         const query =  `SELECT count(*) as totalActiveUsers from users as u
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null`;
         // const query =  `SELECT count(*) from users as u
-        //                 JOIN persons as p ON u.PersonId = p.id
         //                 WHERE u.IsTestUser = 0
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 WHERE p.DeletedAt is null
+        //
 
         let connection: Connection = null;
         try {
@@ -515,7 +542,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalPersons = async () => {
+    getTotalPersons = async (): Promise<number> => {
         const query =  `SELECT * FROM persons;`;
         let connection: Connection = null;
         try {
@@ -531,9 +558,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalActivePersons = async () => {
+    getTotalActivePersons = async (): Promise<number> => {
         const query =  `SELECT count(*) as totalActivePersons from persons as p
                         WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null`;
+        // const query =  `SELECT count(*) as totalActivePersons from persons as p
+        //                 WHERE p.DeletedAt is null
+        //                 JOIN users as u ON u.PersonId = p.id
+        //                 WHERE u.IsTestUser = 0`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -550,9 +581,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedPersons = async () => {
+    getTotalDeletedPersons = async (): Promise<number> => {
         const query =  `SELECT count(*) as totalDeletedPersons from persons as p
                         WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+        // const query =  `SELECT count(*) as totalDeletedPersons from persons as p
+        //                 WHERE p.DeletedAt is not null
+        //                 JOIN users as u ON u.PersonId = p.id
+        //                 WHERE u.IsTestUser = 0`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -569,9 +604,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalTestPersons = async () => {
+    getTotalTestPersons = async (): Promise<number> => {
         const query =  `SELECT count(*) as totalTestPersons from persons as p
-                        WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+                        WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is null`;
+        // const query =  `SELECT count(*) as totalTestPersons from persons as p
+        //                 WHERE p.DeletedAt is null
+        //                 JOIN users as u ON u.PersonId = p.id
+        //                 WHERE u.IsTestUser = 1`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -588,9 +627,14 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedTestPersons = async () => {
+    getTotalDeletedTestPersons = async (): Promise<number> => {
         const query =  `SELECT count(*) as totalDeletedTestPersons from persons as p
                         WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+
+        // const query =  `SELECT count(*) as totalDeletedTestPersons from persons as p
+        //                 WHERE p.DeletedAt is not null
+        //                 JOIN users as u ON p.id = u.PersonId
+        //                 WHERE u.IsTestUser = 1`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -607,7 +651,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDoctors = async () => {
+    getTotalDoctors = async (): Promise<number> => {
         const query =  `SELECT * FROM doctors`;
         let connection: Connection = null;
         try {
@@ -623,11 +667,16 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalActiveDoctors = async () => {
+    getTotalActiveDoctors = async (): Promise<number> => {
         const query =  `select count(distinct (UserId)) as totalActiveDoctors from doctors as d
                         JOIN users as u ON d.UserId = u.id
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null`;
+        // const query =  `select count(distinct (UserId)) as totalActiveDoctors from doctors as d
+        //                 JOIN users as u ON d.UserId = u.id
+        //                 WHERE u.IsTestUser = 0
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 WHERE p.DeletedAt is null`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -644,11 +693,17 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedDoctors = async () => {
+    getTotalDeletedDoctors = async (): Promise<number> => {
         const query =  `select count(distinct (UserId)) as totalDeletedDoctors from doctors as d
                         JOIN users as u ON d.UserId = u.id
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+
+        // const query =  `select count(distinct (UserId)) as totalDeletedDoctors from doctors as d
+        //                 JOIN users as u ON d.UserId = u.id
+        //                 WHERE u.IsTestUser = 0
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 WHERE p.DeletedAt is not null`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -665,11 +720,17 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalTestDoctors = async () => {
+    getTotalTestDoctors = async (): Promise<number> => {
         const query =  `select count(distinct (UserId)) as totalTestDoctors from doctors as d
                         JOIN users as u ON d.UserId = u.id
                         JOIN persons as p ON u.PersonId = p.id
                         WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is null;`;
+
+        // const query =  `select count(distinct (UserId)) as totalTestDoctors from doctors as d
+        //                 JOIN users as u ON d.UserId = u.id
+        //                 WHERE u.IsTestUser = 1
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 WHERE p.DeletedAt is null;`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -686,11 +747,16 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedTestDoctors = async () => {
+    getTotalDeletedTestDoctors = async (): Promise<number> => {
         const query =  `select count(distinct (UserId)) as totalDeletedTestDoctors from doctors as d
                         JOIN users as u ON d.UserId = u.id
                         JOIN persons as p ON u.PersonId = p.id
-                        WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+                        WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is not null`;
+        // const query =  `select count(distinct (UserId)) as totalDeletedTestDoctors from doctors as d
+        //                 JOIN users as u ON d.UserId = u.id
+        //                 WHERE u.IsTestUser = 1
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 WHERE p.DeletedAt is not null`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -707,7 +773,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalCareplanEnrollments = async () => {
+    getTotalCareplanEnrollments = async (): Promise<number> => {
         const query =  `SELECT * FROM careplan_enrollments`;
         let connection: Connection = null;
         try {
@@ -723,7 +789,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalEnrollments = async (careplanCode: CareplanCode) => {
+    getTotalEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
         const query =  `SELECT * FROM careplan_enrollments where PlanCode = '${careplanCode}'`;
         let connection: Connection = null;
         try {
@@ -739,7 +805,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalActiveEnrollments = async (careplanCode: CareplanCode) => {
+    getTotalActiveEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
         const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}' 
                         AND ce.PatientUserId IN 
                         (
@@ -748,6 +814,15 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
                             JOIN persons as p ON u.PersonId = p.id
                             WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null
                         )`;
+        // const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}'
+        //                 AND ce.PatientUserId IN
+        //                 (
+        //                     SELECT distinct (pt.UserId) from patients as pt
+        //                     JOIN users as u ON pt.UserId = u.id
+        //                     WHERE u.IsTestUser = 0
+        //                     JOIN persons as p ON u.PersonId = p.id
+        //                     WHERE p.DeletedAt is null
+        //                 )`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -762,7 +837,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedEnrollments = async (careplanCode: CareplanCode) => {
+    getTotalDeletedEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
         const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}' 
                         AND ce.PatientUserId IN 
                         (
@@ -771,6 +846,15 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
                             JOIN persons as p ON u.PersonId = p.id
                             WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null
                         )`;
+        // const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}'
+        //                 AND ce.PatientUserId IN
+        //                 (
+        //                     SELECT distinct (pt.UserId) from patients as pt
+        //                     JOIN users as u ON pt.UserId = u.id
+        //                     WHERE u.IsTestUser = 0
+        //                     JOIN persons as p ON u.PersonId = p.id
+        //                     WHERE p.DeletedAt is not null
+        //                 )`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -785,15 +869,24 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalTestUsersForCareplanEnrollments = async (careplanCode: CareplanCode) => {
+    getTotalTestUsersForCareplanEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
         const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}' 
                         AND ce.PatientUserId IN 
                         (
                             SELECT distinct (pt.UserId) from patients as pt
                             JOIN users as u ON pt.UserId = u.id
                             JOIN persons as p ON u.PersonId = p.id
-                            WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null
+                            WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is null
                         )`;
+        // const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}'
+        //                 AND ce.PatientUserId IN
+        //                 (
+        //                     SELECT distinct (pt.UserId) from patients as pt
+        //                     JOIN users as u ON pt.UserId = u.id
+        //                     WHERE u.IsTestUser = 1
+        //                     JOIN persons as p ON u.PersonId = p.id
+        //                     WHERE p.DeletedAt is null
+        //                 )`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -808,15 +901,25 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
-    getTotalDeletedTestUsersForCareplanEnrollments = async (careplanCode: CareplanCode) => {
+    getTotalDeletedTestUsersForCareplanEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
         const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}' 
                         AND ce.PatientUserId IN 
                         (
                             SELECT distinct (pt.UserId) from patients as pt
                             JOIN users as u ON pt.UserId = u.id
                             JOIN persons as p ON u.PersonId = p.id
-                            WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null
+                            WHERE p.Phone between "1000000000" and "1000000100" AND p.DeletedAt is not null
                         )`;
+
+        // const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}'
+        //                 AND ce.PatientUserId IN
+        //                 (
+        //                     SELECT distinct (pt.UserId) from patients as pt
+        //                     JOIN users as u ON pt.UserId = u.id
+        //                     WHERE u.IsTestUser = 1
+        //                     JOIN persons as p ON u.PersonId = p.id
+        //                     WHERE p.DeletedAt is not null
+        //                 )`;
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -831,13 +934,13 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
     
-    getHealthSystemSpecificUserCareplanEnrollmentCount = async (healthSystem : HealthSystem) => {
+    getHealthSystemEnrollmentCount = async (careplanCode:CareplanCode, healthSystem : HealthSystem): Promise<any> => {
         const query =  `select distinct (ce.PatientUserId), p.Phone, p.FirstName, p.LastName, ce.Plancode, ce.StartDate,
                         ce.EndDate, pt.HealthSystem, pt.AssociatedHospital, p.DeletedAt from careplan_enrollments as ce 
                         JOIN users as u ON ce.PatientUserId = u.id
                         JOIN patients as pt ON u.id = pt.UserId
                         JOIN persons as p ON u.PersonId = p.id
-                        where ce.PlanCode = "Cholesterol" 
+                        where ce.PlanCode = "${careplanCode}" 
                         AND ce.PatientUserId IN 
                         (
                             SELECT distinct (u.id) from users as u
@@ -848,14 +951,46 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         try {
             connection = await this.createDbConnection();
             const [rows] = await connection.execute(query);
-            const userCareplanEnrollmentCount: any = rows;
-            return userCareplanEnrollmentCount.length;
+            const careplanEnrollments: any = rows;
+            const hospitals = this.extractHospitals(careplanEnrollments);
+            const patientCountForHospital = this.extractPatientCountForHospital(hospitals, careplanEnrollments);
+            return {
+                CareplanCode            : careplanCode,
+                HealthSystem            : healthSystem,
+                CareplanEnrollmentCount : careplanEnrollments.length,
+                PatientCountForHospital : patientCountForHospital
+            };
         } catch (error) {
             Logger.instance().log(`Unable to retrieved deleted test users for ${healthSystem} careplan: ${error.message}`);
             throw new ApiError(500, `Unable to retrieved deleted test users for ${healthSystem} careplan: ${error.message}`);
         } finally {
             connection.end();
         }
+    };
+
+    private extractHospitals = (careplanEnrollments) => {
+        const hospitals: string[] = [];
+        careplanEnrollments.forEach(element => {
+            if (element.AssociatedHospital){
+                const hospitalName = element.AssociatedHospital;
+                if (!hospitals.includes(hospitalName)) {
+                    hospitals.push(hospitalName);
+                }
+            }
+        });
+        return hospitals;
+    };
+
+    private extractPatientCountForHospital = (hospitals, careplanEnrollments) => {
+        const patientCountForHospital:any = [];
+        hospitals.forEach(hospital => {
+            const patientCount = careplanEnrollments.filter(x => hospital === x.AssociatedHospital);
+            patientCountForHospital.push({
+                HospitalName : hospital,
+                PatientCount : patientCount.length
+            });
+        });
+        return patientCountForHospital;
     };
 
     private createDbConnection = async (): Promise<Connection> => {

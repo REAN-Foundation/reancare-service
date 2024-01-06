@@ -21,6 +21,7 @@ import { EHRSymptomService } from '../modules/ehr.analytics/ehr.symptom.service'
 import { EHRMedicationService } from '../modules/ehr.analytics/ehr.medication.service';
 import { EHRAnalyticsHandler } from '../modules/ehr.analytics/ehr.analytics.handler';
 import { StatisticsService } from '../services/statistics/statistics.service';
+import { AhaStatisticsService } from '../services/statistics/aha.statistics.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -78,7 +79,6 @@ export class Scheduler {
                 this.scheduleDailyStatistics();
                 this.scheduleStrokeSurvey();
 
-
                 resolve(true);
             } catch (error) {
                 Logger.instance().log('Error initializing the scheduler.: ' + error.message);
@@ -95,8 +95,15 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['DailyStatistics'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
-                var service = Loader.container.resolve(StatisticsService);
-                await service.createDailyStatistics();
+                var statisticsService = Loader.container.resolve(StatisticsService);
+                const dashboardStats = await statisticsService.createDashboardStats();
+
+                var ahaStatisticsService = Loader.container.resolve(AhaStatisticsService);
+                const stats = await ahaStatisticsService.getAhaStatistics();
+                
+                var userStats = await ahaStatisticsService.getUserStatistics();
+
+                await statisticsService.createDailyStatistics();
             })();
         });
     };

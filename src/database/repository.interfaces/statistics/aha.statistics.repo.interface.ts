@@ -3,64 +3,85 @@ import { AppName, CareplanCode, HealthSystem } from "../../../domain.types/stati
 ////////////////////////////////////////////////////////////////////
 export interface IAhaStatisticsRepo {
 
-    // getAhaStatistics();
-    /////////////////////////////
-    getTotalPatients();
-    getTotalActivePatients();
-    getTotalDeletedPatients();
-    getTotalTestPatients();
-    getTotalDeletedTestPatients();
-    /////////////////////////////////////////
-    getTotalUsersWithMissingDeviceDetail();
-    getTotalUniqueUsersInDeviceDetail();
-    //////////////////////////////////////////////////////////////////
-    // getTotalHSUsers();
-    getAppSpecificTotalUsers(appName : AppName);
-    getTotalUsersLoggedToHSAndHF();
-    // getHSpatientHealthProfileData();
-    getAppSpecificpatientHealthProfileData(appName : AppName);
-    // getTotalHSPatients();
-    getAppSpecificTotalPatients(appName : AppName);
-    // getTotalHSPerson();
-    getAppSpecificTotalPerson(appName : AppName);
-    // getHSDailyAssessmentCount();
-    getAppSpecificDailyAssessmentCount(appName : AppName);
-    // getHSBodyWeightDataCount();
-    getAppSpecificBodyWeightDataCount(appName : AppName);
-    // getHSLabRecordCount();
-    getAppSpecificLabRecordCount(appName : AppName);
-    // getHSCareplanActivityCount();
-    getAppSpecificMedicationConsumptionCount(appName : AppName);
-    // getHSMedicationConsumptionCount();
-    getAppSpecificMedicationConsumptionCount(appName : AppName);
-    getAppSpecificCareplanActivityCount(appName : AppName)
-    ///////////////////////////////////////////////////////////////////
-    getUserAssessmentCount();
-    //////////////////////////////
-    getTotalUsers();
-    getTotalActiveUsers();
-    getTotalDeletedUsers();
-    getTotalTestUsers();
-    getTotalDeletedTestUsers();
-    ////////////////////////////////
-    getTotalPersons();
-    getTotalActivePersons();
-    getTotalDeletedPersons();
-    getTotalTestPersons();
-    getTotalDeletedTestPersons();
-    /////////////////////////////////
-    getTotalDoctors();
-    getTotalActiveDoctors();
-    getTotalDeletedDoctors();
-    getTotalTestDoctors();
-    getTotalDeletedTestDoctors();
-    /////////////////////////////////
-    getTotalCareplanEnrollments();
-    getTotalEnrollments(careplanCode:CareplanCode);
-    getTotalActiveEnrollments(careplanCode:CareplanCode);
-    getTotalDeletedEnrollments(careplanCode:CareplanCode);
-    getTotalTestUsersForCareplanEnrollments(careplanCode:CareplanCode);
-    getTotalDeletedTestUsersForCareplanEnrollments(careplanCode:CareplanCode);
-    ////////////////////////////////////
-    getHealthSystemSpecificUserCareplanEnrollmentCount(healthSystem : HealthSystem);
+    getTotalPatients(): Promise<number>;
+
+    getTotalActivePatients(): Promise<number>;
+
+    getTotalDeletedPatients(): Promise<number>;
+
+    getTotalTestPatients(): Promise<number>;
+
+    getTotalDeletedTestPatients(): Promise<number>;
+    
+    getTotalUsersWithMissingDeviceDetail(): Promise<number>;
+
+    getTotalUniqueUsersInDeviceDetail(): Promise<number>;
+
+    getAppSpecificTotalUsers(appName : AppName): Promise<number>;
+
+    getTotalUsersLoggedToHSAndHF(): Promise<number>;
+
+    getAppSpecificPatientHealthProfileData(appName : AppName): Promise<number>;
+
+    getAppSpecificTotalPatients(appName : AppName): Promise<number>;
+
+    getAppSpecificTotalPerson(appName : AppName): Promise<number>;
+
+    getAppSpecificDailyAssessmentCount(appName : AppName): Promise<number>;
+
+    getAppSpecificBodyWeightDataCount(appName : AppName): Promise<number>;
+
+    getAppSpecificLabRecordCount(appName : AppName): Promise<number>;
+
+    getAppSpecificMedicationConsumptionCount(appName : AppName): Promise<number>;
+
+    getAppSpecificMedicationConsumptionCount(appName : AppName): Promise<number>;
+
+    getAppSpecificCareplanActivityCount(appName : AppName): Promise<number>;
+
+    getUserAssessmentCount(): Promise<number>;
+
+    getTotalUsers(): Promise<number>;
+
+    getTotalActiveUsers(): Promise<number>;
+
+    getTotalDeletedUsers(): Promise<number>;
+
+    getTotalTestUsers(): Promise<number>;
+
+    getTotalDeletedTestUsers(): Promise<number>;
+
+    getTotalPersons(): Promise<number>;
+
+    getTotalActivePersons(): Promise<number>;
+
+    getTotalDeletedPersons(): Promise<number>;
+
+    getTotalTestPersons(): Promise<number>;
+
+    getTotalDeletedTestPersons(): Promise<number>;
+
+    getTotalDoctors(): Promise<number>;
+
+    getTotalActiveDoctors(): Promise<number>;
+
+    getTotalDeletedDoctors(): Promise<number>;
+
+    getTotalTestDoctors(): Promise<number>;
+
+    getTotalDeletedTestDoctors(): Promise<number>;
+
+    getTotalCareplanEnrollments(): Promise<number>;
+
+    getTotalEnrollments(careplanCode:CareplanCode): Promise<number>;
+
+    getTotalActiveEnrollments(careplanCode:CareplanCode): Promise<number>;
+
+    getTotalDeletedEnrollments(careplanCode:CareplanCode): Promise<number>;
+
+    getTotalTestUsersForCareplanEnrollments(careplanCode:CareplanCode): Promise<number>;
+
+    getTotalDeletedTestUsersForCareplanEnrollments(careplanCode:CareplanCode): Promise<number>;
+
+    getHealthSystemEnrollmentCount(careplanCode:CareplanCode, healthSystem : HealthSystem): Promise<any>;
 }

@@ -13,7 +13,6 @@ import { Injector } from "../../../startup/injector";
 import { PatientAppNameCache } from "../patient.appname.cache";
 import { EHRRecordTypes } from "../ehr.domain.models/ehr.record.types";
 import { BloodPressureDto } from "../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { BloodGlucoseDto } from "../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
 import { PulseDto } from "../../../domain.types/clinical/biometrics/pulse/pulse.dto";
 import { BodyHeightDto } from "../../../domain.types/clinical/biometrics/body.height/body.height.dto";
@@ -41,94 +40,6 @@ export class EHRVitalService {
     _bodyTemperatureService: BodyTemperatureService = Injector.Container.resolve(BodyTemperatureService);
 
     _bloodOxygenSaturationService: BloodOxygenSaturationService = Injector.Container.resolve(BloodOxygenSaturationService);
-
-    public scheduleExistingVitalDataToEHR = async () => {
-        await this.scheduleExistingVitalData("BloodPressure");
-        await this.scheduleExistingVitalData("BloodGlucose");
-        await this.scheduleExistingVitalData("BodyWeight");
-        await this.scheduleExistingVitalData("BodyHeight");
-        await this.scheduleExistingVitalData("BodyTemperature");
-        await this.scheduleExistingVitalData("BloodOxygenSaturation");
-        await this.scheduleExistingVitalData("Pulse");
-    }
-
-    public scheduleExistingVitalData = async (model : string) => {
-        try {
-
-            var moreItems = true;
-            var pageIndex = 0;
-            while (moreItems) {
-                var filters = {
-                    PageIndex    : pageIndex,
-                    ItemsPerPage : 1000,
-                };
-
-                var searchResults = null;
-                switch (model) {
-                    case "BloodGlucose" :
-                        searchResults = await this._bloodGlucoseService.search(filters);
-                        for await (var r of searchResults.Items) {
-                            await this.addEHRBloodGlucoseForAppNames(r);
-                        }
-                        break;
-                    
-                        case "BloodPressure" :
-                            searchResults = await this._bloodPressureService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                await this.addEHRBloodPressureForAppNames(r);
-                            }
-                        break;
-
-                        case "Pulse" :
-                            searchResults = await this._pulseService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                await this.addEHRPulseForAppNames(r);
-                            }
-                        break;
-
-                        case "BodyWeight" :
-                            searchResults = await this._bodyWeightService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                await this.addEHRBodyWeightForAppNames(r);
-                            }
-                        break;
-
-                        case "BodyHeight" :
-                            searchResults = await this._bodyHeightService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                await this.addEHRBodyHeightForAppNames(r);
-                            }
-                        break;
-
-                        case "BodyTemperature" :
-                            searchResults = await this._bodyTemperatureService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                await this.addEHRBodyTemperatureForAppNames(r);
-                            }
-                        break;
-
-                        case "BloodOxygenSaturation" :
-                            searchResults = await this._bloodOxygenSaturationService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                await this.addEHRBloodOxygenSaturationForAppNames(r);
-                            }
-                        break;        
-                    
-                }
-                pageIndex++;
-                Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Processed :${searchResults.Items.length} records for ${model}`);
-
-                if (searchResults.Items.length < 1000) {
-                    moreItems = false;
-                }
-
-            }
-            
-        }
-        catch (error) {
-            Logger.instance().log(`[ScheduleExistingVitalDataToEHR] Error population existing vitals data in ehr insights database: ${JSON.stringify(error)}`);
-        }
-    };
 
     public deleteVitalEHRRecord = async (id: string ) => {
         try {

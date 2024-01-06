@@ -22,57 +22,6 @@ export class EHRPhysicalActivityService {
 
     _physicalActivityService = Injector.Container.resolve(PhysicalActivityService);
 
-    public scheduleExistingPhysicalActivityDataToEHR = async (model : string) => {
-        try {
-
-            var moreItems = true;
-            var pageIndex = 0;
-            while (moreItems) {
-                var filters = {
-                    PageIndex    : pageIndex,
-                    ItemsPerPage : 1000,
-                };
-
-                var searchResults = null;
-                switch (model) {
-                    case "Stand" :
-                        searchResults = await this._standService.search(filters);
-                        for await (var r of searchResults.Items) {
-                            await this.addEHRRecordStandForAppNames(r);     
-                        }
-                    break;
-
-                    case "StepCount" :
-                        searchResults = await this._stepCountService.search(filters);
-                        for await (var r of searchResults.Items) {
-                            await this.addEHRRecordStepCountForAppNames(r);     
-                        }
-                    break;
-
-                    case "PhysicalActivity" :
-                        searchResults = await this._physicalActivityService.search(filters);
-                        for await (var r of searchResults.Items) {
-                            await this.addEHRRecordPhysicalActivityForAppNames(r);   
-                        }
-                    break;     
-                    
-                }
-                pageIndex++;
-                Logger.instance().log(`[ScheduleExistingPhysicalActivityDataToEHR] Processed :${searchResults.Items.length} records for ${model}`);
-
-                if (searchResults.Items.length < 1000) {
-                    moreItems = false;
-                }
-
-            }
-            
-        }
-        catch (error) {
-            Logger.instance().log(`[ScheduleExistingPhysicalActivityDataToEHR] Error population existing physical activity data in ehr insights database:  ${JSON.stringify(error)}`);
-        }
-    };
-
-
     public addEHRRecordStand = (model: StandDto, appName?: string) => {
         if (model.Stand) {
             EHRAnalyticsHandler.addFloatRecord(

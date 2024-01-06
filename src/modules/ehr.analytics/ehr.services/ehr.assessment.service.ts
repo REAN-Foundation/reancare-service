@@ -4,76 +4,22 @@ import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
 import { AssessmentTemplateService } from "../../../services/clinical/assessment/assessment.template.service";
 import { AssessmentService } from "../../../services/clinical/assessment/assessment.service";
 import { PatientService } from "../../../services/users/patient/patient.service";
-import { Loader } from "../../../startup/loader";
+import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class EHRAssessmentService {
 
-    _patientService: PatientService = null;
+    _patientService = Injector.Container.resolve(PatientService);
 
-    _assessmentService: AssessmentService = null;
+    _assessmentService = Injector.Container.resolve(AssessmentService);
 
-    _assessmentTemplateService: AssessmentTemplateService = null;
+    _assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
     _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
-    constructor(
-    ) {
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._assessmentService = Injector.Container.resolve(AssessmentService);
-        this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
-    }
-
-    public scheduleExistingAssessmentDataToEHR = async () => {
-        try {
-                var patientUserIds = await this._patientService.getAllPatientUserIds();
-                Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Patient User Ids :${JSON.stringify(patientUserIds)}`);
-                for await (var p of patientUserIds) {
-                    var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
-                    if (eligibleAppNames.length > 0) {
-                        var moreItems = true;
-                        var pageIndex = 0;
-                        while (moreItems) {
-                            var filters = {
-                                PageIndex     : pageIndex,
-                                ItemsPerPage  : 1000,
-                                PatientUserId : p,
-                            };
-                            var searchResults = await this._assessmentService.search(filters);
-                            for await (var a of searchResults.Items) {
-                                var assessment = await this._assessmentService.getById(a.id);
-                                Logger.instance().log(`AnswerResponse :${JSON.stringify(assessment)}`);
-
-                                if (assessment.Status == 'Pending') {
-                                    for await (var appName of eligibleAppNames) {
-                                        this.mapAssessmentResponseToEHR(assessment, appName);
-                                    }
-                                } else {
-                                    for await (var appName of eligibleAppNames) {
-                                        this.mapAssessmentResponseToEHR(assessment, appName);  
-                                    }
-                                }
-                            }
-                            pageIndex++;
-                            if (searchResults.Items.length < 1000) {
-                                moreItems = false;
-                            }
-                        }
-                    } else {
-                        Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`);
-                    }      
-                }
-
-                Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Processed :${searchResults.Items.length} records for Assessment`);
-
-        } catch (error) {
-            Logger.instance().log(`[ScheduleExistingAssessmentDataToEHR] Error population existing assessment data in ehr insights database :: ${JSON.stringify(error)}`);
-        }
-    };
-
-    private mapAssessmentResponseToEHR = async (assessment: any, appName?: string ) => {
+    public addEHRRecord = async (assessment: any, appName?: string ) => {
 
         Logger.instance().log(`AnswerResponse: ${JSON.stringify(assessment)}`);
 
@@ -153,6 +99,5 @@ export class EHRAssessmentService {
             }
         }   
     };
-
 
 }

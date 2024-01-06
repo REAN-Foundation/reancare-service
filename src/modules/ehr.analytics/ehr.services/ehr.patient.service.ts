@@ -20,37 +20,6 @@ export class EHRPatientService {
 
     _emergencyContactService: EmergencyContactService = Injector.Container.resolve(EmergencyContactService);
 
-    public scheduleExistingStaticDataToEHR = async () => {
-        try {
-            var patientUserIds = await this._patientService.getAllPatientUserIds();
-
-            Logger.instance().log(`[ScheduleExistingStaticDataToEHR] Patient User Ids: ${JSON.stringify(patientUserIds)}`);
-
-            for await (var pid of patientUserIds) {
-                var patientDetails = await this._patientService.getByUserId(pid);
-                if (patientDetails == null) {
-                    continue;
-                }
-                var emergencyDetails = await this._emergencyContactService.search({ PatientUserId: pid });
-                var i = 1;
-                for (var e of emergencyDetails.Items) {
-                    if (e.ContactRelation === 'Doctor') {
-                        patientDetails[`DoctorPersonId_${i}`] = e.ContactPersonId;
-                        i++;
-                    }
-                }
-                await this.addEHRRecordPatientForAppNames(patientDetails);
-            }
-            Logger.instance().log(`[ScheduleExistingStaticDataToEHR] Processed ${patientDetails.UserId} for static data`);
-        } catch (error) {
-            Logger.instance().log(
-                `[ScheduleExistingStaticDataToEHR] Error population existing static data in ehr insights database: ${JSON.stringify(
-                    error
-                )}`
-            );
-        }
-    };
-
     public addEHRRecordPatientForAppNames = async (model: PatientDetailsDto) => {
         try {
             const appNames = await PatientAppNameCache.get(model.UserId);
@@ -58,11 +27,7 @@ export class EHRPatientService {
                 this.addEHRRecord(model, appName);
             }
         } catch (error) {
-            Logger.instance().log(
-                `[ScheduleExistingStaticDataToEHR] Error population existing static data in ehr insights database: ${JSON.stringify(
-                    error
-                )}`
-            );
+            Logger.instance().log(`${JSON.stringify(error.message)}`);
         }
     };
 
@@ -81,11 +46,7 @@ export class EHRPatientService {
                 }
             }
         } catch (error) {
-            Logger.instance().log(
-                `[ScheduleExistingStaticDataToEHR] Error population existing static data in ehr insights database: ${JSON.stringify(
-                    error
-                )}`
-            );
+            Logger.instance().log(`${JSON.stringify(error.message)}`);
         }
     };
 
@@ -227,11 +188,7 @@ export class EHRPatientService {
                 this.addEHRRecordHealthProfile(model, appName);
             }
         } catch (error) {
-            Logger.instance().log(
-                `[ScheduleExistingStaticDataToEHR] Error population existing static data in ehr insights database: ${JSON.stringify(
-                    error
-                )}`
-            );
+            Logger.instance().log(`${JSON.stringify(error.message)}`);
         }
     }
 }

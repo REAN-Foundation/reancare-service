@@ -18,39 +18,6 @@ export class EHRMedicationService {
 
     _medicationConsumptionService: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
-    public scheduleExistingMedicationDataToEHR = async () => {
-        try {
-            var patientUserIds = await this._patientService.getAllPatientUserIds();
-
-            for await (var p of patientUserIds) {
-                var moreItems = true;
-                var pageIndex = 0;
-                while (moreItems) {
-                    var filters = {
-                        PageIndex: pageIndex,
-                        ItemsPerPage: 1000,
-                        PatientUserId: p,
-                        DateTo: new Date(),
-                    };
-                    var searchResults = await this._medicationConsumptionService.search(filters);
-                    for await (var r of searchResults.Items) {
-                        await this.addEHRMedicationConsumptionForAppNames(r);
-                    }
-                    pageIndex++;
-                    if (searchResults.Items.length < 1000) {
-                        moreItems = false;
-                    }
-                }
-            }
-        } catch (error) {
-            Logger.instance().log(
-                `[ScheduleExistingMedicationDataToEHR] Error population existing medication data in ehr insights database :: ${JSON.stringify(
-                    error
-                )}`
-            );
-        }
-    };
-
     public deleteMedicationEHRRecord = async (id: string) => {
         try {
             const filters: MedicationConsumptionSearchFilters = {

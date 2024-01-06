@@ -1,25 +1,19 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { DailyStatisticsService } from '../../../services/statistics/daily.statistics.service';
 import { DailyStatisticsValidator } from './daily.statistics.validator';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DailyStatisticsController extends BaseController {
+export class DailyStatisticsController {
 
     //#region member variables and constructors
 
-    _service: DailyStatisticsService = null;
+    _service: DailyStatisticsService = Injector.Container.resolve(DailyStatisticsService);
 
     _validator = new DailyStatisticsValidator();
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(DailyStatisticsService);
-    }
 
     //#endregion
 
@@ -27,7 +21,6 @@ export class DailyStatisticsController extends BaseController {
     
     getLatestStatistics = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyStatistics.GetLatestStatistics', request, response);
             const latestStatistics = await this._service.getLatestStatistics();
             if (latestStatistics === null) {
                 throw new ApiError(404, 'Daily Statistics not found.');

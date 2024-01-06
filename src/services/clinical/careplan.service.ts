@@ -33,6 +33,8 @@ import { IDonorRepo } from "./../../database/repository.interfaces/assorted/bloo
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/assorted/blood.donation/communication.repo.interface";
 import { EHRAnalyticsHandler } from "../../modules/ehr.analytics/ehr.analytics.handler";
 import { PatientDetailsDto } from "../../domain.types/users/patient/patient/patient.dto";
+import { EHRCareplanActivityService } from "../../modules/ehr.analytics/ehr.services/ehr.careplan.activity.service";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +42,8 @@ import { PatientDetailsDto } from "../../domain.types/users/patient/patient/pati
 export class CareplanService implements IUserActionService {
 
     _handler: CareplanHandler = new CareplanHandler();
+
+    _ehrCareplanActivityService: EHRCareplanActivityService = Injector.Container.resolve(EHRCareplanActivityService);
 
     _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
@@ -594,27 +598,9 @@ export class CareplanService implements IUserActionService {
 
         Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
 
-        var patientDetails = await this._patientRepo.getByUserId(dto.PatientUserId);
+        var patientDetails: PatientDetailsDto = await this._patientRepo.getByUserId(dto.PatientUserId);
+        await this._ehrCareplanActivityService.addCareplanActivitiesToEHR(careplanActivities, patientDetails);
 
-        if (appName == 'HF Helper' && enrollmentDetails.PlanCode == 'HFMotivator') {
-            for await (var careplanActivity of careplanActivities) {
-                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, patientDetails);
-            }
-        } else if (appName == 'Heart &amp; Stroke Helper™' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke')) {
-            for await (var careplanActivity of careplanActivities) {
-                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, patientDetails);
-            }
-        } else if (appName == 'REAN HealthGuru' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke' || enrollmentDetails.PlanCode == 'HFMotivator')) {
-            for await (var careplanActivity of careplanActivities) {
-                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, patientDetails);
-            }
-        } else {
-            for await (var careplanActivity of careplanActivities) {
-                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, patientDetails);
-            }
-        }
-
-        //task scheduling
         await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
 
         return dto;

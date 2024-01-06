@@ -1,5 +1,4 @@
 import { injectable } from "tsyringe";
-import { Logger } from "../../../common/logger";
 import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
 import { SleepService } from "../../../services/wellness/daily.records/sleep.service";
 import { MeditationService } from "../../../services/wellness/exercise/meditation.service";
@@ -19,49 +18,6 @@ export class EHRMentalWellBeingService {
     _sleepService: SleepService = Injector.Container.resolve(SleepService);
 
     _meditationService: MeditationService = Injector.Container.resolve(MeditationService);
-
-    public scheduleExistingMentalWellBeingDataToEHR = async (model : string) => {
-        try {
-
-            var moreItems = true;
-            var pageIndex = 0;
-            while (moreItems) {
-                var filters = {
-                    PageIndex    : pageIndex,
-                    ItemsPerPage : 1000,
-                };
-
-                var searchResults = null;
-                switch (model) {
-                        case "Sleep" :
-                            searchResults = await this._sleepService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                await this.addEHRSleepForAppNames(r);    
-                            }
-                        break;
-
-                        case "Meditation" :
-                            searchResults = await this._meditationService.search(filters);
-                            for await (var r of searchResults.Items) {
-                                await this.addEHRMeditationForAppNames(r);     
-                            }
-                        break;     
-                    
-                }
-                pageIndex++;
-                Logger.instance().log(`[ScheduleExistingMentalWellBeingDataToEHR] Processed :${searchResults.Items.length} records for ${model}`);
-
-                if (searchResults.Items.length < 1000) {
-                    moreItems = false;
-                }
-
-            }
-            
-        }
-        catch (error) {
-            Logger.instance().log(`[ScheduleExistingMentalWellBeingDataToEHR] Error population existing data in ehr insights database: ${JSON.stringify(error)}`);
-        }
-    };
 
     public addEHRRecordSleep = async (model: SleepDto, appName?: string) => {
         if (model.SleepDuration) {

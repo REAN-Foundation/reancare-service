@@ -1,12 +1,9 @@
 import { injectable } from "tsyringe";
-import { Logger } from "../../../common/logger";
 import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
-import { Loader } from "../../../startup/loader";
 import { FoodConsumptionService } from "../../../services/wellness/nutrition/food.consumption.service";
 import { Injector } from "../../../startup/injector";
 import { EHRRecordTypes } from "../ehr.domain.models/ehr.record.types";
 import { FoodConsumptionDto } from "../../../domain.types/wellness/nutrition/food.consumption/food.consumption.dto";
-import Patient from "src/database/sql/sequelize/models/users/patient/patient.model";
 import { PatientAppNameCache } from "../patient.appname.cache";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,40 +15,6 @@ export class EHRNutritionService {
 
     _foodConsumptionService: FoodConsumptionService = Injector.Container.resolve(FoodConsumptionService);
 
-    public scheduleExistingNutritionDataToEHR = async () => {
-        try {
-
-            var moreItems = true;
-            var pageIndex = 0;
-            while (moreItems) {
-                var filters = {
-                    PageIndex    : pageIndex,
-                    ItemsPerPage : 1000,
-                };
-
-                var searchResults = null;
-                
-                searchResults = await this._foodConsumptionService.search(filters);
-                for await (var r of searchResults.Items) {
-                    await this.addEHRRecordNutritionForAppNames(r);     
-                }
-                
-                pageIndex++;
-                Logger.instance().log(`[ScheduleExistingNutritionDataToEHR] Processed :${searchResults.Items.length} records for Nutrition`);
-
-                if (searchResults.Items.length < 1000) {
-                    moreItems = false;
-                }
-
-            }
-            
-        }
-        catch (error) {
-            Logger.instance().log(`[ScheduleExistingNutritionDataToEHR] Error population existing nutrition data in ehr insights database: ${JSON.stringify(error)}`);
-        }
-    };
-
-    
     public addEHRRecord = (model: FoodConsumptionDto, appName?: string) => {
         if (model.FoodTypes[0] === "GenericNutrition") {
             EHRAnalyticsHandler.addBooleanRecord(
@@ -166,10 +129,8 @@ export class EHRNutritionService {
                 'Did you select healthy sources of protein today?',
                 appName,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
-
             );
         }
-
     };
 
     public addEHRRecordNutritionForAppNames = async (model: FoodConsumptionDto, appName?: string) => {

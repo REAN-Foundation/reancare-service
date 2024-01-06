@@ -1,13 +1,12 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../common/logger";
-import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
-import { PatientService } from "../../../services/users/patient/patient.service";
-import { Loader } from "../../../startup/loader";
+import { CareplanActivityDto } from "../../../domain.types/clinical/careplan/activity/careplan.activity.dto";
+import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/patient.dto";
 import { CareplanService } from "../../../services/clinical/careplan.service";
+import { PatientService } from "../../../services/users/patient/patient.service";
 import { Injector } from "../../../startup/injector";
-import { PatientDetailsDto } from "src/domain.types/users/patient/patient/patient.dto";
-import { CareplanActivityDto } from "src/domain.types/clinical/careplan/activity/careplan.activity.dto";
-import { EnrollmentDto } from "src/domain.types/clinical/careplan/enrollment/enrollment.dto";
+import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
+import { PatientAppNameCache } from "../patient.appname.cache";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,77 +18,8 @@ export class EHRCareplanActivityService {
 
     _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
-    public scheduleExistingCareplanActivityDataToEHR = async () => {
-        try {
-            var patientUserIds = await this._patientService.getAllPatientUserIds();
-            Logger.instance().log(
-                `[ScheduleExistingCareplanActivityDataToEHR] Patient User Ids :${JSON.stringify(patientUserIds)}`
-            );
-            for await (var p of patientUserIds) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(p);
-                var healthSystemHospitalDetails = await this._patientService.getByUserId(p);
-                if (eligibleAppNames.length > 0) {
-                    var startTime = new Date('2020-01-01');
-                    var endTime = new Date('2024-12-01');
-                    var searchResults = await this._careplanService.getActivities(p, startTime, endTime);
-                    for await (var m of searchResults) {
-                        for await (var appName of eligibleAppNames) {
-                            if (appName == 'HF Helper' && m.PlanCode == 'HFMotivator') {
-                                this._careplanService.addEHRRecord(
-                                    m.PlanName,
-                                    m.PlanCode,
-                                    m,
-                                    appName,
-                                    healthSystemHospitalDetails
-                                );
-                            } else if (
-                                appName == 'Heart &amp; Stroke Helper™' &&
-                                (m.PlanCode == 'Cholesterol' || m.PlanCode == 'Stroke')
-                            ) {
-                                this._careplanService.addEHRRecord(
-                                    m.PlanName,
-                                    m.PlanCode,
-                                    m,
-                                    appName,
-                                    healthSystemHospitalDetails
-                                );
-                            } else if (
-                                appName == 'REAN HealthGuru' &&
-                                (m.PlanCode == 'Cholesterol' || m.PlanCode == 'Stroke' || m.PlanCode == 'HFMotivator')
-                            ) {
-                                this._careplanService.addEHRRecord(
-                                    m.PlanName,
-                                    m.PlanCode,
-                                    m,
-                                    appName,
-                                    healthSystemHospitalDetails
-                                );
-                            }
-                        }
-                    }
-                } else {
-                    Logger.instance().log(
-                        `[ScheduleExistingCareplanActivityDataToEHR] Skip adding details to EHR database as device is not eligible:${p}`
-                    );
-                }
-            }
-            Logger.instance().log(
-                `[ScheduleExistingCareplanActivityDataToEHR] Processed :${searchResults.length} records for careplan activity`
-            );
-        } catch (error) {
-            Logger.instance().log(
-                `[ScheduleExistingCareplanActivityDataToEHR] Error population existing assessment data in ehr insights database :: ${JSON.stringify(
-                    error
-                )}`
-            );
-        }
-    };
-
     public addEHRRecord = (
-        planName: string,
-        planCode: string,
         model: CareplanActivityDto,
-        enrollmentDetails: EnrollmentDto,
         appName?: string,
         patientDetails?: PatientDetailsDto
     ) => {
@@ -99,8 +29,8 @@ export class EHRCareplanActivityService {
             model.id,
             model.EnrollmentId,
             model.Provider,
-            planName,
-            planCode,
+            model.PlanName,
+            model.PlanCode,
             model.Type,
             model.Category,
             model.ProviderActionId,
@@ -118,4 +48,36 @@ export class EHRCareplanActivityService {
             model.CreatedAt ? new Date(model.CreatedAt) : null
         );
     };
+
+    public addCareplanActivitiesToEHR = async (
+        careplanActivities: CareplanActivityDto[], 
+        patientDetails: PatientDetailsDto) => {
+        try {
+            if (careplanActivities.length === 0) {
+                return;
+            }
+            var eligibleAppNames = await PatientAppNameCache.get(patientDetails.UserId);
+            if (eligibleAppNames.length === 0) {
+                return;
+            }
+            for await (var activity of careplanActivities) {
+                for await (var appName of eligibleAppNames) {
+                    const shouldAdd = (appName == 'HF Helper' && activity.PlanCode == 'HFMotivator') ||
+                        (appName == 'Heart &amp; Stroke Helper™' && (activity.PlanCode == 'Cholesterol' || activity.PlanCode == 'Stroke')) ||
+                        (appName == 'REAN HealthGuru' && (activity.PlanCode == 'Cholesterol' || activity.PlanCode == 'Stroke' || activity.PlanCode == 'HFMotivator'));
+                    if (shouldAdd) {
+                        this.addEHRRecord(
+                            activity,
+                            appName,
+                            patientDetails
+                        );
+                    }
+                }
+            }
+        } catch (error) {
+            Logger.instance().log(`[AddCareplanActivitiesToEHR]: ${JSON.stringify(error)}`);
+        }
+    }
 }
+
+

@@ -14,8 +14,11 @@ export class DailyStatisticsRepo implements IDailyStatisticsRepo {
         try {
             const entity = {
                 ReportDate      : dailyStatisticsDomainModel.ReportDate ?? null,
+                ResourceId      : dailyStatisticsDomainModel.ResourceId ?? null,
                 ReportTimestamp : dailyStatisticsDomainModel.ReportTimestamp ?? null,
-                Statistics      : dailyStatisticsDomainModel.Statistics ?? null
+                DashboardStats  : dailyStatisticsDomainModel.DashboardStats ?? null,
+                UserStats       : dailyStatisticsDomainModel.UserStats ?? null,
+                AhaStats        : dailyStatisticsDomainModel.AhaStats ?? null
             };
             const dailyStatistics = await DailyStatistics.create(entity);
             const dto = DailyStatisticsMapper.toDto(dailyStatistics);

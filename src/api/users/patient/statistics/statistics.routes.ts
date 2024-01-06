@@ -11,6 +11,7 @@ export const register = (app: express.Application): void => {
     const controller = new StatisticsController();
 
     router.get('/:patientUserId/report', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientStatsReport);
+    router.get('/:patientUserId/health-summary', authenticator.authenticateClient, controller.getPatientHealthSummary);
     router.get('/:patientUserId', authenticator.authenticateClient, /*authenticator.authenticateUser,*/ controller.getPatientStats);
 
     app.use('/api/v1/patient-statistics', router);

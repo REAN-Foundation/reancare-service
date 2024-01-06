@@ -1,5 +1,6 @@
-import { Column, CreatedAt, DataType, DeletedAt, IsUUID, Model, PrimaryKey, Table, UpdatedAt } from 'sequelize-typescript';
+import { Column, CreatedAt, DataType, DeletedAt, IsUUID, Model, PrimaryKey, ForeignKey, Table, UpdatedAt, BelongsTo } from 'sequelize-typescript';
 import { v4 } from 'uuid';
+import FileResource from '../general/file.resource/file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -23,11 +24,22 @@ export default class DailyStatistics extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => FileResource)
     @Column({
-        type      : DataType.DATE,
+        type      : DataType.UUID,
         allowNull : true,
     })
-    ReportDate: Date;
+    ResourceId: string;
+
+    @BelongsTo(() => FileResource)
+    Resource: FileResource;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    ReportDate: string;
 
     @Column({
         type      : DataType.DATE,
@@ -39,7 +51,19 @@ export default class DailyStatistics extends Model {
         type      : DataType.STRING(5000),
         allowNull : true,
     })
-    Statistics: string;
+    DashboardStats: string;
+
+    @Column({
+        type      : DataType.STRING(5000),
+        allowNull : true,
+    })
+    UserStats: string;
+
+    @Column({
+        type      : DataType.STRING(5000),
+        allowNull : true,
+    })
+    AhaStats: string;
 
     @Column
     @CreatedAt

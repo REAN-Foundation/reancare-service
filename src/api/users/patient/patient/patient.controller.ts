@@ -20,22 +20,26 @@ import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analy
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { RoleDto } from '../../../../domain.types/role/role.dto';
 import { Roles } from '../../../../domain.types/role/role.types';
+import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientController extends BaseUserController {
 
     //#region member variables and constructors
+    _service: PatientService = Injector.Container.resolve(PatientService);
 
-    _service: PatientService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _userService: UserService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _patientHealthProfileService: HealthProfileService = null;
+    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
-    _personService: PersonService = null;
+    _patientHealthProfileService: HealthProfileService = Injector.Container.resolve(HealthProfileService);
 
-    _userDeviceDetailsService: UserDeviceDetailsService = null;
+    _cohortService: CohortService = Injector.Container.resolve(CohortService);
+
+    _ehrPatientService: EHRPatientService = Injector.Container.resolve(EHRPatientService);
 
     _userHelper: UserHelper = new UserHelper();
 
@@ -43,19 +47,7 @@ export class PatientController extends BaseUserController {
 
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
-    _cohortService: CohortService = null;
-
     _validator = new PatientValidator();
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(PatientService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
-        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
-        this._cohortService = Injector.Container.resolve(CohortService);
-    }
 
     //#endregion
 
@@ -74,15 +66,7 @@ export class PatientController extends BaseUserController {
             const clientCode = request.currentClient.ClientCode;
             await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patient.UserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this.addPatientToEHRRecords(patient.UserId, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patient.UserId}`);
-            }
+            await this._ehrPatientService.addEHRRecordPatientForAppNames(patient);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -250,14 +234,7 @@ export class PatientController extends BaseUserController {
                 location = addresses[0].Location;
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(userId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    await this._service.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, appName);       
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
-            }
+            await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient);
 
             const patient = await this._service.getByUserId(userId);
 
@@ -318,7 +295,7 @@ export class PatientController extends BaseUserController {
             }
 
             // delete static ehr record
-            this._ehrAnalyticsHandler.deleteStaticEHRRecord(userId);
+            await this._ehrPatientService.deleteStaticEHRRecord(userId);
 
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,

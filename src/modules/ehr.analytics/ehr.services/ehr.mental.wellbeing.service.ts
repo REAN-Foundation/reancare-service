@@ -1,8 +1,5 @@
 import { injectable } from "tsyringe";
 import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
-import { SleepService } from "../../../services/wellness/daily.records/sleep.service";
-import { MeditationService } from "../../../services/wellness/exercise/meditation.service";
-import { Injector } from "../../../startup/injector";
 import { SleepDto } from "../../../domain.types/wellness/daily.records/sleep/sleep.dto";
 import { EHRRecordTypes } from "../ehr.domain.models/ehr.record.types";
 import { MeditationDto } from "../../../domain.types/wellness/exercise/meditation/meditation.dto";
@@ -12,12 +9,6 @@ import { PatientAppNameCache } from "../patient.appname.cache";
 
 @injectable()
 export class EHRMentalWellBeingService {
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _sleepService: SleepService = Injector.Container.resolve(SleepService);
-
-    _meditationService: MeditationService = Injector.Container.resolve(MeditationService);
 
     public addEHRRecordSleep = async (model: SleepDto, appName?: string) => {
         if (model.SleepDuration) {
@@ -55,14 +46,14 @@ export class EHRMentalWellBeingService {
 
     public async addEHRSleepForAppNames(r: SleepDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) { 
+        for (var appName of eligibleAppNames) {
             this.addEHRRecordSleep(r, appName);
         }
     }
 
     public async addEHRMeditationForAppNames(r: MeditationDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) { 
+        for (var appName of eligibleAppNames) {
             this.addEHRRecordMeditation(r, appName);
         }
     }

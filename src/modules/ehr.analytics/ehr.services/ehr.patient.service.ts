@@ -1,10 +1,7 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../common/logger";
 import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
-import { Injector } from "../../../startup/injector";
 import { PatientAppNameCache } from "../patient.appname.cache";
-import { PatientService } from "../../../services/users/patient/patient.service";
-import { EmergencyContactService } from "../../../services/users/patient/emergency.contact.service";
 import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/patient.dto";
 import { EmergencyContactDto } from "../../../domain.types/users/patient/emergency.contact/emergency.contact.dto";
 import { EmergencyContactRoles } from "../../../domain.types/users/patient/emergency.contact/emergency.contact.types";
@@ -14,11 +11,6 @@ import { HealthProfileDto } from "../../../domain.types/users/patient/health.pro
 
 @injectable()
 export class EHRPatientService {
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _patientService: PatientService = Injector.Container.resolve(PatientService);
-
-    _emergencyContactService: EmergencyContactService = Injector.Container.resolve(EmergencyContactService);
 
     public addEHRRecordPatientForAppNames = async (model: PatientDetailsDto) => {
         try {
@@ -31,6 +23,14 @@ export class EHRPatientService {
         }
     };
 
+    public deleteStaticEHRRecord = async (id: string ) => {
+        try {
+            EHRAnalyticsHandler.deletePatientStaticRecord(id);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
     public addEHRRecordEmergencyContactForAppNames = async (model: EmergencyContactDto) => {
         try {
             const appNames = await PatientAppNameCache.get(model.PatientUserId);
@@ -39,7 +39,7 @@ export class EHRPatientService {
                     await EHRAnalyticsHandler.addOrUpdatePatient(
                         model.PatientUserId,
                         {
-                            DoctorPersonId_1: model.ContactPersonId,
+                            DoctorPersonId_1 : model.ContactPersonId,
                         },
                         appName
                     );
@@ -190,5 +190,6 @@ export class EHRPatientService {
         } catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message)}`);
         }
-    }
+    };
+
 }

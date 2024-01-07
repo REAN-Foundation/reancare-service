@@ -1110,55 +1110,6 @@ export class AssessmentService {
         return null;
     };
 
-    public addEHRRecord = async (answerResponse: any, assessment?: any, options?: any, appName?: string ) => {
-
-        Logger.instance().log(`AnswerResponse: ${JSON.stringify(answerResponse)}`);
-        Logger.instance().log(`Assessment: ${JSON.stringify(assessment, null, 2)}`);
-
-        var assessmentRecord = {
-            AppName        : appName,
-            PatientUserId  : assessment.PatientUserId,
-            AssessmentId   : assessment.id,
-            TemplateId     : assessment.AssessmentTemplateId,
-            NodeId         : answerResponse ? answerResponse.Answer.NodeId                                           : null,
-            Title          : assessment.Title,
-            Question       : answerResponse ? answerResponse.Answer.Title                                            : null,
-            SubQuestion    : answerResponse && answerResponse.Answer.SubQuestion ? answerResponse.Answer.SubQuestion : null,
-            QuestionType   : answerResponse ? answerResponse.Answer.ResponseType                                     : null,
-            AnswerOptions  : options ? JSON.stringify(options.Options)                                               : null,
-            AnswerValue    : null,
-            AnswerReceived : null,
-            AnsweredOn     : assessment.CreatedAt,
-            Status         : assessment.Status ?? null,
-            Score          : assessment.Score ?? null,
-            AdditionalInfo : null,
-            StartedAt      : assessment.StartedAt ?? null,
-            FinishedAt     : assessment.FinishedAt ?? null,
-            RecordDate     : assessment.CreatedAt ? new Date(assessment.CreatedAt) : null
-        };
-
-        Logger.instance().log(`AssessmentRecord: ${JSON.stringify(assessmentRecord, null, 2)}`);
-
-        if (answerResponse && answerResponse.Answer.ResponseType === 'Single Choice Selection') {
-            assessmentRecord['AnswerValue'] = answerResponse.Answer.ChosenOption.Sequence;
-            assessmentRecord['AnswerReceived'] = answerResponse.Answer.ChosenOption.Text;
-            EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-        } else if (answerResponse && answerResponse.Answer.ResponseType === 'Multi Choice Selection') {
-            var responses = answerResponse.Answer.ChosenOptions;
-            for await (var r of responses) {
-                assessmentRecord['AnswerValue'] = r.Sequence;
-                assessmentRecord['AnswerReceived'] = r.Text;
-                var a = JSON.parse(JSON.stringify(assessmentRecord));
-                EHRAnalyticsHandler.addAssessmentRecord(a);
-            }
-        } else {
-            EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-
-        }
-        
-    };
-
-
     //#endregion
 
 }

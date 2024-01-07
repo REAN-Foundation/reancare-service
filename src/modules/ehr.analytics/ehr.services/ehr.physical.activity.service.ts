@@ -1,10 +1,5 @@
 import { injectable } from "tsyringe";
-import { Logger } from "../../../common/logger";
 import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
-import { StandService } from "../../../services/wellness/daily.records/stand.service";
-import { StepCountService } from "../../../services/wellness/daily.records/step.count.service";
-import { PhysicalActivityService } from "../../../services/wellness/exercise/physical.activity.service";
-import { Injector } from "../../../startup/injector";
 import { StandDto } from "../../../domain.types/wellness/daily.records/stand/stand.dto";
 import { StepCountDto } from "../../../domain.types/wellness/daily.records/step.count/step.count.dto";
 import { PhysicalActivityDto } from "../../../domain.types/wellness/exercise/physical.activity/physical.activity.dto";
@@ -15,12 +10,6 @@ import { EHRRecordTypes } from "../ehr.domain.models/ehr.record.types";
 
 @injectable()
 export class EHRPhysicalActivityService {
-
-    _standService = Injector.Container.resolve(StandService);
-
-    _stepCountService = Injector.Container.resolve(StepCountService);
-
-    _physicalActivityService = Injector.Container.resolve(PhysicalActivityService);
 
     public addEHRRecordStand = (model: StandDto, appName?: string) => {
         if (model.Stand) {
@@ -56,7 +45,6 @@ export class EHRPhysicalActivityService {
         }
     };
 
-
     public addEHRRecordPhysicalActivity = (model: PhysicalActivityDto, appName?: string) => {
         if (model.PhysicalActivityQuestionAns !== null) {
             EHRAnalyticsHandler.addBooleanRecord(
@@ -80,7 +68,7 @@ export class EHRPhysicalActivityService {
                 model.Provider,
                 EHRRecordTypes.PhysicalActivity,
                 model.DurationInMin,
-                'mins',   
+                'mins',
                 model.Category,
                 'Exercise',
                 appName,

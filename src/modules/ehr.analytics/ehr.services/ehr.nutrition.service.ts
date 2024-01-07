@@ -1,7 +1,5 @@
 import { injectable } from "tsyringe";
 import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
-import { FoodConsumptionService } from "../../../services/wellness/nutrition/food.consumption.service";
-import { Injector } from "../../../startup/injector";
 import { EHRRecordTypes } from "../ehr.domain.models/ehr.record.types";
 import { FoodConsumptionDto } from "../../../domain.types/wellness/nutrition/food.consumption/food.consumption.dto";
 import { PatientAppNameCache } from "../patient.appname.cache";
@@ -10,10 +8,6 @@ import { PatientAppNameCache } from "../patient.appname.cache";
 
 @injectable()
 export class EHRNutritionService {
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _foodConsumptionService: FoodConsumptionService = Injector.Container.resolve(FoodConsumptionService);
 
     public addEHRRecord = (model: FoodConsumptionDto, appName?: string) => {
         if (model.FoodTypes[0] === "GenericNutrition") {

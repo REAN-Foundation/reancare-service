@@ -117,7 +117,7 @@ export class BodyHeightController {
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteVitalEHRRecord(existing.id);
+            this._ehrVitalService.deleteRecord(existing.id);
 
             ResponseHandler.success(request, response, 'Height record deleted successfully!', 200, {
                 Deleted : true,

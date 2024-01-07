@@ -218,7 +218,7 @@ export class MedicationController {
                 if (updated.FrequencyUnit !== 'Other') {
                     var stats = await this._medicationConsumptionService.create(updated);
                     var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
-    
+
                     var consumptionSummary: ConsumptionSummaryDto = {
                         TotalConsumptionCount   : stats.TotalConsumptionCount,
                         TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
@@ -254,7 +254,7 @@ export class MedicationController {
             await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
 
             // delete ehr record
-            this._ehrMedicationService.deleteMedicationEHRRecord(id);
+            this._ehrMedicationService.deleteMedicationEHRRecords(id);
 
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
                 Deleted : true,

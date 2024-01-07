@@ -1,8 +1,6 @@
 import { injectable } from "tsyringe";
 import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
-import { Injector } from "../../../startup/injector";
 import { PatientAppNameCache } from "../patient.appname.cache";
-import { UserTaskService } from "../../../services/users/user/user.task.service";
 import { UserTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
 import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/patient.dto";
 
@@ -10,9 +8,6 @@ import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/p
 
 @injectable()
 export class EHRUserTaskService {
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _userTaskService: UserTaskService = Injector.Container.resolve(UserTaskService);
 
     private addEHRRecord = (updated?: UserTaskDto, appName?: string, healthSystem?: PatientDetailsDto) => {
         EHRAnalyticsHandler.addCareplanActivityRecord(

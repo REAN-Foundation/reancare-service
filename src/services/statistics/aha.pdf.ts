@@ -97,7 +97,7 @@ const exportAhaStatsReportToPDF = async (reportModel: any) => {
             filename
         };
     } catch (error) {
-        throw new Error(`Unable to generate assessment report! ${error.message}`);
+        throw new Error(`Unable to generate AHA stats report! ${error.message}`);
     }
 };
 

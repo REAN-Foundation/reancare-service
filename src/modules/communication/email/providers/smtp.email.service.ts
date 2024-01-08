@@ -33,9 +33,10 @@ export class SMTPEmailService implements IEmailService {
     sendEmail = async (emailDetails: EmailDetails, textBody: boolean): Promise<boolean> => {
         try {
             const mailOptions = {
-                from    : this._emailFrom,
-                to      : emailDetails.EmailTo,
-                subject : emailDetails.Subject,
+                from        : this._emailFrom,
+                to          : emailDetails.EmailTo,
+                subject     : emailDetails.Subject,
+                attachments : emailDetails.Attachments,
                 //ses     : { Tags: [] },
             };
             if (textBody) {

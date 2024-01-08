@@ -3,7 +3,15 @@ import { IAhaStatisticsRepo } from "../../database/repository.interfaces/statist
 import { AppName, CareplanCode, HealthSystem } from "../../domain.types/statistics/aha/aha.type";
 import { generateAhaStatsReport } from './aha.pdf';
 import { Logger } from "../../common/logger";
-
+import { FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
+import path from "path";
+import { TimeHelper } from "../../common/time.helper";
+import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
+import { Loader } from "../../startup/loader";
+import { FileResourceService } from "../general/file.resource.service";
+import { EmailService } from "../../modules/communication/email/email.service";
+import { EmailDetails } from "../../modules/communication/email/email.details";
+import fs from 'fs';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -93,12 +101,18 @@ export class AhaStatisticsService {
                 UserEnrollmentForHCAHealthcare        : strokeForHCAHealthcare
             };
             const pdfModel = await generateAhaStatsReport(ahaStats);
+            await this.sendStatisticsByEmail(pdfModel.absFilepath, pdfModel.filename);
+            const fileDto = await this.uploadFile(pdfModel.absFilepath);
             return {
                 AhaStatistics : ahaStats,
-                PdfModel      : pdfModel
+                ResourceId    : fileDto.id ?? null
             };
         } catch (error) {
             Logger.instance().log(`Error in creating AHA statistics:${error.message}`);
+            return {
+                AhaStatistics : null,
+                ResourceId    : null
+            };
         }
         
     };
@@ -244,4 +258,39 @@ export class AhaStatisticsService {
         }
     };
 
+    private sendStatisticsByEmail = async (filePath: string, fileName: string) => {
+        const { emailService, emailDetails } = await this.getEmailDetails(filePath, fileName);
+        await emailService.sendEmail(emailDetails, false);
+    };
+
+    private getEmailDetails = async (filePath: string, fileName: string) => {
+        const emailService = new EmailService();
+        // var body = await emailService.getTemplate('AHA.user.stats.template.html');
+        var body = 'Hi This is test mail, Dont reply';
+        const emailDetails: EmailDetails = {
+            EmailTo     : process.env.EMAIL_TO,
+            Subject     : `User statistics recent update: ${TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD)}`,
+            Body        : body,
+            Attachments : [
+                {
+                    filename : 'My File name.pdf',
+                    content  : fs.createReadStream(path.join('C:\\Users\\91920\\Documents\\demo.pdf')),
+                },
+                // {
+                //     filename : fileName,
+                //     content  : fs.createReadStream(path.join(filePath)),
+                // },
+            ]
+        };
+        return { emailService, emailDetails };
+    };
+
+    private uploadFile = async (sourceLocation: string): Promise<FileResourceDto> => {
+        const filename = path.basename(sourceLocation);
+        const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+        const storageKey = `resources/${dateFolder}/${filename}`;
+        const fileResourceService = Loader.container.resolve(FileResourceService);
+        return await fileResourceService.uploadLocal(sourceLocation, storageKey, true);
+    };
+    
 }

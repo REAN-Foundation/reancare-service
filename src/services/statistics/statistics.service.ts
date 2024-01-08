@@ -7,8 +7,6 @@ import { YearWiseDeviceDetails, YearWiseUsers } from "../../domain.types/statist
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
 import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { Logger } from "../../common/logger";
-import { TimeHelper } from "../../common/time.helper";
-import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -88,58 +86,23 @@ export class StatisticsService {
         return await this._statisticsRepo.getAllYears();
     };
 
-    createDailyStatistics = async () => {
+    createDailyStatistics = async (model: DailyStatisticsDomainModel): Promise<any> => {
         try {
-            const filter = {};
-            const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
-            const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
-            const appDownload = await this._statisticsRepo.getAppDownlodCount();
-            const allYears = await this._statisticsRepo.getAllYears();
-            const yearWiseUserCount = await this.getYearWiseUserCount(allYears);
-            yearWiseUserCount.sort(this.compare);
-            const yearWiseDeviceDetails = await this.getYearWiseDeviceDetails(allYears);
-            yearWiseDeviceDetails.sort(this.compare);
-            const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
-            const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
-            const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
-            const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
-            const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
-            const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
-           
-            const statisticsData = {
-                UserStatistics : {
-                    UsersCountStats          : usersCountStats,
-                    DeviceDetailWiseUsers    : deviceDetailWiseUsers,
-                    AppDownload              : appDownload,
-                    YearWiseUserCount        : yearWiseUserCount,
-                    YearWiseDeviceDetails    : yearWiseDeviceDetails,
-                    AgeWiseUsers             : ageWiseUsers,
-                    GenderWiseUsers          : genderWiseUsers,
-                    MaritalStatusWiseUsers   : maritalStatusWiseUsers,
-                    CountryWiseUsers         : countryWiseUsers,
-                    MajorAilmentDistribution : majorAilmentDistribution,
-                    AddictionDistribution    : addictionDistribution
-                },
-            };
-    
-            const dailyStatisticsDomainModel: DailyStatisticsDomainModel = {
-                ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),
-                ReportTimestamp : new Date(),
-                DashboardStats  : statisticsData ? JSON.stringify(statisticsData) : null,
-            };
-    
-            const dailyStatistics = await this._dailyStatisticsRepo.create(dailyStatisticsDomainModel);
+            if (!model.DashboardStats && !model.AhaStats && !model.UserStats) {
+                throw new Error('Dashboard stats, Aha stats & user stats is not generated.');
+            }
+            const dailyStatistics = await this._dailyStatisticsRepo.create(model);
             if (dailyStatistics) {
-                Logger.instance().log('Daily users stattistics created successfully.');
+                Logger.instance().log(`${dailyStatistics.DashboardStats ? 'Dashboard stats' : ''} ${dailyStatistics.AhaStats ? 'AHA stats' : ''} ${dailyStatistics.UserStats ? 'User stats' : ''} created successfully`);
             } else {
-                Logger.instance().log('Error in creating daily users stattistics.');
+                Logger.instance().log('Error in creating daily users statistics.');
             }
         } catch (error) {
             Logger.instance().log(`Error in creating daily users statistics:${error.message}`);
         }
     };
 
-    createDashboardStats = async () => {
+    createDashboardStats = async (): Promise<any> => {
         try {
             const filter = {};
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
@@ -174,20 +137,8 @@ export class StatisticsService {
             };
     
             return dashboardStats;
-            // const dailyStatisticsDomainModel: DailyStatisticsDomainModel = {
-            //     ReportDate      : new Date(),
-            //     ReportTimestamp : new Date(),
-            //     Statistics      : JSON.stringify(statisticsData)
-            // };
-    
-            // const dailyStatistics = await this._dailyStatisticsRepo.create(dailyStatisticsDomainModel);
-            // if (dailyStatistics) {
-            //     Logger.instance().log('Daily users stattistics created successfully.');
-            // } else {
-            //     Logger.instance().log('Error in creating daily users stattistics.');
-            // }
         } catch (error) {
-            Logger.instance().log(`Error in creating daily users stattistics:${error.message}`);
+            Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
         }
     };
 

@@ -41,6 +41,7 @@ import { EHRHowDoYouFeelService } from '../ehr.analytics/ehr.services/ehr.how.do
 
 @injectable()
 export class RunOnceScheduler {
+
     //#region member variables and constructors
 
     _patientService: PatientService = Injector.Container.resolve(PatientService);
@@ -116,6 +117,7 @@ export class RunOnceScheduler {
     public static instance(): RunOnceScheduler {
         return this._instance || (this._instance = Injector.Container.resolve(RunOnceScheduler));
     }
+
     public schedule(schedules: any) {
         this.scheduleExistingVitalDataToEHR(schedules);
         this.scheduleExistingLabDataToEHR(schedules);
@@ -246,8 +248,8 @@ export class RunOnceScheduler {
             var pageIndex = 0;
             while (moreItems) {
                 var filters = {
-                    PageIndex: pageIndex,
-                    ItemsPerPage: 1000,
+                    PageIndex    : pageIndex,
+                    ItemsPerPage : 1000,
                 };
 
                 var searchResults = null;
@@ -287,9 +289,9 @@ export class RunOnceScheduler {
                 var pageIndex = 0;
                 while (moreItems) {
                     var filters = {
-                        PageIndex: pageIndex,
-                        ItemsPerPage: 1000,
-                        PatientUserId: patientId,
+                        PageIndex     : pageIndex,
+                        ItemsPerPage  : 1000,
+                        PatientUserId : patientId,
                     };
                     var searchResults = await this._assessmentService.search(filters);
                     for await (var assessment_ of searchResults.Items) {
@@ -364,10 +366,10 @@ export class RunOnceScheduler {
                 var pageIndex = 0;
                 while (moreItems) {
                     var filters = {
-                        PageIndex: pageIndex,
-                        ItemsPerPage: 1000,
-                        PatientUserId: p,
-                        DateTo: new Date(),
+                        PageIndex     : pageIndex,
+                        ItemsPerPage  : 1000,
+                        PatientUserId : p,
+                        DateTo        : new Date(),
                     };
                     var searchResults = await this._medicationConsumptionService.search(filters);
                     for await (var r of searchResults.Items) {
@@ -390,8 +392,8 @@ export class RunOnceScheduler {
             var pageIndex = 0;
             while (moreItems) {
                 var filters = {
-                    PageIndex: pageIndex,
-                    ItemsPerPage: 1000,
+                    PageIndex    : pageIndex,
+                    ItemsPerPage : 1000,
                 };
 
                 var searchResults = null;
@@ -431,8 +433,8 @@ export class RunOnceScheduler {
             var pageIndex = 0;
             while (moreItems) {
                 var filters = {
-                    PageIndex: pageIndex,
-                    ItemsPerPage: 1000,
+                    PageIndex    : pageIndex,
+                    ItemsPerPage : 1000,
                 };
 
                 var searchResults = null;
@@ -459,8 +461,8 @@ export class RunOnceScheduler {
             var pageIndex = 0;
             while (moreItems) {
                 var filters = {
-                    PageIndex: pageIndex,
-                    ItemsPerPage: 1000,
+                    PageIndex    : pageIndex,
+                    ItemsPerPage : 1000,
                 };
 
                 var searchResults = null;
@@ -503,14 +505,14 @@ export class RunOnceScheduler {
             var pageIndex = 0;
             while (moreItems) {
                 var filters = {
-                    PageIndex: pageIndex,
-                    ItemsPerPage: 1000,
+                    PageIndex    : pageIndex,
+                    ItemsPerPage : 1000,
                 };
 
                 var searchResults = null;
                 searchResults = await this._howDoYouFeelService.search(filters);
                 for await (var r of searchResults.Items) {
-                    await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(r)
+                    await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(r);
                 }
 
                 pageIndex++;
@@ -523,8 +525,8 @@ export class RunOnceScheduler {
             pageIndex = 0;
             while (moreItems) {
                 var filters = {
-                    PageIndex: pageIndex,
-                    ItemsPerPage: 1000,
+                    PageIndex    : pageIndex,
+                    ItemsPerPage : 1000,
                 };
 
                 var dailyAssessmentSearchResults = null;
@@ -560,8 +562,8 @@ export class RunOnceScheduler {
             var pageIndex = 0;
             while (moreItems) {
                 var filters = {
-                    PageIndex: pageIndex,
-                    ItemsPerPage: 1000,
+                    PageIndex    : pageIndex,
+                    ItemsPerPage : 1000,
                 };
 
                 var searchResults = null;
@@ -624,5 +626,5 @@ export class RunOnceScheduler {
             Logger.instance().log(`[ScheduleExistingVitalDataToEHR] : ${JSON.stringify(error)}`);
         }
     };
-    
+
 }

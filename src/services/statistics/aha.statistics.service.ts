@@ -274,10 +274,6 @@ export class AhaStatisticsService {
             Subject     : `User statistics recent update: ${TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD)}`,
             Body        : body,
             Attachments : [
-                {
-                    filename : 'My File name.pdf',
-                    content  : fs.createReadStream(path.join('C:\\Users\\91920\\Documents\\demo.pdf')),
-                },
                 // {
                 //     filename : fileName,
                 //     content  : fs.createReadStream(path.join(filePath)),

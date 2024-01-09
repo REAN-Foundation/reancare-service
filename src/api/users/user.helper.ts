@@ -178,10 +178,13 @@ export class UserHelper {
 
     private async updateUserDomainModel(createModel: PatientDomainModel): Promise<PatientDomainModel> {
 
-        const userName = await this._userService.generateUserName(
-            createModel.User.Person.FirstName,
-            createModel.User.Person.LastName
-        );
+        let userName = createModel.User.UserName;
+        if (!createModel.User.UserName) {
+            userName = await this._userService.generateUserName(
+                createModel.User.Person.FirstName,
+                createModel.User.Person.LastName
+            );
+        }
 
         const displayId = await this._userService.generateUserDisplayId(
             Roles.Patient,

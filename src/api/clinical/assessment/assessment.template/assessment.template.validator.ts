@@ -39,8 +39,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
     search = async (
         request: express.Request
     ): Promise<AssessmentTemplateSearchFilters> => {
-        await this.validateUuid(request, 'title', Where.Query, false, false);
+        await this.validateString(request, 'title', Where.Query, false, false);
         await this.validateString(request, 'type', Where.Query, false, false, true);
+        await this.validateString(request, 'displayCode', Where.Query, false, false, true);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getFilter(request);
@@ -106,6 +107,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateArray(request, 'Options', Where.Body, false, false);
         await this.validateDecimal(request, 'Score', Where.Body, false, false);
         await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
+        await this.validateObject(request, 'RawData', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -123,7 +125,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 TemplateId        : templateId,
                 Score             : request.body.Score ?? 0,
                 CorrectAnswer     : request.body.CorrectAnswer ? JSON.stringify(request.body.CorrectAnswer) : null,
-                Options           : []
+                Options           : [],
+                RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
             };
             if (request.body.Options && request.body.Options.length > 0) {
                 var options: CAssessmentQueryOption[] = [];
@@ -170,7 +173,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 TemplateId        : templateId,
                 Score             : request.body.Score ?? 0,
                 Message           : request.body.Message,
-                Acknowledged      : false
+                Acknowledged      : false,
+                RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
             };
             return messageNode;
         }

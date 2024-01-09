@@ -7,7 +7,7 @@ import { ResponseHandler } from '../../../../common/response.handler';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
-import { ConsumptionSummaryDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
+import { ConsumptionSummaryDto, MedicationDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
 import { MedicationAdministrationRoutesList, MedicationDosageUnitsList, MedicationDurationUnitsList, MedicationFrequencyUnitsList, MedicationTimeSchedulesList } from '../../../../domain.types/clinical/medication/medication/medication.types';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
@@ -117,12 +117,14 @@ export class MedicationController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            Logger.instance().log(`[MedicationTime] Create - API call started`);
             request.context = 'Medication.Create';
             await this._authorizer.authorize(request, response);
 
             const domainModel = await MedicationValidator.create(request);
 
             const user = await this._userService.getById(domainModel.PatientUserId);
+
             if (user == null) {
                 throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
             }
@@ -130,17 +132,20 @@ export class MedicationController {
             await this.updateDrugDetails(domainModel);
 
             var medication = await this._service.create(domainModel);
+            Logger.instance().log(`[MedicationTime] Create - service call completed`);
+
             if (medication == null) {
                 throw new ApiError(400, 'Cannot create medication!');
             }
             if (medication.FrequencyUnit !== 'Other') {
                 var stats = await this._medicationConsumptionService.create(medication);
+                var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
                 var consumptionSummary: ConsumptionSummaryDto = {
                     TotalConsumptionCount   : stats.TotalConsumptionCount,
-                    TotalDoseCount          : stats.TotalConsumptionCount * medication.Dose,
+                    TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
                     PendingConsumptionCount : stats.PendingConsumptionCount,
-                    PendingDoseCount        : stats.PendingConsumptionCount * medication.Dose,
+                    PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
                 };
 
                 medication.ConsumptionSummary = consumptionSummary;
@@ -159,17 +164,22 @@ export class MedicationController {
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${medication.PatientUserId}`);
             }
+
+            Logger.instance().log(`[MedicationTime] Create - Medication response returned`);
             ResponseHandler.success(request, response, 'Medication created successfully!', 201, {
                 Medication : medication,
             });
 
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] Create - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            Logger.instance().log(`[MedicationTime] GetById - API call started`);
+
             request.context = 'Medication.GetById';
 
             await this._authorizer.authorize(request, response);
@@ -177,37 +187,46 @@ export class MedicationController {
             const id: string = await MedicationValidator.getParamId(request);
 
             const medication = await this._service.getById(id);
+            Logger.instance().log(`[MedicationTime] GetById - service call completed`);
+
             if (medication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
 
             var stats = await this._medicationConsumptionService.getConsumptionStatusForMedication(id);
+            var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
             var consumptionSummary: ConsumptionSummaryDto = {
                 TotalConsumptionCount   : stats.TotalConsumptionCount,
-                TotalDoseCount          : stats.TotalConsumptionCount * medication.Dose,
+                TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
                 PendingConsumptionCount : stats.PendingConsumptionCount,
-                PendingDoseCount        : stats.PendingConsumptionCount * medication.Dose,
+                PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
             };
 
             medication.ConsumptionSummary = consumptionSummary;
 
+            Logger.instance().log(`[MedicationTime] GetById - medication response returned`);
             ResponseHandler.success(request, response, 'Medication retrieved successfully!', 200, {
                 Medication : medication,
             });
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] GetById - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            Logger.instance().log(`[MedicationTime] Search - API call started`);
+
             request.context = 'Medication.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await MedicationValidator.search(request);
 
             const searchResults = await this._service.search(filters);
+            Logger.instance().log(`[MedicationTime] Search - service call completed`);
+
 
             const count = searchResults.Items.length;
             const message =
@@ -215,15 +234,19 @@ export class MedicationController {
                     ? 'No records found!'
                     : `Total ${count} medication records retrieved successfully!`;
 
+            Logger.instance().log(`[MedicationTime] Search - medication response returned`);
             ResponseHandler.success(request, response, message, 200, { Medications: searchResults });
 
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] Search - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+
+            Logger.instance().log(`[MedicationTime] Update - API call started`);
             request.context = 'Medication.Update';
             await this._authorizer.authorize(request, response);
 
@@ -240,47 +263,28 @@ export class MedicationController {
             domainModel.StartDate = startDate;
 
             const updated = await this._service.update(id, domainModel);
+            Logger.instance().log(`[MedicationTime] Update - service call completed`);
+
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update medication record!');
             }
 
-            if (domainModel.DrugId !== null ||
-                domainModel.RefillCount !== null ||
-                domainModel.RefillNeeded !== null ||
-                domainModel.Duration !== null ||
-                domainModel.DurationUnit !== null ||
-                domainModel.Frequency !== null ||
-                domainModel.FrequencyUnit !== null ||
-                domainModel.TimeSchedules !== null ||
-                domainModel.StartDate !== null) {
+            this.updateMedicationConsumption(domainModel, id, updated);
 
-                await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
-
-                if (updated.FrequencyUnit !== 'Other') {
-                    var stats = await this._medicationConsumptionService.create(updated);
-    
-                    var consumptionSummary: ConsumptionSummaryDto = {
-                        TotalConsumptionCount   : stats.TotalConsumptionCount,
-                        TotalDoseCount          : stats.TotalConsumptionCount * updated.Dose,
-                        PendingConsumptionCount : stats.PendingConsumptionCount,
-                        PendingDoseCount        : stats.PendingConsumptionCount * updated.Dose,
-                    };
-    
-                    updated.ConsumptionSummary = consumptionSummary;
-                }
-                
-            }
-
-            ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
+            Logger.instance().log(`[MedicationTime] Update - medication response returned`);
+            ResponseHandler.success(request, response, 'Medication record updated successfully! Updates will be available shortly.', 200, {
                 Medication : updated,
             });
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] Update - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+
+            Logger.instance().log(`[MedicationTime] Delete - API call started`);
             request.context = 'Medication.Delete';
             await this._authorizer.authorize(request, response);
 
@@ -291,6 +295,8 @@ export class MedicationController {
             }
 
             const deleted = await this._service.delete(id);
+            Logger.instance().log(`[MedicationTime] Delete - service call completed`);
+
             if (!deleted) {
                 throw new ApiError(400, 'Medication cannot be deleted.');
             }
@@ -300,10 +306,12 @@ export class MedicationController {
             // delete ehr record
             this._ehrMedicationService.deleteMedicationEHRRecord(id);
 
+            Logger.instance().log(`[MedicationTime] Delete - medication response returned`);
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] Delete - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -417,6 +425,37 @@ export class MedicationController {
             }
             domainModel.DrugName = drug.DrugName;
         }
+    }
+
+    private async updateMedicationConsumption(domainModel: MedicationDomainModel, id: string, updated: MedicationDto) {
+        if (domainModel.DrugId !== null ||
+            domainModel.RefillCount !== null ||
+            domainModel.RefillNeeded !== null ||
+            domainModel.Duration !== null ||
+            domainModel.DurationUnit !== null ||
+            domainModel.Frequency !== null ||
+            domainModel.FrequencyUnit !== null ||
+            domainModel.TimeSchedules !== null ||
+            domainModel.StartDate !== null) {
+
+            await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+
+            if (updated.FrequencyUnit !== 'Other') {
+                await this._medicationConsumptionService.create(updated);
+                /*var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
+
+                var consumptionSummary: ConsumptionSummaryDto = {
+                    TotalConsumptionCount   : stats.TotalConsumptionCount,
+                    TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
+                    PendingConsumptionCount : stats.PendingConsumptionCount,
+                    PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
+                };
+
+                updated.ConsumptionSummary = consumptionSummary;*/
+            }
+            
+        }
+
     }
 
     //#endregion

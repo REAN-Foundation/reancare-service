@@ -13,6 +13,7 @@ export interface AssessmentQueryDto {
     Sequence?           : number;
     Title?              : string;
     Description?        : string;
+    RawData?            : string;
     Message?            : string;
     Options             : CAssessmentQueryOption[];
     CorrectAnswer?     : string | any;

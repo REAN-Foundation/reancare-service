@@ -298,7 +298,7 @@ export class EHRAnalyticsHandler {
         recordId          : uuid,
         patientUserId     : uuid,
         drugName          : string,
-        dose              : number,
+        dose              : string,
         details?          : string,
         timeScheduleStart?: Date,
         timeScheduleEnd?  : Date,

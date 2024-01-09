@@ -329,7 +329,12 @@
             "Hospital.Delete",
             "Hospital.GetHospitalsForHealthSystem",
             "DailyStatistics.Create",
-            "DailyStatistics.GetLatestStatistics"
+            "DailyStatistics.GetLatestStatistics",
+            "TenantFeatureSetting.Create",
+            "TenantFeatureSetting.GetById",
+            "TenantFeatureSetting.Update",
+            "TenantFeatureSetting.Delete",
+            "TenantFeatureSetting.Search"
         ]
     },
     {

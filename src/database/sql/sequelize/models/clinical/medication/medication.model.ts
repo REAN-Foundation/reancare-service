@@ -95,12 +95,11 @@ export default class Medication extends Model {
     })
     DrugId: string;
 
-    @IsDecimal
     @Column({
-        type      : DataType.FLOAT,
+        type      : DataType.STRING(128),
         allowNull : false,
     })
-    Dose: number;
+    Dose: string;
 
     @Length({ max: 128 })
     @Column({

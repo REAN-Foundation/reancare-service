@@ -7,7 +7,7 @@ export interface EHRMedicationDomainModel {
     RecordId?         : uuid;
     DrugName?         : string;
     DrugId?           : string;
-    Dose?             : number;
+    Dose?             : string;
     Details?          : string;
     TimeScheduleStart?: Date;
     TimeScheduleEnd?  : Date;

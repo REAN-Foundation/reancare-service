@@ -9,7 +9,7 @@ export interface MedicationConsumptionDetailsDto {
     MedicationId?     : string;
     DrugName?         : string;
     DrugId?           : string;
-    Dose?             : number;
+    Dose?             : string | number;
     Details?          : string;
     TimeScheduleStart?: Date;
     TimeScheduleEnd?  : Date;

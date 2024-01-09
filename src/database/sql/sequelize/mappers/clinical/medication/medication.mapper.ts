@@ -1,3 +1,4 @@
+import { Helper } from '../../../../../../common/helper';
 import { MedicationDto } from '../../../../../../domain.types/clinical/medication/medication/medication.dto';
 import { MedicationAdministrationRoutes, MedicationDosageUnits, MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from '../../../../../../domain.types/clinical/medication/medication/medication.types';
 import MedicationModel from '../../../models/clinical/medication/medication.model';
@@ -44,6 +45,8 @@ export class MedicationMapper {
             ToBeTakenForNextNDays     : medication.ToBeTakenForNextNDays,
             IsCancelled               : medication.IsCancelled,
         };
+
+        dto.Dose = Helper.parseIntegerFromString(dto.Dose.toString()) ?? dto.Dose;
         return dto;
     };
 

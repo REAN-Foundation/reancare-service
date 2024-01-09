@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IAhaStatisticsRepo } from "../../database/repository.interfaces/statistics/aha.statistics.repo.interface";
 import { AppName, CareplanCode, HealthSystem } from "../../domain.types/statistics/aha/aha.type";
-import { generateAhaStatsReport } from './aha.pdf';
+import { exportAhaStatsReportToPDF } from './aha.pdf';
 import { Logger } from "../../common/logger";
 import { FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
 import path from "path";
@@ -100,19 +100,9 @@ export class AhaStatisticsService {
                 UserEnrollmentForNebraskaHealthSystem : cholesterolNebraskaHealthSystem,
                 UserEnrollmentForHCAHealthcare        : strokeForHCAHealthcare
             };
-            const pdfModel = await generateAhaStatsReport(ahaStats);
-            await this.sendStatisticsByEmail(pdfModel.absFilepath, pdfModel.filename);
-            const fileDto = await this.uploadFile(pdfModel.absFilepath);
-            return {
-                AhaStatistics : ahaStats,
-                ResourceId    : fileDto.id ?? null
-            };
+            return ahaStats;
         } catch (error) {
             Logger.instance().log(`Error in creating AHA statistics:${error.message}`);
-            return {
-                AhaStatistics : null,
-                ResourceId    : null
-            };
         }
         
     };
@@ -258,9 +248,21 @@ export class AhaStatisticsService {
         }
     };
 
-    private sendStatisticsByEmail = async (filePath: string, fileName: string) => {
-        const { emailService, emailDetails } = await this.getEmailDetails(filePath, fileName);
-        await emailService.sendEmail(emailDetails, false);
+    generateAhaStatsReport = async (reportModel: any) => {
+        try {
+            return await exportAhaStatsReportToPDF(reportModel);
+        } catch (error) {
+            Logger.instance().log(`Error in creating stats report in pdf :${error.message}`);
+        }
+    };
+
+    sendStatisticsByEmail = async (filePath: string, fileName: string) => {
+        try {
+            const { emailService, emailDetails } = await this.getEmailDetails(filePath, fileName);
+            await emailService.sendEmail(emailDetails, false);
+        } catch (error) {
+            Logger.instance().log(`Error in sending stats by email :${error.message}`);
+        }
     };
 
     private getEmailDetails = async (filePath: string, fileName: string) => {
@@ -285,12 +287,17 @@ export class AhaStatisticsService {
         return { emailService, emailDetails };
     };
 
-    private uploadFile = async (sourceLocation: string): Promise<FileResourceDto> => {
-        const filename = path.basename(sourceLocation);
-        const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
-        const storageKey = `resources/${dateFolder}/${filename}`;
-        const fileResourceService = Loader.container.resolve(FileResourceService);
-        return await fileResourceService.uploadLocal(sourceLocation, storageKey, true);
+    uploadFile = async (sourceLocation: string): Promise<FileResourceDto> => {
+        try {
+            const filename = path.basename(sourceLocation);
+            const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+            const storageKey = `resources/${dateFolder}/${filename}`;
+            const fileResourceService = Loader.container.resolve(FileResourceService);
+            return await fileResourceService.uploadLocal(sourceLocation, storageKey, true);
+        } catch (error) {
+            Logger.instance().log(`Error in uploading pdf :${error.message}`);
+        }
+        
     };
     
 }

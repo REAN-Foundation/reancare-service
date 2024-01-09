@@ -20,11 +20,7 @@ import { EHRNutritionService } from '../modules/ehr.analytics/ehr.nutrition.serv
 import { EHRSymptomService } from '../modules/ehr.analytics/ehr.symptom.service';
 import { EHRMedicationService } from '../modules/ehr.analytics/ehr.medication.service';
 import { EHRAnalyticsHandler } from '../modules/ehr.analytics/ehr.analytics.handler';
-import { StatisticsService } from '../services/statistics/statistics.service';
-import { AhaStatisticsService } from '../services/statistics/aha.statistics.service';
-import { DailyStatisticsDomainModel } from '../domain.types/statistics/daily.statistics/daily.statistics.domain.model';
-import { TimeHelper } from '../common/time.helper';
-import { DateStringFormat } from '../domain.types/miscellaneous/time.types';
+import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -98,23 +94,8 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['DailyStatistics'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
-                
-                var statisticsService = Loader.container.resolve(StatisticsService);
-                const dashboardStats = await statisticsService.createDashboardStats();
-
-                var ahaStatisticsService = Loader.container.resolve(AhaStatisticsService);
-                const stats = await ahaStatisticsService.getAhaStatistics();
-                var userStats = await ahaStatisticsService.getUserStatistics();
-               
-                const dailyStatisticsCreateModel: DailyStatisticsDomainModel = {
-                    ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),
-                    ReportTimestamp : new Date(),
-                    DashboardStats  : dashboardStats ? JSON.stringify(dashboardStats) : null,
-                    AhaStats        : stats.AhaStatistics ? JSON.stringify(stats.AhaStatistics) : null,
-                    UserStats       : userStats ? JSON.stringify(userStats) : null,
-                    ResourceId      : stats.ResourceId ?? null,
-                };
-                await statisticsService.createDailyStatistics(dailyStatisticsCreateModel);
+                var service = Loader.container.resolve(DailyStatisticsService);
+                await service.generateDailyStatistics();
             })();
         });
     };

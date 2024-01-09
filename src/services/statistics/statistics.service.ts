@@ -5,7 +5,6 @@ import { AppDownloadDomainModel } from "../../domain.types/statistics/app.downlo
 import { StatisticSearchFilters } from "../../domain.types/statistics/statistics.search.type";
 import { YearWiseDeviceDetails, YearWiseUsers } from "../../domain.types/statistics/daily.statistics/daily.statistics.dto";
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
-import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,22 +83,6 @@ export class StatisticsService {
 
     getAllYears = async (): Promise<any> => {
         return await this._statisticsRepo.getAllYears();
-    };
-
-    createDailyStatistics = async (model: DailyStatisticsDomainModel): Promise<any> => {
-        try {
-            if (!model.DashboardStats && !model.AhaStats && !model.UserStats) {
-                throw new Error('Dashboard stats, Aha stats & user stats is not generated.');
-            }
-            const dailyStatistics = await this._dailyStatisticsRepo.create(model);
-            if (dailyStatistics) {
-                Logger.instance().log(`${dailyStatistics.DashboardStats ? 'Dashboard stats' : ''} ${dailyStatistics.AhaStats ? 'AHA stats' : ''} ${dailyStatistics.UserStats ? 'User stats' : ''} created successfully`);
-            } else {
-                Logger.instance().log('Error in creating daily users statistics.');
-            }
-        } catch (error) {
-            Logger.instance().log(`Error in creating daily users statistics:${error.message}`);
-        }
     };
 
     createDashboardStats = async (): Promise<any> => {

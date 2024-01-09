@@ -5,11 +5,7 @@ import fs from 'fs';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-export const generateAhaStatsReport = async (reportModel: any) => {
-    return await exportAhaStatsReportToPDF(reportModel);
-};
-
-const exportAhaStatsReportToPDF = async (reportModel: any) => {
+export const exportAhaStatsReportToPDF = async (reportModel: any) => {
     try {
         var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Heart & Stroke statistics');
         var writeStream = fs.createWriteStream(absFilepath);

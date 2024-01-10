@@ -50,6 +50,7 @@ export class PatientAppNameCache {
     static update(patientId: string, appNames: string[]): void {
         PatientAppNameCache.cache.set(patientId, appNames);
     }
+
     static async get(patientId: string): Promise<string[] | undefined> {
         const list = PatientAppNameCache.cache.get(patientId);
         if (!list) {

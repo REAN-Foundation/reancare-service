@@ -345,10 +345,10 @@ export class AHAActions {
 
                 if (userAppRegistrations.length > 0 && this.eligibleForStrokeSurvey(userAppRegistrations)) {
                     Logger.instance().log(`[StrokeCron] Sending Stroke survey notification to user:${patient.UserId}`);
-                    await this.sendStrokeSurveyNotification(userDeviceTokens);        
+                    await this.sendStrokeSurveyNotification(userDeviceTokens);
                 } else {
                     Logger.instance().log(`[StrokeCron] Skip sending Stroke survey notification as device is not eligible:${patient.UserId}`);
-                }  
+                }
             }
             Logger.instance().log(`[StrokeCron] Cron completed successfully.`);
         }

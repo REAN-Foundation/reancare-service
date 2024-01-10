@@ -23,6 +23,7 @@ export class MessagingService {
     };
 
     sendTelegramMessage = async (telegramChatId: string, message: string, clientName: string): Promise<boolean> => {
+        message = `You have ${message}`;
         await this.sendMessage(clientName, "telegram", telegramChatId, "text", null, message, null);
         return true;
     };
@@ -31,7 +32,7 @@ export class MessagingService {
         type:string, PlanCode:string, payload = null): Promise<boolean> => {
 
         let templateName = null;
-        let channel = "whatsappMeta";
+        const channel = "whatsappMeta";
 
         toPhone = toPhone.replace(/\D/g, '');
         message = JSON.parse(message);
@@ -40,13 +41,13 @@ export class MessagingService {
             type = "template";
 
         }
-        if (message.Variables.includes("Messages")) {
-            provider = "KENYA_MATERNAL";
-            channel = "telegram";
-            type = 'text';
-            const variables = JSON.parse(message.Variables);
-            message = variables.Messages;
-        }
+        // if (message.Variables.includes("Messages")) {
+        //     provider = "KENYA_MATERNAL";
+        //     channel = "telegram";
+        //     type = 'text';
+        //     const variables = JSON.parse(message.Variables);
+        //     message = variables.Messages;
+        // }
         message = JSON.stringify(message);
         await this.sendMessage(provider, channel, toPhone, type, templateName, message, payload);
 

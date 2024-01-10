@@ -41,13 +41,6 @@ export class MessagingService {
             type = "template";
 
         }
-        // if (message.Variables.includes("Messages")) {
-        //     provider = "KENYA_MATERNAL";
-        //     channel = "telegram";
-        //     type = 'text';
-        //     const variables = JSON.parse(message.Variables);
-        //     message = variables.Messages;
-        // }
         message = JSON.stringify(message);
         await this.sendMessage(provider, channel, toPhone, type, templateName, message, payload);
 

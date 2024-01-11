@@ -19,6 +19,7 @@ import { FileResourceService } from '../../../../services/general/file.resource.
 import { DocumentService } from '../../../../services/users/patient/document.service';
 import { Loader } from '../../../../startup/loader';
 import { DocumentValidator } from './document.validator';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,8 +38,8 @@ export class DocumentController {
     _personService: any;
 
     constructor() {
-        this._service = Loader.container.resolve(DocumentService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._service = Injector.Container.resolve(DocumentService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
         this._authorizer = Loader.authorizer;
     }
 

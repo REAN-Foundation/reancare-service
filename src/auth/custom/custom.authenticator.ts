@@ -9,7 +9,7 @@ import { Loader } from '../../startup/loader';
 import { IAuthenticator } from '../authenticator.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { ConfigurationManager } from '../../config/configuration.manager';
-//import Terra  from 'terra-api';
+import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////
 
@@ -20,8 +20,8 @@ export class CustomAuthenticator implements IAuthenticator {
     _userService: UserService = null;
 
     constructor() {
-        this._clientService = Loader.container.resolve(ApiClientService);
-        this._userService = Loader.container.resolve(UserService);
+        this._clientService = Injector.Container.resolve(ApiClientService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     public authenticateUser = async (

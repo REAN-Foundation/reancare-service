@@ -6,6 +6,7 @@ import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import { DonationCommunicationValidator } from './donation.communication.validator';
 import { DonationCommunicationService } from '../../../services/clinical/donation/donation.communication.service';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class DonationCommunicationController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(DonationCommunicationService);
+        this._service = Injector.Container.resolve(DonationCommunicationService);
     }
 
     //#endregion

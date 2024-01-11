@@ -23,7 +23,8 @@ import { DailyDomainModel } from "../../domain.types/webhook/daily.domain.model"
 import { IBodyWeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { IBodyHeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { Logger } from "../../common/logger";
-import { IWearableDeviceDetailsRepo } from "../..//database/repository.interfaces/webhook/webhook.wearable.device.details.repo.interface";
+import { IWearableDeviceDetailsRepo } from "../../database/repository.interfaces/webhook/webhook.wearable.device.details.repo.interface";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +48,7 @@ export class TeraWebhookService {
         @inject('IWearableDeviceDetailsRepo') private _webhookWearableDeviceDetailsRepo: IWearableDeviceDetailsRepo
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
+            this._ehrBodyWeightStore = Injector.Container.resolve(BodyWeightStore);
         }
     }
   

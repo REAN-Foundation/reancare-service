@@ -9,6 +9,7 @@ import { AwardsFactsService } from '../../../modules/awards.facts/awards.facts.s
 import { ReminderTypeList, RepeatAfterEveryUnitList } from '../../../domain.types/general/reminder/reminder.domain.model';
 import { TypesValidator } from './types.validator';
 import { UserEngagementCategoryList } from '../../../domain.types/statistics/user.engagement.types';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +23,7 @@ export class TypesController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(TypesService);
+        this._service = Injector.Container.resolve(TypesService);
     }
 
     //#endregion

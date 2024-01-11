@@ -6,6 +6,7 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import { PatientDonorsValidator } from './patient.donors.validator';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class PatientDonorsController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(PatientDonorsService);
+        this._service = Injector.Container.resolve(PatientDonorsService);
     }
 
     //#endregion

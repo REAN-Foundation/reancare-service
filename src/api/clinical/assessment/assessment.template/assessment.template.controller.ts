@@ -13,6 +13,7 @@ import { Loader } from '../../../../startup/loader';
 import { AssessmentTemplateValidator } from './assessment.template.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,8 +31,8 @@ export class AssessmentTemplateController extends BaseController{
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(AssessmentTemplateService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._service = Injector.Container.resolve(AssessmentTemplateService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
     }
 
     //#endregion

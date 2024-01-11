@@ -3,15 +3,14 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.do.you.feel.service';
-import { Loader } from '../../../../startup/loader';
 import { HowDoYouFeelValidator } from './how.do.you.feel.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../../common/logger';
+import { EHRHowDoYouFeelService } from '../../../../modules/ehr.analytics/ehr.services/ehr.how.do.you.feel.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HowDoYouFeelController extends BaseController{
+export class HowDoYouFeelController extends BaseController {
 
     //#region member variables and constructors
 
@@ -19,11 +18,11 @@ export class HowDoYouFeelController extends BaseController{
 
     _validator: HowDoYouFeelValidator = new HowDoYouFeelValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrHowDoYouFeelService: EHRHowDoYouFeelService = Injector.Container.resolve(EHRHowDoYouFeelService);
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(HowDoYouFeelService);  
+        this._service = Injector.Container.resolve(HowDoYouFeelService);  
     }
 
     //#endregion
@@ -40,15 +39,7 @@ export class HowDoYouFeelController extends BaseController{
             if (howDoYouFeel == null) {
                 throw new ApiError(400, 'Cannot create record for how do you feel!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(howDoYouFeel.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, howDoYouFeel.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${howDoYouFeel.PatientUserId}`);
-            }
+            await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(howDoYouFeel);
 
             ResponseHandler.success(request, response, 'How do you feel record created successfully!', 201, {
                 HowDoYouFeel : howDoYouFeel,
@@ -114,15 +105,8 @@ export class HowDoYouFeelController extends BaseController{
                 throw new ApiError(400, 'Unable to update how do you feel record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, updated.id, null, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(updated);
+            
             ResponseHandler.success(request, response, 'How do you feel record updated successfully!', 200, {
                 HowDoYouFeel : updated,
             });

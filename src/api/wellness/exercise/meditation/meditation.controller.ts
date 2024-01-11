@@ -3,15 +3,14 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { MeditationService } from '../../../../services/wellness/exercise/meditation.service';
-import { Loader } from '../../../../startup/loader';
 import { MeditationValidator } from './meditation.validator';
 import { BaseController } from '../../../base.controller';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../../common/logger';
+import { Injector } from '../../../../startup/injector';
+import { EHRMentalWellBeingService } from '../../../../modules/ehr.analytics/ehr.services/ehr.mental.wellbeing.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,11 +22,11 @@ export class MeditationController extends BaseController{
 
     _validator: MeditationValidator = new MeditationValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrMentalWellBeingService: EHRMentalWellBeingService = Injector.Container.resolve(EHRMentalWellBeingService);
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(MeditationService); 
+        this._service = Injector.Container.resolve(MeditationService); 
     }
 
     //#endregion
@@ -45,14 +44,7 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Cannot create record for meditation!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(meditation.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, meditation.id, null, meditation, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${meditation.PatientUserId}`);
-            }
+            await this._ehrMentalWellBeingService.addEHRMeditationForAppNames(meditation);
 
             if (meditation.DurationInMins) {
                 var timestamp = meditation.EndTime ?? meditation.StartTime;
@@ -143,14 +135,7 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Unable to update meditation record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, updated, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrMentalWellBeingService.addEHRMeditationForAppNames(updated);
 
             ResponseHandler.success(request, response, 'Meditation record updated successfully!', 200, {
                 Meditation : updated,

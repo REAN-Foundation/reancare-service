@@ -9,7 +9,6 @@ import { AssessmentService } from '../../../../services/clinical/assessment/asse
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { FormsService } from '../../../../services/clinical/assessment/forms.service';
 import { ThirdpartyApiService } from '../../../../services/general/thirdparty.api.service';
-import { Loader } from '../../../../startup/loader';
 import { FormsValidator } from './forms.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
 import { BaseController } from '../../../base.controller';
@@ -19,24 +18,25 @@ import { PatientDomainModel } from '../../../../domain.types/users/patient/patie
 import { UserService } from '../../../../services/users/user/user.service';
 import { PersonService } from '../../../../services/person/person.service';
 import { UserHelper } from '../../../users/user.helper';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FormsController extends BaseController{
+export class FormsController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: FormsService = null;
+    _service = Injector.Container.resolve(FormsService);
 
-    _assessmentTemplateService: AssessmentTemplateService = null;
+    _assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
-    _assessmentService: AssessmentService = null;
+    _assessmentService = Injector.Container.resolve(AssessmentService);
 
-    _thirdpartyApiService: ThirdpartyApiService = null;
+    _thirdpartyApiService = Injector.Container.resolve(ThirdpartyApiService);
 
-    _userService: UserService = null;
+    _userService = Injector.Container.resolve(UserService);
 
-    _personService: PersonService = null;
+    _personService = Injector.Container.resolve(PersonService);
 
     _validator: FormsValidator = new FormsValidator();
 
@@ -46,12 +46,6 @@ export class FormsController extends BaseController{
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(FormsService);
-        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
-        this._assessmentService = Loader.container.resolve(AssessmentService);
-        this._thirdpartyApiService = Loader.container.resolve(ThirdpartyApiService);
-        this._userService = Loader.container.resolve(UserService);
-        this._personService = Loader.container.resolve(PersonService);
     }
 
     //#endregion

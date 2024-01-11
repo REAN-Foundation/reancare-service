@@ -1,5 +1,4 @@
 import express from 'express';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
@@ -14,11 +13,13 @@ import { MedicationConsumptionValidator } from './medication.consumption.validat
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { TimeHelper } from '../../../../common/time.helper';
-import { Logger } from '../../../../common/logger';
+import { Injector } from '../../../../startup/injector';
+import { BaseController } from '../../../../api/base.controller';
+import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicationConsumptionController {
+export class MedicationConsumptionController extends BaseController {
 
     //#region member variables and constructors
 
@@ -32,12 +33,13 @@ export class MedicationConsumptionController {
 
     _authorizer: Authorizer = null;
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrMedicationService: EHRMedicationService = Injector.Container.resolve(EHRMedicationService);
 
     constructor() {
-        this._service = Loader.container.resolve(MedicationConsumptionService);
-        this._medicationService = Loader.container.resolve(MedicationService);
-        this._drugService = Loader.container.resolve(DrugService);
+        super();
+        this._service = Injector.Container.resolve(MedicationConsumptionService);
+        this._medicationService = Injector.Container.resolve(MedicationService);
+        this._drugService = Injector.Container.resolve(DrugService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -61,14 +63,7 @@ export class MedicationConsumptionController {
 
             // get user details to add records in ehr database
             for (var dto of dtos) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) { 
-                        this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                    }
-                } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-                }
+                await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
             }
             const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
@@ -112,14 +107,7 @@ export class MedicationConsumptionController {
             }
 
             for (var dto of dtos) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) { 
-                        this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                    }
-                } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-                }
+                await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
             }
 
             const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
@@ -160,15 +148,8 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-            }
+            await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
+
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
@@ -206,15 +187,7 @@ export class MedicationConsumptionController {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-            }
+            await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
 
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);

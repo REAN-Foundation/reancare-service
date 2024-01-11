@@ -4,13 +4,14 @@ import { ResponseHandler } from '../../../common/response.handler';
 import { DailyAssessmentService } from '../../../services/clinical/daily.assessment/daily.assessment.service';
 import { Loader } from '../../../startup/loader';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
-import { Injector } from '../../../../startup/injector';
-import { PatientService } from '../../../../services/users/patient/patient.service';
-import { EHRHowDoYouFeelService } from '../../../../modules/ehr.analytics/ehr.services/ehr.how.do.you.feel.service';
+import { Injector } from '../../../startup/injector';
+import { PatientService } from '../../../services/users/patient/patient.service';
+import { EHRHowDoYouFeelService } from '../../../modules/ehr.analytics/ehr.services/ehr.how.do.you.feel.service';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DailyAssessmentController extends BaseController{
+export class DailyAssessmentController extends BaseController {
 
     //#region member variables and constructors
 
@@ -21,6 +22,13 @@ export class DailyAssessmentController extends BaseController{
     _ehrHowDoYouFeelService: EHRHowDoYouFeelService = Injector.Container.resolve(EHRHowDoYouFeelService);
 
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
+
+    constructor() {
+        super();
+        this._service = Injector.Container.resolve(DailyAssessmentService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._ehrHowDoYouFeelService = Injector.Container.resolve(EHRHowDoYouFeelService);
+    }
 
     //#endregion
 

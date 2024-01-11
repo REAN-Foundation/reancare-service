@@ -8,10 +8,12 @@ import { PatientService } from '../../../services/users/patient/patient.service'
 import { RoleService } from '../../../services/role/role.service';
 import { Loader } from '../../../startup/loader';
 import { EmergencyEventValidator } from './emergency.event.validator';
+import { BaseController } from '../../../api/base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EmergencyEventController {
+export class EmergencyEventController extends BaseController {
 
     //#region member variables and constructors
 
@@ -26,10 +28,11 @@ export class EmergencyEventController {
     _authorizer: Authorizer = null;
 
     constructor() {
-        this._service = Loader.container.resolve(EmergencyEventService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
+        super();
+        this._service = Injector.Container.resolve(EmergencyEventService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._organizationService = Injector.Container.resolve(OrganizationService);
         this._authorizer = Loader.authorizer;
     }
 

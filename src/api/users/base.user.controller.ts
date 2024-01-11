@@ -9,6 +9,7 @@ import { UserService } from '../../services/users/user/user.service';
 import { Loader } from '../../startup/loader';
 import { AddressValidator } from '../general/address/address.validator';
 import { BaseController } from '../base.controller';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,10 +27,10 @@ export class BaseUserController extends BaseController {
 
     constructor() {
         super();
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._addressService = Loader.container.resolve(AddressService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._addressService = Injector.Container.resolve(AddressService);
         this._authorizer = Loader.authorizer;
     }
 

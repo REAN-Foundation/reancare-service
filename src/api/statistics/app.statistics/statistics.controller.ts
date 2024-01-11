@@ -1,11 +1,10 @@
-import express, { application } from 'express';
+import express from 'express';
 import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import { StatisticsService } from '../../../services/statistics/statistics.service';
 import { StatistcsValidator } from './statistics.validator';
 import { ApiError } from '../../../common/api.error';
-import * as path from 'path';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +17,7 @@ export class StatisticsController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(StatisticsService);
+        this._service = Injector.Container.resolve(StatisticsService);
     }
 
     //#endregion

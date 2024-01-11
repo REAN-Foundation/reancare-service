@@ -6,6 +6,7 @@ import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
 import { ApiClientValidator } from './api.client.validator';
 import { ApiError } from '../../common/api.error';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +19,7 @@ export class ApiClientController {
     _authorizer: Authorizer = null;
 
     constructor() {
-        this._service = Loader.container.resolve(ApiClientService);
+        this._service = Injector.Container.resolve(ApiClientService);
         this._authorizer = Loader.authorizer;
     }
 

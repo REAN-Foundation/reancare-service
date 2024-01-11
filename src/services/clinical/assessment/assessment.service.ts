@@ -1,5 +1,3 @@
-import { Logger } from '../../../common/logger';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../../common/api.error';
 import { IAssessmentHelperRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface';
@@ -33,9 +31,9 @@ import {
     BooleanQueryAnswer,
     CAssessmentListNode } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Loader } from '../../../startup/loader';
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { ConditionProcessor } from './condition.processor';
+import { Injector } from '../../../startup/injector';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +47,7 @@ export class AssessmentService {
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
     ) {
-        this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
+        this._conditionProcessor = Injector.Container.resolve(ConditionProcessor);
     }
 
     public create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
@@ -824,7 +822,7 @@ export class AssessmentService {
 
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         if (answerDto.ResponseType === QueryResponseType.Biometrics) {
-            const biometricsHelper = Loader.container.resolve(AssessmentBiometricsHelper);
+            const biometricsHelper = Injector.Container.resolve(AssessmentBiometricsHelper);
             await biometricsHelper.persistBiometrics(assessment.PatientUserId, answerDto);
         }
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);

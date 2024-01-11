@@ -14,7 +14,8 @@ import { Loader } from '../../../startup/loader';
 import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
+import { Injector } from '../../../startup/injector';
+import { EHRUserTaskService } from '../../../modules/ehr.analytics/ehr.services/ehr.user.task.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,15 +39,15 @@ export class UserTaskController {
 
     _validator: UserTaskValidator = new UserTaskValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrUserTaskService: EHRUserTaskService = Injector.Container.resolve(EHRUserTaskService);
 
     constructor() {
-        this._service = Loader.container.resolve(UserTaskService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
-        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
-        this._careplanService = Loader.container.resolve(CareplanService);
+        this._service = Injector.Container.resolve(UserTaskService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._organizationService = Injector.Container.resolve(OrganizationService);
+        this._medicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
+        this._careplanService = Injector.Container.resolve(CareplanService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -255,17 +256,8 @@ export class UserTaskController {
                 if (action) {
                     updated['Action'] = action;
                 }
-
-                var healthSystemHospitalDetails = await this._service.getHealthSystem(updated.UserId);
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(action.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for (var appName of eligibleAppNames) {
-                        this.addEHRRecord(action, appName, healthSystemHospitalDetails, updated);
-                    }
-                } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${action.PatientUserId}`);
-                }
-
+                var healthSystem = await this._service.getHealthSystem(updated.UserId);
+                await this._ehrUserTaskService.addEHRUserTaskForAppNames(updated, healthSystem);
             }
 
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
@@ -455,33 +447,6 @@ export class UserTaskController {
 
         return dto;
     };
-
-    private addEHRRecord = (action: any, appName?: string, healthSystemHospitalDetails?: any , updated?: UserTaskDto) => {
-        EHRAnalyticsHandler.addCareplanActivityRecord(
-            appName,
-            action.PatientUserId,
-            action.id,
-            action.EnrollmentId,     
-            action.Provider,               
-            action.PlanName,      
-            action.PlanCode,                
-            action.Type,            
-            action.Category,        
-            action.ProviderActionId,
-            action.Title,           
-            action.Description,     
-            action.Url,
-            'English',       
-            action.ScheduledAt,
-            action.CompletedAt,     
-            action.Sequence,        
-            action.Frequency,       
-            action.Status,
-            healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
-            healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
-            updated.CreatedAt ? new Date(updated.CreatedAt) : null           
-        );
-};
 
     //#endregion
 

@@ -7,6 +7,7 @@ import Terra from 'terra-api';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { WearableDeviceDetailsService } from '../../../../services/webhook/wearable.device.details.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,9 +20,9 @@ export class TerraSupportService {
     _wearableDeviceDetailsService: WearableDeviceDetailsService = null;
 
     constructor() {
-        this._service = Loader.container.resolve(TeraWebhookService);
-        this._activityService = Loader.container.resolve(TeraWebhookActivityService);
-        this._wearableDeviceDetailsService = Loader.container.resolve(WearableDeviceDetailsService);
+        this._service = Injector.Container.resolve(TeraWebhookService);
+        this._activityService = Injector.Container.resolve(TeraWebhookActivityService);
+        this._wearableDeviceDetailsService = Injector.Container.resolve(WearableDeviceDetailsService);
     }
 
     //#endregion

@@ -9,6 +9,7 @@ import { RoleService } from '../../../services/role/role.service';
 import { Loader } from '../../../startup/loader';
 import { ReminderValidator } from './reminder.validator';
 import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,10 +29,10 @@ export class ReminderController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(ReminderService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
+        this._service = Injector.Container.resolve(ReminderService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._organizationService = Injector.Container.resolve(OrganizationService);
     }
 
     //#endregion

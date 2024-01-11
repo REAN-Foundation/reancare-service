@@ -3,11 +3,11 @@ import { EHRAnalyticsRepo } from "./ehr.analytics.repo";
 import {
     EHRDynamicRecordDomainModel,
     EHRStaticRecordDomainModel
-} from './ehr.analytics.domain.model';
+} from './ehr.domain.models/ehr.analytics.domain.model';
 import * as asyncLib from 'async';
 import { Logger } from "../../common/logger";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
-import { EHRRecordTypes } from "./ehr.record.types";
+import { EHRRecordTypes } from "./ehr.domain.models/ehr.record.types";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { EHRMedicationDomainModel } from "./ehr.domain.models/ehr.medication.domain.model";
 import { EHRCareplanActivityDomainModel } from "./ehr.domain.models/ehr.careplan.activity.domain.model";
@@ -31,21 +31,21 @@ export class EHRAnalyticsHandler {
         })();
     }, EHRAnalyticsHandler._numAsyncTasks);
 
-    static _q1 = asyncLib.queue((model: EHRMedicationDomainModel, onCompleted) => {
+    static _queueMeds = asyncLib.queue((model: EHRMedicationDomainModel, onCompleted) => {
         (async () => {
             await EHRAnalyticsHandler._ehrAnalyticsRepo.createMedication(model);
             onCompleted(model);
         })();
     }, EHRAnalyticsHandler._numAsyncTasks);
 
-    static _q2 = asyncLib.queue((model: EHRCareplanActivityDomainModel, onCompleted) => {
+    static _queueCareplans = asyncLib.queue((model: EHRCareplanActivityDomainModel, onCompleted) => {
         (async () => {
             await EHRAnalyticsHandler._ehrAnalyticsRepo.createCareplanActivity(model);
             onCompleted(model);
         })();
     }, EHRAnalyticsHandler._numAsyncTasks);
 
-    static _q3 = asyncLib.queue((model: EHRCareplanActivityDomainModel, onCompleted) => {
+    static _queueAssessments = asyncLib.queue((model: EHRAssessmentDomainModel, onCompleted) => {
         (async () => {
             await EHRAnalyticsHandler._ehrAnalyticsRepo.createAssessment(model);
             onCompleted(model);
@@ -56,7 +56,7 @@ export class EHRAnalyticsHandler {
         if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
             return;
         }
-        EHRAnalyticsHandler._q.push(model, (model, error) => {
+        EHRAnalyticsHandler._queueGeneral.push(model, (model, error) => {
             if (error) {
                 Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error.stack, null, 2)}`);
@@ -87,7 +87,7 @@ export class EHRAnalyticsHandler {
             return;
         }
 
-        EHRAnalyticsHandler._q2.push(model, (model, error) => {
+        EHRAnalyticsHandler._queueCareplans.push(model, (model, error) => {
             if (error) {
                 Logger.instance().log(`Error recording EHR careplan activity record: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error recording EHR careplan activity record: ${JSON.stringify(error.stack, null, 2)}`);
@@ -112,7 +112,6 @@ export class EHRAnalyticsHandler {
             }
         });
     };
-
 
     static addOrUpdatePatient = async (
         patientUserId: uuid,

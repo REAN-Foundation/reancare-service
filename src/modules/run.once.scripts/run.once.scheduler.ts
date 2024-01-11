@@ -4,7 +4,6 @@ import { Logger } from '../../common/logger';
 import { CareplanService } from '../../services/clinical/careplan.service';
 import { PatientService } from '../../services/users/patient/patient.service';
 import { Injector } from '../../startup/injector';
-import { EHRAnalyticsHandler } from '../ehr.analytics/ehr.analytics.handler';
 import { EHRCareplanActivityService } from '../ehr.analytics/ehr.services/ehr.careplan.activity.service';
 import { EHRAssessmentService } from '../../modules/ehr.analytics/ehr.services/ehr.assessment.service';
 import { EHRVitalService } from '../../modules/ehr.analytics/ehr.services/ehr.vital.service';
@@ -106,8 +105,6 @@ export class RunOnceScheduler {
     _ehrHowDoYouFeelService: EHRHowDoYouFeelService = Injector.Container.resolve(EHRHowDoYouFeelService);
 
     _ehrPatientService: EHRPatientService = Injector.Container.resolve(EHRPatientService);
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     //#endregion
 

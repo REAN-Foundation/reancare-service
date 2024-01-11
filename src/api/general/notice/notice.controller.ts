@@ -3,10 +3,10 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { NoticeService } from '../../../services/general/notice.service';
-import { Loader } from '../../../startup/loader';
 import { NoticeValidator } from './notice.validator';
 import { BaseController } from '../../base.controller';
 import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ export class NoticeController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(NoticeService);
+        this._service = Injector.Container.resolve(NoticeService);
     }
 
     //#endregion

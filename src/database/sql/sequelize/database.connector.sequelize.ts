@@ -7,7 +7,7 @@ import { Logger } from '../../../common/logger';
 import { IPrimaryDatabaseConnector } from '../../database.connector.interface';
 import { DatabaseSchemaType, databaseConfig } from '../../../common/database.utils/database.config';
 import { DatabaseClient } from '../../../common/database.utils/dialect.clients/database.client';
-import { Loader } from '../../../startup/loader';
+import { Injector } from '../../../startup/injector';
 
 //////////////////////////////////////////////////////////////
 
@@ -41,7 +41,7 @@ export class DatabaseConnector_Sequelize implements IPrimaryDatabaseConnector {
 
             Logger.instance().log(`Connecting to database '${config.DatabaseName}' ...`);
 
-            const databaseClient = Loader.container.resolve(DatabaseClient);
+            const databaseClient = Injector.Container.resolve(DatabaseClient);
             await databaseClient.createDb(DatabaseSchemaType.Primary);
 
             await this._sequelize.authenticate();

@@ -8,7 +8,6 @@ import { UserDomainModel } from '../../../../domain.types/users/user/user.domain
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { CohortService } from '../../../../services/community/cohort.service';
-import { Loader } from '../../../../startup/loader';
 import { PatientValidator } from './patient.validator';
 import { BaseUserController } from '../../base.user.controller';
 import { UserHelper } from '../../user.helper';
@@ -16,11 +15,11 @@ import { UserDeviceDetailsService } from '../../../../services/users/user/user.d
 import { PersonService } from '../../../../services/person/person.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { RoleDto } from '../../../../domain.types/role/role.dto';
 import { Roles } from '../../../../domain.types/role/role.types';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -283,10 +282,6 @@ export class PatientController extends BaseUserController {
     //#endregion
 
     //#region Privates
-
-    private addPatientToEHRRecords = (patientUserId: uuid, appName?: string) => {
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {}, appName,);
-    };
 
     private addPatientToCohort = async (patientUserId: uuid, cohortId: uuid) => {
         try {

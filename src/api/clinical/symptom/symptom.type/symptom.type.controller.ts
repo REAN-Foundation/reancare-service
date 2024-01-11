@@ -8,6 +8,7 @@ import { ApiError } from '../../../../common/api.error';
 import { SymptomTypeValidator } from './symptom.type.validator';
 import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +24,7 @@ export class SymptomTypeController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(SymptomTypeService);
+        this._service = Injector.Container.resolve(SymptomTypeService);
         this._authorizer = Loader.authorizer;
     }
 

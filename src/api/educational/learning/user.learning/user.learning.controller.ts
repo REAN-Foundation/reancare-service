@@ -6,6 +6,7 @@ import { UserLearningService } from '../../../../services/educational/learning/u
 import { Loader } from '../../../../startup/loader';
 import { UserLearningValidator } from './user.learning.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class UserLearningController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(UserLearningService);
+        this._service = Injector.Container.resolve(UserLearningService);
     }
 
     //#endregion

@@ -5,6 +5,7 @@ import { CareplanService } from "../../clinical/careplan.service";
 import { CustomTaskService } from "./custom.task.service";
 import { IUserActionService } from "./user.action.service.interface";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,15 +57,15 @@ export class UserActionResolver {
 
     getActionService = (actionType: string): IUserActionService => {
         if (actionType === UserActionType.Medication) {
-            return Loader.container.resolve(MedicationConsumptionService);
+            return Injector.Container.resolve(MedicationConsumptionService);
         }
         else if (actionType === UserActionType.Appointment) {
-            //return Loader.container.resolve(AppointmentService);
+            //return Injector.Container.resolve(AppointmentService);
             return null;
         } else if (actionType === UserActionType.Careplan) {
-            return Loader.container.resolve(CareplanService);
+            return Injector.Container.resolve(CareplanService);
         } else if (actionType === UserActionType.Custom) {
-            return Loader.container.resolve(CustomTaskService);
+            return Injector.Container.resolve(CustomTaskService);
         }
 
         return null;

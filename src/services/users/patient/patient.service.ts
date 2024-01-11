@@ -15,9 +15,7 @@ import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
 import { Loader } from '../../../startup/loader';
-import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
+import { Injector } from '../../../startup/injector';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +34,7 @@ export class PatientService {
         @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrPatientStore = Loader.container.resolve(PatientStore);
+            this._ehrPatientStore = Injector.Container.resolve(PatientStore);
         }
     }
 
@@ -200,88 +198,6 @@ export class PatientService {
         dto.LastName = user.Person.LastName;
         dto.ImageResourceId = user.Person.ImageResourceId;
         return dto;
-    };
-
-    public addEHRRecord = (patientUserId: uuid,
-        model: PersonDomainModel, updatedModel: any, location: string, updatedHealthProfile: any, appName?: string) => {
-        var details = {};
-        if (model.BirthDate) {
-            details['BirthDate'] = model.BirthDate;
-        }
-        if (updatedModel.User.Person.Age) {
-            details['Age'] = updatedModel.User.Person.Age;
-        }
-        /*if (model.id) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                PersonId : model.id
-            });
-        }*/
-        if (model.Gender) {
-            details['Gender'] = model.Gender;
-        }
-        if (model.SelfIdentifiedGender) {
-            details['SelfIdentifiedGender'] = model.SelfIdentifiedGender;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.MaritalStatus) {
-            details['MaritalStatus'] = updatedHealthProfile.MaritalStatus;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.Ethnicity) {
-            details['Ethnicity'] = updatedHealthProfile.Ethnicity;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.Race) {
-            details['Race'] = updatedHealthProfile.Race;
-        }
-        if (updatedModel.HealthSystem) {
-            details['HealthSystem'] = updatedModel.HealthSystem;
-        }
-        if (updatedModel.AssociatedHospital) {
-            details['AssociatedHospital'] = updatedModel.AssociatedHospital;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.HasHeartAilment != null ) {
-            details['HasHeartAilment'] = updatedHealthProfile.HasHeartAilment;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.HasHighBloodPressure != null ) {
-            details['HasHighBloodPressure'] = updatedHealthProfile.HasHighBloodPressure;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.HasHighCholesterol != null ) {
-            details['HasHighCholesterol'] = updatedHealthProfile.HasHighCholesterol;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.IsDiabetic != null ) {
-            details['IsDiabetic'] = updatedHealthProfile.IsDiabetic;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.Occupation) {
-            details['Occupation'] = updatedHealthProfile.Occupation;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.MajorAilment) {
-            details['MajorAilment'] = updatedHealthProfile.MajorAilment;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.IsSmoker) {
-            details['IsSmoker'] = updatedHealthProfile.IsSmoker;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.BloodGroup) {
-            details['BloodGroup'] = updatedHealthProfile.BloodGroup;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.Nationality) {
-            details['Nationality'] = updatedHealthProfile.Nationality;
-        }
-        if (location) {
-            details['Location'] = location;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.OtherConditions) {
-            details['OtherConditions'] = updatedHealthProfile.OtherConditions;
-        }
-        if (updatedModel.DoctorPersonId_1) {
-            details['DoctorPersonId_1'] = updatedModel.DoctorPersonId_1;
-        }
-        if (updatedModel.DoctorPersonId_2) {
-            details['DoctorPersonId_2'] = updatedModel.DoctorPersonId_2;
-        }
-        details['RecordDate'] = new Date(updatedModel.CreatedAt);
-        if (updatedHealthProfile && updatedHealthProfile.CreatedAt) {
-            details['RecordDate'] = new Date(updatedHealthProfile.CreatedAt);
-        }
-        
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
     };
 
     //#endregion

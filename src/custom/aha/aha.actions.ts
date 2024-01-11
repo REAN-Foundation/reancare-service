@@ -19,7 +19,7 @@ import { FileResourceService } from '../../services/general/file.resource.servic
 import { PersonService } from '../../services/person/person.service';
 import { UserService } from '../../services/users/user/user.service';
 import { TimeHelper } from '../../common/time.helper';
-import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,15 +46,15 @@ export class AHAActions {
     _userService: UserService = null;
 
     constructor() {
-        this._patientService = Loader.container.resolve(PatientService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._assessmentService = Loader.container.resolve(AssessmentService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
-        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
-        this._careplanService = Loader.container.resolve(CareplanService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._userService = Loader.container.resolve(UserService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._assessmentService = Injector.Container.resolve(AssessmentService);
+        this._userTaskService = Injector.Container.resolve(UserTaskService);
+        this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
+        this._careplanService = Injector.Container.resolve(CareplanService);
+        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
+        this._userService = Injector.Container.resolve(UserService);
 
     }
 

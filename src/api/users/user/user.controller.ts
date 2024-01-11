@@ -8,6 +8,7 @@ import { UserService } from '../../../services/users/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,9 +23,9 @@ export class UserController {
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
     constructor() {
-        this._service = Loader.container.resolve(UserService);
+        this._service = Injector.Container.resolve(UserService);
         this._authorizer = Loader.authorizer;
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion

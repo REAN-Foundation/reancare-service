@@ -10,7 +10,6 @@ import { ParticipantDomainModel } from "../../../../domain.types/clinical/carepl
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
 import { CAssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
-import { Loader } from '../../../../startup/loader';
 import { UserTaskService } from '../../../../services/users/user/user.task.service';
 import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
 import { TimeHelper } from "../../../../common/time.helper";
@@ -20,6 +19,7 @@ import { GoalDto } from "../../../../domain.types/users/patient/goal/goal.dto";
 import { HealthPriorityDto } from "../../../../domain.types/users/patient/health.priority/health.priority.dto";
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 import { CareplanService } from "../../../../services/clinical/careplan.service";
+import { Injector } from "../../../../startup/injector";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,11 +37,11 @@ export class ReanCareplanService implements ICareplanService {
     _careplanService: CareplanService = null;
 
     constructor() {
-        this._assessmentService = Loader.container.resolve(AssessmentService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
-        this._assessmentTemplateRepo = Loader.container.resolve(AssessmentTemplateRepo);
-        this._careplanRepo = Loader.container.resolve(CareplanRepo);
-        this._careplanService = Loader.container.resolve(CareplanService);
+        this._assessmentService = Injector.Container.resolve(AssessmentService);
+        this._userTaskService = Injector.Container.resolve(UserTaskService);
+        this._assessmentTemplateRepo = Injector.Container.resolve(AssessmentTemplateRepo);
+        this._careplanRepo = Injector.Container.resolve(CareplanRepo);
+        this._careplanService = Injector.Container.resolve(CareplanService);
     }
 
     public providerName(): string {

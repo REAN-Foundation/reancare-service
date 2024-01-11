@@ -3,11 +3,11 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { StandService } from '../../../../services/wellness/daily.records/stand.service';
-import { Loader } from '../../../../startup/loader';
 import { StandValidator } from './stand.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { Logger } from '../../../../common/logger';
+import { Injector } from '../../../../startup/injector';
+import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,11 +19,11 @@ export class StandController extends BaseController {
 
     _validator: StandValidator = new StandValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrPhysicalActivityService: EHRPhysicalActivityService = Injector.Container.resolve(EHRPhysicalActivityService);
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(StandService);
+        this._service = Injector.Container.resolve(StandService);
     }
 
     //#endregion
@@ -41,15 +41,7 @@ export class StandController extends BaseController {
                 throw new ApiError(400, 'Cannot create stand record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stand.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, stand.id, null, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${stand.PatientUserId}`);
-            }
+            await this._ehrPhysicalActivityService.addEHRRecordStandForAppNames(stand);
 
             ResponseHandler.success(request, response, 'Stand record created successfully!', 201, {
                 Stand : stand,
@@ -116,15 +108,7 @@ export class StandController extends BaseController {
                 throw new ApiError(400, 'Unable to update stand record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrPhysicalActivityService.addEHRRecordStandForAppNames(updated);
 
             ResponseHandler.success(request, response, 'Stand record updated successfully!', 200, {
                 Stand : updated,

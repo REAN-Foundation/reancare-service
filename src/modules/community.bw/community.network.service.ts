@@ -24,6 +24,7 @@ import { VolunteerService } from "../../services/users/volunteer.service";
 import { IDonationRecordRepo } from "../../database/repository.interfaces/clinical/donation/donation.record.repo.interface";
 import { PatientService } from "../../services/users/patient/patient.service";
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,9 +51,11 @@ export class CommunityNetworkService {
         @inject('IPatientDonorsRepo') private _patientDonorsRepo: IPatientDonorsRepo,
         @inject('IDonationRecordRepo') private _donationRecordRepo: IDonationRecordRepo,
         @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
-    ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
-        this._volunteerService = Loader.container.resolve(VolunteerService);
-        this._patientService = Loader.container.resolve(PatientService); }
+    ) { 
+        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
+        this._volunteerService = Injector.Container.resolve(VolunteerService);
+        this._patientService = Injector.Container.resolve(PatientService); 
+    }
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 

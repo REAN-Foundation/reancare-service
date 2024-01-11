@@ -4,9 +4,9 @@ import { DocumentDomainModel } from '../../../../domain.types/users/patient/docu
 import { DocumentSearchFilters } from '../../../../domain.types/users/patient/document/document.search.types';
 import { Roles } from '../../../../domain.types/role/role.types';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
 import { BaseValidator, Where } from '../../../base.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,7 @@ export class DocumentValidator  extends BaseValidator {
 
     constructor() {
         super();
-        this._userService = Loader.container.resolve(UserService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     getDomainModel = async (request: express.Request): Promise<DocumentDomainModel> => {

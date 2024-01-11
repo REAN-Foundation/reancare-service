@@ -8,6 +8,7 @@ import { PhysicalActivityService } from '../../services/wellness/exercise/physic
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +16,7 @@ export const updatePhysicalActivityFact = async (model: AwardsFact) => {
 
     const physicalActivityfactRepository: Repository<ExercisePhysicalActivityFact> =
         AwardsFactsSource.getRepository(ExercisePhysicalActivityFact);
-    const physicalActivityService = Loader.container.resolve(PhysicalActivityService);
+    const physicalActivityService = Injector.Container.resolve(PhysicalActivityService);
 
     const lastRecords = await physicalActivityfactRepository.find({
         where : {

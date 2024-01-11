@@ -7,6 +7,7 @@ import { UserTaskService } from '../../../services/users/user/user.task.service'
 import { CustomTaskValidator } from './custom.task.validator';
 import { Loader } from '../../../startup/loader';
 import { CommonActions } from '../../../custom/common/common.actions';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,8 +26,8 @@ export class CustomTaskController {
     _customActions: CommonActions = new CommonActions();
 
     constructor() {
-        this._service = Loader.container.resolve(CustomTaskService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
+        this._service = Injector.Container.resolve(CustomTaskService);
+        this._userTaskService = Injector.Container.resolve(UserTaskService);
         this._authorizer = Loader.authorizer;
     }
 

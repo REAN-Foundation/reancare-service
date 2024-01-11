@@ -7,6 +7,7 @@ import { Logger } from '../../../common/logger';
 import { CustomActionsHandler } from '../../../custom/custom.actions.handler';
 import { CommonActions } from '../../../custom/common/common.actions';
 import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,9 +22,9 @@ export class TestController {
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
     constructor() {
-        this._userService = Loader.container.resolve(UserService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
-        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+        this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
     }
 
     //#endregion

@@ -9,6 +9,7 @@ import { MeditationService } from '../../services/wellness/exercise/meditation.s
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -92,8 +93,8 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
 
     async function getService(Name) {
         const service = {
-            "Sleep"      : Loader.container.resolve(SleepService),
-            "Meditation" : Loader.container.resolve(MeditationService)
+            "Sleep"      : Injector.Container.resolve(SleepService),
+            "Meditation" : Injector.Container.resolve(MeditationService)
         };
         return service[Name];
     }

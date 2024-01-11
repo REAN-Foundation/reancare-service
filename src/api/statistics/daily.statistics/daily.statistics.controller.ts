@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/handlers/response.handler';
+import { ResponseHandler } from '../../../common/response.handler';
 import { DailyStatisticsService } from '../../../services/statistics/daily.statistics.service';
 import { DailyStatisticsValidator } from './daily.statistics.validator';
 import { Injector } from '../../../startup/injector';

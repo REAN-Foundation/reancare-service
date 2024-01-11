@@ -6,6 +6,7 @@ import { LearningPathService } from '../../../../services/educational/learning/l
 import { Loader } from '../../../../startup/loader';
 import { LearningPathValidator } from './learning.path.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class LearningPathController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(LearningPathService);
+        this._service = Injector.Container.resolve(LearningPathService);
     }
 
     //#endregion

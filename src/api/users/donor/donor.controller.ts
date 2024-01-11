@@ -9,6 +9,7 @@ import { UserDomainModel } from '../../../domain.types/users/user/user.domain.mo
 import { Loader } from '../../../startup/loader';
 import { DonorValidator } from './donor.validator';
 import { BaseUserController } from '../base.user.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +21,7 @@ export class DonorController extends BaseUserController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(DonorService);
+        this._service = Injector.Container.resolve(DonorService);
     }
 
     //#endregion

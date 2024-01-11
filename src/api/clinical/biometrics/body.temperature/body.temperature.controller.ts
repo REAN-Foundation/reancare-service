@@ -3,16 +3,14 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyTemperatureService } from '../../../../services/clinical/biometrics/body.temperature.service';
-import { Loader } from '../../../../startup/loader';
 import { BodyTemperatureValidator } from './body.temperature.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Logger } from '../../../../common/logger';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,14 +22,12 @@ export class BodyTemperatureController extends BaseController {
 
     _validator: BodyTemperatureValidator = new BodyTemperatureValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     _ehrVitalService: EHRVitalService = new EHRVitalService();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(BodyTemperatureService);
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
+        this._service = Injector.Container.resolve(BodyTemperatureService);
+        this._ehrVitalService = Injector.Container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -48,14 +44,8 @@ export class BodyTemperatureController extends BaseController {
             if (bodyTemperature == null) {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyTemperature.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bodyTemperature.id, bodyTemperature.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyTemperature.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBodyTemperatureForAppNames(bodyTemperature);
+
             // Adding record to award service
             if (bodyTemperature.BodyTemperature) {
                 var timestamp = bodyTemperature.RecordDate;
@@ -143,14 +133,8 @@ export class BodyTemperatureController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update body temperature record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBodyTemperatureForAppNames(updated);
+
             // Adding record to award service
             if (updated.BodyTemperature) {
                 var timestamp = updated.RecordDate;

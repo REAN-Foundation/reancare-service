@@ -6,9 +6,9 @@ import { ResponseHandler } from '../../../common/response.handler';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
-import { Loader } from '../../../startup/loader';
 import { BaseUserController } from '../base.user.controller';
 import { VolunteerValidator } from './volunteer.validator';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ export class VolunteerController extends BaseUserController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(VolunteerService);
+        this._service = Injector.Container.resolve(VolunteerService);
     }
 
     //#endregion

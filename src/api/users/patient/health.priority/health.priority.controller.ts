@@ -7,6 +7,7 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { HealthPriorityValidator } from './health.priority.validator';
 import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,8 +22,8 @@ export class HealthPriorityController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(HealthPriorityService);
-        this._userService = Loader.container.resolve(UserService);
+        this._service = Injector.Container.resolve(HealthPriorityService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     //#endregion

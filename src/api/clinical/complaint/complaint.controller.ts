@@ -5,9 +5,9 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ComplaintService } from '../../../services/clinical/complaint.service';
 import { DoctorService } from '../../../services/users/doctor.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
-import { Loader } from '../../../startup/loader';
 import { ComplaintValidator } from './complaint.validator';
 import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,9 +25,9 @@ export class ComplaintController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(ComplaintService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._doctorService = Loader.container.resolve(DoctorService);
+        this._service = Injector.Container.resolve(ComplaintService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._doctorService = Injector.Container.resolve(DoctorService);
     }
 
     //#endregion

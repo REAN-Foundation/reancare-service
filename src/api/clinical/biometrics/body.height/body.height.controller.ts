@@ -1,17 +1,17 @@
 import express from 'express';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyHeightValidator } from './body.height.validator';
-import { Logger } from '../../../../common/logger';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { Injector } from '../../../../startup/injector';
+import { BaseController } from '../../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyHeightController {
+export class BodyHeightController extends BaseController {
 
     //#region member variables and constructors
 
@@ -19,14 +19,13 @@ export class BodyHeightController {
 
     _authorizer: Authorizer = null;
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     _ehrVitalService: EHRVitalService = new EHRVitalService();
 
     constructor() {
-        this._service = Loader.container.resolve(BodyHeightService);
+        super();
+        this._service = Injector.Container.resolve(BodyHeightService);
         this._authorizer = Loader.authorizer;
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
+        this._ehrVitalService = Injector.Container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -44,14 +43,7 @@ export class BodyHeightController {
             if (bodyHeight == null) {
                 throw new ApiError(400, 'Cannot create record for height!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyHeight.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bodyHeight.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyHeight.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBodyHeightForAppNames(bodyHeight);
 
             ResponseHandler.success(request, response, 'Height record created successfully!', 201, {
                 BodyHeight : bodyHeight
@@ -123,14 +115,7 @@ export class BodyHeightController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update height record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBodyHeightForAppNames(updated);
 
             ResponseHandler.success(request, response, 'Height record updated successfully!', 200, {
                 BodyHeight : updated

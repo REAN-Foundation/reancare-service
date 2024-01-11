@@ -18,6 +18,7 @@ import AdmZip from 'adm-zip';
 import { Helper } from '../../../common/helper';
 import { FileResourceUploadDomainModel } from '../../../domain.types/general/file.resource/file.resource.domain.model';
 import { Logger } from '../../../common/logger';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,9 +39,9 @@ export class FileResourceController {
     _validator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
-        this._service = Loader.container.resolve(FileResourceService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
+        this._service = Injector.Container.resolve(FileResourceService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
         this._authorizer = Loader.authorizer;
         this._authenticator = Loader.authenticator;
     }

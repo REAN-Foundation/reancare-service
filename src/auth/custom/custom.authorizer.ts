@@ -3,9 +3,7 @@ import { Logger } from '../../common/logger';
 import { IAuthorizer } from '../authorizer.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { RolePrivilegeService } from '../../services/role/role.privilege.service';
-import { Loader } from '../../startup/loader';
-
-//const execSync = require('child_process').execSync;
+import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////
 
@@ -14,7 +12,7 @@ export class CustomAuthorizer implements IAuthorizer {
     _rolePrivilegeService: RolePrivilegeService = null;
 
     constructor() {
-        this._rolePrivilegeService = Loader.container.resolve(RolePrivilegeService);
+        this._rolePrivilegeService = Injector.Container.resolve(RolePrivilegeService);
     }
 
     public authorize = async (request: express.Request): Promise<boolean> => {

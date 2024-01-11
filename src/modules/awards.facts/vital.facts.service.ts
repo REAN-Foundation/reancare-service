@@ -13,6 +13,7 @@ import { PulseService } from '../../services/clinical/biometrics/pulse.service';
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -101,12 +102,12 @@ async function addOrUpdateVitalRecord(model: AwardsFact) {
 
 async function getVitalService(vitalName) {
     const service = {
-        "BloodGlucose"          : Loader.container.resolve(BloodGlucoseService),
-        "BodyWeight"            : Loader.container.resolve(BodyWeightService),
-        "BodyTemperature"       : Loader.container.resolve(BodyTemperatureService),
-        "BloodPressure"         : Loader.container.resolve(BloodPressureService),
-        "BloodOxygenSaturation" : Loader.container.resolve(BloodOxygenSaturationService),
-        "Pulse"                 : Loader.container.resolve(PulseService)
+        "BloodGlucose"          : Injector.Container.resolve(BloodGlucoseService),
+        "BodyWeight"            : Injector.Container.resolve(BodyWeightService),
+        "BodyTemperature"       : Injector.Container.resolve(BodyTemperatureService),
+        "BloodPressure"         : Injector.Container.resolve(BloodPressureService),
+        "BloodOxygenSaturation" : Injector.Container.resolve(BloodOxygenSaturationService),
+        "Pulse"                 : Injector.Container.resolve(PulseService)
     };
     return service[vitalName];
 }

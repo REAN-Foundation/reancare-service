@@ -1,4 +1,4 @@
-import { EHRDynamicRecordDomainModel, EHRStaticRecordDomainModel } from './ehr.analytics.domain.model';
+import { EHRDynamicRecordDomainModel, EHRStaticRecordDomainModel } from './ehr.domain.models/ehr.analytics.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,23 +42,23 @@ export class EHRAnalyticsRepo {
         appName?: string,
     ) => {
 
-        var model = await StaticEHRData.findOne({
+        var staticData: StaticEHRData = await StaticEHRData.findOne({
             where : {
                 PatientUserId : patientUserId,
                 AppName       : appName
             }
         });
 
-        if (!model) {
-            var entity = this.createModel(model, details, appName);
+        if (!staticData) {
+            var entity = this.createEntity(details, appName);
             entity.PatientUserId = patientUserId;
-            model = await StaticEHRData.create(entity);
+            staticData = await StaticEHRData.create(entity);
         } else {
-            model = this.createModel(model, details, appName);
-            model = await model.save();
+            staticData = this.updateEntity(staticData, details, appName);
+            staticData = await staticData.save();
         }
 
-        return model;
+        return staticData;
     };
 
     public create = async (model: EHRDynamicRecordDomainModel): Promise<boolean> => {
@@ -292,37 +292,24 @@ export class EHRAnalyticsRepo {
         }
     };
 
-    private createModel = (model, details, appName) => {
+    private createEntity = (details: EHRStaticRecordDomainModel, appName?: string) => {
 
-        if (!model) {
-            model = {};
-        }
+        var model: any = {};
+
         if (details.DoctorPersonId_1) {
             model.DoctorPersonId_1 = details.DoctorPersonId_1;
         }
         if (details.DoctorPersonId_2) {
             model.DoctorPersonId_2 = details.DoctorPersonId_2;
         }
-        /*else if (model.DoctorPersonId_2 === null) {
-            model.DoctorPersonId_2 = details.DoctorPersonId;
-        }
-        else if (details.OtherDoctorPersonId !== null) {
-            if (model.DoctorPersonId_1 === details.OtherDoctorPersonId) {
-                model.DoctorPersonId_1 = details.DoctorPersonId;
-            }
-            if (model.DoctorPersonId_2 === details.OtherDoctorPersonId) {
-                model.DoctorPersonId_2 = details.DoctorPersonId;
-            }
-        }*/
+
         if (details.ProviderCode) {
             model.ProviderCode = details.ProviderCode;
         }
         if (appName) {
             model.AppName = appName;
         }
-        /*if (details.PersonId) {
-            model.PersonId = details.PersonId;
-        }*/
+
         if (details.MajorAilment) {
             model.MajorAilment = details.MajorAilment;
         }

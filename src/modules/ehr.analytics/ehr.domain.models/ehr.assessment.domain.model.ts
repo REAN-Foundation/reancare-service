@@ -1,5 +1,5 @@
-import { UserTaskCategory } from "../../domain.types/users/user.task/user.task.types";
-import { uuid } from "../../domain.types/miscellaneous/system.types";
+import { UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 export interface EHRAssessmentDomainModel {
     AppName?       : string;

@@ -3,9 +3,9 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
-import { Loader } from '../../../../startup/loader';
 import { DrugValidator } from './drug.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class DrugController extends BaseController{
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(DrugService);
+        this._service = Injector.Container.resolve(DrugService);
     }
 
     //#endregion

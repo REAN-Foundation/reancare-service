@@ -11,6 +11,7 @@ import { PhysicalActivityDomainModel } from "../../domain.types/wellness/exercis
 import { ISleepRepo } from "../../database/repository.interfaces/wellness/daily.records/sleep.repo.interface";
 import { SleepDomainModel } from "../../domain.types/webhook/sleep.domain.model";
 import { ApiError } from "../../common/api.error";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,13 +21,11 @@ export class TeraWebhookActivityService {
     _ehrBodyWeightStore: BodyWeightStore = null;
 
     constructor(
-        @inject('IStepCountRepo') private _stepCountRepo: IStepCountRepo,
-        @inject('ICalorieBalanceRepo') private _calorieBalanceRepo: ICalorieBalanceRepo,
         @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo,
         @inject('ISleepRepo') private _sleepRepo: ISleepRepo
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
+            this._ehrBodyWeightStore = Injector.Container.resolve(BodyWeightStore);
         }
     }
 

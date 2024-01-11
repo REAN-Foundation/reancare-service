@@ -6,6 +6,7 @@ import { CourseService } from '../../../../services/educational/learning/course.
 import { Loader } from '../../../../startup/loader';
 import { CourseValidator } from './course.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class CourseController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(CourseService);
+        this._service = Injector.Container.resolve(CourseService);
 
     }
 

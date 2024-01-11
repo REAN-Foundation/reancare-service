@@ -1,4 +1,4 @@
-import { Gender, uuid } from "../../domain.types/miscellaneous/system.types";
+import { Gender, uuid } from "../../../domain.types/miscellaneous/system.types";
 import { DataTypes, EHRRecordTypes } from "./ehr.record.types";
 
 export interface EHRMedicationDomainModel {

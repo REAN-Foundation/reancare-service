@@ -9,6 +9,7 @@ import { Loader } from '../../../startup/loader';
 import { CohortValidator } from './cohort.validator';
 import { BaseController } from '../../base.controller';
 import { PersonService } from '../../../services/person/person.service';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,10 +29,10 @@ export class CohortController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(CohortService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
+        this._service = Injector.Container.resolve(CohortService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._roleService = Injector.Container.resolve(RoleService);
     }
 
     //#endregion

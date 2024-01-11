@@ -6,6 +6,7 @@ import { TenantValidator } from './tenant.validator';
 import { ApiError } from '../../common/api.error';
 import { BaseController } from '../base.controller';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class TenantController extends BaseController{
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(TenantService);
+        this._service = Injector.Container.resolve(TenantService);
     }
 
     //#endregion

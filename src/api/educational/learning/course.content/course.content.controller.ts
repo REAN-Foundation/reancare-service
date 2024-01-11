@@ -6,6 +6,7 @@ import { CourseContentService } from '../../../../services/educational/learning/
 import { Loader } from '../../../../startup/loader';
 import { CourseContentValidator } from './course.content.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class CourseContentController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(CourseContentService);
+        this._service = Injector.Container.resolve(CourseContentService);
     }
 
     //#endregion

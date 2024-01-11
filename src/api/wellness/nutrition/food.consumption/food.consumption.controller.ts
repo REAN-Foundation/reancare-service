@@ -3,15 +3,14 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
-import { Loader } from '../../../../startup/loader';
 import { FoodConsumptionValidator } from './food.consumption.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { Logger } from '../../../../common/logger';
+import { Injector } from '../../../../startup/injector';
+import { EHRNutritionService } from '../../../../modules/ehr.analytics/ehr.services/ehr.nutrition.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,11 +22,11 @@ export class FoodConsumptionController extends BaseController {
 
     _validator: FoodConsumptionValidator = new FoodConsumptionValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrNutritionService: EHRNutritionService = Injector.Container.resolve(EHRNutritionService);
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(FoodConsumptionService);
+        this._service = Injector.Container.resolve(FoodConsumptionService);
     }
 
     //#endregion
@@ -45,15 +44,8 @@ export class FoodConsumptionController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for nutrition!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(foodConsumption.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, foodConsumption.id, foodConsumption.Provider, foodConsumption, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${foodConsumption.PatientUserId}`);
-            }
+            await this._ehrNutritionService.addEHRRecordNutritionForAppNames(foodConsumption);
+
             if (foodConsumption.UserResponse) {
                 var timestamp = foodConsumption.EndTime ?? foodConsumption.StartTime;
                 if (!timestamp) {

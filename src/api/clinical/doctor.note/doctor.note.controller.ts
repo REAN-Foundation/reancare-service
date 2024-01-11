@@ -3,9 +3,9 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DoctorNoteService } from '../../../services/clinical/doctor.note.service';
-import { Loader } from '../../../startup/loader';
 import { DoctorNoteValidator } from './doctor.note.validator';
 import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class DoctorNoteController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(DoctorNoteService);
+        this._service = Injector.Container.resolve(DoctorNoteService);
     }
 
     //#endregion

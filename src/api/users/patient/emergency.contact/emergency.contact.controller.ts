@@ -3,7 +3,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AddressDomainModel } from '../../../../domain.types/general/address/address.domain.model';
-import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
+import { EmergencyContactRoleList } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { AddressService } from '../../../../services/general/address.service';
 import { OrganizationService } from '../../../../services/general/organization.service';
@@ -14,10 +14,10 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { EmergencyContactValidator } from './emergency.contact.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HospitalService } from '../../../../services/hospitals/hospital.service';
 import { HealthSystemService } from '../../../../services/hospitals/health.system.service';
-import { Logger } from '../../../../common/logger';
+import { Injector } from '../../../../startup/injector';
+import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -43,18 +43,18 @@ export class EmergencyContactController extends BaseController {
 
     _hospitalService: HospitalService = null;
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrPatientService = Injector.Container.resolve(EHRPatientService);
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(EmergencyContactService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._orgService = Loader.container.resolve(OrganizationService);
-        this._userService = Loader.container.resolve(UserService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._healthSystemService = Loader.container.resolve(HealthSystemService);
-        this._hospitalService = Loader.container.resolve(HospitalService);
+        this._service = Injector.Container.resolve(EmergencyContactService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._orgService = Injector.Container.resolve(OrganizationService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._addressService = Injector.Container.resolve(AddressService);
+        this._healthSystemService = Injector.Container.resolve(HealthSystemService);
+        this._hospitalService = Injector.Container.resolve(HospitalService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -166,21 +166,7 @@ export class EmergencyContactController extends BaseController {
                 throw new ApiError(400, 'Cannot create patientEmergencyContact!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(domainModel.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
-                        await EHRAnalyticsHandler.addOrUpdatePatient(
-                            domainModel.PatientUserId,
-                            {
-                                DoctorPersonId_1 : patientEmergencyContact.ContactPersonId
-                            }, appName
-                        );
-                    }
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${domainModel.PatientUserId}`);
-            }
+            await this._ehrPatientService.addEHRRecordEmergencyContactForAppNames(patientEmergencyContact);
 
             ResponseHandler.success(request, response, 'Emergency contact created successfully!', 201, {
                 EmergencyContact : patientEmergencyContact,

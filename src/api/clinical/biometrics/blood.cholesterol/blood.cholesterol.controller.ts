@@ -6,6 +6,7 @@ import { BloodCholesterolService } from '../../../../services/clinical/biometric
 import { Loader } from '../../../../startup/loader';
 import { BloodCholesterolValidator } from './blood.cholesterol.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class BloodCholesterolController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(BloodCholesterolService);
+        this._service = Injector.Container.resolve(BloodCholesterolService);
     }
 
     //#endregion

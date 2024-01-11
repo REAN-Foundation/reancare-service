@@ -3,9 +3,9 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomAssessmentTemplateService } from '../../../../services/clinical/symptom/symptom.assessment.template.service';
-import { Loader } from '../../../../startup/loader';
 import { SymptomAssessmentTemplateValidator } from './symptom.assessment.template.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class SymptomAssessmentTemplateController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(SymptomAssessmentTemplateService);
+        this._service = Injector.Container.resolve(SymptomAssessmentTemplateService);
     }
 
     //#endregion

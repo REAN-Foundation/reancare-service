@@ -8,6 +8,7 @@ import { PersonService } from '../../services/person/person.service';
 import { UserService } from '../../services/users/user/user.service';
 import { Loader } from '../../startup/loader';
 import { PersonValidator } from './person.validator';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,10 +27,10 @@ export class PersonController {
     _authorizer: Authorizer = null;
 
     constructor() {
-        this._service = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
+        this._service = Injector.Container.resolve(PersonService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._addressService = Injector.Container.resolve(AddressService);
+        this._organizationService = Injector.Container.resolve(OrganizationService);
         this._authorizer = Loader.authorizer;
     }
 

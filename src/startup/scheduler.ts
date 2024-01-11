@@ -3,7 +3,6 @@ import * as CronSchedules from '../../seed.data/cron.schedules.json';
 import { Logger } from '../common/logger';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
 import { FileResourceService } from '../services/general/file.resource.service';
-import { Loader } from './loader';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
 import { CommunityNetworkService } from '../modules/community.bw/community.network.service';
@@ -12,6 +11,7 @@ import { TerraSupportService } from '../api/devices/device.integrations/terra/te
 import { UserService } from '../services/users/user/user.service';
 import { StatisticsService } from '../services/statistics/statistics.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
+import { Injector } from './injector';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -78,7 +78,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['DailyStatistics'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
-                var service = Loader.container.resolve(StatisticsService);
+                var service = Injector.Container.resolve(StatisticsService);
                 await service.createDailyStatistics();
             })();
         });
@@ -88,7 +88,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['FileCleanup'], () => {
             (async () => {
                 Logger.instance().log('Running scheducled jobs: temp file clean-up...');
-                var service = Loader.container.resolve(FileResourceService);
+                var service = Injector.Container.resolve(FileResourceService);
                 await service.cleanupTempFiles();
             })();
         });
@@ -108,7 +108,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['MedicationReminder'], () => {
             (async () => {
                 Logger.instance().log('Running scheducled jobs: Reminders for medications...');
-                var service = Loader.container.resolve(MedicationConsumptionService);
+                var service = Injector.Container.resolve(MedicationConsumptionService);
                 var pastMinutes = 15;
                 var count = await service.sendMedicationReminders(pastMinutes);
                 Logger.instance().log(`Total ${count} medication reminders sent.`);
@@ -120,7 +120,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['CreateMedicationTasks'], () => {
             // (async () => {
             //     Logger.instance().log('Running scheducled jobs: Create medication tasks...');
-            //     var service = Loader.container.resolve(MedicationConsumptionService);
+            //     var service = Injector.Container.resolve(MedicationConsumptionService);
             //     var upcomingInMinutes = 60 * 24 * 2;
             //     var count = await service.createMedicationTasks(upcomingInMinutes);
             //     Logger.instance().log(`Total ${count} new medication tasks created.`);
@@ -162,7 +162,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['ScheduleDailyCareplanPushTasks'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
-                const careplanService = Loader.container.resolve(CareplanService);
+                const careplanService = Injector.Container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
             })();
         });
@@ -172,7 +172,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['ScheduleDailyHighRiskCareplan'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule Daily High Risk Careplan...');
-                const careplanService = Loader.container.resolve(CareplanService);
+                const careplanService = Injector.Container.resolve(CareplanService);
                 await careplanService.scheduleDailyHighRiskCareplan();
             })();
         });
@@ -202,7 +202,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['ReminderOnNoActionToDonationRequest'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule Reminder On No Action To Donation Requests...');
-                var communityNetworkService = Loader.container.resolve(CommunityNetworkService);
+                var communityNetworkService = Injector.Container.resolve(CommunityNetworkService);
                 await communityNetworkService.reminderOnNoActionToDonationRequest();
                 await communityNetworkService.reminderOnNoActionToFifthDayReminder();
             })();
@@ -224,7 +224,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['ScheduleTimezoneUpdate'], () => {
             (async () => {
                 Logger.instance().log('Running scheducled jobs: Update Current timezone...');
-                var service = Loader.container.resolve(UserService);
+                var service = Injector.Container.resolve(UserService);
                 await service.updateCurrentTimezone();
             })();
         });
@@ -234,7 +234,7 @@ export class Scheduler {
     //     cron.schedule(Scheduler._schedules['PatientDailyTasks'], () => {
     //         (async () => {
     //             Logger.instance().log('Running scheducled jobs: Patient daily tasks...');
-    //             var service = Loader.container.resolve(UserTaskService);
+    //             var service = Injector.Container.resolve(UserTaskService);
 
     //             await service.sendTaskReminders();
     //         })();

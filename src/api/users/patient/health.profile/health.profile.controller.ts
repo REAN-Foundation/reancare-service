@@ -5,17 +5,16 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../../domain.types/users/patient/health.profile/health.profile.dto';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
-import { Loader } from '../../../../startup/loader';
 import { HealthProfileValidator } from './health.profile.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { PatientService } from '../../../../services/users/patient/patient.service';
-import { Logger } from '../../../../common/logger';
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { Injector } from '../../../../startup/injector';
+import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthProfileController extends BaseController{
+export class HealthProfileController extends BaseController {
 
     //#region member variables and constructors
 
@@ -27,13 +26,13 @@ export class HealthProfileController extends BaseController{
 
     _validator: HealthProfileValidator = new HealthProfileValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrPatientService: EHRPatientService = Injector.Container.resolve(EHRPatientService);
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(HealthProfileService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._service = Injector.Container.resolve(HealthProfileService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion
@@ -79,15 +78,7 @@ export class HealthProfileController extends BaseController{
                 throw new ApiError(400, 'Unable to update Patient health profile record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patientUserId);
-            if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(patientUserId, updated, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patientUserId}`);
-            }
+            await this._ehrPatientService.addEHRRecordHealthProfileForAppNames(updated);
 
             ResponseHandler.success(request, response, 'Patient health profile record updated successfully!', 200, {
                 HealthProfile : updated,
@@ -96,64 +87,6 @@ export class HealthProfileController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    };
-
-    //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, model: HealthProfileDto, appName?: string) => {
-        var details = {};
-        if (model.Race) {
-            details['Race'] = model.Race;
-        }
-        if (model.Ethnicity) {
-            details['Ethnicity'] = model.Ethnicity;  
-        }
-        if (model.MajorAilment) {
-            details['MajorAilment'] = model.MajorAilment;
-        }
-        if (model.BloodGroup) {
-            details['BloodGroup'] = model.BloodGroup;
-        }
-        if (model.IsDiabetic != null) {
-            details['IsDiabetic'] = model.IsDiabetic;
-        }
-        if (model.IsSmoker != null) {
-            details['IsSmoker'] = model.IsSmoker;
-        }
-        if (model.Nationality) {
-            details['Nationality'] = model.Nationality;
-        }
-        if (model.HasHeartAilment != null) {
-            details['HasHeartAilment'] = model.HasHeartAilment;
-        }
-        if (model.HasHighBloodPressure != null) {
-            details['HasHighBloodPressure'] = model.HasHighBloodPressure;
-        }
-        if (model.HasHighCholesterol != null) {
-            details['HasHighCholesterol'] = model.HasHighCholesterol;
-        }
-        if (model.Occupation) {
-            details['Occupation'] = model.Occupation;
-        }
-        if (model.OtherConditions) {
-            details['OtherConditions'] = model.OtherConditions;
-        }
-        if (model.IsDiabetic != null) {
-            details['IsDiabetic'] = model.IsDiabetic;
-        }
-        if (model.MaritalStatus) {
-            details['MaritalStatus'] = model.MaritalStatus;
-        }
-        if (model.CreatedAt) {
-            details['RecordDate'] = new Date(model.CreatedAt);
-        }
-
-
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
-
-    
     };
 
     //#endregion

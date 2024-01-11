@@ -3,16 +3,14 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { PulseService } from '../../../../services/clinical/biometrics/pulse.service';
-import { Loader } from '../../../../startup/loader';
 import { PulseValidator } from './pulse.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Logger } from '../../../../common/logger';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,14 +22,12 @@ export class PulseController extends BaseController{
 
     _validator: PulseValidator = new PulseValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     _ehrVitalService: EHRVitalService = new EHRVitalService();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(PulseService);
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
+        this._service = Injector.Container.resolve(PulseService);
+        this._ehrVitalService = Injector.Container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -48,14 +44,7 @@ export class PulseController extends BaseController{
             if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(pulse.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, pulse.id, pulse.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${pulse.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRPulseForAppNames(pulse);
 
             // Adding record to award service
             if (pulse.Pulse) {
@@ -146,14 +135,7 @@ export class PulseController extends BaseController{
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRPulseForAppNames(updated);
 
             if (updated.Pulse) {
                 var timestamp = updated.RecordDate;

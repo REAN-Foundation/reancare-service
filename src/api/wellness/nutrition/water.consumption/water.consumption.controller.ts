@@ -3,9 +3,9 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { WaterConsumptionService } from '../../../../services/wellness/nutrition/water.consumption.service';
-import { Loader } from '../../../../startup/loader';
 import { WaterConsumptionValidator } from './water.consumption.validator';
 import { BaseController } from '../../../base.controller';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class WaterConsumptionController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(WaterConsumptionService);
+        this._service = Injector.Container.resolve(WaterConsumptionService);
 
     }
 

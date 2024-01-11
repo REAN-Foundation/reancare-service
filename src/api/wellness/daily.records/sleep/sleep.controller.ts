@@ -3,21 +3,19 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { SleepService } from '../../../../services/wellness/daily.records/sleep.service';
-import { Loader } from '../../../../startup/loader';
 import { SleepValidator } from './sleep.validator';
 import { BaseController } from '../../../base.controller';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../../common/logger';
 import { EHRMentalWellBeingService } from '../../../../modules/ehr.analytics/ehr.services/ehr.mental.wellbeing.service';
 import { SleepDto } from '../../../../domain.types/wellness/daily.records/sleep/sleep.dto';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SleepController extends BaseController{
+export class SleepController extends BaseController {
 
     //#region member variables and constructors
 
@@ -26,6 +24,10 @@ export class SleepController extends BaseController{
     _ehrMentalWellbeingService: EHRMentalWellBeingService = Injector.Container.resolve(EHRMentalWellBeingService);
 
     _validator: SleepValidator = new SleepValidator();
+
+    constructor() {
+        super();
+    }
 
     //#endregion
 

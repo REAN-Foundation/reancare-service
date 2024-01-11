@@ -1,14 +1,12 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import { LabRecordValidator } from './lab.record.validator';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../common/logger';
-import { EHRLabService } from '../../../modules/ehr.analytics/ehr.lab.service';
+import { EHRLabService } from '../../../modules/ehr.analytics/ehr.services/ehr.lab.service';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,14 +17,12 @@ export class LabRecordController extends BaseController {
 
     _validator: LabRecordValidator = new LabRecordValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     _ehrLabService: EHRLabService = new EHRLabService();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(LabRecordService);
-        this._ehrLabService = Loader.container.resolve(EHRLabService);
+        this._service = Injector.Container.resolve(LabRecordService);
+        this._ehrLabService = Injector.Container.resolve(EHRLabService);
     }
 
     //#endregion
@@ -43,15 +39,7 @@ export class LabRecordController extends BaseController {
             if (labRecord == null) {
                 throw new ApiError(400, 'Cannot create lab record!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(labRecord.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, labRecord.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${labRecord.PatientUserId}`);
-            }
+            await this._ehrLabService.addEHRLabRecordForAppNames(labRecord);
 
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record created successfully!`, 201, {
                 LabRecord : labRecord,
@@ -117,15 +105,8 @@ export class LabRecordController extends BaseController {
                 throw new ApiError(400, 'Unable to update lab record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrLabService.addEHRLabRecordForAppNames(updated);
+
             ResponseHandler.success(request, response, `${updated.DisplayName} record updated successfully!`, 200, {
                 LabRecord : updated,
             });

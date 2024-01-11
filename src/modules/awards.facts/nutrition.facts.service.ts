@@ -8,13 +8,14 @@ import { NutritionChoiceFact } from './models/nutrition.choice.fact.model';
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////////////////////
 
 export const updateNutritionFact = async (model: AwardsFact) => {
 
     const nutritionfactRepository: Repository<NutritionChoiceFact> = AwardsFactsSource.getRepository(NutritionChoiceFact);
-    const foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
+    const foodConsumptionService = Injector.Container.resolve(FoodConsumptionService);
 
     const lastRecords = await nutritionfactRepository.find({
         where : {

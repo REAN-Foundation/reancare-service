@@ -3,16 +3,14 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BloodOxygenSaturationService } from '../../../../services/clinical/biometrics/blood.oxygen.saturation.service';
-import { Loader } from '../../../../startup/loader';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Logger } from '../../../../common/logger';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +23,11 @@ export class BloodOxygenSaturationController extends BaseController {
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
 
     _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
+
+    constructor() {
+        super();
+        this._service = Injector.Container.resolve(BloodOxygenSaturationService);
+    }
 
     //#endregion
 

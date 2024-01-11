@@ -6,9 +6,9 @@ import { AllergySearchFilters } from '../../../domain.types/clinical/allergy/all
 import { AllergenCategoriesList, AllergenExposureRoutesList } from '../../../domain.types/clinical/allergy/allergy.types';
 import { AllergyService } from '../../../services/clinical/allergy.service';
 import { UserService } from '../../../services/users/user/user.service';
-import { Loader } from '../../../startup/loader';
 import { AllergyValidator } from './allergy.validator';
 import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,8 +24,8 @@ export class AllergyController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(AllergyService);
-        this._userService = Loader.container.resolve(UserService);
+        this._service = Injector.Container.resolve(AllergyService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     //#endregion

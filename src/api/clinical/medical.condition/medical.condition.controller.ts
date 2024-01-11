@@ -6,6 +6,7 @@ import { MedicalConditionService } from '../../../services/clinical/medical.cond
 import { Loader } from '../../../startup/loader';
 import { MedicalConditionValidator } from './medical.condition.validator';
 import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class MedicalConditionController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(MedicalConditionService);
+        this._service = Injector.Container.resolve(MedicalConditionService);
 
     }
 

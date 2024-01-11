@@ -53,6 +53,7 @@ import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
 import { addSummaryGraphs, createSummaryCharts } from "./summary.page";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
+import { Injector } from "../../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,22 +78,22 @@ export class StatisticsService {
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
     ) {
-        this._foodConsumptionRepo = Loader.container.resolve(FoodConsumptionRepo);
-        this._medicationConsumptionRepo = Loader.container.resolve(MedicationConsumptionRepo);
-        this._medicationRepo = Loader.container.resolve(MedicationRepo);
-        this._physicalActivityRepo = Loader.container.resolve(PhysicalActivityRepo);
-        this._bodyWeightRepo = Loader.container.resolve(BodyWeightRepo);
-        this._bodyHeightRepo = Loader.container.resolve(BodyHeightRepo);
-        this._labRecordsRepo = Loader.container.resolve(LabRecordRepo);
-        this._sleepRepo = Loader.container.resolve(SleepRepo);
-        this._bloodPressureRepo = Loader.container.resolve(BloodPressureRepo);
-        this._bloodGlucoseRepo = Loader.container.resolve(BloodGlucoseRepo);
-        this._dailyAssessmentRepo = Loader.container.resolve(DailyAssessmentRepo);
-        this._userTaskRepo = Loader.container.resolve(UserTaskRepo);
-        this._careplanRepo = Loader.container.resolve(CareplanRepo);
-        this._patientRepo = Loader.container.resolve(PatientRepo);
-        this._personRepo = Loader.container.resolve(PersonRepo);
-        this._userRepo = Loader.container.resolve(UserRepo);
+        this._foodConsumptionRepo = Injector.Container.resolve(FoodConsumptionRepo);
+        this._medicationConsumptionRepo = Injector.Container.resolve(MedicationConsumptionRepo);
+        this._medicationRepo = Injector.Container.resolve(MedicationRepo);
+        this._physicalActivityRepo = Injector.Container.resolve(PhysicalActivityRepo);
+        this._bodyWeightRepo = Injector.Container.resolve(BodyWeightRepo);
+        this._bodyHeightRepo = Injector.Container.resolve(BodyHeightRepo);
+        this._labRecordsRepo = Injector.Container.resolve(LabRecordRepo);
+        this._sleepRepo = Injector.Container.resolve(SleepRepo);
+        this._bloodPressureRepo = Injector.Container.resolve(BloodPressureRepo);
+        this._bloodGlucoseRepo = Injector.Container.resolve(BloodGlucoseRepo);
+        this._dailyAssessmentRepo = Injector.Container.resolve(DailyAssessmentRepo);
+        this._userTaskRepo = Injector.Container.resolve(UserTaskRepo);
+        this._careplanRepo = Injector.Container.resolve(CareplanRepo);
+        this._patientRepo = Injector.Container.resolve(PatientRepo);
+        this._personRepo = Injector.Container.resolve(PersonRepo);
+        this._userRepo = Injector.Container.resolve(UserRepo);
 
     }
 

@@ -16,6 +16,7 @@ import { RoleDto } from '../../domain.types/role/role.dto';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { UserDomainModel } from '../../domain.types/users/user/user.domain.model';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,12 +35,12 @@ export class UserHelper {
     _patientHealthProfileService: HealthProfileService = null;
 
     constructor() {
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._addressService = Injector.Container.resolve(AddressService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
     }
 
     createPatient = async(createModel: PatientDomainModel): Promise<[PatientDetailsDto, boolean]> => {

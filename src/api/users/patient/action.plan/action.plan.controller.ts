@@ -9,6 +9,7 @@ import { ActionPlanService } from '../../../../services/users/patient/action.pla
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { GoalService } from '../../../../services/users/patient/goal.service';
 import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,10 +28,10 @@ export class ActionPlanController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(ActionPlanService);
-        this._userService = Loader.container.resolve(UserService);
-        this._goalService = Loader.container.resolve(GoalService);
-        this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
+        this._service = Injector.Container.resolve(ActionPlanService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._goalService = Injector.Container.resolve(GoalService);
+        this._healthPriorityService = Injector.Container.resolve(HealthPriorityService);
     }
 
     //#endregion

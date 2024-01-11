@@ -1,10 +1,10 @@
 import express from 'express';
 import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import { UserEngagementService } from '../../../services/statistics/user.engagement.service';
 import { UserEngagementValidator } from './user.engagement.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ export class UserEngagementController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(UserEngagementService);
+        this._service = Injector.Container.resolve(UserEngagementService);
     }
 
     //#endregion

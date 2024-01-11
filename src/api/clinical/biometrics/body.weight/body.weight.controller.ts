@@ -1,18 +1,16 @@
 import express from 'express';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
-import { Loader } from '../../../../startup/loader';
 import { BodyWeightValidator } from './body.weight.validator';
 import { BaseController } from '../../../base.controller';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Logger } from '../../../../common/logger';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,14 +22,12 @@ export class BodyWeightController extends BaseController {
 
     _validator: BodyWeightValidator = new BodyWeightValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     _ehrVitalService: EHRVitalService = new EHRVitalService();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(BodyWeightService);
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
+        this._service = Injector.Container.resolve(BodyWeightService);
+        this._ehrVitalService = Injector.Container.resolve(EHRVitalService);
     }
     //#endregion
 
@@ -47,14 +43,8 @@ export class BodyWeightController extends BaseController {
             if (bodyWeight == null) {
                 throw new ApiError(400, 'Cannot create weight record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyWeight.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bodyWeight.id, null , model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyWeight.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBodyWeightForAppNames(bodyWeight);
+
             // Adding record to award service
             if (bodyWeight.BodyWeight) {
                 var timestamp = bodyWeight.RecordDate;
@@ -142,14 +132,7 @@ export class BodyWeightController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update weight record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBodyWeightForAppNames(updated);
 
             if (updated.BodyWeight) {
                 var timestamp = updated.RecordDate;

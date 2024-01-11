@@ -297,7 +297,7 @@ export class FormsService {
         const filename = path.basename(sourceLocation);
         const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
         const storageKey = `resources/${dateFolder}/${filename}`;
-        const fileResourceService = Loader.container.resolve(FileResourceService);
+        const fileResourceService = Injector.Container.resolve(FileResourceService);
         return await fileResourceService.uploadLocal(sourceLocation, storageKey, false);
     };
 

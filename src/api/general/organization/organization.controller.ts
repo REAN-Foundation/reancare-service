@@ -8,6 +8,7 @@ import { RoleService } from '../../../services/role/role.service';
 import { Loader } from '../../../startup/loader';
 import { OrganizationValidator } from './organization.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,9 +27,9 @@ export class OrganizationController {
     _validator: OrganizationValidator = new OrganizationValidator();
 
     constructor() {
-        this._service = Loader.container.resolve(OrganizationService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
+        this._service = Injector.Container.resolve(OrganizationService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
         this._authorizer = Loader.authorizer;
     }
 

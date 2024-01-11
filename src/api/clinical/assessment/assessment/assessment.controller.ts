@@ -1,11 +1,10 @@
-import express, { response } from 'express';
+import express from 'express';
 import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
 import { CareplanService } from '../../../../services/clinical/careplan.service';
 import { UserTaskService } from '../../../../services/users/user/user.task.service';
-import { Loader } from '../../../../startup/loader';
 import { AssessmentValidator } from './assessment.validator';
 import { BaseController } from '../../../base.controller';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
@@ -14,12 +13,12 @@ import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/reposit
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
 import { Logger } from '../../../../common/logger';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRAssessmentService } from '../../../../modules/ehr.analytics/ehr.services/ehr.assessment.service';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AssessmentController {
+export class AssessmentController extends BaseController {
     //#region member variables and constructors
 
     _service = Injector.Container.resolve(AssessmentService);
@@ -33,8 +32,6 @@ export class AssessmentController {
     _ehrAssessmentService = Injector.Container.resolve(EHRAssessmentService);
 
     _validator: AssessmentValidator = new AssessmentValidator();
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     //#endregion
 

@@ -14,6 +14,7 @@ import axios from 'axios';
 import { IUserDeviceDetailsRepo } from "../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
 import { INotificationService } from "../../modules/communication/notification.service/notification.service.interface";
 import { TimeHelper } from "../../common/time.helper";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +54,7 @@ export class ReminderSenderService {
 
     private static send = async (timePeriod: number) => {
         try {
-            const scheduleRepo = Loader.container.resolve<IReminderScheduleRepo>('IReminderScheduleRepo');
+            const scheduleRepo = Injector.Container.resolve<IReminderScheduleRepo>('IReminderScheduleRepo');
             const schedules = await scheduleRepo.getRemindersForNextNMinutes(timePeriod);
             if (!schedules || schedules.length === 0) {
                 return;
@@ -153,14 +154,14 @@ export class ReminderSenderService {
 
     private static async markAsDelivered(sent: boolean, scheduleId: uuid) {
         if (sent) {
-            const scheduleRepo = Loader.container.resolve<IReminderScheduleRepo>('IReminderScheduleRepo');
+            const scheduleRepo = Injector.Container.resolve<IReminderScheduleRepo>('IReminderScheduleRepo');
             const delivered = await scheduleRepo.markAsDelivered(scheduleId);
             Logger.instance().log(delivered ? `Schedule marked as delivered` : `Schedule could not be marked as delivered`);
         }
     }
 
     private static async getUserSMSDetails(user: any, reminder: any, schedule: any) {
-        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const personRepo = Injector.Container.resolve<IPersonRepo>('IPersonRepo');
         const messagingService = Loader.messagingService;
         const person = await personRepo.getById(user.PersonId);
         const phone = person.Phone;
@@ -183,7 +184,7 @@ export class ReminderSenderService {
     }
 
     private static async getUserTelegramDetails(user: any, reminder: any, schedule: any) {
-        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const personRepo = Injector.Container.resolve<IPersonRepo>('IPersonRepo');
         const messagingService = Loader.messagingService;
         const person = await personRepo.getById(user.PersonId);
         const telegramChatId = person.TelegramChatId;
@@ -194,7 +195,7 @@ export class ReminderSenderService {
     }
 
     private static async getUserWhatsAppDetails(user: any, reminder: any, schedule: any) {
-        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const personRepo = Injector.Container.resolve<IPersonRepo>('IPersonRepo');
         const messagingService = Loader.messagingService;
         const person = await personRepo.getById(user.PersonId);
         const phone = person.Phone;
@@ -225,8 +226,8 @@ export class ReminderSenderService {
     }
 
     private static async getUserMobilePushDetails(user: any, reminder: any, schedule: any) {
-        const userDeviceDetailsRepo = Loader.container.resolve<IUserDeviceDetailsRepo>('IUserDeviceDetailsRepo');
-        const notificationService = Loader.container.resolve<INotificationService>('INotificationService');
+        const userDeviceDetailsRepo = Injector.Container.resolve<IUserDeviceDetailsRepo>('IUserDeviceDetailsRepo');
+        const notificationService = Injector.Container.resolve<INotificationService>('INotificationService');
         const deviceDetails = await userDeviceDetailsRepo.getByUserId(user.id);
         if (!deviceDetails || deviceDetails.length === 0) {
             throw new Error(`Device details not found for user ${user.id}`);
@@ -242,7 +243,7 @@ export class ReminderSenderService {
     }
 
     private static async getUserEmailDetails(user: any, reminder: any, schedule: any) {
-        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const personRepo = Injector.Container.resolve<IPersonRepo>('IPersonRepo');
         const emailService = new EmailService();
         const person = await personRepo.getById(user.PersonId);
         if (!person.Email) {
@@ -260,7 +261,7 @@ export class ReminderSenderService {
     }
 
     private static async getWebhookDetails(user: any, reminder: any, schedule: any) {
-        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const personRepo = Injector.Container.resolve<IPersonRepo>('IPersonRepo');
         const person = await personRepo.getById(user.PersonId);
         const message = ReminderSenderService.constructMessage(schedule, reminder);
         const payload = {

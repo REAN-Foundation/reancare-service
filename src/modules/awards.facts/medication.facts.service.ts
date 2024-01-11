@@ -8,13 +8,14 @@ import { Logger } from '../../common/logger';
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////////////////////
 
 export const updateMedicationFact = async (model: AwardsFact) => {
 
     const medfactRepository: Repository<MedicationFact> = AwardsFactsSource.getRepository(MedicationFact);
-    const medConsumptionService = Loader.container.resolve(MedicationConsumptionService);
+    const medConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
     const lastRecords = await medfactRepository.find({
         where : {

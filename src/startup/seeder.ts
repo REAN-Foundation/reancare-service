@@ -52,7 +52,6 @@ import { PersonService } from "../services/person/person.service";
 import { RoleService } from "../services/role/role.service";
 import { UserService } from "../services/users/user/user.service";
 import { FoodConsumptionService } from "../services/wellness/nutrition/food.consumption.service";
-import { Loader } from "./loader";
 import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
 import { LabRecordService } from "../services/clinical/lab.record/lab.record.service";
 import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
@@ -64,6 +63,7 @@ import { HealthSystemDomainModel } from "../domain.types/hospitals/health.system
 import { HospitalDomainModel } from "../domain.types/hospitals/hospital/hospital.domain.model";
 import { HealthSystemService } from "../services/hospitals/health.system.service";
 import { HospitalService } from "../services/hospitals/hospital.service";
+import { Injector } from "./injector";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -122,22 +122,22 @@ export class Seeder {
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
         @inject('IHealthSystemRepo') private _healthSystemRepo: IHealthSystemRepo,
     ) {
-        this._apiClientService = Loader.container.resolve(ApiClientService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._symptomTypeService = Loader.container.resolve(SymptomTypeService);
-        this._symptomAssessmentTemplateService = Loader.container.resolve(SymptomAssessmentTemplateService);
-        this._knowledgeNuggetsService = Loader.container.resolve(KnowledgeNuggetService);
-        this._drugService = Loader.container.resolve(DrugService);
-        this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
-        this._labRecordService = Loader.container.resolve(LabRecordService);
-        this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
-        this._healthSystemService = Loader.container.resolve(HealthSystemService);
-        this._hospitalService = Loader.container.resolve(HospitalService);
+        this._apiClientService = Injector.Container.resolve(ApiClientService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
+        this._symptomTypeService = Injector.Container.resolve(SymptomTypeService);
+        this._symptomAssessmentTemplateService = Injector.Container.resolve(SymptomAssessmentTemplateService);
+        this._knowledgeNuggetsService = Injector.Container.resolve(KnowledgeNuggetService);
+        this._drugService = Injector.Container.resolve(DrugService);
+        this._healthPriorityService = Injector.Container.resolve(HealthPriorityService);
+        this._labRecordService = Injector.Container.resolve(LabRecordService);
+        this._foodConsumptionService = Injector.Container.resolve(FoodConsumptionService);
+        this._healthSystemService = Injector.Container.resolve(HealthSystemService);
+        this._hospitalService = Injector.Container.resolve(HospitalService);
     }
 
     public init = async (): Promise<void> => {

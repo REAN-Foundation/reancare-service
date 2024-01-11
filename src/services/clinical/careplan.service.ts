@@ -31,8 +31,6 @@ import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.tas
 import { Loader } from "../../startup/loader";
 import { IDonorRepo } from "./../../database/repository.interfaces/users/donor.repo.interface";
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
-import { EHRAnalyticsHandler } from "../../modules/ehr.analytics/ehr.analytics.handler";
-import { x } from "pdfkit";
 import { PatientDetailsDto } from "../../domain.types/users/patient/patient/patient.dto";
 import { EHRCareplanActivityService } from "../../modules/ehr.analytics/ehr.services/ehr.careplan.activity.service";
 import { Injector } from "../../startup/injector";
@@ -45,8 +43,6 @@ export class CareplanService implements IUserActionService {
     _handler: CareplanHandler = new CareplanHandler();
 
     _ehrCareplanActivityService: EHRCareplanActivityService = Injector.Container.resolve(EHRCareplanActivityService);
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
@@ -683,33 +679,6 @@ export class CareplanService implements IUserActionService {
 
         const provider = "REAN";
         return await this._handler.scheduleDailyHighRiskCareplan(provider);
-    };
-
-    public addEHRRecord = (planName: string, planCode : string, model: CareplanActivityDto, appName?: string, healthSystemHospitalDetails?: PatientDetailsDto) => {
-            EHRAnalyticsHandler.addCareplanActivityRecord(
-                appName,
-                model.PatientUserId,
-                model.id,
-                model.EnrollmentId,     
-                model.Provider,               
-                planName,      
-                planCode,                
-                model.Type,            
-                model.Category,        
-                model.ProviderActionId,
-                model.Title,           
-                model.Description,     
-                model.Url,
-                'English',       
-                model.ScheduledAt,
-                model.CompletedAt,     
-                model.Sequence,        
-                model.Frequency,       
-                model.Status,
-                healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
-                healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
-                model.CreatedAt ? new Date(model.CreatedAt) : null
-            );
     };
 
     //#endregion

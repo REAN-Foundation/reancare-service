@@ -29,8 +29,6 @@ export class MedicationConsumptionController {
 
     _drugService: DrugService = Injector.Container.resolve(DrugService);
 
-    _patientService: PatientService = Injector.Container.resolve(PatientService);
-
     _ehrMedicationService: EHRMedicationService = Injector.Container.resolve(EHRMedicationService);
 
     //#endregion

@@ -224,7 +224,6 @@ export class UserTaskController {
                 if (action) {
                     updated['Action'] = action;
                 }
-
                 var healthSystem = await this._service.getHealthSystem(updated.UserId);
                 await this._ehrUserTaskService.addEHRUserTaskForAppNames(updated, healthSystem);
             }

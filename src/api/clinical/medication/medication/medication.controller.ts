@@ -26,8 +26,6 @@ export class MedicationController {
 
     _service: MedicationService = Injector.Container.resolve(MedicationService);
 
-    _patientService: PatientService = Injector.Container.resolve(PatientService);
-
     _userService: UserService = Injector.Container.resolve(UserService);
 
     _drugService: DrugService = Injector.Container.resolve(DrugService);

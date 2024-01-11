@@ -7,7 +7,6 @@ import { Loader } from '../../../../startup/loader';
 import { BloodPressureValidator } from './blood.pressure.validator';
 import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { PersonService } from '../../../../services/person/person.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
@@ -33,8 +32,6 @@ export class BloodPressureController {
     _patientService: PatientService = Injector.Container.resolve(PatientService);
 
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = Injector.Container.resolve(EHRAnalyticsHandler);
 
     _ehrVitalService = Injector.Container.resolve(EHRVitalService);
 

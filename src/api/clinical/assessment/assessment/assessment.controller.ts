@@ -13,7 +13,6 @@ import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/reposit
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
 import { Logger } from '../../../../common/logger';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { EHRAssessmentService } from '../../../../modules/ehr.analytics/ehr.services/ehr.assessment.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -33,8 +32,6 @@ export class AssessmentController {
     _ehrAssessmentService = Injector.Container.resolve(EHRAssessmentService);
 
     _validator: AssessmentValidator = new AssessmentValidator();
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     //#endregion
 

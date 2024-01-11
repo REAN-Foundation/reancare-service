@@ -16,7 +16,6 @@ import { UserDeviceDetailsService } from '../../../../services/users/user/user.d
 import { PersonService } from '../../../../services/person/person.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { RoleDto } from '../../../../domain.types/role/role.dto';
 import { Roles } from '../../../../domain.types/role/role.types';
@@ -42,8 +41,6 @@ export class PatientController extends BaseUserController {
     _ehrPatientService: EHRPatientService = Injector.Container.resolve(EHRPatientService);
 
     _userHelper: UserHelper = new UserHelper();
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
@@ -213,7 +210,8 @@ export class PatientController extends BaseUserController {
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
-            const updatedHealthProfile = await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
+            const updatedHealthProfile =
+                await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
@@ -308,10 +306,6 @@ export class PatientController extends BaseUserController {
     //#endregion
 
     //#region Privates
-
-    private addPatientToEHRRecords = (patientUserId: uuid, appName?: string) => {
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {}, appName,);
-    };
 
     private addPatientToCohort = async (patientUserId: uuid, cohortId: uuid) => {
         try {

@@ -31,7 +31,6 @@ import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.tas
 import { Loader } from "../../startup/loader";
 import { IDonorRepo } from "./../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface";
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/assorted/blood.donation/communication.repo.interface";
-import { EHRAnalyticsHandler } from "../../modules/ehr.analytics/ehr.analytics.handler";
 import { PatientDetailsDto } from "../../domain.types/users/patient/patient/patient.dto";
 import { EHRCareplanActivityService } from "../../modules/ehr.analytics/ehr.services/ehr.careplan.activity.service";
 import { Injector } from "../../startup/injector";
@@ -44,8 +43,6 @@ export class CareplanService implements IUserActionService {
     _handler: CareplanHandler = new CareplanHandler();
 
     _ehrCareplanActivityService: EHRCareplanActivityService = Injector.Container.resolve(EHRCareplanActivityService);
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,

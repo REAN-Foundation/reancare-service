@@ -1,5 +1,4 @@
 import express from 'express';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
@@ -14,8 +13,6 @@ export class BodyHeightController {
     //#region member variables and constructors
 
     _service: BodyHeightService = Injector.Container.resolve(BodyHeightService);
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     _ehrVitalService: EHRVitalService = new EHRVitalService();
 

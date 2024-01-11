@@ -34,6 +34,8 @@ import { IDonationCommunicationRepo } from "../../database/repository.interfaces
 import { EHRAnalyticsHandler } from "../../modules/ehr.analytics/ehr.analytics.handler";
 import { x } from "pdfkit";
 import { PatientDetailsDto } from "../../domain.types/users/patient/patient/patient.dto";
+import { EHRCareplanActivityService } from "../../modules/ehr.analytics/ehr.services/ehr.careplan.activity.service";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,6 +43,8 @@ import { PatientDetailsDto } from "../../domain.types/users/patient/patient/pati
 export class CareplanService implements IUserActionService {
 
     _handler: CareplanHandler = new CareplanHandler();
+
+    _ehrCareplanActivityService: EHRCareplanActivityService = Injector.Container.resolve(EHRCareplanActivityService);
 
     _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
@@ -595,33 +599,9 @@ export class CareplanService implements IUserActionService {
 
         Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
 
-        var healthSystemHospitalDetails = await this._patientRepo.getByUserId(dto.PatientUserId);
-        var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-        if (eligibleAppNames.length > 0) {
-            for await (var appName of eligibleAppNames) {
-                if (appName == 'HF Helper' && enrollmentDetails.PlanCode == 'HFMotivator') {
-                    for await (var careplanActivity of careplanActivities) {
-                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
-                    }
-                } else if (appName == 'Heart &amp; Stroke Helper™' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke')) {
-                    for await (var careplanActivity of careplanActivities) {
-                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
-                    }
-                } else if (appName == 'REAN HealthGuru' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke' || enrollmentDetails.PlanCode == 'HFMotivator')) {
-                    for await (var careplanActivity of careplanActivities) {
-                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
-                    }
-                } else {
-                    for await (var careplanActivity of careplanActivities) {
-                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
-                    }
-                }
-            }
-        } else {
-            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-        }
+        var patientDetails: PatientDetailsDto = await this._patientRepo.getByUserId(dto.PatientUserId);
+        await this._ehrCareplanActivityService.addCareplanActivitiesToEHR(careplanActivities, patientDetails);
 
-        //task scheduling
         await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
 
         return dto;

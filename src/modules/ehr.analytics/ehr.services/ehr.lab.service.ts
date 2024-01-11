@@ -1,9 +1,7 @@
 import { injectable } from 'tsyringe';
 import { Logger } from '../../../common/logger';
 import { EHRAnalyticsHandler } from '../ehr.analytics.handler';
-import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import EHRLabData from '../models/ehr.lab.data.model';
-import { Injector } from '../../../startup/injector';
 import { LabRecordDto } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.dto';
 import { EHRRecordTypes } from '../ehr.domain.models/ehr.record.types';
 import { PatientAppNameCache } from '../patient.appname.cache';
@@ -12,9 +10,8 @@ import { PatientAppNameCache } from '../patient.appname.cache';
 
 @injectable()
 export class EHRLabService {
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
-    _labRecordService: LabRecordService = Injector.Container.resolve(LabRecordService);
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     public deleteLabEHRRecord = async (id: string) => {
         try {
@@ -48,4 +45,5 @@ export class EHRLabService {
             this.addEHRRecord(r, appName);
         }
     }
+
 }

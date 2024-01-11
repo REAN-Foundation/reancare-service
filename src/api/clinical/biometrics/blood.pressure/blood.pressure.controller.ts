@@ -226,7 +226,7 @@ export class BloodPressureController extends BaseController {
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(existingRecord.id);
 
             ResponseHandler.success(request, response, 'Blood pressure record deleted successfully!', 200, {
                 Deleted : true,

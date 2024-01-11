@@ -304,7 +304,7 @@ export class MedicationController {
             await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
 
             // delete ehr record
-            this._ehrMedicationService.deleteMedicationEHRRecord(id);
+            this._ehrMedicationService.deleteMedicationEHRRecords(id);
 
             Logger.instance().log(`[MedicationTime] Delete - medication response returned`);
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {

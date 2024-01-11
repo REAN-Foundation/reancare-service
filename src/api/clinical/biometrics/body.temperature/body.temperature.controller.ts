@@ -199,7 +199,7 @@ export class BodyTemperatureController extends BaseController {
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(existingRecord.id);
 
             ResponseHandler.success(request, response, 'Body temperature record deleted successfully!', 200, {
                 Deleted : true,

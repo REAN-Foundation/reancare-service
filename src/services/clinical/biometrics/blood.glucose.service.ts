@@ -6,9 +6,6 @@ import { BloodGlucoseDto } from '../../../domain.types/clinical/biometrics/blood
 import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types';
 import { Loader } from "../../../startup/loader";
 import { ConfigurationManager } from "../../../config/configuration.manager";
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +47,7 @@ export class BloodGlucoseService {
 
     search = async (filters: BloodGlucoseSearchFilters): Promise<BloodGlucoseSearchResults> => {
         return await this._bloodGlucoseRepo.search(filters);
-        
+
     };
 
     delete = async (id: string): Promise<boolean> => {

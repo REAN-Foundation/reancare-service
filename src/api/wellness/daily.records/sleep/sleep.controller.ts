@@ -12,6 +12,8 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { Logger } from '../../../../common/logger';
+import { EHRMentalWellBeingService } from '../../../../modules/ehr.analytics/ehr.services/ehr.mental.wellbeing.service';
+import { SleepDto } from '../../../../domain.types/wellness/daily.records/sleep/sleep.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,16 +21,11 @@ export class SleepController extends BaseController{
 
     //#region member variables and constructors
 
-    _service: SleepService = null;
+    _service: SleepService = Injector.Container.resolve(SleepService);
+
+    _ehrMentalWellbeingService: EHRMentalWellBeingService = Injector.Container.resolve(EHRMentalWellBeingService);
 
     _validator: SleepValidator = new SleepValidator();
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(SleepService);
-    }
 
     //#endregion
 
@@ -42,26 +39,20 @@ export class SleepController extends BaseController{
             const model = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
             const patientUserId = request.body.PatientUserId;
-        
+
+            var sleep: SleepDto = null;
             var existingRecord = await this._service.getByRecordDate(recordDate, patientUserId);
             if (existingRecord !== null) {
-                var sleep = await this._service.update(existingRecord.id, model);
+                sleep = await this._service.update(existingRecord.id, model);
             } else {
-                var sleep = await this._service.create(model);
+                sleep = await this._service.create(model);
             }
             if (sleep == null) {
                 throw new ApiError(400, 'Cannot create record for sleep!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(sleep.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, sleep.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${sleep.PatientUserId}`);
-            }
+            await this._ehrMentalWellbeingService.addEHRSleepForAppNames(sleep);
+
             if (sleep.SleepDuration) {
                 var timestamp = sleep.RecordDate;
                 if (!timestamp) {
@@ -148,16 +139,7 @@ export class SleepController extends BaseController{
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update sleep record!');
             }
-
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrMentalWellbeingService.addEHRSleepForAppNames(updated);
 
             ResponseHandler.success(request, response, 'Sleep record updated successfully!', 200, {
                 SleepRecord : updated,

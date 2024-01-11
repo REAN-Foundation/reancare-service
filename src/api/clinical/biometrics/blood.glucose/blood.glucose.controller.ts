@@ -23,15 +23,7 @@ export class BloodGlucoseController extends BaseController {
 
     _validator: BloodGlucoseValidator = new BloodGlucoseValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _ehrVitalService: EHRVitalService = new EHRVitalService();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(BloodGlucoseService);
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
-    }
+    _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
 
     //#endregion
 
@@ -47,15 +39,9 @@ export class BloodGlucoseController extends BaseController {
             if (bloodGlucose == null) {
                 throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodGlucose.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bloodGlucose.id, bloodGlucose.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodGlucose.PatientUserId}`);
-            }
+
+            await  this._ehrVitalService.addEHRBloodGlucoseForAppNames(bloodGlucose);
+
             // Adding record to award service
             if (bloodGlucose.BloodGlucose) {
                 var timestamp = bloodGlucose.RecordDate;
@@ -145,14 +131,7 @@ export class BloodGlucoseController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood glucose record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await  this._ehrVitalService.addEHRBloodGlucoseForAppNames(updated);
 
             if (updated.BloodGlucose) {
                 var timestamp = updated.RecordDate;
@@ -200,7 +179,7 @@ export class BloodGlucoseController extends BaseController {
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(existingRecord.id);
 
             ResponseHandler.success(request, response, 'Blood glucose record deleted successfully!', 200, {
                 Deleted : true,

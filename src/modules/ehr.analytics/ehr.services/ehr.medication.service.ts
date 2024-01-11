@@ -1,7 +1,6 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../common/logger";
 import { EHRAnalyticsHandler } from "../ehr.analytics.handler";
-import { PatientService } from "../../../services/users/patient/patient.service";
 import { MedicationConsumptionService } from "../../../services/clinical/medication/medication.consumption.service";
 import EHRMedicationData from "../models/ehr.medication.data.model";
 import { MedicationConsumptionDetailsDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
@@ -13,15 +12,13 @@ import { MedicationConsumptionSearchFilters } from "../../../domain.types/clinic
 
 @injectable()
 export class EHRMedicationService {
-    
-    _patientService: PatientService = Injector.Container.resolve(PatientService);
 
     _medicationConsumptionService: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
-    public deleteMedicationEHRRecord = async (id: string) => {
+    public deleteMedicationEHRRecords = async (id: string) => {
         try {
             const filters: MedicationConsumptionSearchFilters = {
-                MedicationId: id,
+                MedicationId : id,
             };
             const results = await this._medicationConsumptionService.search(filters);
             const consumptionIds = results.Items.map((x) => x.id);
@@ -33,7 +30,7 @@ export class EHRMedicationService {
     };
 
     public addEHRRecord = (model: MedicationConsumptionDetailsDto, appName?: string) => {
-        if (model.IsTaken == false && model.IsMissed == false) {
+        if (model.IsTaken === false && model.IsMissed === false) {
             EHRAnalyticsHandler.addMedicationRecord(
                 appName,
                 model.id,
@@ -94,4 +91,5 @@ export class EHRMedicationService {
             this.addEHRRecord(r, appName);
         }
     }
+
 }

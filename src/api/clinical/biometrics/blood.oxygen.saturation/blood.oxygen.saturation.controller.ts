@@ -24,15 +24,7 @@ export class BloodOxygenSaturationController extends BaseController {
 
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _ehrVitalService: EHRVitalService = new EHRVitalService();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(BloodOxygenSaturationService);
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
-    }
+    _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
 
     //#endregion
 
@@ -48,14 +40,7 @@ export class BloodOxygenSaturationController extends BaseController {
             if (bloodOxygenSaturation == null) {
                 throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodOxygenSaturation.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, bloodOxygenSaturation.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodOxygenSaturation.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBloodOxygenSaturationForAppNames(bloodOxygenSaturation);
 
             // Adding record to award service
             if (bloodOxygenSaturation.BloodOxygenSaturation) {
@@ -148,14 +133,7 @@ export class BloodOxygenSaturationController extends BaseController {
                 throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBloodOxygenSaturationForAppNames(updated);
 
             // Adding record to award service
             if (updated.BloodOxygenSaturation) {
@@ -205,7 +183,7 @@ export class BloodOxygenSaturationController extends BaseController {
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(existingRecord.id);
 
             ResponseHandler.success(request, response, 'Blood oxygen saturation record deleted successfully!', 200, {
                 Deleted : true,

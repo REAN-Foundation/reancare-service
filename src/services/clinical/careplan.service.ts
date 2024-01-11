@@ -425,6 +425,7 @@ export class CareplanService implements IUserActionService {
     public getActivities = async (patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]> => {
         return await this._careplanRepo.getActivities(patientUserId, startTime, endTime);
     };
+
     private getAssessment = async (
         activity: CareplanActivityDto,
         template: AssessmentTemplateDto,

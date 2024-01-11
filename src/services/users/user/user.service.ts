@@ -619,7 +619,7 @@ export class UserService {
         const parts = inputString.split(':');
 
         if (parts.length < 3) {
-          return inputString;
+            return inputString;
         }
 
         const extractedString = parts.slice(0, 2).join(':');

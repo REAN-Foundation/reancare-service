@@ -13,7 +13,7 @@ import { UserTaskValidator } from './user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
 import { Injector } from '../../../startup/injector';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
+import { EHRUserTaskService } from '../../../modules/ehr.analytics/ehr.services/ehr.user.task.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,7 +35,7 @@ export class UserTaskController {
 
     _validator: UserTaskValidator = new UserTaskValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrUserTaskService: EHRUserTaskService = Injector.Container.resolve(EHRUserTaskService);
 
     //#endregion
 
@@ -207,7 +207,7 @@ export class UserTaskController {
             if (existing.ActionId != null && existing.ActionType !== null) {
                 const result = await actionResolver.completeAction(
                     existing.ActionType, existing.ActionId, true, finishedAt);
-                Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
+                Logger.instance().log(`${existing.ActionType} - Action result : ${result}`);
 
                 if (userResponse) {
                     await this._careplanService.updateActivityUserResponse(existing.ActionId, userResponse );
@@ -224,15 +224,8 @@ export class UserTaskController {
                 if (action) {
                     updated['Action'] = action;
                 }
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(action.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for (var appName of eligibleAppNames) {
-                        this.addEHRRecord(action, appName);
-                    }
-                } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${action.PatientUserId}`);
-                }
-
+                var healthSystem = await this._service.getHealthSystem(updated.UserId);
+                await this._ehrUserTaskService.addEHRUserTaskForAppNames(updated, healthSystem);
             }
 
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
@@ -404,34 +397,9 @@ export class UserTaskController {
             else {
                 dto.Action = await this._careplanService.getActivity(dto.ActionId);
             }
-
         }
 
         return dto;
-    };
-
-    private addEHRRecord = (action: any, appName?: string) => {
-        EHRAnalyticsHandler.addCareplanActivityRecord(
-            appName,
-            action.PatientUserId,
-            action.id,
-            action.EnrollmentId,
-            action.Provider,
-            action.PlanName,
-            action.PlanCode,
-            action.Type,
-            action.Category,
-            action.ProviderActionId,
-            action.Title,
-            action.Description,
-            action.Url,
-            'English',
-            action.ScheduledAt,
-            action.CompletedAt,
-            action.Sequence,
-            action.Frequency,
-            action.Status,
-        );
     };
 
     //#endregion

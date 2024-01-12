@@ -47,6 +47,7 @@ export class BloodGlucoseService {
 
     search = async (filters: BloodGlucoseSearchFilters): Promise<BloodGlucoseSearchResults> => {
         return await this._bloodGlucoseRepo.search(filters);
+
     };
 
     delete = async (id: string): Promise<boolean> => {

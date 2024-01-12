@@ -35,6 +35,9 @@ export class CareplanActivityMapper {
             Frequency        : activity.Frequency,
             Status           : activity.Status,
             RawContent       : activity.RawContent,
+            CreatedAt        : activity.CreatedAt,
+            UpdatedAt        : activity.UpdatedAt,
+
         };
         return dto;
     };

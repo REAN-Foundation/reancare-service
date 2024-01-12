@@ -83,7 +83,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                     [Op.gte] : filters.CreatedDateFrom,
                 };
             }
-            if (filters.RecordedByUserId !== null) {
+            if (filters.RecordedByUserId != null) {
                 search.where['RecordedByUserId'] = filters.RecordedByUserId;
             }
 

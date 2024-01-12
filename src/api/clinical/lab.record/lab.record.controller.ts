@@ -5,11 +5,8 @@ import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import { LabRecordValidator } from './lab.record.validator';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
-import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
-import { EHRRecordTypes } from '../../../modules/ehr.analytics/ehr.record.types';
 import { Injector } from '../../../startup/injector';
-import { Logger } from '../../../common/logger';
+import { EHRLabService } from '../../../modules/ehr.analytics/ehr.services/ehr.lab.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,9 +18,9 @@ export class LabRecordController {
 
     _userService: UserService = Injector.Container.resolve(UserService);
 
-    _validator: LabRecordValidator = new LabRecordValidator();
+    _ehrLabService: EHRLabService = Injector.Container.resolve(EHRLabService);
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _validator: LabRecordValidator = new LabRecordValidator();
 
     //#endregion
 
@@ -37,15 +34,7 @@ export class LabRecordController {
             if (labRecord == null) {
                 throw new ApiError(400, 'Cannot create lab record!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(labRecord.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(model.PatientUserId, labRecord.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${labRecord.PatientUserId}`);
-            }
+            await this._ehrLabService.addEHRLabRecordForAppNames(labRecord);
 
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record created successfully!`, 201, {
                 LabRecord : labRecord,
@@ -106,15 +95,8 @@ export class LabRecordController {
                 throw new ApiError(400, 'Unable to update lab record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrLabService.addEHRLabRecordForAppNames(updated);
+            
             ResponseHandler.success(request, response, `${updated.DisplayName} record updated successfully!`, 200, {
                 LabRecord : updated,
             });
@@ -137,6 +119,9 @@ export class LabRecordController {
                 throw new ApiError(400, `${existingRecord.DisplayName} record cannot be deleted.`);
             }
 
+            // delete ehr record
+            this._ehrLabService.deleteLabEHRRecord(existingRecord.id);
+
             ResponseHandler.success(request, response, `${existingRecord.DisplayName} record deleted successfully!`, 200, {
                 Deleted : true,
             });
@@ -146,24 +131,4 @@ export class LabRecordController {
     };
 
     //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (
-        patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        model: LabRecordDomainModel,
-        appName?: string) => {
-        if (model) {
-            EHRAnalyticsHandler.addIntegerRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.LabRecord, model.PrimaryValue, model.Unit, model.DisplayName, model.DisplayName, appName);
-        }
-    };
-
-    //#endregion
-
 }

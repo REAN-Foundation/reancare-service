@@ -16,6 +16,7 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
 import { MedicationValidator } from './medication.validator';
+import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,26 +24,17 @@ export class MedicationController {
 
     //#region member variables and constructors
 
-    _service: MedicationService = null;
+    _service: MedicationService = Injector.Container.resolve(MedicationService);
 
-    _patientService: PatientService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _userService: UserService = null;
+    _drugService: DrugService = Injector.Container.resolve(DrugService);
 
-    _drugService: DrugService = null;
+    _fileResourceService: FileResourceService = Injector.Container.resolve(FileResourceService);
 
-    _fileResourceService: FileResourceService = null;
+    _medicationConsumptionService: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
-    _medicationConsumptionService: MedicationConsumptionService = null;
-
-    constructor() {
-        this._service = Injector.Container.resolve(MedicationService);
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._drugService = Injector.Container.resolve(DrugService);
-        this._fileResourceService = Injector.Container.resolve(FileResourceService);
-        this._medicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
-    }
+    _ehrMedicationService: EHRMedicationService = Injector.Container.resolve(EHRMedicationService);
 
     //#endregion
 
@@ -120,16 +112,23 @@ export class MedicationController {
             }
             if (medication.FrequencyUnit !== 'Other') {
                 var stats = await this._medicationConsumptionService.create(medication);
+                var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
                 var consumptionSummary: ConsumptionSummaryDto = {
                     TotalConsumptionCount   : stats.TotalConsumptionCount,
-                    TotalDoseCount          : stats.TotalConsumptionCount * medication.Dose,
+                    TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
                     PendingConsumptionCount : stats.PendingConsumptionCount,
-                    PendingDoseCount        : stats.PendingConsumptionCount * medication.Dose,
+                    PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
                 };
 
                 medication.ConsumptionSummary = consumptionSummary;
             }
+
+            var medicationConsumptions = await this._medicationConsumptionService.getByMedicationId(medication.id);
+            for await (var mc of medicationConsumptions) {
+                await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(mc);
+            }
+
             ResponseHandler.success(request, response, 'Medication created successfully!', 201, {
                 Medication : medication,
             });
@@ -149,12 +148,13 @@ export class MedicationController {
             }
 
             var stats = await this._medicationConsumptionService.getConsumptionStatusForMedication(id);
+            var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
             var consumptionSummary: ConsumptionSummaryDto = {
                 TotalConsumptionCount   : stats.TotalConsumptionCount,
-                TotalDoseCount          : stats.TotalConsumptionCount * medication.Dose,
+                TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
                 PendingConsumptionCount : stats.PendingConsumptionCount,
-                PendingDoseCount        : stats.PendingConsumptionCount * medication.Dose,
+                PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
             };
 
             medication.ConsumptionSummary = consumptionSummary;
@@ -170,17 +170,13 @@ export class MedicationController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters = await MedicationValidator.search(request);
-
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
             const message =
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} medication records retrieved successfully!`;
-
             ResponseHandler.success(request, response, message, 200, { Medications: searchResults });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -219,17 +215,17 @@ export class MedicationController {
 
                 if (updated.FrequencyUnit !== 'Other') {
                     var stats = await this._medicationConsumptionService.create(updated);
+                    var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
 
                     var consumptionSummary: ConsumptionSummaryDto = {
                         TotalConsumptionCount   : stats.TotalConsumptionCount,
-                        TotalDoseCount          : stats.TotalConsumptionCount * updated.Dose,
+                        TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
                         PendingConsumptionCount : stats.PendingConsumptionCount,
-                        PendingDoseCount        : stats.PendingConsumptionCount * updated.Dose,
+                        PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
                     };
 
                     updated.ConsumptionSummary = consumptionSummary;
                 }
-
             }
 
             ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
@@ -254,6 +250,9 @@ export class MedicationController {
             }
 
             await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+
+            // delete ehr record
+            this._ehrMedicationService.deleteMedicationEHRRecords(id);
 
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
                 Deleted : true,

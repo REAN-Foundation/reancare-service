@@ -25,7 +25,7 @@ export class MedicationValidator {
             OrderId                   : request.body.OrderId ?? null,
             DrugName                  : request.body.DrugName ?? null,
             DrugId                    : request.body.DrugId,
-            Dose                      : parseFloat(request.body.Dose),
+            Dose                      : request.body.Dose ? request.body.Dose.toString() : null,
             DosageUnit                : request.body.DosageUnit,
             TimeSchedules             : request.body.TimeSchedules ? request.body.TimeSchedules : [],
             Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : 1,
@@ -58,7 +58,7 @@ export class MedicationValidator {
             OrderId                   : request.body.OrderId ?? null,
             DrugName                  : request.body.DrugName ?? null,
             DrugId                    : request.body.DrugId ?? null,
-            Dose                      : request.body.Dose ? parseFloat(request.body.Dose) : null,
+            Dose                      : request.body.Dose ? request.body.Dose.toString() : null,
             DosageUnit                : request.body.DosageUnit ?? null,
             TimeSchedules             : request.body.TimeSchedules ?? [],
             Frequency                 : request.body.Frequency ? parseInt(request.body.Frequency) : null,
@@ -129,9 +129,12 @@ export class MedicationValidator {
                 .isUUID()
         ]).run(request);
 
-        await body('Dose').exists()
-            .isDecimal()
-            .run(request);
+        await oneOf([
+            body('Dose').exists()
+                .isDecimal(),
+            body('Dose').exists()
+                .isString()
+        ]).run(request);
 
         await body('DosageUnit').exists()
             .trim()
@@ -259,9 +262,12 @@ export class MedicationValidator {
             .trim()
             .run(request);
 
-        await body('Dose').optional()
-            .isDecimal()
-            .run(request);
+        await oneOf([
+            body('Dose').optional()
+                .isDecimal(),
+            body('Dose').optional()
+                .isString()
+        ]).run(request);
 
         await body('DosageUnit').optional()
             .trim()

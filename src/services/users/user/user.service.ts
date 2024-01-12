@@ -58,15 +58,15 @@ export class UserService {
 
         // timezone sanitization
         if (model.DefaultTimeZone) {
-            const defaultTimezone = this.sanitizeTimezone(model.DefaultTimeZone); 
+            const defaultTimezone = this.sanitizeTimezone(model.DefaultTimeZone);
             model.DefaultTimeZone = defaultTimezone;
             model.CurrentTimeZone = defaultTimezone;
         }
         if (model.CurrentTimeZone) {
             const currentTimezone = model.CurrentTimeZone ?? model.DefaultTimeZone;
-            model.CurrentTimeZone = this.sanitizeTimezone(currentTimezone); 
+            model.CurrentTimeZone = this.sanitizeTimezone(currentTimezone);
         }
-    
+
         var dto = await this._userRepo.create(model);
         if (dto == null) {
             return null;
@@ -110,12 +110,12 @@ export class UserService {
         // timezone sanitization
 
         if (model.DefaultTimeZone != null) {
-            model.DefaultTimeZone = this.sanitizeTimezone(model.DefaultTimeZone); 
+            model.DefaultTimeZone = this.sanitizeTimezone(model.DefaultTimeZone);
             model.CurrentTimeZone = model.DefaultTimeZone;
         }
         if (model.CurrentTimeZone != null) {
-            model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone); 
-        }  
+            model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);
+        }
         var dto = await this._userRepo.update(id, model);
         dto = await this.updateDetailsDto(dto);
         return dto;
@@ -617,11 +617,11 @@ export class UserService {
 
     private sanitizeTimezone = (inputString) => {
         const parts = inputString.split(':');
-        
+
         if (parts.length < 3) {
-          return inputString;
+            return inputString;
         }
-        
+
         const extractedString = parts.slice(0, 2).join(':');
         return extractedString;
     };

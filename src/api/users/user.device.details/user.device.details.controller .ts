@@ -15,20 +15,13 @@ export class UserDeviceDetailsController {
 
     //#region member variables and constructors
 
-    _service: UserDeviceDetailsService = null;
+    _service = Injector.Container.resolve(UserDeviceDetailsService);
 
-    _personService: PersonService = null;
+    _personService = Injector.Container.resolve(PersonService);
 
-    _patientService: PatientService = null;
-
-    _firebaseNotificationService: FirebaseNotificationService = null;
-
-    constructor() {
-        this._service = Injector.Container.resolve(UserDeviceDetailsService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._firebaseNotificationService = Injector.Container.resolve(FirebaseNotificationService);
-    }
+    _patientService = Injector.Container.resolve(PatientService);
+    
+    _firebaseNotificationService = Injector.Container.resolve(FirebaseNotificationService);
 
     //#endregion
 
@@ -168,8 +161,7 @@ export class UserDeviceDetailsController {
                 deviceTokens.push(device.Token);
             });
 
-            const message = await this._firebaseNotificationService.formatNotificationMessage(
-                details.Type, details.Title, details.Body);
+            const message = await this._firebaseNotificationService.formatNotificationMessage(details.Type, details.Title, details.Body, details.Url);
 
             // call notification service to send multiple devices
             await this._firebaseNotificationService.sendNotificationToMultipleDevice(deviceTokens, message);

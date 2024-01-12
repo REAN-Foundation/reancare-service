@@ -16,46 +16,35 @@ import { UserDeviceDetailsService } from '../../../../services/users/user/user.d
 import { PersonService } from '../../../../services/person/person.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { RoleDto } from '../../../../domain.types/role/role.dto';
 import { Roles } from '../../../../domain.types/role/role.types';
+import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientController extends BaseUserController {
 
     //#region member variables and constructors
+    _service: PatientService = Injector.Container.resolve(PatientService);
 
-    _service: PatientService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _userService: UserService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _patientHealthProfileService: HealthProfileService = null;
+    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
-    _personService: PersonService = null;
+    _patientHealthProfileService: HealthProfileService = Injector.Container.resolve(HealthProfileService);
 
-    _userDeviceDetailsService: UserDeviceDetailsService = null;
+    _cohortService: CohortService = Injector.Container.resolve(CohortService);
+
+    _ehrPatientService: EHRPatientService = Injector.Container.resolve(EHRPatientService);
 
     _userHelper: UserHelper = new UserHelper();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
-    _cohortService: CohortService = null;
-
     _validator = new PatientValidator();
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(PatientService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
-        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
-        this._cohortService = Injector.Container.resolve(CohortService);
-    }
 
     //#endregion
 
@@ -74,15 +63,7 @@ export class PatientController extends BaseUserController {
             const clientCode = request.currentClient.ClientCode;
             await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patient.UserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this.addPatientToEHRRecords(patient.UserId, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patient.UserId}`);
-            }
+            await this._ehrPatientService.addEHRRecordPatientForAppNames(patient);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -229,7 +210,8 @@ export class PatientController extends BaseUserController {
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
-            const updatedHealthProfile = await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
+            const updatedHealthProfile =
+                await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
@@ -250,14 +232,7 @@ export class PatientController extends BaseUserController {
                 location = addresses[0].Location;
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(userId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, appName);       
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
-            }
+            await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient);
 
             const patient = await this._service.getByUserId(userId);
 
@@ -317,6 +292,9 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(400, 'User sessions cannot be deleted.');
             }
 
+            // delete static ehr record
+            await this._ehrPatientService.deleteStaticEHRRecord(userId);
+
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -328,62 +306,6 @@ export class PatientController extends BaseUserController {
     //#endregion
 
     //#region Privates
-
-    private addPatientToEHRRecords = (patientUserId: uuid, appName?: string) => {
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {}, appName,);
-    };
-
-    private addEHRRecord = (patientUserId: uuid,
-        model: PersonDomainModel, updatedModel: any, location: string, updatedHealthProfile: any, appName?: string) => {
-        var details = {};
-        if (model.BirthDate) {
-            details['BirthDate'] = model.BirthDate;
-        }
-        if (updatedModel.User.Person.Age) {
-            details['Age'] = updatedModel.User.Person.Age;
-        }
-        if (model.Gender) {
-            details['Gender'] = model.Gender;
-        }
-        if (model.SelfIdentifiedGender) {
-            details['SelfIdentifiedGender'] = model.SelfIdentifiedGender;
-        }
-        if (model.MaritalStatus) {
-            details['MaritalStatus'] = model.MaritalStatus;
-        }
-        if (model.Ethnicity) {
-            details['Ethnicity'] = model.Ethnicity;
-        }
-        if (model.Race) {
-            details['Race'] = model.Race;
-        }
-        if (updatedModel.HealthSystem) {
-            details['HealthSystem'] = updatedModel.HealthSystem;
-        }
-        if (updatedModel.AssociatedHospital) {
-            details['AssociatedHospital'] = updatedModel.AssociatedHospital;
-        }
-        if (updatedHealthProfile.HasHeartAilment) {
-            details['HasHeartAilment'] = updatedHealthProfile.HasHeartAilment;
-        }
-        if (updatedHealthProfile.HasHighBloodPressure) {
-            details['HasHighBloodPressure'] = updatedHealthProfile.HasHighBloodPressure;
-        }
-        if (updatedHealthProfile.HasHighCholesterol) {
-            details['HasHighCholesterol'] = updatedHealthProfile.HasHighCholesterol;
-        }
-        if (updatedHealthProfile.Occupation) {
-            details['Occupation'] = updatedHealthProfile.Occupation;
-        }
-        if (location) {
-            details['Location'] = location;
-        }
-        if (updatedHealthProfile.OtherConditions) {
-            details['OtherConditions'] = updatedHealthProfile.OtherConditions;
-        }
-
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
-    };
 
     private addPatientToCohort = async (patientUserId: uuid, cohortId: uuid) => {
         try {

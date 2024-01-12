@@ -10,6 +10,8 @@ import { CommunityNetworkService } from '../modules/community.bw/community.netwo
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
 import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
 import { UserService } from '../services/users/user/user.service';
+import { StatisticsService } from '../services/statistics/statistics.service';
+import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -51,9 +53,14 @@ export class Scheduler {
                 this.scheduleCareplanRegistrationReminders();
                 this.scheduleFetchDataFromDevices();
                 this.scheduleCurrentTimezoneUpdate();
+                this.scheduleDailyStatistics();
+                this.scheduleStrokeSurvey();
 
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
+
+                const runOnceScheduler = RunOnceScheduler.instance();
+                runOnceScheduler.schedule(Scheduler._schedules);
 
                 resolve(true);
             } catch (error) {
@@ -66,6 +73,16 @@ export class Scheduler {
     //#endregion
 
     //#region Privates
+
+    private scheduleDailyStatistics = ()=>{
+        cron.schedule(Scheduler._schedules['DailyStatistics'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: creating overall statistics...');
+                var service = Injector.Container.resolve(StatisticsService);
+                await service.createDailyStatistics();
+            })();
+        });
+    };
 
     private scheduleFileCleanup = () => {
         cron.schedule(Scheduler._schedules['FileCleanup'], () => {
@@ -171,6 +188,16 @@ export class Scheduler {
         });
     };
 
+    private scheduleStrokeSurvey = () => {
+        cron.schedule(Scheduler._schedules['ScheduleStrokeSurvey'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Stroke Survey notification...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleStrokeSurvey();
+            })();
+        });
+    };
+
     private scheduleReminderOnNoActionToDonationRequest = () => {
         cron.schedule(Scheduler._schedules['ReminderOnNoActionToDonationRequest'], () => {
             (async () => {
@@ -202,6 +229,7 @@ export class Scheduler {
             })();
         });
     };
+
     // private scheduleDaillyPatientTasks = () => {
     //     cron.schedule(Scheduler._schedules['PatientDailyTasks'], () => {
     //         (async () => {

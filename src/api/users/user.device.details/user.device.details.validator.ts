@@ -216,13 +216,12 @@ export class UserDeviceDetailsValidator {
                 .run(request);
 
             await body('Title').exists()
-                .trim()
-                .escape()
                 .run(request);
 
             await body('Body').exists()
-                .trim()
-                .escape()
+                .run(request);
+
+            await body('Url').optional()
                 .run(request);
 
             const result = validationResult(request);
@@ -234,7 +233,8 @@ export class UserDeviceDetailsValidator {
                 Phone : request.body.Phone,
                 Type  : request.body.Type,
                 Title : request.body.Title,
-                Body  : request.body.Body
+                Body  : request.body.Body,
+                Url   : request.body.Url ?? null
             };
             return details;
 

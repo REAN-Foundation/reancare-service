@@ -5,14 +5,11 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BodyTemperatureService } from '../../../../services/clinical/biometrics/body.temperature.service';
 import { Injector } from '../../../../startup/injector';
 import { BodyTemperatureValidator } from './body.temperature.validator';
-import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Logger } from '../../../../common/logger';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +21,7 @@ export class BodyTemperatureController {
 
     _validator: BodyTemperatureValidator = new BodyTemperatureValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
 
     //#endregion
 
@@ -38,14 +35,8 @@ export class BodyTemperatureController {
             if (bodyTemperature == null) {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyTemperature.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(model.PatientUserId, bodyTemperature.id, bodyTemperature.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyTemperature.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBodyTemperatureForAppNames(bodyTemperature);
+
             // Adding record to award service
             if (bodyTemperature.BodyTemperature) {
                 var timestamp = bodyTemperature.RecordDate;
@@ -127,14 +118,8 @@ export class BodyTemperatureController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update body temperature record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBodyTemperatureForAppNames(updated);
+
             // Adding record to award service
             if (updated.BodyTemperature) {
                 var timestamp = updated.RecordDate;
@@ -180,36 +165,14 @@ export class BodyTemperatureController {
                 throw new ApiError(400, 'Body temperature record cannot be deleted.');
             }
 
+            // delete ehr record
+            this._ehrVitalService.deleteRecord(existingRecord.id);
+
             ResponseHandler.success(request, response, 'Body temperature record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    //#endregion
-
-    //#region Privates
-
-    private addEHRRecord = (
-        patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        model: BodyTemperatureDomainModel,
-        appName?: string) => {
-        if (model.BodyTemperature) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.BodyTemperature,
-                model.BodyTemperature,
-                model.Unit,
-                null,
-                null,
-                appName
-            );
         }
     };
 

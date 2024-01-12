@@ -147,6 +147,12 @@ export default class EHRAssessmentData extends Model {
     })
     FinishedAt: Date;
 
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    RecordDate: Date;
+
     @Column
     @CreatedAt
     TimeStamp: Date;

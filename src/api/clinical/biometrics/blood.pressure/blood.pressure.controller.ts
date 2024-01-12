@@ -7,8 +7,6 @@ import { Loader } from '../../../../startup/loader';
 import { BloodPressureValidator } from './blood.pressure.validator';
 import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { PersonService } from '../../../../services/person/person.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
@@ -17,12 +15,15 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { Injector } from '../../../../startup/injector';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class BloodPressureController {
 
     //#region member variables and constructors
+
+    _validator: BloodPressureValidator = new BloodPressureValidator();
 
     _service: BloodPressureService = Injector.Container.resolve(BloodPressureService);
 
@@ -32,9 +33,7 @@ export class BloodPressureController {
 
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
-    _validator: BloodPressureValidator = new BloodPressureValidator();
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrVitalService = Injector.Container.resolve(EHRVitalService);
 
     //#endregion
 
@@ -49,15 +48,7 @@ export class BloodPressureController {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodPressure.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(model.PatientUserId, bloodPressure.id, bloodPressure.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodPressure.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBloodPressureForAppNames(bloodPressure);
 
             /*if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
@@ -152,14 +143,7 @@ export class BloodPressureController {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    this.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBloodPressureForAppNames(updated);
 
             // Adding record to award service
             if (updated.Systolic || updated.Diastolic) {
@@ -207,6 +191,9 @@ export class BloodPressureController {
                 throw new ApiError(400, 'Blood pressure record cannot be deleted.');
             }
 
+            // delete ehr record
+            this._ehrVitalService.deleteRecord(existingRecord.id);
+
             ResponseHandler.success(request, response, 'Blood pressure record deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -218,41 +205,6 @@ export class BloodPressureController {
     //#endregion
 
     //#region Privates
-
-    private addEHRRecord = (
-        patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        model: BloodPressureDomainModel,
-        appName?: string) => {
-
-        if (model.Systolic) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.BloodPressure,
-                model.Systolic,
-                model.Unit,
-                'Systolic Blood Pressure',
-                'Blood Pressure',
-                appName
-            );
-        }
-        if (model.Diastolic) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.BloodPressure,
-                model.Diastolic,
-                model.Unit,
-                'Distolic Blood Pressure',
-                'Blood Pressure',
-                appName
-            );
-        }
-    };
 
     private sendBPMessage = async (patientUserId: uuid, model: BloodPressureDomainModel) => {
 

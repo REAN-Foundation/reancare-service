@@ -20,7 +20,7 @@ import { v4 } from 'uuid';
     timestamps      : true,
     modelName       : 'StaticEHRData',
     tableName       : 'static_ehr_data',
-    paranoid        : false,
+    paranoid        : true,
     freezeTableName : true,
 })
 export default class StaticEHRData extends Model {
@@ -202,8 +202,14 @@ export default class StaticEHRData extends Model {
     })
     Occupation: string;
 
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    RecordDate: Date;
+
     @Column
     @CreatedAt
-    CreatedAt: Date;
+    TimeStamp: Date;
 
 }

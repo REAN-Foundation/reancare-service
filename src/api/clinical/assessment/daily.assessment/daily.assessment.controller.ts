@@ -5,6 +5,7 @@ import { DailyAssessmentService } from '../../../../services/clinical/daily.asse
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { Injector } from '../../../../startup/injector';
 import { PatientService } from '../../../../services/users/patient/patient.service';
+import { EHRHowDoYouFeelService } from '../../../../modules/ehr.analytics/ehr.services/ehr.how.do.you.feel.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -14,9 +15,11 @@ export class DailyAssessmentController {
 
     _service: DailyAssessmentService = Injector.Container.resolve(DailyAssessmentService);
 
-    _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
-
     _patientService: PatientService = Injector.Container.resolve(PatientService);
+
+    _ehrHowDoYouFeelService: EHRHowDoYouFeelService = Injector.Container.resolve(EHRHowDoYouFeelService);
+
+    _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 
     //#endregion
 
@@ -31,6 +34,9 @@ export class DailyAssessmentController {
             if (dailyAssessment == null) {
                 throw new ApiError(400, 'Cannot create record for daily assessment!');
             }
+
+            await this._ehrHowDoYouFeelService.addEHRDailyAssessmentForAppNames(dailyAssessment);
+
             ResponseHandler.success(request, response, 'Daily assessment record created successfully!', 201, {
                 DailyAssessment : dailyAssessment,
             });

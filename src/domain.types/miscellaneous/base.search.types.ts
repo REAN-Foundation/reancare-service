@@ -15,8 +15,8 @@ export interface BaseSearchFilters {
 export interface BaseSearchResults {
     TotalCount    : integer;
     RetrievedCount: integer;
-    PageIndex     : integer;
-    ItemsPerPage  : integer;
-    Order         : string;
-    OrderedBy     : string;
+    PageIndex?     : integer;
+    ItemsPerPage?  : integer;
+    Order?         : string;
+    OrderedBy?    : string;
 }

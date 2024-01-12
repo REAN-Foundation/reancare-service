@@ -8,9 +8,7 @@ import { EnrollmentDomainModel } from "../../../../domain.types/clinical/carepla
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
-import {
-    CAssessmentTemplate,
-} from '../../../../domain.types/clinical/assessment/assessment.types';
+import { CAssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
 import { Injector } from '../../../../startup/injector';
 import { UserTaskService } from '../../../../services/users/user/user.task.service';

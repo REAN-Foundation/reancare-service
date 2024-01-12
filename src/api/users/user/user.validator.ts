@@ -294,10 +294,10 @@ export class UserValidator {
                 .run(request);
 
             await oneOf([
-                body('TenantId').exists()
+                body('TenantId')
                     .trim()
                     .isUUID(),
-                body('TenantCode').exists()
+                body('TenantCode')
                     .trim()
                     .escape(),
             ]).run(request);

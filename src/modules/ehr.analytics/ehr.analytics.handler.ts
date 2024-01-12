@@ -3,59 +3,51 @@ import { EHRAnalyticsRepo } from "./ehr.analytics.repo";
 import {
     EHRDynamicRecordDomainModel,
     EHRStaticRecordDomainModel
-} from './ehr.analytics.domain.model';
+} from './ehr.domain.models/ehr.analytics.domain.model';
 import * as asyncLib from 'async';
 import { Logger } from "../../common/logger";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
-import { EHRRecordTypes } from "./ehr.record.types";
+import { EHRRecordTypes } from "./ehr.domain.models/ehr.record.types";
 import { ConfigurationManager } from "../../config/configuration.manager";
-import { EHRMedicationDomainModel } from "./ehr.medication.domain.model";
-import { EHRCareplanActivityDomainModel } from "./ehr.careplan.activity.domain.model";
-import { EHRAssessmentDomainModel } from "./ehr.assessment.domain.model";
-import { PatientService } from "../../services/users/patient/patient.service";
-import { UserDeviceDetailsService } from "../../services/users/user/user.device.details.service";
-import { Injector } from "../../startup/injector";
+import { EHRMedicationDomainModel } from "./ehr.domain.models/ehr.medication.domain.model";
+import { EHRCareplanActivityDomainModel } from "./ehr.domain.models/ehr.careplan.activity.domain.model";
+import { EHRAssessmentDomainModel } from "./ehr.domain.models/ehr.assessment.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class EHRAnalyticsHandler {
 
-    //#region Publics
-
-    _patientService: PatientService = Injector.Container.resolve(PatientService);
-
-    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
-
-    static _ehrDatasetRepo: EHRAnalyticsRepo = new EHRAnalyticsRepo();
+    static _ehrAnalyticsRepo: EHRAnalyticsRepo = new EHRAnalyticsRepo();
 
     static _numAsyncTasks = 4;
 
-    static _q = asyncLib.queue((model: EHRDynamicRecordDomainModel, onCompleted) => {
+    //#region Async task queues
+
+    static _queueGeneral = asyncLib.queue((model: EHRDynamicRecordDomainModel, onCompleted) => {
         (async () => {
-            model.RecordDate = (new Date()).toISOString()
-                .split('T')[0];
-            await EHRAnalyticsHandler._ehrDatasetRepo.create(model);
+            model.RecordDate = model.RecordDate ? new Date(model.RecordDate) : null;
+            await EHRAnalyticsHandler._ehrAnalyticsRepo.create(model);
             onCompleted(model);
         })();
     }, EHRAnalyticsHandler._numAsyncTasks);
 
-    static _q1 = asyncLib.queue((model: EHRMedicationDomainModel, onCompleted) => {
+    static _queueMeds = asyncLib.queue((model: EHRMedicationDomainModel, onCompleted) => {
         (async () => {
-            await EHRAnalyticsHandler._ehrDatasetRepo.createMedication(model);
+            await EHRAnalyticsHandler._ehrAnalyticsRepo.createMedication(model);
             onCompleted(model);
         })();
     }, EHRAnalyticsHandler._numAsyncTasks);
 
-    static _q2 = asyncLib.queue((model: EHRCareplanActivityDomainModel, onCompleted) => {
+    static _queueCareplans = asyncLib.queue((model: EHRCareplanActivityDomainModel, onCompleted) => {
         (async () => {
-            await EHRAnalyticsHandler._ehrDatasetRepo.createCareplanActivity(model);
+            await EHRAnalyticsHandler._ehrAnalyticsRepo.createCareplanActivity(model);
             onCompleted(model);
         })();
     }, EHRAnalyticsHandler._numAsyncTasks);
 
-    static _q3 = asyncLib.queue((model: EHRCareplanActivityDomainModel, onCompleted) => {
+    static _queueAssessments = asyncLib.queue((model: EHRAssessmentDomainModel, onCompleted) => {
         (async () => {
-            await EHRAnalyticsHandler._ehrDatasetRepo.createAssessment(model);
+            await EHRAnalyticsHandler._ehrAnalyticsRepo.createAssessment(model);
             onCompleted(model);
         })();
     }, EHRAnalyticsHandler._numAsyncTasks);
@@ -64,7 +56,7 @@ export class EHRAnalyticsHandler {
         if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
             return;
         }
-        EHRAnalyticsHandler._q.push(model, (model, error) => {
+        EHRAnalyticsHandler._queueGeneral.push(model, (model, error) => {
             if (error) {
                 Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error recording EHR record: ${JSON.stringify(error.stack, null, 2)}`);
@@ -79,8 +71,7 @@ export class EHRAnalyticsHandler {
         if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
             return;
         }
-
-        EHRAnalyticsHandler._q1.push(model, (model, error) => {
+        EHRAnalyticsHandler._queueMeds.push(model, (model, error) => {
             if (error) {
                 Logger.instance().log(`Error recording EHR medication record: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error recording EHR medication record: ${JSON.stringify(error.stack, null, 2)}`);
@@ -96,7 +87,7 @@ export class EHRAnalyticsHandler {
             return;
         }
 
-        EHRAnalyticsHandler._q2.push(model, (model, error) => {
+        EHRAnalyticsHandler._queueCareplans.push(model, (model, error) => {
             if (error) {
                 Logger.instance().log(`Error recording EHR careplan activity record: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error recording EHR careplan activity record: ${JSON.stringify(error.stack, null, 2)}`);
@@ -111,8 +102,7 @@ export class EHRAnalyticsHandler {
         if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
             return;
         }
-
-        EHRAnalyticsHandler._q3.push(model, (model, error) => {
+        EHRAnalyticsHandler._queueAssessments.push(model, (model, error) => {
             if (error) {
                 Logger.instance().log(`Error recording EHR assessment record: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error recording EHR assessment record: ${JSON.stringify(error.stack, null, 2)}`);
@@ -131,8 +121,22 @@ export class EHRAnalyticsHandler {
         if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
             return;
         }
-        await EHRAnalyticsHandler._ehrDatasetRepo.addOrUpdatePatient(
+        await EHRAnalyticsHandler._ehrAnalyticsRepo.addOrUpdatePatient(
             patientUserId, details, appName);
+    };
+
+    static deletePatientStaticRecord = async (patientUserId: uuid) => {
+        if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
+            return;
+        }
+        await EHRAnalyticsHandler._ehrAnalyticsRepo.deletePatientStaticRecord(patientUserId);
+    };
+
+    static deleteVitalsRecord = async (recordId: uuid) => {
+        if (ConfigurationManager.EHRAnalyticsEnabled() === false) {
+            return;
+        }
+        await EHRAnalyticsHandler._ehrAnalyticsRepo.deleteVitalsRecord(recordId);
     };
 
     //#region Add records
@@ -147,6 +151,7 @@ export class EHRAnalyticsHandler {
         primaryName?: string,
         name?: string,
         appName?: string,
+        recordDate?: Date
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -158,6 +163,7 @@ export class EHRAnalyticsHandler {
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
             AppName       : appName ?? null,
+            RecordDate    : recordDate ?? null,
 
         };
         EHRAnalyticsHandler.add(model);
@@ -190,16 +196,16 @@ export class EHRAnalyticsHandler {
     };
 
     static addIntegerRecord = (
-        patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        type: EHRRecordTypes,
-        primaryValue: number,
-        primaryUnit?: string,
-        primaryName?: string,
-        name?: string,
-        appName?: string,
-
+        patientUserId : uuid,
+        recordId      : uuid,
+        provider      : string,
+        type          : EHRRecordTypes,
+        primaryValue  : number,
+        primaryUnit  ?: string,
+        primaryName  ?: string,
+        name         ?: string,
+        appName      ?: string,
+        recordDate   ?: Date,
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -211,22 +217,23 @@ export class EHRAnalyticsHandler {
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
             AppName       : appName ?? null,
+            RecordDate    : recordDate ?? null,
 
         };
         EHRAnalyticsHandler.add(model);
     };
 
     static addFloatRecord = (
-        patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        type: EHRRecordTypes,
-        primaryValue: number,
-        primaryUnit?: string,
-        primaryName?: string,
-        name?: string,
-        appName?: string,
-
+        patientUserId : uuid,
+        recordId      : uuid,
+        provider      : string,
+        type          : EHRRecordTypes,
+        primaryValue  : number,
+        primaryUnit  ?: string,
+        primaryName  ?: string,
+        name         ?: string,
+        appName      ?: string,
+        recordDate   ?: Date,
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -238,21 +245,23 @@ export class EHRAnalyticsHandler {
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
             AppName       : appName ?? null,
+            RecordDate    : recordDate ?? null,
 
         };
         EHRAnalyticsHandler.add(model);
     };
 
     static addBooleanRecord = (
-        patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        type: EHRRecordTypes,
-        primaryValue: boolean,
-        primaryUnit?: string,
-        primaryName?: string,
-        name?: string,
-        appName?: string,
+        patientUserId : uuid,
+        recordId      : uuid,
+        provider      : string,
+        type          : EHRRecordTypes,
+        primaryValue  : boolean,
+        primaryUnit  ?: string,
+        primaryName  ?: string,
+        name         ?: string,
+        appName      ?: string,
+        recordDate   ?: Date,
 
     ) => {
         var model:EHRDynamicRecordDomainModel = {
@@ -265,6 +274,7 @@ export class EHRAnalyticsHandler {
             ValueName     : primaryName ?? ( name ?? type),
             ValueUnit     : primaryUnit ?? null,
             AppName       : appName ?? null,
+            RecordDate    : recordDate ?? null,
 
         };
         EHRAnalyticsHandler.add(model);
@@ -275,7 +285,7 @@ export class EHRAnalyticsHandler {
         recordId          : uuid,
         patientUserId     : uuid,
         drugName          : string,
-        dose              : number,
+        dose              : string,
         details?          : string,
         timeScheduleStart?: Date,
         timeScheduleEnd?  : Date,
@@ -283,6 +293,7 @@ export class EHRAnalyticsHandler {
         isTaken?          : boolean,
         isMissed?         : boolean,
         isCancelled?      : boolean,
+        recordDate?       : Date
     ) => {
         var model:EHRMedicationDomainModel = {
             AppName           : appName,
@@ -297,6 +308,7 @@ export class EHRAnalyticsHandler {
             IsTaken           : isTaken,
             IsMissed          : isMissed,
             IsCancelled       : isCancelled,
+            RecordDate        : recordDate,
 
         };
         EHRAnalyticsHandler.addMedication(model);
@@ -324,6 +336,7 @@ export class EHRAnalyticsHandler {
         status             : string,
         healthSystem?      : string,
         associatedHospital?: string,
+        recordDate?        : Date
     ) => {
         var model:EHRCareplanActivityDomainModel = {
             AppName            : appName,
@@ -347,6 +360,7 @@ export class EHRAnalyticsHandler {
             Status             : status,
             HealthSystem       : healthSystem ?? null,
             AssociatedHospital : associatedHospital ?? null,
+            RecordDate         : recordDate ?? null,
 
         };
         EHRAnalyticsHandler.addCareplanActivity(model);
@@ -356,36 +370,5 @@ export class EHRAnalyticsHandler {
         var model:EHRAssessmentDomainModel = assessmentRecord;
         EHRAnalyticsHandler.addAssessment(model);
     };
-
-    private eligibleToAddInEhrRecords = (userAppRegistrations) => {
-
-        const eligibleToAddInEhrRecords =
-        userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
-        userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ||
-        userAppRegistrations.indexOf('HF Helper') >= 0;
-
-        return eligibleToAddInEhrRecords;
-    };
-
-    public getEligibleAppNames = async (patientUserId: uuid) => {
-        const userDetails = await this._patientService.getByUserId(patientUserId);
-        var appNames = [];
-        if (userDetails.User.IsTestUser === false) {
-            var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
-            if (userDevices.length > 0) {
-                userDevices.forEach(userDevice => {
-                    var deviceEligibility = this.eligibleToAddInEhrRecords(userDevice.AppName);
-                    if (deviceEligibility) {
-                        appNames.push(userDevice.AppName);
-                    }
-                });
-            }
-        }
-        // app is not invalidating old devices, hence considering only unique devices
-        var uniqueAppNames = appNames.filter((item, i, ar) => ar.indexOf(item) === i);
-        return uniqueAppNames;
-    };
-
-    //#endregion
 
 }

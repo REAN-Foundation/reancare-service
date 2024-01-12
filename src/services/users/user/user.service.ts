@@ -498,14 +498,16 @@ export class UserService {
     //#region Privates
 
     private checkTenant = async (loginModel: UserLoginDetails, user: UserDetailsDto): Promise<TenantDto> => {
-        var tenant = await this.getTenant(loginModel.TenantId, loginModel.TenantCode);
+        const tenantId = user.TenantId;
+        var tenant = await this._tenantRepo.getById(tenantId);
+        // var tenant = await this.getTenant(loginModel.TenantId, loginModel.TenantCode);
         if (tenant == null) {
             throw new ApiError(404, 'Tenant not found.');
         }
-        var isTenantUser = await this._userRepo.isTenantUser(user.id, tenant.id);
-        if (!isTenantUser) {
-            throw new ApiError(401, 'User does not belong to the given tenant.');
-        }
+        // var isTenantUser = await this._userRepo.isTenantUser(user.id, tenant.id);
+        // if (!isTenantUser) {
+        //     throw new ApiError(401, 'User does not belong to the given tenant.');
+        // }
         return tenant;
     };
 

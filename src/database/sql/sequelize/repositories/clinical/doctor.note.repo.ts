@@ -37,7 +37,7 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
         try {
             const doctorNote = await DoctorNote.findByPk(id);
             return await DoctorNoteMapper.toDto(doctorNote);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -66,7 +66,7 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
             if (filters.RecordDateTo != null) {
                 search.where['RecordDateTo'] = filters.RecordDateTo;
             }
-            
+
             let orderByColum = 'RecordDate';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -140,11 +140,11 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
             if (doctorNoteDomainModel.RecordDate != null) {
                 doctorNote.RecordDate = doctorNoteDomainModel.RecordDate;
             }
-            
+
             await doctorNote.save();
 
             return await DoctorNoteMapper.toDto(doctorNote);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

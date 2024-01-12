@@ -4,11 +4,9 @@ import { IBloodOxygenSaturationRepo } from "../../../database/repository.interfa
 import { BloodOxygenSaturationDomainModel } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
 import { BloodOxygenSaturationDto } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto';
 import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types';
-import { Loader } from "../../../startup/loader";
+import { Injector } from "../../../startup/injector";
 import { BloodOxygenSaturationStore } from "../../../modules/ehr/services/blood.oxygen.saturation.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +19,7 @@ export class BloodOxygenSaturationService {
         @inject('IBloodOxygenSaturationRepo') private _bloodOxygenSaturationRepo: IBloodOxygenSaturationRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBloodOxygenSaturationStore = Loader.container.resolve(BloodOxygenSaturationStore);
+            this._ehrBloodOxygenSaturationStore = Injector.Container.resolve(BloodOxygenSaturationStore);
         }
     }
 
@@ -66,23 +64,6 @@ export class BloodOxygenSaturationService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bloodOxygenSaturationRepo.getAllUserResponsesBefore(patientUserId, date);
-    };
-
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BloodOxygenSaturationDomainModel, appName?: string) => {
-        if (model.BloodOxygenSaturation) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.BloodOxygenSaturation,
-                model.BloodOxygenSaturation,
-                model.Unit,
-                null,
-                null,
-                appName,
-                model.RecordDate ? model.RecordDate : null
-            );
-        }
     };
 
 }

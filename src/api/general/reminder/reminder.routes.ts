@@ -1,29 +1,28 @@
 import express from 'express';
 import { ReminderController } from './reminder.controller';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new ReminderController();
 
-    router.post('/one-time', authenticator.authenticateClient, authenticator.authenticateUser, controller.createOneTimeReminder);
-    router.post('/repeat-after-every-n', authenticator.authenticateClient, authenticator.authenticateUser, controller.createReminderWithRepeatAfterEveryN);
-    router.post('/repeat-every-weekday', authenticator.authenticateClient, authenticator.authenticateUser, controller.createReminderWithRepeatEveryWeekday);
-    router.post('/repeat-every-week-on-days', authenticator.authenticateClient, authenticator.authenticateUser, controller.createReminderWithRepeatEveryWeekOnDays);
-    router.post('/repeat-every-month-on', authenticator.authenticateClient, authenticator.authenticateUser, controller.createReminderWithEveryMonthOn);
-    router.post('/repeat-every-quarter-on', authenticator.authenticateClient, authenticator.authenticateUser, controller.createReminderWithEveryQuarterOn);
-    router.post('/repeat-every-hour', authenticator.authenticateClient, authenticator.authenticateUser, controller.createReminderWithRepeatEveryHour);
-    router.post('/repeat-every-day', authenticator.authenticateClient, authenticator.authenticateUser, controller.createReminderWithRepeatEveryDay);
+    router.post('/one-time', auth('General.Reminder.CreateOneTimeReminder'), controller.createOneTimeReminder);
+    router.post('/repeat-after-every-n', auth('General.Reminder.CreateReminderWithRepeatAfterEveryN'), controller.createReminderWithRepeatAfterEveryN);
+    router.post('/repeat-every-weekday', auth('General.Reminder.CreateReminderWithRepeatEveryWeekday'), controller.createReminderWithRepeatEveryWeekday);
+    router.post('/repeat-every-week-on-days', auth('General.Reminder.CreateReminderWithRepeatEveryWeekOnDays'), controller.createReminderWithRepeatEveryWeekOnDays);
+    router.post('/repeat-every-month-on', auth('General.Reminder.CreateReminderWithEveryMonthOn'), controller.createReminderWithEveryMonthOn);
+    router.post('/repeat-every-quarter-on', auth('General.Reminder.CreateReminderWithEveryQuarterOn'), controller.createReminderWithEveryQuarterOn);
+    router.post('/repeat-every-hour', auth('General.Reminder.CreateReminderWithRepeatEveryHour'), controller.createReminderWithRepeatEveryHour);
+    router.post('/repeat-every-day', auth('General.Reminder.CreateReminderWithRepeatEveryDay'), controller.createReminderWithRepeatEveryDay);
 
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.get('/search', auth('General.Reminder.Search'), controller.search);
+    router.get('/:id', auth('General.Reminder.GetById'), controller.getById);
+    router.delete('/:id', auth('General.Reminder.Delete'), controller.delete);
 
-    //router.post('/:id/snooze', authenticator.authenticateClient, authenticator.authenticateUser, controller.snooze);
+    //router.post('/:id/snooze', auth(), controller.snooze);
 
     app.use('/api/v1/reminders', router);
 };

@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { BodyWeightStore } from "../../modules/ehr/services/body.weight.store";
-import { Loader } from "../../startup/loader";
+import { Injector } from "../../startup/injector";
 import { ActivityDomainModel, ActivityType } from "../../domain.types/webhook/activity.domain.model";
 import { IStepCountRepo } from "../../database/repository.interfaces/wellness/daily.records/step.count.interface";
 import { ICalorieBalanceRepo } from "../../database/repository.interfaces/wellness/daily.records/calorie.balance.repo.interface";
@@ -26,12 +26,12 @@ export class TeraWebhookActivityService {
         @inject('ISleepRepo') private _sleepRepo: ISleepRepo
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
+            this._ehrBodyWeightStore = Injector.Container.resolve(BodyWeightStore);
         }
     }
 
     activity = async (activityDomainModel: ActivityDomainModel) => {
-        
+
         const recentActivity = await this._physicalActivityRepo.getRecent(activityDomainModel.User.ReferenceId);
         let filteredActivitySamples = [];
         if (recentActivity != null) {
@@ -41,7 +41,7 @@ export class TeraWebhookActivityService {
             filteredActivitySamples = activityDomainModel.Data;
         }
         filteredActivitySamples.forEach(async activity => {
-            
+
             const durationInMin = activity.ActiveDurationsData.ActivitySeconds / 60;
             const category = await this.getActivityType(activity.MetaData.Type);
             const activityModel : PhysicalActivityDomainModel = {
@@ -62,7 +62,7 @@ export class TeraWebhookActivityService {
     };
 
     sleep = async (sleepDomainModel: SleepDomainModel) => {
-        
+
         const sleep = sleepDomainModel.Data;
         var existingSleepRecord = await this._sleepRepo.getByRecordDateAndPatientUserId(new Date(sleep.MetaData.StartTime.split('T')[0]),
             sleepDomainModel.User.ReferenceId);

@@ -19,7 +19,7 @@ import { FileResourceService } from '../../services/general/file.resource.servic
 import { PersonService } from '../../services/person/person.service';
 import { UserService } from '../../services/users/user/user.service';
 import { TimeHelper } from '../../common/time.helper';
-import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,15 +46,15 @@ export class AHAActions {
     _userService: UserService = null;
 
     constructor() {
-        this._patientService = Loader.container.resolve(PatientService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._assessmentService = Loader.container.resolve(AssessmentService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
-        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
-        this._careplanService = Loader.container.resolve(CareplanService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._userService = Loader.container.resolve(UserService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._assessmentService = Injector.Container.resolve(AssessmentService);
+        this._userTaskService = Injector.Container.resolve(UserTaskService);
+        this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
+        this._careplanService = Injector.Container.resolve(CareplanService);
+        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
+        this._userService = Injector.Container.resolve(UserService);
 
     }
 
@@ -125,9 +125,10 @@ export class AHAActions {
                             userDeviceTokens.push(userDevice.Token);
                         });
 
-                        if (userAppRegistrations.length > 0 && this.eligibleForCareplanRegistartionReminder(userAppRegistrations)) {
+                        if (userAppRegistrations.length > 0 &&
+                            this.eligibleForCareplanRegistartionReminder(userAppRegistrations)) {
                             Logger.instance().log(`Sending careplan registration reminder to :${patient.UserId}`);
-                            await this.sendCareplanRegistrationReminder(userDeviceTokens);        
+                            await this.sendCareplanRegistrationReminder(userDeviceTokens);
                         } else {
                             Logger.instance().log(`Skip sending careplan registration reminder as device is not eligible:${patient.UserId}`);
                         }
@@ -137,7 +138,7 @@ export class AHAActions {
                 } else {
                     Logger.instance().log(`Skip sending careplan registration reminder as patient is already enrolled:${patient.UserId}`);
                 }
-                
+
             }
         }
         catch (error) {
@@ -160,9 +161,9 @@ export class AHAActions {
                     today = new Date(today.setHours(0, 0, 0, 0));
 
                     const dayDiff = Math.floor(TimeHelper.dayDiff(today, referenceDate));
-                    
+
                     if (dayDiff === 3 || dayDiff === 10 || dayDiff === 30) {
-                    var userDevices = await this._userDeviceDetailsService.getByUserId(patient.UserId);
+                        var userDevices = await this._userDeviceDetailsService.getByUserId(patient.UserId);
                         var userAppRegistrations = [];
                         var userDeviceTokens = [];
                         userDevices.forEach(userDevice => {
@@ -170,18 +171,19 @@ export class AHAActions {
                             userDeviceTokens.push(userDevice.Token);
                         });
 
-                    if (userAppRegistrations.length > 0 && this.eligibleForCareplanRegistartionReminder(userAppRegistrations)) {
-                        Logger.instance().log(`Sending careplan registration reminder (old user) to :${patient.UserId}`);
-                        await this.sendCareplanRegistrationReminder(userDeviceTokens);        
+                        if (userAppRegistrations.length > 0 &&
+                            this.eligibleForCareplanRegistartionReminder(userAppRegistrations)) {
+                            Logger.instance().log(`Sending careplan registration reminder (old user) to :${patient.UserId}`);
+                            await this.sendCareplanRegistrationReminder(userDeviceTokens);
+                        } else {
+                            Logger.instance().log(`Skip sending careplan registration reminder (old user) as device is not eligible:${patient.UserId}`);
+                        }
                     } else {
-                        Logger.instance().log(`Skip sending careplan registration reminder (old user) as device is not eligible:${patient.UserId}`);
-                    }               
+                        Logger.instance().log(`Skip sending careplan registration reminder (old user) as ineligible day:${patient.UserId}`);
+                    }
                 } else {
-                    Logger.instance().log(`Skip sending careplan registration reminder (old user) as ineligible day:${patient.UserId}`);
-                }
-            } else {
                     Logger.instance().log(`Skip sending careplan registration reminder (old user) as patient is already enrolled:${patient.UserId}`);
-                }          
+                }
             }
         }
         catch (error) {
@@ -343,10 +345,10 @@ export class AHAActions {
 
                 if (userAppRegistrations.length > 0 && this.eligibleForStrokeSurvey(userAppRegistrations)) {
                     Logger.instance().log(`[StrokeCron] Sending Stroke survey notification to user:${patient.UserId}`);
-                    await this.sendStrokeSurveyNotification(userDeviceTokens);        
+                    await this.sendStrokeSurveyNotification(userDeviceTokens);
                 } else {
                     Logger.instance().log(`[StrokeCron] Skip sending Stroke survey notification as device is not eligible:${patient.UserId}`);
-                }  
+                }
             }
             Logger.instance().log(`[StrokeCron] Cron completed successfully.`);
         }
@@ -505,7 +507,6 @@ export class AHAActions {
         }
 
     };
-
 
     //#endregion
 

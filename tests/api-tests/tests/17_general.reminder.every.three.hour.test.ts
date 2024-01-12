@@ -57,7 +57,7 @@ describe('17 - Reminder schedule every 3 hours tests', function() {
             .get(`/api/v1/reminders/${getTestData('Reminder3HourId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Reminder).to.have.property('id');
                 expect(response.body.Data.Reminder).to.have.property('UserId');
@@ -86,7 +86,7 @@ describe('17 - Reminder schedule every 3 hours tests', function() {
             .get(`/api/v1/reminders/search${loadReminderQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Reminders).to.have.property('TotalCount');
                 expect(response.body.Data.Reminders).to.have.property('RetrievedCount');
@@ -106,7 +106,7 @@ describe('17 - Reminder schedule every 3 hours tests', function() {
             .delete(`/api/v1/reminders/${getTestData('Reminder3HourId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -121,7 +121,7 @@ describe('17 - Reminder schedule every 3 hours tests', function() {
             .post(`/api/v1/reminders/repeat-after-every-n/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Reminder.id, 'Reminder3HourId');
@@ -155,7 +155,7 @@ describe('17 - Reminder schedule every 3 hours tests', function() {
         agent
             .post(`/api/v1/reminders/repeat-after-every-n/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -184,7 +184,7 @@ describe('17 - Reminder schedule every 3 hours tests', function() {
             .delete(`/api/v1/reminders/${getTestData('Reminder3HourId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

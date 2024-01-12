@@ -1,15 +1,14 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { KnowledgeNuggetService } from '../../../services/educational/knowledge.nugget.service';
-import { Loader } from '../../../startup/loader';
 import { KnowledgeNuggetValidator } from './knowledge.nugget.validator';
-import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class KnowledgeNuggetController extends BaseController {
+export class KnowledgeNuggetController {
 
     //#region member variables and constructors
 
@@ -18,9 +17,7 @@ export class KnowledgeNuggetController extends BaseController {
     _validator: KnowledgeNuggetValidator = new KnowledgeNuggetValidator();
 
     constructor() {
-        super();
-        this._service = Loader.container.resolve(KnowledgeNuggetService);
-
+        this._service = Injector.Container.resolve(KnowledgeNuggetService);
     }
 
     //#endregion
@@ -29,7 +26,6 @@ export class KnowledgeNuggetController extends BaseController {
 
     getTodaysTopic = async(request: express.Request, response: express.Response) => {
         try {
-            await this.setContext('KnowledgeNugget.GetTodaysTopic', request, response);
 
             const patientUserId = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -49,7 +45,6 @@ export class KnowledgeNuggetController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('KnowledgeNugget.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -69,8 +64,6 @@ export class KnowledgeNuggetController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('KnowledgeNugget.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const knowledgeNugget = await this._service.getById(id);
@@ -88,7 +81,6 @@ export class KnowledgeNuggetController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('KnowledgeNugget.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -111,7 +103,6 @@ export class KnowledgeNuggetController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('KnowledgeNugget.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -136,7 +127,6 @@ export class KnowledgeNuggetController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('KnowledgeNugget.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

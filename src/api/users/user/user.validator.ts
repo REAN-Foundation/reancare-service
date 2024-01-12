@@ -1,13 +1,123 @@
 import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/response.handler';
-import { UserExistanceModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
+import { UserDomainModel, UserExistanceModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserSearchFilters } from '../../../domain.types/users/user/user.search.types';
+import { Gender, uuid } from '../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class UserValidator {
+
+    static create = async (request: express.Request): Promise<UserDomainModel> => {
+
+        await body('TenantId').exists()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await body('RoleId').exists()
+            .trim()
+            .isNumeric()
+            .run(request);
+
+        await body('Prefix').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('FirstName').exists()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('MiddleName').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('LastName').exists()
+            .trim()
+            .escape()
+            .run(request);
+
+        await oneOf([
+            body('Phone').optional()
+                .trim()
+                .escape(),
+            body('Email').optional()
+                .trim()
+                .escape(),
+            body('UserName').optional()
+                .trim()
+                .escape(),
+        ]).run(request);
+
+        await body('Password').exists()
+            .trim()
+            .escape()
+            .isStrongPassword({
+                minLength                 : 8,
+                minLowercase              : 1,
+                minUppercase              : 1,
+                minNumbers                : 1,
+                minSymbols                : 1,
+                returnScore               : false,
+                pointsPerUnique           : 1,
+                pointsPerRepeat           : 0.5,
+                pointsForContainingLower  : 10,
+                pointsForContainingUpper  : 10,
+                pointsForContainingNumber : 10,
+                pointsForContainingSymbol : 10,
+            })
+            .run(request);
+
+        await body('DefaultTimeZone').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('CurrentTimeZone').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('IsTestUser').optional()
+            .isBoolean()
+            .run(request);
+
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        return UserValidator.getCreateModel(request);
+
+    };
+
+    private static getCreateModel(request): UserDomainModel {
+
+        const model: UserDomainModel = {
+            TenantId : request.body.TenantId,
+            RoleId   : request.body.RoleId,
+            Person   : {
+                Prefix     : request.body.Prefix ?? null,
+                FirstName  : request.body.FirstName,
+                MiddleName : request.body.MiddleName ?? null,
+                LastName   : request.body.LastName,
+                Phone      : request.body.Phone ?? null,
+                Email      : request.body.Email ?? null,
+            },
+            UserName        : request.body.UserName ?? null,
+            Password        : request.body.Password,
+            DefaultTimeZone : request.body.DefaultTimeZone ?? null,
+            CurrentTimeZone : request.body.CurrentTimeZone ?? null,
+            IsTestUser      : request.body.IsTestUser ?? false,
+        };
+
+        return model;
+    }
 
     static getById = async (request: express.Request): Promise<string> => {
 
@@ -132,23 +242,25 @@ export class UserValidator {
         }
     };
 
-    private static getFilter(request): UserSearchFilters {
+    private static getFilter(request: express.Request): UserSearchFilters {
 
         const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
         const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+        const tenantId: uuid = request.currentUserTenantId ?? null;
 
         const filters: UserSearchFilters = {
-            Phone           : request.query.phone ?? null,
-            Email           : request.query.email ?? null,
-            UserId          : request.query.userId ?? null,
-            Name            : request.query.name ?? null,
-            Gender          : request.query.gender ?? null,
-            BirthdateFrom   : request.query.birthdateFrom ?? null,
-            BirthdateTo     : request.query.birthdateTo ?? null,
-            CreatedDateFrom : request.query.createdDateFrom ?? null,
-            CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
+            TenantId        : tenantId,
+            Phone           : request.query.phone as string ?? null,
+            Email           : request.query.email as string ?? null,
+            UserId          : request.query.userId as string ?? null,
+            Name            : request.query.name as string ?? null,
+            Gender          : request.query.gender as Gender ?? null,
+            BirthdateFrom   : request.query.birthdateFrom ? new Date(request.query.birthdateFrom as string) : null,
+            BirthdateTo     : request.query.birthdateTo ? new Date(request.query.birthdateTo as string) : null,
+            CreatedDateFrom : request.query.createdDateFrom ? new Date(request.query.createdDateFrom as string) : null,
+            CreatedDateTo   : request.query.createdDateTo ? new Date(request.query.createdDateTo as string) : null,
+            OrderBy         : request.query.orderBy as string ?? 'CreatedAt',
+            Order           : request.query.order as string ?? 'descending',
             PageIndex       : pageIndex,
             ItemsPerPage    : itemsPerPage,
         };
@@ -181,6 +293,15 @@ export class UserValidator {
                 .isNumeric()
                 .run(request);
 
+            await oneOf([
+                body('TenantId')
+                    .trim()
+                    .isUUID(),
+                body('TenantCode')
+                    .trim()
+                    .escape(),
+            ]).run(request);
+
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
@@ -192,7 +313,9 @@ export class UserValidator {
                 UserName    : null,
                 Password    : request.body.Password,
                 Otp         : null,
-                LoginRoleId : parseInt(request.body.LoginRoleId, 10)
+                LoginRoleId : parseInt(request.body.LoginRoleId, 10),
+                TenantId    : request.body.TenantId ?? null,
+                TenantCode  : request.body.TenantCode ?? null,
             };
             if (typeof request.body.Phone !== 'undefined') {
                 loginDetails.Phone = request.body.Phone;
@@ -221,6 +344,15 @@ export class UserValidator {
                 .escape(),
         ]).run(request);
 
+        // await oneOf([
+        //     body('TenantId').exists()
+        //         .trim()
+        //         .isUUID(),
+        //     body('TenantCode').exists()
+        //         .trim()
+        //         .escape(),
+        // ]).run(request);
+
         await param('roleId').exists()
             .trim()
             .isNumeric()
@@ -232,9 +364,11 @@ export class UserValidator {
         }
 
         const userDetails: UserExistanceModel = {
-            Phone  : null,
-            Email  : null,
-            RoleId : parseInt(request.params.roleId, 10)
+            Phone      : null,
+            Email      : null,
+            RoleId     : parseInt(request.params.roleId, 10),
+            TenantId   : request.body.TenantId ?? null,
+            TenantCode : request.body.TenantCode ?? null,
         };
         if (typeof request.params.phone !== 'undefined') {
             userDetails.Phone = request.params.phone;
@@ -258,6 +392,15 @@ export class UserValidator {
                     .escape(),
             ]).run(request);
 
+            await oneOf([
+                body('TenantId').exists()
+                    .trim()
+                    .isUUID(),
+                body('TenantCode').exists()
+                    .trim()
+                    .escape(),
+            ]).run(request);
+
             await body('NewPassword').exists()
                 .trim()
                 .run(request);
@@ -271,6 +414,8 @@ export class UserValidator {
                 Phone       : null,
                 Email       : null,
                 NewPassword : request.body.NewPassword,
+                TenantId    : request.body.TenantId ?? null,
+                TenantCode  : request.body.TenantCode ?? null,
             };
 
             if (typeof request.body.Phone !== 'undefined') {
@@ -302,6 +447,15 @@ export class UserValidator {
                     .escape(),
             ]).run(request);
 
+            await oneOf([
+                body('TenantId').exists()
+                    .trim()
+                    .isUUID(),
+                body('TenantCode').exists()
+                    .trim()
+                    .escape(),
+            ]).run(request);
+
             await body('Purpose').optional()
                 .trim()
                 .run(request);
@@ -318,11 +472,13 @@ export class UserValidator {
             }
 
             const obj = {
-                Phone   : null,
-                Email   : null,
-                UserId  : null,
-                Purpose : 'Login',
-                RoleId  : request.body.RoleId
+                Phone      : null,
+                Email      : null,
+                UserId     : null,
+                Purpose    : 'Login',
+                RoleId     : request.body.RoleId,
+                TenantId   : request.body.TenantId ?? null,
+                TenantCode : request.body.TenantCode ?? null,
             };
 
             if (typeof request.body.Phone !== 'undefined') {
@@ -350,6 +506,7 @@ export class UserValidator {
 
     static loginWithOtp = async (request: express.Request, response: express.Response): Promise<UserLoginDetails> => {
         try {
+
             await oneOf([
                 body('Phone').optional()
                     .trim()
@@ -360,6 +517,7 @@ export class UserValidator {
                     .isEmail()
                     .escape(),
             ]).run(request);
+
             await body('Otp').exists()
                 .trim()
                 .isNumeric()
@@ -369,6 +527,15 @@ export class UserValidator {
                 .trim()
                 .isNumeric()
                 .run(request);
+
+            await oneOf([
+                body('TenantId').exists()
+                    .trim()
+                    .isUUID(),
+                body('TenantCode').exists()
+                    .trim()
+                    .escape(),
+            ]).run(request);
 
             const result = validationResult(request);
             if (!result.isEmpty()) {
@@ -381,6 +548,8 @@ export class UserValidator {
                 Password    : null,
                 Otp         : request.body.Otp,
                 LoginRoleId : parseInt(request.body.LoginRoleId),
+                TenantId    : request.body.TenantId ?? null,
+                TenantCode  : request.body.TenantCode ?? null,
             };
             if (typeof request.body.Phone !== 'undefined') {
                 loginObject.Phone = request.body.Phone;

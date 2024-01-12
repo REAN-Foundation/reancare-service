@@ -1,15 +1,14 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { MedicalConditionService } from '../../../services/clinical/medical.condition.service';
-import { Loader } from '../../../startup/loader';
 import { MedicalConditionValidator } from './medical.condition.validator';
-import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicalConditionController extends BaseController {
+export class MedicalConditionController {
 
     //#region member variables and constructors
 
@@ -18,9 +17,7 @@ export class MedicalConditionController extends BaseController {
     _validator: MedicalConditionValidator = new MedicalConditionValidator();
 
     constructor() {
-        super();
-        this._service = Loader.container.resolve(MedicalConditionService);
-
+        this._service = Injector.Container.resolve(MedicalConditionService);
     }
 
     //#endregion
@@ -29,8 +26,6 @@ export class MedicalConditionController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('MedicalCondition.Create', request, response);
 
             const medicalConditionDomainModel = await this._validator.create(request);
 
@@ -49,7 +44,6 @@ export class MedicalConditionController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('MedicalCondition.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -68,7 +62,6 @@ export class MedicalConditionController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('MedicalCondition.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -91,7 +84,6 @@ export class MedicalConditionController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('MedicalCondition.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -117,7 +109,6 @@ export class MedicalConditionController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('MedicalCondition.Update', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

@@ -1,39 +1,30 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserService } from '../../../../services/users/user/user.service';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { PhysicalActivityValidator } from './physical.activity.validator';
-import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { Logger } from '../../../../common/logger';
+import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PhysicalActivityController extends BaseController {
+export class PhysicalActivityController {
 
     //#region member variables and constructors
 
-    _service: PhysicalActivityService = null;
-
     _validator: PhysicalActivityValidator = new PhysicalActivityValidator();
 
-    _userService: UserService = null;
+    _service = Injector.Container.resolve(PhysicalActivityService);
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _userService = Injector.Container.resolve(UserService);
 
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(PhysicalActivityService);
-        this._userService = Loader.container.resolve(UserService);
-    }
+    _ehrPhysicalActivityService: EHRPhysicalActivityService = Injector.Container.resolve(EHRPhysicalActivityService);
 
     //#endregion
 
@@ -41,7 +32,6 @@ export class PhysicalActivityController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -56,15 +46,8 @@ export class PhysicalActivityController extends BaseController {
             if (physicalActivity == null) {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(physicalActivity.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, physicalActivity, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${physicalActivity.PatientUserId}`);
-            }
+            
+            await this._ehrPhysicalActivityService.addEHRRecordPhysicalActivityForAppNames(physicalActivity);
 
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
@@ -97,7 +80,6 @@ export class PhysicalActivityController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -116,7 +98,6 @@ export class PhysicalActivityController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -137,7 +118,6 @@ export class PhysicalActivityController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -152,14 +132,7 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Unable to update physical activity record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(updated.PatientUserId, id, updated.Provider, updated, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrPhysicalActivityService.addEHRRecordPhysicalActivityForAppNames(physicalActivity);
 
             if (updated.PhysicalActivityQuestionAns !== null) {
                 var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
@@ -189,7 +162,6 @@ export class PhysicalActivityController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const physicalActivity = await this._service.getById(id);

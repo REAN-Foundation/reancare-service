@@ -14,7 +14,7 @@ import { DoctorDetailsDto, DoctorDto } from '../../domain.types/users/doctor/doc
 import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../../domain.types/users/doctor/doctor.search.types';
 import { Roles } from '../../domain.types/role/role.types';
 import { DoctorStore } from '../../modules/ehr/services/doctor.store';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@ export class DoctorService {
         @inject('IOrganizationRepo') private _organizationRepo: IOrganizationRepo
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrDoctorStore = Loader.container.resolve(DoctorStore);
+            this._ehrDoctorStore = Injector.Container.resolve(DoctorStore);
         }
     }
 

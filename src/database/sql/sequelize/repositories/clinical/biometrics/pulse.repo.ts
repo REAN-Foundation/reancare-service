@@ -160,7 +160,7 @@ export class PulseRepo implements IPulseRepo {
             if (updateModel.Provider != null) {
                 pulse.Provider = updateModel.Provider;
             }
-    
+
             await pulse.save();
 
             return await PulseMapper.toDto(pulse);

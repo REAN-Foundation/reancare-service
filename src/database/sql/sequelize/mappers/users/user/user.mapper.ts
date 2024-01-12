@@ -18,7 +18,7 @@ export class UserMapper {
             id              : user.id,
             UserName        : user.UserName,
             PersonId        : user.PersonId,
-            TenantId        : tenant?.id,
+            TenantId        : user.TenantId ?? tenant?.id,
             Person          : personDto,
             IsTestUser      : user.IsTestUser,
             LastLogin       : user.LastLogin,

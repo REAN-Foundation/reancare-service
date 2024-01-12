@@ -36,7 +36,7 @@ import EmergencyContact from '../../models/users/patient/emergency.contact.model
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
 import { Sequelize } from 'sequelize-typescript';
- 
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 const sequelizeStats = new Sequelize(
@@ -46,7 +46,7 @@ const sequelizeStats = new Sequelize(
         host    : process.env.DB_HOST,
         dialect : process.env.DB_DIALECT  as Dialect,
     });
-    
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 export class StatisticsRepo implements IStatisticsRepo {
@@ -1118,7 +1118,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     getAllYears = async (): Promise<any> => {
         try {
-           
+
             const search: any = {
                 where      : {},
                 include    : [],

@@ -1,9 +1,8 @@
 import express from 'express';
 import fs from 'fs';
 import { Helper } from '../../../../common/helper';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
@@ -13,13 +12,11 @@ import { DrugService } from '../../../../services/clinical/medication/drug.servi
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { MedicationValidator } from './medication.validator';
-import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.medication.service';
+import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
 import { Logger } from '../../../../common/logger';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,34 +24,17 @@ export class MedicationController {
 
     //#region member variables and constructors
 
-    _service: MedicationService = null;
+    _service: MedicationService = Injector.Container.resolve(MedicationService);
 
-    _patientService: PatientService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _userService: UserService = null;
+    _drugService: DrugService = Injector.Container.resolve(DrugService);
 
-    _drugService: DrugService = null;
+    _fileResourceService: FileResourceService = Injector.Container.resolve(FileResourceService);
 
-    _fileResourceService: FileResourceService = null;
+    _medicationConsumptionService: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
-    _medicationConsumptionService: MedicationConsumptionService = null;
-
-    _authorizer: Authorizer = null;
-
-    _ehrMedicationService: EHRMedicationService = new EHRMedicationService();
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    constructor() {
-        this._service = Loader.container.resolve(MedicationService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._userService = Loader.container.resolve(UserService);
-        this._drugService = Loader.container.resolve(DrugService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
-        this._authorizer = Loader.authorizer;
-        this._ehrMedicationService = Loader.container.resolve(EHRMedicationService);
-    }
+    _ehrMedicationService: EHRMedicationService = Injector.Container.resolve(EHRMedicationService);
 
     //#endregion
 
@@ -117,10 +97,6 @@ export class MedicationController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            Logger.instance().log(`[MedicationTime] Create - API call started`);
-            request.context = 'Medication.Create';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await MedicationValidator.create(request);
 
             const user = await this._userService.getById(domainModel.PatientUserId);
@@ -151,21 +127,11 @@ export class MedicationController {
                 medication.ConsumptionSummary = consumptionSummary;
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(medication.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                var medicationConsumptions = await this._medicationConsumptionService.getByMedicationId(medication.id);
-                for await (var mc of medicationConsumptions) {
-                    for await (var appName of eligibleAppNames) {
-                        this._medicationConsumptionService.addEHRRecord(mc.PatientUserId, mc.id, mc, appName);
-                    
-                    }
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${medication.PatientUserId}`);
+            var medicationConsumptions = await this._medicationConsumptionService.getByMedicationId(medication.id);
+            for await (var mc of medicationConsumptions) {
+                await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(mc);
             }
 
-            Logger.instance().log(`[MedicationTime] Create - Medication response returned`);
             ResponseHandler.success(request, response, 'Medication created successfully!', 201, {
                 Medication : medication,
             });
@@ -178,12 +144,6 @@ export class MedicationController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            Logger.instance().log(`[MedicationTime] GetById - API call started`);
-
-            request.context = 'Medication.GetById';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await MedicationValidator.getParamId(request);
 
             const medication = await this._service.getById(id);
@@ -217,26 +177,14 @@ export class MedicationController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            Logger.instance().log(`[MedicationTime] Search - API call started`);
-
-            request.context = 'Medication.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await MedicationValidator.search(request);
-
             const searchResults = await this._service.search(filters);
-            Logger.instance().log(`[MedicationTime] Search - service call completed`);
-
-
             const count = searchResults.Items.length;
             const message =
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} medication records retrieved successfully!`;
-
-            Logger.instance().log(`[MedicationTime] Search - medication response returned`);
             ResponseHandler.success(request, response, message, 200, { Medications: searchResults });
-
         } catch (error) {
             Logger.instance().log(`[MedicationTime] Search - error occured`);
             ResponseHandler.handleError(request, response, error);
@@ -245,11 +193,6 @@ export class MedicationController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            Logger.instance().log(`[MedicationTime] Update - API call started`);
-            request.context = 'Medication.Update';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await MedicationValidator.update(request);
             const id: string = await MedicationValidator.getParamId(request);
 
@@ -283,11 +226,6 @@ export class MedicationController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            Logger.instance().log(`[MedicationTime] Delete - API call started`);
-            request.context = 'Medication.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await MedicationValidator.getParamId(request);
             const existingMedication = await this._service.getById(id);
             if (existingMedication == null) {
@@ -304,7 +242,7 @@ export class MedicationController {
             await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
 
             // delete ehr record
-            this._ehrMedicationService.deleteMedicationEHRRecord(id);
+            this._ehrMedicationService.deleteMedicationEHRRecords(id);
 
             Logger.instance().log(`[MedicationTime] Delete - medication response returned`);
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
@@ -318,10 +256,6 @@ export class MedicationController {
 
     getCurrentMedications = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetCurrentMedications';
-
-            await this._authorizer.authorize(request, response);
-
             const patientUserId: string = await MedicationValidator.getPatientUserId(request);
 
             const medications = await this._service.getCurrentMedications(patientUserId);
@@ -336,9 +270,6 @@ export class MedicationController {
 
     getStockMedicationImages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetStockMedicationImages';
-            await this._authorizer.authorize(request, response);
-
             const images = await this._service.getStockMedicationImages();
 
             ResponseHandler.success(request, response, 'Medication stock images retrieved successfully!', 200, {
@@ -352,10 +283,6 @@ export class MedicationController {
 
     getStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetStockMedicationImageById';
-
-            await this._authorizer.authorize(request, response);
-
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
@@ -371,10 +298,6 @@ export class MedicationController {
 
     downloadStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.DownloadStockMedicationImageById';
-
-            await this._authorizer.authorize(request, response);
-
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
@@ -442,6 +365,7 @@ export class MedicationController {
 
             if (updated.FrequencyUnit !== 'Other') {
                 await this._medicationConsumptionService.create(updated);
+
                 /*var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
 
                 var consumptionSummary: ConsumptionSummaryDto = {
@@ -453,7 +377,7 @@ export class MedicationController {
 
                 updated.ConsumptionSummary = consumptionSummary;*/
             }
-            
+
         }
 
     }

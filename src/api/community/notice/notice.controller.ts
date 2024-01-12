@@ -1,0 +1,181 @@
+import express from 'express';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { ApiError } from '../../../common/api.error';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
+import { NoticeService } from '../../../services/general/notice.service';
+import { NoticeValidator } from './notice.validator';
+import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
+import { Injector } from '../../../startup/injector';
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+export class NoticeController {
+
+    //#region member variables and constructors
+
+    _service: NoticeService = null;
+
+    _validator: NoticeValidator = new NoticeValidator();
+
+    constructor() {
+        this._service = Injector.Container.resolve(NoticeService);
+    }
+
+    //#endregion
+
+    //#region Action methods
+
+    create = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const model = await this._validator.create(request);
+            const notice = await this._service.create(model);
+            if (notice == null) {
+                throw new ApiError(400, 'Could not create a notice!');
+            }
+
+            ResponseHandler.success(request, response, 'Notice created successfully!', 201, {
+                Notice : notice,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getNotice = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const notice = await this._service.getNotice(id);
+            if (notice == null) {
+                throw new ApiError(404, 'Notice not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Notice retrieved successfully!', 200, {
+                Notice : notice,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    search = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const filters = await this._validator.search(request);
+            const currentUserId = request.currentUser.UserId;
+            const searchResults = await this._service.search(filters, currentUserId);
+
+            const count = searchResults.Items.length;
+
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} notices retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, {
+                NoticeRecords : searchResults });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateNotice = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getNotice(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Notice not found.');
+            }
+
+            const updated = await this._service.updateNotice(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update a notice!');
+            }
+
+            ResponseHandler.success(request, response, 'Notice updated successfully!', 200, {
+                Notice : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deleteNotice = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getNotice(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Notice record not found.');
+            }
+
+            const deleted = await this._service.deleteNotice(id);
+            if (!deleted) {
+                throw new ApiError(400, 'Notice can not be deleted.');
+            }
+
+            ResponseHandler.success(request, response, 'Notice deleted successfully!', 200, {
+                Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    takeAction = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const userId = request.currentUser.UserId;
+            const model = await this._validator.takeAction(request);
+            const entity: NoticeActionDomainModel = {
+                UserId   : userId,
+                NoticeId : model.NoticeId,
+                Action   : model.Action,
+                Contents : model.Contents,
+            };
+
+            const noticeAction = await this._service.takeAction(entity);
+            if (noticeAction == null) {
+                throw new ApiError(400, 'Could not perform notice action!');
+            }
+
+            ResponseHandler.success(request, response, 'Notice action performed successfully!', 201, {
+                NoticeAction : noticeAction,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getNoticeActionForUser = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const noticeId: uuid = await this._validator.getParamUuid(request, 'id');
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const noticeAction = await this._service.getNoticeActionForUser(noticeId, userId);
+            ResponseHandler.success(request, response, 'Notice action retrieved successfully for the user!', 200, {
+                NoticeAction : noticeAction,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getAllNoticeActionsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const noticeActions = await this._service.getAllNoticeActionsForUser(userId);
+            ResponseHandler.success(request, response, 'Notice action retrieved successfully!', 200, {
+                NoticeActions : noticeActions,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    //#endregion
+
+}

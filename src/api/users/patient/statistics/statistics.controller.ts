@@ -1,9 +1,8 @@
 import express from 'express';
 import { PatientService } from '../../../../services/users/patient/patient.service';
-import { Authorizer } from '../../../../auth/authorizer';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { StatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
+import { PatientStatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
 import { Loader } from '../../../../startup/loader';
 import { StatisticsValidator } from './statistics.validator';
 import { Helper } from '../../../../common/helper';
@@ -16,6 +15,7 @@ import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.ty
 import * as path from 'path';
 import { PersonService } from '../../../../services/person/person.service';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +23,7 @@ export class StatisticsController {
 
     //#region member variables and constructors
 
-    _service: StatisticsService = null;
+    _service: PatientStatisticsService = null;
 
     _fileResourceService: FileResourceService = null;
 
@@ -31,19 +31,16 @@ export class StatisticsController {
 
     _documentService: DocumentService = null;
 
-    _authorizer: Authorizer = null;
-
     _validator: StatisticsValidator = new StatisticsValidator();
 
     _personService: PersonService = null;
 
     constructor() {
-        this._service = Loader.container.resolve(StatisticsService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._documentService = Loader.container.resolve(DocumentService);
-        this._authorizer = Loader.authorizer;
+        this._service = Injector.Container.resolve(PatientStatisticsService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._documentService = Injector.Container.resolve(DocumentService);
     }
 
     //#endregion
@@ -52,8 +49,6 @@ export class StatisticsController {
 
     getPatientStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientStatistics.GetPatientStats';
-            //await this._authorizer.authorize(request, response);
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const stats = await this._service.getPatientStats(patientUserId);
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
@@ -66,10 +61,6 @@ export class StatisticsController {
 
     getPatientStatsReport = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientStatistics.GetPatientStatsReport';
-
-            await this._authorizer.authorize(request, response);
-
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const clientCode = request.currentClient.ClientCode;
 
@@ -107,7 +98,7 @@ export class StatisticsController {
                 MimeType         : mimeType,
             }
         };
-        const patientDocumentService = Loader.container.resolve(DocumentService);
+        const patientDocumentService = Injector.Container.resolve(DocumentService);
         const documentDto = await patientDocumentService.upload(documentModel);
         Logger.instance().log(`Document Id: ${documentDto.id}`);
         return url;
@@ -124,12 +115,12 @@ export class StatisticsController {
     };
 
     private sendMessageForReportUpdate = async (url: any, reportModel: any) => {
-        
+
         const patient  = await this._patientService.getByUserId(reportModel.PatientUserId);
         const phoneNumber = patient.User.Person.Phone;
         const person = await this._personService.getById(patient.User.PersonId);
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
-        
+
         var userFirstName = 'user';
         if (person && person.FirstName) {
             userFirstName = person.FirstName;

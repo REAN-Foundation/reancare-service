@@ -1,0 +1,812 @@
+{
+    "Assorted": {
+        "BloodDonation": {
+            "Bridge": {
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Search": true,
+                "Update": true
+            },
+            "Communication": {
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Search": true,
+                "Update": true
+            },
+            "Donation": {
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Search": true,
+                "Update": true
+            },
+            "Donor": {
+                "Create": true,
+                "DeleteByUserId": true,
+                "GetByUserId": true,
+                "Search": true,
+                "UpdateByUserId": true
+            },
+            "Volunteer": {
+                "Create": true,
+                "DeleteByUserId": true,
+                "GetByUserId": true,
+                "Search": true,
+                "UpdateByUserId": true
+            }
+        }
+    },
+    "Auth": {
+        "Consent": {
+            "Create": false,
+            "Delete": false,
+            "GetById": false,
+            "Search": false,
+            "Update": false
+        }
+    },
+    "ClientApp": {
+        "Create": false,
+        "Delete": false,
+        "GetById": true,
+        "GetCurrentApiKey": false,
+        "RenewApiKey": false,
+        "Search": true,
+        "Update": false
+    },
+    "Clinical": {
+        "Allergy": {
+            "Create": false,
+            "Delete": false,
+            "GetAllergenCategories": true,
+            "GetAllergenExposureRoutes": true,
+            "GetById": false,
+            "GetForPatient": false,
+            "Search": false,
+            "Update": true
+        },
+        "Assessments": {
+            "Assessment": {
+                "AnswerQuestion": false,
+                "AnswerQuestionList": false,
+                "Create": false,
+                "Delete": false,
+                "GetById": false,
+                "GetNextQuestion": false,
+                "GetQuestionById": false,
+                "ScoreAssessment": false,
+                "Search": false,
+                "StartAssessment": false,
+                "Update": false
+            },
+            "AssessmentTemplate": {
+                "AddNode": true,
+                "AddScoringCondition": true,
+                "Create": true,
+                "Delete": true,
+                "DeleteNode": true,
+                "DeleteScoringCondition": true,
+                "Export": true,
+                "GetById": true,
+                "GetNode": true,
+                "GetScoringCondition": true,
+                "ImportFromFile": true,
+                "ImportFromJson": true,
+                "Search": true,
+                "SearchNode": true,
+                "Update": true,
+                "UpdateNode": true,
+                "UpdateScoringCondition": true
+            },
+            "DailyAssessment": {
+                "Create": false,
+                "Search": true
+            },
+            "Forms": {
+                "Connect": true,
+                "GetFormsList": true
+            },
+            "SymptomAssessment": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "SymptomAssessmentTemplate": {
+                "AddSymptomTypes": true,
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "RemoveSymptomTypes": true,
+                "Update": true,
+                "search": true
+            }
+        },
+        "Biometrics": {
+            "BloodCholesterol": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "BloodGlucose": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "BloodOxygenSaturation": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "BloodPressure": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "BodyHeight": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "BodyTemperature": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "BodyWeight": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "Pulse": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            }
+        },
+        "Careplan": {
+            "Enroll": false,
+            "FetchTasks": false,
+            "GetAvailableCareplans": true,
+            "GetPatientEligibility": true,
+            "GetPatientEnrollments": true,
+            "GetWeeklyStatus": false,
+            "UpdateRisk": false
+        },
+        "ClinicalTypes": {
+            "GetClinicalValidationStatuses": true,
+            "GetInterpretations": true,
+            "GetSeverities": true
+        },
+        "Complaint": {
+            "Create": false,
+            "Delete": false,
+            "GetById": true,
+            "Search": true,
+            "Update": false
+        },
+        "Diagnosis": {
+            "Create": false,
+            "Delete": false,
+            "GetById": true,
+            "Search": true,
+            "Update": false
+        },
+        "DoctorNote": {
+            "Create": false,
+            "Delete": false,
+            "GetById": true,
+            "Search": true,
+            "Update": false
+        },
+        "EmergencyEvent": {
+            "Create": false,
+            "Delete": false,
+            "GetById": true,
+            "Search": true,
+            "Update": false
+        },
+        "LabRecord": {
+            "Create": false,
+            "Delete": false,
+            "GetById": true,
+            "Search": true,
+            "Update": false
+        },
+        "MedicalCondition": {
+            "Create": false,
+            "Delete": false,
+            "GetById": true,
+            "Search": true,
+            "Update": false
+        },
+        "Medications": {
+            "Drug": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "Medication": {
+                "Create": false,
+                "Delete": false,
+                "DownloadStockMedicationImageById": true,
+                "GetAdministrationRoutes": true,
+                "GetById": true,
+                "GetCurrentMedications": true,
+                "GetDosageUnits": true,
+                "GetDurationUnits": true,
+                "GetFrequencyUnits": true,
+                "GetStockMedicationImageById": true,
+                "GetStockMedicationImages": true,
+                "GetTimeSchedules": true,
+                "Search": true,
+                "Update": false
+            },
+            "MedicationConsumption": {
+                "DeleteFutureMedicationSchedules": false,
+                "GetById": true,
+                "GetMedicationConsumptionSummaryForDay": true,
+                "GetMedicationSchedule": true,
+                "GetMedicationScheduleForDay": true,
+                "GetSummaryByCalendarMonths": true,
+                "MarkAsMissed": false,
+                "MarkAsTaken": false,
+                "MarkListAsMissed": false,
+                "MarkListAsTaken": false,
+                "Search": true
+            }
+        },
+        "Order": {
+            "Create": false,
+            "Delete": false,
+            "GetById": true,
+            "Search": true,
+            "Update": false
+        },
+        "Symptoms": {
+            "HowDoYouFeel": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "Symptom": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "SymptomType": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            }
+        }
+    },
+    "Community": {
+        "Chat": {
+            "AddUserToConversation": false,
+            "DeleteConversation": false,
+            "DeleteMessage": false,
+            "GetConversationBetweenTwoUsers": false,
+            "GetConversationById": false,
+            "GetConversationMessages": false,
+            "GetMarkedConversationsForUser": false,
+            "GetMessage": false,
+            "GetRecentConversationsForUser": false,
+            "RemoveUserFromConversation": false,
+            "SearchUserConversations": true,
+            "SendMessage": false,
+            "StartConversation": false,
+            "UpdateConversation": false,
+            "UpdateMessage": false
+        },
+        "Cohort": {
+            "AddUserToCohort": true,
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "GetCohortStats": true,
+            "GetCohortUsers": true,
+            "GetCohortsForTenant": true,
+            "RemoveUserFromCohort": true,
+            "Search": true,
+            "Update": true
+        },
+        "Notice": {
+            "Create": true,
+            "Delete": true,
+            "GetAllNoticeActionsForUser": true,
+            "GetById": true,
+            "GetNoticeActionForUser": true,
+            "Search": true,
+            "TakeAction": false,
+            "Update": true
+        },
+        "Rssfeed": {
+            "AddFeedItem": true,
+            "Create": true,
+            "Delete": true,
+            "DeleteFeedItem": true,
+            "GetAtomFeed": true,
+            "GetById": true,
+            "GetFeedItemById": true,
+            "GetJsonFeed": true,
+            "GetRssFeed": true,
+            "Search": true,
+            "Update": true,
+            "UpdateFeedItem": true
+        },
+        "UserGroup": {
+            "AddUserToGroup": true,
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "GetGroupActivityTypes": true,
+            "GetGroupAdmins": true,
+            "GetGroupUsers": true,
+            "MakeUserAdmin": true,
+            "RemoveUserAdmin": true,
+            "RemoveUserFromGroup": true,
+            "Search": true,
+            "SetGroupActivityTypes": true,
+            "Update": true
+        }
+    },
+    "Devices": {
+        "Wearables": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "GetUserWearables": true,
+            "Search": true,
+            "Update": true
+        }
+    },
+    "Educational": {
+        "Course": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
+        },
+        "CourseContent": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "GetContentsForCourse": true,
+            "GetContentsForLearningPath": true,
+            "Search": true,
+            "Update": true
+        },
+        "CourseModule": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
+        },
+        "KnowledgeNugget": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "GetTodaysTopic": true,
+            "Search": true,
+            "Update": true
+        },
+        "LearningPath": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
+        },
+        "UserLearning": {
+            "GetContentProgress": true,
+            "GetCourseProgress": true,
+            "GetLearningPathProgress": true,
+            "GetModuleProgress": true,
+            "GetUserCourseContents": true,
+            "GetUserLearningPaths": true,
+            "UpdateUserLearning": false
+        }
+    },
+    "General": {
+        "Address": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
+        },
+        "FileResource": {
+            "Delete": true,
+            "DeleteVersionByVersionId": true,
+            "DownloadById": true,
+            "DownloadByVersionId": true,
+            "DownloadByVersionName": true,
+            "GetResourceInfo": true,
+            "GetVersionById": true,
+            "GetVersions": true,
+            "Rename": true,
+            "Search": true,
+            "SearchAndDownload": true,
+            "Update": true,
+            "Upload": true
+        },
+        "Notification": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "MarkAsRead": true,
+            "Search": true,
+            "Update": true
+        },
+        "Organization": {
+            "AddAddress": true,
+            "AddPerson": true,
+            "Create": true,
+            "Delete": true,
+            "GetAddresses": true,
+            "GetByContactUserId": true,
+            "GetById": true,
+            "GetPersons": true,
+            "RemoveAddress": true,
+            "RemovePerson": true,
+            "Search": true,
+            "Update": true
+        },
+        "Reminder": {
+            "CreateOneTimeReminder": true,
+            "CreateReminderWithEveryMonthOn": true,
+            "CreateReminderWithEveryQuarterOn": true,
+            "CreateReminderWithRepeatAfterEveryN": true,
+            "CreateReminderWithRepeatEveryDay": true,
+            "CreateReminderWithRepeatEveryHour": true,
+            "CreateReminderWithRepeatEveryWeekOnDays": true,
+            "CreateReminderWithRepeatEveryWeekday": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true
+        },
+        "Types": {
+            "GetBloodGroups": true,
+            "GetEthnicityTypes": true,
+            "GetGenderTypes": true,
+            "GetMaritalStatuses": true,
+            "GetOrganizationTypes": true,
+            "GetPersonRoleTypes": true,
+            "GetQueryResponseTypes": true,
+            "GetRaceTypes": true,
+            "GetSeverities": true,
+            "GetUserEngagementCategories": true,
+            "GoalType": {
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "GetGoalTypes": true,
+                "Update": true
+            },
+            "GroupActivityTypes": true,
+            "HealthPriority": {
+                "GetPriorityTypes": true
+            },
+            "HealthPriorityType": {
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Update": true
+            },
+            "LabRecordType": {
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Update": true
+            },
+            "LabRecords": true,
+            "ReminderRepeatAfterEveryNUnits": true,
+            "ReminderTypes": true,
+            "RoleType": {
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Update": true
+            }
+        }
+    },
+    "Person": {
+        "AddAddress": true,
+        "GetAddresses": true,
+        "GetAllPersonsWithPhone": true,
+        "GetAllPersonsWithPhoneAndRole": true,
+        "GetById": true,
+        "GetOrganizations": true,
+        "RemoveAddress": true
+    },
+    "Role": {
+        "Create": true,
+        "Delete": true,
+        "GetById": true,
+        "Search": true,
+        "Update": true
+    },
+    "Statistics": {
+        "AppStats": {
+            "GetAllYears": true,
+            "GetAppDownlodCount": true,
+            "GetUsersByAddiction": true,
+            "GetUsersByAge": true,
+            "GetUsersByBiometrics": true,
+            "GetUsersByCountry": true,
+            "GetUsersByDeviceDetail": true,
+            "GetUsersByEnrollment": true,
+            "GetUsersByGender": true,
+            "GetUsersByHealthPillar": true,
+            "GetUsersByMajorAilment": true,
+            "GetUsersByMaritalStatus": true,
+            "GetUsersByObesity": true,
+            "GetUsersByRole": true,
+            "GetUsersCount": true,
+            "GetUsersStats": true,
+            "UpdateAppDownloadCount": true
+        },
+        "CustomQuery": {
+            "Delete": true,
+            "ExecuteQuery": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
+        },
+        "UserEngagement": {
+            "GetUserEngagementStatsByDateRange": true,
+            "GetUserEngagementStatsByMonth": true,
+            "GetUserEngagementStatsByQuarter": true,
+            "GetUserEngagementStatsByWeek": true,
+            "GetUserEngagementStatsByYear": true,
+            "GetUserEngagementStatsForUser": true
+        }
+    },
+    "Tenant": {
+        "Create": false,
+        "Delete": false,
+        "DemoteAdmin": true,
+        "GetById": true,
+        "GetTenantAdmins": true,
+        "GetTenantRegularUsers": true,
+        "GetTenantStats": true,
+        "PromoteTenantUserAsAdmin": true,
+        "Search": false,
+        "Update": true
+    },
+    "User": {
+        "CustomTask": {
+            "Create": true,
+            "GetById": true,
+            "Update": true
+        },
+        "DeviceDetails": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "GetByUserId": true,
+            "Search": true,
+            "SendTestNotification": true,
+            "Update": true
+        },
+        "Doctor": {
+            "Create": true,
+            "DeleteByUserId": false,
+            "GetByUserId": true,
+            "Search": true,
+            "UpdateByUserId": true
+        },
+        "Patient": {
+            "ActionPlan": {
+                "Create": true,
+                "Delete": false,
+                "GetActionPlans": false,
+                "GetSelectedActionPlans": false,
+                "Search": true,
+                "Update": true
+            },
+            "Document": {
+                "Delete": false,
+                "Download": false,
+                "GetById": true,
+                "GetTypes": true,
+                "Rename": false,
+                "Search": true,
+                "Share": false,
+                "Update": false,
+                "Upload": false
+            },
+            "EmergencyContact": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "GetContactRoles": true,
+                "GetHealthSystemHospitals": true,
+                "GetHealthSystems": true,
+                "Search": true,
+                "Update": false
+            },
+            "Goal": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "GetGoalsByPriority": true,
+                "GetPatientGoals": true,
+                "Search": true,
+                "Update": false
+            },
+            "HealthPriority": {
+                "Create": false,
+                "Delete": false,
+                "Search": true,
+                "Update": true,
+                "getPatientHealthPriorities": false
+            },
+            "HealthProfile": {
+                "GetByPatientUserId": true,
+                "UpdateByPatientUserId": false
+            },
+            "Patient": {
+                "Create": true,
+                "DeleteByUserId": false,
+                "GetByPhone": true,
+                "GetByUserId": true,
+                "GetPatientByPhone": true,
+                "Search": true,
+                "UpdateByUserId": false
+            },
+            "Statistics": {
+                "GetPatientStats": true,
+                "GetPatientStatsReport": true
+            }
+        },
+        "User": {
+            "Create": true,
+            "GenerateOtp": true,
+            "GetById": true,
+            "GetTenantsForUserWithEmail": true,
+            "GetTenantsForUserWithPhone": true,
+            "LoginWithOtp": true,
+            "LoginWithPassword": true,
+            "Logout": true,
+            "ResetPassword": true,
+            "RotateUserAccessToken": true,
+            "Search": true
+        },
+        "UserTask": {
+            "CancelTask": true,
+            "Create": true,
+            "Delete": true,
+            "DeleteFutureTask": true,
+            "FinishTask": true,
+            "GetByDisplayId": true,
+            "GetById": true,
+            "GetCategories": true,
+            "GetUserActionTypes": true,
+            "Search": true,
+            "StartTask": true,
+            "SummaryForDay": true,
+            "Update": true
+        }
+    },
+    "Wellness": {
+        "DailyRecords": {
+            "CalorieBalance": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "HeartPoints": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "MoveMinutes": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "Sleep": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "Stand": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "StepCount": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            }
+        },
+        "Exercise": {
+            "Meditation": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "PhysicalActivity": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            }
+        },
+        "Nutrition": {
+            "FoodComponentMonitoring": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            },
+            "FoodConsumption": {
+                "Create": false,
+                "Delete": false,
+                "GetByEvent": true,
+                "GetById": true,
+                "GetForDay": true,
+                "Search": true,
+                "Update": false
+            },
+            "Questionnaire": {
+                "GetNutritionQuestionnaire": true
+            },
+            "WaterConsumption": {
+                "Create": false,
+                "Delete": false,
+                "GetById": true,
+                "Search": true,
+                "Update": false
+            }
+        }
+    }
+}

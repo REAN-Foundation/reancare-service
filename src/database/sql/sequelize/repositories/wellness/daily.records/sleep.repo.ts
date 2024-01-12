@@ -194,9 +194,10 @@ export class SleepRepo implements ISleepRepo {
                     .split('T')[0];
                 return {
                     SleepDuration : x.SleepDuration,
-                    DayStr    : dayStr,
+                    DayStr        : dayStr,
                 };
             });
+
             // const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
             // const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
             // const stats = [];
@@ -213,6 +214,7 @@ export class SleepRepo implements ISleepRepo {
             // }
             // Logger.instance().log(JSON.stringify(stats));
             // return stats;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

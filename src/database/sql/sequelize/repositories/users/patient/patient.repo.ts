@@ -113,6 +113,10 @@ export class PatientRepo implements IPatientRepo {
                 },
             };
 
+            if (filters.TenantId != null) {
+                includesObj.where['TenantId'] = filters.TenantId;
+            }
+
             const userIncludesObj =
             {
                 model    : User,
@@ -260,18 +264,18 @@ export class PatientRepo implements IPatientRepo {
         try {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-    
+
             const lastMonth = new Date(today);
             lastMonth.setDate(lastMonth.getDate() - 30);
-    
+
             const patients = await Patient.findAll({
-                where: {
-                    CreatedAt: {
-                        [Op.between]: [lastMonth, today],
+                where : {
+                    CreatedAt : {
+                        [Op.between] : [lastMonth, today],
                     },
                 },
             });
-    
+
             return patients;
         } catch (error) {
             Logger.instance().log(error.message);

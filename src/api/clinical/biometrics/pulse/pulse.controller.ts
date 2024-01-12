@@ -1,38 +1,27 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { PulseService } from '../../../../services/clinical/biometrics/pulse.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { PulseValidator } from './pulse.validator';
-import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Logger } from '../../../../common/logger';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PulseController extends BaseController{
+export class PulseController{
 
     //#region member variables and constructors
 
-    _service: PulseService = null;
+    _service: PulseService = Injector.Container.resolve(PulseService);
 
     _validator: PulseValidator = new PulseValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _ehrVitalService: EHRVitalService = new EHRVitalService();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(PulseService);
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
-    }
+    _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
 
     //#endregion
 
@@ -41,21 +30,12 @@ export class PulseController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.Pulse.Create', request, response);
-
             const model = await this._validator.create(request);
             const pulse = await this._service.create(model);
             if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(pulse.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, pulse.id, pulse.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${pulse.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRPulseForAppNames(pulse);
 
             // Adding record to award service
             if (pulse.Pulse) {
@@ -91,8 +71,6 @@ export class PulseController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.Pulse.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const pulse = await this._service.getById(id);
             if (pulse == null) {
@@ -109,8 +87,6 @@ export class PulseController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.Pulse.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -133,8 +109,6 @@ export class PulseController extends BaseController{
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.Pulse.Update', request, response);
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -146,14 +120,7 @@ export class PulseController extends BaseController{
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRPulseForAppNames(updated);
 
             if (updated.Pulse) {
                 var timestamp = updated.RecordDate;
@@ -188,8 +155,6 @@ export class PulseController extends BaseController{
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.Pulse.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -202,7 +167,7 @@ export class PulseController extends BaseController{
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(existingRecord.id);
 
             ResponseHandler.success(request, response, 'Pulse rate record deleted successfully!', 200, {
                 Deleted : true,
@@ -213,4 +178,5 @@ export class PulseController extends BaseController{
     };
 
     //#endregion
+
 }

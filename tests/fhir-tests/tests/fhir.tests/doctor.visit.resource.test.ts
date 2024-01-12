@@ -17,7 +17,7 @@ describe('Encounter resource: Storage, retrieval', () => {
         var model = DoctorVisitMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
         model.RecordedByUserId = doctorEhrId;
-        
+
         var doctorVisitEhirId = await TestLoader.DoctorVisitStore.create(model);
         var doctorVisitFhirResource = await TestLoader.DoctorVisitStore.getById(doctorVisitEhirId);
 

@@ -13,7 +13,7 @@ export class MockBiometricsHeightStore implements IBiometricsHeightStore {
     getById = async (resourceId: string): Promise<any> => {
         return null;
     };
-    
+
     update = async (updates: any): Promise<any> => {
         return null;
     };

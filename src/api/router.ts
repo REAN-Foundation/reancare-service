@@ -1,7 +1,7 @@
 import express from "express";
 import { Logger } from "../common/logger";
 import { register as registerAddressRoutes } from "./general/address/address.routes";
-import { register as registerClientRoutes } from "./api.client/api.client.routes";
+import { register as registerClientRoutes } from "./client.apps/client.app.routes";
 import { register as registerAllergyRoutes } from './clinical/allergy/allergy.routes';
 import { register as registerBloodGlucoseRoutes } from './clinical/biometrics/blood.glucose/blood.glucose.routes';
 import { register as registerBiometricsBloodOxygenSaturationRoutes } from './clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.routes';
@@ -11,7 +11,7 @@ import { register as registerBodyTemperatureRoutes } from './clinical/biometrics
 import { register as registerBodyWeightRoutes } from './clinical/biometrics/body.weight/body.weight.routes';
 import { register as registerBiometricsPulse } from './clinical/biometrics/pulse/pulse.routes';
 import { register as registerComplaintRoutes } from './clinical/complaint/complaint.routes';
-import { register as registerDailyAssessmentRoutes } from './clinical/daily.assessment/daily.assessment.routes';
+import { register as registerDailyAssessmentRoutes } from './clinical/assessment/daily.assessment/daily.assessment.routes';
 import { register as registerDiagnosisRoutes } from './clinical/diagnosis/diagnosis.routes';
 import { register as registerDoctorNoteRoutes } from './clinical/doctor.note/doctor.note.routes';
 import { register as registerEmergencyEventRoutes } from './clinical/emergency.event/emergency.event.routes';
@@ -21,8 +21,8 @@ import { register as registerMedicationConsumptionRoutes } from './clinical/medi
 import { register as registerMedicationRoutes } from './clinical/medication/medication/medication.routes';
 import { register as registerOrderRoutes } from './clinical/order/order.routes';
 import { register as registerHowDoYouFeelRoutes } from './clinical/symptom/how.do.you.feel/how.do.you.feel.routes';
-import { register as registerSymptomAssessmentRoutes } from './clinical/symptom/symptom.assessment/symptom.assessment.routes';
-import { register as registerSymptomAssessmentTemplateRoutes } from './clinical/symptom/symptom.assessment.template/symptom.assessment.template.routes';
+import { register as registerSymptomAssessmentRoutes } from './clinical/assessment/symptom.assessment/symptom.assessment.routes';
+import { register as registerSymptomAssessmentTemplateRoutes } from './clinical/assessment/symptom.assessment.template/symptom.assessment.template.routes';
 import { register as registerSymptomRoutes } from './clinical/symptom/symptom/symptom.routes';
 import { register as registerSymptomTypeRoutes } from './clinical/symptom/symptom.type/symptom.type.routes';
 import { register as registerDoctorRoutes } from "./users/doctor/doctor.routes";
@@ -57,8 +57,8 @@ import { register as registerFormsRoutes } from './clinical/assessment/forms/for
 import { register as registerCustomTaskRoutes } from './users/custom.task/custom.task.routes';
 import { register as registerBloodCholesterolRoutes } from './clinical/biometrics/blood.cholesterol/blood.cholesterol.routes';
 import { register as registerStandRoutes } from './wellness/daily.records/stand/stand.routes';
-import { register as registerFoodComponentMonitoringRoutes } from './wellness/food.component.monitoring/food.component.monitoring.routes';
-import { register as registerNoticeRoutes } from './general/notice/notice.routes';
+import { register as registerFoodComponentMonitoringRoutes } from './wellness/nutrition/food.component.monitoring/food.component.monitoring.routes';
+import { register as registerNoticeRoutes } from './community/notice/notice.routes';
 import { register as registerLearningPathRoutes } from './educational/learning/learning.path/learning.path.routes';
 import { register as registerCourseRoutes } from './educational/learning/course/course.routes';
 import { register as registerCourseModuleRoutes } from './educational/learning/course.module/course.module.routes';
@@ -66,23 +66,24 @@ import { register as registerCourseContentRoutes } from './educational/learning/
 import { register as registerUserLearningRoutes } from './educational/learning/user.learning/user.learning.routes';
 import { register as registerLabRecordRoutes } from './clinical/lab.record/lab.record.routes';
 import { register as registerTestRoutes } from './general/test/test.routes';
-import { register as registerDonorRoutes } from './users/donor/donor.routes';
+import { register as registerDonorRoutes } from './assorted/blood.donation/donor/donor.routes';
 import { register as registerNotificationRoutes } from './general/notification/notification.routes';
-import { register as registerVolunteerRoutes } from './users/volunteer/volunteer.routes';
+import { register as registerVolunteerRoutes } from './assorted/blood.donation/volunteer/volunteer.routes';
 import { register as registerChatRoutes } from './community/chat/chat.routes';
 import { register as registerPatientStatisticsRoutes } from './users/patient/statistics/statistics.routes';
-import { register as registerRssfeedRoutes } from './general/rss.feed/rss.feed.routes';
-import { register as registerPatientDonorsRoutes } from './clinical/donation/patient.donors.routes';
-import { register as registerDonationRecordRoutes } from './clinical/donation.record/donation.record.routes';
+import { register as registerRssfeedRoutes } from './community/rss.feed/rss.feed.routes';
+import { register as registerPatientDonorsRoutes } from './assorted/blood.donation/bridge/bridge.routes';
+import { register as registerDonationRoutes } from './assorted/blood.donation/donation/donation.routes';
 import { register as registerWearableWebhookTerraRoutes } from './webhooks/providers/terra/terra.webhook.routes';
 import { register as registerWearableDeviceDetailsRoutes } from './devices/wearables/wearable.device.details.routes';
 import { register as registerStatisticsRoutes } from './statistics/app.statistics/statistics.routes';
-import { register as registerDonationCommunicationRoutes } from './clinical/donation.communication/donation.communication.routes';
+import { register as registerDonationCommunicationRoutes } from './assorted/blood.donation/communication/communication.routes';
 import { register as registerUserGroupRoutes } from './community/user.groups/user.group.routes';
 import { register as registerReminderRoutes } from './general/reminder/reminder.routes';
 import { register as registerTenantRoutes } from './tenant/tenant.routes';
 import { register as registerCohortRoutes } from './community/cohorts/cohort.routes';
 import { register as registerCustomQueryRoutes } from './statistics/custom.query/custom.query.routes';
+import { register as registerConsentRoutes } from './auth/consent/consent.routes';
 import { register as registerHealthSystemRoutes } from './hospitals/health.system/health.system.routes';
 import { register as registerHospitalRoutes } from './hospitals/hospital/hospital.routes';
 import { register as registerDailyStatisticsRoutes } from './statistics/daily.statistics/daily.statistics.routes';
@@ -183,7 +184,7 @@ export class Router {
                 registerPatientStatisticsRoutes(this._app);
                 registerRssfeedRoutes(this._app);
                 registerPatientDonorsRoutes(this._app);
-                registerDonationRecordRoutes(this._app);
+                registerDonationRoutes(this._app);
                 registerWearableWebhookTerraRoutes(this._app);
                 registerStatisticsRoutes(this._app);
                 registerWearableDeviceDetailsRoutes(this._app);
@@ -193,10 +194,11 @@ export class Router {
                 registerTenantRoutes(this._app);
                 registerCohortRoutes(this._app);
                 registerCustomQueryRoutes(this._app);
+                registerConsentRoutes(this._app);
                 registerHealthSystemRoutes(this._app);
                 registerHospitalRoutes(this._app);
                 registerDailyStatisticsRoutes(this._app);
-                
+
                 resolve(true);
 
             } catch (error) {

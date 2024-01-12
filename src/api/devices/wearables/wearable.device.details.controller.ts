@@ -1,16 +1,15 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
 import { WearableDeviceDetailsService } from '../../../services/webhook/wearable.device.details.service';
 import { WearableDeviceDetailsValidator } from './wearable.device.details.validator';
 import { PatientService } from '../../../services/users/patient/patient.service';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class WearableDeviceDetailsController extends BaseController {
+export class WearableDeviceDetailsController {
 
     //#region member variables and constructors
     _service: WearableDeviceDetailsService = null;
@@ -20,10 +19,8 @@ export class WearableDeviceDetailsController extends BaseController {
     _validator: WearableDeviceDetailsValidator = new WearableDeviceDetailsValidator();
 
     constructor() {
-        super();
-        this._service = Loader.container.resolve(WearableDeviceDetailsService);
-        this._patientService = Loader.container.resolve(PatientService);
-
+        this._service = Injector.Container.resolve(WearableDeviceDetailsService);
+        this._patientService = Injector.Container.resolve(PatientService);
     }
 
     //#endregion
@@ -108,7 +105,7 @@ export class WearableDeviceDetailsController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -130,7 +127,7 @@ export class WearableDeviceDetailsController extends BaseController {
 
     getPatientWearableDeviceDetails = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const patientRecord = await this._patientService.getByUserId(patientUserId);
             if (patientRecord == null) {

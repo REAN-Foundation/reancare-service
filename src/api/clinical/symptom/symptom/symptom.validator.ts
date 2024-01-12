@@ -5,7 +5,7 @@ import { ClinicalInterpretation, ClinicalValidationStatus } from '../../../../do
 import { Severity } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomAssessmentService } from '../../../../services/clinical/symptom/symptom.assessment.service';
 import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ export class SymptomValidator extends BaseValidator {
 
         if (create) {
             var symptomTypeName = null;
-            var symptomTypeService = Loader.container.resolve(SymptomTypeService);
+            var symptomTypeService = Injector.Container.resolve(SymptomTypeService);
             var symptomType = await symptomTypeService.getById(request.body.SymptomTypeId);
             if (symptomType !== null) {
                 symptomTypeName = symptomType.Symptom;
@@ -28,7 +28,7 @@ export class SymptomValidator extends BaseValidator {
 
             var templateId = null;
             if (request.body.AssessmentId !== undefined) {
-                var symptomAssessmentService = Loader.container.resolve(SymptomAssessmentService);
+                var symptomAssessmentService = Injector.Container.resolve(SymptomAssessmentService);
                 var assessment = await symptomAssessmentService.getById(request.body.AssessmentId);
                 if (assessment !== null) {
                     templateId = assessment.AssessmentTemplateId;

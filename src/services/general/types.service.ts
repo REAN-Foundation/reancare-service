@@ -29,7 +29,7 @@ export class TypesService {
     ) {}
 
     getPersonRoleTypes = async (): Promise<RoleDto[]> => {
-        return await this._roleRepo.search();
+        return await this._roleRepo.searchByName();
     };
 
     getOrganizationTypes = async (): Promise<string[]> => {

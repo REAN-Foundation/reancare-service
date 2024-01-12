@@ -85,7 +85,7 @@ describe('45 - Authorization checks tests', function() {
             .get(`/api/v1/clinical/biometrics/blood-pressures/${getTestData('BloodPressureId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt_2")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BloodPressure).to.have.property('id');
                 expect(response.body.Data.BloodPressure).to.have.property('PatientUserId');
@@ -112,7 +112,7 @@ describe('45 - Authorization checks tests', function() {
             .put(`/api/v1/clinical/biometrics/blood-pressures/${getTestData('BloodPressureId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt_2")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.BloodPressure).to.have.property('id');
@@ -139,7 +139,7 @@ describe('45 - Authorization checks tests', function() {
             .delete(`/api/v1/clinical/biometrics/blood-pressures/${getTestData('BloodPressureId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt_2")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -213,7 +213,7 @@ describe('45 - Authorization checks tests', function() {
             .delete(`/api/v1/clinical/biometrics/blood-pressures/${getTestData('BloodPressureId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt_2")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -235,6 +235,7 @@ export const loadPatientCreateWithPhoneSecondModel = async (
             Phone: patientPhoneNumber,
             Password: patientPassword,
             LoginRoleId: getTestData("patientRoleId"),
+            TenantId: getTestData("TenantId") 
         };
         setTestData(model, 'PatientCreateWithPhoneSecondModel');
 };
@@ -245,6 +246,7 @@ export const loadPatientLoginSecondModel = async (
             Phone: patientPhoneNumber,
             Password: patientPassword,
             LoginRoleId: getTestData("patientRoleId"),
+            TenantId: getTestData("TenantId") 
         };
         setTestData(model, 'PatientLoginSecondModel');
 };

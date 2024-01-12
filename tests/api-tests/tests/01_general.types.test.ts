@@ -22,14 +22,17 @@ describe('01 - Type tests', function() {
                 const Admin = roles.find(x => x.RoleName == 'System admin');
                 const Patient = roles.find(x => x.RoleName == 'Patient');
                 const Doctor = roles.find(x => x.RoleName == 'Doctor');
+                const Tenant = roles.find(x => x.RoleName == 'Tenant user');
 
                 setTestData(Admin.id, "adminRoleId");
                 setTestData(Patient.id, "patientRoleId");
                 setTestData(Doctor.id, "doctorRoleId");
+                setTestData(Tenant.TenantId, "TenantId");
 
                 setTestData(Admin.RoleName, "adminRoleName");
                 setTestData(Patient.RoleName, "patientRoleName");
                 setTestData(Doctor.RoleName, "doctorRoleName");
+                setTestData(Tenant.RoleName, "tenantName");
             })
             .expect(200, done);
     });

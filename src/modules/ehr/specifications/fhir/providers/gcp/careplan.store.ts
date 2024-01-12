@@ -43,7 +43,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
             );
             var data: any = resource.data;
             return data;
-            
+
         } catch (error) {
             if (error.message != null) {
                 // eslint-disable-next-line no-prototype-builtins
@@ -72,7 +72,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
             );
             var data:any = existingResource.data;
             //delete data.id; //Remove id from the resource
-        
+
             //Construct updated body
             const body: healthcare_v1.Schema$HttpBody = this.updateCarePlanFhirResource(updates, data);
             const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
@@ -103,7 +103,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         } catch (error) {
             Logger.instance().log(error.message);
             throw error;
-            
+
         }
     };
 
@@ -122,7 +122,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
             ],
             contained : [],
             activity  : []
-            
+
         };
 
         if (model.Title != null) {
@@ -165,7 +165,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         }
 
         if (model.Description != null) {
-            
+
             var goal = {
                 resourceType    : "Goal",
                 id              : "goal",
@@ -183,7 +183,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         }
 
         if (model.Type != null) {
-            
+
             var activity = {
                 reference : {
                     id      : model.PlanCode,
@@ -196,7 +196,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
 
         return resource;
     }
-    
+
     private updateCarePlanFhirResource(updates: CareplanActivityDomainModel, existingResource: any): any {
 
         existingResource.resourceType = "CarePlan";
@@ -249,7 +249,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         }
 
         if (updates.Description != null) {
-            
+
             var goal = {
                 resourceType    : "Goal",
                 id              : "goal",
@@ -267,7 +267,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         }
 
         if (updates.Type != null) {
-            
+
             var activity = {
                 reference : {
                     id      : updates.PlanCode,
@@ -277,8 +277,8 @@ export class GcpCarePlanStore implements ICarePlanStore {
             };
             existingResource.activity.push(activity);
         }
-        
+
         return existingResource;
     }
-        
+
 }

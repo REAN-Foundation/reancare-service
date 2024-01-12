@@ -2,7 +2,7 @@ import { LessThanOrEqual, Repository } from 'typeorm';
 import { AwardsFactsSource } from './awards.facts.db.connector';
 import { AwardsFact } from './awards.facts.service';
 import { SleepService } from '../../services/wellness/daily.records/sleep.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
 import { MentalHealthFact } from './models/mental.health.fact.model';
 import { MeditationService } from '../../services/wellness/exercise/meditation.service';
@@ -15,7 +15,7 @@ import { DurationType } from '../../domain.types/miscellaneous/time.types';
 export const updateMentalHealthFact = async (model: AwardsFact) => {
 
     const mentalHealthfactRepository: Repository<MentalHealthFact> = AwardsFactsSource.getRepository(MentalHealthFact);
-    
+
     const mentalHealthService = await getService(model.Facts.Name);
 
     const lastRecords = await mentalHealthfactRepository.find({
@@ -92,8 +92,8 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
 
     async function getService(Name) {
         const service = {
-            "Sleep"      : Loader.container.resolve(SleepService),
-            "Meditation" : Loader.container.resolve(MeditationService)
+            "Sleep"      : Injector.Container.resolve(SleepService),
+            "Meditation" : Injector.Container.resolve(MeditationService)
         };
         return service[Name];
     }

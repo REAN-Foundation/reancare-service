@@ -1,17 +1,16 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ComplaintService } from '../../../services/clinical/complaint.service';
 import { DoctorService } from '../../../services/users/doctor.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
-import { Loader } from '../../../startup/loader';
 import { ComplaintValidator } from './complaint.validator';
-import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ComplaintController extends BaseController {
+export class ComplaintController {
 
     //#region member variables and constructors
 
@@ -24,10 +23,9 @@ export class ComplaintController extends BaseController {
     _doctorService: DoctorService = null;
 
     constructor() {
-        super();
-        this._service = Loader.container.resolve(ComplaintService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._doctorService = Loader.container.resolve(DoctorService);
+        this._service = Injector.Container.resolve(ComplaintService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._doctorService = Injector.Container.resolve(DoctorService);
     }
 
     //#endregion
@@ -36,7 +34,6 @@ export class ComplaintController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -69,7 +66,6 @@ export class ComplaintController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -88,7 +84,6 @@ export class ComplaintController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -109,7 +104,6 @@ export class ComplaintController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -134,7 +128,6 @@ export class ComplaintController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Complaint.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingComplaint = await this._service.getById(id);

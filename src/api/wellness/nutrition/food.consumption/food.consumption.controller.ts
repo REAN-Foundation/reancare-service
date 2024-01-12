@@ -1,21 +1,19 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { FoodConsumptionValidator } from './food.consumption.validator';
-import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { Logger } from '../../../../common/logger';
+import { EHRNutritionService } from '../../../../modules/ehr.analytics/ehr.services/ehr.nutrition.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FoodConsumptionController extends BaseController {
+export class FoodConsumptionController {
 
     //#region member variables and constructors
 
@@ -23,11 +21,10 @@ export class FoodConsumptionController extends BaseController {
 
     _validator: FoodConsumptionValidator = new FoodConsumptionValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _ehrNutritionService: EHRNutritionService = Injector.Container.resolve(EHRNutritionService);
 
     constructor() {
-        super();
-        this._service = Loader.container.resolve(FoodConsumptionService);
+        this._service = Injector.Container.resolve(FoodConsumptionService);
     }
 
     //#endregion
@@ -37,23 +34,14 @@ export class FoodConsumptionController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Nutrition.FoodConsumption.Create', request, response);
-
             const model = await this._validator.create(request);
             const foodConsumption = await this._service.create(model);
             if (foodConsumption == null) {
                 throw new ApiError(400, 'Cannot create record for nutrition!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(foodConsumption.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, foodConsumption.id, foodConsumption.Provider, foodConsumption, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${foodConsumption.PatientUserId}`);
-            }
+            await this._ehrNutritionService.addEHRRecordNutritionForAppNames(foodConsumption);
+
             if (foodConsumption.UserResponse) {
                 var timestamp = foodConsumption.EndTime ?? foodConsumption.StartTime;
                 if (!timestamp) {
@@ -87,8 +75,6 @@ export class FoodConsumptionController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Nutrition.FoodConsumption.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const foodConsumption = await this._service.getById(id);
             if (foodConsumption == null) {
@@ -106,8 +92,6 @@ export class FoodConsumptionController extends BaseController {
 
     getByEvent = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.GetByEvent', request, response);
 
             const consumedAs: string = await this._validator.getParamStr(request, 'consumedAs');
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
@@ -128,8 +112,6 @@ export class FoodConsumptionController extends BaseController {
     getForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Nutrition.FoodConsumption.GetForDay', request, response);
-
             const date: Date = await this._validator.getParamDate(request, 'date');
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
             const foodConsumptionForDay = await this._service.getForDay(date, patientUserId);
@@ -148,7 +130,6 @@ export class FoodConsumptionController extends BaseController {
 
     getNutritionQuestionnaire = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Nutrition.GetNutritionQuestionnaire', request, response, false);
 
             const questionnaire = await this._service.getNutritionQuestionnaire();
             if (questionnaire.length === 0) {
@@ -166,8 +147,6 @@ export class FoodConsumptionController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -188,8 +167,6 @@ export class FoodConsumptionController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Nutrition.FoodConsumption.Update', request, response);
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -208,7 +185,7 @@ export class FoodConsumptionController extends BaseController {
                 }
                 //const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(updated.PatientUserId);
                 //const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
-                
+
                 AwardsFactsService.addOrUpdateNutritionResponseFact({
                     PatientUserId : updated.PatientUserId,
                     Facts         : {
@@ -230,8 +207,6 @@ export class FoodConsumptionController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

@@ -1,17 +1,14 @@
 import express from 'express';
-
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { Authorizer } from '../../../../auth/authorizer';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { Injector } from '../../../../startup/injector';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { SymptomTypeValidator } from './symptom.type.validator';
 import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomTypeController extends BaseController {
+export class SymptomTypeController {
 
     //#region member variables and constructors
 
@@ -19,12 +16,8 @@ export class SymptomTypeController extends BaseController {
 
     _validator: SymptomTypeValidator = new SymptomTypeValidator();
 
-    _authorizer: Authorizer = null;
-
     constructor() {
-        super();
-        this._service = Loader.container.resolve(SymptomTypeService);
-        this._authorizer = Loader.authorizer;
+        this._service = Injector.Container.resolve(SymptomTypeService);
     }
 
     //#endregion
@@ -33,7 +26,6 @@ export class SymptomTypeController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -52,7 +44,6 @@ export class SymptomTypeController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -71,7 +62,6 @@ export class SymptomTypeController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -92,7 +82,6 @@ export class SymptomTypeController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -117,7 +106,6 @@ export class SymptomTypeController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptomType = await this._service.getById(id);

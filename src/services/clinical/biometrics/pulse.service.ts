@@ -5,10 +5,8 @@ import { PulseDomainModel } from '../../../domain.types/clinical/biometrics/puls
 import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.dto';
 import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/clinical/biometrics/pulse/pulse.search.types';
 import { PulseStore } from "../../../modules/ehr/services/pulse.store";
-import { Loader } from "../../../startup/loader";
+import { Injector } from "../../../startup/injector";
 import { ConfigurationManager } from "../../../config/configuration.manager";
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +19,7 @@ export class PulseService {
         @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrPulseStore = Loader.container.resolve(PulseStore);
+            this._ehrPulseStore = Injector.Container.resolve(PulseStore);
         }
     }
 
@@ -66,15 +64,6 @@ export class PulseService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._pulseRepo.getAllUserResponsesBefore(patientUserId, date);
-    };
-
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PulseDomainModel, appName?: string) => {
-        if (model.Pulse) {
-            EHRAnalyticsHandler.addIntegerRecord(
-                patientUserId, recordId, provider, EHRRecordTypes.Pulse, model.Pulse, model.Unit, null, null, appName, 
-                model.RecordDate ? model.RecordDate : null
-            );
-        }
     };
 
 }

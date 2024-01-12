@@ -14,6 +14,8 @@ import { Loader } from './startup/loader';
 import { AwardsFactsService } from './modules/awards.facts/awards.facts.service';
 import { DatabaseClient } from './common/database.utils/dialect.clients/database.client';
 import { DatabaseSchemaType } from './common/database.utils/database.config';
+import ClientAppAuthMiddleware from './middlewares/client.app.auth.middleware';
+import { Injector } from './startup/injector';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -93,6 +95,8 @@ export default class Application {
                 this._app.use(helmet());
                 this._app.use(cors());
 
+                this._app.use(ClientAppAuthMiddleware.authenticateClient);
+
                 const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
 
                 this._app.use(fileUpload({
@@ -135,10 +139,10 @@ export default class Application {
 
 async function connectDatabase_Primary() {
     if (process.env.NODE_ENV === 'test') {
-        const databaseClient = Loader.container.resolve(DatabaseClient);
+        const databaseClient = Injector.Container.resolve(DatabaseClient);
         await databaseClient.dropDb(DatabaseSchemaType.Primary);
     }
-    const primaryDatabaseConnector = Loader.container.resolve(PrimaryDatabaseConnector);
+    const primaryDatabaseConnector = Injector.Container.resolve(PrimaryDatabaseConnector);
     await primaryDatabaseConnector.init();
 }
 

@@ -1,3 +1,4 @@
+/*
 import sqlite3 from 'sqlite3';
 import * as fs from 'fs';
 import { Logger } from '../../logger';
@@ -52,3 +53,5 @@ export class SQLiteClient  implements IDatabaseClient {
     };
 
 }
+
+*/

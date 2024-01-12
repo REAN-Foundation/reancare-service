@@ -198,7 +198,7 @@ export class Router {
                 registerHealthSystemRoutes(this._app);
                 registerHospitalRoutes(this._app);
                 registerDailyStatisticsRoutes(this._app);
-                
+
                 resolve(true);
 
             } catch (error) {

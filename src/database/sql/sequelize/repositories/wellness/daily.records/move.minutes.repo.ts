@@ -44,7 +44,7 @@ export class MoveMinutesRepo implements IMoveMinutesRepo {
 
     search = async (filters: MoveMinutesSearchFilters): Promise<MoveMinutesSearchResults> => {
         try {
-            
+
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
@@ -143,7 +143,7 @@ export class MoveMinutesRepo implements IMoveMinutesRepo {
             if (updateModel.RecordDate != null) {
                 moveMinutes.RecordDate = updateModel.RecordDate;
             }
-            
+
             await moveMinutes.save();
 
             return await MoveMinutesMapper.toDto(moveMinutes);
@@ -156,7 +156,7 @@ export class MoveMinutesRepo implements IMoveMinutesRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            
+
             const result = await MoveMinutesModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

@@ -31,7 +31,7 @@ export class DiagnosisRepo implements IDiagnosisRepo {
 
             const diagnosis = await Diagnosis.create(entity);
             return await DiagnosisMapper.toDto(diagnosis);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -52,7 +52,7 @@ export class DiagnosisRepo implements IDiagnosisRepo {
     update = async (id: string, updateModel: DiagnosisDomainModel): Promise<DiagnosisDto> => {
         try {
             const diagnosis = await Diagnosis.findOne({ where: { id: id } });
-            
+
             if (updateModel.PatientUserId != null) {
                 diagnosis.PatientUserId = updateModel.PatientUserId;
             }
@@ -176,7 +176,7 @@ export class DiagnosisRepo implements IDiagnosisRepo {
             search['offset'] = offset;
 
             const foundResults = await Diagnosis.findAndCountAll(search);
-            
+
             const dtos: DiagnosisDto[] = [];
             for (const diagnosis of foundResults.rows) {
                 const dto = await DiagnosisMapper.toDto(diagnosis);
@@ -194,7 +194,7 @@ export class DiagnosisRepo implements IDiagnosisRepo {
                 OrderedBy      : orderByColum,
                 Items          : dtos
             };
-            
+
             return searchResults;
 
         } catch (error) {

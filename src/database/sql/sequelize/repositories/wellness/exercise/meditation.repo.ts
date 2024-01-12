@@ -135,7 +135,7 @@ export class MeditationRepo implements IMeditationRepo {
             if (updateModel.EndTime != null) {
                 meditation.EndTime = updateModel.EndTime;
             }
-    
+
             await meditation.save();
 
             return await MeditationMapper.toDto(meditation);

@@ -12,11 +12,11 @@ import { DrugService } from '../../../../services/clinical/medication/drug.servi
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
 import { MedicationValidator } from './medication.validator';
 import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -365,6 +365,7 @@ export class MedicationController {
 
             if (updated.FrequencyUnit !== 'Other') {
                 await this._medicationConsumptionService.create(updated);
+
                 /*var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
 
                 var consumptionSummary: ConsumptionSummaryDto = {

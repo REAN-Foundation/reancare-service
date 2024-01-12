@@ -61,7 +61,7 @@ export class MedicationRepo implements IMedicationRepo {
 
     getCurrentMedications = async (patientUserId: string): Promise<MedicationDto[]> => {
         try {
-            
+
             var today = new Date();
             const medications = await Medication.findAll({
                 where : {
@@ -138,7 +138,7 @@ export class MedicationRepo implements IMedicationRepo {
                     [Op.gte] : filters.EndDateFrom,
                 };
             }
-            
+
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {
                     [Op.gte] : filters.CreatedDateFrom,
@@ -222,7 +222,7 @@ export class MedicationRepo implements IMedicationRepo {
             // if (model.DrugName != null) {
             //     medication.DrugName = model.DrugName;
             // }
-            
+
             if (model.DrugId != null) {
                 medication.DrugId = model.DrugId;
             }

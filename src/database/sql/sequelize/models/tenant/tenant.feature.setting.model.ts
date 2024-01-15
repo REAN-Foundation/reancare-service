@@ -10,6 +10,7 @@ import {
     PrimaryKey,
     ForeignKey,
     Length,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -42,6 +43,7 @@ export default class TenantFeatureSetting extends Model {
     @Column({
         type      : DataType.UUID,
         allowNull : false,
+        unique    : true
     })
     TenantId: string;
 
@@ -51,6 +53,9 @@ export default class TenantFeatureSetting extends Model {
         allowNull : false,
     })
     Setting: string;
+
+    @BelongsTo(() => Tenant)
+    Tenant: Tenant;
 
     @Column
     @CreatedAt

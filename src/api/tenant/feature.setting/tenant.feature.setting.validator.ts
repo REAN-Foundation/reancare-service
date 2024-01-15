@@ -108,7 +108,7 @@ export class TenantFeatureSettingValidator extends BaseValidator {
                     FormsInterface   : request.body.Setting.Integrations.FormsInterface
                 },
                 Common : {
-                    VitalAndLabRecords   : request.body.Setting.Common.VitalAndLabRecors,
+                    VitalAndLabRecords   : request.body.Setting.Common.VitalAndLabRecords,
                     Nutrition            : request.body.Setting.Common.Nutrition,
                     MedicationManagement : request.body.Setting.Common.MedicationManagement,
                     Reminders            : request.body.Setting.Common.Reminders,

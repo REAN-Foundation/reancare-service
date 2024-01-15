@@ -10,9 +10,11 @@ import {
     PrimaryKey,
     Length,
     IsEmail,
+    HasOne,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
+import TenantFeatureSetting from './tenant.feature.setting.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -72,6 +74,9 @@ export default class Tenant extends Model {
         allowNull : true,
     })
     Email: string;
+
+    @HasOne(() => TenantFeatureSetting)
+    TenantFeatureSetting: TenantFeatureSetting;
 
     @Column
     @CreatedAt

@@ -44,7 +44,6 @@ import { IPulseRepo } from "../../../../database/repository.interfaces/clinical/
 import { IEmergencyEventRepo } from "../../../../database/repository.interfaces/clinical/emergency.event.repo.interface";
 import { HealthSummaryDto } from "../../../../domain.types/statistics/custom.query/custom.query.dto";
 import { CustomQueryMapper } from "../../../../database/sql/sequelize/mappers/statistics/custom.query.mapper";
-import { MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { BloodGlucoseDto } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
 import { BloodOxygenSaturationDto } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
 import { BloodPressureDto } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
@@ -53,6 +52,8 @@ import { BodyWeightDto } from "../../../../domain.types/clinical/biometrics/body
 import { PulseDto } from "../../../../domain.types/clinical/biometrics/pulse/pulse.dto";
 import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
 import { EmergencyEventDto } from "../../../../domain.types/clinical/emergency.event/emergency.event.dto";
+import { MedicationDto } from "../../../../domain.types/clinical/medication/medication/medication.dto";
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -147,14 +148,14 @@ export class StatisticsService {
             healthSummary.HealthProfile = healthProfileSummary;
         }
         
-        const patientCurrentMedication = await this._medicationConsumptionRepo.search(filter);
-        if (patientCurrentMedication.TotalCount > 0) {
-            const currentMedicationSummary: MedicationConsumptionDto[] = [];
-            for (const medication of patientCurrentMedication.Items) {
-                const dto = CustomQueryMapper.toMedicationConsumptionSummaryDto(medication);
-                currentMedicationSummary.push(dto);
+        const patientMedication = await this._medicationRepo.search(filter);
+        if (patientMedication.TotalCount > 0) {
+            const medicationSummary: MedicationDto[] = [];
+            for (const medication of patientMedication.Items) {
+                const dto = CustomQueryMapper.toMedicationSummaryDto(medication);
+                medicationSummary.push(dto);
             }
-            healthSummary.CurrentMedication = currentMedicationSummary;
+            healthSummary.Medication = medicationSummary;
         }
 
         const patientBloodGlucose = await this._bloodGlucoseRepo.search(filter);

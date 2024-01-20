@@ -2,7 +2,7 @@ import express from 'express';
 import { ResponseHandler } from '../../../common/response.handler';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
-import { AhaStatisticsService } from '../../../services/statistics/aha.statistics.service';
+import { AhaStatisticsService } from '../../../services/statistics/aha.stats/aha.statistics.service';
 // import { AhaStatistcsValidator } from './statistics.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

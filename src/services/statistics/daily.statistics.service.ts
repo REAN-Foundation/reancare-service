@@ -4,7 +4,7 @@ import { DailyStatisticsDto } from "../../domain.types/statistics/daily.statisti
 import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { Loader } from "../../startup/loader";
 import { StatisticsService } from "./statistics.service";
-import { AhaStatisticsService } from "./aha.statistics.service";
+import { AhaStatisticsService } from "./aha.stats/aha.statistics.service";
 import { TimeHelper } from "../../common/time.helper";
 import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";

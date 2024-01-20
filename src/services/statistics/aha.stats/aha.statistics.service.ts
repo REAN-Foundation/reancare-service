@@ -1,17 +1,17 @@
 import { inject, injectable } from "tsyringe";
-import { IAhaStatisticsRepo } from "../../database/repository.interfaces/statistics/aha.statistics.repo.interface";
-import { AppName, CareplanCode, HealthSystem } from "../../domain.types/statistics/aha/aha.type";
-import { exportAhaStatsReportToPDF } from './aha.pdf';
-import { Logger } from "../../common/logger";
-import { FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
+import { IAhaStatisticsRepo } from "../../../database/repository.interfaces/statistics/aha.statistics.repo.interface";
+import { AppName, CareplanCode, CareplanHealthSystem, CareplanStats, HealthSystem } from "../../../domain.types/statistics/aha/aha.type";
+import { exportAhaStatsReportToPDF } from './aha.pdf.report';
+import { Logger } from "../../../common/logger";
+import { FileResourceDto } from "../../../domain.types/general/file.resource/file.resource.dto";
 import path from "path";
-import { TimeHelper } from "../../common/time.helper";
-import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
-import { Loader } from "../../startup/loader";
-import { FileResourceService } from "../general/file.resource.service";
-import { EmailService } from "../../modules/communication/email/email.service";
-import { EmailDetails } from "../../modules/communication/email/email.details";
-import fs from 'fs';
+import { TimeHelper } from "../../../common/time.helper";
+import { DateStringFormat } from "../../../domain.types/miscellaneous/time.types";
+import { Loader } from "../../../startup/loader";
+import { FileResourceService } from "../../general/file.resource.service";
+import { EmailService } from "../../../modules/communication/email/email.service";
+import { EmailDetails } from "../../../modules/communication/email/email.details";
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -23,6 +23,27 @@ export class AhaStatisticsService {
 
     getAhaStatistics = async(): Promise<any> => {
         try {
+            const careplanStats: CareplanStats[] = [];
+            const listOfCareplans = await this._ahaStatisticsRepo.getListOfCareplan();
+            for (let i = 0; i < listOfCareplans.length; i++) {
+                const totalCareplanEnrollments = await this._ahaStatisticsRepo.getTotalEnrollments(
+                    listOfCareplans[i]
+                );
+                const totalActiveCareplanEnrollments = await this._ahaStatisticsRepo.getTotalActiveEnrollments(
+                    listOfCareplans[i]
+                );
+                const totalDeletedCareplanEnrollments = await this._ahaStatisticsRepo.getTotalDeletedEnrollments(
+                    listOfCareplans[i]
+                );
+                const careplan: CareplanStats = {
+                    Careplan           : listOfCareplans[i],
+                    Enrollments        : totalCareplanEnrollments,
+                    ActiveEnrollments  : totalActiveCareplanEnrollments,
+                    DeletedEnrollments : totalDeletedCareplanEnrollments
+                };
+                careplanStats.push(careplan);
+            }
+
             const totalCholesterolCareplanEnrollments = await this._ahaStatisticsRepo.getTotalEnrollments(
                 CareplanCode.Cholesterol
             );
@@ -50,7 +71,19 @@ export class AhaStatisticsService {
             const totalDeletedHeartFailureCareplanEnrollments = await this._ahaStatisticsRepo.getTotalDeletedEnrollments(
                 CareplanCode.HeartFailure
             );
-      
+            /////////////////////////////////////////////////////////////////////////////////
+            
+            const listOfHealthSystem = await this._ahaStatisticsRepo.getListOfHealthSystem();
+            const careplanHealthSystemStats = [];
+            for (let i = 0; i < listOfCareplans.length; i++) {
+                for (let j = 0; listOfHealthSystem.length; j++) {
+                    const careplanHealthSystem = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
+                        listOfCareplans[i], listOfHealthSystem[j]
+                    );
+                    careplanHealthSystemStats.push(careplanHealthSystem);
+                }
+            }
+
             const cholesterolWellstarHealthSystem = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
                 CareplanCode.Cholesterol, HealthSystem.WellstarHealthSystem
             );
@@ -98,7 +131,12 @@ export class AhaStatisticsService {
                 UserEnrollmentForMHealthFairview      : cholesterolMHealthFairview,
                 UserEnrollmentForKaiserPermanente     : cholesterolKaiserPermanente,
                 UserEnrollmentForNebraskaHealthSystem : cholesterolNebraskaHealthSystem,
-                UserEnrollmentForHCAHealthcare        : strokeForHCAHealthcare
+                UserEnrollmentForHCAHealthcare        : strokeForHCAHealthcare,
+
+                CareplanStats             : careplanStats,
+                CareplanHealthSystemStats : careplanHealthSystemStats,
+                Careplans                 : listOfCareplans,
+                HealthSystems             : listOfHealthSystem
             };
             return ahaStats;
         } catch (error) {

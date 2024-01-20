@@ -1,6 +1,6 @@
-import { PDFGenerator } from "../../modules/reports/pdf.generator";
-import { addBottom, addFooter, addTop } from "../users/patient/statistics/stat.report.commons";
-import { TableRowProperties, addTableRow } from "../users/patient/statistics/report.helper";
+import { PDFGenerator } from "../../../modules/reports/pdf.generator";
+import { addBottom, addFooter, addTop } from "../../users/patient/statistics/stat.report.commons";
+import { TableRowProperties, addTableRow } from "../../users/patient/statistics/report.helper";
 import fs from 'fs';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

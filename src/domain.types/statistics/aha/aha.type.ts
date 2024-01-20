@@ -19,3 +19,16 @@ export enum HealthSystem {
     NebraskaHealthSystem = 'Nebraska Health System',
     HCAHealthcare = 'HCA Healthcare'
 }
+
+export interface CareplanStats {
+    Careplan: string,
+    Enrollments: number,
+    ActiveEnrollments: number,
+    DeletedEnrollments: number
+}
+
+export interface CareplanHealthSystem {
+    Careplan: string,
+    HealthSystem: string,
+    Enrollments: number,
+}

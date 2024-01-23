@@ -84,6 +84,7 @@ export class ReminderSenderService {
                 else {
                     continue;
                 }
+                await TimeHelper.timeDelay(300);
             }
         }
         catch (error) {

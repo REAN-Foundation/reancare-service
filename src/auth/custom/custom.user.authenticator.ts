@@ -129,6 +129,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             UserId        : user.id,
             TenantId      : tenant.id,
             TenantCode    : tenant.Code,
+            TenantName    : tenant.Name,
             DisplayName   : user.Person.DisplayName,
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,

@@ -128,7 +128,7 @@ export class UserService {
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
 
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
-        var tenant = await this.checkTenant(loginModel, user);
+        var tenant = await this.checkTenant(user);
 
         var isTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
         if (!isTestUser) {
@@ -161,6 +161,7 @@ export class UserService {
             UserId        : user.id,
             TenantId      : tenant.id,
             TenantCode    : tenant.Code,
+            TenantName    : tenant.Name,
             DisplayName   : user.Person.DisplayName,
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,
@@ -168,6 +169,77 @@ export class UserService {
             CurrentRoleId : loginModel.LoginRoleId,
             CurrentRole   : user.Role.RoleName,
             SessionId     : loginSessionDetails.id,
+        };
+
+        const sessionId = currentUser.SessionId;
+        const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
+        var refreshToken = null;
+        if (ConfigurationManager.UseRefreshToken()) {
+            refreshToken = await AuthHandler.generateRefreshToken(user.id, sessionId, tenant.id);
+        }
+
+        return {
+            user,
+            accessToken,
+            refreshToken : refreshToken ?? null,
+            sessionId,
+            sessionValidTill
+        };
+    };
+
+    public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
+
+        const user: UserDetailsDto = await this.checkUserDetails(loginModel);
+        var tenant = await this.checkTenant(user);
+
+        var isTenantUser = await this._userRepo.isTenantUser(user.id, loginModel.TenantId);
+        if (!isTenantUser) {
+            throw new ApiError(401, 'User does not belong to the given tenant.');
+        }
+
+        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
+
+        if (!isTestUser) {
+            const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
+            if (!storedOtp) {
+                throw new ApiError(404, 'Active OTP record not found!');
+            }
+            const date = new Date();
+            if (storedOtp.ValidTill <= date) {
+                throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
+            }
+        }
+
+        await this._userRepo.updateLastLogin(user.id);
+
+        //Generate login session
+
+        const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
+        var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+
+        var entity: UserLoginSessionDomainModel = {
+            UserId    : user.id,
+            IsActive  : true,
+            StartedAt : new Date(),
+            ValidTill : sessionValidTill
+        };
+
+        const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
+
+        //The following user data is immutable. Don't include any mutable data
+
+        var currentUser: CurrentUser = {
+            UserId        : user.id,
+            TenantId      : tenant.id,
+            TenantCode    : tenant.Code,
+            TenantName    : tenant.Name,
+            DisplayName   : user.Person.DisplayName,
+            Phone         : user.Person.Phone,
+            Email         : user.Person.Email,
+            UserName      : user.UserName,
+            CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRole   : user.Role.RoleName,
+            SessionId     : loginSessionDetails.id
         };
 
         const sessionId = currentUser.SessionId;
@@ -249,76 +321,6 @@ export class UserService {
         }
 
         return true;
-    };
-
-    public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
-
-        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
-
-        const user: UserDetailsDto = await this.checkUserDetails(loginModel);
-        var tenant = await this.checkTenant(loginModel, user);
-
-        var isTenantUser = await this._userRepo.isTenantUser(user.id, loginModel.TenantId);
-        if (!isTenantUser) {
-            throw new ApiError(401, 'User does not belong to the given tenant.');
-        }
-
-        if (!isTestUser) {
-            const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
-            if (!storedOtp) {
-                throw new ApiError(404, 'Active OTP record not found!');
-            }
-            const date = new Date();
-            if (storedOtp.ValidTill <= date) {
-                throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
-            }
-        }
-
-        await this._userRepo.updateLastLogin(user.id);
-
-        //Generate login session
-
-        const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
-        var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
-
-        var entity: UserLoginSessionDomainModel = {
-            UserId    : user.id,
-            IsActive  : true,
-            StartedAt : new Date(),
-            ValidTill : sessionValidTill
-        };
-
-        const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
-
-        //The following user data is immutable. Don't include any mutable data
-
-        var currentUser: CurrentUser = {
-            UserId        : user.id,
-            TenantId      : tenant.id,
-            TenantCode    : tenant.Code,
-            DisplayName   : user.Person.DisplayName,
-            Phone         : user.Person.Phone,
-            Email         : user.Person.Email,
-            UserName      : user.UserName,
-            CurrentRoleId : loginModel.LoginRoleId,
-            CurrentRole   : user.Role.RoleName,
-            SessionId     : loginSessionDetails.id
-        };
-
-        const sessionId = currentUser.SessionId;
-        const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
-        var refreshToken = null;
-        if (ConfigurationManager.UseRefreshToken()) {
-            refreshToken = await AuthHandler.generateRefreshToken(user.id, sessionId, tenant.id);
-        }
-
-        return {
-            user,
-            accessToken,
-            refreshToken : refreshToken ?? null,
-            sessionId,
-            sessionValidTill
-        };
     };
 
     public invalidateSession = async (sesssionId: uuid): Promise<boolean> => {
@@ -497,17 +499,12 @@ export class UserService {
 
     //#region Privates
 
-    private checkTenant = async (loginModel: UserLoginDetails, user: UserDetailsDto): Promise<TenantDto> => {
+    private checkTenant = async (user: UserDetailsDto): Promise<TenantDto> => {
         const tenantId = user.TenantId;
         var tenant = await this._tenantRepo.getById(tenantId);
-        // var tenant = await this.getTenant(loginModel.TenantId, loginModel.TenantCode);
         if (tenant == null) {
             throw new ApiError(404, 'Tenant not found.');
         }
-        // var isTenantUser = await this._userRepo.isTenantUser(user.id, tenant.id);
-        // if (!isTenantUser) {
-        //     throw new ApiError(401, 'User does not belong to the given tenant.');
-        // }
         return tenant;
     };
 
@@ -549,6 +546,8 @@ export class UserService {
         if (person == null) {
             throw new ApiError(404, 'Cannot find person.');
         }
+
+        user  = await this._userRepo.getByPersonId(person.id);
 
         //Now check if that person is an user with a given role
         const personId = person.id;

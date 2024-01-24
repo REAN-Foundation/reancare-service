@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IAhaStatisticsRepo } from "../../../database/repository.interfaces/statistics/aha.statistics.repo.interface";
-import { AppName, CareplanCode, CareplanHealthSystem, CareplanStats, HealthSystem } from "../../../domain.types/statistics/aha/aha.type";
-import { exportAhaStatsReportToPDF } from './aha.pdf.report';
+import { AppName, CareplanCode, CareplanStats } from "../../../domain.types/statistics/aha/aha.type";
+import { exportAhaStatsReportToPDF } from './aha.report.generator';
 import { Logger } from "../../../common/logger";
 import { FileResourceDto } from "../../../domain.types/general/file.resource/file.resource.dto";
 import path from "path";
@@ -43,35 +43,6 @@ export class AhaStatisticsService {
                 };
                 careplanStats.push(careplan);
             }
-
-            const totalCholesterolCareplanEnrollments = await this._ahaStatisticsRepo.getTotalEnrollments(
-                CareplanCode.Cholesterol
-            );
-            const totalActiveCholesterolCareplanEnrollments = await this._ahaStatisticsRepo.getTotalActiveEnrollments(
-                CareplanCode.Cholesterol
-            );
-            const totalDeletedCholesterolCareplanEnrollments = await this._ahaStatisticsRepo.getTotalDeletedEnrollments(
-                CareplanCode.Cholesterol
-            );
-            
-            const totalStrokeCareplanEnrollments = await this._ahaStatisticsRepo.getTotalEnrollments(CareplanCode.Stroke);
-            const totalActiveStrokeCareplanEnrollments = await this._ahaStatisticsRepo.getTotalActiveEnrollments(
-                CareplanCode.Stroke
-            );
-            const totalDeletedStrokeCareplanEnrollments = await this._ahaStatisticsRepo.getTotalDeletedEnrollments(
-                CareplanCode.Stroke
-            );
-          
-            const totalHeartFailureCareplanEnrollments = await this._ahaStatisticsRepo.getTotalEnrollments(
-                CareplanCode.HeartFailure
-            );
-            const totalActiveHeartFailureCareplanEnrollments = await this._ahaStatisticsRepo.getTotalActiveEnrollments(
-                CareplanCode.HeartFailure
-            );
-            const totalDeletedHeartFailureCareplanEnrollments = await this._ahaStatisticsRepo.getTotalDeletedEnrollments(
-                CareplanCode.HeartFailure
-            );
-            /////////////////////////////////////////////////////////////////////////////////
             
             const listOfHealthSystem = await this._ahaStatisticsRepo.getListOfHealthSystem();
             const careplanHealthSystemStats = [];
@@ -84,55 +55,7 @@ export class AhaStatisticsService {
                 }
             }
 
-            const cholesterolWellstarHealthSystem = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
-                CareplanCode.Cholesterol, HealthSystem.WellstarHealthSystem
-            );
-    
-            const cholesterolUCSanDiegoHealth = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
-                CareplanCode.Cholesterol, HealthSystem.UCSanDiegoHealth
-            );
-    
-            const cholesterolAtriumHealth = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
-                CareplanCode.Cholesterol, HealthSystem.AtriumHealth
-            );
-    
-            const cholesterolMHealthFairview = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
-                CareplanCode.Cholesterol, HealthSystem.MHealthFairview
-            );
-    
-            const cholesterolKaiserPermanente = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
-                CareplanCode.Cholesterol, HealthSystem.KaiserPermanente
-            );
-    
-            const cholesterolNebraskaHealthSystem = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
-                CareplanCode.Cholesterol, HealthSystem.NebraskaHealthSystem
-            );
-    
-            const strokeForHCAHealthcare = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
-                CareplanCode.Stroke, HealthSystem.HCAHealthcare
-            );
-    
             const ahaStats = {
-                TotalCholesterolEnrollments        : totalCholesterolCareplanEnrollments,
-                TotalActiveCholesterolEnrollments  : totalActiveCholesterolCareplanEnrollments,
-                TotalDeletedCholesterolEnrollments : totalDeletedCholesterolCareplanEnrollments,
-             
-                TotalStrokeEnrollments        : totalStrokeCareplanEnrollments,
-                TotalActiveStrokeEnrollments  : totalActiveStrokeCareplanEnrollments,
-                TotalDeletedStrokeEnrollments : totalDeletedStrokeCareplanEnrollments,
-              
-                TotalHeartFailureEnrollments        : totalHeartFailureCareplanEnrollments,
-                TotalActiveHeartFailureEnrollments  : totalActiveHeartFailureCareplanEnrollments,
-                TotalDeletedHeartFailureEnrollments : totalDeletedHeartFailureCareplanEnrollments,
-     
-                CholesterolWellstarHealthSystem       : cholesterolWellstarHealthSystem,
-                UserEnrollmentForUCSanDiegoHealth     : cholesterolUCSanDiegoHealth,
-                UserEnrollmentForAtriumHealth         : cholesterolAtriumHealth,
-                UserEnrollmentForMHealthFairview      : cholesterolMHealthFairview,
-                UserEnrollmentForKaiserPermanente     : cholesterolKaiserPermanente,
-                UserEnrollmentForNebraskaHealthSystem : cholesterolNebraskaHealthSystem,
-                UserEnrollmentForHCAHealthcare        : strokeForHCAHealthcare,
-
                 CareplanStats             : careplanStats,
                 CareplanHealthSystemStats : careplanHealthSystemStats,
                 Careplans                 : listOfCareplans,

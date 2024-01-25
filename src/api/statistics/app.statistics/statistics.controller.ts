@@ -10,13 +10,9 @@ import { Injector } from '../../../startup/injector';
 export class StatisticsController {
 
     //#region member variables and constructors
-    _service: StatisticsService = null;
+    _service: StatisticsService = Injector.Container.resolve(StatisticsService);
 
     _validator = new StatistcsValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(StatisticsService);
-    }
 
     //#endregion
 

@@ -1,6 +1,9 @@
 export interface DailyStatisticsDomainModel {
     id?                              : string;
-    ReportDate?                      : Date;
+    ResourceId?                      : string;
+    ReportDate?                      : string;
     ReportTimestamp?                 : Date;
-    Statistics ?                     : string;
+    DashboardStats?                  : string;
+    UserStats?                       : string;
+    AhaStats?                        : string;
 }

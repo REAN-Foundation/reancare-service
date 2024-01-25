@@ -1,8 +1,9 @@
 import express from 'express';
+import * as path from 'path';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { PatientStatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
+import { PatientStatisticsService } from '../../../../services/users/patient/statistics/patient.statistics.service';
 import { Loader } from '../../../../startup/loader';
 import { StatisticsValidator } from './statistics.validator';
 import { Helper } from '../../../../common/helper';
@@ -12,10 +13,11 @@ import { DocumentTypes } from '../../../../domain.types/users/patient/document/d
 import { DocumentService } from '../../../../services/users/patient/document.service';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DateStringFormat } from '../../../../domain.types/miscellaneous/time.types';
-import * as path from 'path';
 import { PersonService } from '../../../../services/person/person.service';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
 import { Injector } from '../../../../startup/injector';
+import { ApiError } from '../../../../common/api.error';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,25 +25,19 @@ export class StatisticsController {
 
     //#region member variables and constructors
 
-    _service: PatientStatisticsService = null;
+    _service: PatientStatisticsService = Injector.Container.resolve(PatientStatisticsService);
 
-    _fileResourceService: FileResourceService = null;
+    _fileResourceService: FileResourceService = Injector.Container.resolve(FileResourceService);
 
-    _patientService: PatientService = null;
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
+    
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _documentService: DocumentService = null;
+    _documentService: DocumentService = Injector.Container.resolve(DocumentService);
+
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
     _validator: StatisticsValidator = new StatisticsValidator();
-
-    _personService: PersonService = null;
-
-    constructor() {
-        this._service = Injector.Container.resolve(PatientStatisticsService);
-        this._fileResourceService = Injector.Container.resolve(FileResourceService);
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._documentService = Injector.Container.resolve(DocumentService);
-    }
 
     //#endregion
 
@@ -54,6 +50,29 @@ export class StatisticsController {
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
                 Statistics : stats,
             });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPatientHealthSummary = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'PatientStatistics.getPatientHealthSummary';
+
+            const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
+            const existingUser = await this._userService.getById(patientUserId);
+            if (existingUser == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+
+            const patientHealthSummary =  await this._service.getHealthSummary(patientUserId);
+            ResponseHandler.success(
+                request,
+                response,
+                'Patient health summary retrieved successfully!',
+                200,
+                patientHealthSummary
+            );
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

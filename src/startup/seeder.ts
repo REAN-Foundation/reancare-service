@@ -99,15 +99,15 @@ export class Seeder {
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
     ) {
-        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
-        this._fileResourceService = Injector.Container.resolve(FileResourceService);
-        this._symptomTypeService = Injector.Container.resolve(SymptomTypeService);
+        this._patientHealthProfileService      = Injector.Container.resolve(HealthProfileService);
+        this._fileResourceService              = Injector.Container.resolve(FileResourceService);
+        this._symptomTypeService               = Injector.Container.resolve(SymptomTypeService);
         this._symptomAssessmentTemplateService = Injector.Container.resolve(SymptomAssessmentTemplateService);
-        this._knowledgeNuggetsService = Injector.Container.resolve(KnowledgeNuggetService);
-        this._drugService = Injector.Container.resolve(DrugService);
-        this._healthPriorityService = Injector.Container.resolve(HealthPriorityService);
-        this._labRecordService = Injector.Container.resolve(LabRecordService);
-        this._foodConsumptionService = Injector.Container.resolve(FoodConsumptionService);
+        this._knowledgeNuggetsService          = Injector.Container.resolve(KnowledgeNuggetService);
+        this._drugService                      = Injector.Container.resolve(DrugService);
+        this._healthPriorityService            = Injector.Container.resolve(HealthPriorityService);
+        this._labRecordService                 = Injector.Container.resolve(LabRecordService);
+        this._foodConsumptionService           = Injector.Container.resolve(FoodConsumptionService);
     }
 
     public init = async (): Promise<void> => {

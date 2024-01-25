@@ -66,7 +66,7 @@ export class PhysicalActivityController {
                     },
                     RecordId       : physicalActivity.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -148,7 +148,7 @@ export class PhysicalActivityController {
                     },
                     RecordId      : updated.id,
                     RecordDate    : timestamp,
-                    RecordDateStr : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                 });
             }
 

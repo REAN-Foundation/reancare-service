@@ -52,7 +52,7 @@ import { TypesService } from './general/types.service';
 import { PersonService } from './person/person.service';
 import { RoleService } from './role/role.service';
 import { RolePrivilegeService } from './role/role.privilege.service';
-import { PatientStatisticsService } from './users/patient/statistics/statistics.service';
+import { PatientStatisticsService } from './users/patient/statistics/patient.statistics.service';
 import { StatisticsService } from './statistics/statistics.service';
 import { CustomQueryService } from './statistics/custom.query.service';
 import { UserEngagementService } from './statistics/user.engagement.service';

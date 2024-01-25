@@ -1,5 +1,6 @@
 
 import { inject, injectable } from "tsyringe";
+import * as fs from 'fs';
 import { IMedicationConsumptionRepo } from "../../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
 import { IMedicationRepo } from "../../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
 import { IFoodConsumptionRepo } from "../../../../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
@@ -7,34 +8,19 @@ import { IPhysicalActivityRepo } from "../../../../database/repository.interface
 import { IBodyWeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { ILabRecordRepo } from "../../../../database/repository.interfaces/clinical/lab.record/lab.record.interface";
 import { uuid } from "../../../../domain.types/miscellaneous/system.types";
-import { Injector } from "../../../../startup/injector";
-import { LabRecordRepo } from "../../../../database/sql/sequelize/repositories/clinical/lab.record/lab.record.repo";
-import { BodyWeightRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/body.weight.repo";
-import { MedicationConsumptionRepo } from "../../../../database/sql/sequelize/repositories/clinical/medication/medication.consumption.repo";
-import { MedicationRepo } from "../../../../database/sql/sequelize/repositories/clinical/medication/medication.repo";
-import { PhysicalActivityRepo } from "../../../../database/sql/sequelize/repositories/wellness/exercise/physical.activity.repo";
-import { FoodConsumptionRepo } from "../../../../database/sql/sequelize/repositories/wellness/nutrition/food.consumption.repo";
 import { ISleepRepo } from "../../../../database/repository.interfaces/wellness/daily.records/sleep.repo.interface";
-import { SleepRepo } from "../../../../database/sql/sequelize/repositories/wellness/daily.records/sleep.repo";
 import { PatientDetailsDto } from "../../../../domain.types/users/patient/patient/patient.dto";
 import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
 import { PDFGenerator } from "../../../../modules/reports/pdf.generator";
-import * as fs from 'fs';
 import { IBloodPressureRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface";
 import { IBloodGlucoseRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.glucose.repo.interface";
 import { IDailyAssessmentRepo } from "../../../../database/repository.interfaces/clinical/daily.assessment/daily.assessment.repo.interface";
-import { BloodGlucoseRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/blood.glucose.repo";
-import { BloodPressureRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/blood.pressure.repo";
-import { DailyAssessmentRepo } from "../../../../database/sql/sequelize/repositories/clinical/daily.assessment/daily.assessment.repo";
-import { UserTaskRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.task.repo";
 import { IUserTaskRepo } from "../../../../database/repository.interfaces/users/user/user.task.repo.interface";
-import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 import { ICareplanRepo } from "../../../../database/repository.interfaces/clinical/careplan.repo.interface";
-import { BodyHeightRepo } from "../../../../database/sql/sequelize/repositories/clinical/biometrics/body.height.repo";
 import { IBodyHeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
-import { PatientRepo } from "../../../../database/sql/sequelize/repositories/users/patient/patient.repo";
 import { IPatientRepo } from "../../../../database/repository.interfaces/users/patient/patient.repo.interface";
+import { IHealthProfileRepo } from "../../../../database/repository.interfaces/users/patient/health.profile.repo.interface";
 import { addBottom, addFooter, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
 import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
@@ -47,12 +33,24 @@ import { addNutritionQuestionnaire, addNutritionServingsStats, createNutritionCh
 import { addSleepStats, createSleepTrendCharts } from "./sleep.stats";
 import { addUserTasksStats, createUserTaskCharts } from "./user.tasks.stats";
 import { addHealthJourney, addReportMetadata } from "./main.page";
-import { PersonRepo } from "../../../../database/sql/sequelize/repositories/person/person.repo";
 import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
-import { UserRepo } from "../../../../database/sql/sequelize/repositories/users/user/user.repo";
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
 import { addSummaryGraphs, createSummaryCharts } from "./summary.page";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
+import { HealthSummaryDto } from "../../../../domain.types/statistics/custom.query/custom.query.dto";
+import { CustomQueryMapper } from "../../../../database/sql/sequelize/mappers/statistics/custom.query.mapper";
+import { MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { BloodGlucoseDto } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
+import { BloodOxygenSaturationDto } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
+import { BloodPressureDto } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
+import { BodyHeightDto } from "../../../../domain.types/clinical/biometrics/body.height/body.height.dto";
+import { BodyWeightDto } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.dto";
+import { PulseDto } from "../../../../domain.types/clinical/biometrics/pulse/pulse.dto";
+import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
+import { EmergencyEventDto } from "../../../../domain.types/clinical/emergency.event/emergency.event.dto";
+import { IBloodOxygenSaturationRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface";
+import { IPulseRepo } from "../../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
+import { IEmergencyEventRepo } from "../../../../database/repository.interfaces/clinical/emergency.event.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,6 +58,7 @@ import { DurationType } from "../../../../domain.types/miscellaneous/time.types"
 export class PatientStatisticsService {
 
     constructor(
+        @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
@@ -68,32 +67,18 @@ export class PatientStatisticsService {
         @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
         @inject('ILabRecordRepo') private _labRecordsRepo: ILabRecordRepo,
         @inject('ISleepRepo') private _sleepRepo: ISleepRepo,
+        @inject('IBloodOxygenSaturationRepo') private _bloodOxygenSaturationRepo: IBloodOxygenSaturationRepo,
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
+        @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
         @inject('IBloodGlucoseRepo') private _bloodGlucoseRepo: IBloodGlucoseRepo,
         @inject('IDailyAssessmentRepo') private _dailyAssessmentRepo: IDailyAssessmentRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
+        @inject('IEmergencyEventRepo') private _emergencyEventRepo: IEmergencyEventRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
     ) {
-        this._foodConsumptionRepo = Injector.Container.resolve(FoodConsumptionRepo);
-        this._medicationConsumptionRepo = Injector.Container.resolve(MedicationConsumptionRepo);
-        this._medicationRepo = Injector.Container.resolve(MedicationRepo);
-        this._physicalActivityRepo = Injector.Container.resolve(PhysicalActivityRepo);
-        this._bodyWeightRepo = Injector.Container.resolve(BodyWeightRepo);
-        this._bodyHeightRepo = Injector.Container.resolve(BodyHeightRepo);
-        this._labRecordsRepo = Injector.Container.resolve(LabRecordRepo);
-        this._sleepRepo = Injector.Container.resolve(SleepRepo);
-        this._bloodPressureRepo = Injector.Container.resolve(BloodPressureRepo);
-        this._bloodGlucoseRepo = Injector.Container.resolve(BloodGlucoseRepo);
-        this._dailyAssessmentRepo = Injector.Container.resolve(DailyAssessmentRepo);
-        this._userTaskRepo = Injector.Container.resolve(UserTaskRepo);
-        this._careplanRepo = Injector.Container.resolve(CareplanRepo);
-        this._patientRepo = Injector.Container.resolve(PatientRepo);
-        this._personRepo = Injector.Container.resolve(PersonRepo);
-        this._userRepo = Injector.Container.resolve(UserRepo);
-
     }
 
     //#region Publics
@@ -145,6 +130,113 @@ export class PatientStatisticsService {
             Stats             : stats,
             ClientCode        : clientCode
         };
+    };
+
+    public getHealthSummary = async(patientUserId: uuid): Promise<HealthSummaryDto> => {
+        const filter = {
+            PatientUserId : patientUserId,
+        };
+
+        const healthSummary: HealthSummaryDto = {};
+
+        const patientHealthProfile = await this._healthProfileRepo.getByPatientUserId(patientUserId);
+        const healthProfileSummary = CustomQueryMapper.toHealthProfileSummaryDto(patientHealthProfile);
+        if (healthProfileSummary){
+            healthSummary.HealthProfile = healthProfileSummary;
+        }
+        
+        const patientCurrentMedication = await this._medicationConsumptionRepo.search(filter);
+        if (patientCurrentMedication.TotalCount > 0) {
+            const currentMedicationSummary: MedicationConsumptionDto[] = [];
+            for (const medication of patientCurrentMedication.Items) {
+                const dto = CustomQueryMapper.toMedicationConsumptionSummaryDto(medication);
+                currentMedicationSummary.push(dto);
+            }
+            healthSummary.CurrentMedication = currentMedicationSummary;
+        }
+
+        const patientBloodGlucose = await this._bloodGlucoseRepo.search(filter);
+        if (patientBloodGlucose.TotalCount > 0) {
+            const bloodGlucoseSummary: BloodGlucoseDto[] = [];
+            for (const bloodGlucose of patientBloodGlucose.Items) {
+                const dto = CustomQueryMapper.toBloodGlucoseSummaryDto(bloodGlucose);
+                bloodGlucoseSummary.push(dto);
+            }
+            healthSummary.BloodGlucose = bloodGlucoseSummary;
+        }
+
+        const patientBloodOxygenSaturation =
+        await this._bloodOxygenSaturationRepo.search(filter);
+        if (patientBloodOxygenSaturation.TotalCount > 0) {
+            const bloodOxygenSaturationSummary: BloodOxygenSaturationDto[] = [];
+            for (const oxygenSaturation of patientBloodOxygenSaturation.Items) {
+                const dto = CustomQueryMapper.toBloodOxygenSaturationSummaryDto(oxygenSaturation);
+                bloodOxygenSaturationSummary.push(dto);
+            }
+            healthSummary.BloodOxygenSaturation = bloodOxygenSaturationSummary;
+        }
+
+        const patientBloodPressure = await this._bloodPressureRepo.search(filter);
+        if (patientBloodPressure.TotalCount > 0) {
+            const bloodPressureSummary: BloodPressureDto[] = [];
+            for (const bloodPressure of patientBloodPressure.Items) {
+                const dto = CustomQueryMapper.toBloodPressureSummaryDto(bloodPressure);
+                bloodPressureSummary.push(dto);
+            }
+            healthSummary.BloodPressure = bloodPressureSummary;
+        }
+
+        const patientBodyHeight =  await this._bodyHeightRepo.search(filter);
+        if (patientBodyHeight.TotalCount > 0) {
+            const bodyHeightSummary: BodyHeightDto[] = [];
+            for (const bodyHeight of patientBodyHeight.Items) {
+                const dto = CustomQueryMapper.toBodyHeightSummaryDto(bodyHeight);
+                bodyHeightSummary.push(dto);
+            }
+            healthSummary.BodyHeight = bodyHeightSummary;
+        }
+        
+        const patientBodyWeight = await this._bodyWeightRepo.search(filter);
+        if (patientBodyWeight.TotalCount > 0) {
+            const bodyWeightSummary: BodyWeightDto[] = [];
+            for (const bodyWeight of patientBodyWeight.Items) {
+                const dto = CustomQueryMapper.toBodyWeightSummaryDto(bodyWeight);
+                bodyWeightSummary.push(dto);
+            }
+            healthSummary.BodyWeight = bodyWeightSummary;
+        }
+        
+        const patientPulse = await this._pulseRepo.search(filter);
+        if (patientPulse.TotalCount > 0) {
+            const pulseSummary: PulseDto[] = [];
+            for (const pulse of patientPulse.Items) {
+                const dto = CustomQueryMapper.toPulseSummaryDto(pulse);
+                pulseSummary.push(dto);
+            }
+            healthSummary.Pulse = pulseSummary;
+        }
+
+        const patientLabRecord = await this._labRecordsRepo.search(filter);
+        if (patientLabRecord.TotalCount > 0) {
+            const labRecordSummary: LabRecordDto[] = [];
+            for (const labRecord of patientLabRecord.Items) {
+                const dto = CustomQueryMapper.toLabRecordSummaryDto(labRecord);
+                labRecordSummary.push(dto);
+            }
+            healthSummary.LabRecord = labRecordSummary;
+        }
+
+        const patientEmergencyEvent = await this._emergencyEventRepo.search(filter);
+        if (patientEmergencyEvent.TotalCount > 0) {
+            const emergencyEventSummary: EmergencyEventDto[] = [];
+            for (const emergencyEvent of patientEmergencyEvent.Items) {
+                const dto = CustomQueryMapper.toEmergencyEventSummaryDto(emergencyEvent);
+                emergencyEventSummary.push(dto);
+            }
+            healthSummary.EmergencyEvent = emergencyEventSummary;
+        }
+        
+        return healthSummary;
     };
 
     public getPatientStats = async (patientUserId: uuid) => {

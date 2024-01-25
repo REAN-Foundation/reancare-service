@@ -6,8 +6,14 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
-import { ConsumptionSummaryDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
-import { MedicationAdministrationRoutesList, MedicationDosageUnitsList, MedicationDurationUnitsList, MedicationFrequencyUnitsList, MedicationTimeSchedulesList } from '../../../../domain.types/clinical/medication/medication/medication.types';
+import { ConsumptionSummaryDto, MedicationDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
+import { 
+    MedicationAdministrationRoutesList, 
+    MedicationDosageUnitsList, 
+    MedicationDurationUnitsList, 
+    MedicationFrequencyUnitsList, 
+    MedicationTimeSchedulesList 
+} from '../../../../domain.types/clinical/medication/medication/medication.types';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
@@ -17,6 +23,7 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
 import { MedicationValidator } from './medication.validator';
 import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -102,6 +109,7 @@ export class MedicationController {
             const domainModel = await MedicationValidator.create(request);
 
             const user = await this._userService.getById(domainModel.PatientUserId);
+
             if (user == null) {
                 throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
             }
@@ -109,6 +117,8 @@ export class MedicationController {
             await this.updateDrugDetails(domainModel);
 
             var medication = await this._service.create(domainModel);
+            Logger.instance().log(`[MedicationTime] Create - service call completed`);
+
             if (medication == null) {
                 throw new ApiError(400, 'Cannot create medication!');
             }
@@ -136,6 +146,7 @@ export class MedicationController {
             });
 
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] Create - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -145,6 +156,8 @@ export class MedicationController {
             const id: string = await MedicationValidator.getParamId(request);
 
             const medication = await this._service.getById(id);
+            Logger.instance().log(`[MedicationTime] GetById - service call completed`);
+
             if (medication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
@@ -161,10 +174,12 @@ export class MedicationController {
 
             medication.ConsumptionSummary = consumptionSummary;
 
+            Logger.instance().log(`[MedicationTime] GetById - medication response returned`);
             ResponseHandler.success(request, response, 'Medication retrieved successfully!', 200, {
                 Medication : medication,
             });
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] GetById - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -180,6 +195,7 @@ export class MedicationController {
                     : `Total ${count} medication records retrieved successfully!`;
             ResponseHandler.success(request, response, message, 200, { Medications: searchResults });
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] Search - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -199,41 +215,35 @@ export class MedicationController {
             domainModel.StartDate = startDate;
 
             const updated = await this._service.update(id, domainModel);
+            Logger.instance().log(`[MedicationTime] Update - service call completed`);
+
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update medication record!');
             }
 
-            if (domainModel.DrugId !== null ||
-                domainModel.RefillCount !== null ||
-                domainModel.RefillNeeded !== null ||
-                domainModel.Duration !== null ||
-                domainModel.DurationUnit !== null ||
-                domainModel.Frequency !== null ||
-                domainModel.FrequencyUnit !== null ||
-                domainModel.TimeSchedules !== null ||
-                domainModel.StartDate !== null) {
+            this.updateMedicationConsumption(domainModel, id, updated);
 
-                await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+            await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
 
-                if (updated.FrequencyUnit !== 'Other') {
-                    var stats = await this._medicationConsumptionService.create(updated);
-                    var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
+            if (updated.FrequencyUnit !== 'Other') {
+                var stats = await this._medicationConsumptionService.create(updated);
+                var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
 
-                    var consumptionSummary: ConsumptionSummaryDto = {
-                        TotalConsumptionCount   : stats.TotalConsumptionCount,
-                        TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
-                        PendingConsumptionCount : stats.PendingConsumptionCount,
-                        PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
-                    };
+                var consumptionSummary: ConsumptionSummaryDto = {
+                    TotalConsumptionCount   : stats.TotalConsumptionCount,
+                    TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
+                    PendingConsumptionCount : stats.PendingConsumptionCount,
+                    PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
+                };
 
-                    updated.ConsumptionSummary = consumptionSummary;
-                }
+                updated.ConsumptionSummary = consumptionSummary;
             }
-
+        
             ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
                 Medication : updated,
             });
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] Update - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -247,6 +257,8 @@ export class MedicationController {
             }
 
             const deleted = await this._service.delete(id);
+            Logger.instance().log(`[MedicationTime] Delete - service call completed`);
+
             if (!deleted) {
                 throw new ApiError(400, 'Medication cannot be deleted.');
             }
@@ -256,10 +268,12 @@ export class MedicationController {
             // delete ehr record
             this._ehrMedicationService.deleteMedicationEHRRecords(id);
 
+            Logger.instance().log(`[MedicationTime] Delete - medication response returned`);
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {
+            Logger.instance().log(`[MedicationTime] Delete - error occured`);
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -358,6 +372,37 @@ export class MedicationController {
             }
             domainModel.DrugName = drug.DrugName;
         }
+    }
+
+    private async updateMedicationConsumption(domainModel: MedicationDomainModel, id: string, updated: MedicationDto) {
+        if (domainModel.DrugId !== null ||
+            domainModel.RefillCount !== null ||
+            domainModel.RefillNeeded !== null ||
+            domainModel.Duration !== null ||
+            domainModel.DurationUnit !== null ||
+            domainModel.Frequency !== null ||
+            domainModel.FrequencyUnit !== null ||
+            domainModel.TimeSchedules !== null ||
+            domainModel.StartDate !== null) {
+
+            await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+
+            if (updated.FrequencyUnit !== 'Other') {
+                await this._medicationConsumptionService.create(updated);
+                /*var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
+
+                var consumptionSummary: ConsumptionSummaryDto = {
+                    TotalConsumptionCount   : stats.TotalConsumptionCount,
+                    TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
+                    PendingConsumptionCount : stats.PendingConsumptionCount,
+                    PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
+                };
+
+                updated.ConsumptionSummary = consumptionSummary;*/
+            }
+            
+        }
+
     }
 
     //#endregion

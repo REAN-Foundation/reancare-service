@@ -29,7 +29,7 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
     });
     const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(model.PatientUserId);
     const tempDate = TimeHelper.subtractDuration(model.RecordDate, offsetMinutes, DurationType.Minute);
-    const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
+    const tempDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
     model.RecordDateStr = tempDateStr;
 
     await addOrUpdateMentalHealthRecord(model);

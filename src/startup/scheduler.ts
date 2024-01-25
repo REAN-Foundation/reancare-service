@@ -12,6 +12,7 @@ import { TerraSupportService } from '../api/devices/device.integrations/terra/te
 import { UserService } from '../services/users/user/user.service';
 import { StatisticsService } from '../services/statistics/statistics.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
+import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -79,7 +80,10 @@ export class Scheduler {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
                 var service = Injector.Container.resolve(StatisticsService);
-                await service.createDailyStatistics();
+                await service.createDashboardStats();
+
+                const dailyStatsService = Injector.Container.resolve(DailyStatisticsService);
+                await dailyStatsService.generateDailyStatistics();
             })();
         });
     };

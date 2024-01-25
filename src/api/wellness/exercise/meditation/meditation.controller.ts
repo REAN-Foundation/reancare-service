@@ -56,7 +56,7 @@ export class MeditationController {
                     },
                     RecordId       : meditation.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }

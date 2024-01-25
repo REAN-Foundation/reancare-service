@@ -66,7 +66,7 @@ export class MedicationConsumptionController {
                     },
                     RecordId       : dto.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -108,7 +108,7 @@ export class MedicationConsumptionController {
                     },
                     RecordId       : dto.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -133,7 +133,7 @@ export class MedicationConsumptionController {
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
-            const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd);
+            const tempDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd);
             const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
             AwardsFactsService.addOrUpdateMedicationFact({
                 PatientUserId : dto.PatientUserId,
@@ -178,7 +178,7 @@ export class MedicationConsumptionController {
                 },
                 RecordId       : dto.id,
                 RecordDate     : tempDate,
-                RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                 RecordTimeZone : currentTimeZone,
             });
 

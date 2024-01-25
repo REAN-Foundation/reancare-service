@@ -58,7 +58,7 @@ export class FoodConsumptionController {
                     },
                     RecordId       : foodConsumption.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -193,7 +193,7 @@ export class FoodConsumptionController {
                     },
                     RecordId      : updated.id,
                     RecordDate    : timestamp,
-                    RecordDateStr : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
                 });
             }
             ResponseHandler.success(request, response, 'Nutrition record updated successfully!', 200, {

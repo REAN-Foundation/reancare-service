@@ -11,9 +11,12 @@ export class DailyStatisticsMapper {
         }
         const dto: DailyStatisticsDto = {
             id              : dailyStatistics.id,
+            ResourceId      : dailyStatistics.ResourceId,
             ReportDate      : dailyStatistics.ReportDate,
             ReportTimestamp : dailyStatistics.ReportTimestamp,
-            Statistics      : JSON.parse(dailyStatistics.Statistics)
+            DashboardStats  : JSON.parse(dailyStatistics.DashboardStats),
+            UserStats       : JSON.parse(dailyStatistics.UserStats),
+            AhaStats        : JSON.parse(dailyStatistics.AhaStats),
         };
         return dto;
     };

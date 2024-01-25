@@ -288,7 +288,7 @@ export class SleepRepo implements ISleepRepo {
                     Duration       : x.SleepDuration,
                     Unit           : x.Unit,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });
@@ -326,7 +326,7 @@ export class SleepRepo implements ISleepRepo {
                     Duration       : x.SleepDuration,
                     Unit           : x.Unit,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });

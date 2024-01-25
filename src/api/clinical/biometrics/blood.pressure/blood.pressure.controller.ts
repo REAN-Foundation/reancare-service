@@ -78,7 +78,7 @@ export class BloodPressureController {
                     },
                     RecordId       : bloodPressure.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -168,7 +168,7 @@ export class BloodPressureController {
                     },
                     RecordId       : updated.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }

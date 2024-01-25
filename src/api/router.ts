@@ -87,6 +87,7 @@ import { register as registerConsentRoutes } from './auth/consent/consent.routes
 import { register as registerHealthSystemRoutes } from './hospitals/health.system/health.system.routes';
 import { register as registerHospitalRoutes } from './hospitals/hospital/hospital.routes';
 import { register as registerDailyStatisticsRoutes } from './statistics/daily.statistics/daily.statistics.routes';
+import { register as registerAhaStatisticsRoutes } from './statistics/aha.statistics/aha.statistics.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -198,6 +199,7 @@ export class Router {
                 registerHealthSystemRoutes(this._app);
                 registerHospitalRoutes(this._app);
                 registerDailyStatisticsRoutes(this._app);
+                registerAhaStatisticsRoutes(this._app);
                 
                 resolve(true);
 

@@ -5,8 +5,9 @@ import { AppDownloadDomainModel } from "../../domain.types/statistics/app.downlo
 import { StatisticSearchFilters } from "../../domain.types/statistics/statistics.search.type";
 import { YearWiseDeviceDetails, YearWiseUsers } from "../../domain.types/statistics/daily.statistics/daily.statistics.dto";
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
-import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { Logger } from "../../common/logger";
+import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
+import { TimeHelper } from "../../common/time.helper";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,7 +87,7 @@ export class StatisticsService {
         return await this._statisticsRepo.getAllYears();
     };
 
-    createDailyStatistics = async () => {
+    createDashboardStats = async (): Promise<any> => {
         try {
             const filter = {};
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
@@ -104,7 +105,7 @@ export class StatisticsService {
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
             const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
            
-            const statisticsData = {
+            const dashboardStats = {
                 UserStatistics : {
                     UsersCountStats          : usersCountStats,
                     DeviceDetailWiseUsers    : deviceDetailWiseUsers,
@@ -119,21 +120,23 @@ export class StatisticsService {
                     AddictionDistribution    : addictionDistribution
                 },
             };
-    
-            const dailyStatisticsDomainModel: DailyStatisticsDomainModel = {
-                ReportDate      : new Date(),
+            
+            const model: DailyStatisticsDomainModel = {
+                ReportDate      : TimeHelper.formatDateToLocal_YYYY_MM_DD(new Date()),
                 ReportTimestamp : new Date(),
-                Statistics      : JSON.stringify(statisticsData)
+                DashboardStats  : JSON.stringify(dashboardStats)
             };
     
-            const dailyStatistics = await this._dailyStatisticsRepo.create(dailyStatisticsDomainModel);
+            const dailyStatistics = await this._dailyStatisticsRepo.create(model);
             if (dailyStatistics) {
                 Logger.instance().log('Daily users stattistics created successfully.');
             } else {
                 Logger.instance().log('Error in creating daily users stattistics.');
             }
+
+            return dashboardStats;
         } catch (error) {
-            Logger.instance().log(`Error in creating daily users stattistics:${error.message}`);
+            Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
         }
     };
 

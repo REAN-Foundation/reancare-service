@@ -3,7 +3,7 @@ import { decimal, uuid } from "../../../../domain.types/miscellaneous/system.typ
 export interface LabRecordDto {
     id?             : string;
     EhrId?          : string;
-    PatientUserId   : uuid;
+    PatientUserId?  : uuid;
     TypeName ?      : string;
     DisplayName ?   : string;
     TypeId ?        : uuid;

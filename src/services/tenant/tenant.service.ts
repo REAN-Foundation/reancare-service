@@ -53,20 +53,12 @@ export class TenantService {
         return await this._tenantRepo.getTenantWithEmail(email);
     };
 
-    public addUserAsAdminToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.addUserAsAdminToTenant(id, userId);
+    public promoteTenantUserAsAdmin = async (id: uuid, userId: uuid): Promise<boolean> => {
+        return await this._tenantRepo.promoteTenantUserAsAdmin(id, userId);
     };
 
-    public removeUserAsAdminFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.removeUserAsAdminFromTenant(id, userId);
-    };
-
-    public addUserAsModeratorToTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.addUserAsModeratorToTenant(id, userId);
-    };
-
-    public removeUserAsModeratorFromTenant = async (id: uuid, userId: uuid): Promise<boolean> => {
-        return await this._tenantRepo.removeUserAsModeratorFromTenant(id, userId);
+    public demoteAdmin = async (id: uuid, userId: uuid): Promise<boolean> => {
+        return await this._tenantRepo.demoteAdmin(id, userId);
     };
 
     public getTenantStats = async (id: uuid): Promise<any> => {
@@ -77,8 +69,27 @@ export class TenantService {
         return await this._tenantRepo.getTenantAdmins(id);
     };
 
-    public getTenantModerators = async (id: uuid): Promise<any[]> => {
-        return await this._tenantRepo.getTenantModerators(id);
+    public getTenantRegularUsers = async (id: uuid): Promise<any[]> => {
+        return await this._tenantRepo.getTenantRegularUsers(id);
+    };
+
+    public seedDefaultTenant = async (): Promise<TenantDto> => {
+        var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
+        if (defaultTenant == null) {
+            var tenant: TenantDomainModel = {
+                Name        : 'default',
+                Description : 'Default tenant',
+                Code        : 'default',
+                Phone       : '0000000000',
+                Email       : 'support@reanfoundation.org',
+            };
+            var defaultTenant = await this._tenantRepo.create(tenant);
+            return defaultTenant;
+        }
+        else {
+            var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
+            return defaultTenant;
+        }
     };
 
     //#endregion

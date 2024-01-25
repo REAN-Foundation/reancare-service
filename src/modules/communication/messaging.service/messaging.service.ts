@@ -39,7 +39,6 @@ export class MessagingService {
         if (message.Variables) {
             templateName = type;
             type = "template";
-
         }
         message = JSON.stringify(message);
         await this.sendMessage(provider, channel, toPhone, type, templateName, message, payload);
@@ -57,7 +56,7 @@ export class MessagingService {
         const options = {
             headers : headers
         };
-        
+
         const url = `${reanBotBaseUrl}${client}/${channel}/${urlToken}/send`;
         Logger.instance().log(`URL: ${url}`);
         Logger.instance().log(`Phone: ${toPhone}`);
@@ -88,5 +87,5 @@ export class MessagingService {
         };
         return clientName[provider] ?? provider;
     }
-    
+
 }

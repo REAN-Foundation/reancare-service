@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { SymptomTypeController } from '../../../clinical/symptom/symptom.type/symptom.type.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,14 +7,13 @@ import { SymptomTypeController } from '../../../clinical/symptom/symptom.type/sy
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new SymptomTypeController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Clinical.Symptoms.SymptomType.Create'), controller.create);
+    router.get('/search', auth('Clinical.Symptoms.SymptomType.Search'), controller.search);
+    router.get('/:id', auth('Clinical.Symptoms.SymptomType.GetById'), controller.getById);
+    router.put('/:id', auth('Clinical.Symptoms.SymptomType.Update'), controller.update);
+    router.delete('/:id', auth('Clinical.Symptoms.SymptomType.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/symptom-types', router);
 };

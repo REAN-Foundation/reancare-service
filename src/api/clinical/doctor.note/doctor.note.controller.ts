@@ -1,26 +1,20 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DoctorNoteService } from '../../../services/clinical/doctor.note.service';
-import { Loader } from '../../../startup/loader';
 import { DoctorNoteValidator } from './doctor.note.validator';
-import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DoctorNoteController extends BaseController {
+export class DoctorNoteController {
 
     //#region member variables and constructors
 
-    _service: DoctorNoteService = null;
+    _service: DoctorNoteService = Injector.Container.resolve(DoctorNoteService);
 
     _validator: DoctorNoteValidator = new DoctorNoteValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(DoctorNoteService);
-    }
 
     //#endregion
 
@@ -28,8 +22,6 @@ export class DoctorNoteController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DoctorNote.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -49,8 +41,6 @@ export class DoctorNoteController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DoctorNote.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const doctorNote = await this._service.getById(id);
@@ -68,8 +58,6 @@ export class DoctorNoteController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DoctorNote.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -90,8 +78,6 @@ export class DoctorNoteController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DoctorNote.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -117,8 +103,6 @@ export class DoctorNoteController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DoctorNote.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const doctorNote = await this._service.getById(id);

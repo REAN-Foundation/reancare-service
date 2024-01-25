@@ -35,7 +35,7 @@ describe('69 - Assessment tasks tests', function() {
             .get(`/api/v1/user-tasks/${getTestData('TaskId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -51,7 +51,7 @@ describe('69 - Assessment tasks tests', function() {
             .post(`/api/v1/clinical/assessment-templates/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentTemplate.id, 'AssessmentTemplateId');
@@ -84,7 +84,7 @@ describe('69 - Assessment tasks tests', function() {
             .post(`/api/v1/clinical/assessments/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Assessment.id, 'AssessmentId');
@@ -112,7 +112,7 @@ describe('69 - Assessment tasks tests', function() {
             .get(`/api/v1/clinical/assessments/${getTestData('AssessmentId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Assessment).to.have.property('id');
                 expect(response.body.Data.Assessment).to.have.property('PatientUserId');
@@ -131,7 +131,7 @@ describe('69 - Assessment tasks tests', function() {
             .post(`/api/v1/clinical/assessments/${getTestData('AssessmentId')}/start`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -145,13 +145,12 @@ describe('69 - Assessment tasks tests', function() {
         agent
             .get(`/api/v1/user-tasks/search${loadAssessmentQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('69:05 -> Negative - Get task by id', function(done) {
@@ -159,7 +158,7 @@ describe('69 - Assessment tasks tests', function() {
         agent
             .get(`/api/v1/user-tasks/${getTestData('TaskId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -187,7 +186,7 @@ describe('69 - Assessment tasks tests', function() {
             .post(`/api/v1/clinical/assessments/${getTestData('AssessmentId')}/start`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -209,6 +208,7 @@ function loadAssessmentQueryString() {
 export const loadAssessmentTemplateCreateModel = async (    
 ) => {
     const model = {
+        TenantId: getTestData("TenantId"),
         Type                        : getRandomEnumValue(AssessmentType),
         Title                       : faker.lorem.word(),
         Description                 : faker.lorem.words(),
@@ -216,7 +216,7 @@ export const loadAssessmentTemplateCreateModel = async (
         ProviderAssessmentCode      : faker.lorem.word(),
         ServeListNodeChildrenAtOnce : faker.datatype.boolean(),
         DisplayCode                 : faker.lorem.word(),
-        TotalNumberOfQuestions      : faker.number.int(100)
+        TotalNumberOfQuestions      : faker.number.int(100),
               
     };
     setTestData(model, "AssessmentTemplateCreateModel");

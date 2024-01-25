@@ -3,20 +3,19 @@ import fs from 'fs';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AssessmentTemplateFileConverter } from '../../../../services/clinical/assessment/assessment.template.file.converter';
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { AssessmentTemplateValidator } from './assessment.template.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AssessmentTemplateController extends BaseController{
+export class AssessmentTemplateController{
 
     //#region member variables and constructors
 
@@ -29,9 +28,8 @@ export class AssessmentTemplateController extends BaseController{
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
-        super();
-        this._service = Loader.container.resolve(AssessmentTemplateService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._service = Injector.Container.resolve(AssessmentTemplateService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
     }
 
     //#endregion
@@ -40,8 +38,6 @@ export class AssessmentTemplateController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.Create', request, response);
 
             const model = await this._validator.create(request);
             const assessmentTemplate = await this._service.create(model);
@@ -60,8 +56,6 @@ export class AssessmentTemplateController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const assessmentTemplate = await this._service.getById(id);
             if (assessmentTemplate == null) {
@@ -78,8 +72,6 @@ export class AssessmentTemplateController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -101,8 +93,6 @@ export class AssessmentTemplateController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -127,8 +117,6 @@ export class AssessmentTemplateController extends BaseController{
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -151,7 +139,6 @@ export class AssessmentTemplateController extends BaseController{
     export = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.Export', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const assessmentTemplate = await this._service.getById(id);
@@ -179,8 +166,6 @@ export class AssessmentTemplateController extends BaseController{
 
     importFromFile = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.ImportFromFile', request, response);
 
             const uploadModels = this._fileResourceValidator.getUploadDomainModel(request);
             if (uploadModels.length === 0) {
@@ -217,8 +202,6 @@ export class AssessmentTemplateController extends BaseController{
     importFromJson = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.ImportFromJson', request, response);
-
             const templateModel = JSON.parse(request.body);
 
             var assessmentTemplate = await this._service.import(templateModel);
@@ -237,9 +220,6 @@ export class AssessmentTemplateController extends BaseController{
 
     addNode = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.AddNode', request, response);
-
             const model:CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode
                 = await this._validator.addNode(request);
 
@@ -259,8 +239,6 @@ export class AssessmentTemplateController extends BaseController{
 
     updateNode = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.UpdateNode', request, response);
 
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             var updates = await this._validator.updateNode(request);
@@ -287,8 +265,6 @@ export class AssessmentTemplateController extends BaseController{
     deleteNode = async (request: express.Request, response: express.Response) => {
         try {
 
-            await this.setContext('AssessmentTemplate.DeleteNode', request, response);
-
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const deleted: boolean = await this._service.deleteNode(nodeId);
             if (!deleted) {
@@ -307,8 +283,6 @@ export class AssessmentTemplateController extends BaseController{
     getNode = async (request: express.Request, response: express.Response) => {
         try {
 
-            await this.setContext('AssessmentTemplate.GetNode', request, response);
-
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const assessmentNode: CAssessmentNode = await this._service.getNode(nodeId);
             if (assessmentNode == null) {
@@ -326,8 +300,6 @@ export class AssessmentTemplateController extends BaseController{
 
     addScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.AddScoringCondition', request, response);
 
             const model:CScoringCondition
                 = await this._validator.addScoringCondition(request);
@@ -348,8 +320,6 @@ export class AssessmentTemplateController extends BaseController{
 
     updateScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.UpdateScoringCondition', request, response);
 
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
             Logger.instance().log(`Updating scoring condition for assessment template - ${templateId}`);
@@ -379,8 +349,6 @@ export class AssessmentTemplateController extends BaseController{
     deleteScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
 
-            await this.setContext('AssessmentTemplate.DeleteScoringCondition', request, response);
-
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
             const deleted: boolean = await this._service.deleteScoringCondition(conditionId);
             if (!deleted) {
@@ -399,8 +367,6 @@ export class AssessmentTemplateController extends BaseController{
     getScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
 
-            await this.setContext('AssessmentTemplate.GetScoringCondition', request, response);
-
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
             const condition: CScoringCondition = await this._service.getScoringCondition(conditionId);
             if (condition == null) {
@@ -418,8 +384,6 @@ export class AssessmentTemplateController extends BaseController{
 
     searchNode = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.SearchNode', request, response);
 
             const filters = await this._validator.searchNode(request);
             const searchResults = await this._service.searchNode(filters);

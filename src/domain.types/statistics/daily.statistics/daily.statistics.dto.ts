@@ -10,7 +10,10 @@ export interface YearWiseDeviceDetails {
 
 export interface DailyStatisticsDto {
     id?                              : string;
-    ReportDate?                      : Date;
+    ResourceId?                      : string;
+    ReportDate?                      : string;
     ReportTimestamp?                 : Date;
-    Statistics?                      : any;
+    DashboardStats?                  : string;
+    UserStats?                       : string;
+    AhaStats?                        : string;
 }

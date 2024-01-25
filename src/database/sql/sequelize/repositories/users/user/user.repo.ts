@@ -9,7 +9,9 @@ import { UserMapper } from "../../../mappers/users/user/user.mapper";
 import Person from "../../../models/person/person.model";
 import User from '../../../models/users/user/user.model';
 import Tenant from '../../../models/tenant/tenant.model';
-import TenantUser from '../../../models/tenant/tenant.user.model';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { TenantMapper } from '../../../mappers/tenant/tenant.mapper';
+import { TenantDto } from '../../../../../../domain.types/tenant/tenant.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -120,6 +122,7 @@ export class UserRepo implements IUserRepo {
             const entity = {
                 PersonId        : model.Person.id,
                 RoleId          : model.RoleId ?? null,
+                TenantId        : model.TenantId ?? null,
                 UserName        : model.UserName,
                 IsTestUser      : model.IsTestUser ?? false,
                 Password        : model.Password ? Helper.hash(model.Password) : null,
@@ -132,14 +135,6 @@ export class UserRepo implements IUserRepo {
             var tenant = null;
             if (model.TenantId != null) {
                 tenant = await Tenant.findByPk(model.TenantId);
-                if (tenant != null) {
-                    const tenantUser = await TenantUser.create({
-                        UserId   : user.id,
-                        TenantId : tenant.id,
-                        Admin    : false,
-                    });
-                    Logger.instance().log(`Tenant user created: ${JSON.stringify(tenantUser)}`);
-                }
             }
             return UserMapper.toDetailsDto(user, tenant);
         } catch (error) {
@@ -221,12 +216,6 @@ export class UserRepo implements IUserRepo {
                     id : id
                 }
             });
-            //Destroy tenant user
-            await TenantUser.destroy({
-                where : {
-                    UserId : id
-                }
-            });
             return count === 1;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -242,6 +231,54 @@ export class UserRepo implements IUserRepo {
         return user.Password;
     };
 
+    checkUsersWithoutTenants = async (): Promise<void> => {
+        try {
+
+            const tentant = await Tenant.findOne({
+                where : {
+                    Code : 'default'
+                }
+            });
+
+            const users = await User.findAll({
+                where : {
+                    TenantId : null
+                },
+                attributes : ['id']
+            });
+
+            for await (const user of users) {
+                var record = await User.findOne({
+                    where : {
+                        id : user.id
+                    }
+                });
+                record.TenantId = tentant.id;
+                await record.save();
+                // Logger.instance().log(`User associated: ${JSON.stringify(x)}`);
+            }
+        }   catch (error) {
+            Logger.instance().log(error.message);
+            //throw new ApiError(500, error.message);
+        }
+    };
+
+    public isTenantUser = async (userId: uuid, tenantId: uuid): Promise<boolean> => {
+        try {
+            var user = await User.findOne({
+                where : {
+                    id       : userId,
+                    TenantId : tenantId
+                }
+            });
+            return user != null;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     getAllRegisteredUsers = async (): Promise<any[]> => {
         try {
             var users = await User.findAll();
@@ -253,5 +290,26 @@ export class UserRepo implements IUserRepo {
         }
     };
 
+    public getTenantsForUser = async (userId: uuid): Promise<TenantDto[]> => {
+        try {
+            var tenantUsers = await User.findAll({
+                where : {
+                    id : userId
+                },
+                include : [
+                    {
+                        model : Tenant,
+                        as    : 'Tenant'
+                    }
+                ]
+            });
+            var tenants = tenantUsers.map(x => x.Tenant);
+            return tenants.map(x => TenantMapper.toDto(x));
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
 }

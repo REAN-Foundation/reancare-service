@@ -227,7 +227,7 @@ export class PulseRepo implements IPulseRepo {
                     VitalName         : "Pulse",
                     VitalPrimaryValue : x.Pulse,
                     Unit              : x.Unit,
-                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };
@@ -265,7 +265,7 @@ export class PulseRepo implements IPulseRepo {
                     VitalName         : "Pulse",
                     VitalPrimaryValue : x.Pulse,
                     Unit              : x.Unit,
-                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };

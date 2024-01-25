@@ -21,7 +21,7 @@ describe('66 - Blood glucose tests', function() {
             .post(`/api/v1/clinical/biometrics/blood-glucose`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BloodGlucose.id, 'BloodGlucoseId_1');
@@ -48,7 +48,7 @@ describe('66 - Blood glucose tests', function() {
             .get(`/api/v1/clinical/biometrics/blood-glucose/${getTestData('BloodGlucoseId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BloodGlucose).to.have.property('id');
                 expect(response.body.Data.BloodGlucose).to.have.property('EhrId');
@@ -69,7 +69,7 @@ describe('66 - Blood glucose tests', function() {
             .get(`/api/v1/clinical/biometrics/blood-glucose/search${loadBloodGlucoseQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BloodGlucoseRecords).to.have.property('TotalCount');
                 expect(response.body.Data.BloodGlucoseRecords).to.have.property('RetrievedCount');
@@ -90,7 +90,7 @@ describe('66 - Blood glucose tests', function() {
             .put(`/api/v1/clinical/biometrics/blood-glucose/${getTestData('BloodGlucoseId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.BloodGlucose).to.have.property('id');
@@ -118,7 +118,7 @@ describe('66 - Blood glucose tests', function() {
             .delete(`/api/v1/clinical/biometrics/blood-glucose/${getTestData('BloodGlucoseId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -133,7 +133,7 @@ describe('66 - Blood glucose tests', function() {
             .post(`/api/v1/clinical/biometrics/blood-glucose`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BloodGlucose.id, 'BloodGlucoseId');
@@ -161,7 +161,7 @@ describe('66 - Blood glucose tests', function() {
             .post(`/api/v1/clinical/biometrics/blood-glucose`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -177,7 +177,7 @@ describe('66 - Blood glucose tests', function() {
             .get(`/api/v1/clinical/biometrics/blood-glucose/${getTestData('BloodGlucoseId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -191,7 +191,7 @@ describe('66 - Blood glucose tests', function() {
         agent
             .put(`/api/v1/clinical/biometrics/blood-glucose/${getTestData('BloodGlucoseId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

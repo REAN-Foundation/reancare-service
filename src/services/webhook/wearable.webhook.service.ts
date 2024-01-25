@@ -2,7 +2,7 @@
 import { inject, injectable } from "tsyringe";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { BodyWeightStore } from "../../modules/ehr/services/body.weight.store";
-import { Loader } from "../../startup/loader";
+import { Injector } from "../../startup/injector";
 import { IPulseRepo } from "../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
 import { IBodyTemperatureRepo } from "../..//database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface";
 import { IBloodPressureRepo } from "../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface";
@@ -23,7 +23,7 @@ import { DailyDomainModel } from "../../domain.types/webhook/daily.domain.model"
 import { IBodyWeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { IBodyHeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { Logger } from "../../common/logger";
-import { IWearableDeviceDetailsRepo } from "../..//database/repository.interfaces/webhook/webhook.wearable.device.details.repo.interface";
+import { IWearableDeviceDetailsRepo } from "../../database/repository.interfaces/webhook/webhook.wearable.device.details.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,10 +47,10 @@ export class TeraWebhookService {
         @inject('IWearableDeviceDetailsRepo') private _webhookWearableDeviceDetailsRepo: IWearableDeviceDetailsRepo
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
+            this._ehrBodyWeightStore = Injector.Container.resolve(BodyWeightStore);
         }
     }
-  
+
     auth = async (authDomainModel: AuthDomainModel) => {
 
         if (authDomainModel.User.ReferenceId) {
@@ -168,7 +168,7 @@ export class TeraWebhookService {
     body = async (bodyDomainModel: BodyDomainModel) => {
         const bodyData = bodyDomainModel.Data;
         bodyData.forEach(async body => {
-           
+
             const bloodPressureSamples = body.BloodPressureData.BloodPressureSamples;
             Logger.instance().log(`Incoming BP samples ${JSON.stringify(bloodPressureSamples, null, 2)}`);
             const recentBP = await this._bloodPressureRepo.getRecent(bodyDomainModel.User.ReferenceId);
@@ -390,5 +390,5 @@ export class TeraWebhookService {
             }
         });
     };
-    
+
 }

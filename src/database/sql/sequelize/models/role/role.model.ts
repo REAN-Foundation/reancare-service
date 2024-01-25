@@ -8,8 +8,13 @@ import {
     DeletedAt,
     PrimaryKey,
     Length,
-    IsInt
+    IsInt,
+    IsUUID,
+    ForeignKey,
+    BelongsTo,
+    HasOne
 } from 'sequelize-typescript';
+import Tenant from '../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -44,6 +49,51 @@ export default class Role extends Model {
         allowNull : true,
     })
     Description: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type         : DataType.UUID,
+        allowNull    : true,
+        defaultValue : null
+    })
+    TenantId: string;
+
+    @BelongsTo(() => Tenant)
+    Tenant: Tenant;
+
+    @IsInt
+    @ForeignKey(() => Role)
+    @Column({
+        type         : DataType.INTEGER,
+        allowNull    : true,
+        defaultValue : null
+    })
+    ParentRoleId: number;
+
+    @HasOne(() => Role)
+    ParentRole: Role;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    IsSystemRole: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    IsUserRole: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    IsDefaultRole: boolean;
 
     @Column
     @CreatedAt

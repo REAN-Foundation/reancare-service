@@ -20,7 +20,7 @@ describe('60 - Blood oxygen saturation tests', function() {
             .post(`/api/v1/clinical/biometrics/blood-oxygen-saturations`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BloodOxygenSaturation.id, 'BloodOxygenSaturationId_1');
@@ -48,7 +48,7 @@ describe('60 - Blood oxygen saturation tests', function() {
             .get(`/api/v1/clinical/biometrics/blood-oxygen-saturations/${getTestData('BloodOxygenSaturationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BloodOxygenSaturation).to.have.property('id');
                 expect(response.body.Data.BloodOxygenSaturation).to.have.property('EhrId');
@@ -72,7 +72,7 @@ describe('60 - Blood oxygen saturation tests', function() {
             .get(`/api/v1/clinical/biometrics/blood-oxygen-saturations/search${loadBloodOxygenSaturationQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BloodOxygenSaturationRecords).to.have.property('TotalCount');
                 expect(response.body.Data.BloodOxygenSaturationRecords).to.have.property('RetrievedCount');
@@ -93,7 +93,7 @@ describe('60 - Blood oxygen saturation tests', function() {
             .put(`/api/v1/clinical/biometrics/blood-oxygen-saturations/${getTestData('BloodOxygenSaturationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.BloodOxygenSaturation).to.have.property('id');
@@ -117,7 +117,7 @@ describe('60 - Blood oxygen saturation tests', function() {
             .delete(`/api/v1/clinical/biometrics/blood-oxygen-saturations/${getTestData('BloodOxygenSaturationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -132,7 +132,7 @@ describe('60 - Blood oxygen saturation tests', function() {
             .post(`/api/v1/clinical/biometrics/blood-oxygen-saturations`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BloodOxygenSaturation.id, 'BloodOxygenSaturationId');
@@ -161,7 +161,7 @@ describe('60 - Blood oxygen saturation tests', function() {
             .post(`/api/v1/clinical/biometrics/blood-oxygen-saturations`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -177,7 +177,7 @@ describe('60 - Blood oxygen saturation tests', function() {
             .get(`/api/v1/clinical/biometrics/blood-oxygen-saturations/${getTestData('BloodOxygenSaturationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

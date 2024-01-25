@@ -1,6 +1,3 @@
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 import { inject, injectable } from "tsyringe";
 import { IPhysicalActivityRepo } from "../../../database/repository.interfaces/wellness/exercise/physical.activity.repo.interface";
 import { PhysicalActivityDomainModel } from '../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
@@ -46,39 +43,5 @@ export class PhysicalActivityService {
         : Promise<any[]> => {
         return await this._physicalActivityRepo.getAllUserResponsesBefore(patientUserId, date);
     };
-
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: PhysicalActivityDto, appName?: string) => {
-        if (model.PhysicalActivityQuestionAns !== null) {
-            EHRAnalyticsHandler.addBooleanRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.PhysicalActivityQuestionAns,
-                null,
-                null,
-                'Did you add movement to your day today?',
-                appName,
-                model.CreatedAt ? model.CreatedAt : null
-            );
-        }
-
-        if (model.DurationInMin) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.DurationInMin,
-                'mins',   
-                model.Category,
-                'Exercise',
-                appName,
-                model.CreatedAt ? new Date(model.CreatedAt) : null
-            );
-        }
-
-    };
-
 
 }

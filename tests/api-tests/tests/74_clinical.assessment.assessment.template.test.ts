@@ -22,7 +22,7 @@ describe('74 - Cholesterol Demographic Assessment template Copy tests', function
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentTemplate.id, 'AssessmentTemplateId_1');
@@ -54,7 +54,7 @@ describe('74 - Cholesterol Demographic Assessment template Copy tests', function
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateId_1')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentQuestionNodeId');
@@ -81,7 +81,7 @@ describe('74 - Cholesterol Demographic Assessment template Copy tests', function
         agent
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -97,15 +97,14 @@ describe('74 - Cholesterol Demographic Assessment template Copy tests', function
         agent
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateId_1')}/nodes`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
 });
@@ -115,6 +114,7 @@ describe('74 - Cholesterol Demographic Assessment template Copy tests', function
 export const loadKCCQAssessmentTemplateCreateModel = async (
 ) => {
     const model = {
+        TenantId                    : getTestData("TenantId"),
         Title                       : faker.lorem.word(5),
         Description                 : faker.lorem.word(15),
         DisplayCode                 : faker.lorem.word(),

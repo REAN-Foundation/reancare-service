@@ -47,7 +47,7 @@ describe('38 - Knowledge nuggets tests', function() {
             .get(`/api/v1/educational/knowledge-nuggets/${getTestData('KnowledgeNuggetId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.KnowledgeNugget).to.have.property('id');
                 expect(response.body.Data.KnowledgeNugget).to.have.property('TopicName');
@@ -70,7 +70,7 @@ describe('38 - Knowledge nuggets tests', function() {
     //         .get(`/api/v1/educational/knowledge-nuggets/today/${getTestData('PatientUserId')}`)
     //         .set('Content-Type', 'application/json')
     //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+    //         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
     //         .expect(response => {
     //             expect(response.body).to.have.property('Status');
     //             expect(response.body.Status).to.equal('success');
@@ -84,7 +84,7 @@ describe('38 - Knowledge nuggets tests', function() {
             .get(`/api/v1/educational/knowledge-nuggets/search${loadKnowledgeNuggetQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.KnowledgeNuggetRecords).to.have.property('TotalCount');
                 expect(response.body.Data.KnowledgeNuggetRecords).to.have.property('RetrievedCount');
@@ -185,7 +185,7 @@ describe('38 - Knowledge nuggets tests', function() {
             .get(`/api/v1/educational/knowledge-nuggets/${getTestData('KnowledgeNuggetId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -215,13 +215,12 @@ describe('38 - Knowledge nuggets tests', function() {
         agent
             .delete(`/api/v1/educational/knowledge-nuggets/${getTestData('KnowledgeNuggetId')}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
 });

@@ -12,6 +12,8 @@ import Tenant from '../../../models/tenant/tenant.model';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { TenantMapper } from '../../../mappers/tenant/tenant.mapper';
 import { TenantDto } from '../../../../../../domain.types/tenant/tenant.dto';
+import { PersonMapper } from '../../../mappers/person/person.mapper';
+import Role from '../../../models/role/role.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +33,21 @@ export class UserRepo implements IUserRepo {
             return await UserMapper.toDetailsDto(user);
         }
         return null;
+    };
+
+    getByPersonId = async (personId: string): Promise<UserDetailsDto> => {
+        try {
+            const user = await User.findOne({ where: { PersonId: personId } });
+            const tenant = await Tenant.findByPk(user.TenantId);
+            const person = await Person.findByPk(personId);
+            const role = await Role.findByPk(user.RoleId);
+            const personDto = await PersonMapper.toDetailsDto(person);
+            return UserMapper.toDetailsDto(user, tenant, personDto, role);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
     getByEmailAndRole = async (email: any, roleId: number): Promise<UserDetailsDto> => {

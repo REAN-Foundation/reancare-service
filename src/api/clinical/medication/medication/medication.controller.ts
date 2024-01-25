@@ -7,18 +7,17 @@ import { DrugDomainModel } from '../../../../domain.types/clinical/medication/dr
 import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { ConsumptionSummaryDto, MedicationDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
-import { 
-    MedicationAdministrationRoutesList, 
-    MedicationDosageUnitsList, 
-    MedicationDurationUnitsList, 
-    MedicationFrequencyUnitsList, 
-    MedicationTimeSchedulesList 
+import {
+    MedicationAdministrationRoutesList,
+    MedicationDosageUnitsList,
+    MedicationDurationUnitsList,
+    MedicationFrequencyUnitsList,
+    MedicationTimeSchedulesList
 } from '../../../../domain.types/clinical/medication/medication/medication.types';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
 import { MedicationValidator } from './medication.validator';
@@ -32,8 +31,6 @@ export class MedicationController {
     //#region member variables and constructors
 
     _service: MedicationService = Injector.Container.resolve(MedicationService);
-
-    _patientService: PatientService = Injector.Container.resolve(PatientService);
 
     _userService: UserService = Injector.Container.resolve(UserService);
 
@@ -238,7 +235,7 @@ export class MedicationController {
 
                 updated.ConsumptionSummary = consumptionSummary;
             }
-        
+
             ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
                 Medication : updated,
             });
@@ -389,6 +386,7 @@ export class MedicationController {
 
             if (updated.FrequencyUnit !== 'Other') {
                 await this._medicationConsumptionService.create(updated);
+
                 /*var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
 
                 var consumptionSummary: ConsumptionSummaryDto = {
@@ -400,7 +398,7 @@ export class MedicationController {
 
                 updated.ConsumptionSummary = consumptionSummary;*/
             }
-            
+
         }
 
     }

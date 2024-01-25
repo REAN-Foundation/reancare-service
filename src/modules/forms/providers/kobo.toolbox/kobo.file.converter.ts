@@ -29,7 +29,7 @@ export class KoboFileConverter {
         : Promise<CAssessmentTemplate> => {
 
         const workSheetsFromBuffer = xlsx.parse(downloadedFilepath);
-       
+
         const surveyData = workSheetsFromBuffer.find(x => x.name === 'survey').data;
         let choices = null;
         if (workSheetsFromBuffer.find(x => x.name === 'choices')) {
@@ -94,7 +94,7 @@ export class KoboFileConverter {
             var required    = row[headerIndices['required']] === 'true' ? true : false;
             var relevant    = row[headerIndices['relevant']];
             var calculation = row[headerIndices['calculation']];
-            
+
             if (type.startsWith('text') ||
                 type.startsWith('date') ||
                 type.startsWith('decimal') ||

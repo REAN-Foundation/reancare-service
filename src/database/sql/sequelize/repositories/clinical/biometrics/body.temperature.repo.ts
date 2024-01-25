@@ -49,7 +49,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
 
     search = async (filters: BodyTemperatureSearchFilters): Promise<BodyTemperatureSearchResults> => {
         try {
-            
+
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
@@ -117,7 +117,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
                 const dto = await BodyTemperatureMapper.toDto(foodConsumption);
                 dtos.push(dto);
             }
-    
+
             const searchResults: BodyTemperatureSearchResults = {
                 TotalCount     : foundResults.count,
                 RetrievedCount : dtos.length,
@@ -162,7 +162,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             if (updateModel.Provider != null) {
                 bodyTemperature.Provider = updateModel.Provider;
             }
-    
+
             await bodyTemperature.save();
 
             return await BodyTemperatureMapper.toDto(bodyTemperature);

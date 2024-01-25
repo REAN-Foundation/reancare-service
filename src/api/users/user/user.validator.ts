@@ -293,14 +293,14 @@ export class UserValidator {
                 .isNumeric()
                 .run(request);
 
-            await oneOf([
-                body('TenantId')
-                    .trim()
-                    .isUUID(),
-                body('TenantCode')
-                    .trim()
-                    .escape(),
-            ]).run(request);
+            // await oneOf([
+            //     body('TenantId')
+            //         .trim()
+            //         .isUUID(),
+            //     body('TenantCode')
+            //         .trim()
+            //         .escape(),
+            // ]).run(request);
 
             const result = validationResult(request);
             if (!result.isEmpty()) {
@@ -392,14 +392,14 @@ export class UserValidator {
                     .escape(),
             ]).run(request);
 
-            await oneOf([
-                body('TenantId').exists()
-                    .trim()
-                    .isUUID(),
-                body('TenantCode').exists()
-                    .trim()
-                    .escape(),
-            ]).run(request);
+            // await oneOf([
+            //     body('TenantId').exists()
+            //         .trim()
+            //         .isUUID(),
+            //     body('TenantCode').exists()
+            //         .trim()
+            //         .escape(),
+            // ]).run(request);
 
             await body('NewPassword').exists()
                 .trim()
@@ -447,14 +447,14 @@ export class UserValidator {
                     .escape(),
             ]).run(request);
 
-            await oneOf([
-                body('TenantId').exists()
-                    .trim()
-                    .isUUID(),
-                body('TenantCode').exists()
-                    .trim()
-                    .escape(),
-            ]).run(request);
+            // await oneOf([
+            //     body('TenantId').exists()
+            //         .trim()
+            //         .isUUID(),
+            //     body('TenantCode').exists()
+            //         .trim()
+            //         .escape(),
+            // ]).run(request);
 
             await body('Purpose').optional()
                 .trim()
@@ -528,14 +528,14 @@ export class UserValidator {
                 .isNumeric()
                 .run(request);
 
-            await oneOf([
-                body('TenantId').exists()
-                    .trim()
-                    .isUUID(),
-                body('TenantCode').exists()
-                    .trim()
-                    .escape(),
-            ]).run(request);
+            // await oneOf([
+            //     body('TenantId').exists()
+            //         .trim()
+            //         .isUUID(),
+            //     body('TenantCode').exists()
+            //         .trim()
+            //         .escape(),
+            // ]).run(request);
 
             const result = validationResult(request);
             if (!result.isEmpty()) {

@@ -11,7 +11,7 @@ import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { Logger } from "../../common/logger";
 import axios from 'axios';
 import { IUserRepo } from "../../database/repository.interfaces/users/user/user.repo.interface";
-import { ConfigurationManager } from "../../config/configuration.manager";
+import { Helper } from "../../common/helper";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -238,10 +238,8 @@ export class UserGroupService {
                 const user = await this._userRepo.getById(userId);
                 const clientId = await this.getClientId();
                 const fileResourceId = user.Person.ImageResourceId;
-                var profileImageUrl: string | null | undefined = null;
-                if (fileResourceId) {
-                    profileImageUrl = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + fileResourceId + '/download';
-                }
+                var profileImageUrl = Helper.constructFileDownloadURL(fileResourceId);
+
                 url = process.env.AWARDS_SERVICE_BASE_URL + '/api/v1/participants';
                 var body = {
                     clientId        : clientId,

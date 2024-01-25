@@ -520,5 +520,5 @@ export class TimeHelper {
     }
 
     static timeDelay = ms => new Promise(res => setTimeout(res, ms));
-    
+
 }

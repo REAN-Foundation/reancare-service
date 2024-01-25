@@ -277,6 +277,11 @@ export class TenantController{
                 Subject : `Welcome`,
                 Body    : body,
             };
+            Logger.instance().log(`Username -> ${adminUserName}`);
+            Logger.instance().log(`Password -> ${adminPassword}`);
+            Logger.instance().log(`Sending welcome email to ${tenant.Email}`);
+            Logger.instance().log(`Email details: ${JSON.stringify(emailDetails)}`);
+
             const sent = await emailService.sendEmail(emailDetails, false);
             if (!sent) {
                 Logger.instance().log(`Unable to send email to ${tenant.Email}`);

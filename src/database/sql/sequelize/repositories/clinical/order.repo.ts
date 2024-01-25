@@ -194,7 +194,6 @@ export class OrderRepo implements IOrderRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            
             const result = await OrderModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

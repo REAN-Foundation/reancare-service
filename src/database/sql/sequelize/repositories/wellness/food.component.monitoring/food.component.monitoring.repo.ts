@@ -146,7 +146,7 @@ export class FoodComponentMonitoringRepo implements IFoodComponentMonitoringRepo
             await foodComponentMonitoring.save();
 
             return await FoodComponentMonitoringMapper.toDto(foodComponentMonitoring);
-           
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

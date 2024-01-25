@@ -196,7 +196,7 @@ export class LabRecordRepo implements ILabRecordRepo {
             if (filters.DisplayName != null) {
                 search.where['DisplayName'] = filters.DisplayName;
             }
-    
+
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

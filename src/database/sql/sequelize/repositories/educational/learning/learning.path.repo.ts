@@ -40,7 +40,7 @@ export class LearningPathRepo implements ILearningPathRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     getById = async (id: string): Promise<LearningPathDto> => {
         try {
             const course = await LearningPath.findByPk(id);
@@ -143,7 +143,7 @@ export class LearningPathRepo implements ILearningPathRepo {
             }
 
             await course.save();
-            
+
             await this.addCourses(course.id, updateModel.CourseIds);
             return await LearningPathMapper.toDto(course);
 

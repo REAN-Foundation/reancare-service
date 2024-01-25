@@ -14,7 +14,6 @@ import { Logger } from "../../common/logger";
 
 @injectable()
 export class ClientAppService {
-
     constructor(@inject('IClientAppRepo') private _clientAppRepo: IClientAppRepo) {}
 
     create = async (model: ClientAppDomainModel): Promise<ClientAppDto> => {
@@ -55,12 +54,7 @@ export class ClientAppService {
     renewApiKey = async (model: ClientAppVerificationDomainModel): Promise<ApiKeyDto> => {
         const client = await this.authenticateClientPassword(model);
         const key = apikeyGenerator.default.create();
-        const clientApiKeyDto = await this._clientAppRepo.setApiKey(
-            client.id,
-            key.apiKey,
-            model.ValidFrom,
-            model.ValidTill
-        );
+        const clientApiKeyDto = await this._clientAppRepo.setApiKey(client.id, key.apiKey, model.ValidFrom, model.ValidTill);
         return clientApiKeyDto;
     };
 
@@ -96,31 +90,34 @@ export class ClientAppService {
     };
 
     seedDefaultClients = async (): Promise<boolean> => {
-
         Logger.instance().log('Seeding internal clients...');
+        try {
+            const arr = Helper.loadJSONSeedFile('internal.clients.seed.json');
 
-        const arr = Helper.loadJSONSeedFile('internal.clients.seed.json');
-
-        for (let i = 0; i < arr.length; i++) {
-            var c = arr[i];
-            let client = await this._clientAppRepo.getByCode(c.ClientCode);
-            if (client == null) {
-                const model: ClientAppDomainModel = {
-                    ClientName   : c['ClientName'],
-                    ClientCode   : c['ClientCode'],
-                    IsPrivileged : c['IsPrivileged'],
-                    Email        : c['Email'],
-                    Password     : c['Password'],
-                    ValidFrom    : new Date(),
-                    ValidTill    : new Date(2040, 12, 31),
-                    ApiKey       : c['ApiKey'],
-                };
-                client = await this._clientAppRepo.create(model);
-                var str = JSON.stringify(client, null, '  ');
-                Logger.instance().log(str);
+            for (let i = 0; i < arr.length; i++) {
+                var c = arr[i];
+                let client = await this._clientAppRepo.getByCode(c.ClientCode);
+                if (client == null) {
+                    const model: ClientAppDomainModel = {
+                        ClientName: c['ClientName'],
+                        ClientCode: c['ClientCode'],
+                        IsPrivileged: c['IsPrivileged'],
+                        Email: c['Email'],
+                        Password: c['Password'],
+                        ValidFrom: new Date(),
+                        ValidTill: new Date(2040, 12, 31),
+                        ApiKey: c['ApiKey'],
+                    };
+                    client = await this._clientAppRepo.create(model);
+                    var str = JSON.stringify(client, null, '  ');
+                    Logger.instance().log(str);
+                }
             }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error);
+            return false;
         }
-        return true;
     };
 
     private getClientCode = async (clientName: string) => {
@@ -150,14 +147,13 @@ export class ClientAppService {
 
     private getClientCodePostfix() {
         return generate({
-            length    : 8,
-            numbers   : false,
-            lowercase : false,
-            uppercase : true,
-            symbols   : false,
-            exclude   : ',-@#$%^&*()',
+            length: 8,
+            numbers: false,
+            lowercase: false,
+            uppercase: true,
+            symbols: false,
+            exclude: ',-@#$%^&*()',
         });
     }
-
 }
 

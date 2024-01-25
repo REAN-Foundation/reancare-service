@@ -35,7 +35,6 @@ import { AuthHandler } from '../../../auth/auth.handler';
 
 @injectable()
 export class UserService {
-
     constructor(
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
@@ -49,13 +48,12 @@ export class UserService {
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo
     ) {}
 
     //#region Publics
 
     public create = async (model: UserDomainModel) => {
-
         // timezone sanitization
         if (model.DefaultTimeZone) {
             const defaultTimezone = this.sanitizeTimezone(model.DefaultTimeZone);
@@ -106,7 +104,6 @@ export class UserService {
     };
 
     public update = async (id: string, model: UserDomainModel): Promise<UserDetailsDto> => {
-
         // timezone sanitization
 
         if (model.DefaultTimeZone != null) {
@@ -126,7 +123,6 @@ export class UserService {
     };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
-
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
         var tenant = await this.checkTenant(loginModel, user);
 
@@ -147,10 +143,10 @@ export class UserService {
         var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
 
         var entity: UserLoginSessionDomainModel = {
-            UserId    : user.id,
-            IsActive  : true,
-            StartedAt : new Date(),
-            ValidTill : sessionValidTill
+            UserId: user.id,
+            IsActive: true,
+            StartedAt: new Date(),
+            ValidTill: sessionValidTill,
         };
 
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
@@ -158,16 +154,16 @@ export class UserService {
         //The following user data is immutable. Don't include any mutable data
 
         var currentUser: CurrentUser = {
-            UserId        : user.id,
-            TenantId      : tenant.id,
-            TenantCode    : tenant.Code,
-            DisplayName   : user.Person.DisplayName,
-            Phone         : user.Person.Phone,
-            Email         : user.Person.Email,
-            UserName      : user.UserName,
-            CurrentRoleId : loginModel.LoginRoleId,
-            CurrentRole   : user.Role.RoleName,
-            SessionId     : loginSessionDetails.id,
+            UserId: user.id,
+            TenantId: tenant.id,
+            TenantCode: tenant.Code,
+            DisplayName: user.Person.DisplayName,
+            Phone: user.Person.Phone,
+            Email: user.Person.Email,
+            UserName: user.UserName,
+            CurrentRoleId: loginModel.LoginRoleId,
+            CurrentRole: user.Role.RoleName,
+            SessionId: loginSessionDetails.id,
         };
 
         const sessionId = currentUser.SessionId;
@@ -180,14 +176,13 @@ export class UserService {
         return {
             user,
             accessToken,
-            refreshToken : refreshToken ?? null,
+            refreshToken: refreshToken ?? null,
             sessionId,
-            sessionValidTill
+            sessionValidTill,
         };
     };
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
-
         var isTestUser = await this._internalTestUserRepo.isInternalTestUser(otpDetails.Phone);
         if (isTestUser) {
             return true;
@@ -225,14 +220,14 @@ export class UserService {
 
         const otp = (Math.floor(Math.random() * 900000) + 100000).toString();
         const currMillsecs = Date.now();
-        const validTill = new Date(currMillsecs + (300 * 1000));
+        const validTill = new Date(currMillsecs + 300 * 1000);
 
         const otpEntity: OtpPersistenceEntity = {
-            Purpose   : otpDetails.Purpose,
-            UserId    : user.id,
-            Otp       : otp,
-            ValidFrom : new Date(),
-            ValidTill : validTill
+            Purpose: otpDetails.Purpose,
+            UserId: user.id,
+            Otp: otp,
+            ValidFrom: new Date(),
+            ValidTill: validTill,
         };
 
         const otpDto = await this._otpRepo.create(otpEntity);
@@ -252,7 +247,6 @@ export class UserService {
     };
 
     public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
-
         var isTestUser = await this.isInternalTestUser(loginModel.Phone);
 
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
@@ -282,10 +276,10 @@ export class UserService {
         var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
 
         var entity: UserLoginSessionDomainModel = {
-            UserId    : user.id,
-            IsActive  : true,
-            StartedAt : new Date(),
-            ValidTill : sessionValidTill
+            UserId: user.id,
+            IsActive: true,
+            StartedAt: new Date(),
+            ValidTill: sessionValidTill,
         };
 
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
@@ -293,16 +287,16 @@ export class UserService {
         //The following user data is immutable. Don't include any mutable data
 
         var currentUser: CurrentUser = {
-            UserId        : user.id,
-            TenantId      : tenant.id,
-            TenantCode    : tenant.Code,
-            DisplayName   : user.Person.DisplayName,
-            Phone         : user.Person.Phone,
-            Email         : user.Person.Email,
-            UserName      : user.UserName,
-            CurrentRoleId : loginModel.LoginRoleId,
-            CurrentRole   : user.Role.RoleName,
-            SessionId     : loginSessionDetails.id
+            UserId: user.id,
+            TenantId: tenant.id,
+            TenantCode: tenant.Code,
+            DisplayName: user.Person.DisplayName,
+            Phone: user.Person.Phone,
+            Email: user.Person.Email,
+            UserName: user.UserName,
+            CurrentRoleId: loginModel.LoginRoleId,
+            CurrentRole: user.Role.RoleName,
+            SessionId: loginSessionDetails.id,
         };
 
         const sessionId = currentUser.SessionId;
@@ -315,9 +309,9 @@ export class UserService {
         return {
             user,
             accessToken,
-            refreshToken : refreshToken ?? null,
+            refreshToken: refreshToken ?? null,
             sessionId,
-            sessionValidTill
+            sessionValidTill,
         };
     };
 
@@ -335,7 +329,7 @@ export class UserService {
         return await AuthHandler.rotateUserSessionToken(refreshToken);
     };
 
-    public generateUserName = async (firstName, lastName):Promise<string> => {
+    public generateUserName = async (firstName, lastName): Promise<string> => {
         if (firstName == null) {
             firstName = generate({ length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false });
         }
@@ -351,23 +345,21 @@ export class UserService {
         return userName;
     };
 
-    public generateUserDisplayId = async (role:Roles, phone, phoneCount = 0) => {
-
+    public generateUserDisplayId = async (role: Roles, phone, phoneCount = 0) => {
         let prefix = '';
 
-        if (role === Roles.Doctor){
+        if (role === Roles.Doctor) {
             prefix = 'DR#';
-        } else if (role === Roles.Patient){
+        } else if (role === Roles.Patient) {
             prefix = 'PT#';
-        } else if (role === Roles.LabUser){
+        } else if (role === Roles.LabUser) {
             prefix = 'LU#';
-        } else if (role === Roles.PharmacyUser){
+        } else if (role === Roles.PharmacyUser) {
             prefix = 'PU#';
         }
 
         let str = '';
         if (phone != null && typeof phone !== 'undefined') {
-
             const phoneTemp = phone.toString();
             const tokens = phoneTemp.split('+');
             let s = tokens.length > 1 ? tokens[1] : phoneTemp;
@@ -383,8 +375,7 @@ export class UserService {
             } else {
                 str = str + '0-' + s;
             }
-        }
-        else {
+        } else {
             const tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
             str = tmp.substring(-10);
         }
@@ -400,21 +391,21 @@ export class UserService {
             for await (var u of users) {
                 var extractedResult = await this.sanitizeTimezone(u.DefaultTimeZone);
                 u.CurrentTimeZone = extractedResult;
-                var entity : UserDomainModel = {
-                    CurrentTimeZone : extractedResult,
-                    DefaultTimeZone : extractedResult
+                var entity: UserDomainModel = {
+                    CurrentTimeZone: extractedResult,
+                    DefaultTimeZone: extractedResult,
                 };
                 const updateUser = await this._userRepo.update(u.id, entity);
-                Logger.instance().log(`CurrentTimezone :: ${updateUser.CurrentTimeZone} and DefualtTimezone :: ${updateUser.CurrentTimeZone}  for ${u.id}`);
+                Logger.instance().log(
+                    `CurrentTimezone :: ${updateUser.CurrentTimeZone} and DefualtTimezone :: ${updateUser.CurrentTimeZone}  for ${u.id}`
+                );
             }
-        }
-        catch (error) {
+        } catch (error) {
             Logger.instance().log(`Error updating the current timezone.`);
         }
     };
 
-    getDateInUserTimeZone = async(userId, dateStr: string, useCurrent = true) => {
-
+    getDateInUserTimeZone = async (userId, dateStr: string, useCurrent = true) => {
         var user = await this.getById(userId);
         if (user === null) {
             throw new ApiError(422, 'Invalid user id.');
@@ -422,15 +413,13 @@ export class UserService {
         var timezoneOffset = '+05:30';
         if (user.CurrentTimeZone !== null && useCurrent) {
             timezoneOffset = user.CurrentTimeZone;
-        }
-        else if (user.DefaultTimeZone !== null) {
+        } else if (user.DefaultTimeZone !== null) {
             timezoneOffset = user.DefaultTimeZone;
         }
         return TimeHelper.getDateWithTimezone(dateStr, timezoneOffset);
     };
 
     public isValidUserLoginSession = async (sessionId: uuid): Promise<boolean> => {
-
         const isValidLoginSession = await this._userLoginSessionRepo.isValidUserLoginSession(sessionId);
         return isValidLoginSession;
     };
@@ -457,36 +446,39 @@ export class UserService {
     };
 
     public seedSystemAdmin = async () => {
+        try {
+            const exists = await this._userRepo.userNameExists('super-admin');
+            if (exists) {
+                return;
+            }
 
-        const exists = await this._userRepo.userNameExists('super-admin');
-        if (exists) {
-            return;
+            const SeededSystemAdmin = Helper.loadJSONSeedFile('system.admin.seed.json');
+            const tenant = await this._tenantRepo.getTenantWithCode('default');
+
+            const role = await this._roleRepo.getByName(Roles.SystemAdmin);
+
+            const userDomainModel: UserDomainModel = {
+                Person: {
+                    Phone: SeededSystemAdmin.Phone,
+                    FirstName: SeededSystemAdmin.FirstName,
+                },
+                TenantId: tenant.id,
+                UserName: SeededSystemAdmin.UserName,
+                Password: SeededSystemAdmin.Password,
+                DefaultTimeZone: SeededSystemAdmin.DefaultTimeZone,
+                CurrentTimeZone: SeededSystemAdmin.CurrentTimeZone,
+                RoleId: role.id,
+            };
+
+            const person = await this._personRepo.create(userDomainModel.Person);
+            userDomainModel.Person.id = person.id;
+            await this._userRepo.create(userDomainModel);
+            await this._personRoleRepo.addPersonRole(person.id, role.id);
+
+            Logger.instance().log('Seeded admin user successfully!');
+        } catch (error) {
+            Logger.instance().log(error);
         }
-
-        const SeededSystemAdmin = Helper.loadJSONSeedFile('system.admin.seed.json');
-        const tenant = await this._tenantRepo.getTenantWithCode('default');
-
-        const role = await this._roleRepo.getByName(Roles.SystemAdmin);
-
-        const userDomainModel: UserDomainModel = {
-            Person : {
-                Phone     : SeededSystemAdmin.Phone,
-                FirstName : SeededSystemAdmin.FirstName,
-            },
-            TenantId        : tenant.id,
-            UserName        : SeededSystemAdmin.UserName,
-            Password        : SeededSystemAdmin.Password,
-            DefaultTimeZone : SeededSystemAdmin.DefaultTimeZone,
-            CurrentTimeZone : SeededSystemAdmin.CurrentTimeZone,
-            RoleId          : role.id,
-        };
-
-        const person = await this._personRepo.create(userDomainModel.Person);
-        userDomainModel.Person.id = person.id;
-        await this._userRepo.create(userDomainModel);
-        await this._personRoleRepo.addPersonRole(person.id, role.id);
-
-        Logger.instance().log('Seeded admin user successfully!');
     };
 
     public checkUsersWithoutTenants = async () => {
@@ -510,16 +502,13 @@ export class UserService {
     };
 
     private constructUserName(firstName: string, lastName: string) {
-        const rand = Math.random()
-            .toString(10)
-            .substr(2, 4);
+        const rand = Math.random().toString(10).substr(2, 4);
         let userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
         userName = userName.toLowerCase();
         return userName;
     }
 
     private async checkUserDetails(loginModel: UserLoginDetails): Promise<UserDetailsDto> {
-
         let person: PersonDetailsDto = null;
         let user: UserDetailsDto = null;
 
@@ -563,13 +552,12 @@ export class UserService {
     }
 
     private async generateLoginOtp(userDomainModel: UserDomainModel, user: UserDetailsDto) {
-
         if (userDomainModel.GenerateLoginOTP === true) {
             const obj = {
-                Phone   : user.Person.Phone,
-                Email   : user.Person.Email,
-                UserId  : user.id,
-                Purpose : 'Login',
+                Phone: user.Person.Phone,
+                Email: user.Person.Email,
+                UserId: user.id,
+                Purpose: 'Login',
             };
             const successful = await this.generateOtp(obj);
             if (successful) {
@@ -627,5 +615,4 @@ export class UserService {
     };
 
     //#endregion
-
 }

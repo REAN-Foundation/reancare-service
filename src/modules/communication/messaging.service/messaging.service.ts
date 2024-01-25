@@ -22,9 +22,9 @@ export class MessagingService {
         return await this._service.sendWhatsappMessage(toPhone, message);
     };
 
-    sendTelegramMessage = async (telegramChatId: string, message: string, clientName: string): Promise<boolean> => {
-        message = `You have ${message}`;
-        await this.sendMessage(clientName, "telegram", telegramChatId, "text", null, message, null);
+    sendTelegramMessage = async (telegramChatId: string, message: string, clientName: string,
+        buttonsIds): Promise<boolean> => {
+        await this.sendMessage(clientName, "telegram", telegramChatId, "inline_keyboard", null, message, buttonsIds);
         return true;
     };
 

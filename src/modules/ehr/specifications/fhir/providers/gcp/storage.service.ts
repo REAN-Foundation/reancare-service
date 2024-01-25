@@ -77,7 +77,7 @@ export class GcpStorageService implements IStorageService {
         var parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}`;
         const fhirStoreId: string = c.FhirStoreId;
         const version: string = c.FhirVersion;
-        
+
         const create_store_request = {
             parent,
             fhirStoreId,
@@ -235,7 +235,7 @@ export class GcpStorageService implements IStorageService {
     };
 
     private findDefaultDataset = (datasets) => {
-        
+
         const c = GcpHelper.getGcpFhirConfig();
 
         const datasetPath = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}`;

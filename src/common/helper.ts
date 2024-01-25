@@ -8,7 +8,7 @@ import { generate } from 'generate-password';
 import mime = require('mime-types');
 import path from 'path';
 import { ConfigurationManager } from '../config/configuration.manager';
-import { Gender, OSType } from '../domain.types/miscellaneous/system.types';
+import { Gender, OSType, uuid } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
 import Countries from './misc/countries';
@@ -768,6 +768,14 @@ export class Helper {
             Logger.instance().log(`Error: ${error.message}`);
             return null;
         }
+    };
+
+    public static constructFileDownloadURL = (fileResourceId: uuid): string => {
+        if (!fileResourceId) {
+            return null;
+        }
+        const url = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + fileResourceId + '/download';
+        return url;
     };
 
 }

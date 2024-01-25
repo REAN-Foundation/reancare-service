@@ -104,7 +104,7 @@ export class StatisticsService {
             const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
             const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
-           
+
             const dashboardStats = {
                 UserStatistics : {
                     UsersCountStats          : usersCountStats,
@@ -120,13 +120,13 @@ export class StatisticsService {
                     AddictionDistribution    : addictionDistribution
                 },
             };
-            
+
             const model: DailyStatisticsDomainModel = {
                 ReportDate      : TimeHelper.formatDateToLocal_YYYY_MM_DD(new Date()),
                 ReportTimestamp : new Date(),
                 DashboardStats  : JSON.stringify(dashboardStats)
             };
-    
+
             const dailyStatistics = await this._dailyStatisticsRepo.create(model);
             if (dailyStatistics) {
                 Logger.instance().log('Daily users stattistics created successfully.');
@@ -172,7 +172,7 @@ export class StatisticsService {
         }
         return yearWiseDeviceDetails;
     };
-    
+
     private compare = (a,b) => {
         if ( a.Year < b.Year ) {
             return -1;

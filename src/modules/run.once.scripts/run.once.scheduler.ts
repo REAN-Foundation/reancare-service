@@ -277,7 +277,7 @@ export class RunOnceScheduler {
             var patientUserIds = await this._patientService.getAllPatientUserIds();
             for await (var patientId of patientUserIds) {
                 var eligibleAppNames = await PatientAppNameCache.get(patientId);
-                if (eligibleAppNames.length == 0) {
+                if (eligibleAppNames.length === 0) {
                     continue;
                 }
                 var moreItems = true;

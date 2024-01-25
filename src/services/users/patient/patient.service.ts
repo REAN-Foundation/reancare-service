@@ -104,6 +104,7 @@ export class PatientService {
                 UserId        : items[0].id,
                 TenantId      : tenant.id,
                 TenantCode    : tenant.Code,
+                TenantName    : tenant.Name,
                 DisplayName   : items[0].DisplayName,
                 Phone         : items[0].Phone,
                 Email         : items[0].Email,

@@ -200,7 +200,7 @@ export class Router {
                 registerHospitalRoutes(this._app);
                 registerDailyStatisticsRoutes(this._app);
                 registerAhaStatisticsRoutes(this._app);
-                
+
                 resolve(true);
 
             } catch (error) {

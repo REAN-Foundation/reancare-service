@@ -35,6 +35,7 @@ import { AuthHandler } from '../../../auth/auth.handler';
 
 @injectable()
 export class UserService {
+
     constructor(
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
@@ -124,7 +125,7 @@ export class UserService {
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
-        var tenant = await this.checkTenant(loginModel, user);
+        var tenant = await this.checkTenant(user);
 
         var isTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
         if (!isTestUser) {
@@ -143,10 +144,10 @@ export class UserService {
         var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
 
         var entity: UserLoginSessionDomainModel = {
-            UserId: user.id,
-            IsActive: true,
-            StartedAt: new Date(),
-            ValidTill: sessionValidTill,
+            UserId    : user.id,
+            IsActive  : true,
+            StartedAt : new Date(),
+            ValidTill : sessionValidTill,
         };
 
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
@@ -154,16 +155,17 @@ export class UserService {
         //The following user data is immutable. Don't include any mutable data
 
         var currentUser: CurrentUser = {
-            UserId: user.id,
-            TenantId: tenant.id,
-            TenantCode: tenant.Code,
-            DisplayName: user.Person.DisplayName,
-            Phone: user.Person.Phone,
-            Email: user.Person.Email,
-            UserName: user.UserName,
-            CurrentRoleId: loginModel.LoginRoleId,
-            CurrentRole: user.Role.RoleName,
-            SessionId: loginSessionDetails.id,
+            UserId        : user.id,
+            TenantId      : tenant.id,
+            TenantCode    : tenant.Code,
+            TenantName    : tenant.Name,
+            DisplayName   : user.Person.DisplayName,
+            Phone         : user.Person.Phone,
+            Email         : user.Person.Email,
+            UserName      : user.UserName,
+            CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRole   : user.Role.RoleName,
+            SessionId     : loginSessionDetails.id,
         };
 
         const sessionId = currentUser.SessionId;
@@ -176,9 +178,80 @@ export class UserService {
         return {
             user,
             accessToken,
-            refreshToken: refreshToken ?? null,
+            refreshToken : refreshToken ?? null,
             sessionId,
             sessionValidTill,
+        };
+    };
+
+    public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
+
+        const user: UserDetailsDto = await this.checkUserDetails(loginModel);
+        var tenant = await this.checkTenant(user);
+
+        var isTenantUser = await this._userRepo.isTenantUser(user.id, loginModel.TenantId);
+        if (!isTenantUser) {
+            throw new ApiError(401, 'User does not belong to the given tenant.');
+        }
+
+        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
+
+        if (!isTestUser) {
+            const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
+            if (!storedOtp) {
+                throw new ApiError(404, 'Active OTP record not found!');
+            }
+            const date = new Date();
+            if (storedOtp.ValidTill <= date) {
+                throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
+            }
+        }
+
+        await this._userRepo.updateLastLogin(user.id);
+
+        //Generate login session
+
+        const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
+        var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+
+        var entity: UserLoginSessionDomainModel = {
+            UserId    : user.id,
+            IsActive  : true,
+            StartedAt : new Date(),
+            ValidTill : sessionValidTill
+        };
+
+        const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
+
+        //The following user data is immutable. Don't include any mutable data
+
+        var currentUser: CurrentUser = {
+            UserId        : user.id,
+            TenantId      : tenant.id,
+            TenantCode    : tenant.Code,
+            TenantName    : tenant.Name,
+            DisplayName   : user.Person.DisplayName,
+            Phone         : user.Person.Phone,
+            Email         : user.Person.Email,
+            UserName      : user.UserName,
+            CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRole   : user.Role.RoleName,
+            SessionId     : loginSessionDetails.id
+        };
+
+        const sessionId = currentUser.SessionId;
+        const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
+        var refreshToken = null;
+        if (ConfigurationManager.UseRefreshToken()) {
+            refreshToken = await AuthHandler.generateRefreshToken(user.id, sessionId, tenant.id);
+        }
+
+        return {
+            user,
+            accessToken,
+            refreshToken : refreshToken ?? null,
+            sessionId,
+            sessionValidTill
         };
     };
 
@@ -223,11 +296,11 @@ export class UserService {
         const validTill = new Date(currMillsecs + 300 * 1000);
 
         const otpEntity: OtpPersistenceEntity = {
-            Purpose: otpDetails.Purpose,
-            UserId: user.id,
-            Otp: otp,
-            ValidFrom: new Date(),
-            ValidTill: validTill,
+            Purpose   : otpDetails.Purpose,
+            UserId    : user.id,
+            Otp       : otp,
+            ValidFrom : new Date(),
+            ValidTill : validTill,
         };
 
         const otpDto = await this._otpRepo.create(otpEntity);
@@ -244,75 +317,6 @@ export class UserService {
         }
 
         return true;
-    };
-
-    public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
-        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
-
-        const user: UserDetailsDto = await this.checkUserDetails(loginModel);
-        var tenant = await this.checkTenant(loginModel, user);
-
-        var isTenantUser = await this._userRepo.isTenantUser(user.id, loginModel.TenantId);
-        if (!isTenantUser) {
-            throw new ApiError(401, 'User does not belong to the given tenant.');
-        }
-
-        if (!isTestUser) {
-            const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
-            if (!storedOtp) {
-                throw new ApiError(404, 'Active OTP record not found!');
-            }
-            const date = new Date();
-            if (storedOtp.ValidTill <= date) {
-                throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
-            }
-        }
-
-        await this._userRepo.updateLastLogin(user.id);
-
-        //Generate login session
-
-        const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
-        var sessionValidTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
-
-        var entity: UserLoginSessionDomainModel = {
-            UserId: user.id,
-            IsActive: true,
-            StartedAt: new Date(),
-            ValidTill: sessionValidTill,
-        };
-
-        const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
-
-        //The following user data is immutable. Don't include any mutable data
-
-        var currentUser: CurrentUser = {
-            UserId: user.id,
-            TenantId: tenant.id,
-            TenantCode: tenant.Code,
-            DisplayName: user.Person.DisplayName,
-            Phone: user.Person.Phone,
-            Email: user.Person.Email,
-            UserName: user.UserName,
-            CurrentRoleId: loginModel.LoginRoleId,
-            CurrentRole: user.Role.RoleName,
-            SessionId: loginSessionDetails.id,
-        };
-
-        const sessionId = currentUser.SessionId;
-        const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
-        var refreshToken = null;
-        if (ConfigurationManager.UseRefreshToken()) {
-            refreshToken = await AuthHandler.generateRefreshToken(user.id, sessionId, tenant.id);
-        }
-
-        return {
-            user,
-            accessToken,
-            refreshToken: refreshToken ?? null,
-            sessionId,
-            sessionValidTill,
-        };
     };
 
     public invalidateSession = async (sesssionId: uuid): Promise<boolean> => {
@@ -392,8 +396,8 @@ export class UserService {
                 var extractedResult = await this.sanitizeTimezone(u.DefaultTimeZone);
                 u.CurrentTimeZone = extractedResult;
                 var entity: UserDomainModel = {
-                    CurrentTimeZone: extractedResult,
-                    DefaultTimeZone: extractedResult,
+                    CurrentTimeZone : extractedResult,
+                    DefaultTimeZone : extractedResult,
                 };
                 const updateUser = await this._userRepo.update(u.id, entity);
                 Logger.instance().log(
@@ -458,16 +462,16 @@ export class UserService {
             const role = await this._roleRepo.getByName(Roles.SystemAdmin);
 
             const userDomainModel: UserDomainModel = {
-                Person: {
-                    Phone: SeededSystemAdmin.Phone,
-                    FirstName: SeededSystemAdmin.FirstName,
+                Person : {
+                    Phone     : SeededSystemAdmin.Phone,
+                    FirstName : SeededSystemAdmin.FirstName,
                 },
-                TenantId: tenant.id,
-                UserName: SeededSystemAdmin.UserName,
-                Password: SeededSystemAdmin.Password,
-                DefaultTimeZone: SeededSystemAdmin.DefaultTimeZone,
-                CurrentTimeZone: SeededSystemAdmin.CurrentTimeZone,
-                RoleId: role.id,
+                TenantId        : tenant.id,
+                UserName        : SeededSystemAdmin.UserName,
+                Password        : SeededSystemAdmin.Password,
+                DefaultTimeZone : SeededSystemAdmin.DefaultTimeZone,
+                CurrentTimeZone : SeededSystemAdmin.CurrentTimeZone,
+                RoleId          : role.id,
             };
 
             const person = await this._personRepo.create(userDomainModel.Person);
@@ -489,20 +493,18 @@ export class UserService {
 
     //#region Privates
 
-    private checkTenant = async (loginModel: UserLoginDetails, user: UserDetailsDto): Promise<TenantDto> => {
-        var tenant = await this.getTenant(loginModel.TenantId, loginModel.TenantCode);
+    private checkTenant = async (user: UserDetailsDto): Promise<TenantDto> => {
+        const tenantId = user.TenantId;
+        var tenant = await this._tenantRepo.getById(tenantId);
         if (tenant == null) {
             throw new ApiError(404, 'Tenant not found.');
-        }
-        var isTenantUser = await this._userRepo.isTenantUser(user.id, tenant.id);
-        if (!isTenantUser) {
-            throw new ApiError(401, 'User does not belong to the given tenant.');
         }
         return tenant;
     };
 
     private constructUserName(firstName: string, lastName: string) {
-        const rand = Math.random().toString(10).substr(2, 4);
+        const rand = Math.random().toString(10)
+            .substr(2, 4);
         let userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
         userName = userName.toLowerCase();
         return userName;
@@ -537,6 +539,8 @@ export class UserService {
             throw new ApiError(404, 'Cannot find person.');
         }
 
+        user  = await this._userRepo.getByPersonId(person.id);
+
         //Now check if that person is an user with a given role
         const personId = person.id;
         if (user == null) {
@@ -554,10 +558,10 @@ export class UserService {
     private async generateLoginOtp(userDomainModel: UserDomainModel, user: UserDetailsDto) {
         if (userDomainModel.GenerateLoginOTP === true) {
             const obj = {
-                Phone: user.Person.Phone,
-                Email: user.Person.Email,
-                UserId: user.id,
-                Purpose: 'Login',
+                Phone   : user.Person.Phone,
+                Email   : user.Person.Email,
+                UserId  : user.id,
+                Purpose : 'Login',
             };
             const successful = await this.generateOtp(obj);
             if (successful) {
@@ -615,4 +619,5 @@ export class UserService {
     };
 
     //#endregion
+
 }

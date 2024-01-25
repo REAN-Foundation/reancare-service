@@ -4,6 +4,7 @@ export interface CurrentUser {
     UserId        : string;
     TenantId      : string;
     TenantCode    : string;
+    TenantName    : string;
     DisplayName   : string;
     Phone         : string;
     Email         : string;

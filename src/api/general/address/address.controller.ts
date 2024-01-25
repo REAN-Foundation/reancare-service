@@ -15,22 +15,15 @@ export class AddressController {
 
     //#region member variables and constructors
 
-    _service: AddressService = null;
+    _service: AddressService = Injector.Container.resolve(AddressService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _organizationService: OrganizationService = null;
+    _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
     _validator = new AddressValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(AddressService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._organizationService = Injector.Container.resolve(OrganizationService);
-    }
 
     //#endregion
 

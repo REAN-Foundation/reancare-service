@@ -9,18 +9,15 @@ import { Injector } from '../../../../startup/injector';
 import { TeraWebhookActivityService } from '../../../../services/webhook/wearable.webhook.activity.service';
 import { IWebhooksService } from '../../interfaces/webhooks.service.interface';
 import { TerraCache } from './terra.webhook.cache';
-//import Terra from 'terra-api';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class TeraWebhookController extends BaseUserController implements IWebhooksService {
 
-    _service: TeraWebhookService = null;
+    _service: TeraWebhookService = Injector.Container.resolve(TeraWebhookService);
 
     constructor() {
-
         super();
-        this._service = Injector.Container.resolve(TeraWebhookService);
     }
 
     //#endregion

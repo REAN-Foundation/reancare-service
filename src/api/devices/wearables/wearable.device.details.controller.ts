@@ -12,16 +12,11 @@ import { Injector } from '../../../startup/injector';
 export class WearableDeviceDetailsController {
 
     //#region member variables and constructors
-    _service: WearableDeviceDetailsService = null;
+    _service: WearableDeviceDetailsService = Injector.Container.resolve(WearableDeviceDetailsService);
 
-    _patientService: PatientService = null;
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
 
     _validator: WearableDeviceDetailsValidator = new WearableDeviceDetailsValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(WearableDeviceDetailsService);
-        this._patientService = Injector.Container.resolve(PatientService);
-    }
 
     //#endregion
 

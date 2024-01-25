@@ -11,8 +11,6 @@ import { PatientAppNameCache } from '../patient.appname.cache';
 @injectable()
 export class EHRLabService {
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     public deleteLabEHRRecord = async (id: string) => {
         try {
             const result = await EHRLabData.destroy({ where: { RecordId: id } });

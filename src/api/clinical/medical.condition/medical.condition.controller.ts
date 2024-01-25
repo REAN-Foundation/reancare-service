@@ -12,13 +12,9 @@ export class MedicalConditionController {
 
     //#region member variables and constructors
 
-    _service: MedicalConditionService = null;
+    _service: MedicalConditionService = Injector.Container.resolve(MedicalConditionService);
 
     _validator: MedicalConditionValidator = new MedicalConditionValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(MedicalConditionService);
-    }
 
     //#endregion
 

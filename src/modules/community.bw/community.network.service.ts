@@ -23,8 +23,8 @@ import { VolunteerService } from "../../services/assorted/blood.donation/volunte
 import { IDonationRepo } from "../../database/repository.interfaces/assorted/blood.donation/donation.repo.interface";
 import { PatientService } from "../../services/users/patient/patient.service";
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/assorted/blood.donation/communication.repo.interface";
-import { IDonorRepo } from "../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface";
 import { Injector } from "../../startup/injector";
+import { IDonorRepo } from "../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,9 +51,11 @@ export class CommunityNetworkService {
         @inject('IBridgeRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IDonationRepo') private _donationRecordRepo: IDonationRepo,
         @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
-    ) { this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
+    ) { 
+        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
         this._volunteerService = Injector.Container.resolve(VolunteerService);
-        this._patientService = Injector.Container.resolve(PatientService); }
+        this._patientService = Injector.Container.resolve(PatientService); 
+    }
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 

@@ -14,13 +14,6 @@ import { Injector } from '../../../startup/injector';
 
 export class KccqAssessmentUtils {
 
-    // this._patientService = Injector.Container.resolve(PatientService);
-    // this._assessmentService = Injector.Container.resolve(AssessmentService);
-    // this._userTaskService = Injector.Container.resolve(UserTaskService);
-    // this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
-    // this._careplanService = Injector.Container.resolve(CareplanService);
-    // this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
-
     public static triggerAssessmentTask = async (
         patientUserId: uuid,
         assessmentTemplateName: string): Promise<void> => {

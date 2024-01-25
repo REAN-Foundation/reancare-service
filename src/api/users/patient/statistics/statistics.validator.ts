@@ -1,5 +1,5 @@
-import { UserService } from '../../../../services/users/user/user.service';
 import { Injector } from '../../../../startup/injector';
+import { UserService } from '../../../../services/users/user/user.service';
 import { BaseValidator } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

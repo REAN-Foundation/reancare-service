@@ -1,5 +1,3 @@
-import { Logger } from '../../../common/logger';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../../common/api.error';
 import { IAssessmentHelperRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface';

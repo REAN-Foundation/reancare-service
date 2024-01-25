@@ -15,16 +15,11 @@ export class RssfeedController {
 
     //#region member variables and constructors
 
-    _service: RssfeedService = null;
+    _service: RssfeedService = Injector.Container.resolve(RssfeedService);
 
-    _fileResourceService: FileResourceService = null;
+    _fileResourceService: FileResourceService = Injector.Container.resolve(FileResourceService);
 
     _validator: RssfeedValidator = new RssfeedValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(RssfeedService);
-        this._fileResourceService = Injector.Container.resolve(FileResourceService);
-    }
 
     //#endregion
 

@@ -5,7 +5,6 @@ import { MedicationFact } from './models/medication.fact.model';
 import { Logger } from "../../common/logger";
 import { DatabaseDialect } from '../../domain.types/miscellaneous/system.types';
 import { NutritionChoiceFact } from "./models/nutrition.choice.fact.model";
-import { Injector } from '../../startup/injector';
 import { DatabaseClient } from "../../common/database.utils/dialect.clients/database.client";
 import { DatabaseSchemaType } from "../../common/database.utils/database.config";
 import { ExercisePhysicalActivityFact } from "./models/exercise.physical.activity.fact.model";
@@ -15,6 +14,7 @@ import { BadgeFact } from "./models/badge.fact.model";
 import { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectionOptions";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { SqliteConnectionOptions } from "typeorm/driver/sqlite/SqliteConnectionOptions";
+import { Injector } from "../../startup/injector";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

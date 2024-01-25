@@ -12,13 +12,9 @@ export class KnowledgeNuggetController {
 
     //#region member variables and constructors
 
-    _service: KnowledgeNuggetService = null;
+    _service: KnowledgeNuggetService = Injector.Container.resolve(KnowledgeNuggetService);
 
     _validator: KnowledgeNuggetValidator = new KnowledgeNuggetValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(KnowledgeNuggetService);
-    }
 
     //#endregion
 

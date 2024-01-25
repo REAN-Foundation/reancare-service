@@ -13,13 +13,9 @@ export class NoticeController {
 
     //#region member variables and constructors
 
-    _service: NoticeService = null;
+    _service: NoticeService = Injector.Container.resolve(NoticeService);
 
     _validator: NoticeValidator = new NoticeValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(NoticeService);
-    }
 
     //#endregion
 

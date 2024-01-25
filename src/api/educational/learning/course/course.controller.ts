@@ -12,13 +12,9 @@ export class CourseController {
 
     //#region member variables and constructors
 
-    _service: CourseService = null;
+    _service: CourseService = Injector.Container.resolve(CourseService);
 
     _validator: CourseValidator = new CourseValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(CourseService);
-    }
 
     //#endregion
 

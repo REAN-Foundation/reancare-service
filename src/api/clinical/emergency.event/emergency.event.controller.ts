@@ -14,20 +14,13 @@ export class EmergencyEventController {
 
     //#region member variables and constructors
 
-    _service: EmergencyEventService = null;
+    _service: EmergencyEventService = Injector.Container.resolve(EmergencyEventService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _patientService: PatientService = null;
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
 
-    _organizationService: OrganizationService = null;
-
-    constructor() {
-        this._service = Injector.Container.resolve(EmergencyEventService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._organizationService = Injector.Container.resolve(OrganizationService);
-    }
+    _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
     //#endregion
 

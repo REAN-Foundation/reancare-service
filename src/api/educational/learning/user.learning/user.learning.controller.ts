@@ -12,13 +12,9 @@ export class UserLearningController {
 
     //#region member variables and constructors
 
-    _service: UserLearningService = null;
+    _service: UserLearningService = Injector.Container.resolve(UserLearningService);
 
     _validator: UserLearningValidator = new UserLearningValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(UserLearningService);
-    }
 
     //#endregion
 

@@ -25,32 +25,23 @@ export class FormsController {
 
     //#region member variables and constructors
 
-    _service: FormsService = null;
+    _service = Injector.Container.resolve(FormsService);
 
-    _assessmentTemplateService: AssessmentTemplateService = null;
+    _assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
-    _assessmentService: AssessmentService = null;
+    _assessmentService = Injector.Container.resolve(AssessmentService);
 
-    _thirdpartyApiService: ThirdpartyApiService = null;
+    _thirdpartyApiService = Injector.Container.resolve(ThirdpartyApiService);
 
-    _userService: UserService = null;
+    _userService = Injector.Container.resolve(UserService);
 
-    _personService: PersonService = null;
+    _personService = Injector.Container.resolve(PersonService);
 
     _validator: FormsValidator = new FormsValidator();
 
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
 
     _userHelper: UserHelper = new UserHelper();
-
-    constructor() {
-        this._service = Injector.Container.resolve(FormsService);
-        this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
-        this._assessmentService = Injector.Container.resolve(AssessmentService);
-        this._thirdpartyApiService = Injector.Container.resolve(ThirdpartyApiService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._personService = Injector.Container.resolve(PersonService);
-    }
 
     //#endregion
 

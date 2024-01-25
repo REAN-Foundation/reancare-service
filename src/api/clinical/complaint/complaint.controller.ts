@@ -14,19 +14,13 @@ export class ComplaintController {
 
     //#region member variables and constructors
 
-    _service: ComplaintService = null;
+    _service: ComplaintService = Injector.Container.resolve(ComplaintService);
 
     _validator: ComplaintValidator = new ComplaintValidator();
 
-    _patientService: PatientService = null;
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
 
-    _doctorService: DoctorService = null;
-
-    constructor() {
-        this._service = Injector.Container.resolve(ComplaintService);
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._doctorService = Injector.Container.resolve(DoctorService);
-    }
+    _doctorService: DoctorService = Injector.Container.resolve(DoctorService);
 
     //#endregion
 

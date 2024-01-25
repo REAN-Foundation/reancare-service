@@ -15,22 +15,15 @@ export class CohortController {
 
     //#region member variables and constructors
 
-    _service: CohortService = null;
+    _service: CohortService = Injector.Container.resolve(CohortService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
     _validator = new CohortValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(CohortService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._roleService = Injector.Container.resolve(RoleService);
-    }
 
     //#endregion
 

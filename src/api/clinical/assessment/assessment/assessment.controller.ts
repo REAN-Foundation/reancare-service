@@ -34,8 +34,6 @@ export class AssessmentController {
 
     _validator: AssessmentValidator = new AssessmentValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     //#endregion
 
     //#region Action methods
@@ -49,7 +47,7 @@ export class AssessmentController {
             }
 
             ResponseHandler.success(request, response, 'Assessment record created successfully!', 201, {
-                Assessment : assessment,
+                Assessment: assessment,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -65,7 +63,7 @@ export class AssessmentController {
             }
 
             ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
-                Assessment : assessment,
+                Assessment: assessment,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -104,7 +102,7 @@ export class AssessmentController {
             }
 
             ResponseHandler.success(request, response, 'Assessment record updated successfully!', 200, {
-                Assessment : updated,
+                Assessment: updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -125,7 +123,7 @@ export class AssessmentController {
             }
 
             ResponseHandler.success(request, response, 'Assessment record deleted successfully!', 200, {
-                Deleted : true,
+                Deleted: true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -142,7 +140,7 @@ export class AssessmentController {
             const next = await this._service.startAssessment(id);
 
             ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
-                Next : next,
+                Next: next,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -159,9 +157,9 @@ export class AssessmentController {
             if (assessment.ScoringApplicable) {
                 var { score, reportUrl } = await this.generateScoreReport(assessment);
                 ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
-                    AssessmentId : assessment.id,
-                    Score        : score,
-                    ReportUrl    : reportUrl,
+                    AssessmentId: assessment.id,
+                    Score: score,
+                    ReportUrl: reportUrl,
                 });
             } else {
                 ResponseHandler.failure(request, response, `This assessment does not have scoring!`, 400);
@@ -182,7 +180,7 @@ export class AssessmentController {
             if (progressStatus === ProgressStatus.Pending) {
                 const next = await this._service.startAssessment(id);
                 ResponseHandler.success(request, response, 'Assessment next question retrieved successfully!', 200, {
-                    Next : next,
+                    Next: next,
                 });
             } else if (progressStatus === ProgressStatus.InProgress) {
                 const next = await this._service.getNextQuestion(id);
@@ -192,7 +190,7 @@ export class AssessmentController {
                     return;
                 }
                 ResponseHandler.success(request, response, 'Assessment next question retrieved successfully!', 200, {
-                    Next : next,
+                    Next: next,
                 });
             } else if (progressStatus === ProgressStatus.Completed) {
                 ResponseHandler.failure(request, response, 'The assessment is already completed!', 404);
@@ -219,7 +217,7 @@ export class AssessmentController {
                 throw new ApiError(404, 'Assessment question not found.');
             }
             ResponseHandler.success(request, response, 'Assessment question retrieved successfully!', 200, {
-                Question : question,
+                Question: question,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -392,5 +390,4 @@ export class AssessmentController {
     }
 
     //#endregion
-
 }

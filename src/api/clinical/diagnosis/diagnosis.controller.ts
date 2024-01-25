@@ -13,16 +13,11 @@ export class DiagnosisController {
 
     //#region member variables and constructors
 
-    _service: DiagnosisService = null;
+    _service: DiagnosisService = Injector.Container.resolve(DiagnosisService);
 
     _validator: DiagnosisValidator = new DiagnosisValidator();
 
-    _userService: UserService = null;
-
-    constructor() {
-        this._service = Injector.Container.resolve(DiagnosisService);
-        this._userService = Injector.Container.resolve(UserService);
-    }
+    _userService: UserService = Injector.Container.resolve(UserService);
 
     //#endregion
 

@@ -1,8 +1,8 @@
 import { IFormsService } from "./interfaces/forms.service.interface";
 import { ConfigurationManager } from "../../config/configuration.manager";
-import { Injector } from "../../startup/injector";
 import Dictionary from "../../common/dictionary";
 import { KoboToolboxService } from "./providers/kobo.toolbox/kobo.toolbox.service";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////
 

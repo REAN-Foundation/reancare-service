@@ -3,8 +3,6 @@ import { ConfigurationManager } from "../../config/configuration.manager";
 import { BodyWeightStore } from "../../modules/ehr/services/body.weight.store";
 import { Injector } from "../../startup/injector";
 import { ActivityDomainModel, ActivityType } from "../../domain.types/webhook/activity.domain.model";
-import { IStepCountRepo } from "../../database/repository.interfaces/wellness/daily.records/step.count.interface";
-import { ICalorieBalanceRepo } from "../../database/repository.interfaces/wellness/daily.records/calorie.balance.repo.interface";
 import { PhysicalActivityCategories, Intensity } from "../../domain.types/wellness/exercise/physical.activity/physical.activity.types";
 import { IPhysicalActivityRepo } from "../../database/repository.interfaces/wellness/exercise/physical.activity.repo.interface";
 import { PhysicalActivityDomainModel } from "../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model";
@@ -20,8 +18,6 @@ export class TeraWebhookActivityService {
     _ehrBodyWeightStore: BodyWeightStore = null;
 
     constructor(
-        @inject('IStepCountRepo') private _stepCountRepo: IStepCountRepo,
-        @inject('ICalorieBalanceRepo') private _calorieBalanceRepo: ICalorieBalanceRepo,
         @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo,
         @inject('ISleepRepo') private _sleepRepo: ISleepRepo
     ) {

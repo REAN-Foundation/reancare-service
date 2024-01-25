@@ -5,10 +5,8 @@ import { PulseDomainModel } from '../../../domain.types/clinical/biometrics/puls
 import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.dto';
 import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/clinical/biometrics/pulse/pulse.search.types';
 import { PulseStore } from "../../../modules/ehr/services/pulse.store";
-import { Injector } from "../../../startup/injector";
 import { ConfigurationManager } from "../../../config/configuration.manager";
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.domain.models/ehr.record.types";
+import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

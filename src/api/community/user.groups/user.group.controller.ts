@@ -15,22 +15,15 @@ export class UserGroupController {
 
     //#region member variables and constructors
 
-    _service: UserGroupService = null;
+    _service: UserGroupService = Injector.Container.resolve(UserGroupService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
     _validator = new UserGroupValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(UserGroupService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._roleService = Injector.Container.resolve(RoleService);
-    }
 
     //#endregion
 

@@ -81,7 +81,6 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
                 var service = Injector.Container.resolve(StatisticsService);
                 await service.createDashboardStats();
-
                 const dailyStatsService = Injector.Container.resolve(DailyStatisticsService);
                 await dailyStatsService.generateDailyStatistics();
             })();

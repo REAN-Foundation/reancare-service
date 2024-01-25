@@ -37,20 +37,20 @@ import { IPersonRepo } from "../../../../database/repository.interfaces/person/p
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
 import { addSummaryGraphs, createSummaryCharts } from "./summary.page";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
+import { IBloodOxygenSaturationRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface";
+import { IPulseRepo } from "../../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
+import { IEmergencyEventRepo } from "../../../../database/repository.interfaces/clinical/emergency.event.repo.interface";
 import { HealthSummaryDto } from "../../../../domain.types/statistics/custom.query/custom.query.dto";
 import { CustomQueryMapper } from "../../../../database/sql/sequelize/mappers/statistics/custom.query.mapper";
-import { MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { BloodGlucoseDto } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
 import { BloodOxygenSaturationDto } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
 import { BloodPressureDto } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
 import { BodyHeightDto } from "../../../../domain.types/clinical/biometrics/body.height/body.height.dto";
 import { BodyWeightDto } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.dto";
 import { PulseDto } from "../../../../domain.types/clinical/biometrics/pulse/pulse.dto";
-import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
 import { EmergencyEventDto } from "../../../../domain.types/clinical/emergency.event/emergency.event.dto";
-import { IBloodOxygenSaturationRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface";
-import { IPulseRepo } from "../../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
-import { IEmergencyEventRepo } from "../../../../database/repository.interfaces/clinical/emergency.event.repo.interface";
+import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
+import { MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -20,6 +20,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
     constructor() {
         this._userService = Injector.Container.resolve(UserService);
         this._tenantService = Injector.Container.resolve(TenantService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     public authenticate = async (

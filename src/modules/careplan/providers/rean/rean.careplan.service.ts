@@ -10,7 +10,6 @@ import { ParticipantDomainModel } from "../../../../domain.types/clinical/carepl
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
 import { CAssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
-import { Injector } from '../../../../startup/injector';
 import { UserTaskService } from '../../../../services/users/user/user.task.service';
 import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
 import { TimeHelper } from "../../../../common/time.helper";
@@ -20,6 +19,7 @@ import { GoalDto } from "../../../../domain.types/users/patient/goal/goal.dto";
 import { HealthPriorityDto } from "../../../../domain.types/users/patient/health.priority/health.priority.dto";
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 import { CareplanService } from "../../../../services/clinical/careplan.service";
+import { Injector } from "../../../../startup/injector";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -15,19 +15,13 @@ export class ChatController {
 
     //#region member variables and constructors
 
-    _service: ChatService = null;
+    _service: ChatService = Injector.Container.resolve(ChatService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
     _validator = new ChatValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(ChatService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._userService = Injector.Container.resolve(UserService);
-    }
 
     //#endregion
 

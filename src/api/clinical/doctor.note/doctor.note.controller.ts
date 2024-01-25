@@ -12,13 +12,9 @@ export class DoctorNoteController {
 
     //#region member variables and constructors
 
-    _service: DoctorNoteService = null;
+    _service: DoctorNoteService = Injector.Container.resolve(DoctorNoteService);
 
     _validator: DoctorNoteValidator = new DoctorNoteValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(DoctorNoteService);
-    }
 
     //#endregion
 

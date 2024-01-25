@@ -38,7 +38,6 @@ import { PersonService } from "../services/person/person.service";
 import { RoleService } from "../services/role/role.service";
 import { UserService } from "../services/users/user/user.service";
 import { FoodConsumptionService } from "../services/wellness/nutrition/food.consumption.service";
-import { Injector } from "./injector";
 import { LabRecordService } from "../services/clinical/lab.record/lab.record.service";
 import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model";
 import { IFoodConsumptionRepo }
@@ -46,6 +45,8 @@ import { IFoodConsumptionRepo }
 import { NutritionQuestionnaireDomainModel }
     from "../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model";
 import { HealthSystemService } from "../services/hospitals/health.system.service";
+import { HospitalService } from "../services/hospitals/hospital.service";
+import { Injector } from "./injector";
 import { TenantService } from "../services/tenant/tenant.service";
 import { RolePrivilegeService } from "../services/role/role.privilege.service";
 
@@ -70,23 +71,25 @@ export class Seeder {
 
     _healthSystemService: HealthSystemService = Injector.Container.resolve(HealthSystemService);
 
-    _patientHealthProfileService: HealthProfileService = null;
+    _hospitalService: HospitalService = Injector.Container.resolve(HospitalService);
 
-    _symptomTypeService: SymptomTypeService = null;
+    _patientHealthProfileService: HealthProfileService = Injector.Container.resolve(HealthProfileService);
 
-    _symptomAssessmentTemplateService: SymptomAssessmentTemplateService = null;
+    _symptomTypeService: SymptomTypeService = Injector.Container.resolve(SymptomTypeService);
 
-    _fileResourceService: FileResourceService = null;
+    _symptomAssessmentTemplateService: SymptomAssessmentTemplateService = Injector.Container.resolve(SymptomAssessmentTemplateService);
 
-    _knowledgeNuggetsService: KnowledgeNuggetService = null;
+    _fileResourceService: FileResourceService = Injector.Container.resolve(FileResourceService);
 
-    _drugService: DrugService = null;
+    _knowledgeNuggetsService: KnowledgeNuggetService = Injector.Container.resolve(KnowledgeNuggetService);
 
-    _healthPriorityService: HealthPriorityService = null;
+    _drugService: DrugService = Injector.Container.resolve(DrugService);
 
-    _labRecordService: LabRecordService = null;
+    _healthPriorityService: HealthPriorityService = Injector.Container.resolve(HealthPriorityService);
 
-    _foodConsumptionService: FoodConsumptionService = null;
+    _labRecordService: LabRecordService = Injector.Container.resolve(LabRecordService);
+
+    _foodConsumptionService: FoodConsumptionService = Injector.Container.resolve(FoodConsumptionService);
 
     _userHelper = new UserHelper();
 
@@ -99,15 +102,6 @@ export class Seeder {
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
     ) {
-        this._patientHealthProfileService      = Injector.Container.resolve(HealthProfileService);
-        this._fileResourceService              = Injector.Container.resolve(FileResourceService);
-        this._symptomTypeService               = Injector.Container.resolve(SymptomTypeService);
-        this._symptomAssessmentTemplateService = Injector.Container.resolve(SymptomAssessmentTemplateService);
-        this._knowledgeNuggetsService          = Injector.Container.resolve(KnowledgeNuggetService);
-        this._drugService                      = Injector.Container.resolve(DrugService);
-        this._healthPriorityService            = Injector.Container.resolve(HealthPriorityService);
-        this._labRecordService                 = Injector.Container.resolve(LabRecordService);
-        this._foodConsumptionService           = Injector.Container.resolve(FoodConsumptionService);
     }
 
     public init = async (): Promise<void> => {

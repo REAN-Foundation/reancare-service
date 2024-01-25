@@ -23,13 +23,13 @@ import { AssessmentDto } from "../../../../domain.types/clinical/assessment/asse
 import { BiometricsType } from "../../../../domain.types/clinical/biometrics/biometrics.types";
 import { HealthPriorityDto } from "../../../../domain.types/users/patient/health.priority/health.priority.dto";
 import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
-import { Injector } from '../../../../startup/injector';
 import { UserTaskService } from '../../../../services/users/user/user.task.service';
 import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
 import { AssessmentDomainModel } from "../../../../domain.types/clinical/assessment/assessment.domain.model";
 import { UserTaskDomainModel } from "../../../../domain.types/users/user.task/user.task.domain.model";
 import { TimeHelper } from "../../../../common/time.helper";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
+import { Injector } from "../../../../startup/injector";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 

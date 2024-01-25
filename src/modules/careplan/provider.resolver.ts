@@ -1,9 +1,9 @@
 import { ICareplanService } from "./interfaces/careplan.service.interface";
 import { ConfigurationManager } from "../../config/configuration.manager";
-import { Injector } from "../../startup/injector";
 import Dictionary from "../../common/dictionary";
 import { AhaCareplanService } from "./providers/aha/aha.careplan.service";
 import { ReanCareplanService } from "./providers/rean/rean.careplan.service";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////
 

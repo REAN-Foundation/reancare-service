@@ -12,13 +12,9 @@ export class LearningPathController {
 
     //#region member variables and constructors
 
-    _service: LearningPathService = null;
+    _service: LearningPathService = Injector.Container.resolve(LearningPathService);
 
     _validator: LearningPathValidator = new LearningPathValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(LearningPathService);
-    }
 
     //#endregion
 

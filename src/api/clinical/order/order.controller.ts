@@ -12,13 +12,9 @@ export class OrderController{
 
     //#region member variables and constructors
 
-    _service: OrderService = null;
+    _service: OrderService = Injector.Container.resolve(OrderService);
 
     _validator: OrderValidator = new OrderValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(OrderService);
-    }
 
     //#endregion
 

@@ -1,4 +1,3 @@
-import { Injector } from '../../startup/injector';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
@@ -12,6 +11,7 @@ import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { CustomTaskService } from '../../services/users/user/custom.task.service';
 import { CustomTaskDomainModel } from '../../domain.types/users/custom.task/custom.task.domain.model';
 import { ApiError } from '../../common/api.error';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

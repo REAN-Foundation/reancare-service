@@ -15,19 +15,13 @@ import { Injector } from '../../../startup/injector';
 export class CareplanController {
 
     //#region member variables and constructors
-    _service: CareplanService = null;
+    _service: CareplanService = Injector.Container.resolve(CareplanService);
 
-    _communityNetworkService: CommunityNetworkService = null;
+    _communityNetworkService: CommunityNetworkService = Injector.Container.resolve(CommunityNetworkService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
     _validator: CareplanValidator = new CareplanValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(CareplanService);
-        this._communityNetworkService = Injector.Container.resolve(CommunityNetworkService);
-        this._userService = Injector.Container.resolve(UserService);
-    }
 
     //#endregion
 

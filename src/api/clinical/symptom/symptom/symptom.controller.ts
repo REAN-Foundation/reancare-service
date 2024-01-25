@@ -12,13 +12,9 @@ export class SymptomController {
 
     //#region member variables and constructors
 
-    _service: SymptomService = null;
+    _service: SymptomService = Injector.Container.resolve(SymptomService);
 
     _validator: SymptomValidator = new SymptomValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(SymptomService);
-    }
 
     //#endregion
 

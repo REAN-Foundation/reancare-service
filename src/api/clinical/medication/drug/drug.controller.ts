@@ -12,13 +12,9 @@ export class DrugController{
 
     //#region member variables and constructors
 
-    _service: DrugService = null;
+    _service: DrugService = Injector.Container.resolve(DrugService);
 
     _validator: DrugValidator = new DrugValidator();
-
-    constructor() {
-        this._service = Injector.Container.resolve(DrugService);
-    }
 
     //#endregion
 

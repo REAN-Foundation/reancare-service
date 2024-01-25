@@ -14,8 +14,8 @@ import { Loader } from './startup/loader';
 import { AwardsFactsService } from './modules/awards.facts/awards.facts.service';
 import { DatabaseClient } from './common/database.utils/dialect.clients/database.client';
 import { DatabaseSchemaType } from './common/database.utils/database.config';
-import ClientAppAuthMiddleware from './middlewares/client.app.auth.middleware';
 import { Injector } from './startup/injector';
+import ClientAppAuthMiddleware from './middlewares/client.app.auth.middleware';
 
 /////////////////////////////////////////////////////////////////////////
 

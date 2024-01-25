@@ -1,5 +1,4 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
 import { DailyStatisticsController } from './daily.statistics.controller';
 import { auth } from '../../../auth/auth.handler';
 

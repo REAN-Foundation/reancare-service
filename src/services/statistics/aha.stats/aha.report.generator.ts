@@ -8,7 +8,7 @@ import { FooterLength, SpaceAfterSectionTitle, SpaceBeforeSectionTitle, SpaceBet
 
 const pdfModel: any = {};
 
-export const exportAhaStatsReportToPDF = async (reportModel: any) => {
+export const exportAHAStatsReportToPDF = async (reportModel: any) => {
     try {
         var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Heart & Stroke statistics');
         var writeStream = fs.createWriteStream(absFilepath);

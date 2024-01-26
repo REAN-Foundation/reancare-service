@@ -6,7 +6,7 @@ import { StatisticSearchFilters } from "../../domain.types/statistics/statistics
 import { YearWiseAddictionDistributionDetails, YearWiseAgeDetails, YearWiseCountryDetails, YearWiseDeviceDetails, YearWiseGenderDetails, YearWiseMajorAilmentDistributionDetails, YearWiseMaritalDetails, YearWiseUsers } from "../../domain.types/statistics/daily.statistics/daily.statistics.dto";
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
 import { Logger } from "../../common/logger";
-import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
+import { DailySystemStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { TimeHelper } from "../../common/time.helper";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ export class StatisticsService {
         return await this._statisticsRepo.getAllYears();
     };
 
-    createDashboardStats = async (): Promise<any> => {
+    createSystemDashboardStats = async (): Promise<any> => {
         try {
             const filter = {};
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
@@ -139,13 +139,82 @@ export class StatisticsService {
                 },
             };
 
-            const model: DailyStatisticsDomainModel = {
+            const model: DailySystemStatisticsDomainModel = {
                 ReportDate      : TimeHelper.formatDateToLocal_YYYY_MM_DD(new Date()),
                 ReportTimestamp : new Date(),
                 DashboardStats  : JSON.stringify(dashboardStats)
             };
 
-            const dailyStatistics = await this._dailyStatisticsRepo.create(model);
+            const dailyStatistics = await this._dailyStatisticsRepo.addDailySystemStats(model);
+            if (dailyStatistics) {
+                Logger.instance().log('Daily users stattistics created successfully.');
+            } else {
+                Logger.instance().log('Error in creating daily users stattistics.');
+            }
+
+            return dashboardStats;
+        } catch (error) {
+            Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
+        }
+    };
+
+    createTenantDashboardStats = async (tenantId: string): Promise<any> => {
+        try {
+            const filter = { TenantId: tenantId };
+            const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
+            const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
+            const allYears = await this._statisticsRepo.getAllYears();
+            const yearWiseUserCount = await this.getYearWiseUserCount(allYears);
+            yearWiseUserCount.sort(this.compare);
+            const yearWiseDeviceDetails = await this.getYearWiseDeviceDetails(allYears);
+            yearWiseDeviceDetails.sort(this.compare);
+
+            const yearWiseAgeDetails = await this.getYearWiseAgeDetails(allYears);
+            const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
+            
+            const yearWiseGenderDetails = await this.getYearWiseGenderDetails(allYears);
+            const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
+
+            const yearWiseMaritalDetails = await this.getYearWiseMaritalDetails(allYears);
+            const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
+
+            const yearWiseCountryDetails = await this.getYearWiseCountryDetails(allYears);
+            const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
+
+            const yearWiseMajorAilmentDistributionDetails = await this.getYearWiseMajorAilmentDistributionDetails(allYears);
+            const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
+
+            const yearWiseAddictionDistributionDetails = await this.getYearWiseAddictionDistributionDetails(allYears);
+            const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
+
+            const dashboardStats = {
+                UserStatistics : {
+                    UsersCountStats                         : usersCountStats,
+                    DeviceDetailWiseUsers                   : deviceDetailWiseUsers,
+                    YearWiseUserCount                       : yearWiseUserCount,
+                    YearWiseDeviceDetails                   : yearWiseDeviceDetails,
+                    YearWiseAgeDetails                      : yearWiseAgeDetails,
+                    AgeWiseUsers                            : ageWiseUsers,
+                    YearWiseGenderDetails                   : yearWiseGenderDetails,
+                    GenderWiseUsers                         : genderWiseUsers,
+                    YearWiseMaritalDetails                  : yearWiseMaritalDetails,
+                    MaritalStatusWiseUsers                  : maritalStatusWiseUsers,
+                    YearWiseCountryDetails                  : yearWiseCountryDetails,
+                    CountryWiseUsers                        : countryWiseUsers,
+                    YearWiseMajorAilmentDistributionDetails : yearWiseMajorAilmentDistributionDetails,
+                    MajorAilmentDistribution                : majorAilmentDistribution,
+                    YearWiseAddictionDistributionDetails    : yearWiseAddictionDistributionDetails,
+                    AddictionDistribution                   : addictionDistribution
+                },
+            };
+
+            const model: DailySystemStatisticsDomainModel = {
+                ReportDate      : TimeHelper.formatDateToLocal_YYYY_MM_DD(new Date()),
+                ReportTimestamp : new Date(),
+                DashboardStats  : JSON.stringify(dashboardStats)
+            };
+
+            const dailyStatistics = await this._dailyStatisticsRepo.addDailySystemStats(model);
             if (dailyStatistics) {
                 Logger.instance().log('Daily users stattistics created successfully.');
             } else {

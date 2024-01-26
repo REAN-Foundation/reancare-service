@@ -6,12 +6,12 @@ import FileResource from '../general/file.resource/file.resource.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'DailyStatistics',
-    tableName       : 'daily_statistics',
+    modelName       : 'DailySystemStatistics',
+    tableName       : 'daily_system_statistics',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class DailyStatistics extends Model {
+export default class DailySystemStatistics extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -48,22 +48,22 @@ export default class DailyStatistics extends Model {
     ReportTimestamp: Date;
 
     @Column({
-        type      : DataType.STRING(5000),
+        type      : DataType.TEXT,
         allowNull : true,
     })
     DashboardStats: string;
 
     @Column({
-        type      : DataType.STRING(5000),
+        type      : DataType.TEXT,
         allowNull : true,
     })
     UserStats: string;
 
     @Column({
-        type      : DataType.STRING(5000),
+        type      : DataType.TEXT,
         allowNull : true,
     })
-    AhaStats: string;
+    AHAStats: string;
 
     @Column
     @CreatedAt

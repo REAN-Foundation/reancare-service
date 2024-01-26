@@ -1,10 +1,14 @@
-import { DailyStatisticsDto } from "../../../domain.types/statistics/daily.statistics/daily.statistics.dto";
-import { DailyStatisticsDomainModel } from "../../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
+import { DailySystemStatisticsDto, DailyTenantStatisticsDto } from "../../../domain.types/statistics/daily.statistics/daily.statistics.dto";
+import { DailySystemStatisticsDomainModel, DailyTenantStatisticsDomainModel } from "../../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 
 export interface IDailyStatisticsRepo {
 
-    create(dailyStatisticsDomainModel: DailyStatisticsDomainModel): Promise<DailyStatisticsDto>;
+    addDailySystemStats(model: DailySystemStatisticsDomainModel): Promise<DailySystemStatisticsDto>;
 
-    getLatestStatistics(): Promise<DailyStatisticsDto>;
+    addDailyTenantStats(model: DailyTenantStatisticsDomainModel): Promise<DailyTenantStatisticsDto>;
+
+    getDailySystemStats(): Promise<DailySystemStatisticsDto>;
+
+    getDailyTenantStats(tenantId: string): Promise<DailyTenantStatisticsDto>;
 
 }

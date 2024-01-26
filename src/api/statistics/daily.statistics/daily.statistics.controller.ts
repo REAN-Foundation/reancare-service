@@ -19,9 +19,24 @@ export class DailyStatisticsController {
 
     //#region Action methods
     
-    getLatestStatistics = async (request: express.Request, response: express.Response): Promise<void> => {
+    getDailySystemStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const latestStatistics = await this._service.getLatestStatistics();
+            const latestStatistics = await this._service.getDailySystemStats();
+            if (latestStatistics === null) {
+                throw new ApiError(404, 'Daily Statistics not found.');
+            }
+            ResponseHandler.success(request, response, 'Latest statistics retrieved successfully!', 200, {
+                DailyStatistics : latestStatistics,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getDailyTenantStats = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const tenantId = request.params.tenantId;
+            const latestStatistics = await this._service.getDailyTenantStats(tenantId);
             if (latestStatistics === null) {
                 throw new ApiError(404, 'Daily Statistics not found.');
             }

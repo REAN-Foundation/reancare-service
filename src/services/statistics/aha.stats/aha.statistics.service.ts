@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IAhaStatisticsRepo } from "../../../database/repository.interfaces/statistics/aha.statistics.repo.interface";
 import { AppName, CareplanCode, CareplanStats } from "../../../domain.types/statistics/aha/aha.type";
-import { exportAhaStatsReportToPDF } from './aha.report.generator';
+import { exportAHAStatsReportToPDF } from './aha.report.generator';
 import { Logger } from "../../../common/logger";
 import { FileResourceDto } from "../../../domain.types/general/file.resource/file.resource.dto";
 import path from "path";
@@ -209,9 +209,9 @@ export class AhaStatisticsService {
         }
     };
 
-    generateAhaStatsReport = async (reportModel: any) => {
+    generateAHAStatsReport = async (reportModel: any) => {
         try {
-            return await exportAhaStatsReportToPDF(reportModel);
+            return await exportAHAStatsReportToPDF(reportModel);
         } catch (error) {
             Logger.instance().log(`Error in creating stats report in pdf :${error.message}`);
         }

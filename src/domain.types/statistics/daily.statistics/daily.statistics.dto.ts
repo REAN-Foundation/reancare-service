@@ -38,12 +38,21 @@ export interface YearWiseAddictionDistributionDetails {
     AddictionDistributionDetails?  : any[];
 }
 
-export interface DailyStatisticsDto {
+export interface DailySystemStatisticsDto {
     id?                              : string;
     ResourceId?                      : string;
     ReportDate?                      : string;
     ReportTimestamp?                 : Date;
     DashboardStats?                  : string;
     UserStats?                       : string;
-    AhaStats?                        : string;
+    AHAStats?                        : string;
+}
+
+export interface DailyTenantStatisticsDto {
+    id?                              : string;
+    TenantId?                        : string;
+    ReportDate?                      : string;
+    ReportTimestamp?                 : Date;
+    DashboardStats?                  : string;
+    UserStats?                       : string;
 }

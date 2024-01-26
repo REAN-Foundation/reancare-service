@@ -1,6 +1,6 @@
 import express from 'express';
 import { DailyStatisticsSearchFilters } from '../../../domain.types/statistics/daily.statistics/daily.statistics.search.types';
-import { DailyStatisticsDomainModel } from '../../../domain.types/statistics/daily.statistics/daily.statistics.domain.model';
+import { DailySystemStatisticsDomainModel } from '../../../domain.types/statistics/daily.statistics/daily.statistics.domain.model';
 import { BaseValidator, Where } from '../../../api/base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -11,18 +11,18 @@ export class DailyStatisticsValidator extends BaseValidator {
         super();
     }
 
-    getCreateDomainModel = (requestBody: any): DailyStatisticsDomainModel => {
-        const createModel: DailyStatisticsDomainModel = {
+    getCreateDomainModel = (requestBody: any): DailySystemStatisticsDomainModel => {
+        const createModel: DailySystemStatisticsDomainModel = {
             ReportDate      : requestBody.ReportDate ?? new Date(),
             ReportTimestamp : requestBody.ReportTimestamp ?? new Date(),
             DashboardStats  : requestBody.DashboardStats ? JSON.stringify(requestBody.DashboardStats) : null,
             UserStats       : requestBody.UserStats ? JSON.stringify(requestBody.UserStats) : null,
-            AhaStats        : requestBody.AhaStats ? JSON.stringify(requestBody.AhaStats) : null,
+            AHAStats        : requestBody.AHAStats ? JSON.stringify(requestBody.AHAStats) : null,
         };
         return createModel;
     };
 
-    create = async (request: express.Request): Promise<DailyStatisticsDomainModel> => {
+    create = async (request: express.Request): Promise<DailySystemStatisticsDomainModel> => {
         await this.validateCreateBody(request);
         return this.getCreateDomainModel(request.body);
     };

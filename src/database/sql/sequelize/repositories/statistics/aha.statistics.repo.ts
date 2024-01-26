@@ -968,6 +968,38 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         }
     };
 
+    getListOfCareplan = async () => {
+        const query =  `SELECT distinct(PlanCode) FROM careplan_enrollments;`;
+        let connection: Connection = null;
+        try {
+            connection = await this.createDbConnection();
+            const [rows] = await connection.execute(query);
+            const careplans: any = rows;
+            return careplans;
+        } catch (error) {
+            Logger.instance().log(`Unable to retrieved list of careplans: ${error.message}`);
+            throw new ApiError(500, `Unable to retrieved list of careplans: ${error.message}: ${error.message}`);
+        } finally {
+            connection.end();
+        }
+    };
+
+    getListOfHealthSystem = async () => {
+        const query =  `SELECT distinct(HealthSystem) FROM patients`;
+        let connection: Connection = null;
+        try {
+            connection = await this.createDbConnection();
+            const [rows] = await connection.execute(query);
+            const healthSystems: any = rows;
+            return healthSystems;
+        } catch (error) {
+            Logger.instance().log(`Unable to retrieved list of health system: ${error.message}`);
+            throw new ApiError(500, `Unable to retrieved list of health system: ${error.message}: ${error.message}`);
+        } finally {
+            connection.end();
+        }
+    };
+    
     private extractHospitals = (careplanEnrollments) => {
         const hospitals: string[] = [];
         careplanEnrollments.forEach(element => {

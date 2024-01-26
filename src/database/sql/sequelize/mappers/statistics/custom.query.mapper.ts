@@ -1,7 +1,6 @@
 import StatisticsCustomQueries from '../../models/statistics/custom.query.model';
 import { CustomQueryDto } from '../../../../../domain.types/statistics/custom.query/custom.query.dto';
 import { HealthProfileDto } from '../../../../../domain.types/users/patient/health.profile/health.profile.dto';
-import { MedicationConsumptionDto } from '../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { BloodGlucoseDto } from '../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto';
 import { BloodOxygenSaturationDto } from '../../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto';
 import { BloodPressureDto } from '../../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto';
@@ -10,6 +9,7 @@ import { BodyWeightDto } from '../../../../../domain.types/clinical/biometrics/b
 import { PulseDto } from '../../../../../domain.types/clinical/biometrics/pulse/pulse.dto';
 import { LabRecordDto } from '../../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto';
 import { EmergencyEventDto } from '../../../../../domain.types/clinical/emergency.event/emergency.event.dto';
+import { MedicationDto } from '../../../../../domain.types/clinical/medication/medication/medication.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -63,18 +63,17 @@ export class CustomQueryMapper {
         return dto;
     };
     
-    static toMedicationConsumptionSummaryDto =
-    (medicationConsumption: MedicationConsumptionDto): MedicationConsumptionDto => {
-        if (medicationConsumption === null) {
+    static toMedicationSummaryDto =
+    (medication: MedicationDto): MedicationDto => {
+        if (medication === null) {
             return null;
         }
 
-        const dto: MedicationConsumptionDto = {
-            DrugName          : medicationConsumption.DrugName,
-            Details           : medicationConsumption.Details,
-            TimeScheduleStart : medicationConsumption.TimeScheduleStart,
-            TimeScheduleEnd   : medicationConsumption.TimeScheduleEnd,
-            Status            : medicationConsumption.Status
+        const dto: MedicationDto = {
+            DrugName  : medication.DrugName,
+            Dose      : medication.Dose,
+            Frequency : medication.Frequency,
+            Duration  : medication.Duration
         };
         return dto;
     };

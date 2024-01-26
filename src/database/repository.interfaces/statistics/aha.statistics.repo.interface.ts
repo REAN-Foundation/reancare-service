@@ -84,4 +84,8 @@ export interface IAhaStatisticsRepo {
     getTotalDeletedTestUsersForCareplanEnrollments(careplanCode:CareplanCode): Promise<number>;
 
     getHealthSystemEnrollmentCount(careplanCode:CareplanCode, healthSystem : HealthSystem): Promise<any>;
+
+    getListOfCareplan(): Promise<any>;
+
+    getListOfHealthSystem(): Promise<any>;
 }

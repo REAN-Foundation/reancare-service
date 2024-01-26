@@ -8,6 +8,36 @@ export interface YearWiseDeviceDetails {
     DeviceDetails?  : any[];
 }
 
+export interface YearWiseAgeDetails {
+    Year?           : number;
+    AgeDetails?  : any[];
+}
+
+export interface YearWiseGenderDetails {
+    Year?           : number;
+    GenderDetails?  : any[];
+}
+
+export interface YearWiseMaritalDetails {
+    Year?           : number;
+    MaritalDetails?  : any[];
+}
+
+export interface YearWiseCountryDetails {
+    Year?           : number;
+    CountryDetails?  : any[];
+}
+
+export interface YearWiseMajorAilmentDistributionDetails {
+    Year?           : number;
+    MajorAilmentDistributionDetails?  : any[];
+}
+
+export interface YearWiseAddictionDistributionDetails {
+    Year?           : number;
+    AddictionDistributionDetails?  : any[];
+}
+
 export interface DailyStatisticsDto {
     id?                              : string;
     ResourceId?                      : string;

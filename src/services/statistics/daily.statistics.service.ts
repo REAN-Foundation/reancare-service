@@ -4,7 +4,7 @@ import { DailyStatisticsDto } from "../../domain.types/statistics/daily.statisti
 import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { Loader } from "../../startup/loader";
 import { StatisticsService } from "./statistics.service";
-import { AhaStatisticsService } from "./aha.statistics.service";
+import { AhaStatisticsService } from "./aha.stats/aha.statistics.service";
 import { TimeHelper } from "../../common/time.helper";
 import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
@@ -36,6 +36,289 @@ export class DailyStatisticsService {
             const dashboardStats = await statisticsService.createDashboardStats();
             var ahaStatisticsService = Injector.Container.resolve(AhaStatisticsService);
             const ahaStats = await ahaStatisticsService.getAhaStatistics();
+
+            // ahaStats = {
+            //     CareplanStats : [
+            //         {
+            //             Careplan           : 'Cholesterol',
+            //             Enrollments        : 10,
+            //             ActiveEnrollments  : 8,
+            //             DeletedEnrollments : 2
+            //         },
+            //         {
+            //             Careplan           : 'Stroke',
+            //             Enrollments        : 20,
+            //             ActiveEnrollments  : 15,
+            //             DeletedEnrollments : 5
+            //         },
+            //         {
+            //             Careplan           : 'HeartFailure',
+            //             Enrollments        : 35,
+            //             ActiveEnrollments  : 30,
+            //             DeletedEnrollments : 5
+            //         },
+            //         {
+            //             Careplan           : 'SMBP',
+            //             Enrollments        : 50,
+            //             ActiveEnrollments  : 40,
+            //             DeletedEnrollments : 10
+            //         },
+            //         {
+            //             Careplan           : 'Cholesterol1',
+            //             Enrollments        : 10,
+            //             ActiveEnrollments  : 8,
+            //             DeletedEnrollments : 2
+            //         },
+            //         {
+            //             Careplan           : 'Stroke1',
+            //             Enrollments        : 20,
+            //             ActiveEnrollments  : 15,
+            //             DeletedEnrollments : 5
+            //         },
+            //         {
+            //             Careplan           : 'HeartFailure1',
+            //             Enrollments        : 35,
+            //             ActiveEnrollments  : 30,
+            //             DeletedEnrollments : 5
+            //         },
+            //         {
+            //             Careplan           : 'SMBP1',
+            //             Enrollments        : 50,
+            //             ActiveEnrollments  : 40,
+            //             DeletedEnrollments : 10
+            //         }
+            //     ],
+
+            //     CareplanHealthSystemStats : [
+            //         {
+            //             CareplanCode            : 'Cholesterol',
+            //             HealthSystem            : 'HealthSystem 01',
+            //             CareplanEnrollmentCount : 10,
+            //             PatientCountForHospital : [
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 }
+            //             ]
+            //         },
+            //         {
+            //             CareplanCode            : 'Cholesterol 1',
+            //             HealthSystem            : 'HealthSystem 1',
+            //             CareplanEnrollmentCount : 10,
+            //             PatientCountForHospital : [
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 }
+            //             ]
+            //         }, {
+            //             CareplanCode            : 'Cholesterol 2',
+            //             HealthSystem            : 'HealthSystem 2',
+            //             CareplanEnrollmentCount : 10,
+            //             PatientCountForHospital : [
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 }
+            //             ]
+            //         },
+            //         {
+            //             CareplanCode            : 'Cholesterol 3',
+            //             HealthSystem            : 'HealthSystem 3',
+            //             CareplanEnrollmentCount : 10,
+            //             PatientCountForHospital : [
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 }
+            //             ]
+            //         },
+            //         {
+            //             CareplanCode            : 'Cholesterol 4',
+            //             HealthSystem            : 'HealthSystem 4',
+            //             CareplanEnrollmentCount : 10,
+            //             PatientCountForHospital : [
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },{
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },{
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 }
+            //             ]
+            //         }, {
+            //             CareplanCode            : 'Cholesterol 5',
+            //             HealthSystem            : 'HealthSystem 5',
+            //             CareplanEnrollmentCount : 10,
+            //             PatientCountForHospital : [
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },{
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 }
+            //             ]
+            //         }, {
+            //             CareplanCode            : 'Cholesterol 6',
+            //             HealthSystem            : 'HealthSystem 6',
+            //             CareplanEnrollmentCount : 10,
+            //             PatientCountForHospital : [
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },{
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 }
+            //             ]
+            //         }, {
+            //             CareplanCode            : 'Cholesterol 7',
+            //             HealthSystem            : 'HealthSystem 7',
+            //             CareplanEnrollmentCount : 10,
+            //             PatientCountForHospital : [
+            //                 {
+            //                     HospitalName : 'Hosptal 01',
+            //                     PatientCount : 10
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 02',
+            //                     PatientCount : 20
+            //                 },
+            //                 {
+            //                     HospitalName : 'Hosptal 03',
+            //                     PatientCount : 30
+            //                 },{
+            //                     HospitalName : 'Hosptal 04',
+            //                     PatientCount : 40
+            //                 }
+            //             ]
+            //         }
+            //     ]
+            // } ;
 
             if (ahaStats) {
                 pdfModel = await ahaStatisticsService.generateAhaStatsReport(ahaStats);

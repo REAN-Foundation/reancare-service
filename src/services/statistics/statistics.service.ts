@@ -3,7 +3,7 @@ import { IStatisticsRepo } from "../../database/repository.interfaces/statistics
 import { AppDownloadDto } from "../../domain.types/statistics/app.download.dto";
 import { AppDownloadDomainModel } from "../../domain.types/statistics/app.download.domain.model";
 import { StatisticSearchFilters } from "../../domain.types/statistics/statistics.search.type";
-import { YearWiseDeviceDetails, YearWiseUsers } from "../../domain.types/statistics/daily.statistics/daily.statistics.dto";
+import { YearWiseAddictionDistributionDetails, YearWiseAgeDetails, YearWiseCountryDetails, YearWiseDeviceDetails, YearWiseGenderDetails, YearWiseMajorAilmentDistributionDetails, YearWiseMaritalDetails, YearWiseUsers } from "../../domain.types/statistics/daily.statistics/daily.statistics.dto";
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
 import { Logger } from "../../common/logger";
 import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
@@ -98,26 +98,44 @@ export class StatisticsService {
             yearWiseUserCount.sort(this.compare);
             const yearWiseDeviceDetails = await this.getYearWiseDeviceDetails(allYears);
             yearWiseDeviceDetails.sort(this.compare);
+
+            const yearWiseAgeDetails = await this.getYearWiseAgeDetails(allYears);
             const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
+            
+            const yearWiseGenderDetails = await this.getYearWiseGenderDetails(allYears);
             const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
+
+            const yearWiseMaritalDetails = await this.getYearWiseMaritalDetails(allYears);
             const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
+
+            const yearWiseCountryDetails = await this.getYearWiseCountryDetails(allYears);
             const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
+
+            const yearWiseMajorAilmentDistributionDetails = await this.getYearWiseMajorAilmentDistributionDetails(allYears);
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
+
+            const yearWiseAddictionDistributionDetails = await this.getYearWiseAddictionDistributionDetails(allYears);
             const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
 
             const dashboardStats = {
                 UserStatistics : {
-                    UsersCountStats          : usersCountStats,
-                    DeviceDetailWiseUsers    : deviceDetailWiseUsers,
-                    AppDownload              : appDownload,
-                    YearWiseUserCount        : yearWiseUserCount,
-                    YearWiseDeviceDetails    : yearWiseDeviceDetails,
-                    AgeWiseUsers             : ageWiseUsers,
-                    GenderWiseUsers          : genderWiseUsers,
-                    MaritalStatusWiseUsers   : maritalStatusWiseUsers,
-                    CountryWiseUsers         : countryWiseUsers,
-                    MajorAilmentDistribution : majorAilmentDistribution,
-                    AddictionDistribution    : addictionDistribution
+                    UsersCountStats                         : usersCountStats,
+                    DeviceDetailWiseUsers                   : deviceDetailWiseUsers,
+                    AppDownload                             : appDownload,
+                    YearWiseUserCount                       : yearWiseUserCount,
+                    YearWiseDeviceDetails                   : yearWiseDeviceDetails,
+                    YearWiseAgeDetails                      : yearWiseAgeDetails,
+                    AgeWiseUsers                            : ageWiseUsers,
+                    YearWiseGenderDetails                   : yearWiseGenderDetails,
+                    GenderWiseUsers                         : genderWiseUsers,
+                    YearWiseMaritalDetails                  : yearWiseMaritalDetails,
+                    MaritalStatusWiseUsers                  : maritalStatusWiseUsers,
+                    YearWiseCountryDetails                  : yearWiseCountryDetails,
+                    CountryWiseUsers                        : countryWiseUsers,
+                    YearWiseMajorAilmentDistributionDetails : yearWiseMajorAilmentDistributionDetails,
+                    MajorAilmentDistribution                : majorAilmentDistribution,
+                    YearWiseAddictionDistributionDetails    : yearWiseAddictionDistributionDetails,
+                    AddictionDistribution                   : addictionDistribution
                 },
             };
 
@@ -171,6 +189,110 @@ export class StatisticsService {
             }
         }
         return yearWiseDeviceDetails;
+    };
+    
+    private getYearWiseAgeDetails = async(allYears) => {
+        const yearWiseAgeDetails: YearWiseAgeDetails[] = [];
+        for (let i = 0; i < allYears.length; i++) {
+            const ageDetails: YearWiseAgeDetails = {};
+            ageDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
+            if (ageDetails.Year) {
+                const yearWiseAgeDetails =
+                await this._statisticsRepo.getUsersByAge({ Year: ageDetails.Year });
+                ageDetails.AgeDetails = yearWiseAgeDetails;
+            }
+            if (ageDetails.Year) {
+                yearWiseAgeDetails.push(ageDetails);
+            }
+        }
+        return yearWiseAgeDetails;
+    };
+
+    private getYearWiseGenderDetails = async(allYears) => {
+        const yearWiseGenderDetails: YearWiseGenderDetails[] = [];
+        for (let i = 0; i < allYears.length; i++) {
+            const genderDetails: YearWiseGenderDetails = {};
+            genderDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
+            if (genderDetails.Year) {
+                const yearWiseGenderDetails =
+                await this._statisticsRepo.getUsersByGender({ Year: genderDetails.Year });
+                genderDetails.GenderDetails = yearWiseGenderDetails;
+            }
+            if (genderDetails.Year) {
+                yearWiseGenderDetails.push(genderDetails);
+            }
+        }
+        return yearWiseGenderDetails;
+    };
+
+    private getYearWiseMaritalDetails = async(allYears) => {
+        const yearWiseMaritalDetails: YearWiseMaritalDetails[] = [];
+        for (let i = 0; i < allYears.length; i++) {
+            const maritalDetails: YearWiseMaritalDetails = {};
+            maritalDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
+            if (maritalDetails.Year) {
+                const yearWiseMaritalDetails =
+                await this._statisticsRepo.getUsersByMaritalStatus({ Year: maritalDetails.Year });
+                maritalDetails.MaritalDetails = yearWiseMaritalDetails;
+            }
+            if (maritalDetails.Year) {
+                yearWiseMaritalDetails.push(maritalDetails);
+            }
+        }
+        return yearWiseMaritalDetails;
+    };
+
+    private getYearWiseCountryDetails = async(allYears) => {
+        const yearWiseCountryDetails: YearWiseCountryDetails[] = [];
+        for (let i = 0; i < allYears.length; i++) {
+            const countryDetails: YearWiseCountryDetails = {};
+            countryDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
+            if (countryDetails.Year) {
+                const yearWiseCountryDetails =
+                await this._statisticsRepo.getUsersByCountry({ Year: countryDetails.Year });
+                countryDetails.CountryDetails = yearWiseCountryDetails;
+            }
+            if (countryDetails.Year) {
+                yearWiseCountryDetails.push(countryDetails);
+            }
+        }
+        return yearWiseCountryDetails;
+    };
+
+    private getYearWiseMajorAilmentDistributionDetails = async(allYears) => {
+        const yearWiseMajorAilmentDistributionDetails: YearWiseMajorAilmentDistributionDetails[] = [];
+        for (let i = 0; i < allYears.length; i++) {
+            const majorAilmentDistributionDetails: YearWiseMajorAilmentDistributionDetails = {};
+            majorAilmentDistributionDetails.Year =
+            allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
+            if (majorAilmentDistributionDetails.Year) {
+                const yearWiseMajorAilmentDistributionDetails =
+                await this._statisticsRepo.getUsersByMajorAilment({ Year: majorAilmentDistributionDetails.Year });
+                majorAilmentDistributionDetails.MajorAilmentDistributionDetails = yearWiseMajorAilmentDistributionDetails;
+            }
+            if (majorAilmentDistributionDetails.Year) {
+                yearWiseMajorAilmentDistributionDetails.push(majorAilmentDistributionDetails);
+            }
+        }
+        return yearWiseMajorAilmentDistributionDetails;
+    };
+
+    private getYearWiseAddictionDistributionDetails = async(allYears) => {
+        const yearWiseAddictionDistributionDetails: YearWiseAddictionDistributionDetails[] = [];
+        for (let i = 0; i < allYears.length; i++) {
+            const addictionDistributionDetails: YearWiseAddictionDistributionDetails = {};
+            addictionDistributionDetails.Year =
+            allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
+            if (addictionDistributionDetails.Year) {
+                const yearWiseAddictionDistributionDetails =
+                await this._statisticsRepo.getUsersByAddiction({ Year: addictionDistributionDetails.Year });
+                addictionDistributionDetails.AddictionDistributionDetails = yearWiseAddictionDistributionDetails;
+            }
+            if (addictionDistributionDetails.Year) {
+                yearWiseAddictionDistributionDetails.push(addictionDistributionDetails);
+            }
+        }
+        return yearWiseAddictionDistributionDetails;
     };
 
     private compare = (a,b) => {

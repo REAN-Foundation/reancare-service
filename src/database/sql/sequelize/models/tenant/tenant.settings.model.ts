@@ -8,24 +8,24 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
+    ForeignKey,
     Length,
-    IsEmail,
-    HasOne,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import TenantSettings from './tenant.settings.model';
+import Tenant from './tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'Tenant',
-    tableName       : 'tenants',
+    modelName       : 'TenantSettings',
+    tableName       : 'tenant_settings',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class Tenant extends Model {
+export default class TenantSettings extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -38,45 +38,47 @@ export default class Tenant extends Model {
     })
     id: string;
 
-    @Length({ min: 1, max: 64 })
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
     @Column({
-        type      : DataType.STRING(64),
+        type      : DataType.UUID,
+        allowNull : false,
+        unique    : true
+    })
+    TenantId: string;
+
+    @BelongsTo(() => Tenant)
+    Tenant: Tenant;
+
+    @Column({
+        type      : DataType.TEXT,
         allowNull : false,
     })
-    Name: string;
+    HealthcareInterfaces: string;
 
-    @Length({ max: 1024 })
     @Column({
-        type      : DataType.STRING(1024),
-        allowNull : true,
-    })
-    Description: string;
-
-    @Length({ min: 1, max: 16 })
-    @Column({
-        type      : DataType.STRING(16),
+        type      : DataType.TEXT,
         allowNull : false,
-        unique    : true,
     })
-    Code: string;
+    Common: string;
 
-    @Length({ min: 10, max: 16 })
     @Column({
-        type      : DataType.STRING(16),
-        allowNull : true,
+        type      : DataType.TEXT,
+        allowNull : false,
     })
-    Phone: string;
+    PatientApp: string;
 
-    @Length({ min: 3, max: 128 })
-    @IsEmail
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
+        type      : DataType.TEXT,
+        allowNull : false,
     })
-    Email: string;
+    ChatBot: string;
 
-    @HasOne(() => TenantSettings)
-    TenantFeatureSetting: TenantSettings;
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : false,
+    })
+    Forms: string;
 
     @Column
     @CreatedAt

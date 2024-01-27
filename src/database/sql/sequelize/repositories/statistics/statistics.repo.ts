@@ -1637,8 +1637,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                     }
                 }
 
-                physicalActivityUsers = getMonthlyUsers(physicalActivityDetails,totalUsers);
-
+                physicalActivityUsers = getMonthlyUsers(physicalActivityDetails, totalUsers);
             }
             else
             {

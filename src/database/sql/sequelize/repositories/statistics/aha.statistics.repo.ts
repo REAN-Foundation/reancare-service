@@ -7,7 +7,7 @@ import { AppName, CareplanCode, HealthSystem } from '../../../../../domain.types
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 export class AhaStatisticsRepo implements IAhaStatisticsRepo {
-    
+
     getTotalPatients = async (): Promise<number> => {
         const query = `SELECT * FROM patients`;
         let connection: Connection = null;
@@ -27,13 +27,10 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalActivePatients = async (): Promise<number> => {
         const query =   `SELECT count(distinct (pt.UserId)) as totalActivePatients from patients as pt
                         JOIN users as u ON pt.UserId = u.id
+                        WHERE u.IsTestUser = 0
                         JOIN persons as p ON u.PersonId = p.id
-                        WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null`;
-        // const query =   `SELECT count(distinct (pt.UserId)) as totalActivePatients from patients as pt
-        //                 JOIN users as u ON pt.UserId = u.id
-        //                 WHERE u.IsTestUser = 0
-        //                 JOIN persons as p ON u.PersonId = p.id
-        //                 WHERE p.DeletedAt is null`;
+                        WHERE p.DeletedAt is null`;
+                        
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -61,6 +58,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         //                 WHERE u.IsTestUser = 0
         //                 JOIN persons as p ON u.PersonId = p.id
         //                 WHERE p.DeletedAt is not null`;
+        
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();
@@ -927,8 +925,14 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
             connection.end();
         }
     };
-    
+
+   
     getHealthSystemEnrollmentCount = async (careplanCode:CareplanCode, healthSystem : HealthSystem): Promise<any> => {
+        let query = ahaSqlQuerries.queryHealthSystemEnrollmentCount;
+        query = query.replace('{{careplanCode}}', careplanCode);
+        query = query.replace('{{healthSystem}}', healthSystem);
+        const results = executeQuery(query);
+        
         const query =  `select distinct (ce.PatientUserId), p.Phone, p.FirstName, p.LastName, ce.Plancode, ce.StartDate,
                         ce.EndDate, pt.HealthSystem, pt.AssociatedHospital, p.DeletedAt from careplan_enrollments as ce 
                         JOIN users as u ON ce.PatientUserId = u.id
@@ -941,6 +945,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
                             Join patients as pt on pt.UserId = u.id
                             WHERE u.IsTestUser = 0 AND pt.HealthSystem = '${healthSystem}'
                         )`;
+
         let connection: Connection = null;
         try {
             connection = await this.createDbConnection();

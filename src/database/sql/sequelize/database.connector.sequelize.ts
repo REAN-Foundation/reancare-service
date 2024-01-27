@@ -88,6 +88,17 @@ export class DatabaseConnector_Sequelize implements IPrimaryDatabaseConnector {
         return false;
     };
 
+    public executeQuery = async (query: string): Promise<any> => {
+        try {
+            const result = await this._sequelize.query(query);
+            return result;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            Logger.instance().log(`Error trace: ${error.stack}`);
+        }
+        return null;
+    };
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

@@ -593,16 +593,25 @@
         }
     },
     "Tenant": {
-        "Create": false,
-        "Delete": false,
-        "DemoteAdmin": false,
-        "GetById": false,
-        "GetTenantAdmins": false,
-        "GetTenantRegularUsers": false,
-        "GetTenantStats": false,
-        "PromoteTenantUserAsAdmin": false,
-        "Search": false,
-        "Update": false
+        "Tenants": {
+            "Create": false,
+            "Delete": false,
+            "DemoteAdmin": false,
+            "GetById": false,
+            "GetTenantAdmins": false,
+            "GetTenantRegularUsers": false,
+            "GetTenantStats": false,
+            "PromoteTenantUserAsAdmin": false,
+            "Search": false,
+            "Update": false
+        },
+        "Settings": {
+            "GetTenantSettingsTypes": true,
+            "GetTenantSettings": true,
+            "GetTenantSettingsByType": true,
+            "UpdateTenantSettingsByType": true,
+            "UpdateTenantSettings": true
+        }
     },
     "User": {
         "CustomTask": {

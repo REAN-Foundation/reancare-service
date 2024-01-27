@@ -529,8 +529,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     updateAppDownloadCount = async (createModel: AppDownloadDomainModel):
-    Promise<AppDownloadDto> => {
-
+        Promise<AppDownloadDto> => {
         try {
             const entity = {
                 AppName          : createModel.AppName,
@@ -1245,10 +1244,6 @@ export class StatisticsRepo implements IStatisticsRepo {
                [Op.eq] : null
            };
 
-           includePerson.where['DeletedAt'] = {
-               [Op.eq] : null
-           };
-
            if (filters.PastMonths != null)  {
                const notDeletedUsersDetails = [];
                for (var i = 0; i < filters.PastMonths; i++) {
@@ -1587,7 +1582,6 @@ export class StatisticsRepo implements IStatisticsRepo {
                  },
                  paranoid : false,
                  include  : []
-                 
              };
             const includePerson = {
                 model    : Person,
@@ -2969,7 +2963,7 @@ function getMinMaxDatesForYear(filters) {
 }
 
 function getMaxDate(filters):Date {
-    const numberOfDays = getNumberOfDays(filters.Year,filters.Month);
+    const numberOfDays = getNumberOfDays(filters.Year, filters.Month);
     const maxDate = new Date();
     maxDate.setUTCFullYear(filters.Year,filters.Month - 1, numberOfDays);
     maxDate.setUTCHours(0, 0, 0, 0);

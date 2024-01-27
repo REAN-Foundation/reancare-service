@@ -4,16 +4,10 @@ import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { AppName, CareplanCode, HealthSystem } from '../../../../../domain.types/statistics/aha/aha.type';
 
+////////////////////////////////////////////////////////////////////////////////////////////
+
 export class AhaStatisticsRepo implements IAhaStatisticsRepo {
-
-    //    getAhaStatistics = async () => {
-    //        const connection = await this.createDbConnection();
-    //        const [rows, fields] = await connection.execute('SELECT * FROM patients');
-    //        // console.log(JSON.stringify(rows));
-    //        // console.log('Our result is ',rows);
-    //        return rows;
-    //    };
-
+    
     getTotalPatients = async (): Promise<number> => {
         const query = `SELECT * FROM patients`;
         let connection: Connection = null;

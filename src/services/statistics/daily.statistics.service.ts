@@ -10,6 +10,8 @@ import { Logger } from "../../common/logger";
 import { Injector } from "../../startup/injector";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { StatisticSearchFilters } from "../../domain.types/statistics/statistics.search.type";
+import { ITenantRepo } from "../../database/repository.interfaces/tenant/tenant.repo.interface";
+import { TenantSearchFilters } from "../../domain.types/tenant/tenant.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +20,7 @@ export class DailyStatisticsService {
 
     constructor(
         @inject('IDailyStatisticsRepo') private _dailyStatisticsRepo: IDailyStatisticsRepo,
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
     ) {}
 
     getDailySystemStats = async (): Promise<DailySystemStatisticsDto> => {
@@ -28,15 +31,7 @@ export class DailyStatisticsService {
         return await this._dailyStatisticsRepo.getDailyTenantStats(tenantId);
     };
 
-    addDailySystemStats = async (model: DailySystemStatisticsDomainModel): Promise<DailySystemStatisticsDto> => {
-        return await this._dailyStatisticsRepo.addDailySystemStats(model);
-    };
-
-    addDailyTenantStats = async (model: DailyTenantStatisticsDomainModel): Promise<DailyTenantStatisticsDto> => {
-        return await this._dailyStatisticsRepo.addDailyTenantStats(model);
-    };
-
-    generateDailyStatistics = async (): Promise<void> => {
+    generateDailySystemStats = async (): Promise<void> => {
         try {
             let pdfModel = null;
             let fileResourceDto = null;
@@ -71,7 +66,7 @@ export class DailyStatisticsService {
                 throw new Error('Unable to generate stats!');
             }
             
-            const statsRecord = await this.addDailySystemStats(model);
+            const statsRecord = await this._dailyStatisticsRepo.addDailySystemStats(model);
             if (statsRecord) {
                 Logger.instance().log(`Daily stats: ${JSON.stringify(statsRecord)}`);
             }
@@ -81,7 +76,24 @@ export class DailyStatisticsService {
         }
     };
 
-    generateDailyTenantStatistics = async (tenantId: uuid): Promise<void> => {
+    generateDailyStatsForAllTenants = async (): Promise<void> => {
+        try {
+            const filter: TenantSearchFilters = {
+                ItemsPerPage : 1000,
+                PageIndex    : 0,
+            };
+            const tenantSearchResults = await this._tenantRepo.search(filter);
+            const tenantIds = tenantSearchResults.Items.map(t => t.id);
+            for (const tenantId of tenantIds) {
+                await this.generateDailyStatisForTenant(tenantId);
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Error generating statistics for all tenants : ${error.message}`);
+        }
+    };
+
+    generateDailyStatisForTenant = async (tenantId: uuid): Promise<void> => {
         try {
             const statisticsService = Injector.Container.resolve(StatisticsService);
             const dashboardStats = await statisticsService.createTenantDashboardStats(tenantId);
@@ -100,7 +112,7 @@ export class DailyStatisticsService {
                 throw new Error('Unable to generate stats!');
             }
             
-            const statsRecord = await this.addDailyTenantStats(model);
+            const statsRecord = await this._dailyStatisticsRepo.addDailyTenantStats(model);
             if (statsRecord) {
                 Logger.instance().log(`Daily stats: ${JSON.stringify(statsRecord)}`);
             }

@@ -10,7 +10,6 @@ import { CommunityNetworkService } from '../modules/community.bw/community.netwo
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
 import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
 import { UserService } from '../services/users/user/user.service';
-import { StatisticsService } from '../services/statistics/statistics.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
 import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
 
@@ -79,10 +78,9 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['DailyStatistics'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
-                var service = Injector.Container.resolve(StatisticsService);
-                await service.createSystemDashboardStats();
                 const dailyStatsService = Injector.Container.resolve(DailyStatisticsService);
-                await dailyStatsService.generateDailyStatistics();
+                await dailyStatsService.generateDailySystemStats();
+                await dailyStatsService.generateDailyStatsForAllTenants();
             })();
         });
     };

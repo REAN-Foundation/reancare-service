@@ -6,9 +6,11 @@ import { StatisticSearchFilters } from "../../domain.types/statistics/statistics
 import { YearWiseAddictionDistributionDetails, YearWiseAgeDetails, YearWiseCountryDetails, YearWiseDeviceDetails, YearWiseGenderDetails, YearWiseMajorAilmentDistributionDetails, YearWiseMaritalDetails, YearWiseUsers } from "../../domain.types/statistics/daily.statistics/daily.statistics.dto";
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
 import { Logger } from "../../common/logger";
-import { DailySystemStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
+import { DailySystemStatisticsDomainModel, DailyTenantStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { TimeHelper } from "../../common/time.helper";
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//TODO: Convert all ORM dependent methods used and implemented here to SQL queries for performance reasons.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -145,14 +147,12 @@ export class StatisticsService {
                 DashboardStats  : JSON.stringify(dashboardStats)
             };
 
-            const dailyStatistics = await this._dailyStatisticsRepo.addDailySystemStats(model);
-            if (dailyStatistics) {
-                Logger.instance().log('Daily users stattistics created successfully.');
-            } else {
-                Logger.instance().log('Error in creating daily users stattistics.');
+            const dailyStats = await this._dailyStatisticsRepo.addDailySystemStats(model);
+            if (!dailyStats) {
+                Logger.instance().log(`Error in creating dashboard statistics`);
             }
+            return dailyStats;
 
-            return dashboardStats;
         } catch (error) {
             Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
         }
@@ -161,6 +161,10 @@ export class StatisticsService {
     createTenantDashboardStats = async (tenantId: string): Promise<any> => {
         try {
             const filter = { TenantId: tenantId };
+
+            //TODO: Add Tenant Specific Statistics Extraction menthods and call them here...
+            // All methods should directly use SQL queries rather than ORM for performance reasons.
+
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
             const allYears = await this._statisticsRepo.getAllYears();
@@ -208,20 +212,19 @@ export class StatisticsService {
                 },
             };
 
-            const model: DailySystemStatisticsDomainModel = {
+            const model: DailyTenantStatisticsDomainModel = {
+                TenantId        : tenantId,
                 ReportDate      : TimeHelper.formatDateToLocal_YYYY_MM_DD(new Date()),
                 ReportTimestamp : new Date(),
                 DashboardStats  : JSON.stringify(dashboardStats)
             };
 
-            const dailyStatistics = await this._dailyStatisticsRepo.addDailySystemStats(model);
-            if (dailyStatistics) {
-                Logger.instance().log('Daily users stattistics created successfully.');
-            } else {
-                Logger.instance().log('Error in creating daily users stattistics.');
+            const dailyStats = await this._dailyStatisticsRepo.addDailyTenantStats(model);
+            if (!dailyStats) {
+                Logger.instance().log(`Error in creating dashboard statistics for tenant:${tenantId}`);
             }
+            return dailyStats;
 
-            return dashboardStats;
         } catch (error) {
             Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
         }

@@ -928,10 +928,10 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
 
    
     getHealthSystemEnrollmentCount = async (careplanCode:CareplanCode, healthSystem : HealthSystem): Promise<any> => {
-        let query = ahaSqlQuerries.queryHealthSystemEnrollmentCount;
-        query = query.replace('{{careplanCode}}', careplanCode);
-        query = query.replace('{{healthSystem}}', healthSystem);
-        const results = executeQuery(query);
+        // let query = ahaSqlQuerries.queryHealthSystemEnrollmentCount;
+        // query = query.replace('{{careplanCode}}', careplanCode);
+        // query = query.replace('{{healthSystem}}', healthSystem);
+        // const results = executeQuery(query);
         
         const query =  `select distinct (ce.PatientUserId), p.Phone, p.FirstName, p.LastName, ce.Plancode, ce.StartDate,
                         ce.EndDate, pt.HealthSystem, pt.AssociatedHospital, p.DeletedAt from careplan_enrollments as ce 

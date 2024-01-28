@@ -1,6 +1,6 @@
 import express from 'express';
 import { TenantController } from './tenant.controller';
-import { auth } from '../../auth/auth.handler';
+import { auth } from '../../../auth/auth.handler';
 
 export const register = (app: express.Application): void => {
 

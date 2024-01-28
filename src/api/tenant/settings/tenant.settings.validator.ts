@@ -51,7 +51,6 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateBoolean(request, 'Common.AddOns.Community', Where.Body, true, false);
         await this.validateBoolean(request, 'Common.AddOns.PatientSelfServicePortal', Where.Body, true, false);
 
-
         this.validateRequest(request);
 
         const model: CommonSettings = {
@@ -59,10 +58,7 @@ export class TenantSettingsValidator extends BaseValidator {
                 Vitals     : request.body.Common.Clinical.Vitals,
                 LabRecords : request.body.Common.Clinical.LabRecords,
                 Medications: request.body.Common.Clinical.Medications,
-                Careplans  : {
-                    Default: request.body.Common.Clinical.Careplans.Default,
-                    Custom : request.body.Common.Clinical.Careplans.Custom,
-                },
+                Careplans  : request.body.Common.Clinical.Careplans,
                 PatientStatusReports: request.body.Common.Clinical.PatientStatusReports,
                 AppointmentReminders: request.body.Common.Clinical.AppointmentReminders,
                 ScheduledAssesments : request.body.Common.Clinical.ScheduledAssesments,

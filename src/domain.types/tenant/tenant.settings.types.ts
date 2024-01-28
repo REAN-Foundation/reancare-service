@@ -21,14 +21,11 @@ export interface HealthcareInterfaces {
 }
 
 export interface ClinicalFeatures {
-    Vitals     : boolean;
-    LabRecords : boolean;
-    Medications: boolean;
-    Careplans  : {
-        Default: boolean;
-        Custom : boolean;
-    };
-    PatientStatusReports: true;
+    Vitals              : boolean;
+    LabRecords          : boolean;
+    Medications         : boolean;
+    Careplans           : boolean;
+    PatientStatusReports: boolean;
     AppointmentReminders: boolean;
     ScheduledAssesments : boolean;
     DocumentsManagement : boolean;

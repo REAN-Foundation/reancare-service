@@ -1,7 +1,7 @@
 import express from 'express';
-import { TenantSearchFilters } from '../../domain.types/tenant/tenant.search.types';
-import { TenantDomainModel } from '../../domain.types/tenant/tenant.domain.model';
-import { BaseValidator, Where } from '../base.validator';
+import { TenantSearchFilters } from '../../../domain.types/tenant/tenant.search.types';
+import { TenantDomainModel } from '../../../domain.types/tenant/tenant.domain.model';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

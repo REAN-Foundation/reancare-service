@@ -1,6 +1,14 @@
 import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant/tenant.settings.interface';
 import { injectable, inject } from 'tsyringe';
-import { ChatBotSettings, CommonSettings, FormsSettings, HealthcareInterfaces, PatientAppSettings, TenantSettingsDomainModel, TenantSettingsTypes } from '../../domain.types/tenant/tenant.settings.types';
+import { 
+    ChatBotSettings, 
+    CommonSettings, 
+    FormsSettings, 
+    HealthcareInterfaces, 
+    PatientAppSettings, 
+    TenantSettingsDomainModel, 
+    TenantSettingsTypes 
+} from '../../domain.types/tenant/tenant.settings.types';
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 
@@ -15,7 +23,8 @@ export class TenantSettingsService {
 
     //#region Publics
 
-    createDefaultSettings = async (tenantId: uuid, model: TenantSettingsDomainModel): Promise<TenantSettingsDto> => {
+    createDefaultSettings = async (tenantId: uuid): Promise<TenantSettingsDto> => {
+        const model: TenantSettingsDomainModel = this.getDefaultSettings();
         return await this._tenantSettingsRepo.createDefaultSettings(tenantId, model);
     };
 
@@ -77,5 +86,77 @@ export class TenantSettingsService {
     };
 
     //#endregion
+
+    private getDefaultSettings = (): TenantSettingsDomainModel => {
+
+        const healthcareInterfaces: HealthcareInterfaces = {
+            PatientApp: true,
+            ChatBot   : true,
+            Forms     : true,
+        };
+        const common: CommonSettings = {
+            Clinical: {
+                Vitals              : true,
+                LabRecords          : true,
+                Medications         : true,
+                Careplans           : false,
+                PatientStatusReports: false,
+                AppointmentReminders: true,
+                ScheduledAssesments : true,
+                DocumentsManagement : false,
+            },
+            External: {
+                FHIRStorage    : false,
+                EHIRIntegration: false,
+                ABDMIntegration: false,
+            },
+            AddOns: {
+                Gamification            : false,
+                LearningJourney         : false,
+                Community               : false,
+                PatientSelfServicePortal: false,
+            },
+        };
+
+        const patientApp: PatientAppSettings = {
+            Excercise: true,
+            Nutrition: true,
+            Community: false,
+            DeviceIntegration: {
+                Terra    : false,
+                SenseSemi: false,
+            },
+        };
+
+        const chatBot: ChatBotSettings = {
+            DefaultLanguage: 'en',
+            Description: 'Chatbot for patient interaction',
+            Icon: null,
+            Name: 'Chatbot',
+            Localization: true,
+            LocationContext: false,
+            MessageChannels: {
+                WhatsApp: false,
+                Telegram: true,
+            },
+            SupportChannels: {
+                ClickUp: false,
+                Slack: false,
+                Email: false,
+            },
+            Personalization: false,
+            QuicksightDashboard: true,
+        };
+
+        const model: TenantSettingsDomainModel = {
+            HealthcareInterfaces: healthcareInterfaces,
+            Common              : common,
+            PatientApp          : patientApp,
+            ChatBot             : chatBot,
+            Forms               : null,
+        };
+
+        return model;
+    };
 
 }

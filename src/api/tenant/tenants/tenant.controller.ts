@@ -1,21 +1,22 @@
 import express from 'express';
-import { TenantService } from '../../services/tenant/tenant.service';
-import { ResponseHandler } from '../../common/handlers/response.handler';
-import { Injector } from '../../startup/injector';
+import { TenantService } from '../../../services/tenant/tenant.service';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
+import { Injector } from '../../../startup/injector';
 import { TenantValidator } from './tenant.validator';
-import { ApiError } from '../../common/api.error';
-import { uuid } from '../../domain.types/miscellaneous/system.types';
-import { RoleService } from '../../services/role/role.service';
-import { PersonService } from '../../services/person/person.service';
-import { UserService } from '../../services/users/user/user.service';
-import { PersonRoleService } from '../../services/person/person.role.service';
-import { Roles } from '../../domain.types/role/role.types';
-import { UserDomainModel } from '../../domain.types/users/user/user.domain.model';
-import { Logger } from '../../common/logger';
-import { EmailService } from "../../modules/communication/email/email.service";
-import { EmailDetails } from "../../modules/communication/email/email.details";
-import { TenantDto } from '../../domain.types/tenant/tenant.dto';
-import { Helper } from '../../common/helper';
+import { ApiError } from '../../../common/api.error';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { RoleService } from '../../../services/role/role.service';
+import { PersonService } from '../../../services/person/person.service';
+import { UserService } from '../../../services/users/user/user.service';
+import { PersonRoleService } from '../../../services/person/person.role.service';
+import { Roles } from '../../../domain.types/role/role.types';
+import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
+import { Logger } from '../../../common/logger';
+import { EmailService } from "../../../modules/communication/email/email.service";
+import { EmailDetails } from "../../../modules/communication/email/email.details";
+import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
+import { Helper } from '../../../common/helper';
+import { TenantSettingsService } from '../../../services/tenant/tenant.settings.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,25 +24,20 @@ export class TenantController{
 
     //#region member variables and constructors
 
-    _service: TenantService = null;
+    _service: TenantService = Injector.Container.resolve(TenantService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _personRoleService: PersonRoleService = null;
+    _personRoleService: PersonRoleService = Injector.Container.resolve(PersonRoleService);
+
+    _tenantSettingsService: TenantSettingsService = Injector.Container.resolve(TenantSettingsService);
 
     _validator: TenantValidator = new TenantValidator();
 
-    constructor() {
-        this._service = Injector.Container.resolve(TenantService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._personRoleService = Injector.Container.resolve(PersonRoleService);
-    }
 
     //#endregion
 
@@ -85,11 +81,14 @@ export class TenantController{
             }
             Logger.instance().log(`Tenant admin user created successfully. UserName: ${adminUserName}`);
 
+            const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id);
+
             //Send email to the admin user with username and password
             await this.sendWelcomeEmail(tenant, adminUserName, adminPassword);
 
             ResponseHandler.success(request, response, 'Tenant added successfully!', 201, {
                 Tenant : tenant,
+                Settings: settings,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

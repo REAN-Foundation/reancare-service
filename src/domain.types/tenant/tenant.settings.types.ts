@@ -23,12 +23,11 @@ export interface HealthcareInterfaces {
 export interface ClinicalFeatures {
     Vitals              : boolean;
     LabRecords          : boolean;
+    Symptoms            : boolean;
+    DrugsManagement     : boolean;
     Medications         : boolean;
     Careplans           : boolean;
-    PatientStatusReports: boolean;
-    AppointmentReminders: boolean;
-    ScheduledAssesments : boolean;
-    DocumentsManagement : boolean;
+    Assessments         : boolean;
 }
 
 export interface ExternalIntegrations {
@@ -43,16 +42,31 @@ export interface DeviceIntegration {
 }
 
 export interface AddOnFeatures {
+    HospitalSystems         : boolean,
     Gamification            : boolean,
     LearningJourney         : boolean,
     Community               : boolean,
     PatientSelfServicePortal: boolean;
+    PatientStatusReports    : boolean;
+    DocumentsManagement     : boolean;
+    AppointmentReminders    : boolean;
+    Organizations           : boolean;
+    Cohorts                 : boolean;
+    Notifications           : boolean;
+    Newsfeeds               : boolean;
+    Notices                 : boolean;
+}
+
+export interface AnalysisSettings {
+    CustomQueries: boolean;
+    Quicksight   : boolean;
 }
 
 export interface CommonSettings {
     Clinical : ClinicalFeatures;
     External : ExternalIntegrations;
     AddOns   : AddOnFeatures;
+    Analysis : AnalysisSettings;
 }
 
 export interface PatientAppSettings {
@@ -80,7 +94,6 @@ export interface ChatBotSettings {
     DefaultLanguage    : string;
     MessageChannels    : MessageChannels;
     SupportChannels    : SupportChannels;
-    QuicksightDashboard: boolean,
     Personalization    : boolean,
     LocationContext    : boolean,
     Localization       : boolean,

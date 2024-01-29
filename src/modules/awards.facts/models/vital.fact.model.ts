@@ -1,4 +1,3 @@
-import { float } from "aws-sdk/clients/cloudfront";
 import "reflect-metadata";
 import {
     Column,
@@ -24,10 +23,10 @@ export class VitalFact {
     VitalName: string;
 
     @Column({ nullable: true, default: null })
-    VitalPrimaryValue: float;
+    VitalPrimaryValue: number;
 
     @Column({ nullable: true, default: null })
-    VitalSecondaryValue: float;
+    VitalSecondaryValue: number;
 
     @Column({ type: 'varchar', length: 16, nullable: true })
     Unit: string;

@@ -20,18 +20,131 @@ export class EHRLabService {
         }
     };
 
-    public addEHRRecord = (model: LabRecordDto, appName?: string) => {
-        if (model) {
-            EHRAnalyticsHandler.addIntegerRecord(
+    public addEHRRecord = (model: LabRecordDto, appNames?: string) => {
+        if (model.DisplayName === "Total Cholesterol") {
+            EHRAnalyticsHandler.addLabRecord(
                 model.PatientUserId,
                 model.id,
                 null,
                 EHRRecordTypes.LabRecord,
                 model.PrimaryValue,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.Unit,
-                model.DisplayName,
-                model.DisplayName,
-                appName,
+                appNames,
+                model.RecordedAt ? model.RecordedAt : null
+            );
+        }
+
+        if (model.DisplayName === "HDL") {
+            EHRAnalyticsHandler.addLabRecord(
+                model.PatientUserId,
+                model.id,
+                null,
+                EHRRecordTypes.LabRecord,
+                null,
+                model.PrimaryValue,
+                null,
+                null,
+                null,
+                null,
+                null,
+                model.Unit,
+                appNames,
+                model.RecordedAt ? model.RecordedAt : null
+            );
+        }
+        if (model.DisplayName === "LDL") {
+            EHRAnalyticsHandler.addLabRecord(
+                model.PatientUserId,
+                model.id,
+                null,
+                EHRRecordTypes.LabRecord,
+                null,
+                null,
+                model.PrimaryValue,
+                null,
+                null,
+                null,
+                null,
+                model.Unit,
+                appNames,
+                model.RecordedAt ? model.RecordedAt : null
+            );
+        }
+        if (model.DisplayName === "Lipoprotein") {
+            EHRAnalyticsHandler.addLabRecord(
+                model.PatientUserId,
+                model.id,
+                null,
+                EHRRecordTypes.LabRecord,
+                null,
+                null,
+                null,
+                model.PrimaryValue,
+                null,
+                null,
+                null,
+                model.Unit,
+                appNames,
+                model.RecordedAt ? model.RecordedAt : null
+            );
+        }
+        if (model.DisplayName === "A1C Level") {
+            EHRAnalyticsHandler.addLabRecord(
+                model.PatientUserId,
+                model.id,
+                null,
+                EHRRecordTypes.LabRecord,
+                null,
+                null,
+                null,
+                null,
+                model.PrimaryValue,
+                null,
+                null,
+                model.Unit,
+                appNames,
+                model.RecordedAt ? model.RecordedAt : null
+            );
+        }
+        if (model.DisplayName === "Triglyceride Level") {
+            EHRAnalyticsHandler.addLabRecord(
+                model.PatientUserId,
+                model.id,
+                null,
+                EHRRecordTypes.LabRecord,
+                null,
+                null,
+                null,
+                null,
+                null,
+                model.PrimaryValue,
+                null,
+                model.Unit,
+                appNames,
+                model.RecordedAt ? model.RecordedAt : null
+            );
+        }
+        if (model.DisplayName === "Cholesterol Ratio") {
+            EHRAnalyticsHandler.addLabRecord(
+                model.PatientUserId,
+                model.id,
+                null,
+                EHRRecordTypes.LabRecord,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                model.PrimaryValue,
+                model.Unit,
+                appNames,
                 model.RecordedAt ? model.RecordedAt : null
             );
         }
@@ -39,9 +152,11 @@ export class EHRLabService {
 
     public async addEHRLabRecordForAppNames(r: LabRecordDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecord(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecord(r, JSON.stringify(appNames));
     }
 
 }

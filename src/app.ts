@@ -15,6 +15,7 @@ import { AwardsFactsService } from './modules/awards.facts/awards.facts.service'
 import { DatabaseClient } from './common/database.utils/dialect.clients/database.client';
 import { DatabaseSchemaType } from './common/database.utils/database.config';
 import { Injector } from './startup/injector';
+import { PatientAppNameCache } from './modules/ehr.analytics/patient.appname.cache';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -75,6 +76,8 @@ export default class Application {
             process.on('exit', code => {
                 Logger.instance().log(`Process exited with code: ${code}`);
             });
+
+            await PatientAppNameCache.clear();
 
             //Start listening
             await this.listen();

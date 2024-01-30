@@ -9,129 +9,176 @@ import { PatientAppNameCache } from "../patient.appname.cache";
 @injectable()
 export class EHRNutritionService {
 
-    public addEHRRecord = (model: FoodConsumptionDto, appName?: string) => {
+    public addEHRRecord = (model: FoodConsumptionDto, appNames?: string) => {
         if (model.FoodTypes[0] === "GenericNutrition") {
-            EHRAnalyticsHandler.addBooleanRecord(
+            EHRAnalyticsHandler.addNutritionRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Nutrition,
+                'Were most of your food choices healthy today?',
                 model.UserResponse,
                 null,
                 null,
-                'Were most of your food choices healthy today?',
-                appName,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
-        if (model.FoodTypes[0] === "Fruit") {
-            EHRAnalyticsHandler.addFloatRecord(
+        if (model.FoodTypes[0] === "Fruits") {
+            EHRAnalyticsHandler.addNutritionRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Nutrition,
+                null,
+                null,
                 model.Servings,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.ServingUnit,
-                'How many servings of fruit did you eat today?',
-                'How many servings of fruit did you eat today?',
-                appName,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
         if (model.FoodTypes[0] === "Vegetables") {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addNutritionRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Nutrition,
+                null,
+                null,
+                null,
+                null,
                 model.Servings,
+                null,
+                null,
+                null,
+                null,
                 model.ServingUnit,
-                'How many servings of vegetables did you eat today?',
-                'How many servings of vegetables did you eat today?',
-                appName,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
         if (model.FoodTypes[0] === "Sugary drinks") {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addNutritionRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Nutrition,
+                null,
+                null,
+                null,
                 model.Servings,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.ServingUnit,
-                'How many servings of sugary drinks did you drink today?',
-                'How many servings of sugary drinks did you drink today?',
-                appName,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
         if (model.FoodTypes[0] === "Salt") {
-            EHRAnalyticsHandler.addBooleanRecord(
+            EHRAnalyticsHandler.addNutritionRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Nutrition,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.UserResponse,
-                model.ServingUnit,
-                'Did you choose or prepare foods with little or no salt today?',
-                'Did you choose or prepare foods with little or no salt today?',
-                appName,
+                null,
+                null,
+                null,
+                null,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
-
             );
         }
         if (model.FoodTypes[0] === "Sea food") {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addNutritionRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Nutrition,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.Servings,
+                null,
+                null,
                 model.ServingUnit,
-                'How many servings of fish or shellfish/seafood did you eat today?',
-                'How many servings of fish or shellfish/seafood did you eat today?',
-                appName,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
-
             );
         }
         if (model.FoodTypes[0] === "Grains") {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addNutritionRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Nutrition,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.Servings,
+                null,
                 model.ServingUnit,
-                'How many servings of whole grains do you consume per day?',
-                'How many servings of whole grains do you consume per day?',
-                appName,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
-
             );
         }
         if (model.FoodTypes[0] === "Protein") {
-            EHRAnalyticsHandler.addBooleanRecord(
+            EHRAnalyticsHandler.addNutritionRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Nutrition,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.UserResponse,
-                model.ServingUnit,
-                'Did you select healthy sources of protein today?',
-                'Did you select healthy sources of protein today?',
-                appName,
+                null,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
     };
 
-    public addEHRRecordNutritionForAppNames = async (model: FoodConsumptionDto, appName?: string) => {
+    public addEHRRecordNutritionForAppNames = async (model: FoodConsumptionDto) => {
         const eligibleAppNames = await PatientAppNameCache.get(model.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecord(model, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecord(model, JSON.stringify(appNames));
     };
 
 }

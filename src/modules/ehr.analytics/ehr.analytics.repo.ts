@@ -1,4 +1,4 @@
-import { EHRDynamicRecordDomainModel, EHRStaticRecordDomainModel } from './ehr.domain.models/ehr.analytics.domain.model';
+import { EHRDynamicRecordDomainModel, EHRLabsDomainModel, EHRMentalWellbeingDomainModel, EHRNutritionsDomainModel, EHRPhysicalActivityDomainModel, EHRStaticRecordDomainModel, EHRSymptomsDomainModel, EHRVitalsDomainModel } from './ehr.domain.models/ehr.analytics.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -61,56 +61,328 @@ export class EHRAnalyticsRepo {
         return staticData;
     };
 
-    public create = async (model: EHRDynamicRecordDomainModel): Promise<boolean> => {
+    public createVitalRecord = async (model: EHRVitalsDomainModel): Promise<boolean> => {
         try {
 
-            var targetModel = EHRModels[model.Type];
-            Logger.instance().log('target model ==> ' + targetModel);
+            //var targetModel = EHRModels[model.VitalType];
+            //Logger.instance().log('target model ==> ' + targetModel);
 
-            const existing = await this._modelResolver[targetModel].findOne({
+            const existing = await EHRVitalData.findOne({
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
-                    Type          : model.Type,
-                    AppName       : model.AppName
+                    VitalType     : model.VitalType,
+                    AppNames      : model.AppNames
                 }
             });
 
             if (existing) {
-                existing.AppName       = model.AppName;
-                existing.Provider      = model.Provider;
-                existing.ValueInt      = model.ValueInt;
-                existing.ValueFloat    = model.ValueFloat;
-                existing.ValueString   = model.ValueString;
-                existing.ValueBoolean  = model.ValueBoolean;
-                existing.ValueDate     = model.ValueDate;
-                existing.ValueDataType = model.ValueDataType;
-                existing.ValueName     = model.ValueName;
-                existing.ValueUnit     = model.ValueUnit;
-                existing.RecordDate    = model.RecordDate;
+                existing.AppNames               = model.AppNames;
+                existing.Provider               = model.Provider;
+                existing.VitalType              = model.VitalType;
+                existing.BloodGlucose           = model.BloodGlucose;
+                existing.BloodPressureSystolic  = model.BloodPressureSystolic;
+                existing.BloodPressureDiastolic = model.BloodPressureDiastolic;
+                existing.Pulse                  = model.Pulse;
+                existing.BloodOxygenSaturation  = model.BloodOxygenSaturation;
+                existing.BodyTemperature        = model.BodyTemperature;
+                existing.BodyHeight             = model.BodyHeight;
+                existing.BodyWeight             = model.BodyWeight;
+                existing.Unit                   = model.Unit;
+                existing.RecordDate             = model.RecordDate;
 
                 await existing.save();
 
                 return true;
             }
             const entity = {
-                AppName       : model.AppName,
-                PatientUserId : model.PatientUserId,
-                RecordId      : model.RecordId,
-                Provider      : model.Provider,
-                Type          : model.Type,
-                Name          : model.Name,
-                ValueInt      : model.ValueInt,
-                ValueFloat    : model.ValueFloat,
-                ValueString   : model.ValueString,
-                ValueBoolean  : model.ValueBoolean,
-                ValueDate     : model.ValueDate,
-                ValueDataType : model.ValueDataType,
-                ValueName     : model.ValueName,
-                ValueUnit     : model.ValueUnit,
-                RecordDate    : model.RecordDate,
+                PatientUserId         : model.PatientUserId,
+                RecordId              : model.RecordId,
+                Provider              : model.Provider,
+                VitalType             : model.VitalType,
+                AppNames              : model.AppNames,
+                BloodGlucose          : model.BloodGlucose,
+                BloodPressureSystolic : model.BloodPressureSystolic,
+                BloodPressureDiastolic: model.BloodPressureDiastolic,
+                Pulse                 : model.Pulse,
+                BloodOxygenSaturation : model.BloodOxygenSaturation,
+                BodyTemperature       : model.BodyTemperature,
+                BodyHeight            : model.BodyHeight,
+                BodyWeight            : model.BodyWeight,
+                Unit                  : model.Unit,
+                RecordDate            : model.RecordDate,
+
             };
-            const record = await this._modelResolver[targetModel].create(entity);
+            const record = await EHRVitalData.create(entity);
+            return record != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public createMentalWellbeingRecord = async (model: EHRMentalWellbeingDomainModel): Promise<boolean> => {
+        try {
+
+            //var targetModel = EHRModels[model.Type];
+            //Logger.instance().log('target model ==> ' + targetModel);
+
+            const existing = await EHRMentalWellBeingData.findOne({
+                where : {
+                    PatientUserId: model.PatientUserId,
+                    RecordId     : model.RecordId,
+                    Type         : model.Type,
+                    AppNames     : model.AppNames
+                }
+            });
+
+            if (existing) {
+                existing.AppNames       = model.AppNames;
+                existing.Provider       = model.Provider;
+                existing.Type           = model.Type;
+                existing.SleepMins      = model.SleepMins;
+                existing.MeditationMins = model.MeditationMins;
+                existing.Unit           = model.Unit;
+                existing.RecordDate     = model.RecordDate;
+
+                await existing.save();
+
+                return true;
+            }
+            const entity = {
+                PatientUserId          : model.PatientUserId,
+                RecordId               : model.RecordId,
+                Provider               : model.Provider,
+                Type                   : model.Type,
+                AppNames               : model.AppNames,
+                SleepMins              : model.SleepMins,
+                MeditationMins         : model.MeditationMins,
+                Unit                   : model.Unit,
+                RecordDate             : model.RecordDate,
+
+            };
+            const record = await EHRMentalWellBeingData.create(entity);
+            return record != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public createPhysicalActivityRecord = async (model: EHRPhysicalActivityDomainModel): Promise<boolean> => {
+        try {
+
+            //var targetModel = EHRModels[model.Type];
+            //Logger.instance().log('target model ==> ' + targetModel);
+
+            const existing = await EHRPhysicalActivityData.findOne({
+                where : {
+                    PatientUserId: model.PatientUserId,
+                    RecordId     : model.RecordId,
+                    Type         : model.Type,
+                    AppNames     : model.AppNames
+                }
+            });
+
+            if (existing) {
+                existing.AppNames                     = model.AppNames;
+                existing.Provider                     = model.Provider;
+                existing.Type                         = model.Type;
+                existing.StepCounts                   = model.StepCounts;
+                existing.StandMins                    = model.StandMins;
+                existing.ExerciseMins                 = model.ExerciseMins;
+                existing.PhysicalActivityQuestion     = model.PhysicalActivityQuestion;
+                existing.PhysicalActivityUserResponse = model.PhysicalActivityUserResponse;
+                existing.Unit                         = model.Unit;
+                existing.RecordDate                   = model.RecordDate;
+
+                await existing.save();
+
+                return true;
+            }
+            const entity = {
+                PatientUserId               : model.PatientUserId,
+                RecordId                    : model.RecordId,
+                Provider                    : model.Provider,
+                Type                        : model.Type,
+                AppNames                    : model.AppNames,
+                StepCounts                  : model.StepCounts,
+                StandMins                   : model.StandMins,
+                ExerciseMins                : model.ExerciseMins,
+                PhysicalActivityQuestion    : model.PhysicalActivityQuestion,
+                PhysicalActivityUserResponse: model.PhysicalActivityUserResponse,
+                Unit                        : model.Unit,
+                RecordDate                  : model.RecordDate,
+
+            };
+            const record = await EHRPhysicalActivityData.create(entity);
+            return record != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public createSymptomRecord = async (model: EHRSymptomsDomainModel): Promise<boolean> => {
+        try {
+
+            //var targetModel = EHRModels[model.Type];
+            //Logger.instance().log('target model ==> ' + targetModel);
+
+            const existing = await EHRSymptomData.findOne({
+                where : {
+                    PatientUserId: model.PatientUserId,
+                    RecordId     : model.RecordId,
+                    Type         : model.Type,
+                    AppNames     : model.AppNames
+                }
+            });
+
+            if (existing) {
+                existing.AppNames                    = model.AppNames;
+                existing.Provider                    = model.Provider;
+                existing.Type                        = model.Type,
+                existing.Mood                        = model.Mood;
+                existing.Feeling                     = model.Feeling;
+                existing.EnergyLevels                = model.EnergyLevels;
+                existing.SymptomQuestion             = model.SymptomQuestion;
+                existing.SymptomQuestionUserResponse = model.SymptomQuestionUserResponse;
+                existing.RecordDate                  = model.RecordDate;
+
+                await existing.save();
+
+                return true;
+            }
+            const entity = {
+                PatientUserId              : model.PatientUserId,
+                RecordId                   : model.RecordId,
+                Provider                   : model.Provider,
+                AppNames                   : model.AppNames,
+                Type                       : model.Type,
+                Mood                       : model.Mood,
+                Feeling                    : model.Feeling,
+                EnergyLevels               : model.EnergyLevels,
+                SymptomQuestion            : model.SymptomQuestion,
+                SymptomQuestionUserResponse: model.SymptomQuestionUserResponse,
+                RecordDate                 : model.RecordDate,
+
+            };
+            const record = await EHRSymptomData.create(entity);
+            return record != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public createLabRecord = async (model: EHRLabsDomainModel): Promise<boolean> => {
+        try {
+
+            //var targetModel = EHRModels[model.Type];
+            //Logger.instance().log('target model ==> ' + targetModel);
+
+            const existing = await EHRLabData.findOne({
+                where : {
+                    PatientUserId: model.PatientUserId,
+                    RecordId     : model.RecordId,
+                    Type         : model.Type,
+                    AppNames     : model.AppNames
+                }
+            });
+
+            if (existing) {
+                existing.AppNames          = model.AppNames;
+                existing.Provider          = model.Provider;
+                existing.Type              = model.Type;
+                existing.TotalCholesterol  = model.TotalCholesterol;
+                existing.HDL               = model.HDL;
+                existing.LDL               = model.LDL;
+                existing.Lipoprotein       = model.Lipoprotein;
+                existing.A1CLevel          = model.A1CLevel;
+                existing.CholesterolRatio  = model.CholesterolRatio;
+                existing.TriglycerideLevel = model.TriglycerideLevel;
+                existing.Unit              = model.Unit;
+                existing.RecordDate        = model.RecordDate;
+
+                await existing.save();
+
+                return true;
+            }
+            const entity = {
+                PatientUserId    : model.PatientUserId,
+                RecordId         : model.RecordId,
+                Provider         : model.Provider,
+                Type             : model.Type,
+                AppNames         : model.AppNames,
+                TotalCholesterol : model.TotalCholesterol,
+                HDL              : model.HDL,
+                LDL              : model.LDL,
+                Lipoprotein      : model.Lipoprotein,
+                A1CLevel         : model.A1CLevel,
+                CholesterolRatio : model.CholesterolRatio,
+                TriglycerideLevel: model.TriglycerideLevel,
+                Unit             : model.Unit,
+                RecordDate       : model.RecordDate,
+
+            };
+            const record = await EHRLabData.create(entity);
+            return record != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public createNutritionRecord = async (model: EHRNutritionsDomainModel): Promise<boolean> => {
+        try {
+
+            //var targetModel = EHRModels[model.Type];
+            //Logger.instance().log('target model ==> ' + targetModel);
+
+            const existing = await EHRNutritionData.findOne({
+                where : {
+                    PatientUserId: model.PatientUserId,
+                    RecordId     : model.RecordId,
+                    Type         : model.Type,
+                    AppNames     : model.AppNames
+                }
+            });
+
+            if (existing) {
+                existing.AppNames                      = model.AppNames;
+                existing.Provider                      = model.Provider;
+                existing.Type                          = model.Type;
+                existing.NutritionQuestion             = model.NutritionQuestion;
+                existing.NutritionQuestionUserResponse = model.NutritionQuestionUserResponse;
+                existing.FruitCups                     = model.FruitCups;
+                existing.SugaryDrinkServings           = model.SugaryDrinkServings;
+                existing.VegetableCups                 = model.VegetableCups;
+                existing.TakenSalt                     = model.TakenSalt;
+                existing.SeaFoodServings               = model.SeaFoodServings;
+                existing.GrainServings                 = model.GrainServings;
+                existing.TakenProteins                 = model.TakenProteins;
+                existing.ServingUnit                   = model.ServingUnit;
+                existing.RecordDate                    = model.RecordDate;
+
+                await existing.save();
+
+                return true;
+            }
+            const entity = {
+                PatientUserId                : model.PatientUserId,
+                RecordId                     : model.RecordId,
+                Provider                     : model.Provider,
+                Type                         : model.Type,
+                AppNames                     : model.AppNames,
+                NutritionQuestion            : model.NutritionQuestion,
+                NutritionQuestionUserResponse: model.NutritionQuestionUserResponse,
+                FruitCups                    : model.FruitCups,
+                SugaryDrinkServings          : model.SugaryDrinkServings,
+                VegetableCups                : model.VegetableCups,
+                TakenSalt                    : model.TakenSalt,
+                SeaFoodServings              : model.SeaFoodServings,
+                GrainServings                : model.GrainServings,
+                TakenProteins                : model.TakenProteins,
+                ServingUnit                  : model.ServingUnit,
+                RecordDate                   : model.RecordDate,
+
+            };
+            const record = await EHRNutritionData.create(entity);
             return record != null;
         } catch (error) {
             Logger.instance().log(error.message);

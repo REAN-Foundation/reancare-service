@@ -19,18 +19,23 @@ export class EHRVitalService {
         await EHRAnalyticsHandler.deleteVitalsRecord(id);
     };
 
-    private addEHRRecordBloodGlucose = (model: BloodGlucoseDto, appName?: string) => {
+    private addEHRRecordBloodGlucose = (model: BloodGlucoseDto, appNames?: string) => {
         if (model.BloodGlucose) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addVitalRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.BloodGlucose,
                 model.BloodGlucose,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.Unit,
-                null,
-                null,
-                appName,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
@@ -38,67 +43,87 @@ export class EHRVitalService {
 
     private addEHRRecordBloodPressure = (
         model: BloodPressureDto,
-        appName?: string) => {
+        appNames?: string) => {
 
         if (model.Systolic) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addVitalRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.BloodPressure,
+                null,
                 model.Systolic,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.Unit,
-                'Systolic Blood Pressure',
-                'Blood Pressure',
-                appName,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
         if (model.Diastolic) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addVitalRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.BloodPressure,
+                null,
+                null,
                 model.Diastolic,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.Unit,
-                'Distolic Blood Pressure',
-                'Blood Pressure',
-                appName,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
     };
 
-    private addEHRRecordPulse = (model: PulseDto, appName?: string) => {
+    private addEHRRecordPulse = (model: PulseDto, appNames?: string) => {
         if (model.Pulse) {
-            EHRAnalyticsHandler.addIntegerRecord(
+            EHRAnalyticsHandler.addVitalRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.Pulse,
+                null,
+                null,
+                null,
                 model.Pulse,
+                null,
+                null,
+                null,
+                null,
                 model.Unit,
-                null,
-                null,
-                appName,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
     };
 
-    private addEHRRecordBodyHeight = (model: BodyHeightDto, appName?: string) => {
+    private addEHRRecordBodyHeight = (model: BodyHeightDto, appNames?: string) => {
         if (model.BodyHeight) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addVitalRecord(
                 model.PatientUserId,
                 model.id,
                 null,
                 EHRRecordTypes.BodyHeight,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.BodyHeight,
                 model.Unit,
-                null,
-                null,
-                appName,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
 
@@ -108,57 +133,72 @@ export class EHRVitalService {
                 {
                     BodyHeight : model.BodyHeight,
                 },
-                appName
+                appNames
             );
         }
     };
 
-    private addEHRRecordBodyWeight = (model: BodyWeightDto, appName?: string) => {
+    private addEHRRecordBodyWeight = (model: BodyWeightDto, appNames?: string) => {
         if (model.BodyWeight) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addVitalRecord(
                 model.PatientUserId,
                 model.id,
                 null,
                 EHRRecordTypes.BodyWeight,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.BodyWeight,
+                null,
+                null,
                 model.Unit,
-                null,
-                null,
-                appName,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
     };
 
-    private addEHRRecordBodyTemerature = (model: BodyTemperatureDto, appName?: string) => {
+    private addEHRRecordBodyTemerature = (model: BodyTemperatureDto, appNames?: string) => {
         if (model.BodyTemperature) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addVitalRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.BodyTemperature,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 model.BodyTemperature,
+                null,
                 model.Unit,
-                null,
-                null,
-                appName,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
     };
 
-    private addEHRRecordBloodOxygenSaturation = (model: BloodOxygenSaturationDto, appName?: string) => {
+    private addEHRRecordBloodOxygenSaturation = (model: BloodOxygenSaturationDto, appNames?: string) => {
         if (model.BloodOxygenSaturation) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addVitalRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
-                EHRRecordTypes.BloodOxygenSaturation,
+                EHRRecordTypes.BodyTemperature,
+                null,
+                null,
+                null,
+                null,
                 model.BloodOxygenSaturation,
+                null,
+                null,
+                null,
                 model.Unit,
-                null,
-                null,
-                appName,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
@@ -166,51 +206,65 @@ export class EHRVitalService {
 
     public async addEHRBodyHeightForAppNames(r: BodyHeightDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordBodyHeight(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordBodyHeight(r, JSON.stringify(appNames));
     }
 
     public async addEHRBodyTemperatureForAppNames(r: BodyTemperatureDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordBodyTemerature(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordBodyTemerature(r, JSON.stringify(appNames));
     }
 
     public async addEHRBodyWeightForAppNames(r: BodyWeightDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordBodyWeight(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordBodyWeight(r, JSON.stringify(appNames));
     }
 
     public async addEHRBloodOxygenSaturationForAppNames(r: BloodOxygenSaturationDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordBloodOxygenSaturation(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordBloodOxygenSaturation(r, JSON.stringify(appNames));
     }
 
     public async addEHRBloodPressureForAppNames(r: BloodPressureDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordBloodPressure(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordBloodPressure(r, JSON.stringify(appNames));
     }
 
     public async addEHRPulseForAppNames(r: PulseDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordPulse(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordPulse(r, JSON.stringify(appNames));
     }
 
     public async addEHRBloodGlucoseForAppNames(r: BloodGlucoseDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordBloodGlucose(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordBloodGlucose(r, JSON.stringify(appNames));
     }
 
 }

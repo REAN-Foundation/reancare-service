@@ -43,7 +43,7 @@ export default class EHRPhysicalActivityData extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    AppName: string;
+    AppNames: string;
 
     @IsUUID(4)
     @Column({
@@ -65,64 +65,42 @@ export default class EHRPhysicalActivityData extends Model {
     })
     Type: string;
 
-    @Length({ max: 256 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    Name: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    ValueString: string;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    ValueInt: number;
+    StepCounts: number;
 
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueFloat: number;
+    StandMins: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    ExerciseMins: number;
+
+    @Column({
+        type      : DataType.STRING(1028),
+        allowNull : true,
+    })
+    PhysicalActivityQuestion: string;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    ValueBoolean: boolean;
-
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    ValueDate: Date;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    ValueName: string;
+    PhysicalActivityUserResponse: boolean;
 
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    ValueDataType: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    ValueUnit: string;
+    Unit: string;
 
     @Column({
         type      : DataType.STRING(256),

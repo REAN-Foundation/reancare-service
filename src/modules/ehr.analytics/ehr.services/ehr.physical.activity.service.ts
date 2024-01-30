@@ -11,67 +11,75 @@ import { EHRRecordTypes } from "../ehr.domain.models/ehr.record.types";
 @injectable()
 export class EHRPhysicalActivityService {
 
-    public addEHRRecordStand = (model: StandDto, appName?: string) => {
+    public addEHRRecordStand = (model: StandDto, appNames?: string) => {
         if (model.Stand) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addPhysicalActivityRecord(
                 model.PatientUserId,
                 model.id,
                 null,
-                EHRRecordTypes.PhysicalActivity,
+                EHRRecordTypes.PhysicalActivityStand,
+                null,
                 model.Stand,
-                model.Unit,
-                'Stand',
                 null,
-                appName,
+                null,
+                null,
+                model.Unit,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
     };
 
-    public addEHRRecordStepCount = (model: StepCountDto, appName?: string) => {
+    public addEHRRecordStepCount = (model: StepCountDto, appNames?: string) => {
         if (model.StepCount) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addPhysicalActivityRecord(
                 model.PatientUserId,
                 model.id,
                 null,
-                EHRRecordTypes.PhysicalActivity,
+                EHRRecordTypes.PhysicalActivityStepCounts,
                 model.StepCount,
-                model.Unit,
-                'Step-count',
                 null,
-                appName,
+                null,
+                null,
+                null,
+                model.Unit,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
     };
 
-    public addEHRRecordPhysicalActivity = (model: PhysicalActivityDto, appName?: string) => {
+    public addEHRRecordPhysicalActivity = (model: PhysicalActivityDto, appNames?: string) => {
         if (model.PhysicalActivityQuestionAns !== null) {
-            EHRAnalyticsHandler.addBooleanRecord(
+            EHRAnalyticsHandler.addPhysicalActivityRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
                 EHRRecordTypes.PhysicalActivity,
-                model.PhysicalActivityQuestionAns,
+                null,
                 null,
                 null,
                 'Did you add movement to your day today?',
-                appName,
+                model.PhysicalActivityQuestionAns,
+                null,
+                appNames,
                 model.CreatedAt ? model.CreatedAt : null
             );
         }
 
         if (model.DurationInMin) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addPhysicalActivityRecord(
                 model.PatientUserId,
                 model.id,
                 model.Provider,
-                EHRRecordTypes.PhysicalActivity,
+                EHRRecordTypes.PhysicalActivityExercise,
+                null,
+                null,
                 model.DurationInMin,
+                null,
+                null,
                 'mins',
-                model.Category,
-                'Exercise',
-                appName,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
@@ -80,23 +88,29 @@ export class EHRPhysicalActivityService {
 
     public async addEHRRecordStandForAppNames(r: StandDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for await (var appName of eligibleAppNames) {
-            this.addEHRRecordStand(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordStand(r, JSON.stringify(appNames));
     }
 
     public async addEHRRecordStepCountForAppNames(r: StepCountDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for await (var appName of eligibleAppNames) {
-            this.addEHRRecordStepCount(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordStepCount(r, JSON.stringify(appNames));
     }
 
     public async addEHRRecordPhysicalActivityForAppNames(r: PhysicalActivityDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for await (var appName of eligibleAppNames) {
-            this.addEHRRecordPhysicalActivity(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordPhysicalActivity(r, JSON.stringify(appNames));
     }
 
 }

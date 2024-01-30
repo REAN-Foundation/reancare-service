@@ -25,7 +25,7 @@ export class StepCountService {
         return await this._stepCountRepo.getByRecordDate(recordDate);
     };
 
-    getByRecordDateAndPatientUserId = async (recordDate: Date, patientUserId : string, provider: string):
+    getByRecordDateAndPatientUserId = async (recordDate: Date, patientUserId : string, provider?: string):
         Promise<StepCountDto> => {
         return await this._stepCountRepo.getByRecordDateAndPatientUserId(recordDate, patientUserId, provider);
     };

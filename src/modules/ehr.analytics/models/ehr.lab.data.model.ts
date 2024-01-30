@@ -43,7 +43,7 @@ export default class EHRLabData extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    AppName: string;
+    AppNames: string;
 
     @IsUUID(4)
     @Column({
@@ -65,64 +65,54 @@ export default class EHRLabData extends Model {
     })
     Type: string;
 
-    @Length({ max: 256 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    Name: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    ValueString: string;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    ValueInt: number;
+    TotalCholesterol: number;
 
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueFloat: number;
+    HDL: number;
 
     @Column({
-        type      : DataType.BOOLEAN,
+        type      : DataType.INTEGER,
         allowNull : true,
     })
-    ValueBoolean: boolean;
+    LDL: number;
 
     @Column({
-        type      : DataType.DATE,
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueDate: Date;
+    Lipoprotein: number;
 
-    @Length({ max: 256 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueName: string;
+    A1CLevel: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    TriglycerideLevel: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    CholesterolRatio: number;
 
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    ValueDataType: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    ValueUnit: string;
+    Unit: string;
 
     @Column({
         type      : DataType.STRING(256),

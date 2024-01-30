@@ -43,7 +43,7 @@ export default class EHRSymptomData extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    AppName: string;
+    AppNames: string;
 
     @IsUUID(4)
     @Column({
@@ -70,59 +70,32 @@ export default class EHRSymptomData extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    Name: string;
+    Mood: string;
 
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    ValueString: string;
+    Feeling: string;
 
     @Column({
-        type      : DataType.INTEGER,
+        type      : DataType.STRING(1028),
         allowNull : true,
     })
-    ValueInt: number;
+    EnergyLevels: string;
 
     @Column({
-        type      : DataType.FLOAT,
+        type      : DataType.STRING(1028),
         allowNull : true,
     })
-    ValueFloat: number;
+    SymptomQuestion: string;
 
     @Column({
-        type      : DataType.BOOLEAN,
+        type      : DataType.STRING(128),
         allowNull : true,
     })
-    ValueBoolean: boolean;
-
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    ValueDate: Date;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    ValueName: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    ValueDataType: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    ValueUnit: string;
+    SymptomQuestionUserResponse: string;
 
     @Column({
         type      : DataType.STRING(256),

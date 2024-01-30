@@ -43,7 +43,7 @@ export default class EHRVitalData extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    AppName: string;
+    AppNames: string;
 
     @IsUUID(4)
     @Column({
@@ -63,66 +63,62 @@ export default class EHRVitalData extends Model {
         type      : DataType.STRING(256),
         allowNull : false,
     })
-    Type: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    Name: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    ValueString: string;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    ValueInt: number;
+    VitalType: string;
 
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueFloat: number;
+    BloodGlucose: number;
 
     @Column({
-        type      : DataType.BOOLEAN,
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueBoolean: boolean;
+    BloodPressureSystolic: number;
 
     @Column({
-        type      : DataType.DATE,
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueDate: Date;
+    BloodPressureDiastolic: number;
 
-    @Length({ max: 256 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueName: string;
+    Pulse: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    BloodOxygenSaturation: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    BodyWeight: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    BodyTemperature: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    BodyHeight: number;
 
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    ValueDataType: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    ValueUnit: string;
+    Unit: string;
 
     @Column({
         type      : DataType.STRING(256),

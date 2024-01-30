@@ -10,35 +10,33 @@ import { PatientAppNameCache } from "../patient.appname.cache";
 @injectable()
 export class EHRMentalWellBeingService {
 
-    public addEHRRecordSleep = async (model: SleepDto, appName?: string) => {
+    public addEHRRecordSleep = async (model: SleepDto, appNames?: string) => {
         if (model.SleepDuration) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addMentalWellbeingRecord(
                 model.PatientUserId,
                 model.id,
                 null,
-                EHRRecordTypes.MentalWellBeing,
+                EHRRecordTypes.MentalWellBeingSleep,
                 model.SleepDuration,
-                model.Unit,
-                'Sleep',
                 null,
-                appName,
+                model.Unit,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
     };
 
-    public addEHRRecordMeditation = async (model: MeditationDto, appName?: string) => {
+    public addEHRRecordMeditation = async (model: MeditationDto, appNames?: string) => {
         if (model.DurationInMins) {
-            EHRAnalyticsHandler.addFloatRecord(
+            EHRAnalyticsHandler.addMentalWellbeingRecord(
                 model.PatientUserId,
                 model.id,
                 null,
-                EHRRecordTypes.MentalWellBeing,
+                EHRRecordTypes.MentalWellBeingMeditation,
+                null,
                 model.DurationInMins,
                 'mins',
-                'Meditation',
-                null,
-                appName,
+                appNames,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
         }
@@ -46,16 +44,20 @@ export class EHRMentalWellBeingService {
 
     public async addEHRSleepForAppNames(r: SleepDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordSleep(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordSleep(r, JSON.stringify(appNames));
     }
 
     public async addEHRMeditationForAppNames(r: MeditationDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordMeditation(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordMeditation(r, JSON.stringify(appNames));
     }
 
 }

@@ -12,99 +12,118 @@ export class EHRHowDoYouFeelService {
 
     public addEHRRecordHowDoYouFeel = (
         model: HowDoYouFeelDto,
-        appName?: string) => {
+        appNames?: string) => {
 
-        if (model.Feeling === '1') {
-            EHRAnalyticsHandler.addStringRecord(
+        if ((model.Feeling).toString() === '1') {
+            EHRAnalyticsHandler.addSymptomRecord(
                 model.PatientUserId,
                 model.id,
                 null,
                 EHRRecordTypes.Symptom,
-                model.Feeling,
                 null,
+                null,
+                null,
+                'How are you feeling today?',
                 'Better',
                 null,
-                appName
+                appNames,
+                model.RecordDate ? model.RecordDate : null
             );
         }
 
-        if (model.Feeling === '0') {
-            EHRAnalyticsHandler.addStringRecord(
+        if ((model.Feeling).toString() === '0') {
+            EHRAnalyticsHandler.addSymptomRecord(
                 model.PatientUserId,
                 model.id,
                 null,
                 EHRRecordTypes.Symptom,
-                model.Feeling,
                 null,
+                null,
+                null,
+                'How are you feeling today?',
                 'Same',
-                appName
+                null,
+                appNames,
+                model.RecordDate ? model.RecordDate : null
             );
         }
 
-        if (model.Feeling === '-1') {
-            EHRAnalyticsHandler.addStringRecord(
+        if ((model.Feeling).toString() === '-1') {
+            EHRAnalyticsHandler.addSymptomRecord(
                 model.PatientUserId,
                 model.id,
                 null,
                 EHRRecordTypes.Symptom,
-                model.Feeling,
                 null,
+                null,
+                null,
+                'How are you feeling today?',
                 'Worse',
-                appName
+                null,
+                appNames,
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };
 
     public async addEHRHowDoYouFeelForAppNames(r: HowDoYouFeelDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordHowDoYouFeel(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordHowDoYouFeel(r, JSON.stringify(appNames));
     }
 
-    public addEHRRecordDailyAssessment = async ( model: DailyAssessmentDto, appName?: string) => {
+    public addEHRRecordDailyAssessment = async ( model: DailyAssessmentDto, appNames?: string) => {
         if (model.Mood) {
-            EHRAnalyticsHandler.addStringRecord(
+            EHRAnalyticsHandler.addSymptomRecord(
                 model.PatientUserId,
                 model.id,
                 null,
-                EHRRecordTypes.Symptom,
+                EHRRecordTypes.SymptomMood,
                 model.Mood,
                 null,
-                'Mood',
                 null,
-                appName,
+                null,
+                null,
+                null,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
 
         if (model.Feeling) {
-            EHRAnalyticsHandler.addStringRecord(
+            EHRAnalyticsHandler.addSymptomRecord(
                 model.PatientUserId,
                 model.id,
                 null,
-                EHRRecordTypes.Symptom,
+                EHRRecordTypes.SymptomFeeling,
+                null,
                 model.Feeling,
                 null,
-                'Feeling',
                 null,
-                appName,
+                null,
+                null,
+                appNames,
                 model.RecordDate ? model.RecordDate : null
             );
         }
 
         if (model.EnergyLevels.length > 0) {
             for await (var e of model.EnergyLevels) {
-                EHRAnalyticsHandler.addStringRecord(
+                EHRAnalyticsHandler.addSymptomRecord(
                     model.PatientUserId,
                     model.id,
                     null,
-                    EHRRecordTypes.Symptom,
+                    EHRRecordTypes.SymptomEnergyLevels,
+                    null,
+                    null,
                     e,
                     null,
-                    'EnergyLevels',
                     null,
-                    appName,
+                    null,
+                    appNames,
                     model.RecordDate ? model.RecordDate : null
 
                 );
@@ -114,9 +133,11 @@ export class EHRHowDoYouFeelService {
 
     public async addEHRDailyAssessmentForAppNames(r: DailyAssessmentDto) {
         const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
+        var appNames = [];
         for (var appName of eligibleAppNames) {
-            this.addEHRRecordDailyAssessment(r, appName);
+            appNames.push(appName);
         }
+        this.addEHRRecordDailyAssessment(r, JSON.stringify(appNames));
     }
 
 }

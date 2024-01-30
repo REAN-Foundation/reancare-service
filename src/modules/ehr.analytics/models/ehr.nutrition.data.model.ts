@@ -43,7 +43,7 @@ export default class EHRNutritionData extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    AppName: string;
+    AppNames: string;
 
     @IsUUID(4)
     @Column({
@@ -70,59 +70,61 @@ export default class EHRNutritionData extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    Name: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    ValueString: string;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    ValueInt: number;
-
-    @Column({
-        type      : DataType.FLOAT,
-        allowNull : true,
-    })
-    ValueFloat: number;
+    NutritionQuestion: string;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    ValueBoolean: boolean;
+    NutritionQuestionUserResponse: boolean;
 
     @Column({
-        type      : DataType.DATE,
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueDate: Date;
+    FruitCups: number;
 
-    @Length({ max: 256 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.FLOAT,
         allowNull : true,
     })
-    ValueName: string;
+    SugaryDrinkServings: number;
 
-    @Length({ max: 64 })
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    VegetableCups: number;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    TakenSalt: boolean;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    SeaFoodServings: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    GrainServings: number;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    TakenProteins: boolean;
+
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    ValueDataType: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    ValueUnit: string;
+    ServingUnit: string;
 
     @Column({
         type      : DataType.STRING(256),

@@ -52,3 +52,106 @@ export interface EHRStaticRecordDomainModel {
     RecordDate?          : Date;
 
 }
+
+export interface EHRVitalsDomainModel {
+    AppNames?              : string;
+    PatientUserId?         : uuid;
+    RecordId?              : uuid;
+    Provider?              : string;
+    VitalType              : string;
+    BloodGlucose?          : number;
+    BloodPressureSystolic? : number;
+    BloodPressureDiastolic?: number;
+    BloodOxygenSaturation? : number;
+    BodyWeight?            : number;
+    BodyTemperature?       : number;
+    Pulse?                 : number;
+    BodyHeight?            : number;
+    Unit?                  : string;
+    TimeStamp?             : Date;
+    RecordDate?            : Date;
+}
+
+export interface EHRMentalWellbeingDomainModel {
+    AppNames?              : string;
+    PatientUserId?         : uuid;
+    RecordId?              : uuid;
+    Provider?              : string;
+    Type                   : string;
+    SleepMins?             : number;
+    MeditationMins?        : number;
+    Unit?                  : string;
+    TimeStamp?             : Date;
+    RecordDate?            : Date;
+}
+
+export interface EHRPhysicalActivityDomainModel {
+    AppNames?                    : string;
+    PatientUserId?               : uuid;
+    RecordId?                    : uuid;
+    Provider?                    : string;
+    Type                         : string;
+    StepCounts?                  : number;
+    StandMins?                   : number;
+    ExerciseMins?                : number;
+    PhysicalActivityQuestion?    : string;
+    PhysicalActivityUserResponse?: boolean;
+    Unit?                        : string;
+    TimeStamp?                   : Date;
+    RecordDate?                  : Date;
+}
+
+export interface EHRSymptomsDomainModel {
+    AppNames?                   : string;
+    PatientUserId?              : uuid;
+    RecordId?                   : uuid;
+    Provider?                   : string;
+    Type                        : string;
+    Mood?                       : string;
+    Feeling?                    : string;
+    EnergyLevels?               : string;
+    SymptomQuestion?            : string;
+    SymptomQuestionUserResponse?: string;
+    Unit?                       : string;
+    TimeStamp?                  : Date;
+    RecordDate?                 : Date;
+}
+
+export interface EHRLabsDomainModel {
+    AppNames?          : string;
+    PatientUserId?     : uuid;
+    RecordId?          : uuid;
+    Provider?          : string;
+    Type               : string;
+    TotalCholesterol?  : number;
+    HDL?               : number;
+    LDL?               : number;
+    Lipoprotein?       : number;
+    A1CLevel?          : number;
+    TriglycerideLevel? : number;
+    CholesterolRatio?  : number;
+    Unit?              : string;
+    TimeStamp?         : Date;
+    RecordDate?        : Date;
+}
+
+export interface EHRNutritionsDomainModel {
+    AppNames?                     : string;
+    PatientUserId?                : uuid;
+    RecordId?                     : uuid;
+    Provider?                     : string;
+    Type                          : string;
+    NutritionQuestion?            : string;
+    NutritionQuestionUserResponse?: boolean;
+    FruitCups?                    : number;
+    SugaryDrinkServings?          : number;
+    VegetableCups?                : number;
+    TakenSalt?                    : boolean;
+    SeaFoodServings?              : number;
+    GrainServings?                : number;
+    TakenProteins?                : boolean;
+    ServingUnit?                  : string;
+    TimeStamp?                    : Date;
+    RecordDate?                   : Date;
+}
+

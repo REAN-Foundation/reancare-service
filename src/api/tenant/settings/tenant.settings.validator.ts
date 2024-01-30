@@ -37,36 +37,47 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateBoolean(request, 'Common.Clinical.Vitals', Where.Body, true, false);
         await this.validateBoolean(request, 'Common.Clinical.LabRecords', Where.Body, true, false);
         await this.validateBoolean(request, 'Common.Clinical.Medications', Where.Body, true, false);
-        await this.validateBoolean(request, 'Common.Clinical.Careplans.Default', Where.Body, true, false);
-        await this.validateBoolean(request, 'Common.Clinical.Careplans.Custom', Where.Body, true, false);
-        await this.validateBoolean(request, 'Common.Clinical.PatientStatusReports', Where.Body, true, false);
-        await this.validateBoolean(request, 'Common.Clinical.AppointmentReminders', Where.Body, true, false);
-        await this.validateBoolean(request, 'Common.Clinical.ScheduledAssesments', Where.Body, true, false);
-        await this.validateBoolean(request, 'Common.Clinical.DocumentsManagement', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.Clinical.Careplans', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.Clinical.DrugsManagement', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.Clinical.Symptoms', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.Clinical.Assessments', Where.Body, true, false);
+
         await this.validateBoolean(request, 'Common.External.FHIRStorage', Where.Body, true, false);
-        await this.validateBoolean(request, 'Common.External.EHIRIntegration', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.External.EHRIntegration', Where.Body, true, false);
         await this.validateBoolean(request, 'Common.External.ABDMIntegration', Where.Body, true, false);
+
+        await this.validateBoolean(request, 'Common.Analysis.CustomQueries', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.Analysis.Quicksight', Where.Body, true, false);
+
         await this.validateBoolean(request, 'Common.AddOns.Gamification', Where.Body, true, false);
         await this.validateBoolean(request, 'Common.AddOns.LearningJourney', Where.Body, true, false);
         await this.validateBoolean(request, 'Common.AddOns.Community', Where.Body, true, false);
         await this.validateBoolean(request, 'Common.AddOns.PatientSelfServicePortal', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.AppointmentReminders', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.PatientStatusReports', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.DocumentsManagement', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.HospitalSystems', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.Cohorts', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.Organizations', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.Notifications', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.Newsfeeds', Where.Body, true, false);
+        await this.validateBoolean(request, 'Common.AddOns.Notices', Where.Body, true, false);
 
         this.validateRequest(request);
 
         const model: CommonSettings = {
             Clinical : {
-                Vitals     : request.body.Common.Clinical.Vitals,
-                LabRecords : request.body.Common.Clinical.LabRecords,
-                Medications: request.body.Common.Clinical.Medications,
-                Careplans  : request.body.Common.Clinical.Careplans,
-                PatientStatusReports: request.body.Common.Clinical.PatientStatusReports,
-                AppointmentReminders: request.body.Common.Clinical.AppointmentReminders,
-                ScheduledAssesments : request.body.Common.Clinical.ScheduledAssesments,
-                DocumentsManagement : request.body.Common.Clinical.DocumentsManagement,
+                Vitals         : request.body.Common.Clinical.Vitals,
+                LabRecords     : request.body.Common.Clinical.LabRecords,
+                DrugsManagement: request.body.Common.Clinical.DrugsManagement,
+                Symptoms       : request.body.Common.Clinical.Symptoms,
+                Medications    : request.body.Common.Clinical.Medications,
+                Careplans      : request.body.Common.Clinical.Careplans,
+                Assessments    : request.body.Common.Clinical.ScheduledAssesments,
             },
             External : {
                 FHIRStorage    : request.body.Common.External.FHIRStorage,
-                EHIRIntegration: request.body.Common.External.EHIRIntegration,
+                EHRIntegration: request.body.Common.External.EHIRIntegration,
                 ABDMIntegration: request.body.Common.External.ABDMIntegration,
             },
             AddOns   : {
@@ -74,7 +85,20 @@ export class TenantSettingsValidator extends BaseValidator {
                 LearningJourney         : request.body.Common.AddOns.LearningJourney,
                 Community               : request.body.Common.AddOns.Community,
                 PatientSelfServicePortal: request.body.Common.AddOns.PatientSelfServicePortal,
-            }
+                AppointmentReminders    : request.body.Common.AddOns.AppointmentReminders,
+                PatientStatusReports    : request.body.Common.AddOns.PatientStatusReports,
+                DocumentsManagement     : request.body.Common.AddOns.DocumentsManagement,
+                HospitalSystems         : request.body.Common.AddOns.HospitalSystems,
+                Cohorts                 : request.body.Common.AddOns.Cohorts,
+                Organizations           : request.body.Common.AddOns.Organizations,
+                Notifications           : request.body.Common.AddOns.Notifications,
+                Newsfeeds               : request.body.Common.AddOns.Newsfeeds,
+                Notices                 : request.body.Common.AddOns.Notices,
+            },
+            Analysis : {
+                CustomQueries: request.body.Common.Analysis.CustomQueries,
+                Quicksight   : request.body.Common.Analysis.Quicksight,
+            },
         };
 
         return model;
@@ -86,7 +110,6 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateBoolean(request, 'PatientApp.Nutrition', Where.Body, true, false);
         await this.validateBoolean(request, 'PatientApp.DeviceIntegration.Terra', Where.Body, true, false);
         await this.validateBoolean(request, 'PatientApp.DeviceIntegration.SenseSemi', Where.Body, true, false);
-        await this.validateBoolean(request, 'PatientApp.Community', Where.Body, true, false);
 
         this.validateRequest(request);
 
@@ -97,7 +120,6 @@ export class TenantSettingsValidator extends BaseValidator {
                 Terra    : request.body.PatientApp.DeviceIntegration.Terra,
                 SenseSemi: request.body.PatientApp.DeviceIntegration.SenseSemi,
             },
-            Community: request.body.PatientApp.Community,
         };
 
         return model;
@@ -108,13 +130,12 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateString(request, 'ChatBot.Name', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Description', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Language', Where.Body, true, false);
-        await this.validateString(request, 'ChatBot.Icons', Where.Body, false, false);
+        await this.validateString(request, 'ChatBot.Icon', Where.Body, false, false);
         await this.validateString(request, 'ChatBot.MessageChannels.WhatsApp', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.MessageChannels.Telegram', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.SupportChannels.Email', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.SupportChannels.ClickUp', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.SupportChannels.Slack', Where.Body, true, false);
-        await this.validateString(request, 'ChatBot.QuicksightDashboard', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Personalization', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.LocationContext', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Localization', Where.Body, true, false);
@@ -125,7 +146,7 @@ export class TenantSettingsValidator extends BaseValidator {
             Name               : request.body.ChatBot.Name,
             Description        : request.body.ChatBot.Description,
             DefaultLanguage    : request.body.ChatBot.Language,
-            Icon               : request.body.ChatBot.Icons,
+            Icon               : request.body.ChatBot.Icon,
             MessageChannels    : {
                 WhatsApp: request.body.ChatBot.MessageChannels.WhatsApp,
                 Telegram: request.body.ChatBot.MessageChannels.Telegram,
@@ -135,7 +156,6 @@ export class TenantSettingsValidator extends BaseValidator {
                 ClickUp: request.body.ChatBot.SupportChannels.ClickUp,
                 Slack  : request.body.ChatBot.SupportChannels.Slack,
             },
-            QuicksightDashboard: request.body.ChatBot.QuicksightDashboard,
             Personalization    : request.body.ChatBot.Personalization,
             LocationContext    : request.body.ChatBot.LocationContext,
             Localization       : request.body.ChatBot.Localization,

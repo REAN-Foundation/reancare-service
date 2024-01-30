@@ -32,7 +32,7 @@ export interface ClinicalFeatures {
 
 export interface ExternalIntegrations {
     FHIRStorage    : boolean;
-    EHIRIntegration: boolean;
+    EHRIntegration : boolean;
     ABDMIntegration: boolean;
 }
 
@@ -73,7 +73,6 @@ export interface PatientAppSettings {
     Excercise        : boolean;
     Nutrition        : boolean;
     DeviceIntegration: DeviceIntegration,
-    Community        : boolean,
 }
 
 export interface MessageChannels {

@@ -3,6 +3,7 @@ import { injectable, inject } from 'tsyringe';
 import { 
     ChatBotSettings, 
     CommonSettings, 
+    FormsIntegrations, 
     FormsSettings, 
     HealthcareInterfaces, 
     PatientAppSettings, 
@@ -96,32 +97,43 @@ export class TenantSettingsService {
         };
         const common: CommonSettings = {
             Clinical: {
-                Vitals              : true,
-                LabRecords          : true,
-                Medications         : true,
-                Careplans           : false,
-                PatientStatusReports: false,
-                AppointmentReminders: true,
-                ScheduledAssesments : true,
-                DocumentsManagement : false,
+                Vitals         : true,
+                LabRecords     : true,
+                Symptoms       : true,
+                DrugsManagement: true,
+                Medications    : true,
+                Careplans      : false,
+                Assessments    : true,
             },
             External: {
                 FHIRStorage    : false,
-                EHIRIntegration: false,
+                EHRIntegration: false,
                 ABDMIntegration: false,
             },
             AddOns: {
+                HospitalSystems         : false,
                 Gamification            : false,
                 LearningJourney         : false,
                 Community               : false,
                 PatientSelfServicePortal: false,
+                PatientStatusReports    : false,
+                DocumentsManagement     : false,
+                AppointmentReminders    : false,
+                Organizations           : false,
+                Cohorts                 : false,
+                Notifications           : true,
+                Newsfeeds               : false,
+                Notices                 : false,
+            },
+            Analysis: {
+                CustomQueries: false,
+                Quicksight   : false,
             },
         };
 
         const patientApp: PatientAppSettings = {
             Excercise: true,
             Nutrition: true,
-            Community: false,
             DeviceIntegration: {
                 Terra    : false,
                 SenseSemi: false,
@@ -129,12 +141,10 @@ export class TenantSettingsService {
         };
 
         const chatBot: ChatBotSettings = {
-            DefaultLanguage: 'en',
-            Description: 'Chatbot for patient interaction',
-            Icon: null,
             Name: 'Chatbot',
-            Localization: true,
-            LocationContext: false,
+            Icon: null,
+            Description: 'Chatbot for patient interaction',
+            DefaultLanguage: 'en',
             MessageChannels: {
                 WhatsApp: false,
                 Telegram: true,
@@ -145,7 +155,20 @@ export class TenantSettingsService {
                 Email: false,
             },
             Personalization: false,
-            QuicksightDashboard: true,
+            LocationContext: false,
+            Localization: true,
+        };
+
+        const forms: FormsIntegrations = {
+            KoboToolbox: false,
+            GoogleForm: false,
+            ODK: false,
+        };
+
+        const formSettings: FormsSettings = {
+            Integrations  : forms,
+            OfflineSupport: false,
+            FieldApp      : false,
         };
 
         const model: TenantSettingsDomainModel = {
@@ -153,7 +176,7 @@ export class TenantSettingsService {
             Common              : common,
             PatientApp          : patientApp,
             ChatBot             : chatBot,
-            Forms               : null,
+            Forms               : formSettings,
         };
 
         return model;

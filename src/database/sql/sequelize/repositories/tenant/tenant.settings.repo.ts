@@ -1,12 +1,12 @@
 import TenantSettings from '../../models/tenant/tenant.settings.model';
-import { 
-    HealthcareInterfaces, 
-    CommonSettings, 
-    PatientAppSettings, 
-    ChatBotSettings, 
-    FormsSettings, 
-    TenantSettingsDomainModel, 
-    TenantSettingsDto 
+import {
+    UserInterfaces,
+    CommonSettings,
+    PatientAppSettings,
+    ChatBotSettings,
+    FormsSettings,
+    TenantSettingsDomainModel,
+    TenantSettingsDto
 } from "../../../../../domain.types/tenant/tenant.settings.types";
 import { uuid } from "../../../../../domain.types/miscellaneous/system.types";
 import { ITenantSettingsRepo } from '../../../../repository.interfaces/tenant/tenant.settings.interface';
@@ -22,12 +22,12 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
         : Promise<TenantSettingsDto> => {
         try {
             const entity = {
-                TenantId            : tenantId,
-                HealthcareInterfaces: JSON.stringify(model.HealthcareInterfaces),
-                Common              : JSON.stringify(model.Common),
-                PatientApp          : JSON.stringify(model.PatientApp),
-                ChatBot             : JSON.stringify(model.ChatBot),
-                Forms               : JSON.stringify(model.Forms),
+                TenantId       : tenantId,
+                UserInterfaces : JSON.stringify(model.UserInterfaces),
+                Common         : JSON.stringify(model.Common),
+                PatientApp     : JSON.stringify(model.PatientApp),
+                ChatBot        : JSON.stringify(model.ChatBot),
+                Forms          : JSON.stringify(model.Forms),
             };
             const settings = await TenantSettings.create(entity);
             return TenantSettingsMapper.toDto(settings);
@@ -49,11 +49,11 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
         }
     };
 
-    updateHealthcareInterfaces = async (tenantId: string, settings: HealthcareInterfaces)
+    updateHealthcareInterfaces = async (tenantId: string, settings: UserInterfaces)
         : Promise<TenantSettingsDto> => {
         try {
             const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
-            record.HealthcareInterfaces = JSON.stringify(settings);
+            record.UserInterfaces = JSON.stringify(settings);
             await record.save();
             return TenantSettingsMapper.toDto(record);
         }

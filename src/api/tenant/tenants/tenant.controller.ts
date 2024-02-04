@@ -38,7 +38,6 @@ export class TenantController{
 
     _validator: TenantValidator = new TenantValidator();
 
-
     //#endregion
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
@@ -87,8 +86,8 @@ export class TenantController{
             await this.sendWelcomeEmail(tenant, adminUserName, adminPassword);
 
             ResponseHandler.success(request, response, 'Tenant added successfully!', 201, {
-                Tenant : tenant,
-                Settings: settings,
+                Tenant   : tenant,
+                Settings : settings,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

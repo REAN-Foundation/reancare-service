@@ -33,7 +33,7 @@ export class TenantSettingsController {
     getTenantSettingsByType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            let settings = this._service.getTenantSettings(tenantId);
+            let settings = await this._service.getTenantSettings(tenantId);
             if (!settings) {
                 throw new Error(`Tenant settings not found for tenant: ${tenantId}`);
             }

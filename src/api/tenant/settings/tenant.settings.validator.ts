@@ -19,16 +19,16 @@ export class TenantSettingsValidator extends BaseValidator {
     }
 
     updateHealthcareInterfaces = async (request: express.Request): Promise<UserInterfaces> => {
-        await this.validateBoolean(request, 'HealthcareInterfaces.PatientApp', Where.Body, true, false);
-        await this.validateBoolean(request, 'HealthcareInterfaces.ChatBot', Where.Body, true, false);
-        await this.validateBoolean(request, 'HealthcareInterfaces.Forms', Where.Body, true, false);
+        await this.validateBoolean(request, 'UserInterfaces.PatientApp', Where.Body, true, false);
+        await this.validateBoolean(request, 'UserInterfaces.ChatBot', Where.Body, true, false);
+        await this.validateBoolean(request, 'UserInterfaces.Forms', Where.Body, true, false);
 
         this.validateRequest(request);
 
         const model: UserInterfaces = {
-            PatientApp : request.body.HealthcareInterfaces.PatientApp,
-            ChatBot    : request.body.HealthcareInterfaces.ChatBot,
-            Forms      : request.body.HealthcareInterfaces.Forms,
+            PatientApp : request.body.UserInterfaces.PatientApp,
+            ChatBot    : request.body.UserInterfaces.ChatBot,
+            Forms      : request.body.UserInterfaces.Forms,
         };
         return model;
     };
@@ -74,11 +74,11 @@ export class TenantSettingsValidator extends BaseValidator {
                 Symptoms        : request.body.Common.Clinical.Symptoms,
                 Medications     : request.body.Common.Clinical.Medications,
                 Careplans       : request.body.Common.Clinical.Careplans,
-                Assessments     : request.body.Common.Clinical.ScheduledAssesments,
+                Assessments     : request.body.Common.Clinical.Assessments,
             },
             External : {
                 FHIRStorage     : request.body.Common.External.FHIRStorage,
-                EHRIntegration  : request.body.Common.External.EHIRIntegration,
+                EHRIntegration  : request.body.Common.External.EHRIntegration,
                 ABDMIntegration : request.body.Common.External.ABDMIntegration,
             },
             AddOns : {
@@ -115,7 +115,7 @@ export class TenantSettingsValidator extends BaseValidator {
         this.validateRequest(request);
 
         const model: PatientAppSettings = {
-            Excercise         : request.body.PatientApp.Exercise,
+            Exercise          : request.body.PatientApp.Exercise,
             Nutrition         : request.body.PatientApp.Nutrition,
             DeviceIntegration : {
                 Terra     : request.body.PatientApp.DeviceIntegration.Terra,

@@ -88,7 +88,7 @@ export class TenantSettingsController {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             const settings = await this._validator.updateTenantSettings(request);
-            const updated = await this._service.updateTenantSettings(tenantId, settings);
+            const updated = await this._service.updateTenantSettings(tenantId, request.body);
             ResponseHandler.success(request, response, 'Tenant settings updated successfully!', 200, {
                 Updated : updated,
             });

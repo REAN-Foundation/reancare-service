@@ -70,7 +70,7 @@ export interface CommonSettings {
 }
 
 export interface PatientAppSettings {
-    Excercise        : boolean;
+    Exercise        : boolean;
     Nutrition        : boolean;
     DeviceIntegration: DeviceIntegration,
 }

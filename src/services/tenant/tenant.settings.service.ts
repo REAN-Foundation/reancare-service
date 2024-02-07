@@ -132,7 +132,7 @@ export class TenantSettingsService {
         };
 
         const patientApp: PatientAppSettings = {
-            Excercise         : true,
+            Exercise          : true,
             Nutrition         : true,
             DeviceIntegration : {
                 Terra     : false,

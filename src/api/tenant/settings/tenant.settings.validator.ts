@@ -130,7 +130,7 @@ export class TenantSettingsValidator extends BaseValidator {
 
         await this.validateString(request, 'ChatBot.Name', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Description', Where.Body, true, false);
-        await this.validateString(request, 'ChatBot.Language', Where.Body, true, false);
+        await this.validateString(request, 'ChatBot.DefaultLanguage', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Icon', Where.Body, false, false);
         await this.validateString(request, 'ChatBot.MessageChannels.WhatsApp', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.MessageChannels.Telegram', Where.Body, true, false);
@@ -146,7 +146,7 @@ export class TenantSettingsValidator extends BaseValidator {
         const model: ChatBotSettings = {
             Name            : request.body.ChatBot.Name,
             Description     : request.body.ChatBot.Description,
-            DefaultLanguage : request.body.ChatBot.Language,
+            DefaultLanguage : request.body.ChatBot.DefaultLanguage,
             Icon            : request.body.ChatBot.Icon,
             MessageChannels : {
                 WhatsApp : request.body.ChatBot.MessageChannels.WhatsApp,

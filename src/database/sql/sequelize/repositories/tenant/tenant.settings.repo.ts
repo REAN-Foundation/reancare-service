@@ -13,6 +13,7 @@ import { ITenantSettingsRepo } from '../../../../repository.interfaces/tenant/te
 import { TenantSettingsMapper } from '../../mappers/tenant/tenant.settings.mapper';
 import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
+import { Helper } from '../../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -21,13 +22,19 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
     createDefaultSettings = async (tenantId: uuid, model: TenantSettingsDomainModel)
         : Promise<TenantSettingsDto> => {
         try {
+            const userInterface: string = this.validateJSONStringify(JSON.stringify(model.UserInterfaces));
+            const common = this.validateJSONStringify(JSON.stringify(model.Common));
+            const patientApp = this.validateJSONStringify(JSON.stringify(model.PatientApp));
+            const chatBot = this.validateJSONStringify(JSON.stringify(model.ChatBot));
+            const forms = this.validateJSONStringify(JSON.stringify(model.Forms));
+            
             const entity = {
                 TenantId       : tenantId,
-                UserInterfaces : JSON.stringify(model.UserInterfaces),
-                Common         : JSON.stringify(model.Common),
-                PatientApp     : JSON.stringify(model.PatientApp),
-                ChatBot        : JSON.stringify(model.ChatBot),
-                Forms          : JSON.stringify(model.Forms),
+                UserInterfaces : userInterface,
+                Common         : common,
+                PatientApp     : patientApp,
+                ChatBot        : chatBot,
+                Forms          : forms,
             };
             const settings = await TenantSettings.create(entity);
             return TenantSettingsMapper.toDto(settings);
@@ -52,8 +59,9 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
     updateHealthcareInterfaces = async (tenantId: string, settings: UserInterfaces)
         : Promise<TenantSettingsDto> => {
         try {
+            const userInterface: string = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
-            record.UserInterfaces = JSON.stringify(settings);
+            record.UserInterfaces = userInterface;
             await record.save();
             return TenantSettingsMapper.toDto(record);
         }
@@ -66,8 +74,9 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
     updateCommonSettings = async (tenantId: string, settings: CommonSettings)
         : Promise<TenantSettingsDto> => {
         try {
+            const common = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
-            record.Common = JSON.stringify(settings);
+            record.Common = common;
             await record.save();
             return TenantSettingsMapper.toDto(record);
         }
@@ -80,8 +89,9 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
     updatePatientAppSettings = async (tenantId: string, settings: PatientAppSettings)
         : Promise<TenantSettingsDto> => {
         try {
+            const patientApp = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
-            record.PatientApp = JSON.stringify(settings);
+            record.PatientApp = patientApp;
             await record.save();
             return TenantSettingsMapper.toDto(record);
         }
@@ -93,8 +103,9 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
 
     updateChatBotSettings = async (tenantId: string, settings: ChatBotSettings): Promise<TenantSettingsDto> => {
         try {
+            const chatBot = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
-            record.ChatBot = JSON.stringify(settings);
+            record.ChatBot = chatBot;
             await record.save();
             return TenantSettingsMapper.toDto(record);
         }
@@ -106,8 +117,9 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
 
     updateFormsSettings = async (tenantId: string, settings: FormsSettings): Promise<TenantSettingsDto> => {
         try {
+            const forms = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
-            record.Forms = JSON.stringify(settings);
+            record.Forms = forms;
             await record.save();
             return TenantSettingsMapper.toDto(record);
         }
@@ -115,6 +127,12 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, `Failed to update tenant feature settings: ${error.message}`);
         }
+    };
+
+    private validateJSONStringify = (str: string) => {
+        const validateTrue = Helper.replaceAll(str,`"true"`, 'true');
+        const validatedString = Helper.replaceAll(validateTrue, `"false"`, 'false');
+        return validatedString;
     };
     
 }

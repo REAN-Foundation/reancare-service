@@ -778,4 +778,8 @@ export class Helper {
         return url;
     };
 
+    public static replaceAll = (str: string, find: string, replace: string): string => {
+        return str.replace(new RegExp(find, 'g'), replace);
+    };
+
 }

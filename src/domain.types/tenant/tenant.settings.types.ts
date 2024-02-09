@@ -1,5 +1,5 @@
 export enum TenantSettingsTypes {
-    UserInterfaces = 'UserInterfaces',
+    UserInterfaces      = 'UserInterfaces',
     Common              = 'Common',
     PatientApp          = 'PatientApp',
     ChatBot             = 'ChatBot',
@@ -70,7 +70,7 @@ export interface CommonSettings {
 }
 
 export interface PatientAppSettings {
-    Excercise        : boolean;
+    Exercise        : boolean;
     Nutrition        : boolean;
     DeviceIntegration: DeviceIntegration,
 }
@@ -111,7 +111,7 @@ export interface FormsSettings {
 }
 
 export interface TenantSettingsDomainModel {
-    UserInterfaces : UserInterfaces,
+    UserInterfaces       : UserInterfaces,
     Common               : CommonSettings,
     PatientApp           : PatientAppSettings,
     ChatBot              : ChatBotSettings,

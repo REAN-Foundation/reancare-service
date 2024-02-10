@@ -25,7 +25,7 @@ export interface UserLoginDetails {
     UserName   ?: string;
     Password   ?: string,
     Otp        ?: string,
-    LoginRoleId : number,
+    LoginRoleId?: number,
     TenantId   ?: uuid,
     TenantCode ?: string,
 }

@@ -288,7 +288,7 @@ export class UserValidator {
                 .trim()
                 .run(request);
 
-            await body('LoginRoleId').exists()
+            await body('LoginRoleId').optional()
                 .trim()
                 .isNumeric()
                 .run(request);
@@ -313,7 +313,7 @@ export class UserValidator {
                 UserName    : null,
                 Password    : request.body.Password,
                 Otp         : null,
-                LoginRoleId : parseInt(request.body.LoginRoleId, 10),
+                LoginRoleId : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId, 10) : null,
                 TenantId    : request.body.TenantId ?? null,
                 TenantCode  : request.body.TenantCode ?? null,
             };
@@ -523,7 +523,8 @@ export class UserValidator {
                 .isNumeric()
                 .isLength({ min: 6, max: 6 })
                 .run(request);
-            await body('LoginRoleId').exists()
+
+            await body('LoginRoleId').optional()
                 .trim()
                 .isNumeric()
                 .run(request);
@@ -547,7 +548,7 @@ export class UserValidator {
                 Email       : null,
                 Password    : null,
                 Otp         : request.body.Otp,
-                LoginRoleId : parseInt(request.body.LoginRoleId),
+                LoginRoleId : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId) : null,
                 TenantId    : request.body.TenantId ?? null,
                 TenantCode  : request.body.TenantCode ?? null,
             };

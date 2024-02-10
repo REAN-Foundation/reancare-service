@@ -54,7 +54,7 @@ export default class TenantSettings extends Model {
         type      : DataType.TEXT,
         allowNull : false,
     })
-    HealthcareInterfaces: string;
+    UserInterfaces: string;
 
     @Column({
         type      : DataType.TEXT,

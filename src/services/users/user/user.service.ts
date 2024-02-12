@@ -104,6 +104,11 @@ export class UserService {
         return dto;
     };
 
+    public getUserByTenantIdAndRole = async (tenantId: string, roleName: string): Promise<UserDetailsDto> => {
+        var dto = await this._userRepo.getUserByTenantIdAndRole(tenantId, roleName);
+        return dto;
+    };
+
     public update = async (id: string, model: UserDomainModel): Promise<UserDetailsDto> => {
         // timezone sanitization
 
@@ -163,7 +168,7 @@ export class UserService {
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,
             UserName      : user.UserName,
-            CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRoleId : user.Role.id,
             CurrentRole   : user.Role.RoleName,
             SessionId     : loginSessionDetails.id,
         };
@@ -234,7 +239,7 @@ export class UserService {
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,
             UserName      : user.UserName,
-            CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRoleId : user.Role.id,
             CurrentRole   : user.Role.RoleName,
             SessionId     : loginSessionDetails.id
         };

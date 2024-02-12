@@ -79,6 +79,9 @@ export default class Application {
             //Handle unhandled rejections
             process.on('unhandledRejection', (reason, promise) => {
                 Logger.instance().log('Unhandled Rejection!');
+                promise.catch(error => {
+                    Logger.instance().log(`Unhandled Rejection at: ${error.message}`);
+                });
             });
 
             process.on('exit', code => {

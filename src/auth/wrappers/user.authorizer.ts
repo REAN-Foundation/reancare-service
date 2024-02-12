@@ -1,8 +1,8 @@
 import express from 'express';
 import 'reflect-metadata';
 import { inject, injectable } from "tsyringe";
-import { ErrorHandler } from '../../common/handlers/error.handler';
 import { IUserAuthorizer } from '../interfaces/user.authorizer.interface';
+import { ResponseHandler } from '../../common/handlers/response.handler';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,8 @@ export class UserAuthorizer {
     ): Promise<void> => {
         const authorized = await this._authorizer.authorize(request, response);
         if (!authorized) {
-            ErrorHandler.throwUnauthorizedUserError('Unauthorized access');
+            ResponseHandler.failure(request, response, 'Unauthorized access', 403);
+            return;
         }
         next();
     };

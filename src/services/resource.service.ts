@@ -79,6 +79,7 @@ import { PhysicalActivityService } from './wellness/exercise/physical.activity.s
 import { FoodComponentMonitoringService } from './wellness/food.component.monitoring/food.component.monitoring.service';
 import { FoodConsumptionService } from './wellness/nutrition/food.consumption.service';
 import { WaterConsumptionService } from './wellness/nutrition/water.consumption.service';
+import { TenantSettingsService } from './tenant/tenant.settings.service';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -162,20 +163,21 @@ export default class ResourceService
         'AppStats'                                   : StatisticsService,
         'CustomQuery'                                : CustomQueryService,
         'UserEngagement'                             : UserEngagementService,
-        'Tenant'                                     : TenantService,
-        'User.CustomTask'                           : CustomTaskService,
-        'User.DeviceDetails'                        : UserDeviceDetailsService,
-        'User.Doctor'                               : DoctorService,
-        'User.Patient.Statistics'                  : PatientStatisticsService,
-        'User.Patient.ActionPlan'                  : ActionPlanService,
-        'User.Patient.Document'                    : DocumentService,
-        'User.Patient.EmergencyContact'            : EmergencyContactService,
-        'User.Patient.Goal'                        : GoalService,
-        'User.Patient.HealthPriority'              : HealthPriorityService,
-        'User.Patient.HealthProfile'               : HealthPriorityService,
-        'User.Patient.Patient'                     : PatientService,
-        'User.User'                                 : UserService,
-        'User.UserTask'                             : UserTaskService,
+        'Tenant.Tenants'                             : TenantService,
+        'Tenant.Settings'                            : TenantSettingsService,
+        'User.CustomTask'                            : CustomTaskService,
+        'User.DeviceDetails'                         : UserDeviceDetailsService,
+        'User.Doctor'                                : DoctorService,
+        'User.Patient.Statistics'                    : PatientStatisticsService,
+        'User.Patient.ActionPlan'                    : ActionPlanService,
+        'User.Patient.Document'                      : DocumentService,
+        'User.Patient.EmergencyContact'              : EmergencyContactService,
+        'User.Patient.Goal'                          : GoalService,
+        'User.Patient.HealthPriority'                : HealthPriorityService,
+        'User.Patient.HealthProfile'                 : HealthPriorityService,
+        'User.Patient.Patient'                       : PatientService,
+        'User.User'                                  : UserService,
+        'User.UserTask'                              : UserTaskService,
         'Wellness.DailyRecords.CalorieBalance'       : CalorieBalanceService,
         'Wellness.DailyRecords.HeartPoints'          : HeartPointsService,
         'Wellness.DailyRecords.MoveMinutes'          : MoveMinutesService,

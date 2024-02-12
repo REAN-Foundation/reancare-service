@@ -5,8 +5,6 @@ import { TenantSettingsValidator } from './tenant.settings.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Injector } from '../../../startup/injector';
 import { TenantSettingsTypes, TenantSettingsTypesList } from '../../../domain.types/tenant/tenant.settings.types';
-import { set } from 'shelljs';
-import { th } from '@faker-js/faker';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,7 +31,7 @@ export class TenantSettingsController {
     getTenantSettingsByType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            let settings = this._service.getTenantSettings(tenantId);
+            let settings = await this._service.getTenantSettings(tenantId);
             if (!settings) {
                 throw new Error(`Tenant settings not found for tenant: ${tenantId}`);
             }

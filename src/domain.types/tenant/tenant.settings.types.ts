@@ -1,5 +1,5 @@
 export enum TenantSettingsTypes {
-    HealthcareInterfaces = 'HealthcareInterfaces',
+    UserInterfaces      = 'UserInterfaces',
     Common              = 'Common',
     PatientApp          = 'PatientApp',
     ChatBot             = 'ChatBot',
@@ -7,14 +7,14 @@ export enum TenantSettingsTypes {
 }
 
 export const TenantSettingsTypesList = [
-    TenantSettingsTypes.HealthcareInterfaces,
+    TenantSettingsTypes.UserInterfaces,
     TenantSettingsTypes.Common,
     TenantSettingsTypes.PatientApp,
     TenantSettingsTypes.ChatBot,
     TenantSettingsTypes.Forms
 ];
 
-export interface HealthcareInterfaces {
+export interface UserInterfaces {
     PatientApp: boolean,
     ChatBot   : boolean,
     Forms     : boolean
@@ -70,7 +70,7 @@ export interface CommonSettings {
 }
 
 export interface PatientAppSettings {
-    Excercise        : boolean;
+    Exercise        : boolean;
     Nutrition        : boolean;
     DeviceIntegration: DeviceIntegration,
 }
@@ -111,7 +111,7 @@ export interface FormsSettings {
 }
 
 export interface TenantSettingsDomainModel {
-    HealthcareInterfaces : HealthcareInterfaces,
+    UserInterfaces       : UserInterfaces,
     Common               : CommonSettings,
     PatientApp           : PatientAppSettings,
     ChatBot              : ChatBotSettings,

@@ -1,6 +1,6 @@
 import express from 'express';
-import { 
-    HealthcareInterfaces, 
+import {
+    UserInterfaces,
     CommonSettings,
     PatientAppSettings,
     ChatBotSettings,
@@ -13,21 +13,22 @@ import { BaseValidator, Where } from '../../base.validator';
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class TenantSettingsValidator extends BaseValidator {
+
     constructor() {
         super();
     }
 
-    updateHealthcareInterfaces = async (request: express.Request): Promise<HealthcareInterfaces> => {
-        await this.validateBoolean(request, 'HealthcareInterfaces.PatientApp', Where.Body, true, false);
-        await this.validateBoolean(request, 'HealthcareInterfaces.ChatBot', Where.Body, true, false);
-        await this.validateBoolean(request, 'HealthcareInterfaces.Forms', Where.Body, true, false);
+    updateHealthcareInterfaces = async (request: express.Request): Promise<UserInterfaces> => {
+        await this.validateBoolean(request, 'UserInterfaces.PatientApp', Where.Body, true, false);
+        await this.validateBoolean(request, 'UserInterfaces.ChatBot', Where.Body, true, false);
+        await this.validateBoolean(request, 'UserInterfaces.Forms', Where.Body, true, false);
 
         this.validateRequest(request);
 
-        const model: HealthcareInterfaces = {
-            PatientApp: request.body.HealthcareInterfaces.PatientApp,
-            ChatBot   : request.body.HealthcareInterfaces.ChatBot,
-            Forms     : request.body.HealthcareInterfaces.Forms,
+        const model: UserInterfaces = {
+            PatientApp : request.body.UserInterfaces.PatientApp,
+            ChatBot    : request.body.UserInterfaces.ChatBot,
+            Forms      : request.body.UserInterfaces.Forms,
         };
         return model;
     };
@@ -67,37 +68,37 @@ export class TenantSettingsValidator extends BaseValidator {
 
         const model: CommonSettings = {
             Clinical : {
-                Vitals         : request.body.Common.Clinical.Vitals,
-                LabRecords     : request.body.Common.Clinical.LabRecords,
-                DrugsManagement: request.body.Common.Clinical.DrugsManagement,
-                Symptoms       : request.body.Common.Clinical.Symptoms,
-                Medications    : request.body.Common.Clinical.Medications,
-                Careplans      : request.body.Common.Clinical.Careplans,
-                Assessments    : request.body.Common.Clinical.ScheduledAssesments,
+                Vitals          : request.body.Common.Clinical.Vitals,
+                LabRecords      : request.body.Common.Clinical.LabRecords,
+                DrugsManagement : request.body.Common.Clinical.DrugsManagement,
+                Symptoms        : request.body.Common.Clinical.Symptoms,
+                Medications     : request.body.Common.Clinical.Medications,
+                Careplans       : request.body.Common.Clinical.Careplans,
+                Assessments     : request.body.Common.Clinical.Assessments,
             },
             External : {
-                FHIRStorage    : request.body.Common.External.FHIRStorage,
-                EHRIntegration: request.body.Common.External.EHIRIntegration,
-                ABDMIntegration: request.body.Common.External.ABDMIntegration,
+                FHIRStorage     : request.body.Common.External.FHIRStorage,
+                EHRIntegration  : request.body.Common.External.EHRIntegration,
+                ABDMIntegration : request.body.Common.External.ABDMIntegration,
             },
-            AddOns   : {
-                Gamification            : request.body.Common.AddOns.Gamification,
-                LearningJourney         : request.body.Common.AddOns.LearningJourney,
-                Community               : request.body.Common.AddOns.Community,
-                PatientSelfServicePortal: request.body.Common.AddOns.PatientSelfServicePortal,
-                AppointmentReminders    : request.body.Common.AddOns.AppointmentReminders,
-                PatientStatusReports    : request.body.Common.AddOns.PatientStatusReports,
-                DocumentsManagement     : request.body.Common.AddOns.DocumentsManagement,
-                HospitalSystems         : request.body.Common.AddOns.HospitalSystems,
-                Cohorts                 : request.body.Common.AddOns.Cohorts,
-                Organizations           : request.body.Common.AddOns.Organizations,
-                Notifications           : request.body.Common.AddOns.Notifications,
-                Newsfeeds               : request.body.Common.AddOns.Newsfeeds,
-                Notices                 : request.body.Common.AddOns.Notices,
+            AddOns : {
+                Gamification             : request.body.Common.AddOns.Gamification,
+                LearningJourney          : request.body.Common.AddOns.LearningJourney,
+                Community                : request.body.Common.AddOns.Community,
+                PatientSelfServicePortal : request.body.Common.AddOns.PatientSelfServicePortal,
+                AppointmentReminders     : request.body.Common.AddOns.AppointmentReminders,
+                PatientStatusReports     : request.body.Common.AddOns.PatientStatusReports,
+                DocumentsManagement      : request.body.Common.AddOns.DocumentsManagement,
+                HospitalSystems          : request.body.Common.AddOns.HospitalSystems,
+                Cohorts                  : request.body.Common.AddOns.Cohorts,
+                Organizations            : request.body.Common.AddOns.Organizations,
+                Notifications            : request.body.Common.AddOns.Notifications,
+                Newsfeeds                : request.body.Common.AddOns.Newsfeeds,
+                Notices                  : request.body.Common.AddOns.Notices,
             },
             Analysis : {
-                CustomQueries: request.body.Common.Analysis.CustomQueries,
-                Quicksight   : request.body.Common.Analysis.Quicksight,
+                CustomQueries : request.body.Common.Analysis.CustomQueries,
+                Quicksight    : request.body.Common.Analysis.Quicksight,
             },
         };
 
@@ -114,11 +115,11 @@ export class TenantSettingsValidator extends BaseValidator {
         this.validateRequest(request);
 
         const model: PatientAppSettings = {
-            Excercise: request.body.PatientApp.Exercise,
-            Nutrition: request.body.PatientApp.Nutrition,
-            DeviceIntegration: {
-                Terra    : request.body.PatientApp.DeviceIntegration.Terra,
-                SenseSemi: request.body.PatientApp.DeviceIntegration.SenseSemi,
+            Exercise          : request.body.PatientApp.Exercise,
+            Nutrition         : request.body.PatientApp.Nutrition,
+            DeviceIntegration : {
+                Terra     : request.body.PatientApp.DeviceIntegration.Terra,
+                SenseSemi : request.body.PatientApp.DeviceIntegration.SenseSemi,
             },
         };
 
@@ -129,7 +130,7 @@ export class TenantSettingsValidator extends BaseValidator {
 
         await this.validateString(request, 'ChatBot.Name', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Description', Where.Body, true, false);
-        await this.validateString(request, 'ChatBot.Language', Where.Body, true, false);
+        await this.validateString(request, 'ChatBot.DefaultLanguage', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Icon', Where.Body, false, false);
         await this.validateString(request, 'ChatBot.MessageChannels.WhatsApp', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.MessageChannels.Telegram', Where.Body, true, false);
@@ -143,22 +144,22 @@ export class TenantSettingsValidator extends BaseValidator {
         this.validateRequest(request);
 
         const model: ChatBotSettings = {
-            Name               : request.body.ChatBot.Name,
-            Description        : request.body.ChatBot.Description,
-            DefaultLanguage    : request.body.ChatBot.Language,
-            Icon               : request.body.ChatBot.Icon,
-            MessageChannels    : {
-                WhatsApp: request.body.ChatBot.MessageChannels.WhatsApp,
-                Telegram: request.body.ChatBot.MessageChannels.Telegram,
+            Name            : request.body.ChatBot.Name,
+            Description     : request.body.ChatBot.Description,
+            DefaultLanguage : request.body.ChatBot.DefaultLanguage,
+            Icon            : request.body.ChatBot.Icon,
+            MessageChannels : {
+                WhatsApp : request.body.ChatBot.MessageChannels.WhatsApp,
+                Telegram : request.body.ChatBot.MessageChannels.Telegram,
             },
-            SupportChannels    : {
-                Email  : request.body.ChatBot.SupportChannels.Email,
-                ClickUp: request.body.ChatBot.SupportChannels.ClickUp,
-                Slack  : request.body.ChatBot.SupportChannels.Slack,
+            SupportChannels : {
+                Email   : request.body.ChatBot.SupportChannels.Email,
+                ClickUp : request.body.ChatBot.SupportChannels.ClickUp,
+                Slack   : request.body.ChatBot.SupportChannels.Slack,
             },
-            Personalization    : request.body.ChatBot.Personalization,
-            LocationContext    : request.body.ChatBot.LocationContext,
-            Localization       : request.body.ChatBot.Localization,
+            Personalization : request.body.ChatBot.Personalization,
+            LocationContext : request.body.ChatBot.LocationContext,
+            Localization    : request.body.ChatBot.Localization,
         };
 
         return model;
@@ -175,22 +176,22 @@ export class TenantSettingsValidator extends BaseValidator {
         this.validateRequest(request);
 
         const model: FormsSettings = {
-            Integrations: {
-                KoboToolbox: request.body.Forms.Integrations.KoboToolbox,
-                ODK        : request.body.Forms.Integrations.ODK,
-                GoogleForm : request.body.Forms.Integrations.GoogleForm,
+            Integrations : {
+                KoboToolbox : request.body.Forms.Integrations.KoboToolbox,
+                ODK         : request.body.Forms.Integrations.ODK,
+                GoogleForm  : request.body.Forms.Integrations.GoogleForm,
             },
-            OfflineSupport: request.body.Forms.OfflineSupport,
-            FieldApp      : request.body.Forms.FieldApp,
+            OfflineSupport : request.body.Forms.OfflineSupport,
+            FieldApp       : request.body.Forms.FieldApp,
         };
 
         return model;
     };
 
     updateTenantSettingsByType = async (request: express.Request, settingsType: TenantSettingsTypes)
-        : Promise<HealthcareInterfaces|CommonSettings|PatientAppSettings|ChatBotSettings|FormsSettings> => {
+        : Promise<UserInterfaces|CommonSettings|PatientAppSettings|ChatBotSettings|FormsSettings> => {
         
-        if (settingsType === TenantSettingsTypes.HealthcareInterfaces) {
+        if (settingsType === TenantSettingsTypes.UserInterfaces) {
             return await this.updateHealthcareInterfaces(request);
         }
         if (settingsType === TenantSettingsTypes.Common) {
@@ -219,13 +220,14 @@ export class TenantSettingsValidator extends BaseValidator {
         this.validateRequest(request);
 
         const model: TenantSettingsDomainModel = {
-            HealthcareInterfaces: healthcareInterfaces,
-            Common              : commonSettings,
-            PatientApp          : patientAppSettings,
-            ChatBot             : chatBotSettings,
-            Forms               : formsSettings,
+            UserInterfaces : healthcareInterfaces,
+            Common         : commonSettings,
+            PatientApp     : patientAppSettings,
+            ChatBot        : chatBotSettings,
+            Forms          : formsSettings,
         };
 
         return model;
     };
+
 }

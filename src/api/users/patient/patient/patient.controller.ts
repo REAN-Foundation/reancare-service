@@ -207,7 +207,7 @@ export class PatientController extends BaseUserController {
                 location = addresses[0].Location;
             }
 
-            await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient);
+            await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient, location);
 
             const patient = await this._service.getByUserId(userId);
 

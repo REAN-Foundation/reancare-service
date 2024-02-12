@@ -276,6 +276,9 @@ export class AssessmentController extends BaseController {
 
             var answerResponse: AssessmentQuestionResponseDto = await this._service.answerQuestion(answerModel);
 
+            var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
+            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment, answerResponse, options);
+
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
             if (isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
@@ -288,9 +291,10 @@ export class AssessmentController extends BaseController {
                         answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
+                var updatedAssessment = await this._service.getById(assessment.id);
+                await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
             }
 
-            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment);
 
             const message = isAssessmentCompleted
                 ? 'Assessment has completed successfully!'
@@ -344,6 +348,13 @@ export class AssessmentController extends BaseController {
             var answerResponse = await this._service.answerQuestionList(assessment.id, listNode, answerModels);
             Logger.instance().log(`AnswerResponse: ${JSON.stringify(answerResponse)}`);
 
+            for await (var ar of answerResponse.Answer) {
+                ar = JSON.parse(JSON.stringify(ar));
+                ar.Answer['SubQuestion']  = ar.Answer.Title;
+                ar.Answer.Title = listNode.Title;
+                this._ehrAssessmentService.addEHRRecordForAppNames(assessment, ar, ar.Parent);
+            }
+
             answerResponse['AssessmentScore'] = null;
 
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
@@ -359,9 +370,11 @@ export class AssessmentController extends BaseController {
                         answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
+                var updatedAssessment = await this._service.getById(assessment.id);
+                updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore'])
+                await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
             }
 
-            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment);
 
             const message = isAssessmentCompleted
                 ? 'Assessment has completed successfully!'

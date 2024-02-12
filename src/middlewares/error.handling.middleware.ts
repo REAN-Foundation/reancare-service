@@ -1,14 +1,19 @@
+import express from "express";
 import { Logger } from "../common/logger";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export const errorHandlerMiddleware = (err, req, res, next) => {
-    const stack = JSON.stringify(err.stack);
+export const errorHandlerMiddleware = (
+    error, request: express.Request,
+    response: express.Response,
+    next: express.NextFunction) => {
+
+    const stack = JSON.stringify(error.stack);
     Logger.instance().log(stack);
-    const errMessage = err.message;
+    const errMessage = error.message;
     const responseObject = {
         Status  : 'failure',
         Message : errMessage
     };
-    res.status(500).send(responseObject);
+    response.status(500).send(responseObject);
 };

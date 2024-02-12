@@ -244,8 +244,8 @@ export class AssessmentService {
 
     public completeAssessment = async (assessmentId: uuid): Promise<AssessmentDto> => {
         var assessment = await this._assessmentRepo.completeAssessment(assessmentId);
-        var responses = await this._assessmentHelperRepo.getUserResponses(assessmentId);
-        assessment.UserResponses = responses;
+        //var responses = await this._assessmentHelperRepo.getUserResponses(assessmentId);
+        //assessment.UserResponses = responses;
         return assessment;
     };
 

@@ -16,6 +16,7 @@ import { DatabaseClient } from './common/database.utils/dialect.clients/database
 import { DatabaseSchemaType } from './common/database.utils/database.config';
 import { Injector } from './startup/injector';
 import ClientAppAuthMiddleware from './middlewares/client.app.auth.middleware';
+import { errorHandlerMiddleware } from './middlewares/error.handling.middleware';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +73,13 @@ export default class Application {
                 //Set-up cron jobs
                 await Loader.scheduler.schedule();
             }
+
+            this._app.use(errorHandlerMiddleware);
+
+            //Handle unhandled rejections
+            process.on('unhandledRejection', (reason, promise) => {
+                Logger.instance().log('Unhandled Rejection!');
+            });
 
             process.on('exit', code => {
                 Logger.instance().log(`Process exited with code: ${code}`);

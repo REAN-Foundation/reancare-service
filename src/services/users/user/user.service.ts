@@ -540,16 +540,10 @@ export class UserService {
         }
 
         user  = await this._userRepo.getByPersonId(person.id);
-
-        //Now check if that person is an user with a given role
-        const personId = person.id;
         if (user == null) {
-            user = await this._userRepo.getUserByPersonIdAndRole(personId, loginModel.LoginRoleId);
-            user = await this.updateDetailsDto(user);
-            if (user == null) {
-                throw new ApiError(404, 'Cannot find user with the given role.');
-            }
+            throw new ApiError(404, 'Cannot find user.');
         }
+        user = await this.updateDetailsDto(user);
         user.Person = user.Person ?? person;
 
         return user;

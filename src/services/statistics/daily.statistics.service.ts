@@ -36,8 +36,8 @@ export class DailyStatisticsService {
             const pdfModel = null;
             const fileResourceDto = null;
 
-            // var statisticsService = Injector.Container.resolve(StatisticsService);
-            // const dashboardStats = await statisticsService.createSystemDashboardStats();
+            var statisticsService = Injector.Container.resolve(StatisticsService);
+            const dashboardStats = await statisticsService.createSystemDashboardStats();
             var ahaStatisticsService = Injector.Container.resolve(AhaStatisticsService);
             const ahaStats = await ahaStatisticsService.getAhaStatistics();
             // if (ahaStats) {
@@ -50,7 +50,8 @@ export class DailyStatisticsService {
             // }
 
             // const resourceId = fileResourceDto ? fileResourceDto.id : null;
-            // const userStats = await ahaStatisticsService.getUserStatistics();
+            // const userStats = null;
+            // // const userStats = await ahaStatisticsService.getUserStatistics();
 
             // const model: DailySystemStatisticsDomainModel = {
             //     ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),

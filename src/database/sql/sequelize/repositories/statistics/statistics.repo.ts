@@ -36,6 +36,8 @@ import EmergencyContact from '../../models/users/patient/emergency.contact.model
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
 import { Sequelize } from 'sequelize-typescript';
+import { getTotalCareplanEnrollments, queryDeletedUsers, queryNotDeletedUsers, queryTotalOnboardedUsers, queryUsersWithActiveSession } from './dashboard.sql.queries';
+import { DatabaseConnector_Sequelize } from '../../database.connector.sequelize';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +52,13 @@ const sequelizeStats = new Sequelize(
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 export class StatisticsRepo implements IStatisticsRepo {
+
+    public dbConnector = null;
+
+    constructor() {
+        this.dbConnector = new DatabaseConnector_Sequelize();
+        this.dbConnector.connect();
+    }
 
     getUsersCount = async (filters: StatisticSearchFilters): Promise<any> => {
         try {
@@ -1132,439 +1141,564 @@ export class StatisticsRepo implements IStatisticsRepo {
     // #private region
 
     private getOnboardedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-        try {
-            const search: any = { where: {}, include: [], paranoid: false };
-            const includesObj =
-             {
-                 model    : User,
-                 required : true,
-                 where    : {
-                     IsTestUser : false
-                 },
-                 paranoid : false,
-                 include  : []
-             };
-
-            const includePerson = {
-                model    : Person,
-                required : true,
-                where    : {},
-                paranoid : false,
-                
-            };
-
-            if (filters.PastMonths != null)  {
-                const usersForMonths = [];
-
-                for (var i = 0; i < filters.PastMonths; i++) {
-                    var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-                    var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-                    var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-                    var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-                    includePerson.where['CreatedAt'] = {
-                        [Op.between] : [startOfMonth, endOfMonth],
-                    };
-                    includesObj.include.push(includePerson);
-                    search.include.push(includesObj);
-
-                    const totalUsers = await Patient.findAndCountAll(search);
-
-                    var usersForMonth = {
-                        Month : monthName,
-                        Count : totalUsers.count
-                    };
-                    usersForMonths.push(usersForMonth);
-                }
-                return usersForMonths;
-            }
-            else
-            {
-                const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-                if (filters.Year != null)  {
-                    includePerson.where['CreatedAt'] = {
-                        [Op.between] : [minDate, maxDate],
-                    };
-                }
-                const maxCreatedDate = getMaxDate(filters);
-                if (filters.Year != null && filters.Month != null)  {
-                    includePerson.where['CreatedAt'] = {
-                        [Op.lt] : maxCreatedDate,
-                    };
-                }
-                if (filters.From != null && filters.To != null)  {
-                    includePerson.where['CreatedAt'] = {
-                        [Op.between] : [filters.From, filters.To],
-                    };
-                }
-                includesObj.include.push(includePerson);
-                search.include.push(includesObj);
-
-                const totalUsers = await Patient.findAndCountAll(search);
-
-                const totalUsersDetails = {
-                    Count : totalUsers.count,
-                };
-
-                return totalUsersDetails;
-            }
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+        let totalUsers = null;
+        const query =  queryTotalOnboardedUsers;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const users: any = rows;
+        if (users.length === 1) {
+            totalUsers = users[0].totalUsers;
         }
+        return totalUsers;
+
+        // try {
+        //     const search: any = { where: {}, include: [], paranoid: false };
+        //     const includesObj =
+        //      {
+        //          model    : User,
+        //          required : true,
+        //          where    : {
+        //              IsTestUser : false
+        //          },
+        //          paranoid : false,
+        //          include  : []
+        //      };
+
+        //     const includePerson = {
+        //         model    : Person,
+        //         required : true,
+        //         where    : {},
+        //         paranoid : false,
+                
+        //     };
+
+        //     if (filters.PastMonths != null)  {
+        //         const usersForMonths = [];
+
+        //         for (var i = 0; i < filters.PastMonths; i++) {
+        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
+        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
+        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
+        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
+
+        //             includePerson.where['CreatedAt'] = {
+        //                 [Op.between] : [startOfMonth, endOfMonth],
+        //             };
+        //             includesObj.include.push(includePerson);
+        //             search.include.push(includesObj);
+
+        //             const totalUsers = await Patient.findAndCountAll(search);
+
+        //             var usersForMonth = {
+        //                 Month : monthName,
+        //                 Count : totalUsers.count
+        //             };
+        //             usersForMonths.push(usersForMonth);
+        //         }
+        //         return usersForMonths;
+        //     }
+        //     else
+        //     {
+        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
+        //         if (filters.Year != null)  {
+        //             includePerson.where['CreatedAt'] = {
+        //                 [Op.between] : [minDate, maxDate],
+        //             };
+        //         }
+        //         const maxCreatedDate = getMaxDate(filters);
+        //         if (filters.Year != null && filters.Month != null)  {
+        //             includePerson.where['CreatedAt'] = {
+        //                 [Op.lt] : maxCreatedDate,
+        //             };
+        //         }
+        //         if (filters.From != null && filters.To != null)  {
+        //             includePerson.where['CreatedAt'] = {
+        //                 [Op.between] : [filters.From, filters.To],
+        //             };
+        //         }
+        //         includesObj.include.push(includePerson);
+        //         search.include.push(includesObj);
+
+        //         const totalUsers = await Patient.findAndCountAll(search);
+
+        //         const totalUsersDetails = {
+        //             Count : totalUsers.count,
+        //         };
+
+        //         return totalUsersDetails;
+        //     }
+
+        // } catch (error) {
+        //     Logger.instance().log(error.message);
+        //     throw new ApiError(500, error.message);
+        // }
     };
 
+    // private getOnboardedUsers1 = async (filters: StatisticSearchFilters): Promise<any> => {
+    //     try {
+    //         const search: any = { where: {}, include: [], paranoid: false };
+    //         const includesObj =
+    //          {
+    //              model    : User,
+    //              required : true,
+    //              where    : {
+    //                  IsTestUser : false
+    //              },
+    //              paranoid : false,
+    //              include  : []
+    //          };
+
+    //         const includePerson = {
+    //             model    : Person,
+    //             required : true,
+    //             where    : {},
+    //             paranoid : false,
+                
+    //         };
+
+    //         if (filters.PastMonths != null)  {
+    //             const usersForMonths = [];
+
+    //             for (var i = 0; i < filters.PastMonths; i++) {
+    //                 var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
+    //                 var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
+    //                 var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
+    //                 var monthName = TimeHelper.format(date, 'MMMM, YYYY');
+
+    //                 includePerson.where['CreatedAt'] = {
+    //                     [Op.between] : [startOfMonth, endOfMonth],
+    //                 };
+    //                 includesObj.include.push(includePerson);
+    //                 search.include.push(includesObj);
+
+    //                 const totalUsers = await Patient.findAndCountAll(search);
+
+    //                 var usersForMonth = {
+    //                     Month : monthName,
+    //                     Count : totalUsers.count
+    //                 };
+    //                 usersForMonths.push(usersForMonth);
+    //             }
+    //             return usersForMonths;
+    //         }
+    //         else
+    //         {
+    //             const { minDate, maxDate } = getMinMaxDatesForYear(filters);
+    //             if (filters.Year != null)  {
+    //                 includePerson.where['CreatedAt'] = {
+    //                     [Op.between] : [minDate, maxDate],
+    //                 };
+    //             }
+    //             const maxCreatedDate = getMaxDate(filters);
+    //             if (filters.Year != null && filters.Month != null)  {
+    //                 includePerson.where['CreatedAt'] = {
+    //                     [Op.lt] : maxCreatedDate,
+    //                 };
+    //             }
+    //             if (filters.From != null && filters.To != null)  {
+    //                 includePerson.where['CreatedAt'] = {
+    //                     [Op.between] : [filters.From, filters.To],
+    //                 };
+    //             }
+    //             includesObj.include.push(includePerson);
+    //             search.include.push(includesObj);
+
+    //             const totalUsers = await Patient.findAndCountAll(search);
+
+    //             const totalUsersDetails = {
+    //                 Count : totalUsers.count,
+    //             };
+
+    //             return totalUsersDetails;
+    //         }
+
+    //     } catch (error) {
+    //         Logger.instance().log(error.message);
+    //         throw new ApiError(500, error.message);
+    //     }
+    // };
+
    private  getNotDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-       try {
-           const totalUsers = await this.getTotalUsers(filters);
-           const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-           const maxCreatedDate = getMaxDate(filters);
-           const search: any = { where: {}, include: [], paranoid: false };
-
-           const includesObj =
-           {
-               model    : User,
-               required : true,
-               where    : {
-                   IsTestUser : false
-               },
-               paranoid : false,
-               include  : []
-           };
-
-           const includePerson =  {
-               model    : Person,
-               required : true,
-               where    : {},
-               paranoid : false,
-           };
-
-           includePerson.where['DeletedAt'] = {
-               [Op.eq] : null
-           };
-
-           if (filters.PastMonths != null)  {
-               const notDeletedUsersDetails = [];
-               for (var i = 0; i < filters.PastMonths; i++) {
-                   var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-                   var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-                   var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-                   var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-                   includePerson.where['CreatedAt'] = {
-                       [Op.between] : [startOfMonth, endOfMonth],
-                   };
-                   includesObj.include.push(includePerson);
-                   search.include.push(includesObj);
-
-                   const nonDeletedUsers = await Patient.findAndCountAll(search);
-
-                   var usersForMonth = {
-                       Month : monthName,
-                       Count : nonDeletedUsers.count
-                   };
-                   notDeletedUsersDetails.push(usersForMonth);
-               }
-               return notDeletedUsersDetails;
-           }
-
-           else
-           {
-               if (filters.Year != null)  {
-                   includePerson.where['CreatedAt'] = {
-                       [Op.between] : [minDate, maxDate],
-                   };
-               }
-               if (filters.Year != null && filters.Month != null)  {
-                   includePerson.where['CreatedAt'] = {
-                       [Op.lt] : maxCreatedDate,
-                   };
-               }
-               if (filters.From != null && filters.To != null)  {
-                   includePerson.where['CreatedAt'] = {
-                       [Op.between] : [filters.From, filters.To],
-                   };
-               }
-               includesObj.include.push(includePerson);
-               search.include.push(includesObj);
-
-               const nonDeletedUsers = await Patient.findAndCountAll(search);
-
-               const nonDeletedUsersRatio =  ((nonDeletedUsers.count) / (totalUsers.count) * 100).toFixed(2);
-
-               const notDeletedUsersDetails = {
-                   Count : nonDeletedUsers.count,
-                   Ratio : nonDeletedUsersRatio
-               };
-               return notDeletedUsersDetails;
-           }
-
-       } catch (error) {
-           Logger.instance().log(error.message);
-           throw new ApiError(500, error.message);
+       const query =  queryNotDeletedUsers;
+       let totalNotDeletedUsers = null;
+       const [rows] = await this.dbConnector.executeQuery(query);
+       const notDeletedUsers_: any = rows;
+       if (notDeletedUsers_.length === 1) {
+           totalNotDeletedUsers = notDeletedUsers_[0].totalNotDeletedUsers;
        }
+       return totalNotDeletedUsers;
+       //    try {
+       //        const totalUsers = await this.getTotalUsers(filters);
+       //        const { minDate, maxDate } = getMinMaxDatesForYear(filters);
+       //        const maxCreatedDate = getMaxDate(filters);
+       //        const search: any = { where: {}, include: [], paranoid: false };
+
+       //        const includesObj =
+       //        {
+       //            model    : User,
+       //            required : true,
+       //            where    : {
+       //                IsTestUser : false
+       //            },
+       //            paranoid : false,
+       //            include  : []
+       //        };
+
+       //        const includePerson =  {
+       //            model    : Person,
+       //            required : true,
+       //            where    : {},
+       //            paranoid : false,
+       //        };
+
+       //        includePerson.where['DeletedAt'] = {
+       //            [Op.eq] : null
+       //        };
+
+       //        if (filters.PastMonths != null)  {
+       //            const notDeletedUsersDetails = [];
+       //            for (var i = 0; i < filters.PastMonths; i++) {
+       //                var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
+       //                var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
+       //                var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
+       //                var monthName = TimeHelper.format(date, 'MMMM, YYYY');
+
+       //                includePerson.where['CreatedAt'] = {
+       //                    [Op.between] : [startOfMonth, endOfMonth],
+       //                };
+       //                includesObj.include.push(includePerson);
+       //                search.include.push(includesObj);
+
+       //                const nonDeletedUsers = await Patient.findAndCountAll(search);
+
+       //                var usersForMonth = {
+       //                    Month : monthName,
+       //                    Count : nonDeletedUsers.count
+       //                };
+       //                notDeletedUsersDetails.push(usersForMonth);
+       //            }
+       //            return notDeletedUsersDetails;
+       //        }
+
+       //        else
+       //        {
+       //            if (filters.Year != null)  {
+       //                includePerson.where['CreatedAt'] = {
+       //                    [Op.between] : [minDate, maxDate],
+       //                };
+       //            }
+       //            if (filters.Year != null && filters.Month != null)  {
+       //                includePerson.where['CreatedAt'] = {
+       //                    [Op.lt] : maxCreatedDate,
+       //                };
+       //            }
+       //            if (filters.From != null && filters.To != null)  {
+       //                includePerson.where['CreatedAt'] = {
+       //                    [Op.between] : [filters.From, filters.To],
+       //                };
+       //            }
+       //            includesObj.include.push(includePerson);
+       //            search.include.push(includesObj);
+
+       //            const nonDeletedUsers = await Patient.findAndCountAll(search);
+
+       //            const nonDeletedUsersRatio =  ((nonDeletedUsers.count) / (totalUsers.count) * 100).toFixed(2);
+
+       //            const notDeletedUsersDetails = {
+       //                Count : nonDeletedUsers.count,
+       //                Ratio : nonDeletedUsersRatio
+       //            };
+       //            return notDeletedUsersDetails;
+       //        }
+
+       //    } catch (error) {
+       //        Logger.instance().log(error.message);
+       //        throw new ApiError(500, error.message);
+       //    }
    };
 
    private  getDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-       try {
-           const search: any = { where: {}, include: [],  paranoid: false };
-
-           const includesObj =
-             {
-                 model    : Person,
-                 required : true,
-                 where    : {},
-                 paranoid : false
-             };
-
-           includesObj.where['DeletedAt'] = {
-               [Op.not] : null
-           };
-
-           if (filters.PastMonths != null) {
-
-               const deletedUsersDetails = [];
-
-               for (var i = 0; i < filters.PastMonths; i++) {
-                   var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-                   var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-                   var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-                   var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-                   includesObj.where['CreatedAt'] = {
-                       [Op.between] : [startOfMonth, endOfMonth],
-                   };
-
-                   search.include.push(includesObj);
-
-                   const deletedUsers = await Patient.findAndCountAll(search);
-
-                   var deletedUsersForMonth = {
-                       Month : monthName,
-                       Count : deletedUsers.count
-                   };
-                   deletedUsersDetails.push(deletedUsersForMonth);
-               }
-               return deletedUsersDetails;
-           }
-           else {
-               const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-               if (filters.Year != null)  {
-                   includesObj.where['CreatedAt'] = {
-                       [Op.between] : [minDate, maxDate],
-                   };
-               }
-               const maxCreatedDate = getMaxDate(filters);
-               if (filters.Year != null && filters.Month != null)  {
-                   includesObj.where['CreatedAt'] = {
-                       [Op.lt] : maxCreatedDate,
-                   };
-               }
-               if (filters.From != null && filters.To != null)  {
-                   includesObj.where['CreatedAt'] = {
-                       [Op.between] : [filters.From, filters.To],
-                   };
-               }
-
-               search.include.push(includesObj);
-
-               const deletedUsers = await Patient.findAndCountAll(search);
-
-               const totalUsers = await this.getTotalUsers(filters);
-
-               const deletedUsersRatio =  ((deletedUsers.count) / (totalUsers.count) * 100).toFixed(2);
-
-               const  deletedUsersDetails = {
-                   Count : deletedUsers.count,
-                   Ratio : deletedUsersRatio
-               };
-
-               return deletedUsersDetails;
-
-           }
-       } catch (error) {
-           Logger.instance().log(error.message);
-           throw new ApiError(500, error.message);
+       const query =  queryDeletedUsers;
+       let totalDeletedUsers = null;
+       const [rows] = await this.dbConnector.executeQuery(query);
+       const deletedUsers_: any = rows;
+       if (deletedUsers_.length === 1) {
+           totalDeletedUsers = deletedUsers_[0].totalDeletedUsers;
        }
+       return totalDeletedUsers;
+       //    try {
+       //        const search: any = { where: {}, include: [],  paranoid: false };
+
+       //        const includesObj =
+       //          {
+       //              model    : Person,
+       //              required : true,
+       //              where    : {},
+       //              paranoid : false
+       //          };
+
+       //        includesObj.where['DeletedAt'] = {
+       //            [Op.not] : null
+       //        };
+
+       //        if (filters.PastMonths != null) {
+
+       //            const deletedUsersDetails = [];
+
+       //            for (var i = 0; i < filters.PastMonths; i++) {
+       //                var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
+       //                var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
+       //                var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
+       //                var monthName = TimeHelper.format(date, 'MMMM, YYYY');
+
+       //                includesObj.where['CreatedAt'] = {
+       //                    [Op.between] : [startOfMonth, endOfMonth],
+       //                };
+
+       //                search.include.push(includesObj);
+
+       //                const deletedUsers = await Patient.findAndCountAll(search);
+
+       //                var deletedUsersForMonth = {
+       //                    Month : monthName,
+       //                    Count : deletedUsers.count
+       //                };
+       //                deletedUsersDetails.push(deletedUsersForMonth);
+       //            }
+       //            return deletedUsersDetails;
+       //        }
+       //        else {
+       //            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
+       //            if (filters.Year != null)  {
+       //                includesObj.where['CreatedAt'] = {
+       //                    [Op.between] : [minDate, maxDate],
+       //                };
+       //            }
+       //            const maxCreatedDate = getMaxDate(filters);
+       //            if (filters.Year != null && filters.Month != null)  {
+       //                includesObj.where['CreatedAt'] = {
+       //                    [Op.lt] : maxCreatedDate,
+       //                };
+       //            }
+       //            if (filters.From != null && filters.To != null)  {
+       //                includesObj.where['CreatedAt'] = {
+       //                    [Op.between] : [filters.From, filters.To],
+       //                };
+       //            }
+
+       //            search.include.push(includesObj);
+
+       //            const deletedUsers = await Patient.findAndCountAll(search);
+
+       //            const totalUsers = await this.getTotalUsers(filters);
+
+       //            const deletedUsersRatio =  ((deletedUsers.count) / (totalUsers.count) * 100).toFixed(2);
+
+       //            const  deletedUsersDetails = {
+       //                Count : deletedUsers.count,
+       //                Ratio : deletedUsersRatio
+       //            };
+
+       //            return deletedUsersDetails;
+
+       //        }
+       //    } catch (error) {
+       //        Logger.instance().log(error.message);
+       //        throw new ApiError(500, error.message);
+       //    }
    };
 
     private getUsersWithActiveSession = async (filters: StatisticSearchFilters): Promise<any> => {
-        try {
-            const search: any = { where: {}, include: [], paranoid: false };
-
-            const includesObj =
-             {
-                 model    : Person,
-                 required : true,
-                 where    : {},
-             };
-
-            includesObj.where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
-            };
-
-            includesObj.where['DeletedAt'] = {
-                [Op.eq] : null
-            };
-
-            if (filters.PastMonths != null) {
-
-                const usersWithActiveSessionForMonths = [];
-
-                for (var i = 0; i < filters.PastMonths; i++) {
-                    var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-                    var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-                    var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-                    var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-                    includesObj.where['CreatedAt'] = {
-                        [Op.between] : [startOfMonth, endOfMonth],
-                    };
-
-                    search.include.push(includesObj);
-
-                    const totalUsers_ = await Patient.findAndCountAll(search);
-
-                    const totalUsers  = totalUsers_.rows.map(x => x.UserId);
-
-                    const loginSessions = [];
-                    for (const u of totalUsers) {
-                        const loginSession = await UserLoginSession.findOne({ where : {
-                            UserId    : u,
-                            ValidTill : { [Op.gte]: new Date() },
-                        } });
-                        if (loginSession != null) {
-                            loginSessions.push(loginSession);
-                        }
-                    }
-
-                    var usersWithActiveSessionForMonth = {
-                        Month : monthName,
-                        Count : loginSessions.length
-                    };
-                    usersWithActiveSessionForMonths.push(usersWithActiveSessionForMonth);
-                }
-                return usersWithActiveSessionForMonths;
-            }
-            else {
-                const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-                if (filters.Year != null)  {
-                    includesObj.where['CreatedAt'] = {
-                        [Op.between] : [minDate, maxDate],
-                    };
-                }
-
-                const maxCreatedDate = getMaxDate(filters);
-                if (filters.Year != null && filters.Month != null)  {
-                    includesObj.where['CreatedAt'] = {
-                        [Op.lt] : maxCreatedDate,
-                    };
-                }
-                if (filters.From != null && filters.To != null)  {
-                    includesObj.where['CreatedAt'] = {
-                        [Op.between] : [filters.From, filters.To],
-                    };
-                }
-
-                search.include.push(includesObj);
-
-                const totalUsers_ = await Patient.findAndCountAll(search);
-
-                const totalUsers  = totalUsers_.rows.map(x => x.UserId);
-
-                const activeLoginSessions = [];
-                for (const u of totalUsers) {
-                    const loginSession = await UserLoginSession.findOne({ where : {
-                        UserId    : u,
-                        ValidTill : { [Op.gte]: new Date() },
-                    } });
-                    if (loginSession != null) {
-                        activeLoginSessions.push(loginSession);
-                    }
-                }
-
-                const activeUsersRatio = ((activeLoginSessions.length) / (totalUsers_.count) * 100).toFixed(2);
-
-                const  activeUsers = {
-                    Count : activeLoginSessions.length,
-                    Ratio : activeUsersRatio,
-                };
-                return activeUsers;
-
-            }
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+        let usersWithActiveSession = null;
+        const query =  queryUsersWithActiveSession;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const usersWithActiveSession_: any = rows;
+        if (usersWithActiveSession_.length === 1) {
+            usersWithActiveSession = usersWithActiveSession_[0].totalUsersWithActiveSession;
         }
+        return usersWithActiveSession;
+        // try {
+        //     const search: any = { where: {}, include: [], paranoid: false };
+
+        //     const includesObj =
+        //      {
+        //          model    : Person,
+        //          required : true,
+        //          where    : {},
+        //      };
+
+        //     includesObj.where['Phone'] = {
+        //         [Op.notBetween] : [1000000000, 1000000100],
+        //     };
+
+        //     includesObj.where['DeletedAt'] = {
+        //         [Op.eq] : null
+        //     };
+
+        //     if (filters.PastMonths != null) {
+
+        //         const usersWithActiveSessionForMonths = [];
+
+        //         for (var i = 0; i < filters.PastMonths; i++) {
+        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
+        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
+        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
+        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
+
+        //             includesObj.where['CreatedAt'] = {
+        //                 [Op.between] : [startOfMonth, endOfMonth],
+        //             };
+
+        //             search.include.push(includesObj);
+
+        //             const totalUsers_ = await Patient.findAndCountAll(search);
+
+        //             const totalUsers  = totalUsers_.rows.map(x => x.UserId);
+
+        //             const loginSessions = [];
+        //             for (const u of totalUsers) {
+        //                 const loginSession = await UserLoginSession.findOne({ where : {
+        //                     UserId    : u,
+        //                     ValidTill : { [Op.gte]: new Date() },
+        //                 } });
+        //                 if (loginSession != null) {
+        //                     loginSessions.push(loginSession);
+        //                 }
+        //             }
+
+        //             var usersWithActiveSessionForMonth = {
+        //                 Month : monthName,
+        //                 Count : loginSessions.length
+        //             };
+        //             usersWithActiveSessionForMonths.push(usersWithActiveSessionForMonth);
+        //         }
+        //         return usersWithActiveSessionForMonths;
+        //     }
+        //     else {
+        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
+        //         if (filters.Year != null)  {
+        //             includesObj.where['CreatedAt'] = {
+        //                 [Op.between] : [minDate, maxDate],
+        //             };
+        //         }
+
+        //         const maxCreatedDate = getMaxDate(filters);
+        //         if (filters.Year != null && filters.Month != null)  {
+        //             includesObj.where['CreatedAt'] = {
+        //                 [Op.lt] : maxCreatedDate,
+        //             };
+        //         }
+        //         if (filters.From != null && filters.To != null)  {
+        //             includesObj.where['CreatedAt'] = {
+        //                 [Op.between] : [filters.From, filters.To],
+        //             };
+        //         }
+
+        //         search.include.push(includesObj);
+
+        //         const totalUsers_ = await Patient.findAndCountAll(search);
+
+        //         const totalUsers  = totalUsers_.rows.map(x => x.UserId);
+
+        //         const activeLoginSessions = [];
+        //         for (const u of totalUsers) {
+        //             const loginSession = await UserLoginSession.findOne({ where : {
+        //                 UserId    : u,
+        //                 ValidTill : { [Op.gte]: new Date() },
+        //             } });
+        //             if (loginSession != null) {
+        //                 activeLoginSessions.push(loginSession);
+        //             }
+        //         }
+
+        //         const activeUsersRatio = ((activeLoginSessions.length) / (totalUsers_.count) * 100).toFixed(2);
+
+        //         const  activeUsers = {
+        //             Count : activeLoginSessions.length,
+        //             Ratio : activeUsersRatio,
+        //         };
+        //         return activeUsers;
+
+        //     }
+        // } catch (error) {
+        //     Logger.instance().log(error.message);
+        //     throw new ApiError(500, error.message);
+        // }
     };
 
     private getEnrolledUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-        try {
-            const search: any = { where: {}, };
-
-            if (filters.PastMonths != null) {
-
-                const enrolledUsersForMonths = [];
-
-                for (var i = 0; i < filters.PastMonths; i++) {
-                    var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-                    var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-                    var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-                    var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-                    search.where['CreatedAt'] = {
-                        [Op.between] : [startOfMonth, endOfMonth],
-                    };
-
-                    const enrolledUsers = await CareplanEnrollment.findAndCountAll(search);
-
-                    var enrolledUsersForMonth = {
-                        Month : monthName,
-                        Count : enrolledUsers.count
-                    };
-                    enrolledUsersForMonths.push(enrolledUsersForMonth);
-                }
-                return enrolledUsersForMonths;
-            }
-            else {
-                const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-                if (filters.Year != null)  {
-                    search.where['CreatedAt'] = {
-                        [Op.between] : [minDate, maxDate],
-                    };
-                }
-
-                const maxCreatedDate = getMaxDate(filters);
-                if (filters.Year != null && filters.Month != null)  {
-                    search.where['CreatedAt'] = {
-                        [Op.lt] : maxCreatedDate,
-                    };
-                }
-                if (filters.From != null && filters.To != null)  {
-                    search.where['CreatedAt'] = {
-                        [Op.between] : [filters.From, filters.To],
-                    };
-                }
-
-                const enrolledUsers = await CareplanEnrollment.findAndCountAll(search);
-
-                const totalUsers = await this.getTotalUsers(filters);
-
-                const enrolledUsersRatio = ((enrolledUsers.count) / (totalUsers.count) * 100).toFixed(2);
-
-                const  enrolledUsersDetails = {
-                    Count : enrolledUsers.count,
-                    Ratio : enrolledUsersRatio,
-                };
-
-                return enrolledUsersDetails;
-
-            }
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+        let totalEnrolledUsers = null;
+        const query =  getTotalCareplanEnrollments;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalEnrolledUsers_: any = rows;
+        if (totalEnrolledUsers_.length === 1) {
+            totalEnrolledUsers = totalEnrolledUsers_[0].totalCareplanEnrollments;
         }
+        return totalEnrolledUsers;
+        // try {
+        //     const search: any = { where: {}, };
+
+        //     if (filters.PastMonths != null) {
+
+        //         const enrolledUsersForMonths = [];
+
+        //         for (var i = 0; i < filters.PastMonths; i++) {
+        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
+        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
+        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
+        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
+
+        //             search.where['CreatedAt'] = {
+        //                 [Op.between] : [startOfMonth, endOfMonth],
+        //             };
+
+        //             const enrolledUsers = await CareplanEnrollment.findAndCountAll(search);
+
+        //             var enrolledUsersForMonth = {
+        //                 Month : monthName,
+        //                 Count : enrolledUsers.count
+        //             };
+        //             enrolledUsersForMonths.push(enrolledUsersForMonth);
+        //         }
+        //         return enrolledUsersForMonths;
+        //     }
+        //     else {
+        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
+        //         if (filters.Year != null)  {
+        //             search.where['CreatedAt'] = {
+        //                 [Op.between] : [minDate, maxDate],
+        //             };
+        //         }
+
+        //         const maxCreatedDate = getMaxDate(filters);
+        //         if (filters.Year != null && filters.Month != null)  {
+        //             search.where['CreatedAt'] = {
+        //                 [Op.lt] : maxCreatedDate,
+        //             };
+        //         }
+        //         if (filters.From != null && filters.To != null)  {
+        //             search.where['CreatedAt'] = {
+        //                 [Op.between] : [filters.From, filters.To],
+        //             };
+        //         }
+
+        //         const enrolledUsers = await CareplanEnrollment.findAndCountAll(search);
+
+        //         const totalUsers = await this.getTotalUsers(filters);
+
+        //         const enrolledUsersRatio = ((enrolledUsers.count) / (totalUsers.count) * 100).toFixed(2);
+
+        //         const  enrolledUsersDetails = {
+        //             Count : enrolledUsers.count,
+        //             Ratio : enrolledUsersRatio,
+        //         };
+
+        //         return enrolledUsersDetails;
+
+        //     }
+        // } catch (error) {
+        //     Logger.instance().log(error.message);
+        //     throw new ApiError(500, error.message);
+        // }
     };
 
     private getTotalUsers = async (filters: StatisticSearchFilters): Promise<any> => {

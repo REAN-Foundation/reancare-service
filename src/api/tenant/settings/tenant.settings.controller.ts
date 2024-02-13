@@ -30,7 +30,7 @@ export class TenantSettingsController {
 
     getTenantSettingsByType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'id');
             let settings = await this._service.getTenantSettings(tenantId);
             if (!settings) {
                 throw new Error(`Tenant settings not found for tenant: ${tenantId}`);
@@ -50,7 +50,7 @@ export class TenantSettingsController {
 
     getTenantSettings = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'id');
             const settings = await this._service.getTenantSettings(tenantId);
             if (!settings) {
                 throw new Error(`Tenant settings not found for tenant: ${tenantId}`);
@@ -65,7 +65,7 @@ export class TenantSettingsController {
 
     updateTenantSettingsByType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'id');
             const settingsType: string = await this._validator.getParamStr(request, 'settingsType');
             const types = TenantSettingsTypesList.map(x => x.toLowerCase());
             if (!types.includes(settingsType.toLowerCase())) {
@@ -84,7 +84,7 @@ export class TenantSettingsController {
 
     updateTenantSettings = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'id');
             const settings = await this._validator.updateTenantSettings(request);
             const updated = await this._service.updateTenantSettings(tenantId, settings);
             ResponseHandler.success(request, response, 'Tenant settings updated successfully!', 200, {
@@ -94,6 +94,6 @@ export class TenantSettingsController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
 }
 

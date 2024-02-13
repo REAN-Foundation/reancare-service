@@ -13,7 +13,6 @@ export class PermissionHandler {
     public static hasRoleBasedPermission = async (roleId, context) => {
         const rolePrivilegeService = Injector.Container.resolve(RolePrivilegeService);
         const hasPrivilege = await rolePrivilegeService.hasPrivilegeForRole(roleId, context);
-
         if (!hasPrivilege) {
             return false;
         }

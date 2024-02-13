@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import express from "express";
 import { Logger } from "../common/logger";
 

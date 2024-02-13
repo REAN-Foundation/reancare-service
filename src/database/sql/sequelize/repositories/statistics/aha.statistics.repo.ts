@@ -3,10 +3,20 @@ import mysql, { Connection } from 'mysql2/promise';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { AppName, CareplanCode, HealthSystem } from '../../../../../domain.types/statistics/aha/aha.type';
+import { DatabaseConnector_Sequelize } from '../../database.connector.sequelize';
+import { queryCareplanList, queryHealthSystemEnrollmentCount, queryListOfHealthSystem, queryTotalActiveEnrollments, queryTotalDeletedEnrollments, queryTotalEnrollments } from './aha.sql.queries';
+import { Helper } from '../../../../../common/helper';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 export class AhaStatisticsRepo implements IAhaStatisticsRepo {
+
+    public dbConnector = null;
+
+    constructor() {
+        this.dbConnector = new DatabaseConnector_Sequelize();
+        this.dbConnector.connect();
+    }
 
     getTotalPatients = async (): Promise<number> => {
         const query = `SELECT * FROM patients`;
@@ -782,30 +792,43 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     };
 
     getTotalEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
-        const query =  `SELECT * FROM careplan_enrollments where PlanCode = '${careplanCode}'`;
-        let connection: Connection = null;
-        try {
-            connection = await this.createDbConnection();
-            const [rows] = await connection.execute(query);
-            const cholesterolEnrollments: any = rows;
-            return cholesterolEnrollments.length;
-        } catch (error) {
-            Logger.instance().log(`Unable to retrieved ${careplanCode} Enrollments: ${error.message}`);
-            throw new ApiError(500, `Unable to retrieved ${careplanCode} Enrollments: ${error.message}`);
-        } finally {
-            connection.end();
+        const query = Helper.replaceAll(queryTotalEnrollments,'{{careplanCode}}',careplanCode);
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const enrollments: any = rows;
+        if (enrollments.length === 1) {
+            return enrollments[0].totalEnrollments;
         }
+
+        // const query =  `SELECT * FROM careplan_enrollments where PlanCode = '${careplanCode}'`;
+        // let connection: Connection = null;
+        // try {
+        //     connection = await this.createDbConnection();
+        //     const [rows] = await connection.execute(query);
+        //     const cholesterolEnrollments: any = rows;
+        //     return cholesterolEnrollments.length;
+        // } catch (error) {
+        //     Logger.instance().log(`Unable to retrieved ${careplanCode} Enrollments: ${error.message}`);
+        //     throw new ApiError(500, `Unable to retrieved ${careplanCode} Enrollments: ${error.message}`);
+        // } finally {
+        //     connection.end();
+        // }
     };
 
     getTotalActiveEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
-        const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}' 
-                        AND ce.PatientUserId IN 
-                        (
-                            SELECT distinct (pt.UserId) from patients as pt
-                            JOIN users as u ON pt.UserId = u.id
-                            JOIN persons as p ON u.PersonId = p.id
-                            WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null
-                        )`;
+        const query = Helper.replaceAll(queryTotalActiveEnrollments,'{{careplanCode}}',careplanCode);
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const deletedEnrollments: any = rows;
+        if (deletedEnrollments.length === 1) {
+            return deletedEnrollments[0].totalDeletedEnrollments;
+        }
+        // const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}'
+        //                 AND ce.PatientUserId IN
+        //                 (
+        //                     SELECT distinct (pt.UserId) from patients as pt
+        //                     JOIN users as u ON pt.UserId = u.id
+        //                     JOIN persons as p ON u.PersonId = p.id
+        //                     WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null
+        //                 )`;
         // const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}'
         //                 AND ce.PatientUserId IN
         //                 (
@@ -815,29 +838,35 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         //                     JOIN persons as p ON u.PersonId = p.id
         //                     WHERE p.DeletedAt is null
         //                 )`;
-        let connection: Connection = null;
-        try {
-            connection = await this.createDbConnection();
-            const [rows] = await connection.execute(query);
-            const cholesterolEnrollments: any = rows;
-            return cholesterolEnrollments.length;
-        } catch (error) {
-            Logger.instance().log(`Unable to retrieved active ${careplanCode} Enrollments: ${error.message}`);
-            throw new ApiError(500, `Unable to retrieved active ${careplanCode} Enrollments: ${error.message}`);
-        } finally {
-            connection.end();
-        }
+        // let connection: Connection = null;
+        // try {
+        //     connection = await this.createDbConnection();
+        //     const [rows] = await connection.execute(query);
+        //     const cholesterolEnrollments: any = rows;
+        //     return cholesterolEnrollments.length;
+        // } catch (error) {
+        //     Logger.instance().log(`Unable to retrieved active ${careplanCode} Enrollments: ${error.message}`);
+        //     throw new ApiError(500, `Unable to retrieved active ${careplanCode} Enrollments: ${error.message}`);
+        // } finally {
+        //     connection.end();
+        // }
     };
 
     getTotalDeletedEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
-        const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}' 
-                        AND ce.PatientUserId IN 
-                        (
-                            SELECT distinct (pt.UserId) from patients as pt
-                            JOIN users as u ON pt.UserId = u.id
-                            JOIN persons as p ON u.PersonId = p.id
-                            WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null
-                        )`;
+        const query = Helper.replaceAll(queryTotalDeletedEnrollments,'{{careplanCode}}',careplanCode);
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const activeEnrollments: any = rows;
+        if (activeEnrollments.length === 1) {
+            return activeEnrollments[0].totalActiveEnrollments;
+        }
+        // const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}'
+        //                 AND ce.PatientUserId IN
+        //                 (
+        //                     SELECT distinct (pt.UserId) from patients as pt
+        //                     JOIN users as u ON pt.UserId = u.id
+        //                     JOIN persons as p ON u.PersonId = p.id
+        //                     WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is not null
+        //                 )`;
         // const query =  `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = '${careplanCode}'
         //                 AND ce.PatientUserId IN
         //                 (
@@ -847,18 +876,18 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         //                     JOIN persons as p ON u.PersonId = p.id
         //                     WHERE p.DeletedAt is not null
         //                 )`;
-        let connection: Connection = null;
-        try {
-            connection = await this.createDbConnection();
-            const [rows] = await connection.execute(query);
-            const deletedEnrollments: any = rows;
-            return deletedEnrollments.length;
-        } catch (error) {
-            Logger.instance().log(`Unable to retrieved deleted ${careplanCode} Enrollments: ${error.message}`);
-            throw new ApiError(500, `Unable to retrieved deleted ${careplanCode} Enrollments: ${error.message}`);
-        } finally {
-            connection.end();
-        }
+        // let connection: Connection = null;
+        // try {
+        //     connection = await this.createDbConnection();
+        //     const [rows] = await connection.execute(query);
+        //     const deletedEnrollments: any = rows;
+        //     return deletedEnrollments.length;
+        // } catch (error) {
+        //     Logger.instance().log(`Unable to retrieved deleted ${careplanCode} Enrollments: ${error.message}`);
+        //     throw new ApiError(500, `Unable to retrieved deleted ${careplanCode} Enrollments: ${error.message}`);
+        // } finally {
+        //     connection.end();
+        // }
     };
 
     getTotalTestUsersForCareplanEnrollments = async (careplanCode: CareplanCode): Promise<number> => {
@@ -925,78 +954,93 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
             connection.end();
         }
     };
-
    
     getHealthSystemEnrollmentCount = async (careplanCode:CareplanCode, healthSystem : HealthSystem): Promise<any> => {
-        // let query = ahaSqlQuerries.queryHealthSystemEnrollmentCount;
+        let query = Helper.replaceAll(queryHealthSystemEnrollmentCount, '{{careplanCode}}',careplanCode );
+        query = Helper.replaceAll(query, '{{healthSystem}}', healthSystem);
         // query = query.replace('{{careplanCode}}', careplanCode);
         // query = query.replace('{{healthSystem}}', healthSystem);
-        // const results = executeQuery(query);
-        
-        const query =  `select distinct (ce.PatientUserId), p.Phone, p.FirstName, p.LastName, ce.Plancode, ce.StartDate,
-                        ce.EndDate, pt.HealthSystem, pt.AssociatedHospital, p.DeletedAt from careplan_enrollments as ce 
-                        JOIN users as u ON ce.PatientUserId = u.id
-                        JOIN patients as pt ON u.id = pt.UserId
-                        JOIN persons as p ON u.PersonId = p.id
-                        where ce.PlanCode = "${careplanCode}" 
-                        AND ce.PatientUserId IN 
-                        (
-                            SELECT distinct (u.id) from users as u
-                            Join patients as pt on pt.UserId = u.id
-                            WHERE u.IsTestUser = 0 AND pt.HealthSystem = '${healthSystem}'
-                        )`;
-
-        let connection: Connection = null;
-        try {
-            connection = await this.createDbConnection();
-            const [rows] = await connection.execute(query);
-            const careplanEnrollments: any = rows;
-            const hospitals = this.extractHospitals(careplanEnrollments);
-            const patientCountForHospital = this.extractPatientCountForHospital(hospitals, careplanEnrollments);
-            return {
-                CareplanCode            : careplanCode,
-                HealthSystem            : healthSystem,
-                CareplanEnrollmentCount : careplanEnrollments.length,
-                PatientCountForHospital : patientCountForHospital
-            };
-        } catch (error) {
-            Logger.instance().log(`Unable to retrieved deleted test users for ${healthSystem} careplan: ${error.message}`);
-            throw new ApiError(500, `Unable to retrieved deleted test users for ${healthSystem} careplan: ${error.message}`);
-        } finally {
-            connection.end();
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const healthSystemEnrollments: any = rows;
+        if (healthSystemEnrollments.length === 1) {
+            return healthSystemEnrollments[0].count;
         }
+        
+        // const query =  `select distinct (ce.PatientUserId), p.Phone, p.FirstName, p.LastName, ce.Plancode, ce.StartDate,
+        //                 ce.EndDate, pt.HealthSystem, pt.AssociatedHospital, p.DeletedAt from careplan_enrollments as ce
+        //                 JOIN users as u ON ce.PatientUserId = u.id
+        //                 JOIN patients as pt ON u.id = pt.UserId
+        //                 JOIN persons as p ON u.PersonId = p.id
+        //                 where ce.PlanCode = "${careplanCode}"
+        //                 AND ce.PatientUserId IN
+        //                 (
+        //                     SELECT distinct (u.id) from users as u
+        //                     Join patients as pt on pt.UserId = u.id
+        //                     WHERE u.IsTestUser = 0 AND pt.HealthSystem = '${healthSystem}'
+        //                 )`;
+
+        // let connection: Connection = null;
+        // try {
+        //     connection = await this.createDbConnection();
+        //     const [rows] = await connection.execute(query);
+        //     const careplanEnrollments: any = rows;
+        //     const hospitals = this.extractHospitals(careplanEnrollments);
+        //     const patientCountForHospital = this.extractPatientCountForHospital(hospitals, careplanEnrollments);
+        //     return {
+        //         CareplanCode            : careplanCode,
+        //         HealthSystem            : healthSystem,
+        //         CareplanEnrollmentCount : careplanEnrollments.length,
+        //         PatientCountForHospital : patientCountForHospital
+        //     };
+        // } catch (error) {
+        //     Logger.instance().log(`Unable to retrieved deleted test users for ${healthSystem} careplan: ${error.message}`);
+        //     throw new ApiError(500, `Unable to retrieved deleted test users for ${healthSystem} careplan: ${error.message}`);
+        // } finally {
+        //     connection.end();
+        // }
     };
 
     getListOfCareplan = async () => {
-        const query =  `SELECT distinct(PlanCode) FROM careplan_enrollments;`;
-        let connection: Connection = null;
-        try {
-            connection = await this.createDbConnection();
-            const [rows] = await connection.execute(query);
-            const careplans: any = rows;
-            return careplans;
-        } catch (error) {
-            Logger.instance().log(`Unable to retrieved list of careplans: ${error.message}`);
-            throw new ApiError(500, `Unable to retrieved list of careplans: ${error.message}: ${error.message}`);
-        } finally {
-            connection.end();
-        }
+        // const query =  `SELECT distinct(PlanCode) FROM careplan_enrollments;`;
+        // let connection: Connection = null;
+        // try {
+        //     connection = await this.createDbConnection();
+        //     const [rows] = await connection.execute(query);
+        //     const careplans: any = rows;
+        //     return careplans;
+        // } catch (error) {
+        //     Logger.instance().log(`Unable to retrieved list of careplans: ${error.message}`);
+        //     throw new ApiError(500, `Unable to retrieved list of careplans: ${error.message}: ${error.message}`);
+        // } finally {
+        //     connection.end();
+        // }
+        // const query =  `SELECT distinct(PlanCode) FROM careplan_enrollments`;
+        const query =  queryCareplanList;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const careplans: any = rows;
+        return careplans;
+
     };
 
     getListOfHealthSystem = async () => {
-        const query =  `SELECT distinct(HealthSystem) FROM patients`;
-        let connection: Connection = null;
-        try {
-            connection = await this.createDbConnection();
-            const [rows] = await connection.execute(query);
-            const healthSystems: any = rows;
-            return healthSystems;
-        } catch (error) {
-            Logger.instance().log(`Unable to retrieved list of health system: ${error.message}`);
-            throw new ApiError(500, `Unable to retrieved list of health system: ${error.message}: ${error.message}`);
-        } finally {
-            connection.end();
-        }
+        const query = queryListOfHealthSystem;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const healthSystems: any = rows;
+        return healthSystems;
+
+        // const query =  `SELECT distinct(HealthSystem) FROM patients`;
+        // let connection: Connection = null;
+        // try {
+        //     connection = await this.createDbConnection();
+        //     const [rows] = await connection.execute(query);
+        //     const healthSystems: any = rows;
+        //     return healthSystems;
+        // } catch (error) {
+        //     Logger.instance().log(`Unable to retrieved list of health system: ${error.message}`);
+        //     throw new ApiError(500, `Unable to retrieved list of health system: ${error.message}: ${error.message}`);
+        // } finally {
+        //     connection.end();
+        // }
     };
     
     private extractHospitals = (careplanEnrollments) => {

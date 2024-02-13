@@ -80,7 +80,7 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
                 const dailyStatsService = Injector.Container.resolve(DailyStatisticsService);
                 await dailyStatsService.generateDailySystemStats();
-                await dailyStatsService.generateDailyStatsForAllTenants();
+                // await dailyStatsService.generateDailyStatsForAllTenants();
             })();
         });
     };

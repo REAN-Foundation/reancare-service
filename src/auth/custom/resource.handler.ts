@@ -39,7 +39,8 @@ export class ResourceHandler {
                 }
             }
             if (resourceOwnerUserId == null || resourceTenantId == null) {
-                if (request.resourceType === 'Tenant.Tenants') {
+                if (request.resourceType === 'Tenant.Tenants' ||
+                    request.resourceType === 'Tenant.Settings') {
                     resourceTenantId = request.resourceId as string;
                     const tenantAdminUser =
                         await this._userService.getUserByTenantIdAndRole(resourceTenantId, Roles.TenantAdmin);

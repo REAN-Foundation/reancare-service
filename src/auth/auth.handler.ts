@@ -138,7 +138,8 @@ export class AuthHandler {
         if (request.params.id != null && request.params.id !== 'undefined') {
             if (request.requestType === 'GetById' ||
                 request.requestType === 'Update' ||
-                request.requestType === 'Delete') {
+                request.requestType === 'Delete' ||
+                request.requestType === 'Get') {
                 resourceId = request.params.id;
                 return resourceId;
             }

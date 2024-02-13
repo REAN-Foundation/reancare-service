@@ -23,6 +23,8 @@ export interface IUserRepo {
 
     getUserByPersonIdAndRole(personId: uuid, loginRoleId: number): Promise<UserDetailsDto>;
 
+    getUserByTenantIdAndRole(tenantId: uuid, roleName: string): Promise<UserDetailsDto>;
+
     userNameExists(userName: string): Promise<boolean>;
 
     userExistsWithUsername(userName: string): Promise<boolean>;

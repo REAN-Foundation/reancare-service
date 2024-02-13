@@ -38,6 +38,16 @@ export class ResourceHandler {
                     }
                 }
             }
+            if (resourceOwnerUserId == null || resourceTenantId == null) {
+                if (request.resourceType === 'Tenant.Tenants') {
+                    resourceTenantId = request.resourceId as string;
+                    const tenantAdminUser =
+                        await this._userService.getUserByTenantIdAndRole(resourceTenantId, Roles.TenantAdmin);
+                    if (tenantAdminUser != null && resourceOwnerUserId == null) {
+                        resourceOwnerUserId = tenantAdminUser.id;
+                    }
+                }
+            }
 
             request.resourceOwnerUserId = resourceOwnerUserId;
             request.resourceTenantId = resourceTenantId;

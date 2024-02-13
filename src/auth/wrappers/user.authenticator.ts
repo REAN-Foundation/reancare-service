@@ -23,6 +23,7 @@ export class UserAuthenticator {
             const authResult = await this._authenticator.authenticate(request);
             if (authResult.Result === false){
                 ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
+                return;
             }
             next();
         } catch (error) {

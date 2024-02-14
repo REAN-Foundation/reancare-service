@@ -37,3 +37,15 @@ WHERE PatientUserId IN
         FROM users 
         WHERE IsTestUser= false
     )`;
+    
+//Query to get the user count by device details
+export const queryUsersByDeviceDetail =
+`SELECT OSType, COUNT(*) as count
+FROM user_device_details
+WHERE UserId IN
+    (
+        SELECT id
+        FROM users 
+        WHERE IsTestUser = false
+    )
+GROUP BY OSType`;

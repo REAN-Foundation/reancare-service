@@ -36,7 +36,13 @@ import EmergencyContact from '../../models/users/patient/emergency.contact.model
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
 import { Sequelize } from 'sequelize-typescript';
-import { getTotalCareplanEnrollments, queryDeletedUsers, queryNotDeletedUsers, queryTotalOnboardedUsers, queryUsersWithActiveSession } from './dashboard.sql.queries';
+import {
+    getTotalCareplanEnrollments,
+    queryDeletedUsers,
+    queryNotDeletedUsers,
+    queryTotalOnboardedUsers,
+    queryUsersWithActiveSession
+} from './dashboard.sql.queries';
 import { DatabaseConnector_Sequelize } from '../../database.connector.sequelize';
 
 ////////////////////////////////////////////////////////////////////////////////////////////

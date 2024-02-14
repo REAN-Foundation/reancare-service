@@ -53,7 +53,7 @@ export class Scheduler {
                 this.scheduleCareplanRegistrationReminders();
                 this.scheduleFetchDataFromDevices();
                 this.scheduleCurrentTimezoneUpdate();
-                this.scheduleDailyStatistics();
+                // this.scheduleDailyStatistics();
                 this.scheduleStrokeSurvey();
 
                 //this.scheduleDaillyPatientTasks();

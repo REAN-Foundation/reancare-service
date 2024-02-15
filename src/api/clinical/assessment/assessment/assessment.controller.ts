@@ -295,20 +295,24 @@ export class AssessmentController extends BaseController{
             var answerResponse: AssessmentQuestionResponseDto =
                 await this._service.answerQuestion(answerModel);
 
+            Logger.instance().log(`before update assessment Q in EHR`);
             var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(answerResponse.Parent.PatientUserId);
             var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
             if (eligibleAppNames.length > 0) {
                 for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(answerResponse, assessment, options, appName);   
+                    this._service.addEHRRecord(answerResponse, assessment, options, appName);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
             }
+            Logger.instance().log(`after update assessment Q in EHR`);
 
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
             if ( isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
+                Logger.instance().log(`above completeAssessmentTask`);
                 await this.completeAssessmentTask(id);
+                Logger.instance().log(`below completeAssessmentTask`);
                 //If the assessment has scoring enabled, score the assessment
                 if (assessment.ScoringApplicable) {
                     var { score, reportUrl } = await this.generateScoreReport(assessment);
@@ -317,6 +321,7 @@ export class AssessmentController extends BaseController{
                         answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
+                Logger.instance().log(`afer scoring`);
                 if (eligibleAppNames.length > 0) {
                     var updatedAssessment = await this._service.getById(assessment.id);
                     for await (var appName of eligibleAppNames) { 
@@ -325,6 +330,7 @@ export class AssessmentController extends BaseController{
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
                 }
+                Logger.instance().log(`after update assessment in EHR`);
                 ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
                     AnswerResponse : answerResponse,
                 });

@@ -23,6 +23,7 @@ export enum WearableDeviceNames {
   Fitbit = 'FITBIT',
   Garmin = 'GARMIN',
   Huawei = 'HUAWEI',
+  MyFitnessPal = 'MYFITNESSPAL',
   Omron = 'OMRON',
   Polar = 'POLAR',
   TrainingPeaks = 'TRAININGPEAKS',

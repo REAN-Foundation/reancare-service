@@ -3,13 +3,13 @@ import {
 } from "./medication.consumption.types";
 
 export interface MedicationConsumptionDetailsDto {
-    id                : string,
+    id?               : string,
     EhrId?            : string;
-    PatientUserId     : string;
+    PatientUserId?    : string;
     MedicationId?     : string;
     DrugName?         : string;
     DrugId?           : string;
-    Dose?             : number;
+    Dose?             : string | number;
     Details?          : string;
     TimeScheduleStart?: Date;
     TimeScheduleEnd?  : Date;
@@ -20,16 +20,20 @@ export interface MedicationConsumptionDetailsDto {
     CancelledOn?      : Date;
     Note?             : string;
     Status?           : MedicationConsumptionStatus;
+    CreatedAt?        : Date;
+    UpdatedAt?        : Date;
 }
 
 export interface MedicationConsumptionDto {
-    id                : string,
-    PatientUserId     : string;
+    id?               : string,
+    PatientUserId?    : string;
     DrugName?         : string;
     Details?          : string;
     TimeScheduleStart?: Date;
     TimeScheduleEnd?  : Date;
     Status?           : MedicationConsumptionStatus;
+    CreatedAt?        : Date;
+    UpdatedAt?        : Date;
 }
 
 export interface MedicationConsumptionStatsDto {

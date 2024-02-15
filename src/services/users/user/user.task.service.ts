@@ -7,6 +7,8 @@ import { TaskSummaryDto, UserTaskDto } from '../../../domain.types/users/user.ta
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../domain.types/users/user.task/user.task.search.types';
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { CareplanHandler } from '../../../modules/careplan/careplan.handler';
+import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/patient.dto";
+import { IPatientRepo } from "../../../database/repository.interfaces/users/patient/patient.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +21,7 @@ export class UserTaskService {
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
+        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {}
 
     create = async (userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
@@ -87,6 +90,11 @@ export class UserTaskService {
         };
         var dto = await this._careplanRepo.deleteFutureCareplanTask(careplanActivity);
         return dto;
+    };
+
+    getHealthSystem = async (id: string): Promise<PatientDetailsDto> => {
+        var details = await this._patientRepo.getByUserId(id);
+        return details;
     };
 
 }

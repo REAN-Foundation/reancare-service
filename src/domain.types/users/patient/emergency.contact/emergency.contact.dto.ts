@@ -6,8 +6,8 @@ import { EmergencyContactRoles } from "./emergency.contact.types";
 export interface EmergencyContactDto {
     id?                     : string,
     PatientUserId?          : string;
-    ContactPersonId         : string;
-    ContactPerson           : PersonDto;
+    ContactPersonId?        : string;
+    ContactPerson?          : PersonDto;
     ContactRelation?        : EmergencyContactRoles;
     AddressId?              : string;
     Address?                : AddressDto;

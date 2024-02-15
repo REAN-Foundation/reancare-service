@@ -74,7 +74,8 @@ import { CourseContentRepo } from './repositories/educational/learning/course.co
 import { UserLearningRepo } from './repositories/educational/learning/user.learning.repo';
 import { LabRecordRepo } from './repositories/clinical/lab.record/lab.record.repo';
 import { DonorRepo } from './repositories/users/donor.repo';
-import { HealthSystemRepo } from './repositories/users/patient/health.system.repo';
+import { HealthSystemRepo } from './repositories/hospitals/health.system.repo';
+import { HospitalRepo } from './repositories/hospitals/hospital.repo';
 import { NotificationRepo } from './repositories/general/notification.repo';
 import { VolunteerRepo } from './repositories/users/volunteer.repo';
 import { ChatRepo } from './repositories/community/chat.repo';
@@ -92,6 +93,7 @@ import { TenantRepo } from './repositories/tenant/tenant.repo';
 import { CohortRepo } from './repositories/community/cohort.repo';
 import { UserEngagementRepo } from './repositories/statistics/user.engagement.repo';
 import { CustomQueryRepo } from './repositories/statistics/custom.query.repo';
+import { DailyStatisticsRepo } from './repositories/statistics/daily.statistics.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -176,6 +178,7 @@ export class SequelizeInjector {
         container.register('ILabRecordRepo', LabRecordRepo);
         container.register('IDonorRepo', DonorRepo);
         container.register('IHealthSystemRepo', HealthSystemRepo);
+        container.register('IHospitalRepo', HospitalRepo);
         container.register('INotificationRepo', NotificationRepo);
         container.register('IVolunteerRepo', VolunteerRepo);
         container.register('IChatRepo', ChatRepo);
@@ -193,7 +196,7 @@ export class SequelizeInjector {
         container.register('ICohortRepo', CohortRepo);
         container.register('IUserEngagementRepo', UserEngagementRepo);
         container.register('ICustomQueryRepo', CustomQueryRepo);
-
+        container.register('IDailyStatisticsRepo', DailyStatisticsRepo);
     }
 
 }

@@ -34,6 +34,7 @@ export class ReminderRepo implements IReminderRepo {
                 RepeatAfterEveryNUnit : model.RepeatAfterEveryNUnit ?? RepeatAfterEveryNUnit.Day,
                 HookUrl               : model.HookUrl ?? null,
                 NotificationType      : model.NotificationType ?? NotificationType.SMS,
+                RawContent            : model.RawContent ?? null,
             };
             const reminder = await Reminder.create(entity);
             const dto = ReminderMapper.toDto(reminder);

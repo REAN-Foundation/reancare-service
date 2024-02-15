@@ -24,8 +24,8 @@ export class NotificationService {
         return await this._service.sendMessageToTopic(topic, message);
     };
 
-    formatNotificationMessage = (notificationType: string, title: string, body: any): any => {
-        return this._service.formatNotificationMessage(notificationType, title, body);
+    formatNotificationMessage = (notificationType: string, title: string, body: any, url?: string): any => {
+        return this._service.formatNotificationMessage(notificationType, title, body, url);
     };
     
     formatNotificationMessageWithData = (notificationType: string, title: string, body: any, customData: any): any => {

@@ -47,4 +47,6 @@ export interface PatientDetailsDto {
     HealthProfile?      : HealthProfileDto;
     Insurances?         : PatientInsuranceDto[];
     EmergencyContacts?  : EmergencyContactDto[];
+    CreatedAt?          : Date;
+    UpdatedAt?          : Date;
 }

@@ -6,14 +6,12 @@ import { FoodConsumptionService } from '../../../../services/wellness/nutrition/
 import { Loader } from '../../../../startup/loader';
 import { FoodConsumptionValidator } from './food.consumption.validator';
 import { BaseController } from '../../../base.controller';
-import { FoodConsumptionDomainModel }
-    from '../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.domain.model';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +22,8 @@ export class FoodConsumptionController extends BaseController {
     _service: FoodConsumptionService = null;
 
     _validator: FoodConsumptionValidator = new FoodConsumptionValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
@@ -45,8 +45,15 @@ export class FoodConsumptionController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for nutrition!');
             }
 
-            this.addEHRRecord(model.PatientUserId, foodConsumption.id, model);
-
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(foodConsumption.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, foodConsumption.id, foodConsumption.Provider, foodConsumption, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${foodConsumption.PatientUserId}`);
+            }
             if (foodConsumption.UserResponse) {
                 var timestamp = foodConsumption.EndTime ?? foodConsumption.StartTime;
                 if (!timestamp) {
@@ -192,6 +199,7 @@ export class FoodConsumptionController extends BaseController {
             const updated = await this._service.update(id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update nutrition record!');
+                
             }
             if (updated.UserResponse !== null) {
                 var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
@@ -243,87 +251,6 @@ export class FoodConsumptionController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    };
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: FoodConsumptionDomainModel) => {
-        if (model.FoodTypes[0] === "GenericNutrition") {
-            EHRAnalyticsHandler.addBooleanRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.Nutrition,
-                model.UserResponse);
-        }
-        if (model.FoodTypes[0] === "Fruit") {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.NutritionFruit,
-                model.Servings,
-                model.ServingUnit,
-                'Nutrition-Fruit'
-            );
-        }
-        if (model.FoodTypes[0] === "Vegetables") {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.NutritionVegetables,
-                model.Servings,
-                model.ServingUnit,
-                'Nutrition-Vegetables'
-            );
-        }
-        if (model.FoodTypes[0] === "Sugary drinks") {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.NutritionSugaryDrinks,
-                model.Servings,
-                model.ServingUnit,
-                'Nutrition-SugaryDrinks'
-            );
-        }
-        if (model.FoodTypes[0] === "Salt") {
-            EHRAnalyticsHandler.addBooleanRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.NutritionSalt,
-                model.UserResponse,
-                model.ServingUnit,
-                'Nutrition-Salt'
-            );
-        }
-        if (model.FoodTypes[0] === "Sea food") {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.NutritionSeaFood,
-                model.Servings,
-                model.ServingUnit,
-                'Nutrition-SeaFood'
-            );
-        }
-        if (model.FoodTypes[0] === "Grains") {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.NutritionGrains,
-                model.Servings,
-                model.ServingUnit,
-                'Nutrition-Grains'
-            );
-        }
-        if (model.FoodTypes[0] === "Protein") {
-            EHRAnalyticsHandler.addBooleanRecord(
-                patientUserId,
-                recordId,
-                EHRRecordTypes.NutritionProtein,
-                model.UserResponse,
-                model.ServingUnit,
-                'Nutrition-Protein'
-            );
-        }
-
     };
 
     //#endregion

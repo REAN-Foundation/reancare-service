@@ -9,6 +9,9 @@ import { Loader } from '../../../../startup/loader';
 import { HealthProfileValidator } from './health.profile.validator';
 import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { Logger } from '../../../../common/logger';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,11 +21,19 @@ export class HealthProfileController extends BaseController{
 
     _service: HealthProfileService = null;
 
+    _patientService: PatientService = null;
+
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     _validator: HealthProfileValidator = new HealthProfileValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(HealthProfileService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion
@@ -68,7 +79,15 @@ export class HealthProfileController extends BaseController{
                 throw new ApiError(400, 'Unable to update Patient health profile record!');
             }
 
-            this.addEHRRecord(patientUserId, domainModel);
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patientUserId);
+            if (eligibleAppNames.length > 0) {
+                for (var appName of eligibleAppNames) { 
+                    this.addEHRRecord(patientUserId, updated, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patientUserId}`);
+            }
 
             ResponseHandler.success(request, response, 'Patient health profile record updated successfully!', 200, {
                 HealthProfile : updated,
@@ -83,67 +102,58 @@ export class HealthProfileController extends BaseController{
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, model: HealthProfileDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, model: HealthProfileDto, appName?: string) => {
+        var details = {};
         if (model.Race) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                Race : model.Race
-            });
+            details['Race'] = model.Race;
         }
         if (model.Ethnicity) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                Ethnicity : model.Ethnicity
-            });
+            details['Ethnicity'] = model.Ethnicity;  
         }
         if (model.MajorAilment) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                MajorAilment : model.MajorAilment
-            });
+            details['MajorAilment'] = model.MajorAilment;
         }
         if (model.BloodGroup) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                BloodGroup : model.BloodGroup
-            });
+            details['BloodGroup'] = model.BloodGroup;
         }
-        if (model.IsDiabetic) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                IsDiabetic : model.IsDiabetic
-            });
+        if (model.IsDiabetic != null) {
+            details['IsDiabetic'] = model.IsDiabetic;
         }
-        if (model.IsSmoker) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                IsSmoker : model.IsSmoker
-            });
+        if (model.IsSmoker != null) {
+            details['IsSmoker'] = model.IsSmoker;
         }
         if (model.Nationality) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                Nationality : model.Nationality
-            });
+            details['Nationality'] = model.Nationality;
         }
-        if (model.HasHeartAilment) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                HasHeartAilment : model.HasHeartAilment
-            });
+        if (model.HasHeartAilment != null) {
+            details['HasHeartAilment'] = model.HasHeartAilment;
         }
-        if (model.IsDiabetic) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                IsDiabetic : model.IsDiabetic
-            });
+        if (model.HasHighBloodPressure != null) {
+            details['HasHighBloodPressure'] = model.HasHighBloodPressure;
         }
-        if (model.MaritalStatus) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                MaritalStatus : model.MaritalStatus
-            });
+        if (model.HasHighCholesterol != null) {
+            details['HasHighCholesterol'] = model.HasHighCholesterol;
         }
-        if (model.MaritalStatus) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                MaritalStatus : model.MaritalStatus
-            });
+        if (model.Occupation) {
+            details['Occupation'] = model.Occupation;
+        }
+        if (model.OtherConditions) {
+            details['OtherConditions'] = model.OtherConditions;
+        }
+        if (model.IsDiabetic != null) {
+            details['IsDiabetic'] = model.IsDiabetic;
         }
         if (model.MaritalStatus) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                MaritalStatus : model.MaritalStatus
-            });
+            details['MaritalStatus'] = model.MaritalStatus;
         }
+        if (model.CreatedAt) {
+            details['RecordDate'] = new Date(model.CreatedAt);
+        }
+
+
+        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
+
+    
     };
 
     //#endregion

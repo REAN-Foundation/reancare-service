@@ -5,6 +5,10 @@ import { DailyAssessmentService } from '../../../services/clinical/daily.assessm
 import { Loader } from '../../../startup/loader';
 import { DailyAssessmentValidator } from './daily.assessment.validator';
 import { BaseController } from '../../base.controller';
+import { PatientService } from '../../../services/users/patient/patient.service';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,9 +20,16 @@ export class DailyAssessmentController extends BaseController{
 
     _validator: DailyAssessmentValidator = new DailyAssessmentValidator();
 
+    _patientService: PatientService = null;
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(DailyAssessmentService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._ehrAnalyticsHandler = Loader.container.resolve(EHRAnalyticsHandler);
+
     }
     //#endregion
 
@@ -34,6 +45,15 @@ export class DailyAssessmentController extends BaseController{
 
             if (dailyAssessment == null) {
                 throw new ApiError(400, 'Cannot create record for daily assessment!');
+            }
+            // get user details to add records in ehr database
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dailyAssessment.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(model.PatientUserId, dailyAssessment.id, null, model, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dailyAssessment.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Daily assessment record created successfully!', 201, {

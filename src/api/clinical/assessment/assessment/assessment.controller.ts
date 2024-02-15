@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
@@ -14,6 +14,7 @@ import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/reposit
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
 import { Logger } from '../../../../common/logger';
+import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +31,8 @@ export class AssessmentController extends BaseController{
     _userTaskService: UserTaskService = null;
 
     _validator: AssessmentValidator = new AssessmentValidator();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
@@ -292,11 +295,24 @@ export class AssessmentController extends BaseController{
             var answerResponse: AssessmentQuestionResponseDto =
                 await this._service.answerQuestion(answerModel);
 
+            Logger.instance().log(`before update assessment Q in EHR`);
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(answerResponse.Parent.PatientUserId);
+            var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) { 
+                    this._service.addEHRRecord(answerResponse, assessment, options, appName);
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
+            }
+            Logger.instance().log(`after update assessment Q in EHR`);
+
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
             if ( isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
+                Logger.instance().log(`above completeAssessmentTask`);
                 await this.completeAssessmentTask(id);
-
+                Logger.instance().log(`below completeAssessmentTask`);
                 //If the assessment has scoring enabled, score the assessment
                 if (assessment.ScoringApplicable) {
                     var { score, reportUrl } = await this.generateScoreReport(assessment);
@@ -305,7 +321,16 @@ export class AssessmentController extends BaseController{
                         answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
-
+                Logger.instance().log(`afer scoring`);
+                if (eligibleAppNames.length > 0) {
+                    var updatedAssessment = await this._service.getById(assessment.id);
+                    for await (var appName of eligibleAppNames) { 
+                        this._service.addEHRRecord(null, updatedAssessment, null, appName);
+                    }
+                } else {
+                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
+                }
+                Logger.instance().log(`after update assessment in EHR`);
                 ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
                     AnswerResponse : answerResponse,
                 });
@@ -329,6 +354,8 @@ export class AssessmentController extends BaseController{
             const listId: uuid = await this._validator.getParamUuid(request, 'listId');
 
             const node = await this._service.getNodeById(listId);
+            Logger.instance().log(`Node: ${JSON.stringify(node)}`);
+
             if (!node || node?.NodeType !== AssessmentNodeType.NodeList) {
                 throw new ApiError(404, 'Question list not found!');
             }
@@ -357,6 +384,22 @@ export class AssessmentController extends BaseController{
             }
 
             var answerResponse = await this._service.answerQuestionList(assessment.id, listNode, answerModels);
+            Logger.instance().log(`AnswerResponse: ${JSON.stringify(answerResponse)}`);
+
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(answerResponse.Parent.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                var updatedAssessment = await this._service.getById(assessment.id);
+                for await (var appName of eligibleAppNames) {
+                    for await (var ar of answerResponse.Answer) {
+                        ar = JSON.parse(JSON.stringify(ar));
+                        ar.Answer['SubQuestion']  = ar.Answer.Title;
+                        ar.Answer.Title = listNode.Title;
+                        this._service.addEHRRecord(ar, assessment, ar.Parent, appName);
+                    }
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
+            }
             answerResponse['AssessmentScore'] = null;
 
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
@@ -372,7 +415,15 @@ export class AssessmentController extends BaseController{
                         answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
-
+                if (eligibleAppNames.length > 0) {
+                    var updatedAssessment = await this._service.getById(assessment.id);
+                    updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore']);
+                    for await (var appName of eligibleAppNames) {
+                        this._service.addEHRRecord(null, updatedAssessment, null, appName);
+                    }
+                } else {
+                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
+                }
                 ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
                     AnswerResponse : answerResponse,
                 });

@@ -206,6 +206,7 @@ export class CAssessmentNode {
     Title                   : string;
     Description?            : string;
     Hint?                   : string;
+    RawData?                   : string;
     Sequence?               : number;
     Score                   : number;
     ChildrenNodeDisplayCodes? : string[];
@@ -317,7 +318,7 @@ export class CAssessmentQueryResponse {
     Additional?          : string;
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
-    CreatedAt            : Date;
+    CreatedAt?           : Date;
 
     constructor() {
         this.ResponseType = QueryResponseType.None;

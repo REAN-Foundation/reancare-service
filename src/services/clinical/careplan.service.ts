@@ -31,6 +31,9 @@ import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.tas
 import { Loader } from "../../startup/loader";
 import { IDonorRepo } from "./../../database/repository.interfaces/users/donor.repo.interface";
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
+import { EHRAnalyticsHandler } from "../../modules/ehr.analytics/ehr.analytics.handler";
+import { x } from "pdfkit";
+import { PatientDetailsDto } from "../../domain.types/users/patient/patient/patient.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +41,8 @@ import { IDonationCommunicationRepo } from "../../database/repository.interfaces
 export class CareplanService implements IUserActionService {
 
     _handler: CareplanHandler = new CareplanHandler();
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
@@ -50,6 +55,7 @@ export class CareplanService implements IUserActionService {
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
         @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
+        
     ) {}
 
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
@@ -154,7 +160,13 @@ export class CareplanService implements IUserActionService {
                 } else {
                     patient = await this.getPatient(activity.PatientUserId);
                 }
-                const phoneNumber = patient.User.Person.Phone;
+                let phoneNumber = null;
+                if (message.includes("Messages")) {
+                    phoneNumber = patient.User.Person.TelegramChatId;
+                } else {
+                    phoneNumber = patient.User.Person.Phone;
+                }
+                const payload = { PersonName: patient.User.Person.DisplayName };
                 
                 //Set fifth day reminder flag true for patient
                 if (activity.Type === "reminder_three") {
@@ -164,7 +176,7 @@ export class CareplanService implements IUserActionService {
 
                 let response = null;
                 response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
-                    activity.Provider, activity.Type, activity.PlanCode);
+                    activity.Provider, activity.Type, activity.PlanCode, payload);
                 if (response === true) {
                     await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
                     Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
@@ -351,6 +363,12 @@ export class CareplanService implements IUserActionService {
             activity['ActionDetails'] = actionDetails as AssessmentDto;
         }
 
+        // fetch careplan for given activity and check for expiration
+        var careplanDetails = await this._careplanRepo.getEnrollmentByEnrollmentId(activity.EnrollmentId.toString());
+        if (careplanDetails.EndAt < new Date()) {
+            return true;
+        }
+
         var updatedActivity = await this._handler.updateActivity(
             activity.PatientUserId, activity.Provider, activity.PlanCode,
             activity.EnrollmentId, activity.ProviderActionId, activity);
@@ -400,6 +418,9 @@ export class CareplanService implements IUserActionService {
         return template;
     };
 
+    public getActivities = async (patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]> => {
+        return await this._careplanRepo.getActivities(patientUserId, startTime, endTime);
+    };
     private getAssessment = async (
         activity: CareplanActivityDto,
         template: AssessmentTemplateDto,
@@ -574,6 +595,32 @@ export class CareplanService implements IUserActionService {
 
         Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
 
+        var healthSystemHospitalDetails = await this._patientRepo.getByUserId(dto.PatientUserId);
+        var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
+        if (eligibleAppNames.length > 0) {
+            for await (var appName of eligibleAppNames) {
+                if (appName == 'HF Helper' && enrollmentDetails.PlanCode == 'HFMotivator') {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else if (appName == 'Heart &amp; Stroke Helper™' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke')) {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else if (appName == 'REAN HealthGuru' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke' || enrollmentDetails.PlanCode == 'HFMotivator')) {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                }
+            }
+        } else {
+            Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
+        }
+
         //task scheduling
         await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
 
@@ -655,6 +702,33 @@ export class CareplanService implements IUserActionService {
 
         const provider = "REAN";
         return await this._handler.scheduleDailyHighRiskCareplan(provider);
+    };
+
+    public addEHRRecord = (planName: string, planCode : string, model: CareplanActivityDto, appName?: string, healthSystemHospitalDetails?: PatientDetailsDto) => {
+            EHRAnalyticsHandler.addCareplanActivityRecord(
+                appName,
+                model.PatientUserId,
+                model.id,
+                model.EnrollmentId,     
+                model.Provider,               
+                planName,      
+                planCode,                
+                model.Type,            
+                model.Category,        
+                model.ProviderActionId,
+                model.Title,           
+                model.Description,     
+                model.Url,
+                'English',       
+                model.ScheduledAt,
+                model.CompletedAt,     
+                model.Sequence,        
+                model.Frequency,       
+                model.Status,
+                healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
+                healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
+                model.CreatedAt ? new Date(model.CreatedAt) : null
+            );
     };
 
     //#endregion

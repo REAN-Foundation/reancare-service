@@ -78,9 +78,13 @@ export class ReminderSenderService {
                 else if (notificationType === NotificationType.MobilePush) {
                     await this.sendReminderByMobilePush(user, reminder, schedule);
                 }
+                else if (notificationType === NotificationType.Telegram) {
+                    await this.sendReminderByTelegram(user, reminder, schedule);
+                }
                 else {
                     continue;
                 }
+                await TimeHelper.timeDelay(300);
             }
         }
         catch (error) {
@@ -97,9 +101,18 @@ export class ReminderSenderService {
     };
 
     private static sendReminderByWhatsApp = async (user, reminder, schedule): Promise<boolean> => {
-        const { messagingService, phone, message } =
-            await ReminderSenderService.getUserSMSDetails(user, reminder, schedule);
-        const sent = await messagingService.sendWhatsappMessage(phone, message);
+        const { messagingService, phone, message, templateName, clientName } =
+            await ReminderSenderService.getUserWhatsAppDetails(user, reminder, schedule);
+        const sent = await messagingService.sendWhatsappWithReanBot(phone, message, clientName,
+            templateName, null, null);
+        await ReminderSenderService.markAsDelivered(sent, schedule.id);
+        return true;
+    };
+
+    private static sendReminderByTelegram = async (user, reminder, schedule): Promise<boolean> => {
+        const { messagingService, telegramChatId, message, clientName, buttonsIds } =
+            await ReminderSenderService.getUserTelegramDetails(user, reminder, schedule);
+        const sent = await messagingService.sendTelegramMessage(telegramChatId, message, clientName, buttonsIds);
         await ReminderSenderService.markAsDelivered(sent, schedule.id);
         return true;
     };
@@ -168,6 +181,50 @@ export class ReminderSenderService {
         Logger.instance().log(`Sending reminder for ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}`);
         const message = `${reminder.Name} ${subString} at ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}.`;
         return message;
+    }
+
+    private static async getUserTelegramDetails(user: any, reminder: any, schedule: any) {
+        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const messagingService = Loader.messagingService;
+        const person = await personRepo.getById(user.PersonId);
+        const telegramChatId = person.TelegramChatId;
+        const templateData = JSON.parse(reminder.RawContent);
+        const clientName = templateData.ClientName;
+        const message =
+            templateData.TextMessage ? templateData.TextMessage : ReminderSenderService.constructMessage(schedule, reminder);
+        const buttonsIds = templateData.ButtonsIds;
+        return { messagingService, telegramChatId, message, clientName, buttonsIds };
+    }
+
+    private static async getUserWhatsAppDetails(user: any, reminder: any, schedule: any) {
+        const personRepo = Loader.container.resolve<IPersonRepo>('IPersonRepo');
+        const messagingService = Loader.messagingService;
+        const person = await personRepo.getById(user.PersonId);
+        const phone = person.Phone;
+        const { message, templateName, clientName } =
+            ReminderSenderService.constructWhatsAppTemplateMessage(schedule, reminder, person);
+        return { messagingService, phone, message, templateName, clientName };
+    }
+
+    private static constructWhatsAppTemplateMessage(schedule: any, reminder: any, person: any) {
+        // const duration = dayjs.duration(dayjs(schedule.Schedule).diff(dayjs()));
+        // const minutes = Math.ceil(duration.asMinutes());
+        Logger.instance().log(`Sending reminder for ${TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime)}`);
+
+        // Creating variables for template
+        // create a function, which set variables according to template name
+        const templateData = JSON.parse(reminder.RawContent);
+        const clientName = templateData.ClientName;
+        templateData.Variables.en[0].text = person.DisplayName;
+        if (templateData.AppointmentDate) {
+            templateData.Variables.en[2].text = templateData.AppointmentDate;
+        } else {
+            templateData.Variables.en[2].text = TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime);
+        }
+        const templateName = templateData.TemplateName;
+        const message = JSON.stringify(templateData);
+
+        return { message, templateName, clientName };
     }
 
     private static async getUserMobilePushDetails(user: any, reminder: any, schedule: any) {

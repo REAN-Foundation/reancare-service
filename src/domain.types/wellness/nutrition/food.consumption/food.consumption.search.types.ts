@@ -14,8 +14,8 @@ export interface FoodConsumptionSearchFilters extends BaseSearchFilters{
     UserResponse?  : boolean;
     Tags?          : string[];
     ConsumedAs?    : FoodConsumptionEvents;
-    DateFrom       : Date;
-    DateTo         : Date;
+    DateFrom?      : Date;
+    DateTo?        : Date;
 }
 
 export interface FoodConsumptionSearchResults extends BaseSearchResults{

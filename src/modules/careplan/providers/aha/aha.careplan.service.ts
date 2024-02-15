@@ -475,7 +475,7 @@ export class AhaCareplanService implements ICareplanService {
             }
 
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
-            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}?categories=${categoryCode}&pageSize=500`;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}?categories=${categoryCode}&list=all&pageSize=500`;
             var headerOptions = await this.getHeaderOptions();
             var response = await needle("get", url, headerOptions);
 
@@ -528,7 +528,7 @@ export class AhaCareplanService implements ICareplanService {
             Logger.instance().log(`Category code:: ${JSON.stringify(categoryCode)}`);
 
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
-            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}?categories=${categoryCode}&pageSize=500`;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}?categories=${categoryCode}&list=all&pageSize=500`;
             var headerOptions = await this.getHeaderOptions();
             var response = await needle("get", url, headerOptions);
 

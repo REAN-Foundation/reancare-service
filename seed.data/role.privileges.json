@@ -327,7 +327,9 @@
             "Hospital.Search",
             "Hospital.Update",
             "Hospital.Delete",
-            "Hospital.GetHospitalsForHealthSystem"
+            "Hospital.GetHospitalsForHealthSystem",
+            "DailyStatistics.Create",
+            "DailyStatistics.GetLatestStatistics"
         ]
     },
     {
@@ -1169,12 +1171,10 @@
     },
     {
         "Role": "Lab user",
-        "Privileges": [
-        ]
+        "Privileges": []
     },
     {
         "Role": "Pharmacy user",
-        "Privileges": [
-        ]
+        "Privileges": []
     }
 ]

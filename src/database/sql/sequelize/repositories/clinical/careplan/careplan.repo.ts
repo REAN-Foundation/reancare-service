@@ -110,6 +110,8 @@ export class CareplanRepo implements ICareplanRepo {
             var where_clause = { PatientUserId: patientUserId };
             if (isActive) {
                 where_clause['EndDate'] = { [Op.gte]: new Date() };
+            } else {
+                where_clause['EndDate'] = { [Op.lte]: new Date() };
             }
 
             const enrollments = await CareplanEnrollment.findAll({
@@ -133,6 +135,26 @@ export class CareplanRepo implements ICareplanRepo {
                     PatientUserId : patientUserId,
                     Provider      : provider,
                     EnrollmentId  : enrollmentId
+                },
+            });
+            return EnrollmentMapper.toDto(enrollment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public getEnrollmentByEnrollmentId = async (enrollmentId: string): Promise<EnrollmentDto> => {
+        try {
+            var enrollment = await CareplanEnrollment.findOne({
+                where : {
+                    [Op.or] : [
+                        {
+                            EnrollmentStringId : enrollmentId,
+                        },
+                        {
+                            EnrollmentId : enrollmentId,
+                        },
+                    ]
                 },
             });
             return EnrollmentMapper.toDto(enrollment);

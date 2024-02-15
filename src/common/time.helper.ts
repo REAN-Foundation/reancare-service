@@ -519,4 +519,6 @@ export class TimeHelper {
         return (hour % 12 || 12) + ":" + minute + (hour < 12 ? " AM" : " PM");
     }
 
+    static timeDelay = ms => new Promise(res => setTimeout(res, ms));
+    
 }

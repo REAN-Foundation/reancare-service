@@ -17,6 +17,7 @@ import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HospitalService } from '../../../../services/hospitals/hospital.service';
 import { HealthSystemService } from '../../../../services/hospitals/health.system.service';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,6 +42,8 @@ export class EmergencyContactController extends BaseController {
     _healthSystemService: HealthSystemService = null;
 
     _hospitalService: HospitalService = null;
+
+    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
 
     constructor() {
         super();
@@ -163,13 +166,20 @@ export class EmergencyContactController extends BaseController {
                 throw new ApiError(400, 'Cannot create patientEmergencyContact!');
             }
 
-            if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
-                await EHRAnalyticsHandler.addOrUpdatePatient(
-                    domainModel.PatientUserId,
-                    {
-                        DoctorPersonId : patientEmergencyContact.ContactPersonId
+            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(domainModel.PatientUserId);
+            if (eligibleAppNames.length > 0) {
+                for await (var appName of eligibleAppNames) {
+                    if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
+                        await EHRAnalyticsHandler.addOrUpdatePatient(
+                            domainModel.PatientUserId,
+                            {
+                                DoctorPersonId_1 : patientEmergencyContact.ContactPersonId
+                            }, appName
+                        );
                     }
-                );
+                }
+            } else {
+                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${domainModel.PatientUserId}`);
             }
 
             ResponseHandler.success(request, response, 'Emergency contact created successfully!', 201, {

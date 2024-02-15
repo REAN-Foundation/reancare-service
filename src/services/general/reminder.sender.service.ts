@@ -84,6 +84,7 @@ export class ReminderSenderService {
                 else {
                     continue;
                 }
+                await TimeHelper.timeDelay(300);
             }
         }
         catch (error) {
@@ -109,9 +110,9 @@ export class ReminderSenderService {
     };
 
     private static sendReminderByTelegram = async (user, reminder, schedule): Promise<boolean> => {
-        const { messagingService, telegramChatId, message, clientName } =
+        const { messagingService, telegramChatId, message, clientName, buttonsIds } =
             await ReminderSenderService.getUserTelegramDetails(user, reminder, schedule);
-        const sent = await messagingService.sendTelegramMessage(telegramChatId, message, clientName);
+        const sent = await messagingService.sendTelegramMessage(telegramChatId, message, clientName, buttonsIds);
         await ReminderSenderService.markAsDelivered(sent, schedule.id);
         return true;
     };
@@ -189,8 +190,10 @@ export class ReminderSenderService {
         const telegramChatId = person.TelegramChatId;
         const templateData = JSON.parse(reminder.RawContent);
         const clientName = templateData.ClientName;
-        const message = ReminderSenderService.constructMessage(schedule, reminder);
-        return { messagingService, telegramChatId, message, clientName };
+        const message =
+            templateData.TextMessage ? templateData.TextMessage : ReminderSenderService.constructMessage(schedule, reminder);
+        const buttonsIds = templateData.ButtonsIds;
+        return { messagingService, telegramChatId, message, clientName, buttonsIds };
     }
 
     private static async getUserWhatsAppDetails(user: any, reminder: any, schedule: any) {
@@ -210,19 +213,16 @@ export class ReminderSenderService {
 
         // Creating variables for template
         // create a function, which set variables according to template name
-        const messageData = { TemplateName: "",Variables: {} };
         const templateData = JSON.parse(reminder.RawContent);
         const clientName = templateData.ClientName;
-        messageData.TemplateName = templateData.TemplateName;
         templateData.Variables.en[0].text = person.DisplayName;
         if (templateData.AppointmentDate) {
-            templateData.Variables.en[1].text = templateData.AppointmentDate;
+            templateData.Variables.en[2].text = templateData.AppointmentDate;
         } else {
-            templateData.Variables.en[1].text = TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime);
+            templateData.Variables.en[2].text = TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime);
         }
-        messageData.Variables = JSON.stringify(templateData.Variables);
-        const message = JSON.stringify(messageData);
         const templateName = templateData.TemplateName;
+        const message = JSON.stringify(templateData);
 
         return { message, templateName, clientName };
     }

@@ -363,6 +363,12 @@ export class CareplanService implements IUserActionService {
             activity['ActionDetails'] = actionDetails as AssessmentDto;
         }
 
+        // fetch careplan for given activity and check for expiration
+        var careplanDetails = await this._careplanRepo.getEnrollmentByEnrollmentId(activity.EnrollmentId.toString());
+        if (careplanDetails.EndAt < new Date()) {
+            return true;
+        }
+
         var updatedActivity = await this._handler.updateActivity(
             activity.PatientUserId, activity.Provider, activity.PlanCode,
             activity.EnrollmentId, activity.ProviderActionId, activity);
@@ -593,8 +599,22 @@ export class CareplanService implements IUserActionService {
         var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
         if (eligibleAppNames.length > 0) {
             for await (var appName of eligibleAppNames) {
-                for await (var careplanActivity of careplanActivities) {
-                    this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                if (appName == 'HF Helper' && enrollmentDetails.PlanCode == 'HFMotivator') {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else if (appName == 'Heart &amp; Stroke Helper™' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke')) {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else if (appName == 'REAN HealthGuru' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke' || enrollmentDetails.PlanCode == 'HFMotivator')) {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
+                } else {
+                    for await (var careplanActivity of careplanActivities) {
+                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
+                    }
                 }
             }
         } else {
@@ -705,12 +725,11 @@ export class CareplanService implements IUserActionService {
                 model.Sequence,        
                 model.Frequency,       
                 model.Status,
-                healthSystemHospitalDetails.HealthSystem,
-                healthSystemHospitalDetails.AssociatedHospital,
+                healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
+                healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
                 model.CreatedAt ? new Date(model.CreatedAt) : null
             );
     };
-
 
     //#endregion
 

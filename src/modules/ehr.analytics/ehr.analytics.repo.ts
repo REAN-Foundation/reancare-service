@@ -46,6 +46,7 @@ export class EHRAnalyticsRepo {
         var model = await StaticEHRData.findOne({
             where : {
                 PatientUserId : patientUserId,
+                AppName       : appName
             }
         });
 
@@ -73,7 +74,8 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
-                    Type          : model.Type
+                    Type          : model.Type,
+                    AppName       : model.AppName
                 }
             });
 
@@ -125,6 +127,7 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
+                    AppName       : model.AppName
                 }
             });
 
@@ -133,7 +136,7 @@ export class EHRAnalyticsRepo {
                 existing.PatientUserId      = model.PatientUserId,
                 existing.RecordId           = model.RecordId,
                 existing.DrugName           = model.DrugName,
-                existing.Dose               = model.Dose,
+                existing.Dose               = model.Dose.toString(),
                 existing.Details            = model.Details,
                 existing.TimeScheduleStart  = model.TimeScheduleStart,
                 existing.TimeScheduleEnd    = model.TimeScheduleEnd,
@@ -153,7 +156,7 @@ export class EHRAnalyticsRepo {
                 PatientUserId    : model.PatientUserId,
                 RecordId         : model.RecordId,
                 DrugName         : model.DrugName,
-                Dose             : model.Dose,
+                Dose             : model.Dose.toString(),
                 Details          : model.Details,
                 TimeScheduleStart: model.TimeScheduleStart,
                 TimeScheduleEnd  : model.TimeScheduleEnd,
@@ -178,6 +181,7 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
+                    AppName       : model.AppName
                 }
             });
 

@@ -9,7 +9,7 @@ export interface INotificationService {
 
     sendMessageToTopic(topic: string, message: any): Promise<string>;
 
-    formatNotificationMessage(notificationType: string, title: string, body: any): any;
+    formatNotificationMessage(notificationType: string, title: string, body: any, url?: string): any;
     
     formatNotificationMessageWithData(notificationType: string, title: string, body: any, customData: any): any;
 }

@@ -56,7 +56,7 @@ export interface IAssessmentHelperRepo {
 
     getQuestionNodePaths(nodeType: AssessmentNodeType, nodeId: uuid): Promise<CAssessmentNodePath[]>;
 
-    getPathCondition(conditionId: string, nodeId: string, pathId: string): Promise<CAssessmentPathCondition>;
+    getPathCondition(conditionId: uuid, nodeId: uuid, pathId: uuid): Promise<CAssessmentPathCondition>;
 
     createQueryResponse(answer: | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer
@@ -79,12 +79,34 @@ export interface IAssessmentHelperRepo {
 
     addScoringCondition(model: CScoringCondition): Promise<CScoringCondition>;
 
-    getScoringCondition(conditionId: string): Promise<CScoringCondition>;
+    getScoringCondition(conditionId: uuid): Promise<CScoringCondition>;
 
-    updateScoringCondition(conditionId: string, updates: any): Promise<CScoringCondition>;
+    updateScoringCondition(conditionId: uuid, updates: any): Promise<CScoringCondition>;
 
-    deleteScoringCondition(conditionId: string): Promise<boolean>;
+    deleteScoringCondition(conditionId: uuid): Promise<boolean>;
 
     searchNode(filters: AssessmentNodeSearchFilters): Promise<AssessmentNodeSearchResults>;
+
+    addPath(pathId: uuid, path: CAssessmentNodePath): Promise<CAssessmentNodePath>;
+
+    updatePath(pathId: uuid, updates: any): Promise<CAssessmentNodePath>;
+
+    getPath(pathId: uuid): Promise<CAssessmentNodePath>;
+
+    deletePath(pathId: uuid): Promise<boolean>;
+
+    addPathCondition(pathId: uuid, condition: CAssessmentPathCondition): Promise<CAssessmentPathCondition>;
+
+    updatePathCondition(conditionId: uuid, updates: CAssessmentPathCondition): Promise<CAssessmentPathCondition>;
+
+    getPathCondition(conditionId: uuid, nodeId: uuid, pathId: uuid): Promise<CAssessmentPathCondition>;
+
+    deletePathCondition(conditionId: uuid): Promise<boolean>;
+
+    getPathConditionForPath(pathId: uuid): Promise<CAssessmentPathCondition>;
+
+    getNodePaths(nodeId: uuid): Promise<CAssessmentNodePath[]>;
+
+    setNextNodeToPath(parentNodeId: uuid, pathId: uuid, nextNodeId: uuid): Promise<CAssessmentNodePath>;
 
 }

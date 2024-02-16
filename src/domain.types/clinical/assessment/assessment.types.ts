@@ -270,15 +270,15 @@ export class CAssessmentMessageNode extends CAssessmentNode {
 
 export class CAssessmentNodePath {
 
-    id?                : uuid;
-    DisplayCode        : string;
-    ParentNodeId       : string;
-    ParentNodeDisplayCode?       : string;
-    NextNodeId         : string;
-    NextNodeDisplayCode: string;
-    ConditionId        : string;
-    Condition          : CAssessmentPathCondition;
-    IsExitPath         : boolean;
+    id?                   : uuid;
+    DisplayCode          ?: string;
+    ParentNodeId         ?: string;
+    ParentNodeDisplayCode?: string;
+    NextNodeId           ?: string;
+    NextNodeDisplayCode  ?: string;
+    ConditionId          ?: string;
+    Condition            ?: CAssessmentPathCondition;
+    IsExitPath           ?: boolean;
 
     constructor() {
         this.IsExitPath = false;
@@ -374,10 +374,10 @@ export class ConditionOperand {
 
 export class CAssessmentPathCondition {
 
-    id?        : uuid;
-    DisplayCode: string;
-    NodeId     : uuid;
-    PathId     : uuid;    //Chosen path if the condition satisfies
+    id?         : uuid;
+    DisplayCode?: string;
+    NodeId     ?: uuid;
+    PathId     ?: uuid;    //Chosen path if the condition satisfies
 
     //For composition type condition
     IsCompositeCondition?: boolean;
@@ -389,7 +389,7 @@ export class CAssessmentPathCondition {
     SecondOperand?: ConditionOperand;
     ThirdOperand?: ConditionOperand;
 
-    Children: CAssessmentPathCondition[];
+    Children?: CAssessmentPathCondition[];
 
     constructor() {
         this.Children = [];

@@ -5,7 +5,7 @@ import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces
 import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from '../../../domain.types/clinical/assessment/assessment.template.dto';
 import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from "../../../domain.types/clinical/assessment/assessment.template.search.types";
-import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from "../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentNodePath, CAssessmentPathCondition, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentTemplateFileConverter } from "./assessment.template.file.converter";
 import { AssessmentNodeSearchFilters } from "../../../domain.types/clinical/assessment/assessment.node.search.types";
@@ -139,6 +139,50 @@ export class AssessmentTemplateService {
 
     public searchNode = async (filters: AssessmentNodeSearchFilters): Promise<AssessmentNodeSearchResults> => {
         return await this._assessmentHelperRepo.searchNode(filters);
+    };
+
+    addPath = async (nodeId: uuid, path: CAssessmentNodePath): Promise<CAssessmentNodePath> => {
+        return await this._assessmentHelperRepo.addPath(nodeId, path);
+    };
+
+    updatePath = async (pathId: uuid, updates: CAssessmentNodePath): Promise<CAssessmentNodePath> => {
+        return await this._assessmentHelperRepo.updatePath(pathId, updates);
+    };
+
+    getPath = async (pathId: uuid): Promise<CAssessmentNodePath> => {
+        return await this._assessmentHelperRepo.getPath(pathId);
+    };
+
+    deletePath = async (pathId: uuid): Promise<boolean> => {
+        return await this._assessmentHelperRepo.deletePath(pathId);
+    };
+
+    addPathCondition = async (pathId: uuid, condition: CAssessmentPathCondition): Promise<CAssessmentPathCondition> => {
+        return await this._assessmentHelperRepo.addPathCondition(pathId, condition);
+    };
+
+    updatePathCondition = async (conditionId: uuid, updates: CAssessmentPathCondition): Promise<CAssessmentPathCondition> => {
+        return await this._assessmentHelperRepo.updatePathCondition(conditionId, updates);
+    };
+
+    getPathCondition = async (conditionId: uuid, nodeId: uuid, pathId: uuid): Promise<CAssessmentPathCondition> => {
+        return await this._assessmentHelperRepo.getPathCondition(conditionId, nodeId, pathId);
+    };
+
+    deletePathCondition = async (conditionId: uuid): Promise<boolean> => {
+        return await this._assessmentHelperRepo.deletePathCondition(conditionId);
+    };
+
+    getPathConditionForPath = async (pathId: uuid): Promise<CAssessmentPathCondition> => {
+        return await this._assessmentHelperRepo.getPathConditionForPath(pathId);
+    };
+
+    getNodePaths = async (nodeId: uuid): Promise<CAssessmentNodePath[]> => {
+        return await this._assessmentHelperRepo.getNodePaths(nodeId);
+    };
+
+    setNextNodeToPath = async (parentNodeId: uuid, pathId: uuid, nextNodeId: uuid): Promise<CAssessmentNodePath> => {
+        return await this._assessmentHelperRepo.setNextNodeToPath(parentNodeId, pathId, nextNodeId);
     };
 
 }

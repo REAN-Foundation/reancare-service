@@ -1154,12 +1154,13 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const parentNode = await AssessmentNode.findByPk(nodeId);
             const nextNode = path.NextNodeId ? await AssessmentNode.findByPk(path.NextNodeId) : null;
             const entity = {
-                DisplayCode         : displayCode,
-                ParentNodeId        : parentNode.id,
-                NextNodeId          : nextNode ? nextNode.id : null,
-                NextNodeDisplayCode : nextNode ? nextNode.DisplayCode : null,
-                ConditionId         : null,
-                IsExitPath          : path.IsExitPath
+                DisplayCode          : displayCode,
+                ParentNodeId         : parentNode.id,
+                NextNodeId           : nextNode ? nextNode.id         : null,
+                NextNodeDisplayCode  : nextNode ? nextNode.DisplayCode: null,
+                ConditionId          : null,
+                IsExitPath           : path.IsExitPath,
+                MessageBeforeQuestion: path.MessageBeforeQuestion,
             };
             var thisPath = await AssessmentNodePath.create(entity);
             return AssessmentHelperMapper.toPathDto(thisPath);
@@ -1191,6 +1192,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'ConditionId')) {
                 path.ConditionId = updates['ConditionId'];
+            }
+            if (Helper.hasProperty(updates, 'MessageBeforeQuestion')) {
+                path.MessageBeforeQuestion = updates['MessageBeforeQuestion'];
             }
             path = await path.save();
             return AssessmentHelperMapper.toPathDto(path);

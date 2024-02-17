@@ -270,16 +270,17 @@ export class CAssessmentMessageNode extends CAssessmentNode {
 
 export class CAssessmentNodePath {
 
-    id?                   : uuid;
-    DisplayCode          ?: string;
-    ParentNodeId         ?: string;
-    ParentNodeDisplayCode?: string;
-    NextNodeId           ?: string;
-    NextNodeDisplayCode  ?: string;
-    ConditionId          ?: string;
-    Condition            ?: CAssessmentPathCondition;
-    IsExitPath           ?: boolean;
-
+    id                    ?: uuid;
+    DisplayCode           ?: string;
+    ParentNodeId          ?: string;
+    ParentNodeDisplayCode ?: string;
+    NextNodeId            ?: string;
+    NextNodeDisplayCode   ?: string;
+    ConditionId           ?: string;
+    Condition             ?: CAssessmentPathCondition;
+    IsExitPath            ?: boolean;
+    MessageBeforeQuestion ?: string;
+    
     constructor() {
         this.IsExitPath = false;
     }

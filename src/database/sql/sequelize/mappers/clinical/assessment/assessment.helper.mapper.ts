@@ -93,13 +93,15 @@ export class AssessmentHelperMapper {
             return null;
         }
         var pathDto = new CAssessmentNodePath();
-        pathDto.id = path.id;
-        pathDto.ParentNodeId = path.ParentNodeId;
-        pathDto.DisplayCode  = path.DisplayCode;
-        pathDto.ConditionId  = path.ConditionId;
-        pathDto.NextNodeId   = path.NextNodeId;
-        pathDto.IsExitPath   = path.IsExitPath;
-        pathDto.NextNodeDisplayCode = path.NextNodeDisplayCode;
+        pathDto.id                    = path.id;
+        pathDto.ParentNodeId          = path.ParentNodeId;
+        pathDto.DisplayCode           = path.DisplayCode;
+        pathDto.ConditionId           = path.ConditionId;
+        pathDto.NextNodeId            = path.NextNodeId;
+        pathDto.IsExitPath            = path.IsExitPath;
+        pathDto.NextNodeDisplayCode   = path.NextNodeDisplayCode;
+        pathDto.MessageBeforeQuestion = path.MessageBeforeQuestion;
+
         return pathDto;
     }
 

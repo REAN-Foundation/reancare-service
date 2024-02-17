@@ -255,26 +255,24 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     addPath = async (request: express.Request): Promise<CAssessmentNodePath> => {
         await this.validateString(request, 'DisplayCode', Where.Body, false, false);
-        await this.validateUuid(request, 'ParentNodeId', Where.Body, true, false);
         await this.validateUuid(request, 'NextNodeId', Where.Body, false, true);
         await this.validateUuid(request, 'ConditionId', Where.Body, false, false);
         await this.validateBoolean(request, 'IsExitPath', Where.Body, false, false);
+        await this.validateString(request, 'MessageBeforeQuestion', Where.Body, false, true);
 
         this.validateRequest(request);
 
         var path: CAssessmentNodePath = {
-            DisplayCode: request.body.DisplayCode ?? null,
-            ParentNodeId: request.body.ParentNodeId ?? null,
-            NextNodeId: request.body.NextNodeId ?? null,
-            ConditionId: request.body.ConditionId ?? null,
-            IsExitPath: request.body.IsExitPath ?? false,
+            DisplayCode          : request.body.DisplayCode ?? null,
+            NextNodeId           : request.body.NextNodeId ?? null,
+            ConditionId          : request.body.ConditionId ?? null,
+            IsExitPath           : request.body.IsExitPath ?? false,
+            MessageBeforeQuestion: request.body.MessageBeforeQuestion ?? null,
         };
         return path;
     };
 
     addPathCondition = async (request: express.Request): Promise<CAssessmentPathCondition> => {
-        await this.validateUuid(request, 'PathId', Where.Body, true, false);
-        await this.validateUuid(request, 'NodeId', Where.Body, true, false);
         await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);
         await this.validateString(request, 'CompositionType', Where.Body, false, true);
         await this.validateUuid(request, 'ParentConditionId', Where.Body, false, true);
@@ -286,8 +284,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         var condition: CAssessmentPathCondition = {
-            PathId: request.body.PathId ?? null,
-            NodeId: request.body.NodeId ?? null,
+            PathId: request.params.pathId,
+            NodeId: request.params.nodeId,
             ParentConditionId: request.body.ParentConditionId ?? null,
             IsCompositeCondition: request.body.IsCompositeCondition ?? false,
             CompositionType: request.body.CompositionType ?? null,
@@ -305,14 +303,16 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateUuid(request, 'NextNodeId', Where.Body, false, true);
         await this.validateUuid(request, 'ConditionId', Where.Body, false, false);
         await this.validateBoolean(request, 'IsExitPath', Where.Body, false, false);
+        await this.validateString(request, 'MessageBeforeQuestion', Where.Body, false, true);
 
         this.validateRequest(request);
 
         var path: CAssessmentNodePath = {
-            DisplayCode: request.body.DisplayCode ?? null,
-            NextNodeId: request.body.NextNodeId ?? null,
-            ConditionId: request.body.ConditionId ?? null,
-            IsExitPath: request.body.IsExitPath ?? false,
+            DisplayCode          : request.body.DisplayCode ?? null,
+            NextNodeId           : request.body.NextNodeId ?? null,
+            ConditionId          : request.body.ConditionId ?? null,
+            IsExitPath           : request.body.IsExitPath ?? false,
+            MessageBeforeQuestion: request.body.MessageBeforeQuestion ?? null,
         };
 
         return path;

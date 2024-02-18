@@ -1273,13 +1273,16 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (!path) {
                 throw new ApiError(404, `Path not found!`);
             }
+            if (condition.DisplayCode == null || condition.DisplayCode == undefined) {
+                condition.DisplayCode = Helper.generateDisplayCode('Condition');
+            }
             const record = await AssessmentPathCondition.create({
                 DisplayCode          : condition.DisplayCode,
                 NodeId               : path.ParentNodeId,
                 PathId               : path.id,
                 ParentConditionId    : null,
                 IsCompositeCondition : condition.IsCompositeCondition,
-                CompositionType      : condition.CompositionType,
+                CompositionType      : condition.CompositionType ?? ConditionCompositionType.And,
                 OperatorType         : condition.OperatorType,
                 FirstOperandName     : condition.FirstOperand.Name,
                 FirstOperandValue    : condition.FirstOperand.Value,
@@ -1287,10 +1290,12 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 SecondOperandName    : condition.SecondOperand.Name,
                 SecondOperandValue   : condition.SecondOperand.Value,
                 SecondOperandDataType: condition.SecondOperand.DataType,
-                ThirdOperandName     : condition.ThirdOperand.Name,
-                ThirdOperandValue    : condition.ThirdOperand.Value,
-                ThirdOperandDataType : condition.ThirdOperand.DataType
+                ThirdOperandName     : condition.ThirdOperand ? condition.ThirdOperand.Name : null,
+                ThirdOperandValue    : condition.ThirdOperand ? condition.ThirdOperand.Value : null,
+                ThirdOperandDataType : condition.ThirdOperand ? condition.ThirdOperand.DataType : null,
             });
+            path.ConditionId = record.id;
+            await path.save();
             return AssessmentHelperMapper.toConditionDto(record);
         } catch (error) {
             Logger.instance().log(error.message);

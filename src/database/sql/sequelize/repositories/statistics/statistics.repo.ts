@@ -62,6 +62,8 @@ import {
     queryYearWiseUserCount
 } from './dashboard.sql.queries';
 import { DatabaseConnector_Sequelize } from '../../database.connector.sequelize';
+import { MySQL } from '../../../../../common/database.utils/mysql';
+import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,10 +79,10 @@ const sequelizeStats = new Sequelize(
 
 export class StatisticsRepo implements IStatisticsRepo {
 
-    public dbConnector = null;
+    public dbConnector: MySQL = null;
 
     constructor() {
-        this.dbConnector = new DatabaseConnector_Sequelize();
+        this.dbConnector = new MySQL();
         this.dbConnector.connect();
     }
 

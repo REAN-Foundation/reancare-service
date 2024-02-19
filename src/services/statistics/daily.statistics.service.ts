@@ -38,8 +38,9 @@ export class DailyStatisticsService {
 
             var statisticsService = Injector.Container.resolve(StatisticsService);
             const dashboardStats = await statisticsService.createSystemDashboardStats();
-            var ahaStatisticsService = Injector.Container.resolve(AhaStatisticsService);
-            const ahaStats = await ahaStatisticsService.getAhaStatistics();
+            // console.log(dashboardStats);
+            // var ahaStatisticsService = Injector.Container.resolve(AhaStatisticsService);
+            // const ahaStats = await ahaStatisticsService.getAhaStatistics();
             // if (ahaStats) {
             //     pdfModel = await ahaStatisticsService.generateAHAStatsReport(ahaStats);
             // }

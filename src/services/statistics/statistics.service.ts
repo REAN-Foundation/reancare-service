@@ -93,69 +93,69 @@ export class StatisticsService {
         try {
             const filter = {};
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
-            const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
-            const appDownload = await this._statisticsRepo.getAppDownlodCount();
-            const allYears = await this._statisticsRepo.getAllYears();
-            const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount();
-            // yearWiseUserCount.sort(this.compare);
-            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails();
-            // yearWiseDeviceDetails.sort(this.compare);
+            // const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
+            // const appDownload = await this._statisticsRepo.getAppDownlodCount();
+            // const allYears = await this._statisticsRepo.getAllYears();
+            // const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount();
+            // // yearWiseUserCount.sort(this.compare);
+            // const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails();
+            // // yearWiseDeviceDetails.sort(this.compare);
 
-            // TODO: Need to extract the age from DOB
-            const yearWiseAgeDetails = await this.getYearWiseAgeDetails(allYears);
-            const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
+            // // TODO: Need to extract the age from DOB
+            // const yearWiseAgeDetails = await this.getYearWiseAgeDetails(allYears);
+            // const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
             
-            const yearWiseGenderDetails = await this._statisticsRepo.getYearWiseGenderDetails();
-            const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
+            // const yearWiseGenderDetails = await this._statisticsRepo.getYearWiseGenderDetails();
+            // const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
 
-            const yearWiseMaritalDetails = await this._statisticsRepo.getYearWiseMaritalDetails();
-            const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
+            // const yearWiseMaritalDetails = await this._statisticsRepo.getYearWiseMaritalDetails();
+            // const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
 
-            // TODO: Country data will be available in the address table in future
-            const yearWiseCountryDetails = await this.getYearWiseCountryDetails(allYears);
-            const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
+            // // TODO: Country data will be available in the address table in future
+            // const yearWiseCountryDetails = await this.getYearWiseCountryDetails(allYears);
+            // const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
 
-            const yearWiseMajorAilmentDistributionDetails =
-            await this._statisticsRepo.getYearWiseMajorAilmentDistributionDetails();
-            const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
+            // const yearWiseMajorAilmentDistributionDetails =
+            // await this._statisticsRepo.getYearWiseMajorAilmentDistributionDetails();
+            // const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
 
-            const yearWiseAddictionDistributionDetails =
-            await this._statisticsRepo.getYearWiseAddictionDistributionDetails();
-            const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
+            // const yearWiseAddictionDistributionDetails =
+            // await this._statisticsRepo.getYearWiseAddictionDistributionDetails();
+            // const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
 
-            const dashboardStats = {
-                UserStatistics : {
-                    UsersCountStats                         : usersCountStats,
-                    DeviceDetailWiseUsers                   : deviceDetailWiseUsers,
-                    AppDownload                             : appDownload,
-                    YearWiseUserCount                       : yearWiseUserCount,
-                    YearWiseDeviceDetails                   : yearWiseDeviceDetails,
-                    YearWiseAgeDetails                      : yearWiseAgeDetails,
-                    AgeWiseUsers                            : ageWiseUsers,
-                    YearWiseGenderDetails                   : yearWiseGenderDetails,
-                    GenderWiseUsers                         : genderWiseUsers,
-                    YearWiseMaritalDetails                  : yearWiseMaritalDetails,
-                    MaritalStatusWiseUsers                  : maritalStatusWiseUsers,
-                    YearWiseCountryDetails                  : yearWiseCountryDetails,
-                    CountryWiseUsers                        : countryWiseUsers,
-                    YearWiseMajorAilmentDistributionDetails : yearWiseMajorAilmentDistributionDetails,
-                    MajorAilmentDistribution                : majorAilmentDistribution,
-                    YearWiseAddictionDistributionDetails    : yearWiseAddictionDistributionDetails,
-                    AddictionDistribution                   : addictionDistribution
-                },
-            };
+            // const dashboardStats = {
+            //     UserStatistics : {
+            //         UsersCountStats                         : usersCountStats,
+            //         DeviceDetailWiseUsers                   : deviceDetailWiseUsers,
+            //         AppDownload                             : appDownload,
+            //         YearWiseUserCount                       : yearWiseUserCount,
+            //         YearWiseDeviceDetails                   : yearWiseDeviceDetails,
+            //         YearWiseAgeDetails                      : yearWiseAgeDetails,
+            //         AgeWiseUsers                            : ageWiseUsers,
+            //         YearWiseGenderDetails                   : yearWiseGenderDetails,
+            //         GenderWiseUsers                         : genderWiseUsers,
+            //         YearWiseMaritalDetails                  : yearWiseMaritalDetails,
+            //         MaritalStatusWiseUsers                  : maritalStatusWiseUsers,
+            //         YearWiseCountryDetails                  : yearWiseCountryDetails,
+            //         CountryWiseUsers                        : countryWiseUsers,
+            //         YearWiseMajorAilmentDistributionDetails : yearWiseMajorAilmentDistributionDetails,
+            //         MajorAilmentDistribution                : majorAilmentDistribution,
+            //         YearWiseAddictionDistributionDetails    : yearWiseAddictionDistributionDetails,
+            //         AddictionDistribution                   : addictionDistribution
+            //     },
+            // };
 
-            const model: DailySystemStatisticsDomainModel = {
-                ReportDate      : TimeHelper.formatDateToLocal_YYYY_MM_DD(new Date()),
-                ReportTimestamp : new Date(),
-                DashboardStats  : JSON.stringify(dashboardStats)
-            };
+            // const model: DailySystemStatisticsDomainModel = {
+            //     ReportDate      : TimeHelper.formatDateToLocal_YYYY_MM_DD(new Date()),
+            //     ReportTimestamp : new Date(),
+            //     DashboardStats  : JSON.stringify(dashboardStats)
+            // };
 
-            const dailyStats = await this._dailyStatisticsRepo.addDailySystemStats(model);
-            if (!dailyStats) {
-                Logger.instance().log(`Error in creating dashboard statistics`);
-            }
-            return dailyStats;
+            // const dailyStats = await this._dailyStatisticsRepo.addDailySystemStats(model);
+            // if (!dailyStats) {
+            //     Logger.instance().log(`Error in creating dashboard statistics`);
+            // }
+            // return dailyStats;
 
         } catch (error) {
             Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);

@@ -271,7 +271,7 @@ export class AssessmentHelperMapper {
     static toBiometricsAnswerDto(
         assessmentId: uuid,
         node: CAssessmentQuestionNode,
-        values: AssessmentBiometrics[]
+        values: AssessmentBiometrics[] | AssessmentBiometrics
     ): BiometricQueryAnswer {
         var dto: BiometricQueryAnswer = {
             AssessmentId     : assessmentId,

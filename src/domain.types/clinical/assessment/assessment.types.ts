@@ -464,7 +464,7 @@ export interface AssessmentBiometrics {
 }
 
 export interface BiometricQueryAnswer extends BaseQueryAnswer {
-    Values  : AssessmentBiometrics[];
+    Values  : AssessmentBiometrics[] | AssessmentBiometrics;
 }
 
 export class CScoringCondition {

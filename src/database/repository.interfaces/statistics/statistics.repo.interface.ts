@@ -39,4 +39,16 @@ export interface IStatisticsRepo {
     
     getAllYears(): Promise<any>;
 
+    getYearWiseUserCount(): Promise<any>;
+
+    getYearWiseDeviceDetails(): Promise<any>;
+
+    getYearWiseGenderDetails(): Promise<any>;
+
+    getYearWiseMaritalDetails(): Promise<any>;
+
+    getYearWiseMajorAilmentDistributionDetails(): Promise<any>;
+
+    getYearWiseAddictionDistributionDetails(): Promise<any>;
+
 }

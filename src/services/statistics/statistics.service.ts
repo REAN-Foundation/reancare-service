@@ -96,27 +96,31 @@ export class StatisticsService {
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
             const appDownload = await this._statisticsRepo.getAppDownlodCount();
             const allYears = await this._statisticsRepo.getAllYears();
-            const yearWiseUserCount = await this.getYearWiseUserCount(allYears);
-            yearWiseUserCount.sort(this.compare);
-            const yearWiseDeviceDetails = await this.getYearWiseDeviceDetails(allYears);
-            yearWiseDeviceDetails.sort(this.compare);
+            const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount();
+            // yearWiseUserCount.sort(this.compare);
+            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails();
+            // yearWiseDeviceDetails.sort(this.compare);
 
+            // TODO: Need to extract the age from DOB
             const yearWiseAgeDetails = await this.getYearWiseAgeDetails(allYears);
             const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
             
-            const yearWiseGenderDetails = await this.getYearWiseGenderDetails(allYears);
+            const yearWiseGenderDetails = await this._statisticsRepo.getYearWiseGenderDetails();
             const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
 
-            const yearWiseMaritalDetails = await this.getYearWiseMaritalDetails(allYears);
+            const yearWiseMaritalDetails = await this._statisticsRepo.getYearWiseMaritalDetails();
             const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
 
+            // TODO: Country data will be available in the address table in future
             const yearWiseCountryDetails = await this.getYearWiseCountryDetails(allYears);
             const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
 
-            const yearWiseMajorAilmentDistributionDetails = await this.getYearWiseMajorAilmentDistributionDetails(allYears);
+            const yearWiseMajorAilmentDistributionDetails =
+            await this._statisticsRepo.getYearWiseMajorAilmentDistributionDetails();
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
 
-            const yearWiseAddictionDistributionDetails = await this.getYearWiseAddictionDistributionDetails(allYears);
+            const yearWiseAddictionDistributionDetails =
+            await this._statisticsRepo.getYearWiseAddictionDistributionDetails();
             const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
 
             const dashboardStats = {
@@ -168,11 +172,12 @@ export class StatisticsService {
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
             const allYears = await this._statisticsRepo.getAllYears();
-            const yearWiseUserCount = await this.getYearWiseUserCount(allYears);
-            yearWiseUserCount.sort(this.compare);
-            const yearWiseDeviceDetails = await this.getYearWiseDeviceDetails(allYears);
-            yearWiseDeviceDetails.sort(this.compare);
+            const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount();
+            // yearWiseUserCount.sort(this.compare);
+            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails();
+            // yearWiseDeviceDetails.sort(this.compare);
 
+            //TODO: Need to modify the SQL query
             const yearWiseAgeDetails = await this.getYearWiseAgeDetails(allYears);
             const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
             
@@ -185,7 +190,8 @@ export class StatisticsService {
             const yearWiseCountryDetails = await this.getYearWiseCountryDetails(allYears);
             const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
 
-            const yearWiseMajorAilmentDistributionDetails = await this.getYearWiseMajorAilmentDistributionDetails(allYears);
+            const yearWiseMajorAilmentDistributionDetails =
+            await this._statisticsRepo.getYearWiseMajorAilmentDistributionDetails();
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
 
             const yearWiseAddictionDistributionDetails = await this.getYearWiseAddictionDistributionDetails(allYears);
@@ -246,22 +252,22 @@ export class StatisticsService {
         return yearWiseUserCount;
     };
 
-    private getYearWiseDeviceDetails = async(allYears) => {
-        const yearWiseDeviceDetails: YearWiseDeviceDetails[] = [];
-        for (let i = 0; i < allYears.length; i++) {
-            const deviceDetails: YearWiseDeviceDetails = {};
-            deviceDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-            if (deviceDetails.Year) {
-                const yearWiseDeviceDetails =
-                await this._statisticsRepo.getUsersByDeviceDetail({ Year: deviceDetails.Year });
-                deviceDetails.DeviceDetails = yearWiseDeviceDetails;
-            }
-            if (deviceDetails.Year) {
-                yearWiseDeviceDetails.push(deviceDetails);
-            }
-        }
-        return yearWiseDeviceDetails;
-    };
+    // private getYearWiseDeviceDetails = async(allYears) => {
+    //     const yearWiseDeviceDetails: YearWiseDeviceDetails[] = [];
+    //     for (let i = 0; i < allYears.length; i++) {
+    //         const deviceDetails: YearWiseDeviceDetails = {};
+    //         deviceDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
+    //         if (deviceDetails.Year) {
+    //             const yearWiseDeviceDetails =
+    //             await this._statisticsRepo.getUsersByDeviceDetail({ Year: deviceDetails.Year });
+    //             deviceDetails.DeviceDetails = yearWiseDeviceDetails;
+    //         }
+    //         if (deviceDetails.Year) {
+    //             yearWiseDeviceDetails.push(deviceDetails);
+    //         }
+    //     }
+    //     return yearWiseDeviceDetails;
+    // };
     
     private getYearWiseAgeDetails = async(allYears) => {
         const yearWiseAgeDetails: YearWiseAgeDetails[] = [];

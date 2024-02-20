@@ -47,7 +47,7 @@ export class MessagingService {
         return true;
     };
 
-    private async sendMessage (provider, channel, toPhone, type, templateName, message, payload) {
+    public async sendMessage (provider, channel, toPhone, type, templateName, message, payload) {
         const reanBotBaseUrl = process.env.REANBOT_BACKEND_BASE_URL;
         const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
         const client = await this.getClientByProvider(provider);

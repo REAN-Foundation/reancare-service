@@ -21,6 +21,7 @@ import { EHRSymptomService } from '../modules/ehr.analytics/ehr.symptom.service'
 import { EHRMedicationService } from '../modules/ehr.analytics/ehr.medication.service';
 import { EHRAnalyticsHandler } from '../modules/ehr.analytics/ehr.analytics.handler';
 import { StatisticsService } from '../services/statistics/statistics.service';
+import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -181,6 +182,9 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const careplanService = Loader.container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
+                const nextMinutes = 15;
+                const userTaskService = Loader.container.resolve(UserTaskSenderService);
+                await userTaskService.sendUserTasks(nextMinutes);
             })();
         });
     };

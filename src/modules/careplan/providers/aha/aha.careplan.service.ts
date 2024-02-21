@@ -787,7 +787,7 @@ export class AhaCareplanService implements ICareplanService {
                 case QueryResponseType.Biometrics: {
                     var biometrics = [];
                     Logger.instance().log(`Result - Value : ${JSON.stringify(res.ObjectValue.Value)}`);
-                    var biometrics_ =res.ObjectValue.Value;
+                    var biometrics_ = res.ObjectValue.Value;
                     Logger.instance().log(`Biometrics : ${biometrics_}`);
                     if (!Array.isArray(biometrics_)) {
                         biometrics = [biometrics_];

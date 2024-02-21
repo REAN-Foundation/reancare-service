@@ -15,6 +15,8 @@ export interface IStatisticsRepo {
 
     getUsersByAge(filters: StatisticSearchFilters): Promise<any>;
 
+    getYearWiseAgeDetails(filter): Promise<any>;
+
     getUsersByMaritalStatus(filters: StatisticSearchFilters): Promise<any>;
 
     getUsersByDeviceDetail(filters: StatisticSearchFilters): Promise<any>;
@@ -39,16 +41,16 @@ export interface IStatisticsRepo {
     
     getAllYears(): Promise<any>;
 
-    getYearWiseUserCount(): Promise<any>;
+    getYearWiseUserCount(filter): Promise<any>;
 
-    getYearWiseDeviceDetails(): Promise<any>;
+    getYearWiseDeviceDetails(filter): Promise<any>;
 
-    getYearWiseGenderDetails(): Promise<any>;
+    getYearWiseGenderDetails(filter): Promise<any>;
 
-    getYearWiseMaritalDetails(): Promise<any>;
+    getYearWiseMaritalDetails(filter): Promise<any>;
 
-    getYearWiseMajorAilmentDistributionDetails(): Promise<any>;
+    getYearWiseMajorAilmentDistributionDetails(filter): Promise<any>;
 
-    getYearWiseAddictionDistributionDetails(): Promise<any>;
+    getYearWiseAddictionDistributionDetails(filter): Promise<any>;
 
 }

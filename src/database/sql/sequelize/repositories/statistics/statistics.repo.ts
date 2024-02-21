@@ -6,9 +6,6 @@ import { IStatisticsRepo } from '../../../../repository.interfaces/statistics/st
 import Person from '../../models/person/person.model';
 import Patient from '../../models/users/patient/patient.model';
 import { Helper } from '../../../../../common/helper';
-import HealthProfile from '../../models/users/patient/health.profile.model';
-import UserLoginSession from '../../models/users/user/user.login.session.model';
-import UserDeviceDetails from '../../models/users/user/user.device.details.model';
 import CareplanEnrollment from '../../models/clinical/careplan/enrollment.model';
 import { AppDownloadDomainModel } from '../../../../../domain.types/statistics/app.download.domain.model';
 import { AppDownloadDto } from '../../../../../domain.types/statistics/app.download.dto';
@@ -39,6 +36,7 @@ import { Sequelize } from 'sequelize-typescript';
 import {
     getTotalCareplanEnrollments,
     queryAllYear,
+    queryAppDownloadCount,
     queryDeletedUsers,
     queryHeavyDrinkers,
     queryNotAddited,
@@ -46,6 +44,7 @@ import {
     querySubstanceAbuse,
     queryTobaccoSmokers,
     queryTotalOnboardedUsers,
+    queryUserByAge,
     queryUserByGender,
     queryUserByMajorAilment,
     queryUserMarritalStatus,
@@ -59,11 +58,13 @@ import {
     queryYearWiseNotAddited,
     queryYearWiseSubstanceAbuse,
     queryYearWiseTobaccoSmokers,
+    queryYearWiseUserAge,
     queryYearWiseUserCount
-} from './dashboard.sql.queries';
-import { DatabaseConnector_Sequelize } from '../../database.connector.sequelize';
-import { MySQL } from '../../../../../common/database.utils/mysql';
-import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
+} from './tenant.sql.queries';
+import { DatabaseConnector_Mysql } from '../../../../../database/sql/mysql/database.connector.mysql';
+import { DeviceDetails } from '../../../../../domain.types/users/user.device.details/user.device.domain.model';
+import { GenderDetails } from '../../../../../domain.types/person/person.types';
+import { MajorAilmentDetails, MaritalStatusDetails } from '../../../../../domain.types/users/patient/health.profile/health.profile.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -79,10 +80,10 @@ const sequelizeStats = new Sequelize(
 
 export class StatisticsRepo implements IStatisticsRepo {
 
-    public dbConnector: MySQL = null;
+    public dbConnector: DatabaseConnector_Mysql = null;
 
     constructor() {
-        this.dbConnector = new MySQL();
+        this.dbConnector = DatabaseConnector_Mysql.getInstance();
         this.dbConnector.connect();
     }
 
@@ -94,15 +95,13 @@ export class StatisticsRepo implements IStatisticsRepo {
             const deletedUsers = await this.getDeletedUsers(filters);
             const enrolledUsers = await this.getEnrolledUsers(filters);
 
-            const usersData = {
-                TotalUsers             : totalUsers,
-                NotDeletedUsers        : notDeletedUsers,
-                UsersWithActiveSession : usersWithActiveSession,
-                DeletedUsers           : deletedUsers,
-                EnrolledUsers          : enrolledUsers,
-            };
-
-            return usersData;
+            return this.getComposeUserCountStats(
+                totalUsers,
+                notDeletedUsers,
+                usersWithActiveSession,
+                deletedUsers,
+                enrolledUsers);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -173,327 +172,53 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    getUsersByGender = async (filters): Promise<any> => {
-        const query =  queryUserByGender;
+    getUsersByGender = async (filter): Promise<any> => {
+        const query =  Helper.replaceAll(queryUserByGender, "{{tenantId}}", filter.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const genderWiseUsers: any = rows;
-        return genderWiseUsers;
-        // try {
-        //     const totalUsers = await this.getTotalUsers(filters);
-            
-        //     const totalUsers_ = totalUsers.rows.map(x => x.User.Person.Gender);
-
-        //     const totalMaleUsers = totalUsers_.filter(x => x === "Male");
-
-        //     const maleUsersRatio = ((totalMaleUsers.length) / (totalUsers.count) * 100).toFixed(2);
-
-        //     const maleUsers = {
-        //         Status : "Male",
-        //         Count  : totalMaleUsers.length,
-        //         Ratio  : maleUsersRatio,
-        //     };
-
-        //     const totalFemaleUsers = totalUsers_.filter(x => x === "Female");
-        //     const femaleUsersRatio = ((totalFemaleUsers.length) / (totalUsers.count) * 100).toFixed(2);
-
-        //     const femaleUsers = {
-        //         Status : "Female",
-        //         Count  : totalFemaleUsers.length,
-        //         Ratio  : femaleUsersRatio,
-        //     };
-
-        //     const totalIntersexUsers = totalUsers_.filter(x => x === "Intersex");
-        //     const IntersexUsersRatio = ((totalIntersexUsers.length) / (totalUsers.count) * 100).toFixed(2);
-
-        //     const intersexUsers = {
-        //         Status : "Intersex",
-        //         Count  : totalIntersexUsers.length,
-        //         Ratio  : IntersexUsersRatio,
-        //     };
-
-        //     const totalGenderNotSpecifiedUsers = totalUsers_.filter(x => x === "Other" || x === "Unknown" );
-
-        //     const genderNotSpecifiedUsersRatio =
-        //     ((totalGenderNotSpecifiedUsers.length) / (totalUsers.count) * 100).toFixed(2);
-
-        //     const genderNotSpecifiedUsers = {
-        //         Status : "Not Specified",
-        //         Count  : totalGenderNotSpecifiedUsers.length,
-        //         Ratio  : genderNotSpecifiedUsersRatio,
-        //     };
-
-        //     const genderWiseUsers = [
-        //         maleUsers,
-        //         femaleUsers,
-        //         intersexUsers,
-        //         genderNotSpecifiedUsers
-        //     ];
-
-        //     return genderWiseUsers;
-
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
+        return this.getComposeUserByGender(genderWiseUsers);
     };
 
-    getUsersByAge = async (filters): Promise<any> => {
-        try {
-            const totalUsers_ = await this.getTotalUsers(filters);
-            const totalUsers = totalUsers_.rows.map(x => x.User.Person.BirthDate);
+    public getYearWiseAgeDetails = async(filter) => {
+        const queryForAllYears = queryAllYear;
+        const [allYears] = await this.dbConnector.executeQuery(queryForAllYears);
+        const years: any = allYears;
+        const result = [];
 
-            const usersWithBirthDate = totalUsers.filter(x => x != null);
-
-            const totalAgeNotSpecifiedUsers = (totalUsers.length) - (usersWithBirthDate.length);
-
-            const ageNotSpecifiedUsersRatio = ((totalAgeNotSpecifiedUsers) / (totalUsers_.count) * 100).toFixed(2);
-
-            const ageNotSpecifiedUsers = {
-                Status : 'Not Specified',
-                Count  : totalAgeNotSpecifiedUsers,
-                Ratio  : ageNotSpecifiedUsersRatio,
-            };
-
-            const totalUsresWithAge = [];
-
-            for ( const u of usersWithBirthDate ) {
-                var userAge = Helper.getAgeFromBirthDate(u, true);
-                var usrAge = userAge.split(" ");
-                const user = Number(usrAge[0]);
-                totalUsresWithAge.push(user);
-            }
-
-            // var usersBetweenTwoNumbers = {};
-
-            if (filters.AgeFrom != null && filters.AgeTo != null) {
-                const totalUsersBetweenTwoNumbers =
-                    totalUsresWithAge.filter(x => x > filters.AgeFrom && x < filters.AgeTo);
-                const usersBetweenTwoNumbersRatio =
-                    ((totalUsersBetweenTwoNumbers.length) / (totalUsers_.count) * 100).toFixed(2);
-
-                // usersBetweenTwoNumbers = {
-                //     Count : totalUsersBetweenTwoNumbers.length,
-                //     Ratio : usersBetweenTwoNumbersRatio,
-                // };
-            }
-
-            const totalUsersBelowThirtyfive = totalUsresWithAge.filter(x => x <= 35);
-            const usersBelowThirtyfiveRatio = ((totalUsersBelowThirtyfive.length) / (totalUsers_.count) * 100).toFixed(2);
-
-            const usersBelowThirtyfive = {
-                Status : 'Below 35',
-                Count  : totalUsersBelowThirtyfive.length,
-                Ratio  : usersBelowThirtyfiveRatio,
-            };
-
-            const totalUsersBetweenThirtysixToSeventy = totalUsresWithAge.filter(x => x >= 36 && x <= 70);
-
-            const usersBetweenThirtysixToSeventyRatio =
-            ((totalUsersBetweenThirtysixToSeventy.length) / (totalUsers_.count) * 100).toFixed(2);
-
-            const usersBetweenThirtysixToSeventy = {
-                Status : '36 to 70',
-                Count  : totalUsersBetweenThirtysixToSeventy.length,
-                Ratio  : usersBetweenThirtysixToSeventyRatio,
-            };
-
-            const totalUsersAboveSeventy = totalUsresWithAge.filter(x => x >= 71);
-            const usersAboveSeventyRatio =
-            ((totalUsersAboveSeventy.length) / (totalUsers_.count) * 100).toFixed(2);
-
-            const usersAboveSeventy = {
-                Status : 'Above 71',
-                Count  : totalUsersAboveSeventy.length,
-                Ratio  : usersAboveSeventyRatio,
-            };
-
-            const ageWiseUsers = [
-                usersBelowThirtyfive,
-                usersBetweenThirtysixToSeventy,
-                usersAboveSeventy,
-                ageNotSpecifiedUsers,
-            ];
-
-            return ageWiseUsers;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+        for (let i = 0; i < years.length; i++) {
+            let query =  Helper.replaceAll(queryYearWiseUserAge, "{{tenantId}}", filter.TenantId);
+            query =  Helper.replaceAll(query, "{{year}}", years[i].year);
+            const [rows] = await this.dbConnector.executeQuery(query);
+            const userByAge: any = rows;
+            const ageDetails = this.getComposeUserByAge(userByAge);
+            result.push({
+                Year       : years[i].year,
+                AgeDetails : ageDetails
+            });
         }
+
+        return result;
     };
 
-    getUsersByMaritalStatus = async (): Promise<any> => {
-        const query =  queryUserMarritalStatus;
+    getUsersByAge = async (filter): Promise<any> => {
+        const query =  Helper.replaceAll(queryUserByAge, "{{tenantId}}", filter.TenantId);
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const userByAge: any = rows;
+        return this.getComposeUserByAge(userByAge);
+    };
+
+    getUsersByMaritalStatus = async (filter): Promise<any> => {
+        const query =  Helper.replaceAll(queryUserMarritalStatus, "{{tenantId}}", filter.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const usersByMaritalStatus: any = rows;
         return usersByMaritalStatus;
-        // try {
-        //     const search: any = {
-        //         where      : {},
-        //         include    : [],
-        //         paranoid   : false,
-        //         attributes : ['MaritalStatus'],
-        //         group      : ['MaritalStatus']
-        //     };
-
-        //     const includeObj =
-        //     {
-        //         model    : User,
-        //         required : true,
-        //         where    : {
-        //             IsTestUser : false
-        //         },
-        //         include : [{
-        //             model    : Person,
-        //             required : true,
-        //             where    : {},
-        //         }]
-        //     };
-
-        //     search.include.push(includeObj);
-
-        //     if (filters.PastMonths != null) {
-
-        //         const usersByMaritalStatusForMonths = [];
-
-        //         for (var i = 0; i < filters.PastMonths; i++) {
-        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [startOfMonth, endOfMonth],
-        //             };
-
-        //             const healthProfileDetails = await HealthProfile.findAndCountAll(search);
-
-        //             var usersByMaritalStatusForMonth = {
-        //                 Month : monthName,
-        //                 Count : healthProfileDetails.count
-        //             };
-        //             usersByMaritalStatusForMonths.push(usersByMaritalStatusForMonth);
-        //         }
-        //         return usersByMaritalStatusForMonths;
-        //     }
-        //     else {
-        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-        //         if (filters.Year != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [minDate, maxDate],
-        //             };
-        //         }
-
-        //         const maxCreatedDate = getMaxDate(filters);
-        //         if (filters.Year != null && filters.Month != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.lt] : maxCreatedDate,
-        //             };
-        //         }
-        //         if (filters.From != null && filters.To != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [filters.From, filters.To],
-        //             };
-        //         }
-
-        //         const usersByMaritalStatus = await HealthProfile.findAndCountAll(search);
-
-        //         return usersByMaritalStatus.count;
-
-        //     }
-
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
     };
 
-    getUsersByDeviceDetail = async (): Promise<any> => {
-        const query =  queryUsersByDeviceDetail;
+    getUsersByDeviceDetail = async (filters): Promise<any> => {
+        const query =  Helper.replaceAll(queryUsersByDeviceDetail, "{{tenantId}}", filters.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const userByDeviceDetails: any = rows;
         return userByDeviceDetails;
-
-        // try {
-
-        //     const search: any = {
-        //         where      : {},
-        //         include    : [],
-        //         paranoid   : false,
-        //         attributes : ['OSType'],
-        //         group      : ['OSType']
-        //     };
-
-        //     const includeObj =
-        //     {
-        //         model    : User,
-        //         required : true,
-        //         where    : {
-        //             IsTestUser : false
-        //         },
-        //         include : [{
-        //             model    : Person,
-        //             required : true,
-        //             where    : {},
-        //         }]
-        //     };
-
-        //     search.include.push(includeObj);
-
-        //     if (filters.PastMonths != null) {
-
-        //         const userDeviceDetailsForMonths = [];
-
-        //         for (var i = 0; i < filters.PastMonths; i++) {
-        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [startOfMonth, endOfMonth],
-        //             };
-
-        //             const usersByDeviceDetails = await UserDeviceDetails.findAndCountAll(search);
-
-        //             var userDeviceDetailsForMonth = {
-        //                 Month : monthName,
-        //                 Count : usersByDeviceDetails.count
-        //             };
-        //             userDeviceDetailsForMonths.push(userDeviceDetailsForMonth);
-        //         }
-        //         return userDeviceDetailsForMonths;
-        //     }
-        //     else {
-        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-        //         if (filters.Year != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [minDate, maxDate],
-        //             };
-        //         }
-
-        //         const maxCreatedDate = getMaxDate(filters);
-        //         if (filters.Year != null && filters.Month != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.lt] : maxCreatedDate,
-        //             };
-        //         }
-        //         if (filters.From != null && filters.To != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [filters.From, filters.To],
-        //             };
-        //         }
-
-        //         const usersByDeviceDetails = await UserDeviceDetails.findAndCountAll(search);
-
-        //         return usersByDeviceDetails.count;
-
-        //     }
-
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
     };
 
     getUsersByEnrollment = async (filters): Promise<any> => {
@@ -595,13 +320,16 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     getAppDownlodCount = async (): Promise<any> => {
-        try {
-            const appDownload = await AppDownloadsModel.findAndCountAll();
-            return appDownload;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+        let totalAppDownload = null;
+        const query =  queryAppDownloadCount;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalAppDownload_: any = rows;
+        if (totalAppDownload_.length === 1) {
+            totalAppDownload = totalAppDownload_[0].totalAppDownload;
         }
+        return {
+            Count : totalAppDownload
+        };
     };
 
     getUsersByCountry = async (filters): Promise<any> => {
@@ -650,89 +378,11 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    getUsersByMajorAilment = async (): Promise<any> => {
-        const query =  queryUserByMajorAilment;
+    getUsersByMajorAilment = async (filter): Promise<any> => {
+        const query =  Helper.replaceAll(queryUserByMajorAilment, "{{tenantId}}", filter.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const userByMajorAilment: any = rows;
         return userByMajorAilment;
-        // try {
-        //     const search: any = {
-        //         where      : {},
-        //         include    : [],
-        //         paranoid   : false,
-        //         attributes : ['MajorAilment'],
-        //         group      : ['MajorAilment']
-        //     };
-
-        //     const includeObj =
-        //     {
-        //         model    : User,
-        //         required : true,
-        //         where    : {
-        //             IsTestUser : false
-        //         },
-        //         include : [{
-        //             model    : Person,
-        //             required : true,
-        //             where    : {},
-        //         }]
-        //     };
-
-        //     search.include.push(includeObj);
-
-        //     if (filters.PastMonths != null) {
-
-        //         const majorAilmentUsersForMonths = [];
-
-        //         for (var i = 0; i < filters.PastMonths; i++) {
-        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [startOfMonth, endOfMonth],
-        //             };
-
-        //             const usersBymajorAilments = await HealthProfile.findAndCountAll(search);
-
-        //             var majorAilmentUsersForMonth = {
-        //                 Month : monthName,
-        //                 Count : usersBymajorAilments.count
-        //             };
-        //             majorAilmentUsersForMonths.push(majorAilmentUsersForMonth);
-        //         }
-        //         return majorAilmentUsersForMonths;
-        //     }
-        //     else {
-        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-        //         if (filters.Year != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [minDate, maxDate],
-        //             };
-        //         }
-
-        //         const maxCreatedDate = getMaxDate(filters);
-        //         if (filters.Year != null && filters.Month != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.lt] : maxCreatedDate,
-        //             };
-        //         }
-        //         if (filters.From != null && filters.To != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [filters.From, filters.To],
-        //             };
-        //         }
-
-        //         const usersBymajorAilments = await HealthProfile.findAndCountAll(search);
-
-        //         return usersBymajorAilments.count;
-
-        //     }
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
     };
 
     getUsersByObesity = async (filters): Promise<any> => {
@@ -920,9 +570,9 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    getUsersByAddiction = async (): Promise<any> => {
+    getUsersByAddiction = async (filter): Promise<any> => {
         let tobaccoSmokers = null;
-        const tobaccoSmokersQuery =  queryTobaccoSmokers;
+        const tobaccoSmokersQuery =  Helper.replaceAll(queryTobaccoSmokers, "{{tenantId}}", filter.TenantId);
         const [tobaccoSmokersRows] = await this.dbConnector.executeQuery(tobaccoSmokersQuery);
         const tobaccoSmokers_: any = tobaccoSmokersRows;
         if (tobaccoSmokers_.length === 1) {
@@ -930,7 +580,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
         
         let heavyDrinkers = null;
-        const heavyDrinkersQuery =  queryHeavyDrinkers;
+        const heavyDrinkersQuery =  Helper.replaceAll(queryHeavyDrinkers, "{{tenantId}}", filter.TenantId);
         const [heavyDrinkersRows] = await this.dbConnector.executeQuery(heavyDrinkersQuery);
         const heavyDrinkers_: any = heavyDrinkersRows;
         if (heavyDrinkers_.length === 1) {
@@ -938,7 +588,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
 
         let substanceAbuse = null;
-        const substanceAbuseQuery =  querySubstanceAbuse;
+        const substanceAbuseQuery =  Helper.replaceAll(querySubstanceAbuse, "{{tenantId}}", filter.TenantId);
         const [substanceAbuseRows] = await this.dbConnector.executeQuery(substanceAbuseQuery);
         const substanceAbuse_: any = substanceAbuseRows;
         if (substanceAbuse_.length === 1) {
@@ -946,35 +596,36 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
 
         let notAddited = null;
-        const notAdditedQuery =  queryNotAddited;
+        const notAdditedQuery =  Helper.replaceAll(queryNotAddited, "{{tenantId}}", filter.TenantId);
         const [notAdditedRows] = await this.dbConnector.executeQuery(notAdditedQuery);
         const notAddited_: any = notAdditedRows;
         if (notAddited_.length === 1) {
             notAddited = notAddited_[0].notAddedUserCount;
         }
 
+        const totalUsers = tobaccoSmokers + heavyDrinkers + substanceAbuse + notAddited;
         const tobaccoSmokerUsers = {
             Status : "Tobacco Smokers",
             Count  : tobaccoSmokers,
-            // Ratio  : tobaccoSmokersRatio
+            Ratio  : totalUsers ? tobaccoSmokers / totalUsers : 0.00
         };
 
         const heavyDrinkerUsers = {
             Status : "Heavy Drinker",
             Count  : heavyDrinkers,
-            // Ratio  : heavyDrinkersRatio
+            Ratio  : totalUsers ? heavyDrinkers / totalUsers : 0.00
         };
 
         const substanceAbuseUsers = {
             Status : "Substance Abuse",
             Count  : substanceAbuse,
-            // Ratio  : substanceAbuseRatio
+            Ratio  : totalUsers ? substanceAbuse / totalUsers : 0.00
         };
 
         const nonAddictedUsers = {
             Status : "Non Addicted",
             Count  : notAddited,
-            // Ratio  : nonAddictedRatio
+            Ratio  : totalUsers ? notAddited / totalUsers : 0.00
         };
 
         const addictionDetails = [
@@ -1228,149 +879,63 @@ export class StatisticsRepo implements IStatisticsRepo {
         const [rows] = await this.dbConnector.executeQuery(query);
         const years: any = rows;
         return years;
-        // try {
-
-        //     const search: any = {
-        //         where      : {},
-        //         include    : [],
-        //         paranoid   : false,
-        //         attributes : [
-        //             [sequelizeStats.fn('YEAR', sequelizeStats.col('CreatedAt')), 'year'], // Extract year from createdAt
-        //         ],
-        //         group : [sequelizeStats.fn('YEAR', sequelizeStats.col('CreatedAt'))],
-        //     };
-
-        //     const allYears = await Patient.findAll(search);
-        //     return allYears;
-
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
     };
 
-    getYearWiseUserCount = async () => {
-        const query =  queryYearWiseUserCount;
+    getYearWiseUserCount = async (filters) => {
+        const query =  Helper.replaceAll(queryYearWiseUserCount, "{{tenantId}}", filters.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseUserCount: any = rows;
         return yearWiseUserCount;
-        // const yearWiseUserCount:YearWiseUsers[] = [];
-        // for (let i = 0; i < allYears.length; i++) {
-        //     const user: YearWiseUsers = {};
-        //     user.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-        //     if (user.Year) {
-        //         const yearWiseUserCount = await this._statisticsRepo.getUsersCount({ Year: user.Year });
-        //         user.UserCount = yearWiseUserCount.TotalUsers.Count;
-        //     }
-        //     if (user.Year) {
-        //         yearWiseUserCount.push(user);
-        //     }
-        // }
-        // return yearWiseUserCount;
     };
 
-    getYearWiseDeviceDetails = async() => {
-        const query =  queryYearWiseDeviceDetail;
+    getYearWiseDeviceDetails = async(filters) => {
+        const query =  Helper.replaceAll(queryYearWiseDeviceDetail, "{{tenantId}}", filters.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseDeviceDetails: any = rows;
-        return yearWiseDeviceDetails;
-        // const yearWiseDeviceDetails: YearWiseDeviceDetails[] = [];
-        // for (let i = 0; i < allYears.length; i++) {
-        //     const deviceDetails: YearWiseDeviceDetails = {};
-        //     deviceDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-        //     if (deviceDetails.Year) {
-        //         const yearWiseDeviceDetails =
-        //         await this._statisticsRepo.getUsersByDeviceDetail({ Year: deviceDetails.Year });
-        //         deviceDetails.DeviceDetails = yearWiseDeviceDetails;
-        //     }
-        //     if (deviceDetails.Year) {
-        //         yearWiseDeviceDetails.push(deviceDetails);
-        //     }
-        // }
-        // return yearWiseDeviceDetails;
+        return this.getComposeYearWiseDeviceDetails(yearWiseDeviceDetails);
     };
 
-    getYearWiseGenderDetails = async() => {
-        const query =  queryYearWiseGenderDetails;
+    getYearWiseGenderDetails = async(filter) => {
+        const query =  Helper.replaceAll(queryYearWiseGenderDetails, "{{tenantId}}", filter.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseGenderDetails: any = rows;
-        return yearWiseGenderDetails;
-        // const yearWiseGenderDetails: YearWiseGenderDetails[] = [];
-        // for (let i = 0; i < allYears.length; i++) {
-        //     const genderDetails: YearWiseGenderDetails = {};
-        //     genderDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-        //     if (genderDetails.Year) {
-        //         const yearWiseGenderDetails =
-        //         await this._statisticsRepo.getUsersByGender({ Year: genderDetails.Year });
-        //         genderDetails.GenderDetails = yearWiseGenderDetails;
-        //     }
-        //     if (genderDetails.Year) {
-        //         yearWiseGenderDetails.push(genderDetails);
-        //     }
-        // }
-        // return yearWiseGenderDetails;
+        return this.getComposeYearWiseGenderDetails(yearWiseGenderDetails);
     };
 
-    getYearWiseMaritalDetails = async() => {
-        const query =  queryYearWiseMaritalDetails;
+    getYearWiseMaritalDetails = async(filter) => {
+        const query =  Helper.replaceAll(queryYearWiseMaritalDetails, "{{tenantId}}", filter.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseMaritalDetails: any = rows;
-        return yearWiseMaritalDetails;
-        // const yearWiseMaritalDetails: YearWiseMaritalDetails[] = [];
-        // for (let i = 0; i < allYears.length; i++) {
-        //     const maritalDetails: YearWiseMaritalDetails = {};
-        //     maritalDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-        //     if (maritalDetails.Year) {
-        //         const yearWiseMaritalDetails =
-        //         await this._statisticsRepo.getUsersByMaritalStatus({ Year: maritalDetails.Year });
-        //         maritalDetails.MaritalDetails = yearWiseMaritalDetails;
-        //     }
-        //     if (maritalDetails.Year) {
-        //         yearWiseMaritalDetails.push(maritalDetails);
-        //     }
-        // }
-        // return yearWiseMaritalDetails;
+        return this.getComposeYearWiseMaritalDetails(yearWiseMaritalDetails);
     };
 
-    getYearWiseMajorAilmentDistributionDetails = async() => {
-        const query =  queryYearWiseMajorAilmentDistributionDetails;
+    getYearWiseMajorAilmentDistributionDetails = async(filter) => {
+        const query =  Helper.replaceAll(queryYearWiseMajorAilmentDistributionDetails, "{{tenantId}}", filter.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseMajorAilmentDistributionDetails: any = rows;
-        return yearWiseMajorAilmentDistributionDetails;
-        // const yearWiseMajorAilmentDistributionDetails: YearWiseMajorAilmentDistributionDetails[] = [];
-        // for (let i = 0; i < allYears.length; i++) {
-        //     const majorAilmentDistributionDetails: YearWiseMajorAilmentDistributionDetails = {};
-        //     majorAilmentDistributionDetails.Year =
-        //     allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-        //     if (majorAilmentDistributionDetails.Year) {
-        //         const yearWiseMajorAilmentDistributionDetails =
-        //         await this._statisticsRepo.getUsersByMajorAilment({ Year: majorAilmentDistributionDetails.Year });
-        //         majorAilmentDistributionDetails.MajorAilmentDistributionDetails = yearWiseMajorAilmentDistributionDetails;
-        //     }
-        //     if (majorAilmentDistributionDetails.Year) {
-        //         yearWiseMajorAilmentDistributionDetails.push(majorAilmentDistributionDetails);
-        //     }
-        // }
-        // return yearWiseMajorAilmentDistributionDetails;
+        return this.getComposeYearWiseMajorAilment(yearWiseMajorAilmentDistributionDetails);
     };
 
-    getYearWiseAddictionDistributionDetails = async() => {
-        const tobaccoSmokersQuery =  queryYearWiseTobaccoSmokers;
+    getYearWiseAddictionDistributionDetails = async(filter) => {
+        const tobaccoSmokersQuery =  Helper.replaceAll(queryYearWiseTobaccoSmokers, "{{tenantId}}", filter.TenantId);
         const [tobaccoSmokersRows] = await this.dbConnector.executeQuery(tobaccoSmokersQuery);
         const yearWiseTobaccoSmokers: any = tobaccoSmokersRows;
                 
-        const heavyDrinkersQuery =  queryYearWiseHeavyDrinkers;
+        const heavyDrinkersQuery =  Helper.replaceAll(queryYearWiseHeavyDrinkers, "{{tenantId}}", filter.TenantId);
         const [heavyDrinkersRows] = await this.dbConnector.executeQuery(heavyDrinkersQuery);
         const yearWiseHeavyDrinkers: any = heavyDrinkersRows;
         
-        const substanceAbuseQuery =  queryYearWiseSubstanceAbuse;
+        const substanceAbuseQuery =  Helper.replaceAll(queryYearWiseSubstanceAbuse, "{{tenantId}}", filter.TenantId);
         const [substanceAbuseRows] = await this.dbConnector.executeQuery(substanceAbuseQuery);
         const yearWiseSubstanceAbuse: any = substanceAbuseRows;
         
-        const notAdditedQuery =  queryYearWiseNotAddited;
+        const notAdditedQuery =  Helper.replaceAll(queryYearWiseNotAddited, "{{tenantId}}", filter.TenantId);
         const [notAdditedRows] = await this.dbConnector.executeQuery(notAdditedQuery);
         const yearWiseNotAddited: any = notAdditedRows;
-        
+        // console.log('year wise tobbaco smoker', yearWiseTobaccoSmokers);
+        // console.log('year wise Heavely drinker', yearWiseHeavyDrinkers);
+        // console.log('year wise Subtance abuse', yearWiseSubstanceAbuse);
+        // console.log('year wise not addited', yearWiseNotAddited);
         return {
             yearWiseTobaccoSmokers,
             yearWiseHeavyDrinkers,
@@ -1398,183 +963,17 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     private getOnboardedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
         let totalUsers = null;
-        const query =  queryTotalOnboardedUsers;
+        const query =  Helper.replaceAll(queryTotalOnboardedUsers, "{{tenantId}}", filters.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const users: any = rows;
         if (users.length === 1) {
             totalUsers = users[0].totalUsers;
         }
         return totalUsers;
-
-        // try {
-        //     const search: any = { where: {}, include: [], paranoid: false };
-        //     const includesObj =
-        //      {
-        //          model    : User,
-        //          required : true,
-        //          where    : {
-        //              IsTestUser : false
-        //          },
-        //          paranoid : false,
-        //          include  : []
-        //      };
-
-        //     const includePerson = {
-        //         model    : Person,
-        //         required : true,
-        //         where    : {},
-        //         paranoid : false,
-                
-        //     };
-
-        //     if (filters.PastMonths != null)  {
-        //         const usersForMonths = [];
-
-        //         for (var i = 0; i < filters.PastMonths; i++) {
-        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-        //             includePerson.where['CreatedAt'] = {
-        //                 [Op.between] : [startOfMonth, endOfMonth],
-        //             };
-        //             includesObj.include.push(includePerson);
-        //             search.include.push(includesObj);
-
-        //             const totalUsers = await Patient.findAndCountAll(search);
-
-        //             var usersForMonth = {
-        //                 Month : monthName,
-        //                 Count : totalUsers.count
-        //             };
-        //             usersForMonths.push(usersForMonth);
-        //         }
-        //         return usersForMonths;
-        //     }
-        //     else
-        //     {
-        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-        //         if (filters.Year != null)  {
-        //             includePerson.where['CreatedAt'] = {
-        //                 [Op.between] : [minDate, maxDate],
-        //             };
-        //         }
-        //         const maxCreatedDate = getMaxDate(filters);
-        //         if (filters.Year != null && filters.Month != null)  {
-        //             includePerson.where['CreatedAt'] = {
-        //                 [Op.lt] : maxCreatedDate,
-        //             };
-        //         }
-        //         if (filters.From != null && filters.To != null)  {
-        //             includePerson.where['CreatedAt'] = {
-        //                 [Op.between] : [filters.From, filters.To],
-        //             };
-        //         }
-        //         includesObj.include.push(includePerson);
-        //         search.include.push(includesObj);
-
-        //         const totalUsers = await Patient.findAndCountAll(search);
-
-        //         const totalUsersDetails = {
-        //             Count : totalUsers.count,
-        //         };
-
-        //         return totalUsersDetails;
-        //     }
-
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
     };
 
-    // private getOnboardedUsers1 = async (filters: StatisticSearchFilters): Promise<any> => {
-    //     try {
-    //         const search: any = { where: {}, include: [], paranoid: false };
-    //         const includesObj =
-    //          {
-    //              model    : User,
-    //              required : true,
-    //              where    : {
-    //                  IsTestUser : false
-    //              },
-    //              paranoid : false,
-    //              include  : []
-    //          };
-
-    //         const includePerson = {
-    //             model    : Person,
-    //             required : true,
-    //             where    : {},
-    //             paranoid : false,
-                
-    //         };
-
-    //         if (filters.PastMonths != null)  {
-    //             const usersForMonths = [];
-
-    //             for (var i = 0; i < filters.PastMonths; i++) {
-    //                 var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-    //                 var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-    //                 var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-    //                 var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-    //                 includePerson.where['CreatedAt'] = {
-    //                     [Op.between] : [startOfMonth, endOfMonth],
-    //                 };
-    //                 includesObj.include.push(includePerson);
-    //                 search.include.push(includesObj);
-
-    //                 const totalUsers = await Patient.findAndCountAll(search);
-
-    //                 var usersForMonth = {
-    //                     Month : monthName,
-    //                     Count : totalUsers.count
-    //                 };
-    //                 usersForMonths.push(usersForMonth);
-    //             }
-    //             return usersForMonths;
-    //         }
-    //         else
-    //         {
-    //             const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-    //             if (filters.Year != null)  {
-    //                 includePerson.where['CreatedAt'] = {
-    //                     [Op.between] : [minDate, maxDate],
-    //                 };
-    //             }
-    //             const maxCreatedDate = getMaxDate(filters);
-    //             if (filters.Year != null && filters.Month != null)  {
-    //                 includePerson.where['CreatedAt'] = {
-    //                     [Op.lt] : maxCreatedDate,
-    //                 };
-    //             }
-    //             if (filters.From != null && filters.To != null)  {
-    //                 includePerson.where['CreatedAt'] = {
-    //                     [Op.between] : [filters.From, filters.To],
-    //                 };
-    //             }
-    //             includesObj.include.push(includePerson);
-    //             search.include.push(includesObj);
-
-    //             const totalUsers = await Patient.findAndCountAll(search);
-
-    //             const totalUsersDetails = {
-    //                 Count : totalUsers.count,
-    //             };
-
-    //             return totalUsersDetails;
-    //         }
-
-    //     } catch (error) {
-    //         Logger.instance().log(error.message);
-    //         throw new ApiError(500, error.message);
-    //     }
-    // };
-
    private  getNotDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-       const query =  queryNotDeletedUsers;
+       const query =  Helper.replaceAll(queryNotDeletedUsers, "{{tenantId}}", filters.TenantId);
        let totalNotDeletedUsers = null;
        const [rows] = await this.dbConnector.executeQuery(query);
        const notDeletedUsers_: any = rows;
@@ -1582,98 +981,10 @@ export class StatisticsRepo implements IStatisticsRepo {
            totalNotDeletedUsers = notDeletedUsers_[0].totalNotDeletedUsers;
        }
        return totalNotDeletedUsers;
-       //    try {
-       //        const totalUsers = await this.getTotalUsers(filters);
-       //        const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-       //        const maxCreatedDate = getMaxDate(filters);
-       //        const search: any = { where: {}, include: [], paranoid: false };
-
-       //        const includesObj =
-       //        {
-       //            model    : User,
-       //            required : true,
-       //            where    : {
-       //                IsTestUser : false
-       //            },
-       //            paranoid : false,
-       //            include  : []
-       //        };
-
-       //        const includePerson =  {
-       //            model    : Person,
-       //            required : true,
-       //            where    : {},
-       //            paranoid : false,
-       //        };
-
-       //        includePerson.where['DeletedAt'] = {
-       //            [Op.eq] : null
-       //        };
-
-       //        if (filters.PastMonths != null)  {
-       //            const notDeletedUsersDetails = [];
-       //            for (var i = 0; i < filters.PastMonths; i++) {
-       //                var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-       //                var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-       //                var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-       //                var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-       //                includePerson.where['CreatedAt'] = {
-       //                    [Op.between] : [startOfMonth, endOfMonth],
-       //                };
-       //                includesObj.include.push(includePerson);
-       //                search.include.push(includesObj);
-
-       //                const nonDeletedUsers = await Patient.findAndCountAll(search);
-
-       //                var usersForMonth = {
-       //                    Month : monthName,
-       //                    Count : nonDeletedUsers.count
-       //                };
-       //                notDeletedUsersDetails.push(usersForMonth);
-       //            }
-       //            return notDeletedUsersDetails;
-       //        }
-
-       //        else
-       //        {
-       //            if (filters.Year != null)  {
-       //                includePerson.where['CreatedAt'] = {
-       //                    [Op.between] : [minDate, maxDate],
-       //                };
-       //            }
-       //            if (filters.Year != null && filters.Month != null)  {
-       //                includePerson.where['CreatedAt'] = {
-       //                    [Op.lt] : maxCreatedDate,
-       //                };
-       //            }
-       //            if (filters.From != null && filters.To != null)  {
-       //                includePerson.where['CreatedAt'] = {
-       //                    [Op.between] : [filters.From, filters.To],
-       //                };
-       //            }
-       //            includesObj.include.push(includePerson);
-       //            search.include.push(includesObj);
-
-       //            const nonDeletedUsers = await Patient.findAndCountAll(search);
-
-       //            const nonDeletedUsersRatio =  ((nonDeletedUsers.count) / (totalUsers.count) * 100).toFixed(2);
-
-       //            const notDeletedUsersDetails = {
-       //                Count : nonDeletedUsers.count,
-       //                Ratio : nonDeletedUsersRatio
-       //            };
-       //            return notDeletedUsersDetails;
-       //        }
-
-       //    } catch (error) {
-       //        Logger.instance().log(error.message);
-       //        throw new ApiError(500, error.message);
-       //    }
    };
 
    private  getDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-       const query =  queryDeletedUsers;
+       const query =  Helper.replaceAll(queryDeletedUsers, "{{tenantId}}", filters.TenantId);
        let totalDeletedUsers = null;
        const [rows] = await this.dbConnector.executeQuery(query);
        const deletedUsers_: any = rows;
@@ -1681,280 +992,28 @@ export class StatisticsRepo implements IStatisticsRepo {
            totalDeletedUsers = deletedUsers_[0].totalDeletedUsers;
        }
        return totalDeletedUsers;
-       //    try {
-       //        const search: any = { where: {}, include: [],  paranoid: false };
-
-       //        const includesObj =
-       //          {
-       //              model    : Person,
-       //              required : true,
-       //              where    : {},
-       //              paranoid : false
-       //          };
-
-       //        includesObj.where['DeletedAt'] = {
-       //            [Op.not] : null
-       //        };
-
-       //        if (filters.PastMonths != null) {
-
-       //            const deletedUsersDetails = [];
-
-       //            for (var i = 0; i < filters.PastMonths; i++) {
-       //                var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-       //                var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-       //                var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-       //                var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-       //                includesObj.where['CreatedAt'] = {
-       //                    [Op.between] : [startOfMonth, endOfMonth],
-       //                };
-
-       //                search.include.push(includesObj);
-
-       //                const deletedUsers = await Patient.findAndCountAll(search);
-
-       //                var deletedUsersForMonth = {
-       //                    Month : monthName,
-       //                    Count : deletedUsers.count
-       //                };
-       //                deletedUsersDetails.push(deletedUsersForMonth);
-       //            }
-       //            return deletedUsersDetails;
-       //        }
-       //        else {
-       //            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-       //            if (filters.Year != null)  {
-       //                includesObj.where['CreatedAt'] = {
-       //                    [Op.between] : [minDate, maxDate],
-       //                };
-       //            }
-       //            const maxCreatedDate = getMaxDate(filters);
-       //            if (filters.Year != null && filters.Month != null)  {
-       //                includesObj.where['CreatedAt'] = {
-       //                    [Op.lt] : maxCreatedDate,
-       //                };
-       //            }
-       //            if (filters.From != null && filters.To != null)  {
-       //                includesObj.where['CreatedAt'] = {
-       //                    [Op.between] : [filters.From, filters.To],
-       //                };
-       //            }
-
-       //            search.include.push(includesObj);
-
-       //            const deletedUsers = await Patient.findAndCountAll(search);
-
-       //            const totalUsers = await this.getTotalUsers(filters);
-
-       //            const deletedUsersRatio =  ((deletedUsers.count) / (totalUsers.count) * 100).toFixed(2);
-
-       //            const  deletedUsersDetails = {
-       //                Count : deletedUsers.count,
-       //                Ratio : deletedUsersRatio
-       //            };
-
-       //            return deletedUsersDetails;
-
-       //        }
-       //    } catch (error) {
-       //        Logger.instance().log(error.message);
-       //        throw new ApiError(500, error.message);
-       //    }
    };
 
     private getUsersWithActiveSession = async (filters: StatisticSearchFilters): Promise<any> => {
         let usersWithActiveSession = null;
-        const query =  queryUsersWithActiveSession;
+        const query =  Helper.replaceAll(queryUsersWithActiveSession, "{{tenantId}}", filters.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const usersWithActiveSession_: any = rows;
         if (usersWithActiveSession_.length === 1) {
             usersWithActiveSession = usersWithActiveSession_[0].totalUsersWithActiveSession;
         }
         return usersWithActiveSession;
-        // try {
-        //     const search: any = { where: {}, include: [], paranoid: false };
-
-        //     const includesObj =
-        //      {
-        //          model    : Person,
-        //          required : true,
-        //          where    : {},
-        //      };
-
-        //     includesObj.where['Phone'] = {
-        //         [Op.notBetween] : [1000000000, 1000000100],
-        //     };
-
-        //     includesObj.where['DeletedAt'] = {
-        //         [Op.eq] : null
-        //     };
-
-        //     if (filters.PastMonths != null) {
-
-        //         const usersWithActiveSessionForMonths = [];
-
-        //         for (var i = 0; i < filters.PastMonths; i++) {
-        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-        //             includesObj.where['CreatedAt'] = {
-        //                 [Op.between] : [startOfMonth, endOfMonth],
-        //             };
-
-        //             search.include.push(includesObj);
-
-        //             const totalUsers_ = await Patient.findAndCountAll(search);
-
-        //             const totalUsers  = totalUsers_.rows.map(x => x.UserId);
-
-        //             const loginSessions = [];
-        //             for (const u of totalUsers) {
-        //                 const loginSession = await UserLoginSession.findOne({ where : {
-        //                     UserId    : u,
-        //                     ValidTill : { [Op.gte]: new Date() },
-        //                 } });
-        //                 if (loginSession != null) {
-        //                     loginSessions.push(loginSession);
-        //                 }
-        //             }
-
-        //             var usersWithActiveSessionForMonth = {
-        //                 Month : monthName,
-        //                 Count : loginSessions.length
-        //             };
-        //             usersWithActiveSessionForMonths.push(usersWithActiveSessionForMonth);
-        //         }
-        //         return usersWithActiveSessionForMonths;
-        //     }
-        //     else {
-        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-        //         if (filters.Year != null)  {
-        //             includesObj.where['CreatedAt'] = {
-        //                 [Op.between] : [minDate, maxDate],
-        //             };
-        //         }
-
-        //         const maxCreatedDate = getMaxDate(filters);
-        //         if (filters.Year != null && filters.Month != null)  {
-        //             includesObj.where['CreatedAt'] = {
-        //                 [Op.lt] : maxCreatedDate,
-        //             };
-        //         }
-        //         if (filters.From != null && filters.To != null)  {
-        //             includesObj.where['CreatedAt'] = {
-        //                 [Op.between] : [filters.From, filters.To],
-        //             };
-        //         }
-
-        //         search.include.push(includesObj);
-
-        //         const totalUsers_ = await Patient.findAndCountAll(search);
-
-        //         const totalUsers  = totalUsers_.rows.map(x => x.UserId);
-
-        //         const activeLoginSessions = [];
-        //         for (const u of totalUsers) {
-        //             const loginSession = await UserLoginSession.findOne({ where : {
-        //                 UserId    : u,
-        //                 ValidTill : { [Op.gte]: new Date() },
-        //             } });
-        //             if (loginSession != null) {
-        //                 activeLoginSessions.push(loginSession);
-        //             }
-        //         }
-
-        //         const activeUsersRatio = ((activeLoginSessions.length) / (totalUsers_.count) * 100).toFixed(2);
-
-        //         const  activeUsers = {
-        //             Count : activeLoginSessions.length,
-        //             Ratio : activeUsersRatio,
-        //         };
-        //         return activeUsers;
-
-        //     }
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
     };
 
     private getEnrolledUsers = async (filters: StatisticSearchFilters): Promise<any> => {
         let totalEnrolledUsers = null;
-        const query =  getTotalCareplanEnrollments;
+        const query =  Helper.replaceAll(getTotalCareplanEnrollments, "{{tenantId}}", filters.TenantId);
         const [rows] = await this.dbConnector.executeQuery(query);
         const totalEnrolledUsers_: any = rows;
         if (totalEnrolledUsers_.length === 1) {
             totalEnrolledUsers = totalEnrolledUsers_[0].totalCareplanEnrollments;
         }
         return totalEnrolledUsers;
-        // try {
-        //     const search: any = { where: {}, };
-
-        //     if (filters.PastMonths != null) {
-
-        //         const enrolledUsersForMonths = [];
-
-        //         for (var i = 0; i < filters.PastMonths; i++) {
-        //             var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
-        //             var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
-        //             var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
-        //             var monthName = TimeHelper.format(date, 'MMMM, YYYY');
-
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [startOfMonth, endOfMonth],
-        //             };
-
-        //             const enrolledUsers = await CareplanEnrollment.findAndCountAll(search);
-
-        //             var enrolledUsersForMonth = {
-        //                 Month : monthName,
-        //                 Count : enrolledUsers.count
-        //             };
-        //             enrolledUsersForMonths.push(enrolledUsersForMonth);
-        //         }
-        //         return enrolledUsersForMonths;
-        //     }
-        //     else {
-        //         const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-        //         if (filters.Year != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [minDate, maxDate],
-        //             };
-        //         }
-
-        //         const maxCreatedDate = getMaxDate(filters);
-        //         if (filters.Year != null && filters.Month != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.lt] : maxCreatedDate,
-        //             };
-        //         }
-        //         if (filters.From != null && filters.To != null)  {
-        //             search.where['CreatedAt'] = {
-        //                 [Op.between] : [filters.From, filters.To],
-        //             };
-        //         }
-
-        //         const enrolledUsers = await CareplanEnrollment.findAndCountAll(search);
-
-        //         const totalUsers = await this.getTotalUsers(filters);
-
-        //         const enrolledUsersRatio = ((enrolledUsers.count) / (totalUsers.count) * 100).toFixed(2);
-
-        //         const  enrolledUsersDetails = {
-        //             Count : enrolledUsers.count,
-        //             Ratio : enrolledUsersRatio,
-        //         };
-
-        //         return enrolledUsersDetails;
-
-        //     }
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
     };
 
     private getTotalUsers = async (filters: StatisticSearchFilters): Promise<any> => {
@@ -3270,6 +2329,66 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
+    private getComposeUserCountStats =
+     (
+         totalUsers: number,
+         notDeletedUsers: number,
+         usersWithActiveSession: number,
+         deletedUsers: number,
+         enrolledUsers: number) => {
+         return {
+             TotalUsers : {
+                 Count : totalUsers
+             },
+             NotDeletedUsers : {
+                 Count : notDeletedUsers,
+                 Ratio : totalUsers ? ((Number(notDeletedUsers) / Number(totalUsers)) * 100).toFixed(2) : "0.00"
+             },
+             UsersWithActiveSession : {
+                 Count : usersWithActiveSession,
+                 Ratio : totalUsers ? ((Number(usersWithActiveSession) / Number(totalUsers)) * 100).toFixed(2) : "0.00"
+             },
+             DeletedUsers : {
+                 Count : deletedUsers,
+                 Ratio : totalUsers ? ((Number(deletedUsers) / Number(totalUsers)) * 100).toFixed(2) : "0.00"
+             },
+             EnrolledUsers : {
+                 Count : enrolledUsers,
+                 Ratio : totalUsers ? ((Number(enrolledUsers) / Number(totalUsers)) * 100).toFixed(2) : "0.00"
+             }
+         };
+     };
+
+    private getComposeYearWiseDeviceDetails = (yearWiseDeviceDetails) => {
+        const year = [];
+        const result = [];
+         
+        for (let i = 0; i < yearWiseDeviceDetails.length; i++) {
+            if (!year.includes(yearWiseDeviceDetails[i].year)) {
+                year.push(yearWiseDeviceDetails[i].year);
+            }
+        }
+
+        for (let i = 0; i < year.length; i++) {
+            const y = year[i];
+            const details = [];
+            for (let j = 0; j < yearWiseDeviceDetails.length; j++) {
+                if (yearWiseDeviceDetails[j].year === y) {
+                    const deviceDetails: DeviceDetails = {
+                        OSType : yearWiseDeviceDetails[j].OSType,
+                        Count  : yearWiseDeviceDetails[j].totalUsers
+                    };
+                    details.push(deviceDetails);
+                }
+            }
+            result.push({
+                Year          : y,
+                DeviceDetails : details
+            });
+        }
+        return result;
+    };
+
     private  getPulseUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
@@ -3335,6 +2454,156 @@ export class StatisticsRepo implements IStatisticsRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    private getComposeYearWiseGenderDetails = (yearWiseGenderDetails) => {
+        const year = [];
+        const result = [];
+         
+        for (let i = 0; i < yearWiseGenderDetails.length; i++) {
+            if (!year.includes(yearWiseGenderDetails[i].year)) {
+                year.push(yearWiseGenderDetails[i].year);
+            }
+        }
+
+        for (let i = 0; i < year.length; i++) {
+            const y = year[i];
+            const details = [];
+            for (let j = 0; j < yearWiseGenderDetails.length; j++) {
+                if (yearWiseGenderDetails[j].year === y) {
+                    const genderDetails: GenderDetails = {
+                        Gender : yearWiseGenderDetails[j].Gender,
+                        Count  : yearWiseGenderDetails[j].totalCount
+                    };
+                    details.push(genderDetails);
+                }
+            }
+            result.push({
+                Year          : y,
+                DeviceDetails : details
+            });
+        }
+        return result;
+    };
+
+    private getComposeUserByGender = (genderWiseUsers) => {
+        let totalGenders = 0;
+        const result = [];
+        for (let i = 0; i < genderWiseUsers.length; i++) {
+            totalGenders += genderWiseUsers[i].totalCount;
+        }
+
+        for (let i = 0; i < genderWiseUsers.length; i++) {
+            result.push({
+                Gender : genderWiseUsers[i].Gender,
+                Count  : genderWiseUsers[i].totalCount,
+                Ratio  : totalGenders ? ((genderWiseUsers[i].totalCount / totalGenders) * 100).toFixed(2) : "0.00"
+            });
+        }
+        return result;
+    };
+
+    private getComposeUserByAge = (userByAge) => {
+        let below35 = 0;
+        let above35Below70 = 0;
+        let above71 = 0;
+        let notSpecified = 0;
+
+        for (let i = 0; i < userByAge.length; i++) {
+            
+            if (!userByAge[i].age) {
+                notSpecified += 1;
+            } else if (userByAge[i].age <= 35 ) {
+                below35 += 1;
+            } else if (userByAge[i].age >= 36 && userByAge[i].age <= 70) {
+                above35Below70 += 1;
+            } else {
+                above71 += 1;
+            }
+        }
+
+        return [
+            {
+                Status : "Below 35",
+                Count  : below35,
+                Ratio  : userByAge.length ? ((below35 / userByAge.length) * 100).toFixed(2) : "0.00"
+            },
+            {
+                Status : "36 to 70",
+                Count  : above35Below70,
+                Ratio  : userByAge.length ? ((above35Below70 / userByAge.length) * 100).toFixed(2) : "0.00"
+            },
+            {
+                Status : "Above 71",
+                Count  : above71,
+                Ratio  : userByAge.length ? ((above71 / userByAge.length) * 100).toFixed(2) : "0.00"
+            },
+            {
+                Status : "Not Specified",
+                Count  : notSpecified,
+                Ratio  : userByAge.length ? ((notSpecified / userByAge.length) * 100).toFixed(2) : "0.00"
+            }
+        ];
+    };
+    
+    private getComposeYearWiseMaritalDetails = (yearWiseMaritalDetails) => {
+        const year = [];
+        const result = [];
+         
+        for (let i = 0; i < yearWiseMaritalDetails.length; i++) {
+            if (!year.includes(yearWiseMaritalDetails[i].year)) {
+                year.push(yearWiseMaritalDetails[i].year);
+            }
+        }
+
+        for (let i = 0; i < year.length; i++) {
+            const y = year[i];
+            const details = [];
+            for (let j = 0; j < yearWiseMaritalDetails.length; j++) {
+                if (yearWiseMaritalDetails[j].year === y) {
+                    const maritalDetails: MaritalStatusDetails = {
+                        MaritalStatus : yearWiseMaritalDetails[j].MaritalStatus,
+                        Count         : yearWiseMaritalDetails[j].totalCount
+                    };
+                    details.push(maritalDetails);
+                }
+            }
+            result.push({
+                Year          : y,
+                DeviceDetails : details
+            });
+        }
+        return result;
+    };
+
+    private getComposeYearWiseMajorAilment = (yearWiseMajorAilment) => {
+        const year = [];
+        const result = [];
+         
+        for (let i = 0; i < yearWiseMajorAilment.length; i++) {
+            if (!year.includes(yearWiseMajorAilment[i].year)) {
+                year.push(yearWiseMajorAilment[i].year);
+            }
+        }
+
+        for (let i = 0; i < year.length; i++) {
+            const y = year[i];
+            const details = [];
+            for (let j = 0; j < yearWiseMajorAilment.length; j++) {
+                if (yearWiseMajorAilment[j].year === y) {
+                    const ailmentDetails: MajorAilmentDetails = {
+                        MajorAilment : yearWiseMajorAilment[j].MajorAilment,
+                        Count        : yearWiseMajorAilment[j].totalCount
+                    };
+                    details.push(ailmentDetails);
+                }
+            }
+            result.push({
+                Year          : y,
+                DeviceDetails : details
+            });
+        }
+        return result;
     };
 
 }

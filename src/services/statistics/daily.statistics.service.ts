@@ -98,14 +98,15 @@ export class DailyStatisticsService {
         try {
             const statisticsService = Injector.Container.resolve(StatisticsService);
             const dashboardStats = await statisticsService.createTenantDashboardStats(tenantId);
-            const filters: StatisticSearchFilters = { TenantId: tenantId };
-            const userStats = await statisticsService.getUsersStats(filters);
+            // const filters: StatisticSearchFilters = { TenantId: tenantId };
+            // const userStats = await statisticsService.getUsersStats(filters);
 
             const model: DailyTenantStatisticsDomainModel = {
                 ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),
                 ReportTimestamp : new Date(),
                 DashboardStats  : dashboardStats ? JSON.stringify(dashboardStats) : null,
-                UserStats       : userStats ? JSON.stringify(userStats) : null,
+                // UserStats       : userStats ? JSON.stringify(userStats) : null,
+                UserStats       : null,
                 TenantId        : tenantId
             };
             

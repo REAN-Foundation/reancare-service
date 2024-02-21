@@ -53,7 +53,7 @@ export class Scheduler {
                 this.scheduleCareplanRegistrationReminders();
                 this.scheduleFetchDataFromDevices();
                 this.scheduleCurrentTimezoneUpdate();
-                // this.scheduleDailyStatistics();
+                this.scheduleDailyStatistics();
                 this.scheduleStrokeSurvey();
 
                 //this.scheduleDaillyPatientTasks();
@@ -79,8 +79,8 @@ export class Scheduler {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
                 const dailyStatsService = Injector.Container.resolve(DailyStatisticsService);
-                await dailyStatsService.generateDailySystemStats();
-                // await dailyStatsService.generateDailyStatsForAllTenants();
+                // await dailyStatsService.generateDailySystemStats();
+                await dailyStatsService.generateDailyStatsForAllTenants();
             })();
         });
     };

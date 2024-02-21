@@ -1260,7 +1260,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             await path.save();
             return AssessmentHelperMapper.toPathDto(path);
         }
-        catch(error) {
+        catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }

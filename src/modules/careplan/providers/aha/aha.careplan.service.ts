@@ -785,7 +785,14 @@ export class AhaCareplanService implements ICareplanService {
                     break;
                 }
                 case QueryResponseType.Biometrics: {
-                    var biometrics = JSON.parse(res.TextValue);
+                    var biometrics = [];
+                    var parsedBiometrics = JSON.parse(res.TextValue);
+                    if (!Array.isArray(parsedBiometrics)) {
+                        biometrics = [parsedBiometrics];
+                    }
+                    else {
+                        biometrics = parsedBiometrics;
+                    }
                     for (var b of biometrics) {
                         var biometricsType = b.BiometricsType as BiometricsType;
                         this.populateBiometricValues(biometricsType, v, b);

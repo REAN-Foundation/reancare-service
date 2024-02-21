@@ -79,6 +79,9 @@ export class AssessmentService {
 
     public getById = async (id: string): Promise<AssessmentDto> => {
         var assessment = await this._assessmentRepo.getById(id);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${id} cannot be found!`);
+        }
         var responses = await this._assessmentHelperRepo.getUserResponses(id);
         assessment.UserResponses = responses;
         return assessment;
@@ -98,6 +101,9 @@ export class AssessmentService {
 
     public startAssessment = async (id: uuid): Promise<AssessmentQueryDto | AssessmentQueryListDto> => {
         var assessment = await this._assessmentRepo.getById(id);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${id} cannot be found!`);
+        }
         if (assessment.Status === ProgressStatus.InProgress &&
             assessment.StartedAt !== null) {
             throw new Error('Assessment is already in progress.');
@@ -662,10 +668,11 @@ export class AssessmentService {
                 next = await this.messageNodeAsQueryDto(nextNode, assessment);
             }
             const response: AssessmentQuestionResponseDto = {
-                AssessmentId : assessment.id,
-                Parent       : currentQueryDto,
-                Answer       : answerDto,
-                Next         : next,
+                AssessmentId     : assessment.id,
+                Parent           : currentQueryDto,
+                Answer           : answerDto,
+                Next             : next,
+                MessageBeforeNext: chosenPath.MessageBeforeQuestion
             };
             return response;
         }

@@ -16,7 +16,7 @@ export interface AssessmentQuestionResponseDto {
     AssessmentId?: uuid;
     Parent?      : AssessmentQueryDto;
     Next?        : AssessmentQueryDto | AssessmentQueryListDto;
-    Answer?      :
+    Answer?      : 
         | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer
         | MessageAnswer
@@ -26,4 +26,5 @@ export interface AssessmentQuestionResponseDto {
         | FloatQueryAnswer
         | FileQueryAnswer
         | BiometricQueryAnswer;
+    MessageBeforeNext?: string;
 }

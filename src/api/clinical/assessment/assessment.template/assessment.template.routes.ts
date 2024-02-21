@@ -10,6 +10,19 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new AssessmentTemplateController();
 
+    router.post('/:id/nodes/:nodeId/paths/:pathId/set-next-node/:nextNodeId', authenticator.authenticateClient, authenticator.authenticateUser, controller.setNextNodeToPath);
+    router.post('/:id/nodes/:nodeId/paths/:pathId/conditions', authenticator.authenticateClient, authenticator.authenticateUser, controller.addPathCondition);
+    router.put('/:id/nodes/:nodeId/paths/:pathId/conditions/:conditionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updatePathCondition);
+    router.get('/:id/nodes/:nodeId/paths/:pathId/conditions/:conditionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPathCondition);
+    router.delete('/:id/nodes/:nodeId/paths/:pathId/conditions/:conditionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deletePathCondition);
+    router.get('/:id/nodes/:nodeId/paths/:pathId/conditions', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPathConditionsForPath);
+
+    router.get('/:id/nodes/:nodeId/paths', authenticator.authenticateClient, authenticator.authenticateUser, controller.getNodePaths);
+    router.post('/:id/nodes/:nodeId/paths', authenticator.authenticateClient, authenticator.authenticateUser, controller.addPath);
+    router.put('/:id/nodes/:nodeId/paths/:pathId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updatePath);
+    router.get('/:id/nodes/:nodeId/paths/:pathId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPath);
+    router.delete('/:id/nodes/:nodeId/paths/:pathId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deletePath);
+
     router.post('/:id/nodes', authenticator.authenticateClient, authenticator.authenticateUser, controller.addNode);
     router.get('/nodes/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.searchNode);
     router.get('/:id/nodes/:nodeId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getNode);

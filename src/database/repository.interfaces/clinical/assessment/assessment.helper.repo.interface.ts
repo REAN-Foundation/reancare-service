@@ -56,8 +56,6 @@ export interface IAssessmentHelperRepo {
 
     getQuestionNodePaths(nodeType: AssessmentNodeType, nodeId: uuid): Promise<CAssessmentNodePath[]>;
 
-    getPathCondition(conditionId: uuid, nodeId: uuid, pathId: uuid): Promise<CAssessmentPathCondition>;
-
     createQueryResponse(answer: | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer
         | MessageAnswer

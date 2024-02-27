@@ -21,7 +21,7 @@ export interface IStatisticsRepo {
 
     getUsersByDeviceDetail(filters: StatisticSearchFilters): Promise<any>;
 
-    getUsersByEnrollment(filters: StatisticSearchFilters): Promise<any>;
+    // getUsersByEnrollment(filters: StatisticSearchFilters): Promise<any>;
 
     updateAppDownloadCount(appDownloadDomainModel: AppDownloadDomainModel): Promise<AppDownloadDto>;
 

@@ -1,12 +1,10 @@
-import { Dialect, Op, QueryTypes } from 'sequelize';
+import { Op } from 'sequelize';
 import { CountryCurrencyPhone } from 'country-currency-phone';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { IStatisticsRepo } from '../../../../repository.interfaces/statistics/statistics.repo.interface';
 import Person from '../../models/person/person.model';
-import Patient from '../../models/users/patient/patient.model';
 import { Helper } from '../../../../../common/helper';
-import CareplanEnrollment from '../../models/clinical/careplan/enrollment.model';
 import { AppDownloadDomainModel } from '../../../../../domain.types/statistics/app.download.domain.model';
 import { AppDownloadDto } from '../../../../../domain.types/statistics/app.download.dto';
 import AppDownloadsModel from '../../models/statistics/app.downloads.model';
@@ -28,18 +26,41 @@ import Pulse from '../../models/clinical/biometrics/pulse.model';
 import { TimeHelper } from '../../../../../common/time.helper';
 import User from '../../models/users/user/user.model';
 import Role from '../../models/role/role.model';
-import Doctor from '../../models/users/doctor.model';
-import EmergencyContact from '../../models/users/patient/emergency.contact.model';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
-import { Sequelize } from 'sequelize-typescript';
 import {
-    getTotalCareplanEnrollments,
+    queryTenantUsersCareplanEnrollments,
+    queryDeletedTenantUsers,
+    queryHeavyDrinkersTenantUser,
+    queryNotAddictedTenantUser,
+    queryNotDeletedTenantUsers,
+    querySubstanceAbuseTenantUser,
+    queryTobaccoSmokersTenantUser,
+    queryTotalOnboardedTenantUsers,
+    queryTenantUserByAge,
+    queryTenantUserByGender,
+    queryTenantUserByMajorAilment,
+    queryTenantUserMarritalStatus,
+    queryTenantUsersByDeviceDetail,
+    queryTenantUsersWithActiveSession,
+    queryYearWiseTenantUserDeviceDetail,
+    queryYearWiseTenantUserGenderDetails,
+    queryYearWiseHeavyDrinkersTenantUser,
+    queryYearWiseTenantUserMajorAilmentDetails,
+    queryYearWiseTenantUserMaritalDetails,
+    queryYearWiseNotAddictedTenantUser,
+    queryYearWiseSubstanceAbuseTenantUser,
+    queryYearWiseTobaccoSmokersTenantUser,
+    queryYearWiseTenantUserAge,
+    queryYearWiseTenantUserCount
+} from './tenant.sql.queries';
+import {
+    queryTotalCareplanEnrollments,
     queryAllYear,
     queryAppDownloadCount,
     queryDeletedUsers,
     queryHeavyDrinkers,
-    queryNotAddited,
+    queryNotAddicted,
     queryNotDeletedUsers,
     querySubstanceAbuse,
     queryTobaccoSmokers,
@@ -55,36 +76,28 @@ import {
     queryYearWiseHeavyDrinkers,
     queryYearWiseMajorAilmentDistributionDetails,
     queryYearWiseMaritalDetails,
-    queryYearWiseNotAddited,
+    queryYearWiseNotAddicted,
     queryYearWiseSubstanceAbuse,
     queryYearWiseTobaccoSmokers,
     queryYearWiseUserAge,
     queryYearWiseUserCount
-} from './tenant.sql.queries';
-import { DatabaseConnector_Mysql } from '../../../../../database/sql/mysql/database.connector.mysql';
+} from './system.sql.queries';
 import { DeviceDetails } from '../../../../../domain.types/users/user.device.details/user.device.domain.model';
 import { GenderDetails } from '../../../../../domain.types/person/person.types';
 import { MajorAilmentDetails, MaritalStatusDetails } from '../../../../../domain.types/users/patient/health.profile/health.profile.types';
-
-////////////////////////////////////////////////////////////////////////////////////////////
-
-const sequelizeStats = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER_NAME,
-    process.env.DB_USER_PASSWORD, {
-        host    : process.env.DB_HOST,
-        dialect : process.env.DB_DIALECT  as Dialect,
-    });
+import { MysqlClient } from '../../../../../common/database.utils/dialect.clients/mysql.client';
+import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
+import { queryTotalActiveTenantDoctors, queryTotalActiveTenantPersons, queryTotalActiveTenantUsers, queryTotalDeletedTenantDoctors, queryTotalDeletedTenantPersons, queryTotalDeletedTenantUsers, queryTotalTenantDoctors, queryTotalTenantPersons, queryTotalTenantUsers } from './tenant.user.sql.queries';
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 export class StatisticsRepo implements IStatisticsRepo {
 
-    public dbConnector: DatabaseConnector_Mysql = null;
+    public dbConnector: MysqlClient = null;
 
     constructor() {
-        this.dbConnector = DatabaseConnector_Mysql.getInstance();
-        this.dbConnector.connect();
+        this.dbConnector = MysqlClient.getInstance();
+        this.dbConnector.connect(DatabaseSchemaType.Primary);
     }
 
     getUsersCount = async (filters: StatisticSearchFilters): Promise<any> => {
@@ -95,7 +108,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             const deletedUsers = await this.getDeletedUsers(filters);
             const enrolledUsers = await this.getEnrolledUsers(filters);
 
-            return this.getComposeUserCountStats(
+            return this.aggregateUserStats(
                 totalUsers,
                 notDeletedUsers,
                 usersWithActiveSession,
@@ -173,10 +186,17 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     getUsersByGender = async (filter): Promise<any> => {
-        const query =  Helper.replaceAll(queryUserByGender, "{{tenantId}}", filter.TenantId);
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryTenantUserByGender, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryUserByGender;
+        }
+
         const [rows] = await this.dbConnector.executeQuery(query);
         const genderWiseUsers: any = rows;
-        return this.getComposeUserByGender(genderWiseUsers);
+        return this.aggregateUserByGender(genderWiseUsers);
     };
 
     public getYearWiseAgeDetails = async(filter) => {
@@ -186,11 +206,18 @@ export class StatisticsRepo implements IStatisticsRepo {
         const result = [];
 
         for (let i = 0; i < years.length; i++) {
-            let query =  Helper.replaceAll(queryYearWiseUserAge, "{{tenantId}}", filter.TenantId);
+            let query = null;
+
+            if (filter.TenantId) {
+                query =  Helper.replaceAll(queryYearWiseTenantUserAge, "{{tenantId}}", filter.TenantId);
+            } else {
+                query = queryYearWiseUserAge;
+            }
+
             query =  Helper.replaceAll(query, "{{year}}", years[i].year);
             const [rows] = await this.dbConnector.executeQuery(query);
             const userByAge: any = rows;
-            const ageDetails = this.getComposeUserByAge(userByAge);
+            const ageDetails = this.aggregateUserByAge(userByAge);
             result.push({
                 Year       : years[i].year,
                 AgeDetails : ageDetails
@@ -201,104 +228,45 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     getUsersByAge = async (filter): Promise<any> => {
-        const query =  Helper.replaceAll(queryUserByAge, "{{tenantId}}", filter.TenantId);
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryTenantUserByAge, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryUserByAge;
+        }
+
         const [rows] = await this.dbConnector.executeQuery(query);
         const userByAge: any = rows;
-        return this.getComposeUserByAge(userByAge);
+        return this.aggregateUserByAge(userByAge);
     };
 
     getUsersByMaritalStatus = async (filter): Promise<any> => {
-        const query =  Helper.replaceAll(queryUserMarritalStatus, "{{tenantId}}", filter.TenantId);
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryTenantUserMarritalStatus, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryUserMarritalStatus;
+        }
+
         const [rows] = await this.dbConnector.executeQuery(query);
         const usersByMaritalStatus: any = rows;
         return usersByMaritalStatus;
     };
 
-    getUsersByDeviceDetail = async (filters): Promise<any> => {
-        const query =  Helper.replaceAll(queryUsersByDeviceDetail, "{{tenantId}}", filters.TenantId);
+    getUsersByDeviceDetail = async (filter): Promise<any> => {
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryTenantUsersByDeviceDetail, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryUsersByDeviceDetail;
+        }
+        
         const [rows] = await this.dbConnector.executeQuery(query);
         const userByDeviceDetails: any = rows;
         return userByDeviceDetails;
-    };
-
-    getUsersByEnrollment = async (filters): Promise<any> => {
-        try {
-
-            const query = `select distinct (ce.PatientUserId) from careplan_enrollments as ce where ce.PlanCode = "Cholesterol"
-            AND ce.PatientUserId IN
-            (
-             SELECT distinct (pt.UserId) from patients as pt
-                JOIN users as u ON pt.UserId = u.id
-                JOIN persons as p ON u.PersonId = p.id
-                WHERE p.Phone not between "1000000000" and "1000000100" AND p.DeletedAt is null
-            )`;
-
-            const response = await sequelizeStats.query(query,
-                {
-                    type : QueryTypes.SELECT,
-                }
-            );
-
-            return response;
-
-            // const totalUsers = await this.getTotalUsers(filters);
-            // const enrollmentDetails = [];
-            // for (const u of totalUsers.rows) {
-            //     const enrollmentDetail = await CareplanEnrollment.findOne({ where : {
-            //         PatientUserId : u.UserId,
-            //     }, paranoid : false });
-            //     enrollmentDetails.push(enrollmentDetail);
-            // }
-
-            // const totalEnrollnemtUsers = enrollmentDetails.filter(x => x !== null);
-
-            // const totalEnrollnemtUsersRatio =
-            //  ((totalEnrollnemtUsers.length) / (totalUsers.count) * 100).toFixed(2);
-
-            // const deviceDetails = [];
-            // for (const u of totalEnrollnemtUsers) {
-            //     const deviceDetail  = await UserDeviceDetails.findOne({ where : {
-            //         UserId : u.PatientUserId,
-            //     } });
-            //     deviceDetails.push(deviceDetail);
-            // }
-
-            // const deviceDatilUsers = deviceDetails.filter(x => x !== null);
-
-            // const androidUsers = deviceDatilUsers.filter(x => x.OSType === 'Android');
-
-            // const androidUsersRatio = ((androidUsers.length) / (totalEnrollnemtUsers.length) * 100).toFixed(2);
-
-            // const iOSUsers = deviceDatilUsers.filter(x => x.OSType === 'iOS');
-
-            // const iOSUsersRatio = ((iOSUsers.length) / (totalEnrollnemtUsers.length) * 100).toFixed(2);
-
-            // const  androidUsersDetails = {
-            //     Count : androidUsers.length,
-            //     Ratio : androidUsersRatio
-            // };
-
-            // const  iOSUsersDetails = {
-            //     Count : iOSUsers.length,
-            //     Ratio : iOSUsersRatio
-            // };
-            // const  totalEnrollnemtUsersDetails = {
-            //     Count : totalEnrollnemtUsers.length,
-            //     Ratio : totalEnrollnemtUsersRatio,
-            // };
-
-            // const  enrollmentUsers = {
-            //     TotalEnrollnemtUsers : totalEnrollnemtUsersDetails,
-            //     AndroidUsers         : androidUsersDetails,
-            //     IOSUsers             : iOSUsersDetails,
-            // };
-
-            // return enrollmentUsers;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
     };
 
     updateAppDownloadCount = async (createModel: AppDownloadDomainModel):
@@ -379,7 +347,14 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     getUsersByMajorAilment = async (filter): Promise<any> => {
-        const query =  Helper.replaceAll(queryUserByMajorAilment, "{{tenantId}}", filter.TenantId);
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryTenantUserByMajorAilment, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryUserByMajorAilment;
+        }
+
         const [rows] = await this.dbConnector.executeQuery(query);
         const userByMajorAilment: any = rows;
         return userByMajorAilment;
@@ -572,7 +547,12 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     getUsersByAddiction = async (filter): Promise<any> => {
         let tobaccoSmokers = null;
-        const tobaccoSmokersQuery =  Helper.replaceAll(queryTobaccoSmokers, "{{tenantId}}", filter.TenantId);
+        let tobaccoSmokersQuery = null;
+        if (filter.TenantId) {
+            tobaccoSmokersQuery =  Helper.replaceAll(queryTobaccoSmokersTenantUser, "{{tenantId}}", filter.TenantId);
+        } else {
+            tobaccoSmokersQuery = queryTobaccoSmokers;
+        }
         const [tobaccoSmokersRows] = await this.dbConnector.executeQuery(tobaccoSmokersQuery);
         const tobaccoSmokers_: any = tobaccoSmokersRows;
         if (tobaccoSmokers_.length === 1) {
@@ -580,7 +560,12 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
         
         let heavyDrinkers = null;
-        const heavyDrinkersQuery =  Helper.replaceAll(queryHeavyDrinkers, "{{tenantId}}", filter.TenantId);
+        let heavyDrinkersQuery = null;
+        if (filter.TenantId) {
+            heavyDrinkersQuery =  Helper.replaceAll(queryHeavyDrinkersTenantUser, "{{tenantId}}", filter.TenantId);
+        } else {
+            heavyDrinkersQuery = queryHeavyDrinkers;
+        }
         const [heavyDrinkersRows] = await this.dbConnector.executeQuery(heavyDrinkersQuery);
         const heavyDrinkers_: any = heavyDrinkersRows;
         if (heavyDrinkers_.length === 1) {
@@ -588,22 +573,32 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
 
         let substanceAbuse = null;
-        const substanceAbuseQuery =  Helper.replaceAll(querySubstanceAbuse, "{{tenantId}}", filter.TenantId);
+        let substanceAbuseQuery = null;
+        if (filter.TenantId) {
+            substanceAbuseQuery =  Helper.replaceAll(querySubstanceAbuseTenantUser, "{{tenantId}}", filter.TenantId);
+        } else {
+            substanceAbuseQuery = querySubstanceAbuse;
+        }
         const [substanceAbuseRows] = await this.dbConnector.executeQuery(substanceAbuseQuery);
         const substanceAbuse_: any = substanceAbuseRows;
         if (substanceAbuse_.length === 1) {
             substanceAbuse = substanceAbuse_[0].substanceAbuseUserCount;
         }
 
-        let notAddited = null;
-        const notAdditedQuery =  Helper.replaceAll(queryNotAddited, "{{tenantId}}", filter.TenantId);
-        const [notAdditedRows] = await this.dbConnector.executeQuery(notAdditedQuery);
-        const notAddited_: any = notAdditedRows;
-        if (notAddited_.length === 1) {
-            notAddited = notAddited_[0].notAddedUserCount;
+        let notAddicted = null;
+        let notAddictedQuery = null;
+        if (filter.TenantId) {
+            notAddictedQuery =  Helper.replaceAll(queryNotAddictedTenantUser, "{{tenantId}}", filter.TenantId);
+        } else {
+            notAddictedQuery = queryNotAddicted;
+        }
+        const [notAddictedRows] = await this.dbConnector.executeQuery(notAddictedQuery);
+        const notAddicted_: any = notAddictedRows;
+        if (notAddicted_.length === 1) {
+            notAddicted = notAddicted_[0].notAddedUserCount;
         }
 
-        const totalUsers = tobaccoSmokers + heavyDrinkers + substanceAbuse + notAddited;
+        const totalUsers = tobaccoSmokers + heavyDrinkers + substanceAbuse + notAddicted;
         const tobaccoSmokerUsers = {
             Status : "Tobacco Smokers",
             Count  : tobaccoSmokers,
@@ -624,8 +619,8 @@ export class StatisticsRepo implements IStatisticsRepo {
 
         const nonAddictedUsers = {
             Status : "Non Addicted",
-            Count  : notAddited,
-            Ratio  : totalUsers ? notAddited / totalUsers : 0.00
+            Count  : notAddicted,
+            Ratio  : totalUsers ? notAddicted / totalUsers : 0.00
         };
 
         const addictionDetails = [
@@ -636,89 +631,6 @@ export class StatisticsRepo implements IStatisticsRepo {
         ];
 
         return addictionDetails;
-        // try {
-        //     const totalUsers = await this.getTotalUsers(filters);
-
-        //     const search: any = {
-        //         where    : {},
-        //         include  : [],
-        //         paranoid : false,
-        //     };
-
-        //     const includeObj =
-        //     {
-        //         model    : User,
-        //         required : true,
-        //         where    : {
-        //             IsTestUser : false
-        //         },
-        //         include : [{
-        //             model    : Person,
-        //             required : true,
-        //             where    : {},
-        //         }]
-        //     };
-
-        //     search.include.push(includeObj);
-
-        //     const healthProfileDetails = await HealthProfile.findAndCountAll(search);
-
-        //     const tobaccoSmokers = healthProfileDetails.rows.filter(x => x.TobaccoQuestionAns === true);
-
-        //     const heavyDrinkers = healthProfileDetails.rows.filter(x => x.IsDrinker === true && x.DrinkingSeverity === 'High');
-
-        //     const substanceAbuse = healthProfileDetails.rows.filter(x => x.SubstanceAbuse === true);
-
-        //     const nonAddicted  = healthProfileDetails.rows.filter(
-        //         x => x.SubstanceAbuse === false &&
-        //         x.IsDrinker === false &&
-        //         (x.TobaccoQuestionAns === false) || (x.TobaccoQuestionAns === null));
-
-        //     const tobaccoSmokersRatio =  ((tobaccoSmokers.length) / (totalUsers.count) * 100).toFixed(2);
-
-        //     const heavyDrinkersRatio =  ((heavyDrinkers.length) / (totalUsers.count) * 100).toFixed(2);
-
-        //     const substanceAbuseRatio =  ((substanceAbuse.length) / (totalUsers.count) * 100).toFixed(2);
-
-        //     const nonAddictedRatio =  ((nonAddicted.length) / (totalUsers.count) * 100).toFixed(2);
-
-        //     const tobaccoSmokerUsers = {
-        //         Status : "Tobacco Smokers",
-        //         Count  : tobaccoSmokers.length,
-        //         Ratio  : tobaccoSmokersRatio
-        //     };
-
-        //     const heavyDrinkerUsers = {
-        //         Status : "Heavy Drinker",
-        //         Count  : heavyDrinkers.length,
-        //         Ratio  : heavyDrinkersRatio
-        //     };
-
-        //     const substanceAbuseUsers = {
-        //         Status : "Substance Abuse",
-        //         Count  : substanceAbuse.length,
-        //         Ratio  : substanceAbuseRatio
-        //     };
-
-        //     const nonAddictedUsers = {
-        //         Status : "Non Addicted",
-        //         Count  : nonAddicted.length,
-        //         Ratio  : nonAddictedRatio
-        //     };
-
-        //     const addictionDetails = [
-        //         tobaccoSmokerUsers,
-        //         heavyDrinkerUsers,
-        //         substanceAbuseUsers,
-        //         nonAddictedUsers
-        //     ];
-
-        //     return addictionDetails;
-
-        // } catch (error) {
-        //     Logger.instance().log(error.message);
-        //     throw new ApiError(500, error.message);
-        // }
     };
 
     getUsersByHealthPillar = async (filters): Promise<any> => {
@@ -776,38 +688,34 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     getUsersStats = async (filters): Promise<any> => {
         try {
-            const persons = await this.getPersons(filters);
+            const totalPersons = await this.getTotalPersons(filters);
 
-            const users = await this.getUsers(filters);
+            const notDeletedPersons = await this.getTotalActivePersons(filters);
 
-            const admins = await this.getAdmins(filters);
+            const deletedPersons = await this.getTotalDeletedPersons(filters);
 
-            const doctors = await this.getDoctors(filters);
+            const totalUsers = await this.getTotalUsers(filters);
 
-            const totalPatients = await this.getTotalUsers(filters);
+            const notDeletedUsers = await this.getTotalActiveUsers(filters);
 
-            const nonDetetedPatients = await this.getNotDeletedUsers(filters);
+            const deletedUsers = await this.getTotalDeletedUsers(filters);
 
-            const detetedPatients = await this.getDeletedUsers(filters);
+            const totalDoctors = await this.getTotalDoctors(filters);
 
-            const enrollments = await this.getEnrollments(filters);
+            const notDeletedDoctors = await this.getTotalActiveDoctors(filters);
 
-            const emergencyContacts  = await this.getEmergencyContacts(filters);
-
-            const paitents = {
-                TotalPatients      : totalPatients.count,
-                NonDetetedPatients : nonDetetedPatients,
-                DetetedPatients    : detetedPatients,
-            };
+            const deletedDoctors = await this.getTotalDeletedDoctors(filters);
 
             const usersStats = {
-                Persons           : persons,
-                Users             : users,
-                Admins            : admins,
-                Doctors           : doctors,
-                Paitents          : paitents,
-                Enrollments       : enrollments,
-                EmergencyContacts : emergencyContacts
+                TotalPersons   : totalPersons,
+                ActivePersons  : notDeletedPersons,
+                DeletedPersons : deletedPersons,
+                TotalUsers     : totalUsers,
+                ActiveUsers    : notDeletedUsers,
+                DeletedUsers   : deletedUsers,
+                TotalDoctors   : totalDoctors,
+                ActiveDoctors  : notDeletedDoctors,
+                DeletedDoctors : deletedDoctors,
             };
 
             return usersStats;
@@ -881,89 +789,133 @@ export class StatisticsRepo implements IStatisticsRepo {
         return years;
     };
 
-    getYearWiseUserCount = async (filters) => {
-        const query =  Helper.replaceAll(queryYearWiseUserCount, "{{tenantId}}", filters.TenantId);
+    getYearWiseUserCount = async (filter) => {
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryYearWiseTenantUserCount, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryYearWiseUserCount;
+        }
+       
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseUserCount: any = rows;
         return yearWiseUserCount;
     };
 
-    getYearWiseDeviceDetails = async(filters) => {
-        const query =  Helper.replaceAll(queryYearWiseDeviceDetail, "{{tenantId}}", filters.TenantId);
+    getYearWiseDeviceDetails = async(filter) => {
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryYearWiseTenantUserDeviceDetail, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryYearWiseDeviceDetail;
+        }
+        
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseDeviceDetails: any = rows;
-        return this.getComposeYearWiseDeviceDetails(yearWiseDeviceDetails);
+        return this.aggregateYearWiseDeviceDetails(yearWiseDeviceDetails);
     };
 
     getYearWiseGenderDetails = async(filter) => {
-        const query =  Helper.replaceAll(queryYearWiseGenderDetails, "{{tenantId}}", filter.TenantId);
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryYearWiseTenantUserGenderDetails, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryYearWiseGenderDetails;
+        }
+
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseGenderDetails: any = rows;
-        return this.getComposeYearWiseGenderDetails(yearWiseGenderDetails);
+        return this.aggregateYearWiseGenderDetails(yearWiseGenderDetails);
     };
 
     getYearWiseMaritalDetails = async(filter) => {
-        const query =  Helper.replaceAll(queryYearWiseMaritalDetails, "{{tenantId}}", filter.TenantId);
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryYearWiseTenantUserMaritalDetails, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryYearWiseMaritalDetails;
+        }
+
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseMaritalDetails: any = rows;
-        return this.getComposeYearWiseMaritalDetails(yearWiseMaritalDetails);
+        return this.aggregateYearWiseMaritalDetails(yearWiseMaritalDetails);
     };
 
     getYearWiseMajorAilmentDistributionDetails = async(filter) => {
-        const query =  Helper.replaceAll(queryYearWiseMajorAilmentDistributionDetails, "{{tenantId}}", filter.TenantId);
+        let query = null;
+
+        if (filter.TenantId) {
+            query =  Helper.replaceAll(queryYearWiseTenantUserMajorAilmentDetails, "{{tenantId}}", filter.TenantId);
+        } else {
+            query = queryYearWiseMajorAilmentDistributionDetails;
+        }
+
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseMajorAilmentDistributionDetails: any = rows;
-        return this.getComposeYearWiseMajorAilment(yearWiseMajorAilmentDistributionDetails);
+        return this.aggregateYearWiseMajorAilmentDetails(yearWiseMajorAilmentDistributionDetails);
     };
 
     getYearWiseAddictionDistributionDetails = async(filter) => {
-        const tobaccoSmokersQuery =  Helper.replaceAll(queryYearWiseTobaccoSmokers, "{{tenantId}}", filter.TenantId);
+        let tobaccoSmokersQuery = null;
+        if (filter.TenantId) {
+            tobaccoSmokersQuery =  Helper.replaceAll(queryYearWiseTobaccoSmokersTenantUser, "{{tenantId}}", filter.TenantId);
+        } else {
+            tobaccoSmokersQuery = queryYearWiseTobaccoSmokers;
+        }
         const [tobaccoSmokersRows] = await this.dbConnector.executeQuery(tobaccoSmokersQuery);
         const yearWiseTobaccoSmokers: any = tobaccoSmokersRows;
-                
-        const heavyDrinkersQuery =  Helper.replaceAll(queryYearWiseHeavyDrinkers, "{{tenantId}}", filter.TenantId);
+         
+        let heavyDrinkersQuery = null;
+        if (filter.TenantId) {
+            heavyDrinkersQuery =  Helper.replaceAll(queryYearWiseHeavyDrinkersTenantUser, "{{tenantId}}", filter.TenantId);
+        } else {
+            heavyDrinkersQuery = queryYearWiseHeavyDrinkers;
+        }
         const [heavyDrinkersRows] = await this.dbConnector.executeQuery(heavyDrinkersQuery);
         const yearWiseHeavyDrinkers: any = heavyDrinkersRows;
         
-        const substanceAbuseQuery =  Helper.replaceAll(queryYearWiseSubstanceAbuse, "{{tenantId}}", filter.TenantId);
+        let substanceAbuseQuery = null;
+        if (filter.TenantId) {
+            substanceAbuseQuery =  Helper.replaceAll(queryYearWiseSubstanceAbuseTenantUser, "{{tenantId}}", filter.TenantId);
+        } else {
+            substanceAbuseQuery = queryYearWiseSubstanceAbuse;
+        }
         const [substanceAbuseRows] = await this.dbConnector.executeQuery(substanceAbuseQuery);
         const yearWiseSubstanceAbuse: any = substanceAbuseRows;
         
-        const notAdditedQuery =  Helper.replaceAll(queryYearWiseNotAddited, "{{tenantId}}", filter.TenantId);
-        const [notAdditedRows] = await this.dbConnector.executeQuery(notAdditedQuery);
-        const yearWiseNotAddited: any = notAdditedRows;
-        // console.log('year wise tobbaco smoker', yearWiseTobaccoSmokers);
-        // console.log('year wise Heavely drinker', yearWiseHeavyDrinkers);
-        // console.log('year wise Subtance abuse', yearWiseSubstanceAbuse);
-        // console.log('year wise not addited', yearWiseNotAddited);
+        let notAddictedQuery = null;
+        if (filter.TenantId) {
+            notAddictedQuery =  Helper.replaceAll(queryYearWiseNotAddictedTenantUser, "{{tenantId}}", filter.TenantId);
+        } else {
+            notAddictedQuery = queryYearWiseNotAddicted;
+        }
+        const [notAddictedRows] = await this.dbConnector.executeQuery(notAddictedQuery);
+        const yearWisenotAddicted: any = notAddictedRows;
+
         return {
             yearWiseTobaccoSmokers,
             yearWiseHeavyDrinkers,
             yearWiseSubstanceAbuse,
-            yearWiseNotAddited
+            yearWisenotAddicted
         };
-        // const yearWiseAddictionDistributionDetails: YearWiseAddictionDistributionDetails[] = [];
-        // for (let i = 0; i < allYears.length; i++) {
-        //     const addictionDistributionDetails: YearWiseAddictionDistributionDetails = {};
-        //     addictionDistributionDetails.Year =
-        //     allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-        //     if (addictionDistributionDetails.Year) {
-        //         const yearWiseAddictionDistributionDetails =
-        //         await this._statisticsRepo.getUsersByAddiction({ Year: addictionDistributionDetails.Year });
-        //         addictionDistributionDetails.AddictionDistributionDetails = yearWiseAddictionDistributionDetails;
-        //     }
-        //     if (addictionDistributionDetails.Year) {
-        //         yearWiseAddictionDistributionDetails.push(addictionDistributionDetails);
-        //     }
-        // }
-        // return yearWiseAddictionDistributionDetails;
     };
 
     // #private region
 
     private getOnboardedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
         let totalUsers = null;
-        const query =  Helper.replaceAll(queryTotalOnboardedUsers, "{{tenantId}}", filters.TenantId);
+        let query = null;
+
+        if (filters.TenantId) {
+            query =  Helper.replaceAll(queryTotalOnboardedTenantUsers, "{{tenantId}}", filters.TenantId);
+        } else {
+            query = queryTotalOnboardedUsers;
+        }
+        
         const [rows] = await this.dbConnector.executeQuery(query);
         const users: any = rows;
         if (users.length === 1) {
@@ -973,7 +925,14 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
    private  getNotDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-       const query =  Helper.replaceAll(queryNotDeletedUsers, "{{tenantId}}", filters.TenantId);
+       let query = null;
+        
+       if (filters.TenantId) {
+           query =  Helper.replaceAll(queryNotDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
+       } else {
+           query = queryNotDeletedUsers;
+       }
+
        let totalNotDeletedUsers = null;
        const [rows] = await this.dbConnector.executeQuery(query);
        const notDeletedUsers_: any = rows;
@@ -984,7 +943,14 @@ export class StatisticsRepo implements IStatisticsRepo {
    };
 
    private  getDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-       const query =  Helper.replaceAll(queryDeletedUsers, "{{tenantId}}", filters.TenantId);
+       let query = null;
+        
+       if (filters.TenantId) {
+           query =  Helper.replaceAll(queryDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
+       } else {
+           query = queryDeletedUsers;
+       }
+       
        let totalDeletedUsers = null;
        const [rows] = await this.dbConnector.executeQuery(query);
        const deletedUsers_: any = rows;
@@ -996,7 +962,14 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     private getUsersWithActiveSession = async (filters: StatisticSearchFilters): Promise<any> => {
         let usersWithActiveSession = null;
-        const query =  Helper.replaceAll(queryUsersWithActiveSession, "{{tenantId}}", filters.TenantId);
+        let query = null;
+            
+        if (filters.TenantId) {
+            query =  Helper.replaceAll(queryTenantUsersWithActiveSession, "{{tenantId}}", filters.TenantId);
+        } else {
+            query = queryUsersWithActiveSession;
+        }
+        
         const [rows] = await this.dbConnector.executeQuery(query);
         const usersWithActiveSession_: any = rows;
         if (usersWithActiveSession_.length === 1) {
@@ -1007,7 +980,14 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     private getEnrolledUsers = async (filters: StatisticSearchFilters): Promise<any> => {
         let totalEnrolledUsers = null;
-        const query =  Helper.replaceAll(getTotalCareplanEnrollments, "{{tenantId}}", filters.TenantId);
+        let query = null;
+            
+        if (filters.TenantId) {
+            query =  Helper.replaceAll(queryTenantUsersCareplanEnrollments, "{{tenantId}}", filters.TenantId);
+        } else {
+            query = queryTotalCareplanEnrollments;
+        }
+
         const [rows] = await this.dbConnector.executeQuery(query);
         const totalEnrolledUsers_: any = rows;
         if (totalEnrolledUsers_.length === 1) {
@@ -1017,54 +997,36 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     private getTotalUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-        try {
-            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-            const maxCreatedDate = getMaxDate(filters);
-            const search: any = { where: {}, include: [], paranoid: false };
-
-            const includesObj =
-             {
-                 model    : User,
-                 required : true,
-                 where    : {
-                     IsTestUser : false
-                 },
-                 paranoid : false,
-                 include  : []
-             };
-            const includePerson = {
-                model    : Person,
-                required : true,
-                where    : {},
-                paranoid : false,
-            };
-
-            if (filters.Year != null)  {
-                includePerson.where['CreatedAt'] = {
-                    [Op.between] : [minDate, maxDate],
-                };
-            }
-            if (filters.Year != null && filters.Month != null)  {
-                includePerson.where['CreatedAt'] = {
-                    [Op.lt] : maxCreatedDate,
-                };
-            }
-            if (filters.From != null && filters.To != null)  {
-                includePerson.where['CreatedAt'] = {
-                    [Op.between] : [filters.From, filters.To],
-                };
-            }
-            includesObj.include.push(includePerson);
-            search.include.push(includesObj);
-
-            const totalUsers = await Patient.findAndCountAll(search);
-
-            return totalUsers;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+        const query = Helper.replaceAll(queryTotalTenantUsers, "{{tenantId}}", filters.TenantId);
+        let totalUsers = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalUsers_: any = rows;
+        if (totalUsers_.length === 1) {
+            totalUsers = totalUsers_[0].totalUsers;
         }
+        return totalUsers;
+    };
+
+    getTotalActiveUsers = async (filters): Promise<number> => {
+        const query = Helper.replaceAll(queryTotalActiveTenantUsers, "{{tenantId}}", filters.TenantId);
+        let totalActiveUsers = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalActiveUsers_: any = rows;
+        if (totalActiveUsers_.length === 1) {
+            totalActiveUsers = totalActiveUsers_[0].totalActiveUsers;
+        }
+        return totalActiveUsers;
+    };
+
+    getTotalDeletedUsers = async (filters): Promise<number> => {
+        const query = Helper.replaceAll(queryTotalDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
+        let totalDeletedUsers = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalDeletedUsers_: any = rows;
+        if (totalDeletedUsers_.length === 1) {
+            totalDeletedUsers = totalDeletedUsers_[0].totalDeletedUsers;
+        }
+        return totalDeletedUsers;
     };
 
     private  getPhysicalActivityUsers = async (totalUsers, filters) => {
@@ -1487,372 +1449,70 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    private  getPersons = async (filters) => {
-        try {
-            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-            const search: any = { where: {}, paranoid: false };
-
-            search.where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
-            };
-
-            search.where['DeletedAt'] = {
-                [Op.eq] : null
-            };
-
-            if (filters.Year != null)  {
-                search.where['CreatedAt'] = {
-                    [Op.between] : [minDate, maxDate],
-                };
-            }
-
-            const nonDeletedPersons = await Person.findAndCountAll(search);
-
-            search.where['DeletedAt'] = {
-                [Op.not] : null
-            };
-
-            const deletedPersons = await Person.findAndCountAll(search);
-
-            const totalPresons = nonDeletedPersons.count + deletedPersons.count;
-
-            const presons = {
-                TotalPresons      : totalPresons,
-                NonDeletedPersons : nonDeletedPersons.count,
-                DeletedPersons    : deletedPersons.count
-            };
-
-            return presons;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+    private  getTotalPersons = async (filters) => {
+        const query = Helper.replaceAll(queryTotalTenantPersons, "{{tenantId}}", filters.TenantId);
+        let totalPersons = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalPersons_: any = rows;
+        if (totalPersons_.length === 1) {
+            totalPersons = totalPersons_[0].totalPersons;
         }
+        return totalPersons;
     };
 
-    private  getUsers = async (filters) => {
-        try {
-            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-            const search: any = { where: {}, include: [],  paranoid: false };
-
-            const includesObj =
-            {
-                model    : Person,
-                required : true,
-                where    : {},
-                paranoid : false
-            };
-
-            includesObj.where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
-            };
-
-            includesObj.where['DeletedAt'] = {
-                [Op.eq] : null
-            };
-
-            if (filters.Year != null)  {
-                includesObj.where['CreatedAt'] = {
-                    [Op.between] : [minDate, maxDate],
-                };
-            }
-
-            search.include.push(includesObj);
-
-            const nonDeletedUsers = await User.findAndCountAll(search);
-
-            includesObj.where['DeletedAt'] = {
-                [Op.not] : null
-            };
-
-            search.include.push(includesObj);
-
-            const deletedUsers = await User.findAndCountAll(search);
-
-            const totalUsers = nonDeletedUsers.count + deletedUsers.count;
-
-            const users = {
-                TotalUsers      : totalUsers,
-                nonDeletedUsers : nonDeletedUsers.count,
-                DeletedUsers    : deletedUsers.count
-            };
-
-            return users;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+    private getTotalActivePersons = async (filters) => {
+        const query = Helper.replaceAll(queryTotalActiveTenantPersons, "{{tenantId}}", filters.TenantId);
+        let totalActivePersons = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalActivePersons_: any = rows;
+        if (totalActivePersons_.length === 1) {
+            totalActivePersons = totalActivePersons_[0].totalActivePersons;
         }
+        return totalActivePersons;
     };
 
-    private  getDoctors = async (filters) => {
-        try {
-            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-            const search: any = { where: {}, include: [],  paranoid: false };
-
-            const includesObj =
-            {
-                model    : Person,
-                required : true,
-                where    : {},
-                paranoid : false
-            };
-
-            includesObj.where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
-            };
-
-            includesObj.where['DeletedAt'] = {
-                [Op.eq] : null
-            };
-
-            if (filters.Year != null)  {
-                includesObj.where['CreatedAt'] = {
-                    [Op.between] : [minDate, maxDate],
-                };
-            }
-
-            search.include.push(includesObj);
-
-            const nonDeletedDoctors = await Doctor.findAndCountAll(search);
-
-            includesObj.where['DeletedAt'] = {
-                [Op.not] : null
-            };
-
-            search.include.push(includesObj);
-
-            const deletedDoctors = await Doctor.findAndCountAll(search);
-
-            const totalDoctors = nonDeletedDoctors.count + deletedDoctors.count;
-
-            const doctors = {
-                TotalDoctors      : totalDoctors,
-                NonDeletedDoctors : nonDeletedDoctors.count,
-                DeletedDoctors    : deletedDoctors.count
-            };
-
-            return doctors;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+    getTotalDeletedPersons = async (filters): Promise<number> => {
+        const query = Helper.replaceAll(queryTotalDeletedTenantPersons, "{{tenantId}}", filters.TenantId);
+        let totalDeletedPersons = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalDeletedPersons_: any = rows;
+        if (totalDeletedPersons_.length === 1) {
+            totalDeletedPersons = totalDeletedPersons_[0].totalDeletedPersons;
         }
+        return totalDeletedPersons;
     };
 
-    private  getAdmins = async (filters) => {
-        try {
-            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-            const search: any = { where: {}, include: [],  paranoid: false };
-
-            const includesObj =
-            {
-                model    : Person,
-                required : true,
-                where    : {},
-                paranoid : false
-            };
-
-            search.where['RoleId'] = {
-                [Op.eq] : 1,
-            };
-
-            includesObj.where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
-            };
-
-            includesObj.where['DeletedAt'] = {
-                [Op.eq] : null
-            };
-
-            if (filters.Year != null)  {
-                includesObj.where['CreatedAt'] = {
-                    [Op.between] : [minDate, maxDate],
-                };
-            }
-
-            search.include.push(includesObj);
-
-            const adminUsers = await User.findAndCountAll(search);
-
-            search.include.push(includesObj);
-
-            const admins = {
-                TotalAdmins : adminUsers.count
-            };
-
-            return admins;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+    private  getTotalDoctors = async (filters) => {
+        const query = Helper.replaceAll(queryTotalTenantDoctors, "{{tenantId}}", filters.TenantId);
+        let totalDoctors = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalDoctors_: any = rows;
+        if (totalDoctors_.length === 1) {
+            totalDoctors = totalDoctors_[0].totalDoctors;
         }
+        return totalDoctors;
     };
 
-    private  getEnrollments = async (filters) => {
-        try {
-
-            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-            const maxCreatedDate = getMaxDate(filters);
-            const search: any = { where: {}, include: [], paranoid: false };
-
-            const includesObj =
-            {
-                model    : Person,
-                required : true,
-                where    : {},
-                paranoid : false
-            };
-
-            includesObj.where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
-            };
-
-            includesObj.where['DeletedAt'] = {
-                [Op.eq] : null
-            };
-
-            if (filters.Year != null)  {
-                includesObj.where['CreatedAt'] = {
-                    [Op.between] : [minDate, maxDate],
-                };
-            }
-
-            if (filters.Year != null && filters.Month != null)  {
-                includesObj.where['CreatedAt'] = {
-                    [Op.lt] : maxCreatedDate,
-                };
-            }
-
-            search.include.push(includesObj);
-
-            const nonDeletedUsers = await Patient.findAndCountAll(search);
-
-            includesObj.where['DeletedAt'] = {
-                [Op.not] : null
-            };
-
-            search.include.push(includesObj);
-
-            const deletedUsers = await Patient.findAndCountAll(search);
-
-            const nonDeletedEnrollmentDetails = [];
-            for (const u of nonDeletedUsers.rows) {
-                const enrollmentDetail = await CareplanEnrollment.findOne({ where : {
-                    PatientUserId : u.UserId,
-                }, paranoid : false });
-                if (enrollmentDetail !== null){
-                    nonDeletedEnrollmentDetails.push(enrollmentDetail);
-                }
-            }
-
-            const deletedEnrollmentDetails = [];
-            for (const u of deletedUsers.rows) {
-                const enrollmentDetail = await CareplanEnrollment.findOne({ where : {
-                    PatientUserId : u.UserId,
-                }, paranoid : false });
-                if (enrollmentDetail !== null){
-                    deletedEnrollmentDetails.push(enrollmentDetail);
-                }
-
-            }
-
-            const totalEnrollments = nonDeletedEnrollmentDetails.length + deletedEnrollmentDetails.length;
-
-            const nonDeletedCholestrolEnrollment = nonDeletedEnrollmentDetails.filter(x => x.PlanCode === 'Cholesterol');
-
-            const deletedCholestrolEnrollment = deletedEnrollmentDetails.filter(x => x.PlanCode === 'Cholesterol');
-
-            const totalCholestrolEnrollment = nonDeletedCholestrolEnrollment.length + deletedCholestrolEnrollment.length;
-
-            const nonDeletedStrokeEnrollment = nonDeletedEnrollmentDetails.filter(x => x.PlanCode === 'Stroke');
-
-            const deletedStrokeEnrollment = deletedEnrollmentDetails.filter(x => x.PlanCode === 'Stroke');
-
-            const totalStrokeEnrollment = nonDeletedStrokeEnrollment.length + deletedStrokeEnrollment.length;
-
-            const nonDeletedHFMotivatorEnrollment = nonDeletedEnrollmentDetails.filter(x => x.PlanCode === 'HFMotivator');
-
-            const deletedHFMotivatorEnrollment = deletedEnrollmentDetails.filter(x => x.PlanCode === 'HFMotivator');
-
-            const totalHFMotivatorEnrollment = nonDeletedHFMotivatorEnrollment.length + deletedHFMotivatorEnrollment.length;
-
-            const enrollments = {
-                TotalEnrollments                : totalEnrollments,
-                NonDeletedEnrollment            : nonDeletedEnrollmentDetails.length,
-                DeletedEnrollment               : deletedEnrollmentDetails.length,
-                TotalCholestrolEnrollment       : totalCholestrolEnrollment,
-                NonDeletedCholestrolEnrollment  : nonDeletedCholestrolEnrollment.length,
-                DeletedCholestrolEnrollment     : deletedCholestrolEnrollment.length,
-                TotalStrokeEnrollment           : totalStrokeEnrollment,
-                NonDeletedStrokeEnrollment      : nonDeletedStrokeEnrollment.length,
-                DeletedStrokeEnrollment         : deletedStrokeEnrollment.length,
-                TotalHFMotivatorEnrollment      : totalHFMotivatorEnrollment,
-                NonDeletedHFMotivatorEnrollment : nonDeletedHFMotivatorEnrollment.length,
-                DeletedHFMotivatorEnrollment    : deletedHFMotivatorEnrollment.length
-
-            };
-
-            return enrollments;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+    getTotalActiveDoctors = async (filters): Promise<number> => {
+        const query = Helper.replaceAll(queryTotalActiveTenantDoctors, "{{tenantId}}", filters.TenantId);
+        let totalActiveDoctors = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalActiveDoctors_: any = rows;
+        if (totalActiveDoctors_.length === 1) {
+            totalActiveDoctors = totalActiveDoctors_[0].totalActiveDoctors;
         }
+        return totalActiveDoctors;
     };
 
-    private  getEmergencyContacts = async (filters) => {
-        try {
-            const { minDate, maxDate } = getMinMaxDatesForYear(filters);
-            const search: any = { where: {}, paranoid: false };
-
-            search.where['Phone'] = {
-                [Op.notBetween] : [1000000000, 1000000100],
-            };
-
-            if (filters.Year != null)  {
-                search.where['CreatedAt'] = {
-                    [Op.between] : [minDate, maxDate],
-                };
-            }
-
-            const persons = await Person.findAndCountAll(search);
-
-            const emergencyContactDetails = [];
-            for (const p of persons.rows) {
-                const emergencyContactDetail = await EmergencyContact.findOne({ where : {
-                    ContactPersonId : p.id,
-                }, paranoid : false });
-                if (emergencyContactDetail !== null){
-                    emergencyContactDetails.push(emergencyContactDetail);
-                }
-            }
-
-            const usersDetails = [];
-            for (const p of emergencyContactDetails) {
-                const user = await User.findOne({ where : {
-                    PersonId : p.ContactPersonId,
-                }, paranoid : false });
-                if (user !== null){
-                    usersDetails.push(user);
-                }
-            }
-
-            const onlyEmergencyContact =  emergencyContactDetails.length - usersDetails.length;
-
-            const emergencyContacts = {
-                TotalEmergencyContacts          : emergencyContactDetails.length,
-                EmergencyContactsWhoAreAppUsers : usersDetails.length,
-                OnlyEmergencyContacts           : onlyEmergencyContact
-
-            };
-
-            return emergencyContacts;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+    getTotalDeletedDoctors = async (filters): Promise<number> => {
+        const query = Helper.replaceAll(queryTotalDeletedTenantDoctors, "{{tenantId}}", filters.TenantId);
+        let totalDeletedDoctors = null;
+        const [rows] = await this.dbConnector.executeQuery(query);
+        const totalDeletedDoctors_: any = rows;
+        if (totalDeletedDoctors_.length === 1) {
+            totalDeletedDoctors = totalDeletedDoctors_[0].totalDeletedDoctors;
         }
+        return totalDeletedDoctors;
     };
 
     private  getCholestrolUsers = async (totalUsers, filters: StatisticSearchFilters) => {
@@ -2329,7 +1989,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    private getComposeUserCountStats =
+    private aggregateUserStats =
      (
          totalUsers: number,
          notDeletedUsers: number,
@@ -2359,7 +2019,7 @@ export class StatisticsRepo implements IStatisticsRepo {
          };
      };
 
-    private getComposeYearWiseDeviceDetails = (yearWiseDeviceDetails) => {
+    private aggregateYearWiseDeviceDetails = (yearWiseDeviceDetails) => {
         const year = [];
         const result = [];
          
@@ -2456,7 +2116,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    private getComposeYearWiseGenderDetails = (yearWiseGenderDetails) => {
+    private aggregateYearWiseGenderDetails = (yearWiseGenderDetails) => {
         const year = [];
         const result = [];
          
@@ -2486,7 +2146,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return result;
     };
 
-    private getComposeUserByGender = (genderWiseUsers) => {
+    private aggregateUserByGender = (genderWiseUsers) => {
         let totalGenders = 0;
         const result = [];
         for (let i = 0; i < genderWiseUsers.length; i++) {
@@ -2503,7 +2163,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return result;
     };
 
-    private getComposeUserByAge = (userByAge) => {
+    private aggregateUserByAge = (userByAge) => {
         let below35 = 0;
         let above35Below70 = 0;
         let above71 = 0;
@@ -2546,7 +2206,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         ];
     };
     
-    private getComposeYearWiseMaritalDetails = (yearWiseMaritalDetails) => {
+    private aggregateYearWiseMaritalDetails = (yearWiseMaritalDetails) => {
         const year = [];
         const result = [];
          
@@ -2576,7 +2236,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return result;
     };
 
-    private getComposeYearWiseMajorAilment = (yearWiseMajorAilment) => {
+    private aggregateYearWiseMajorAilmentDetails = (yearWiseMajorAilment) => {
         const year = [];
         const result = [];
          

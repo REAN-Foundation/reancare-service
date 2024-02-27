@@ -10,7 +10,7 @@ export class DatabaseInjector {
 
     static registerInjections(container: DependencyContainer) {
 
-        DatabaseClientInjector.registerInjections(container);
+        // DatabaseClientInjector.registerInjections(container);
 
         const databaseType = ConfigurationManager.DatabaseType();
         if (databaseType === 'SQL') {

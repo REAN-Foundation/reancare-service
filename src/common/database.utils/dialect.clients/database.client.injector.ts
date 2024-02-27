@@ -13,7 +13,7 @@ export class DatabaseClientInjector
     static registerInjections(container: DependencyContainer) {
         const dialect = process.env.DB_DIALECT as DatabaseDialect;
         if (dialect === 'mysql') {
-            container.register('IDatabaseClient', MysqlClient);
+            // container.register('IDatabaseClient', MysqlClient);
         }
         else if (dialect === 'postgres') {
             container.register('IDatabaseClient', PostgresqlClient);

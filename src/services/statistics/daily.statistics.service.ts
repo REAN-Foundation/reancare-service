@@ -33,44 +33,43 @@ export class DailyStatisticsService {
 
     generateDailySystemStats = async (): Promise<void> => {
         try {
-            const pdfModel = null;
-            const fileResourceDto = null;
+            let pdfModel = null;
+            let fileResourceDto = null;
 
             var statisticsService = Injector.Container.resolve(StatisticsService);
             const dashboardStats = await statisticsService.createSystemDashboardStats();
-            // console.log(dashboardStats);
-            // var ahaStatisticsService = Injector.Container.resolve(AhaStatisticsService);
-            // const ahaStats = await ahaStatisticsService.getAhaStatistics();
-            // if (ahaStats) {
-            //     pdfModel = await ahaStatisticsService.generateAHAStatsReport(ahaStats);
-            // }
+            var ahaStatisticsService = Injector.Container.resolve(AhaStatisticsService);
+            const tenantId = await ahaStatisticsService.getAHATenant();
+            const ahaStats = await ahaStatisticsService.getAhaStatistics(tenantId);
+            if (ahaStats) {
+                pdfModel = await ahaStatisticsService.generateAHAStatsReport(ahaStats);
+            }
 
-            // if (pdfModel) {
-            //     await ahaStatisticsService.sendStatisticsByEmail(pdfModel.absFilepath, pdfModel.filename);
-            //     fileResourceDto = await ahaStatisticsService.uploadFile(pdfModel.absFilepath);
-            // }
+            if (pdfModel) {
+                await ahaStatisticsService.sendStatisticsByEmail(pdfModel.absFilepath, pdfModel.filename);
+                fileResourceDto = await ahaStatisticsService.uploadFile(pdfModel.absFilepath);
+            }
 
-            // const resourceId = fileResourceDto ? fileResourceDto.id : null;
-            // const userStats = null;
-            // // const userStats = await ahaStatisticsService.getUserStatistics();
+            const resourceId = fileResourceDto ? fileResourceDto.id : null;
+            const userStats = await ahaStatisticsService.getUserStatistics();
 
-            // const model: DailySystemStatisticsDomainModel = {
-            //     ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),
-            //     ReportTimestamp : new Date(),
-            //     DashboardStats  : dashboardStats ? JSON.stringify(dashboardStats) : null,
-            //     AHAStats        : ahaStats ? JSON.stringify(ahaStats) : null,
-            //     UserStats       : userStats ? JSON.stringify(userStats) : null,
-            //     ResourceId      : resourceId
-            // };
+            const model: DailySystemStatisticsDomainModel = {
+                ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),
+                ReportTimestamp : new Date(),
+                DashboardStats  : dashboardStats ? JSON.stringify(dashboardStats) : null,
+                AHAStats        : ahaStats ? JSON.stringify(ahaStats) : null,
+                UserStats       : userStats ? JSON.stringify(userStats) : null,
+                ResourceId      : resourceId,
+            };
             
-            // if (!model.DashboardStats && !model.AHAStats && !model.UserStats) {
-            //     throw new Error('Unable to generate stats!');
-            // }
+            if (!model.DashboardStats && !model.AHAStats && !model.UserStats) {
+                throw new Error('Unable to generate stats!');
+            }
             
-            // const statsRecord = await this._dailyStatisticsRepo.addDailySystemStats(model);
-            // if (statsRecord) {
-            //     Logger.instance().log(`Daily stats: ${JSON.stringify(statsRecord)}`);
-            // }
+            const statsRecord = await this._dailyStatisticsRepo.addDailySystemStats(model);
+            if (statsRecord) {
+                Logger.instance().log(`Daily stats: ${JSON.stringify(statsRecord)}`);
+            }
 
         } catch (error) {
             Logger.instance().log(`Error generating statistics : ${error.message}`);
@@ -98,15 +97,16 @@ export class DailyStatisticsService {
         try {
             const statisticsService = Injector.Container.resolve(StatisticsService);
             const dashboardStats = await statisticsService.createTenantDashboardStats(tenantId);
-            // const filters: StatisticSearchFilters = { TenantId: tenantId };
-            // const userStats = await statisticsService.getUsersStats(filters);
-
+            const filters: StatisticSearchFilters = { TenantId: tenantId };
+            // var ahaStatisticsService = Injector.Container.resolve(AhaStatisticsService);
+            // const enrollments = await ahaStatisticsService.getAhaStatistics(tenantId);
+            const userStats = await statisticsService.getUsersStats(filters);
+            // userStats.enrollments = enrollments ? enrollments : null;
             const model: DailyTenantStatisticsDomainModel = {
                 ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),
                 ReportTimestamp : new Date(),
                 DashboardStats  : dashboardStats ? JSON.stringify(dashboardStats) : null,
-                // UserStats       : userStats ? JSON.stringify(userStats) : null,
-                UserStats       : null,
+                UserStats       : userStats ? JSON.stringify(userStats) : null,
                 TenantId        : tenantId
             };
             

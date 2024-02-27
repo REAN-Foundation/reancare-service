@@ -90,7 +90,7 @@ export class StatisticsService {
             const appDownload = await this._statisticsRepo.getAppDownlodCount();
             const allYears = await this._statisticsRepo.getAllYears();
             const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount(filter);
-            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails(filter);
+            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails(filter, yearWiseUserCount);
 
             const yearWiseAgeDetails = await this._statisticsRepo.getYearWiseAgeDetails(allYears);
             const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
@@ -154,7 +154,7 @@ export class StatisticsService {
 
             const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount(filter);
 
-            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails(filter);
+            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails(filter, yearWiseUserCount);
 
             const yearWiseAgeDetails = await this._statisticsRepo.getYearWiseAgeDetails(filter);
             const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);

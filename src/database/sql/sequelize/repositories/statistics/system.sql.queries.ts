@@ -20,7 +20,7 @@ export const queryDeletedUsers = `SELECT COUNT(*) AS totalDeletedUsers
                                     AND DeletedAt IS NOT null`;
 
 //Query to get the total users with active session
-export const queryUsersWithActiveSession = `SELECT COUNT(*) AS totalUsersWithActiveSession
+export const queryUsersWithActiveSession = `SELECT COUNT(DISTINCT(user_login_sessions.UserId)) AS totalUsersWithActiveSession
                                             FROM user_login_sessions
                                             JOIN users ON user_login_sessions.UserId = users.id
                                             where 

@@ -43,7 +43,7 @@ export interface IStatisticsRepo {
 
     getYearWiseUserCount(filter): Promise<any>;
 
-    getYearWiseDeviceDetails(filter): Promise<any>;
+    getYearWiseDeviceDetails(filter, getYearWiseDeviceDetails): Promise<any>;
 
     getYearWiseGenderDetails(filter): Promise<any>;
 

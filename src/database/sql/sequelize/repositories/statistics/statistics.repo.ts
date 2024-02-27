@@ -82,7 +82,6 @@ import {
     queryYearWiseUserAge,
     queryYearWiseUserCount
 } from './system.sql.queries';
-import { DeviceDetails } from '../../../../../domain.types/users/user.device.details/user.device.domain.model';
 import { GenderDetails } from '../../../../../domain.types/person/person.types';
 import { MajorAilmentDetails, MaritalStatusDetails } from '../../../../../domain.types/users/patient/health.profile/health.profile.types';
 import { MysqlClient } from '../../../../../common/database.utils/dialect.clients/mysql.client';
@@ -803,7 +802,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return yearWiseUserCount;
     };
 
-    getYearWiseDeviceDetails = async(filter) => {
+    getYearWiseDeviceDetails = async(filter, yearWiseUserCount) => {
         let query = null;
 
         if (filter.TenantId) {
@@ -814,7 +813,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         
         const [rows] = await this.dbConnector.executeQuery(query);
         const yearWiseDeviceDetails: any = rows;
-        return this.aggregateYearWiseDeviceDetails(yearWiseDeviceDetails);
+        return this.aggregateYearWiseDeviceDetails(yearWiseDeviceDetails, yearWiseUserCount);
     };
 
     getYearWiseGenderDetails = async(filter) => {
@@ -2019,32 +2018,43 @@ export class StatisticsRepo implements IStatisticsRepo {
          };
      };
 
-    private aggregateYearWiseDeviceDetails = (yearWiseDeviceDetails) => {
+    private aggregateYearWiseDeviceDetails = (yearWiseDeviceDetails, yearWiseUserCount) => {
         const year = [];
         const result = [];
          
-        for (let i = 0; i < yearWiseDeviceDetails.length; i++) {
-            if (!year.includes(yearWiseDeviceDetails[i].year)) {
-                year.push(yearWiseDeviceDetails[i].year);
+        for (let i = 0; i < yearWiseUserCount.length; i++) {
+            if (!year.includes(yearWiseUserCount[i].year)) {
+                year.push(yearWiseUserCount[i].year);
+                result.push({
+                    Year          : yearWiseUserCount[i].year,
+                    UserCount     : yearWiseUserCount[i].totalUsers,
+                    DeviceDetails : [
+                        {
+                            OSType : "Android",
+                            Count  : 0
+                        },
+                        {
+                            OSType : "iOS",
+                            Count  : 0
+                        }
+                    ]
+                });
             }
         }
 
         for (let i = 0; i < year.length; i++) {
             const y = year[i];
-            const details = [];
+       
             for (let j = 0; j < yearWiseDeviceDetails.length; j++) {
                 if (yearWiseDeviceDetails[j].year === y) {
-                    const deviceDetails: DeviceDetails = {
-                        OSType : yearWiseDeviceDetails[j].OSType,
-                        Count  : yearWiseDeviceDetails[j].totalUsers
-                    };
-                    details.push(deviceDetails);
+                    if (yearWiseDeviceDetails[j].OSType === "Android") {
+                        result[i].DeviceDetails[0].Count = yearWiseDeviceDetails[j].totalUsers;
+                    }
+                    if (yearWiseDeviceDetails[j].OSType === "iOS") {
+                        result[i].DeviceDetails[1].Count = yearWiseDeviceDetails[j].totalUsers;
+                    }
                 }
             }
-            result.push({
-                Year          : y,
-                DeviceDetails : details
-            });
         }
         return result;
     };

@@ -26,7 +26,7 @@ export const queryDeletedTenantUsers = `SELECT COUNT(*) AS totalDeletedUsers
                                             TenantId = "{{tenantId}}"`;
 
 //Query to get the total users with active session
-export const queryTenantUsersWithActiveSession =    `SELECT COUNT(*) AS totalUsersWithActiveSession
+export const queryTenantUsersWithActiveSession =    `SELECT COUNT(DISTINCT(user_login_sessions.UserId)) AS totalUsersWithActiveSession
                                                     FROM user_login_sessions
                                                     JOIN users ON user_login_sessions.UserId = users.id
                                                     where 

@@ -11,7 +11,7 @@ export class AhaStatisticsController {
 
     getAhaStatistics = async (request: express.Request, response: express.Response) => {
         try {
-            const usersStats = await this._service.getAhaStatistics();
+            const usersStats = await this._service.getAhaStatistics(null);
             const message = 'Aha statistics retrieved successfully!';
             ResponseHandler.success(request, response,message, 200, {
                 UsersStats : usersStats });

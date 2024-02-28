@@ -1158,13 +1158,15 @@ export class AssessmentService {
                 var a = JSON.parse(JSON.stringify(assessmentRecord));
                 EHRAnalyticsHandler.addAssessmentRecord(a);
             }
+        } else if (answerResponse && answerResponse.Answer.ResponseType === 'Text') {
+            assessmentRecord['AnswerValue'] = answerResponse.Answer.Text;
+            assessmentRecord['AnswerReceived'] = answerResponse.Answer.Text;
+            EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
         } else {
             EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-
         }
         
     };
-
 
     //#endregion
 

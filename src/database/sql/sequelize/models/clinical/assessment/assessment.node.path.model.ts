@@ -96,6 +96,13 @@ export default class AssessmentNodePath extends Model {
     @BelongsTo(() => AssessmentPathCondition)
     Condition: AssessmentPathCondition;
 
+    //Message to be displayed before asking next question...
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    MessageBeforeQuestion: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

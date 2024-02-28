@@ -104,7 +104,7 @@ export class AhaCareplanService implements ICareplanService {
             const patientBirthDate : Date = user.Person.BirthDate;
             const dateTurned18 = TimeHelper.addDuration(patientBirthDate, 18, DurationType.Year);
             var isBefore = TimeHelper.isBefore(dateTurned18, new Date());
-            var careplansWithAgeLimit = ["Cholesterol", "Stroke", "HFMotivator"];
+            var careplansWithAgeLimit = ["Cholesterol", "Stroke", "HFMotivator", "SMBP"];
             if (isBefore || careplansWithAgeLimit.indexOf(planCode) === -1) {
                 resolve({
                     Eligible : true
@@ -120,10 +120,15 @@ export class AhaCareplanService implements ICareplanService {
                     Eligible : false,
                     Reason   : `Sorry, you are too young to register. Check out our resources at https://heart.org/heartfailure`
                 });
-            } else {
+            } else if (planCode === 'Stroke') {
                 resolve({
                     Eligible : false,
                     Reason   : `Sorry, you are too young to register. Check out our resources at https://heart.org/stroke`
+                });
+            } else {
+                resolve({
+                    Eligible : false,
+                    Reason   : `Sorry, you are too young to register.`
                 });
             }
         });
@@ -475,7 +480,7 @@ export class AhaCareplanService implements ICareplanService {
             }
 
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
-            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}?categories=${categoryCode}&pageSize=500`;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}?categories=${categoryCode}&list=all&pageSize=500`;
             var headerOptions = await this.getHeaderOptions();
             var response = await needle("get", url, headerOptions);
 
@@ -528,7 +533,7 @@ export class AhaCareplanService implements ICareplanService {
             Logger.instance().log(`Category code:: ${JSON.stringify(categoryCode)}`);
 
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
-            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}?categories=${categoryCode}&pageSize=500`;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}?categories=${categoryCode}&list=all&pageSize=500`;
             var headerOptions = await this.getHeaderOptions();
             var response = await needle("get", url, headerOptions);
 
@@ -785,7 +790,16 @@ export class AhaCareplanService implements ICareplanService {
                     break;
                 }
                 case QueryResponseType.Biometrics: {
-                    var biometrics = JSON.parse(res.TextValue);
+                    var biometrics = [];
+                    Logger.instance().log(`Result - Value : ${JSON.stringify(res.ObjectValue.Value)}`);
+                    var biometrics_ = res.ObjectValue.Value;
+                    Logger.instance().log(`Biometrics : ${biometrics_}`);
+                    if (!Array.isArray(biometrics_)) {
+                        biometrics = [biometrics_];
+                    }
+                    else {
+                        biometrics = biometrics_;
+                    }
                     for (var b of biometrics) {
                         var biometricsType = b.BiometricsType as BiometricsType;
                         this.populateBiometricValues(biometricsType, v, b);

@@ -104,7 +104,7 @@ export class AhaCareplanService implements ICareplanService {
             const patientBirthDate : Date = user.Person.BirthDate;
             const dateTurned18 = TimeHelper.addDuration(patientBirthDate, 18, DurationType.Year);
             var isBefore = TimeHelper.isBefore(dateTurned18, new Date());
-            var careplansWithAgeLimit = ["Cholesterol", "Stroke", "HFMotivator"];
+            var careplansWithAgeLimit = ["Cholesterol", "Stroke", "HFMotivator", "SMBP"];
             if (isBefore || careplansWithAgeLimit.indexOf(planCode) === -1) {
                 resolve({
                     Eligible : true
@@ -120,10 +120,15 @@ export class AhaCareplanService implements ICareplanService {
                     Eligible : false,
                     Reason   : `Sorry, you are too young to register. Check out our resources at https://heart.org/heartfailure`
                 });
-            } else {
+            } else if (planCode === 'Stroke') {
                 resolve({
                     Eligible : false,
                     Reason   : `Sorry, you are too young to register. Check out our resources at https://heart.org/stroke`
+                });
+            } else {
+                resolve({
+                    Eligible : false,
+                    Reason   : `Sorry, you are too young to register.`
                 });
             }
         });

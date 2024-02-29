@@ -46,7 +46,7 @@ export const queryTenantUsersCareplanEnrollments =    `SELECT COUNT(*) AS totalC
                                                         users.TenantId = "{{tenantId}}"`;
     
 //Query to get the user count by device details for tenant
-export const queryTenantUsersByDeviceDetail =  `SELECT OSType, COUNT(*) as count
+export const queryTenantUsersByDeviceDetail =  `SELECT OSType, COUNT(*) as Count
                                                 FROM user_device_details
                                                 JOIN users ON user_device_details.UserId = users.id
                                                 WHERE 
@@ -113,7 +113,7 @@ export const queryTenantUserByGender =  `SELECT Gender, COUNT(*) as totalCount
                                             users.TenantId = "{{tenantId}}"
                                         GROUP BY Gender`;
 // Query to get user marrital status information for perticular tenant
-export const queryTenantUserMarritalStatus =    `SELECT MaritalStatus, COUNT(*) AS totalCount
+export const queryTenantUserMarritalStatus =    `SELECT MaritalStatus, COUNT(*) AS Count
                                                 FROM patient_health_profiles
                                                 JOIN users ON patient_health_profiles.PatientUserId = users.id
                                                 WHERE
@@ -122,7 +122,7 @@ export const queryTenantUserMarritalStatus =    `SELECT MaritalStatus, COUNT(*) 
                                                     users.TenantId = "{{tenantId}}"
                                                 GROUP BY MaritalStatus`;
 // Query to get user major ailment information for perticular tenant
-export const queryTenantUserByMajorAilment =    `SELECT MajorAilment, COUNT(*) as totalCount
+export const queryTenantUserByMajorAilment =    `SELECT MajorAilment, COUNT(*) as Count
                                                 FROM patient_health_profiles
                                                 JOIN users ON patient_health_profiles.PatientUserId = users.id
                                                 WHERE 

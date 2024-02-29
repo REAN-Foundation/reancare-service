@@ -36,7 +36,7 @@ export const queryTotalCareplanEnrollments = `SELECT COUNT(*) AS totalCareplanEn
                                                 users.IsTestUser= false`;
     
 //Query to get the user count by device details for tenant
-export const queryUsersByDeviceDetail = `SELECT OSType, COUNT(*) as count
+export const queryUsersByDeviceDetail = `SELECT OSType, COUNT(*) as Count
                                         FROM user_device_details
                                         JOIN users ON user_device_details.UserId = users.id
                                         WHERE 
@@ -91,14 +91,14 @@ export const queryUserByGender =   `SELECT Gender, COUNT(*) as totalCount
                                         users.IsTestUser = false
                                     GROUP BY Gender`;
 // Query to get user marrital status information for perticular tenant
-export const queryUserMarritalStatus = `SELECT MaritalStatus, COUNT(*) AS totalCount
+export const queryUserMarritalStatus = `SELECT MaritalStatus, COUNT(*) AS Count
                                         FROM patient_health_profiles
                                         JOIN users ON patient_health_profiles.PatientUserId = users.id
                                         WHERE
                                             users.IsTestUser = false
                                         GROUP BY MaritalStatus`;
 // Query to get user major ailment information for perticular tenant
-export const queryUserByMajorAilment = `SELECT MajorAilment, COUNT(*) as totalCount
+export const queryUserByMajorAilment = `SELECT MajorAilment, COUNT(*) as Count
                                         FROM patient_health_profiles
                                         JOIN users ON patient_health_profiles.PatientUserId = users.id
                                         WHERE 

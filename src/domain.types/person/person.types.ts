@@ -6,5 +6,6 @@ export enum PersonIdentificationType {
 
 export interface GenderDetails {
     Gender: string,
-    Count: number
+    Count: number,
+    Ratio: string
 }

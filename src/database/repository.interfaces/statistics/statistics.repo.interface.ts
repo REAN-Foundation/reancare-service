@@ -51,6 +51,6 @@ export interface IStatisticsRepo {
 
     getYearWiseMajorAilmentDistributionDetails(filter): Promise<any>;
 
-    getYearWiseAddictionDistributionDetails(filter): Promise<any>;
+    getYearWiseAddictionDistributionDetails(filter, yearWiseUserCount): Promise<any>;
 
 }

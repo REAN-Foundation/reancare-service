@@ -53,7 +53,7 @@ import {
     queryYearWiseTobaccoSmokersTenantUser,
     queryYearWiseTenantUserAge,
     queryYearWiseTenantUserCount
-} from './tenant.sql.queries';
+} from './query/tenant.sql';
 import {
     queryTotalCareplanEnrollments,
     queryAllYear,
@@ -81,12 +81,12 @@ import {
     queryYearWiseTobaccoSmokers,
     queryYearWiseUserAge,
     queryYearWiseUserCount
-} from './system.sql.queries';
+} from './query/system.sql';
 import { GenderDetails } from '../../../../../domain.types/person/person.types';
 import { MajorAilmentDetails, MaritalStatusDetails } from '../../../../../domain.types/users/patient/health.profile/health.profile.types';
 import { MysqlClient } from '../../../../../common/database.utils/dialect.clients/mysql.client';
 import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
-import { queryTotalActiveTenantDoctors, queryTotalActiveTenantPersons, queryTotalActiveTenantUsers, queryTotalDeletedTenantDoctors, queryTotalDeletedTenantPersons, queryTotalDeletedTenantUsers, queryTotalTenantDoctors, queryTotalTenantPersons, queryTotalTenantUsers } from './tenant.user.sql.queries';
+import { queryTotalActiveTenantDoctors, queryTotalActiveTenantPersons, queryTotalActiveTenantUsers, queryTotalDeletedTenantDoctors, queryTotalDeletedTenantPersons, queryTotalDeletedTenantUsers, queryTotalTenantDoctors, queryTotalTenantPersons, queryTotalTenantUsers } from './query/tenant.user.sql';
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -601,25 +601,25 @@ export class StatisticsRepo implements IStatisticsRepo {
         const tobaccoSmokerUsers = {
             Status : "Tobacco Smokers",
             Count  : tobaccoSmokers,
-            Ratio  : totalUsers ? tobaccoSmokers / totalUsers : 0.00
+            Ratio  : totalUsers ? ((tobaccoSmokers / totalUsers) * 100).toFixed(2) : "0.00"
         };
 
         const heavyDrinkerUsers = {
             Status : "Heavy Drinker",
             Count  : heavyDrinkers,
-            Ratio  : totalUsers ? heavyDrinkers / totalUsers : 0.00
+            Ratio  : totalUsers ? ((heavyDrinkers / totalUsers) * 100).toFixed(2) : "0.00"
         };
 
         const substanceAbuseUsers = {
             Status : "Substance Abuse",
             Count  : substanceAbuse,
-            Ratio  : totalUsers ? substanceAbuse / totalUsers : 0.00
+            Ratio  : totalUsers ? ((substanceAbuse / totalUsers) * 100).toFixed(2) : "0.00"
         };
 
         const nonAddictedUsers = {
             Status : "Non Addicted",
             Count  : notAddicted,
-            Ratio  : totalUsers ? notAddicted / totalUsers : 0.00
+            Ratio  : totalUsers ? ((notAddicted / totalUsers) * 100).toFixed(2) : "0.00"
         };
 
         const addictionDetails = [
@@ -858,7 +858,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return this.aggregateYearWiseMajorAilmentDetails(yearWiseMajorAilmentDistributionDetails);
     };
 
-    getYearWiseAddictionDistributionDetails = async(filter) => {
+    getYearWiseAddictionDistributionDetails = async(filter, yearWiseUserCount) => {
         let tobaccoSmokersQuery = null;
         if (filter.TenantId) {
             tobaccoSmokersQuery =  Helper.replaceAll(queryYearWiseTobaccoSmokersTenantUser, "{{tenantId}}", filter.TenantId);
@@ -895,12 +895,13 @@ export class StatisticsRepo implements IStatisticsRepo {
         const [notAddictedRows] = await this.dbConnector.executeQuery(notAddictedQuery);
         const yearWisenotAddicted: any = notAddictedRows;
 
-        return {
+        return this.aggregateYearWiseAddictionDetails(
             yearWiseTobaccoSmokers,
             yearWiseHeavyDrinkers,
             yearWiseSubstanceAbuse,
-            yearWisenotAddicted
-        };
+            yearWisenotAddicted,
+            yearWiseUserCount
+        );
     };
 
     // #private region
@@ -2059,6 +2060,74 @@ export class StatisticsRepo implements IStatisticsRepo {
         return result;
     };
 
+    private aggregateYearWiseAddictionDetails = (
+        yearWiseTobaccoSmokers,
+        yearWiseHeavyDrinkers,
+        yearWiseSubstanceAbuse,
+        yearWisenotAddicted,
+        yearWiseUserCount
+    ) => {
+        const year = [];
+        const result = [];
+         
+        for (let i = 0; i < yearWiseUserCount.length; i++) {
+            if (!year.includes(yearWiseUserCount[i].year)) {
+                year.push(yearWiseUserCount[i].year);
+                result.push({
+                    Year            : yearWiseUserCount[i].year,
+                    UserCount       : yearWiseUserCount[i].totalUsers,
+                    AdditionDetails : [
+                        {
+                            Status : "Tobacco Smokers",
+                            Count  : 0,
+                        },
+                
+                        {
+                            Status : "Heavy Drinker",
+                            Count  : 0,
+                        },
+                
+                        {
+                            Status : "Substance Abuse",
+                            Count  : 0,
+                        },
+                
+                        {
+                            Status : "Non Addicted",
+                            Count  : 0,
+                        }
+                    ]
+                });
+            }
+        }
+
+        for (let i = 0; i < year.length; i++) {
+            const y = year[i];
+       
+            for (let j = 0; j < yearWiseTobaccoSmokers.length; j++) {
+                if (yearWiseTobaccoSmokers[j].year === y) {
+                    result[i].AdditionDetails[0].Count = yearWiseTobaccoSmokers[j].tobaccoUserCount;
+                }
+            }
+            for (let j = 0; j < yearWiseHeavyDrinkers.length; j++) {
+                if (yearWiseHeavyDrinkers[j].year === y) {
+                    result[i].AdditionDetails[1].Count = yearWiseHeavyDrinkers[j].drinkerUserCount;
+                }
+            }
+            for (let j = 0; j < yearWiseSubstanceAbuse.length; j++) {
+                if (yearWiseSubstanceAbuse[j].year === y) {
+                    result[i].AdditionDetails[2].Count = yearWiseSubstanceAbuse[j].substanceAbuseUserCount;
+                }
+            }
+            for (let j = 0; j < yearWisenotAddicted.length; j++) {
+                if (yearWisenotAddicted[j].year === y) {
+                    result[i].AdditionDetails[3].Count = yearWisenotAddicted[j].notAddedUserCount;
+                }
+            }
+        }
+        return result;
+    };
+
     private  getPulseUsers = async (totalUsers, filters: StatisticSearchFilters) => {
         try {
             const search: any = { where: {}, };
@@ -2139,18 +2208,25 @@ export class StatisticsRepo implements IStatisticsRepo {
         for (let i = 0; i < year.length; i++) {
             const y = year[i];
             const details = [];
+            let totalUsers = 0;
+            for (let j = 0; j < yearWiseGenderDetails.length; j++) {
+                if (yearWiseGenderDetails[j].year === y) {
+                    totalUsers = totalUsers + yearWiseGenderDetails[j].totalCount;
+                }
+            }
             for (let j = 0; j < yearWiseGenderDetails.length; j++) {
                 if (yearWiseGenderDetails[j].year === y) {
                     const genderDetails: GenderDetails = {
                         Gender : yearWiseGenderDetails[j].Gender,
-                        Count  : yearWiseGenderDetails[j].totalCount
+                        Count  : yearWiseGenderDetails[j].totalCount,
+                        Ratio  : totalUsers ? ((yearWiseGenderDetails[j].totalCount / totalUsers) * 100).toFixed(2) : "0.00"
                     };
                     details.push(genderDetails);
                 }
             }
             result.push({
                 Year          : y,
-                DeviceDetails : details
+                GenderDetails : details
             });
         }
         return result;
@@ -2239,8 +2315,8 @@ export class StatisticsRepo implements IStatisticsRepo {
                 }
             }
             result.push({
-                Year          : y,
-                DeviceDetails : details
+                Year           : y,
+                MaritalDetails : details
             });
         }
         return result;
@@ -2269,8 +2345,8 @@ export class StatisticsRepo implements IStatisticsRepo {
                 }
             }
             result.push({
-                Year          : y,
-                DeviceDetails : details
+                Year           : y,
+                AilmentDetails : details
             });
         }
         return result;

@@ -87,7 +87,6 @@ export class StatisticsService {
             const filter = {};
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
-            const appDownload = await this._statisticsRepo.getAppDownlodCount();
             const allYears = await this._statisticsRepo.getAllYears();
             const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount(filter);
             const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails(filter, yearWiseUserCount);
@@ -109,14 +108,13 @@ export class StatisticsService {
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
 
             const yearWiseAddictionDistributionDetails =
-            await this._statisticsRepo.getYearWiseAddictionDistributionDetails(filter);
+            await this._statisticsRepo.getYearWiseAddictionDistributionDetails(filter, yearWiseUserCount);
             const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
 
             const dashboardStats = {
                 UserStatistics : {
                     UsersCountStats                         : usersCountStats,
                     DeviceDetailWiseUsers                   : deviceDetailWiseUsers,
-                    AppDownload                             : appDownload,
                     YearWiseUserCount                       : yearWiseUserCount,
                     YearWiseDeviceDetails                   : yearWiseDeviceDetails,
                     YearWiseAgeDetails                      : yearWiseAgeDetails,
@@ -150,8 +148,6 @@ export class StatisticsService {
 
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
 
-            const allYears = await this._statisticsRepo.getAllYears();
-
             const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount(filter);
 
             const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails(filter, yearWiseUserCount);
@@ -173,7 +169,7 @@ export class StatisticsService {
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
 
             const yearWiseAddictionDistributionDetails =
-            await this._statisticsRepo.getYearWiseAddictionDistributionDetails(filter);
+            await this._statisticsRepo.getYearWiseAddictionDistributionDetails(filter, yearWiseUserCount);
             const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
 
             const dashboardStats = {

@@ -1,9 +1,7 @@
 import { IAhaStatisticsRepo } from '../../../../../database/repository.interfaces/statistics/aha.statistics.repo.interface';
-import mysql, { Connection } from 'mysql2/promise';
-import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
-import { AppName, CareplanCode, HealthSystem } from '../../../../../domain.types/statistics/aha/aha.type';
-import { queryAhaTenant, queryCareplanList, queryHealthSystemEnrollmentCount, queryListOfHealthSystem, queryTotalActiveEnrollments, queryTotalDeletedEnrollments, queryTotalEnrollments } from './aha.sql.queries';
+import { CareplanCode, HealthSystem } from '../../../../../domain.types/statistics/aha/aha.type';
+import { queryAhaTenant, queryCareplanList, queryHealthSystemEnrollmentCount, queryListOfHealthSystem, queryTotalActiveEnrollments, queryTotalDeletedEnrollments, queryTotalEnrollments } from './query/aha.sql';
 import { Helper } from '../../../../../common/helper';
 import { MysqlClient } from '../../../../../common/database.utils/dialect.clients/mysql.client';
 import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
@@ -21,7 +19,7 @@ import {
     queryTotalPersons,
     queryTotalUsers,
     queryUniqueUsersInDeviceDetail,
-    queryUsersWithMissingDeviceDetail } from './user.sql.queries';
+    queryUsersWithMissingDeviceDetail } from './query/system.user.sql';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 

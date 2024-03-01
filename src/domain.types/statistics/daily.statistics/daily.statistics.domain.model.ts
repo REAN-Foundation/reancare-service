@@ -10,6 +10,7 @@ export interface DailySystemStatisticsDomainModel {
 
 export interface DailyTenantStatisticsDomainModel {
     id?                              : string;
+    ResourceId?                      : string;
     TenantId?                        : string;
     ReportDate?                      : string;
     ReportTimestamp?                 : Date;

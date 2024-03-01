@@ -1,6 +1,6 @@
 import express from 'express';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { AhaStatisticsService } from '../../../services/statistics/aha.stats/aha.statistics.service';
+import { AhaStatisticsService } from '../../../services/statistics/aha.stats.report/aha.statistics.service';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////

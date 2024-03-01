@@ -6,9 +6,9 @@ import { DailySystemStatisticsDto, DailyTenantStatisticsDto } from '../../../../
 import DailySystemStatistics from '../../models/statistics/daily.system.statistics.model';
 import DailyTenantStatistics from '../../models/statistics/daily.tenant.statistics.model';
 import { DailyStatisticsMapper } from '../../mappers/statistics/daily.statistics.mapper';
-import { 
-    DailySystemStatisticsDomainModel, 
-    DailyTenantStatisticsDomainModel 
+import {
+    DailySystemStatisticsDomainModel,
+    DailyTenantStatisticsDomainModel
 } from '../../../../../domain.types/statistics/daily.statistics/daily.statistics.domain.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,7 @@ export class DailyStatisticsRepo implements IDailyStatisticsRepo {
         try {
             const entity = {
                 ReportDate      : model.ReportDate ?? null,
+                ResourceId      : model.ResourceId,
                 TenantId        : model.TenantId ?? null,
                 ReportTimestamp : model.ReportTimestamp ?? null,
                 DashboardStats  : model.DashboardStats ?? null,

@@ -5,6 +5,13 @@ import { AppDownloadDomainModel } from "../../domain.types/statistics/app.downlo
 import { StatisticSearchFilters } from "../../domain.types/statistics/statistics.search.type";
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
 import { Logger } from "../../common/logger";
+import path from "path";
+import { exportStatsReportToPDF } from "./tenant.stats.report/report.generator";
+import { FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
+import { TimeHelper } from "../../common/time.helper";
+import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
+import { FileResourceService } from "../general/file.resource.service";
+import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO: Convert all ORM dependent methods used and implemented here to SQL queries for performance reasons.
@@ -198,6 +205,35 @@ export class StatisticsService {
         } catch (error) {
             Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
         }
+    };
+
+    generateStatsReport = async (reportModel: any) => {
+        try {
+            return await exportStatsReportToPDF(reportModel);
+        } catch (error) {
+            Logger.instance().log(`Error in creating stats report in pdf :${error.message}`);
+        }
+    };
+
+    generateStatsChartReport = async (reportModel: any) => {
+        try {
+            return await exportStatsReportToPDF(reportModel);
+        } catch (error) {
+            Logger.instance().log(`Error in creating stats report in pdf :${error.message}`);
+        }
+    };
+
+    uploadFile = async (sourceLocation: string): Promise<FileResourceDto> => {
+        try {
+            const filename = path.basename(sourceLocation);
+            const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+            const storageKey = `resources/${dateFolder}/${filename}`;
+            const fileResourceService = Injector.Container.resolve(FileResourceService);
+            return await fileResourceService.uploadLocal(sourceLocation, storageKey, true);
+        } catch (error) {
+            Logger.instance().log(`Error in uploading pdf :${error.message}`);
+        }
+        
     };
 
 }

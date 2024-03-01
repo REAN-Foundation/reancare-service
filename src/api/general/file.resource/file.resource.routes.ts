@@ -47,7 +47,6 @@ export const register = (app: express.Application): void => {
     router.get('/:id/download-by-version-name/:version', auth('General.FileResource.DownloadByVersionName'), controller.downloadByVersionName);
     router.get('/:id/download-by-version-id/:versionId', auth('General.FileResource.DownloadByVersionId'), controller.downloadByVersionId);
     router.get('/:id/download', auth('General.FileResource.DownloadById'), controller.downloadById);
-
     //#endregion
 
     //#region Get resource info routes

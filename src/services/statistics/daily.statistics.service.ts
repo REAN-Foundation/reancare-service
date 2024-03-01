@@ -3,7 +3,7 @@ import { IDailyStatisticsRepo } from "../../database/repository.interfaces/stati
 import { DailySystemStatisticsDto, DailyTenantStatisticsDto } from "../../domain.types/statistics/daily.statistics/daily.statistics.dto";
 import { DailySystemStatisticsDomainModel, DailyTenantStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { StatisticsService } from "./statistics.service";
-import { AhaStatisticsService } from "./aha.stats/aha.statistics.service";
+import { AhaStatisticsService } from "./aha.stats.report/aha.statistics.service";
 import { TimeHelper } from "../../common/time.helper";
 import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
@@ -95,16 +95,28 @@ export class DailyStatisticsService {
 
     generateDailyStatisForTenant = async (tenantId: uuid): Promise<void> => {
         try {
+            let pdfModel = null;
+            let fileResourceDto = null;
+
             const statisticsService = Injector.Container.resolve(StatisticsService);
             const dashboardStats = await statisticsService.createTenantDashboardStats(tenantId);
+            
+            if (dashboardStats) {
+                pdfModel = await statisticsService.generateStatsReport(dashboardStats.UserStatistics);
+            }
+            
+            if (pdfModel) {
+                fileResourceDto = await statisticsService.uploadFile(pdfModel.absFilepath);
+            }
+
+            const resourceId = fileResourceDto ? fileResourceDto.id : null;
+
             const filters: StatisticSearchFilters = { TenantId: tenantId };
-            // var ahaStatisticsService = Injector.Container.resolve(AhaStatisticsService);
-            // const enrollments = await ahaStatisticsService.getAhaStatistics(tenantId);
             const userStats = await statisticsService.getUsersStats(filters);
-            // userStats.enrollments = enrollments ? enrollments : null;
             const model: DailyTenantStatisticsDomainModel = {
                 ReportDate      : TimeHelper.getDateString(new Date(),DateStringFormat.YYYY_MM_DD),
                 ReportTimestamp : new Date(),
+                ResourceId      : resourceId,
                 DashboardStats  : dashboardStats ? JSON.stringify(dashboardStats) : null,
                 UserStats       : userStats ? JSON.stringify(userStats) : null,
                 TenantId        : tenantId

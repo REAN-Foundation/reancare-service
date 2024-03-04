@@ -84,19 +84,19 @@ import {
 } from './query/system.sql';
 import { GenderDetails } from '../../../../../domain.types/person/person.types';
 import { MajorAilmentDetails, MaritalStatusDetails } from '../../../../../domain.types/users/patient/health.profile/health.profile.types';
-import { MysqlClient } from '../../../../../common/database.utils/dialect.clients/mysql.client';
 import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
 import { queryTotalActiveTenantDoctors, queryTotalActiveTenantPersons, queryTotalActiveTenantUsers, queryTotalDeletedTenantDoctors, queryTotalDeletedTenantPersons, queryTotalDeletedTenantUsers, queryTotalTenantDoctors, queryTotalTenantPersons, queryTotalTenantUsers } from './query/tenant.user.sql';
+import { DatabaseClient } from '../../../../../common/database.utils/dialect.clients/database.client';
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 export class StatisticsRepo implements IStatisticsRepo {
 
-    public dbConnector: MysqlClient = null;
+    public dbConnector: DatabaseClient = null;
 
     constructor() {
-        this.dbConnector = MysqlClient.getInstance();
-        this.dbConnector.connect(DatabaseSchemaType.Primary);
+        this.dbConnector = new DatabaseClient();
+        this.dbConnector._client.connect(DatabaseSchemaType.Primary);
     }
 
     getUsersCount = async (filters: StatisticSearchFilters): Promise<any> => {
@@ -193,14 +193,14 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryUserByGender;
         }
 
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const genderWiseUsers: any = rows;
         return this.aggregateUserByGender(genderWiseUsers);
     };
 
     public getYearWiseAgeDetails = async(filter) => {
         const queryForAllYears = queryAllYear;
-        const [allYears] = await this.dbConnector.executeQuery(queryForAllYears);
+        const [allYears] = await this.dbConnector._client.executeQuery(queryForAllYears);
         const years: any = allYears;
         const result = [];
 
@@ -214,7 +214,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             }
 
             query =  Helper.replaceAll(query, "{{year}}", years[i].year);
-            const [rows] = await this.dbConnector.executeQuery(query);
+            const [rows] = await this.dbConnector._client.executeQuery(query);
             const userByAge: any = rows;
             const ageDetails = this.aggregateUserByAge(userByAge);
             result.push({
@@ -235,7 +235,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryUserByAge;
         }
 
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const userByAge: any = rows;
         return this.aggregateUserByAge(userByAge);
     };
@@ -249,7 +249,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryUserMarritalStatus;
         }
 
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const usersByMaritalStatus: any = rows;
         return usersByMaritalStatus;
     };
@@ -263,7 +263,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryUsersByDeviceDetail;
         }
         
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const userByDeviceDetails: any = rows;
         return userByDeviceDetails;
     };
@@ -289,7 +289,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     getAppDownlodCount = async (): Promise<any> => {
         let totalAppDownload = null;
         const query =  queryAppDownloadCount;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalAppDownload_: any = rows;
         if (totalAppDownload_.length === 1) {
             totalAppDownload = totalAppDownload_[0].totalAppDownload;
@@ -354,7 +354,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryUserByMajorAilment;
         }
 
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const userByMajorAilment: any = rows;
         return userByMajorAilment;
     };
@@ -552,7 +552,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             tobaccoSmokersQuery = queryTobaccoSmokers;
         }
-        const [tobaccoSmokersRows] = await this.dbConnector.executeQuery(tobaccoSmokersQuery);
+        const [tobaccoSmokersRows] = await this.dbConnector._client.executeQuery(tobaccoSmokersQuery);
         const tobaccoSmokers_: any = tobaccoSmokersRows;
         if (tobaccoSmokers_.length === 1) {
             tobaccoSmokers = tobaccoSmokers_[0].tobaccoUserCount;
@@ -565,7 +565,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             heavyDrinkersQuery = queryHeavyDrinkers;
         }
-        const [heavyDrinkersRows] = await this.dbConnector.executeQuery(heavyDrinkersQuery);
+        const [heavyDrinkersRows] = await this.dbConnector._client.executeQuery(heavyDrinkersQuery);
         const heavyDrinkers_: any = heavyDrinkersRows;
         if (heavyDrinkers_.length === 1) {
             heavyDrinkers = heavyDrinkers_[0].drinkerUserCount;
@@ -578,7 +578,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             substanceAbuseQuery = querySubstanceAbuse;
         }
-        const [substanceAbuseRows] = await this.dbConnector.executeQuery(substanceAbuseQuery);
+        const [substanceAbuseRows] = await this.dbConnector._client.executeQuery(substanceAbuseQuery);
         const substanceAbuse_: any = substanceAbuseRows;
         if (substanceAbuse_.length === 1) {
             substanceAbuse = substanceAbuse_[0].substanceAbuseUserCount;
@@ -591,7 +591,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             notAddictedQuery = queryNotAddicted;
         }
-        const [notAddictedRows] = await this.dbConnector.executeQuery(notAddictedQuery);
+        const [notAddictedRows] = await this.dbConnector._client.executeQuery(notAddictedQuery);
         const notAddicted_: any = notAddictedRows;
         if (notAddicted_.length === 1) {
             notAddicted = notAddicted_[0].notAddedUserCount;
@@ -783,7 +783,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     getAllYears = async (): Promise<any> => {
         const query =  queryAllYear;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const years: any = rows;
         return years;
     };
@@ -797,7 +797,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryYearWiseUserCount;
         }
        
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const yearWiseUserCount: any = rows;
         return yearWiseUserCount;
     };
@@ -811,7 +811,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryYearWiseDeviceDetail;
         }
         
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const yearWiseDeviceDetails: any = rows;
         return this.aggregateYearWiseDeviceDetails(yearWiseDeviceDetails, yearWiseUserCount);
     };
@@ -825,7 +825,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryYearWiseGenderDetails;
         }
 
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const yearWiseGenderDetails: any = rows;
         return this.aggregateYearWiseGenderDetails(yearWiseGenderDetails);
     };
@@ -839,7 +839,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryYearWiseMaritalDetails;
         }
 
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const yearWiseMaritalDetails: any = rows;
         return this.aggregateYearWiseMaritalDetails(yearWiseMaritalDetails);
     };
@@ -853,7 +853,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryYearWiseMajorAilmentDistributionDetails;
         }
 
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const yearWiseMajorAilmentDistributionDetails: any = rows;
         return this.aggregateYearWiseMajorAilmentDetails(yearWiseMajorAilmentDistributionDetails);
     };
@@ -865,7 +865,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             tobaccoSmokersQuery = queryYearWiseTobaccoSmokers;
         }
-        const [tobaccoSmokersRows] = await this.dbConnector.executeQuery(tobaccoSmokersQuery);
+        const [tobaccoSmokersRows] = await this.dbConnector._client.executeQuery(tobaccoSmokersQuery);
         const yearWiseTobaccoSmokers: any = tobaccoSmokersRows;
          
         let heavyDrinkersQuery = null;
@@ -874,7 +874,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             heavyDrinkersQuery = queryYearWiseHeavyDrinkers;
         }
-        const [heavyDrinkersRows] = await this.dbConnector.executeQuery(heavyDrinkersQuery);
+        const [heavyDrinkersRows] = await this.dbConnector._client.executeQuery(heavyDrinkersQuery);
         const yearWiseHeavyDrinkers: any = heavyDrinkersRows;
         
         let substanceAbuseQuery = null;
@@ -883,7 +883,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             substanceAbuseQuery = queryYearWiseSubstanceAbuse;
         }
-        const [substanceAbuseRows] = await this.dbConnector.executeQuery(substanceAbuseQuery);
+        const [substanceAbuseRows] = await this.dbConnector._client.executeQuery(substanceAbuseQuery);
         const yearWiseSubstanceAbuse: any = substanceAbuseRows;
         
         let notAddictedQuery = null;
@@ -892,7 +892,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             notAddictedQuery = queryYearWiseNotAddicted;
         }
-        const [notAddictedRows] = await this.dbConnector.executeQuery(notAddictedQuery);
+        const [notAddictedRows] = await this.dbConnector._client.executeQuery(notAddictedQuery);
         const yearWisenotAddicted: any = notAddictedRows;
 
         return this.aggregateYearWiseAddictionDetails(
@@ -916,7 +916,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryTotalOnboardedUsers;
         }
         
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const users: any = rows;
         if (users.length === 1) {
             totalUsers = users[0].totalUsers;
@@ -934,7 +934,7 @@ export class StatisticsRepo implements IStatisticsRepo {
        }
 
        let totalNotDeletedUsers = null;
-       const [rows] = await this.dbConnector.executeQuery(query);
+       const [rows] = await this.dbConnector._client.executeQuery(query);
        const notDeletedUsers_: any = rows;
        if (notDeletedUsers_.length === 1) {
            totalNotDeletedUsers = notDeletedUsers_[0].totalNotDeletedUsers;
@@ -952,7 +952,7 @@ export class StatisticsRepo implements IStatisticsRepo {
        }
        
        let totalDeletedUsers = null;
-       const [rows] = await this.dbConnector.executeQuery(query);
+       const [rows] = await this.dbConnector._client.executeQuery(query);
        const deletedUsers_: any = rows;
        if (deletedUsers_.length === 1) {
            totalDeletedUsers = deletedUsers_[0].totalDeletedUsers;
@@ -970,7 +970,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryUsersWithActiveSession;
         }
         
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const usersWithActiveSession_: any = rows;
         if (usersWithActiveSession_.length === 1) {
             usersWithActiveSession = usersWithActiveSession_[0].totalUsersWithActiveSession;
@@ -988,7 +988,7 @@ export class StatisticsRepo implements IStatisticsRepo {
             query = queryTotalCareplanEnrollments;
         }
 
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalEnrolledUsers_: any = rows;
         if (totalEnrolledUsers_.length === 1) {
             totalEnrolledUsers = totalEnrolledUsers_[0].totalCareplanEnrollments;
@@ -999,7 +999,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     private getTotalUsers = async (filters: StatisticSearchFilters): Promise<any> => {
         const query = Helper.replaceAll(queryTotalTenantUsers, "{{tenantId}}", filters.TenantId);
         let totalUsers = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalUsers_: any = rows;
         if (totalUsers_.length === 1) {
             totalUsers = totalUsers_[0].totalUsers;
@@ -1010,7 +1010,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     getTotalActiveUsers = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalActiveTenantUsers, "{{tenantId}}", filters.TenantId);
         let totalActiveUsers = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalActiveUsers_: any = rows;
         if (totalActiveUsers_.length === 1) {
             totalActiveUsers = totalActiveUsers_[0].totalActiveUsers;
@@ -1021,7 +1021,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     getTotalDeletedUsers = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
         let totalDeletedUsers = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDeletedUsers_: any = rows;
         if (totalDeletedUsers_.length === 1) {
             totalDeletedUsers = totalDeletedUsers_[0].totalDeletedUsers;
@@ -1452,7 +1452,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getTotalPersons = async (filters) => {
         const query = Helper.replaceAll(queryTotalTenantPersons, "{{tenantId}}", filters.TenantId);
         let totalPersons = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalPersons_: any = rows;
         if (totalPersons_.length === 1) {
             totalPersons = totalPersons_[0].totalPersons;
@@ -1463,7 +1463,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     private getTotalActivePersons = async (filters) => {
         const query = Helper.replaceAll(queryTotalActiveTenantPersons, "{{tenantId}}", filters.TenantId);
         let totalActivePersons = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalActivePersons_: any = rows;
         if (totalActivePersons_.length === 1) {
             totalActivePersons = totalActivePersons_[0].totalActivePersons;
@@ -1474,7 +1474,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     getTotalDeletedPersons = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalDeletedTenantPersons, "{{tenantId}}", filters.TenantId);
         let totalDeletedPersons = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDeletedPersons_: any = rows;
         if (totalDeletedPersons_.length === 1) {
             totalDeletedPersons = totalDeletedPersons_[0].totalDeletedPersons;
@@ -1485,7 +1485,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     private  getTotalDoctors = async (filters) => {
         const query = Helper.replaceAll(queryTotalTenantDoctors, "{{tenantId}}", filters.TenantId);
         let totalDoctors = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDoctors_: any = rows;
         if (totalDoctors_.length === 1) {
             totalDoctors = totalDoctors_[0].totalDoctors;
@@ -1496,7 +1496,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     getTotalActiveDoctors = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalActiveTenantDoctors, "{{tenantId}}", filters.TenantId);
         let totalActiveDoctors = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalActiveDoctors_: any = rows;
         if (totalActiveDoctors_.length === 1) {
             totalActiveDoctors = totalActiveDoctors_[0].totalActiveDoctors;
@@ -1507,7 +1507,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     getTotalDeletedDoctors = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalDeletedTenantDoctors, "{{tenantId}}", filters.TenantId);
         let totalDeletedDoctors = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDeletedDoctors_: any = rows;
         if (totalDeletedDoctors_.length === 1) {
             totalDeletedDoctors = totalDeletedDoctors_[0].totalDeletedDoctors;

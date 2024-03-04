@@ -56,12 +56,8 @@ export class PermissionHandler {
         // 4. Tenant Admin and Tenant User
         if (currentUserRole === Roles.TenantAdmin ||
             currentUserRole === Roles.TenantUser) {
-            //Check if the resource belongs to the same tenant
-            if (currentUser.TenantId === request.resourceTenantId) {
-                return true;
-            }
-            //Rest of the permissions are checked for role based permissions
-            return false;
+            const permitted = await this.checkTenantRolePermissions(request, currentUser);
+            return permitted;
         }
 
         // 5. Patient
@@ -213,6 +209,44 @@ export class PermissionHandler {
             }
         }
         return true;
+    };
+
+    private static checkTenantRolePermissions = async (request: express.Request, currentUser: CurrentUser) => {
+
+        //Check if it is single resource request...
+        if (request.singleResourceRequest) {
+            //Check if the resource belongs to the same tenant
+            if (currentUser.TenantId === request.resourceTenantId) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else if (request.requestType === 'Search') {
+            //Check if the search request is limited to the tenant
+            const queryParams = request.query;
+            if (queryParams == null || queryParams === undefined) {
+                request.query = {};
+                request.query["tenantId"] = currentUser.TenantId;
+            }
+            else {
+                if (queryParams.tenantId == null || queryParams.tenantId === undefined) {
+                    request.query["tenantId"] = currentUser.TenantId;
+                }
+            }
+            return true;
+        }
+        else {
+            //Check if the context is DailyStatistics
+            let context = request.context;
+            context = context.toLowerCase();
+            if (context.includes('DailyStatistics'.toLowerCase())) {
+                return true;
+            }
+        }
+        //Rest of the permissions are checked for role based permissions
+        return false;
     };
 
     private static hasConsent = async (request: express.Request): Promise<boolean> => {

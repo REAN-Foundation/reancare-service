@@ -12,6 +12,8 @@ import { TimeHelper } from "../../common/time.helper";
 import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
 import { FileResourceService } from "../general/file.resource.service";
 import { Injector } from "../../startup/injector";
+import { exportStatsChartReportToPDF } from "./tenant.stats.report/chart.report.generator";
+import { createUsersAgeTrendCharts, createUsersGenderTrendCharts, createYearWiseUserTrendCharts } from "./chart/user.chart";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO: Convert all ORM dependent methods used and implemented here to SQL queries for performance reasons.
@@ -215,9 +217,23 @@ export class StatisticsService {
         }
     };
 
+    public generateChartImages = async (
+        reportModel: any): Promise<any> => {
+
+        const chartImagePaths = [];
+        let imageLocations = await createYearWiseUserTrendCharts(reportModel.YearWiseUserCount);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createUsersAgeTrendCharts(reportModel.AgeWiseUsers);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createUsersGenderTrendCharts(reportModel.GenderWiseUsers);
+        chartImagePaths.push(...imageLocations);
+        return chartImagePaths;
+    };
+    
     generateStatsChartReport = async (reportModel: any) => {
         try {
-            return await exportStatsReportToPDF(reportModel);
+            const chartImagePaths = await this.generateChartImages(reportModel);
+            return await exportStatsChartReportToPDF(reportModel, chartImagePaths);
         } catch (error) {
             Logger.instance().log(`Error in creating stats report in pdf :${error.message}`);
         }

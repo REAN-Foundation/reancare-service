@@ -1,18 +1,20 @@
 import { PDFGenerator } from "../../../modules/reports/pdf.generator";
-import { addFooter, addTop } from "../../users/patient/statistics/stat.report.commons";
-import { TableRowProperties, addTableRow } from "../../users/patient/statistics/report.helper";
+import { addFooter, addNoDataDisplay, addTop } from "../../users/patient/statistics/stat.report.commons";
+import { TableRowProperties, addRectangularChartImage, addSquareChartImageWithLegend, addTableRow, chartExists } from "../../users/patient/statistics/report.helper";
 import fs from 'fs';
 import { FooterLength, SpaceAfterSectionTitle, SpaceBeforeSectionTitle, SpaceBetweenRow } from "./pdf.setting";
+import { ChartColors } from "../../../modules/charts/chart.options";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 const pdfModel: any = {};
 
-export const exportStatsReportToPDF = async (reportModel: any) => {
+export const exportStatsChartReportToPDF = async (reportModel: any, chartImagePaths) => {
     try {
         var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Summary Report');
         var writeStream = fs.createWriteStream(absFilepath);
         const reportTitle = `Summary Report`;
+        reportModel.ChartImagePaths = chartImagePaths;
         const options: Intl.DateTimeFormatOptions = {
             day   : '2-digit',
             month : 'long',
@@ -29,11 +31,7 @@ export const exportStatsReportToPDF = async (reportModel: any) => {
 
         var document = PDFGenerator.createDocument(reportTitle, pdfModel.Author, writeStream);
 
-        let y = addStatsPage(document, pdfModel, false);
-
-        y = addUserStats(reportModel, document, y);
-
-        setPageNumbers(document);
+        addTenantStatsPage(document, reportModel, pdfModel, 1);
         document.end();
 
         await PDFGenerator.savePDFLocally(writeStream, absFilepath);
@@ -44,6 +42,97 @@ export const exportStatsReportToPDF = async (reportModel: any) => {
     } catch (error) {
         throw new Error(`Unable to generate dashboard stats report! ${error.message}`);
     }
+};
+
+const addTenantStatsPage = (document, model, pdfModel, pageNumber) => {
+    const y = addTop(document, pdfModel, null, false);
+    addFooter(document, "https://www.heart.org/", pdfModel.FooterImagePath);
+    addTenantStats(document, model, y);
+    pageNumber += 1;
+    return pageNumber;
+};
+
+export const addTenantStats = (document, model, y) => {
+
+    let chartImage = 'UserAge';
+    let titleColor = '#505050';
+    const sectionTitle = 'Users Statistics';
+    y = addSectionTitle(document, y, sectionTitle);
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 25;
+        const legend = [
+            {
+                Key   : 'Below 35',
+                Color : ChartColors.MediumSeaGreen,
+            },
+            {
+                Key   : '36 to 70',
+                Color : ChartColors.OrangeRed,
+            },
+            {
+                Key   : 'Above 71',
+                Color : ChartColors.SlateGray,
+            },
+            {
+                Key   : 'Not Specified',
+                Color : ChartColors.BlueViolet,
+            }
+        ];
+        chartImage = 'UserAge';
+        const title = 'Users Age Distribution';
+        y = addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend, 40, 150);
+    }
+
+    chartImage = 'UserGender';
+    titleColor = '#505050';
+ 
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 25;
+        const legend = [
+            {
+                Key   : 'Male',
+                Color : ChartColors.MediumSeaGreen,
+            },
+            {
+                Key   : 'Female',
+                Color : ChartColors.OrangeRed,
+            },
+            {
+                Key   : 'Intersex',
+                Color : ChartColors.SlateGray,
+            },
+            {
+                Key   : 'Not Specified',
+                Color : ChartColors.BlueViolet,
+            }
+        ];
+        chartImage = 'UserGender';
+        const title = 'Users Gender Wise Distribution';
+        y = addSquareChartImageWithLegend(document, model, chartImage, y, title, titleColor, legend, 40, 150);
+    }
+
+    chartImage = 'Users_OverYear';
+    titleColor = '#505050';
+
+    y = y + 7;
+
+    chartImage = 'Users_OverYear';
+    const detailedTitle = 'User Over Years';
+
+    if (!chartExists(model, chartImage)) {
+        y = addNoDataDisplay(document, y);
+    } else {
+        y = y + 25;
+        y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 20;
+    }
+
+    return y;
 };
 
 const setPageNumbers = (document: PDFKit.PDFDocument) => {
@@ -74,7 +163,8 @@ const addUserStatsTable = (model: any, document: PDFKit.PDFDocument, y: any) => 
     y = isPageEnd(y, document, 'SectionTitle');
     y = addSectionTitle(document, y, sectionTitle);
     y = isPageEnd(y, document, 'Row');
-    y = addSummary(model, document, y, 1);
+    // y = addSummary(model, document, y, 1);
+    y = addSummaryChart(model, document, y, 1);
     return y;
 };
 
@@ -140,6 +230,17 @@ const addSummary = (model, document, y, pageNumber) => {
     return y;
 };
 
+const addSummaryChart = (model, document, y, pageNumber) => {
+    y = addRectangularChartImage(document, {
+        ChartImagePath : [
+            {
+                key      : "chartImage",
+                location : 200
+            }
+        ]
+    }, "chartImage", y, "detailedTitle", '#505050');
+};
+
 const isPageEnd = (y: number, document: PDFKit.PDFDocument, head: string) => {
     if (head === 'Row') {
         if (y + SpaceBetweenRow > document.page.maxY() - FooterLength) {
@@ -166,7 +267,6 @@ const composeRowsData = (model, pageNumber: number) => {
         rows.push([false, sequence, `${row.Title}`, row.Count]);
         sequence += 1;
     });
-    
     return rows;
 };
 

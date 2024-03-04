@@ -102,7 +102,8 @@ export class DailyStatisticsService {
             const dashboardStats = await statisticsService.createTenantDashboardStats(tenantId);
             
             if (dashboardStats) {
-                pdfModel = await statisticsService.generateStatsReport(dashboardStats.UserStatistics);
+                // pdfModel = await statisticsService.generateStatsReport(dashboardStats.UserStatistics);
+                pdfModel = await statisticsService.generateStatsChartReport(dashboardStats.UserStatistics);
             }
             
             if (pdfModel) {

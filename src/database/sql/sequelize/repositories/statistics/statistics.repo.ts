@@ -1007,7 +1007,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return totalUsers;
     };
 
-    getTotalActiveUsers = async (filters): Promise<number> => {
+    private getTotalActiveUsers = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalActiveTenantUsers, "{{tenantId}}", filters.TenantId);
         let totalActiveUsers = null;
         const [rows] = await this.dbConnector._client.executeQuery(query);
@@ -1018,7 +1018,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return totalActiveUsers;
     };
 
-    getTotalDeletedUsers = async (filters): Promise<number> => {
+    private getTotalDeletedUsers = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
         let totalDeletedUsers = null;
         const [rows] = await this.dbConnector._client.executeQuery(query);
@@ -1471,7 +1471,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return totalActivePersons;
     };
 
-    getTotalDeletedPersons = async (filters): Promise<number> => {
+    private getTotalDeletedPersons = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalDeletedTenantPersons, "{{tenantId}}", filters.TenantId);
         let totalDeletedPersons = null;
         const [rows] = await this.dbConnector._client.executeQuery(query);
@@ -1493,7 +1493,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return totalDoctors;
     };
 
-    getTotalActiveDoctors = async (filters): Promise<number> => {
+    private getTotalActiveDoctors = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalActiveTenantDoctors, "{{tenantId}}", filters.TenantId);
         let totalActiveDoctors = null;
         const [rows] = await this.dbConnector._client.executeQuery(query);
@@ -1504,7 +1504,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         return totalActiveDoctors;
     };
 
-    getTotalDeletedDoctors = async (filters): Promise<number> => {
+    private getTotalDeletedDoctors = async (filters): Promise<number> => {
         const query = Helper.replaceAll(queryTotalDeletedTenantDoctors, "{{tenantId}}", filters.TenantId);
         let totalDeletedDoctors = null;
         const [rows] = await this.dbConnector._client.executeQuery(query);

@@ -4,6 +4,7 @@ export const queryCareplanList =   `SELECT DISTINCT(PlanCode)
                                     JOIN users ON careplan_enrollments.PatientUserId = users.id
                                     WHERE 
                                         users.TenantId = "{{tenantId}}"`;
+
 // Query to get total enrollments for the selected careplan
 export const queryTotalEnrollments =   `SELECT COUNT(*) AS totalEnrollments
                                         FROM careplan_enrollments
@@ -33,30 +34,7 @@ export const queryTotalActiveEnrollments = `SELECT COUNT(DISTINCT(careplan_enrol
                                                             AND
                                                             person.DeletedAt IS null
                                                         )`;
-// export const queryTotalActiveEnrollments = `SELECT COUNT(DISTINCT(careplan_enrollments.PatientUserId)) AS totalActiveEnrollments
-//                                             FROM careplan_enrollments
-//                                             JOIN users ON careplan_enrollments.PatientUserId = users.id
-//                                             WHERE
-//                                                 careplan_enrollments.PlanCode = '{{careplanCode}}'
-//                                                 AND
-//                                                 users.IsTestUser = false
-//                                                 AND
-//                                                 users.TenantId = "{{tenantId}}"
-//                                                 AND
-//                                                 users.DeletedAt IS null`;
 
-// export const queryTotalActiveEnrollments = `SELECT COUNT(DISTINCT(careplan_enrollments.PatientUserId)) AS totalActiveEnrollments
-//                                             FROM careplan_enrollments
-//                                             JOIN users ON careplan_enrollments.PatientUserId = users.id
-//                                             WHERE
-//                                                 careplan_enrollments.PlanCode = '{{careplanCode}}'
-//                                                 AND
-//                                                 users.IsTestUser = false
-//                                                 AND
-//                                                 users.TenantId = "{{tenantId}}"
-//                                                 AND
-//                                                 users.DeletedAt IS null`;
-                                                        
 // Query to get the total deleted enrollments for the selected careplan
 export const queryTotalDeletedEnrollments = `SELECT COUNT(DISTINCT(careplan_enrollment.PatientUserId)) AS totalActiveEnrollments
                                             FROM careplan_enrollments as careplan_enrollment 
@@ -76,19 +54,6 @@ export const queryTotalDeletedEnrollments = `SELECT COUNT(DISTINCT(careplan_enro
                                                                 person.DeletedAt IS NOT null
                                                         )`;
                                                         
-// Query to get the total deleted enrollments for the selected careplan
-// export const queryTotalDeletedEnrollments = `SELECT COUNT(DISTINCT(careplan_enrollments.PatientUserId)) AS totalActiveEnrollments
-//                                             FROM careplan_enrollments
-//                                             JOIN users ON careplan_enrollments.PatientUserId = users.id
-//                                             WHERE
-//                                                 careplan_enrollments.PlanCode = '{{careplanCode}}'
-//                                                 AND
-//                                                 users.IsTestUser = false
-//                                                 AND
-//                                                 users.TenantId = "{{tenantId}}"
-//                                                 AND
-//                                                 users.DeletedAt IS NOT null`;
-
 //Query to get the list of health systems
 export const queryListOfHealthSystem = `SELECT DISTINCT(Name) FROM health_systems`;
 

@@ -16,8 +16,6 @@ import { exportStatsChartReportToPDF } from "./tenant.stats.report/chart.report.
 import { createUsersAgeTrendCharts, createUsersGenderTrendCharts, createYearWiseUserTrendCharts } from "./chart/user.chart";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//TODO: Convert all ORM dependent methods used and implemented here to SQL queries for performance reasons.
-////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class StatisticsService {
@@ -109,9 +107,6 @@ export class StatisticsService {
             const yearWiseMaritalDetails = await this._statisticsRepo.getYearWiseMaritalDetails(filter);
             const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
 
-            // const yearWiseCountryDetails = await this.getYearWiseCountryDetails(allYears);
-            // const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
-
             const yearWiseMajorAilmentDistributionDetails =
             await this._statisticsRepo.getYearWiseMajorAilmentDistributionDetails(filter);
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
@@ -132,8 +127,6 @@ export class StatisticsService {
                     GenderWiseUsers                         : genderWiseUsers,
                     YearWiseMaritalDetails                  : yearWiseMaritalDetails,
                     MaritalStatusWiseUsers                  : maritalStatusWiseUsers,
-                    // YearWiseCountryDetails                  : yearWiseCountryDetails,
-                    // CountryWiseUsers                        : countryWiseUsers,
                     YearWiseMajorAilmentDistributionDetails : yearWiseMajorAilmentDistributionDetails,
                     MajorAilmentDistribution                : majorAilmentDistribution,
                     YearWiseAddictionDistributionDetails    : yearWiseAddictionDistributionDetails,
@@ -150,9 +143,7 @@ export class StatisticsService {
     createTenantDashboardStats = async (tenantId: string): Promise<any> => {
         try {
             const filter = { TenantId: tenantId };
-            //TODO: Add Tenant Specific Statistics Extraction menthods and call them here...
-            // All methods should directly use SQL queries rather than ORM for performance reasons.
-
+ 
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
 
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
@@ -170,9 +161,6 @@ export class StatisticsService {
             const yearWiseMaritalDetails = await this._statisticsRepo.getYearWiseMaritalDetails(filter);
             const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
 
-            // // const yearWiseCountryDetails = await this.getYearWiseCountryDetails(allYears);
-            // // const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
-
             const yearWiseMajorAilmentDistributionDetails =
             await this._statisticsRepo.getYearWiseMajorAilmentDistributionDetails(filter);
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
@@ -193,8 +181,6 @@ export class StatisticsService {
                     GenderWiseUsers                         : genderWiseUsers,
                     YearWiseMaritalDetails                  : yearWiseMaritalDetails,
                     MaritalStatusWiseUsers                  : maritalStatusWiseUsers,
-                    // YearWiseCountryDetails                  : yearWiseCountryDetails,
-                    // CountryWiseUsers                        : countryWiseUsers,
                     YearWiseMajorAilmentDistributionDetails : yearWiseMajorAilmentDistributionDetails,
                     MajorAilmentDistribution                : majorAilmentDistribution,
                     YearWiseAddictionDistributionDetails    : yearWiseAddictionDistributionDetails,

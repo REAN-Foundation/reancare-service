@@ -102,6 +102,7 @@ export class DailyStatisticsService {
             const dashboardStats = await statisticsService.createTenantDashboardStats(tenantId);
             
             if (dashboardStats) {
+                // Report is in Tabular/Table Form
                 // pdfModel = await statisticsService.generateStatsReport(dashboardStats.UserStatistics);
                 pdfModel = await statisticsService.generateStatsChartReport(dashboardStats.UserStatistics);
             }

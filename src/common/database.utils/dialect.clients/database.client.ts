@@ -1,6 +1,7 @@
 import { DatabaseSchemaType } from "../database.config";
 import { DatabaseDialect } from '../../../domain.types/miscellaneous/system.types';
 import { MysqlClient } from "./mysql.client";
+import { PostgresqlClient } from "./postgresql.client";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -12,10 +13,10 @@ export class DatabaseClient {
         const dialect = process.env.DB_DIALECT as DatabaseDialect;
         if (dialect === 'mysql') {
             this._client = MysqlClient.getInstance();
-        }
-
-        if (dialect === 'postgres') {
-            // this._client = PostgresqlClient.getInstance();
+        } else if (dialect === 'postgres') {
+            this._client = PostgresqlClient.getInstance();
+        } else {
+            // this._client = SQLiteClient.getInstance();
         }
 
     }

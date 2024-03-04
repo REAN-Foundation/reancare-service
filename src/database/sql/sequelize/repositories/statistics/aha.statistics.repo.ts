@@ -3,7 +3,6 @@ import { Logger } from '../../../../../common/logger';
 import { CareplanCode, HealthSystem } from '../../../../../domain.types/statistics/aha/aha.type';
 import { queryAhaTenant, queryCareplanList, queryHealthSystemEnrollmentCount, queryListOfHealthSystem, queryTotalActiveEnrollments, queryTotalDeletedEnrollments, queryTotalEnrollments } from './query/aha.sql';
 import { Helper } from '../../../../../common/helper';
-import { MysqlClient } from '../../../../../common/database.utils/dialect.clients/mysql.client';
 import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
 import {
     queryTotalActiveDoctors,
@@ -20,22 +19,23 @@ import {
     queryTotalUsers,
     queryUniqueUsersInDeviceDetail,
     queryUsersWithMissingDeviceDetail } from './query/system.user.sql';
+import { DatabaseClient } from '../../../../../common/database.utils/dialect.clients/database.client';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 export class AhaStatisticsRepo implements IAhaStatisticsRepo {
 
-    public dbConnector: MysqlClient = null;
+    public dbConnector: DatabaseClient = null;
 
     constructor() {
-        this.dbConnector = MysqlClient.getInstance();
-        this.dbConnector.connect(DatabaseSchemaType.Primary);
+        this.dbConnector = new DatabaseClient();
+        this.dbConnector._client.connect(DatabaseSchemaType.Primary);
     }
 
     getAhaTenant = async (): Promise<string> => {
         const query = queryAhaTenant;
         try {
-            const [rows] = await this.dbConnector.executeQuery(query);
+            const [rows] = await this.dbConnector._client.executeQuery(query);
             const tenantIds: any = rows;
             if (tenantIds.length === 1) {
                 return tenantIds[0].id;
@@ -50,7 +50,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalPatients = async (): Promise<number> => {
         const query = queryTotalPatients;
         let totalPatients = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalPatients_: any = rows;
         if (totalPatients_.length === 1) {
             totalPatients = totalPatients_[0].totalPatients;
@@ -61,7 +61,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalActivePatients = async (): Promise<number> => {
         const query = queryTotalActivePatients;
         let totalActivePatients = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalActivePatients_: any = rows;
         if (totalActivePatients_.length === 1) {
             totalActivePatients = totalActivePatients_[0].totalActivePatients;
@@ -72,7 +72,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalDeletedPatients = async (): Promise<number> => {
         const query = queryTotalDeletedPatients;
         let totalDeletedPatients = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDeletedPatients_: any = rows;
         if (totalDeletedPatients_.length === 1) {
             totalDeletedPatients = totalDeletedPatients_[0].totalDeletedPatients;
@@ -83,7 +83,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalUsersWithMissingDeviceDetail = async (): Promise<number> => {
         const query = queryUsersWithMissingDeviceDetail;
         let totalUsersWithMissingDeviceDetail = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalUsersWithMissingDeviceDetail_: any = rows;
         if (totalUsersWithMissingDeviceDetail_.length === 1) {
             totalUsersWithMissingDeviceDetail = totalUsersWithMissingDeviceDetail_[0].count;
@@ -94,7 +94,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalUniqueUsersInDeviceDetail = async (): Promise<number> => {
         const query = queryUniqueUsersInDeviceDetail;
         let totalUniqueUsersInDeviceDetail = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalUniqueUsersInDeviceDetail_: any = rows;
         if (totalUniqueUsersInDeviceDetail_.length === 1) {
             totalUniqueUsersInDeviceDetail = totalUniqueUsersInDeviceDetail_[0].count;
@@ -105,7 +105,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalUsers = async (): Promise<number> => {
         const query = queryTotalUsers;
         let totalUsers = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalUsers_: any = rows;
         if (totalUsers_.length === 1) {
             totalUsers = totalUsers_[0].totalUsers;
@@ -116,7 +116,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalDeletedUsers = async (): Promise<number> => {
         const query = queryTotalDeletedUsers;
         let totalDeletedUsers = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDeletedUsers_: any = rows;
         if (totalDeletedUsers_.length === 1) {
             totalDeletedUsers = totalDeletedUsers_[0].totalDeletedUsers;
@@ -127,7 +127,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalActiveUsers = async (): Promise<number> => {
         const query = queryTotalActiveUsers;
         let totalActiveUsers = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalActiveUsers_: any = rows;
         if (totalActiveUsers_.length === 1) {
             totalActiveUsers = totalActiveUsers_[0].totalActiveUsers;
@@ -138,7 +138,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalPersons = async (): Promise<number> => {
         const query = queryTotalPersons;
         let totalPersons = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalPersons_: any = rows;
         if (totalPersons_.length === 1) {
             totalPersons = totalPersons_[0].totalPersons;
@@ -149,7 +149,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalActivePersons = async (): Promise<number> => {
         const query = queryTotalActivePersons;
         let totalActivePersons = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalActivePersons_: any = rows;
         if (totalActivePersons_.length === 1) {
             totalActivePersons = totalActivePersons_[0].totalActivePersons;
@@ -160,7 +160,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalDeletedPersons = async (): Promise<number> => {
         const query = queryTotalDeletedPersons;
         let totalDeletedPersons = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDeletedPersons_: any = rows;
         if (totalDeletedPersons_.length === 1) {
             totalDeletedPersons = totalDeletedPersons_[0].totalDeletedPersons;
@@ -171,7 +171,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalDoctors = async (): Promise<number> => {
         const query = queryTotalDoctors;
         let totalDoctors = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDoctors_: any = rows;
         if (totalDoctors_.length === 1) {
             totalDoctors = totalDoctors_[0].totalDoctors;
@@ -182,7 +182,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalActiveDoctors = async (): Promise<number> => {
         const query = queryTotalActiveDoctors;
         let totalActiveDoctors = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalActiveDoctors_: any = rows;
         if (totalActiveDoctors_.length === 1) {
             totalActiveDoctors = totalActiveDoctors_[0].totalActiveDoctors;
@@ -193,7 +193,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalDeletedDoctors = async (): Promise<number> => {
         const query = queryTotalDeletedDoctors;
         let totalDeletedDoctors = null;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const totalDeletedDoctors_: any = rows;
         if (totalDeletedDoctors_.length === 1) {
             totalDeletedDoctors = totalDeletedDoctors_[0].totalDeletedDoctors;
@@ -204,7 +204,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalEnrollments = async (careplanCode: CareplanCode, tenantId: string): Promise<number> => {
         let query = Helper.replaceAll(queryTotalEnrollments,'{{careplanCode}}',careplanCode);
         query = Helper.replaceAll(query, '{{tenantId}}',tenantId);
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const enrollments: any = rows;
         if (enrollments.length === 1) {
             return enrollments[0].totalEnrollments;
@@ -214,7 +214,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalActiveEnrollments = async (careplanCode: CareplanCode, tenantId: string): Promise<number> => {
         let query = Helper.replaceAll(queryTotalActiveEnrollments,'{{careplanCode}}',careplanCode);
         query = Helper.replaceAll(query, '{{tenantId}}',tenantId);
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const deletedEnrollments: any = rows;
         if (deletedEnrollments.length === 1) {
             return deletedEnrollments[0].totalDeletedEnrollments;
@@ -224,7 +224,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
     getTotalDeletedEnrollments = async (careplanCode: CareplanCode, tenantId: string): Promise<number> => {
         let query = Helper.replaceAll(queryTotalDeletedEnrollments,'{{careplanCode}}',careplanCode);
         query = Helper.replaceAll(query, '{{tenantId}}',tenantId);
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const activeEnrollments: any = rows;
         if (activeEnrollments.length === 1) {
             return activeEnrollments[0].totalActiveEnrollments;
@@ -236,7 +236,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
         let query = Helper.replaceAll(queryHealthSystemEnrollmentCount, '{{careplanCode}}',careplanCode );
         query = Helper.replaceAll(query, '{{healthSystem}}', healthSystem);
         query = Helper.replaceAll(query, '{{tenantId}}',tenantId);
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const healthSystemEnrollments: any = rows;
         if (healthSystemEnrollments.length === 1) {
             return healthSystemEnrollments[0].count;
@@ -245,7 +245,7 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
 
     getListOfCareplan = async (tenantId: string) => {
         const query =  Helper.replaceAll(queryCareplanList, "{{tenantId}}",tenantId);
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const careplans: any = rows;
         return careplans;
 
@@ -253,12 +253,12 @@ export class AhaStatisticsRepo implements IAhaStatisticsRepo {
 
     getListOfHealthSystem = async () => {
         const query = queryListOfHealthSystem;
-        const [rows] = await this.dbConnector.executeQuery(query);
+        const [rows] = await this.dbConnector._client.executeQuery(query);
         const healthSystems: any = rows;
         return this.combineHealthSystems(healthSystems);
     };
     
-    private combineHealthSystems = (data) => {
+    combineHealthSystems = (data) => {
         const healthSystems = [];
         data.forEach((healthSystem) => {
             healthSystems.push(healthSystem.Name);

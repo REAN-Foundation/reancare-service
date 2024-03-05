@@ -98,7 +98,18 @@
                 "SearchNode": false,
                 "Update": false,
                 "UpdateNode": false,
-                "UpdateScoringCondition": false
+                "UpdateScoringCondition": false,
+                "AddPath": false,
+                "GetPath": false,
+                "UpdatePath": false,
+                "DeletePath": false,
+                "GetNodePaths": false,
+                "AddPathCondition": false,
+                "GetPathCondition": false,
+                "UpdatePathCondition": false,
+                "DeletePathCondition": false,
+                "GetConditionsForPath": false,
+                "SetNextNodeToPath": false
             },
             "DailyAssessment": {
                 "Create": true,

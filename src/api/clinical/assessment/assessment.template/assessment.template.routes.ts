@@ -15,6 +15,19 @@ export const register = (app: express.Application): void => {
     router.put('/:id/nodes/:nodeId', auth('Clinical.Assessments.AssessmentTemplate.UpdateNode'), controller.updateNode);
     router.delete('/:id/nodes/:nodeId', auth('Clinical.Assessments.AssessmentTemplate.DeleteNode'), controller.deleteNode);
 
+    router.post('/:id/nodes/:nodeId/paths/:pathId/set-next-node/:nextNodeId', auth('Clinical.Assessments.AssessmentTemplate.SetNextNodeToPath'), controller.setNextNodeToPath);
+    router.post('/:id/nodes/:nodeId/paths/:pathId/conditions', auth('Clinical.Assessments.AssessmentTemplate.AddPathCondition'), controller.addPathCondition);
+    router.put('/:id/nodes/:nodeId/paths/:pathId/conditions/:conditionId', auth('Clinical.Assessments.AssessmentTemplate.UpdatePathCondition'), controller.updatePathCondition);
+    router.get('/:id/nodes/:nodeId/paths/:pathId/conditions/:conditionId', auth('Clinical.Assessments.AssessmentTemplate.GetPathCondition'), controller.getPathCondition);
+    router.delete('/:id/nodes/:nodeId/paths/:pathId/conditions/:conditionId', auth('Clinical.Assessments.AssessmentTemplate.DeletePathCondition'), controller.deletePathCondition);
+    router.get('/:id/nodes/:nodeId/paths/:pathId/conditions', auth('Clinical.Assessments.AssessmentTemplate.GetConditionsForPath'), controller.getPathConditionsForPath);
+
+    router.get('/:id/nodes/:nodeId/paths', auth('Clinical.Assessments.AssessmentTemplate.GetNodePaths'), controller.getNodePaths);
+    router.post('/:id/nodes/:nodeId/paths', auth('Clinical.Assessments.AssessmentTemplate.AddPath'), controller.addPath);
+    router.put('/:id/nodes/:nodeId/paths/:pathId', auth('Clinical.Assessments.AssessmentTemplate.UpdatePath'), controller.updatePath);
+    router.get('/:id/nodes/:nodeId/paths/:pathId', auth('Clinical.Assessments.AssessmentTemplate.GetPath'), controller.getPath);
+    router.delete('/:id/nodes/:nodeId/paths/:pathId', auth('Clinical.Assessments.AssessmentTemplate.DeletePath'), controller.deletePath);
+
     router.post('/:id/scoring-conditions/', auth('Clinical.Assessments.AssessmentTemplate.AddScoringCondition'), controller.addScoringCondition);
     router.put('/:id/scoring-conditions/:conditionId', auth('Clinical.Assessments.AssessmentTemplate.UpdateScoringCondition'), controller.updateScoringCondition);
     router.get('/:id/scoring-conditions/:conditionId', auth('Clinical.Assessments.AssessmentTemplate.GetScoringCondition'), controller.getScoringCondition);

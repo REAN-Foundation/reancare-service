@@ -531,11 +531,11 @@ export class Helper {
         const code = generate({
             length    : 24,
             numbers   : true,
-            lowercase : true,
-            uppercase : false,
+            lowercase : false,
+            uppercase : true,
             symbols   : false,
         });
-        return prefix ? prefix + '#' + code : code;
+        return prefix ? prefix + '-' + code : code;
     };
 
     public static convertCamelCaseToPascalCase = (str: string): string => {

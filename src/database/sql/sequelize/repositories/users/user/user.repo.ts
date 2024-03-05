@@ -146,7 +146,7 @@ export class UserRepo implements IUserRepo {
         if (userName != null && typeof userName !== 'undefined') {
             const user = await User.findOne({
                 where : {
-                    UserName : { [Op.like]: '%' + userName + '%' }
+                    UserName : userName
                 },
             });
             const dto = await UserMapper.toDetailsDto(user);

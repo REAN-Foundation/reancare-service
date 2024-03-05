@@ -16,7 +16,6 @@ export const register = (app: express.Application): void => {
     router.get('/by-ages', auth('Statistics.AppStats.GetUsersByAge'), controller.getUsersByAge);
     router.get('/by-marital-statuses', auth('Statistics.AppStats.GetUsersByMaritalStatus'), controller.getUsersByMaritalStatus);
     router.get('/by-device-details', auth('Statistics.AppStats.GetUsersByDeviceDetail'), controller.getUsersByDeviceDetail);
-    router.get('/by-enrollments', auth('Statistics.AppStats.GetUsersByEnrollment'), controller.getUsersByEnrollment);
     router.post('/app-downloads', auth('Statistics.AppStats.UpdateAppDownloadCount'), controller.updateAppDownloadCount);
     router.get('/app-downloads', auth('Statistics.AppStats.GetAppDownlodCount'), controller.getAppDownlodCount);
     router.get('/by-countries', auth('Statistics.AppStats.GetUsersByCountry'), controller.getUsersByCountry);

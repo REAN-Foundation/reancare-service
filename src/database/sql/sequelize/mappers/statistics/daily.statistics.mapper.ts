@@ -1,8 +1,8 @@
 import DailySystemStatistics from '../../models/statistics/daily.system.statistics.model';
 import DailyTenantStatistics from '../../models/statistics/daily.tenant.statistics.model';
-import { 
-    DailySystemStatisticsDto, 
-    DailyTenantStatisticsDto 
+import {
+    DailySystemStatisticsDto,
+    DailyTenantStatisticsDto
 } from '../../../../../domain.types/statistics/daily.statistics/daily.statistics.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +32,7 @@ export class DailyStatisticsMapper {
         const dto: DailyTenantStatisticsDto = {
             id              : stats.id,
             TenantId        : stats.TenantId,
+            ResourceId      : stats.ResourceId,
             ReportDate      : stats.ReportDate,
             ReportTimestamp : stats.ReportTimestamp,
             DashboardStats  : JSON.parse(stats.DashboardStats),

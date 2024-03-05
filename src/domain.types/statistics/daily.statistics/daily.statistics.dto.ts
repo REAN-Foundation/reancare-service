@@ -51,6 +51,7 @@ export interface DailySystemStatisticsDto {
 export interface DailyTenantStatisticsDto {
     id?                              : string;
     TenantId?                        : string;
+    ResourceId?                      : string;
     ReportDate?                      : string;
     ReportTimestamp?                 : Date;
     DashboardStats?                  : string;

@@ -108,18 +108,6 @@ export class StatisticsController {
         }
     };
 
-    getUsersByEnrollment = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            const filters = await this._validator.searchFilter(request);
-            const enrollmentUsers = await this._service.getUsersByEnrollment(filters);
-            const message = 'Enrollment users retrieved successfully!';
-            ResponseHandler.success(request, response,message, 200, {
-                EnrollmentUsers : enrollmentUsers });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     updateAppDownloadCount = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 

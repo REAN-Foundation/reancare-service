@@ -6,6 +6,6 @@ export interface IDatabaseClient {
 
     dropDb(schemaType: DatabaseSchemaType): Promise<boolean>;
 
-    executeQuery(schemaType: DatabaseSchemaType, query: string): Promise<boolean>;
+    execute(schemaType: DatabaseSchemaType, query: string): Promise<boolean>;
 
 }

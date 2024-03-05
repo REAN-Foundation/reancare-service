@@ -135,7 +135,7 @@ export class MeditationRepo implements IMeditationRepo {
             if (updateModel.EndTime != null) {
                 meditation.EndTime = updateModel.EndTime;
             }
-    
+
             await meditation.save();
 
             return await MeditationMapper.toDto(meditation);
@@ -186,7 +186,7 @@ export class MeditationRepo implements IMeditationRepo {
                     Duration       : x.DurationInMins,
                     Unit           : 'mins',
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });
@@ -225,7 +225,7 @@ export class MeditationRepo implements IMeditationRepo {
                     Duration       : x.DurationInMins,
                     Unit           : 'mins',
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });

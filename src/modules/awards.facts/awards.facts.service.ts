@@ -65,7 +65,7 @@ export class AwardsFactsService {
     //#region Task queue
 
     static _q = asyncLib.queue((model: AwardsFact, onCompleted) => {
-                        
+
         //Only if gamification is enabled
         if (ConfigurationManager.GamificationEnabled() === false) {
             return;

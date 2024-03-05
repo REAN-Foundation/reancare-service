@@ -1,5 +1,5 @@
+import { Injector } from '../../../../startup/injector';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
 import { BaseValidator } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -10,7 +10,7 @@ export class StatisticsValidator  extends BaseValidator {
 
     constructor() {
         super();
-        this._userService = Loader.container.resolve(UserService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
 }

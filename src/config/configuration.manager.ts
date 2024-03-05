@@ -25,8 +25,8 @@ export class ConfigurationManager {
 
     public static loadConfigurations = (): void => {
 
-        const configuration = process.env.NODE_ENV === 'local' 
-            || process.env.NODE_ENV === 'test' 
+        const configuration = process.env.NODE_ENV === 'local'
+            || process.env.NODE_ENV === 'test'
             ? localConfiguration : defaultConfiguration;
 
         ConfigurationManager._config = {

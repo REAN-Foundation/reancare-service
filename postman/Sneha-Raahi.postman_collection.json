@@ -86,7 +86,7 @@
 			"description": "User login with username/phone/email and password.\nIn this example, system admin logs in.\n\nSystem admin can perform multiple admin tasks such as - \n1. Add/remove/update api clients.\n2. Renew the API keys for the api clients.\n3. Perform monitoring and admin tasks through selected set of APIs only accessible to system-admin role."
 		},
 		{
-			"name": "Users",
+			"name": "User",
 			"item": [
 				{
 					"name": "Register patient- with phone and password",

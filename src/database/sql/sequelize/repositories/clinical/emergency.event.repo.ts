@@ -56,7 +56,7 @@ export class EmergencyEventRepo implements IEmergencyEventRepo {
                     [Op.lte] : filters.EmergencyDateTo,
                 };
             }
-            
+
             let orderByColum = 'EmergencyDate';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

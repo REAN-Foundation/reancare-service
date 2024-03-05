@@ -152,7 +152,7 @@ export class DrugRepo implements IDrugRepo {
             if (updateModel.OtherInformation != null) {
                 drug.OtherInformation = updateModel.OtherInformation;
             }
-    
+
             await drug.save();
 
             return await DrugMapper.toDto(drug);
@@ -165,7 +165,7 @@ export class DrugRepo implements IDrugRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            
+
             const result = await Drug.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

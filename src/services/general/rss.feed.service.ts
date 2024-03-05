@@ -10,7 +10,7 @@ import { Feed, FeedOptions } from "feed";
 import { Helper } from "../../common/helper";
 import { TimeHelper } from "../../common/time.helper";
 import { FileResourceService } from "./file.resource.service";
-import { Loader } from "../../startup/loader";
+import { Injector } from "../../startup/injector";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
 
@@ -174,7 +174,7 @@ export class RssfeedService {
     };
 
     createFileResource = async (text: string, prefix = 'atom|rss|json', extension = '.atom|.rss|.json') => {
-        const frService = Loader.container.resolve(FileResourceService);
+        const frService = Injector.Container.resolve(FileResourceService);
         const timestamp = TimeHelper.timestamp(new Date());
         const filename = prefix + '_' + timestamp + extension;
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
@@ -185,7 +185,7 @@ export class RssfeedService {
     };
 
     updateFileResource = async (fileResourceId: uuid, text: string) => {
-        const frService = Loader.container.resolve(FileResourceService);
+        const frService = Injector.Container.resolve(FileResourceService);
         const record = await frService.getById(fileResourceId);
         const filename = record.FileName;
         const systemIdentifier = ConfigurationManager.SystemIdentifier();

@@ -37,7 +37,6 @@ export class AllergyRepo implements IAllergyRepo {
         try {
             const allergy = await Allergy.findByPk(id);
             return await AllergyMapper.toDto(allergy);
-            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -96,13 +95,13 @@ export class AllergyRepo implements IAllergyRepo {
             await allergy.save();
 
             return await AllergyMapper.toDto(allergy);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
-    
+
     search = async (filters: AllergySearchFilters): Promise<AllergySearchResults> => {
 
         try {
@@ -126,7 +125,7 @@ export class AllergyRepo implements IAllergyRepo {
             if (filters.Reaction != null) {
                 search.where['Reaction'] = { [Op.like]: '%' + filters.Reaction + '%' };
             }
-            
+
             let orderByColum = 'Allergy';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

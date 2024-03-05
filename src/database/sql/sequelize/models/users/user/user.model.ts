@@ -5,6 +5,7 @@ import {
 import { v4 } from 'uuid';
 import Person from '../../person/person.model';
 import Role from '../../role/role.model';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -46,9 +47,23 @@ export default class User extends Model {
     })
     RoleId: number;
 
-    @Length({ min: 1, max: 10 })
+    @BelongsTo(() => Role)
+    Role: Role;
+
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
     @Column({
-        type      : DataType.STRING(10),
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    TenantId: string;
+
+    @BelongsTo(() =>  Tenant)
+    Tenant:  Tenant;
+
+    @Length({ min: 1, max: 32 })
+    @Column({
+        type      : DataType.STRING(32),
         allowNull : true,
         unique    : true
     })

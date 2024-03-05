@@ -4,7 +4,7 @@ import { Logger } from '../../common/logger';
 import { DatabaseDialect } from '../../domain.types/miscellaneous/system.types';
 import { DatabaseSchemaType, databaseConfig } from '../../common/database.utils/database.config';
 import { DatabaseClient } from '../../common/database.utils/dialect.clients/database.client';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////
 
@@ -41,7 +41,7 @@ export class EHRDbConnector {
 
             Logger.instance().log(`Connecting to EHR Insights database '${config.DatabaseName}' ...`);
 
-            const databaseClient = Loader.container.resolve(DatabaseClient);
+            const databaseClient = Injector.Container.resolve(DatabaseClient);
             await databaseClient.createDb(DatabaseSchemaType.EHRInsights);
 
             await EHRDbConnector._sequelize.authenticate();

@@ -194,7 +194,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     PatientUserId  : x.PatientUserId,
                     Taken          : x.IsTaken,
                     DrugName       : x.DrugName,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
                     RecordDate     : tempDate,
                     RecordTimeZone : currentTimeZone,
                 };
@@ -232,7 +232,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     PatientUserId  : x.PatientUserId,
                     Taken          : x.IsTaken,
                     DrugName       : x.DrugName,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
                     RecordDate     : tempDate,
                     RecordTimeZone : currentTimeZone,
                 };

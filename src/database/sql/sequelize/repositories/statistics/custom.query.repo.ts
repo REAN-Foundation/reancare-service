@@ -16,7 +16,7 @@ import { CustomQueryDto } from '../../../../../domain.types/statistics/custom.qu
 import { CustomQuerySearchResults } from '../../../../../domain.types/statistics/custom.query/custom.query.search.type';
 import { CustomQuerySearchFilters } from '../../../../../domain.types/statistics/custom.query/custom.query.search.type';
 import { CustomQueryMapper } from '../../mappers/statistics/custom.query.mapper';
- 
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 const sequelizeStats = new Sequelize(
@@ -26,7 +26,7 @@ const sequelizeStats = new Sequelize(
         host    : process.env.DB_HOST,
         dialect : process.env.DB_DIALECT  as Dialect,
     });
-    
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 export class CustomQueryRepo implements ICustomQueryRepo {
@@ -55,7 +55,8 @@ export class CustomQueryRepo implements ICustomQueryRepo {
           const [results] = await sequelizeStats.query(entity.Query);
 
           const customQuery = await StatisticsCustomQueries.create(entity);
-    
+          Logger.instance().log(`Query created: ${customQuery.id}`);
+
           if (createModel.Format === 'JSON'){
               const generatedFilePath = await getGeneratedFilePath('.json' );
               const jsonContent = JSON.stringify(results, null, 2);
@@ -174,7 +175,7 @@ export class CustomQueryRepo implements ICustomQueryRepo {
            if (updateModel.UserId != null) {
                query.UserId = updateModel.UserId;
            }
-         
+
            await query.save();
 
            const hasDisallowedKeyword = containsDisallowedKeyword(updateModel.Query);
@@ -182,16 +183,16 @@ export class CustomQueryRepo implements ICustomQueryRepo {
            if (hasDisallowedKeyword) {
                throw new ApiError(404, 'Only read only queries are allowed' );
            }
- 
+
            const [results] = await sequelizeStats.query(updateModel.Query);
-     
+
            if (updateModel.Format === 'JSON'){
                const generatedFilePath = await getGeneratedFilePath('.json' );
                const jsonContent = JSON.stringify(results, null, 2);
                fs.writeFileSync(generatedFilePath, jsonContent);
                return generatedFilePath;
            }
- 
+
            if (updateModel.Format === 'CSV') {
                const generatedFilePath = await getGeneratedFilePath('.csv' );
                const csvWriter = createObjectCsvWriter({
@@ -201,7 +202,7 @@ export class CustomQueryRepo implements ICustomQueryRepo {
                await csvWriter.writeRecords(results);
                return generatedFilePath;
            }
- 
+
            return results;
 
        } catch (error) {

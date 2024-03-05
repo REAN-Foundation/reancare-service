@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { CalorieBalanceController } from './calorie.balance.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,14 +7,13 @@ import { CalorieBalanceController } from './calorie.balance.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new CalorieBalanceController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Wellness.DailyRecords.CalorieBalance.Create'), controller.create);
+    router.get('/search', auth('Wellness.DailyRecords.CalorieBalance.Search'), controller.search);
+    router.get('/:id', auth('Wellness.DailyRecords.CalorieBalance.GetById'), controller.getById);
+    router.put('/:id', auth('Wellness.DailyRecords.CalorieBalance.Update'), controller.update);
+    router.delete('/:id', auth('Wellness.DailyRecords.CalorieBalance.Delete'), controller.delete);
 
     app.use('/api/v1/wellness/daily-records/calorie-balances', router);
 };

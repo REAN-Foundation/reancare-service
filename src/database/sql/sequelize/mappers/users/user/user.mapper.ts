@@ -2,12 +2,13 @@ import User from '../../../models/users/user/user.model';
 import { PersonDetailsDto, PersonDto } from '../../../../../../domain.types/person/person.dto';
 import { UserDetailsDto, UserDto } from '../../../../../../domain.types/users/user/user.dto';
 import Tenant from '../../../models/tenant/tenant.model';
+import Role from '../../../models/role/role.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserMapper {
 
-    static toDetailsDto = (user: User, tenant: Tenant = null, personDto: PersonDetailsDto = null)
+    static toDetailsDto = (user: User, tenant: Tenant = null, personDto: PersonDetailsDto = null, role: Role = null)
         : UserDetailsDto => {
 
         if (user == null){
@@ -18,14 +19,16 @@ export class UserMapper {
             id              : user.id,
             UserName        : user.UserName,
             PersonId        : user.PersonId,
-            TenantId        : tenant?.id,
+            TenantId        : user.TenantId ?? tenant?.id,
+            TenantCode      : tenant?.Code,
+            TenantName      : tenant?.Name,
             Person          : personDto,
             IsTestUser      : user.IsTestUser,
             LastLogin       : user.LastLogin,
             DefaultTimeZone : user.DefaultTimeZone,
             CurrentTimeZone : user.CurrentTimeZone,
             RoleId          : user.RoleId,
-            Role            : null
+            Role            : role ?? null,
         };
         return dto;
     };

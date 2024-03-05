@@ -1,33 +1,26 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
+import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import { LabRecordValidator } from './lab.record.validator';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../common/logger';
-import { EHRLabService } from '../../../modules/ehr.analytics/ehr.lab.service';
+import { Injector } from '../../../startup/injector';
+import { EHRLabService } from '../../../modules/ehr.analytics/ehr.services/ehr.lab.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class LabRecordController extends BaseController {
+export class LabRecordController {
 
     //#region member variables and constructors
-    _service: LabRecordService = null;
+
+    _service: LabRecordService = Injector.Container.resolve(LabRecordService);
+
+    _userService: UserService = Injector.Container.resolve(UserService);
+
+    _ehrLabService: EHRLabService = Injector.Container.resolve(EHRLabService);
 
     _validator: LabRecordValidator = new LabRecordValidator();
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _ehrLabService: EHRLabService = new EHRLabService();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(LabRecordService);
-        this._ehrLabService = Loader.container.resolve(EHRLabService);
-    }
 
     //#endregion
 
@@ -36,22 +29,12 @@ export class LabRecordController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecord.Create', request, response);
-
             const model = await this._validator.create(request);
             const labRecord = await this._service.create(model);
             if (labRecord == null) {
                 throw new ApiError(400, 'Cannot create lab record!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(labRecord.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, labRecord.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${labRecord.PatientUserId}`);
-            }
+            await this._ehrLabService.addEHRLabRecordForAppNames(labRecord);
 
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record created successfully!`, 201, {
                 LabRecord : labRecord,
@@ -63,7 +46,6 @@ export class LabRecordController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('LabRecord.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -81,8 +63,6 @@ export class LabRecordController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -103,8 +83,6 @@ export class LabRecordController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecord.Update', request, response);
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -117,15 +95,8 @@ export class LabRecordController extends BaseController {
                 throw new ApiError(400, 'Unable to update lab record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrLabService.addEHRLabRecordForAppNames(updated);
+            
             ResponseHandler.success(request, response, `${updated.DisplayName} record updated successfully!`, 200, {
                 LabRecord : updated,
             });
@@ -136,8 +107,6 @@ export class LabRecordController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

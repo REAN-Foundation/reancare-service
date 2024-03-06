@@ -1,5 +1,4 @@
-import { Gender, uuid } from "../../../domain.types/miscellaneous/system.types";
-import { DataTypes, EHRRecordTypes } from "./ehr.record.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 export interface EHRMedicationDomainModel {
     AppName?          : string;

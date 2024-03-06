@@ -39,7 +39,7 @@ export class VolunteerValidator {
             SelectedBridgeId     : request.body.SelectedBridgeId ?? null,
             SelectedBloodGroup   : request.body.SelectedBloodGroup ?? null,
             SelectedPhoneNumber  : request.body.SelectedPhoneNumber ?? null,
-            LastDonationId : request.body.LastDonationId ?? null,
+            LastDonationId       : request.body.LastDonationId ?? null,
             LastDonationDate     : request.body.LastDonationDate ?? null,
             IsAvailable          : request.body.IsAvailable ?? false,
             AddressId            : request.body.AddressId,

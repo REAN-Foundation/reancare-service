@@ -50,7 +50,6 @@ import { BodyWeightDto } from "../../../../domain.types/clinical/biometrics/body
 import { PulseDto } from "../../../../domain.types/clinical/biometrics/pulse/pulse.dto";
 import { EmergencyEventDto } from "../../../../domain.types/clinical/emergency.event/emergency.event.dto";
 import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
-import { MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationDto } from "../../../../domain.types/clinical/medication/medication/medication.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

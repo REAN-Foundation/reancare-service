@@ -12,7 +12,6 @@ import { MedicationConsumptionValidator } from './medication.consumption.validat
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { TimeHelper } from '../../../../common/time.helper';
-import { PatientService } from '../../../../services/users/patient/patient.service';
 import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////

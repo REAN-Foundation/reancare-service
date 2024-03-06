@@ -210,8 +210,7 @@ export class PatientController extends BaseUserController {
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
-            const updatedHealthProfile =
-                await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
+            await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
@@ -227,10 +226,10 @@ export class PatientController extends BaseUserController {
             }
             await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
             const addresses = await this._personService.getAddresses(personDomainModel.id);
-            let location = null;
-            if (addresses.length >= 1) {
-                location = addresses[0].Location;
-            }
+            // let location = null;
+            // if (addresses.length >= 1) {
+            //     location = addresses[0].Location;
+            // }
 
             await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient);
 

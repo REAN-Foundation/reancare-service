@@ -183,5 +183,4 @@ export class BloodGlucoseController {
 
     //#endregion
 
-    //#region Privates
 }

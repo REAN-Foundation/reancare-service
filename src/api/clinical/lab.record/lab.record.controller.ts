@@ -131,4 +131,5 @@ export class LabRecordController {
     };
 
     //#endregion
+    
 }

@@ -135,7 +135,7 @@ export const addTenantStats = (document, model, y) => {
     return y;
 };
 
-const setPageNumbers = (document: PDFKit.PDFDocument) => {
+export const setPageNumbers = (document: PDFKit.PDFDocument) => {
     const pageRange: {
         start: number,
         count: number
@@ -147,18 +147,18 @@ const setPageNumbers = (document: PDFKit.PDFDocument) => {
     document.flushPages();
 };
 
-const addStatsPage = (document: PDFKit.PDFDocument, pdfModel: any, addToNewPage: boolean) => {
+export const addStatsPage = (document: PDFKit.PDFDocument, pdfModel: any, addToNewPage: boolean) => {
     var y = addTop(document, pdfModel, null, addToNewPage);
     addFooter(document, "https://www.heart.org/", pdfModel.FooterImagePath);
     return y;
 };
 
-const addUserStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
+export const addUserStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
     y = addUserStatsTable(model, document, y);
     return y;
 };
 
-const addUserStatsTable = (model: any, document: PDFKit.PDFDocument, y: any) => {
+export const addUserStatsTable = (model: any, document: PDFKit.PDFDocument, y: any) => {
     const sectionTitle = `User Statistics`;
     y = isPageEnd(y, document, 'SectionTitle');
     y = addSectionTitle(document, y, sectionTitle);
@@ -168,7 +168,7 @@ const addUserStatsTable = (model: any, document: PDFKit.PDFDocument, y: any) => 
     return y;
 };
 
-const addSectionTitle = (document: PDFKit.PDFDocument, y: any, pageTitle: string) => {
+export const addSectionTitle = (document: PDFKit.PDFDocument, y: any, pageTitle: string) => {
     y = y + SpaceBeforeSectionTitle - 14;
 
     document
@@ -199,7 +199,7 @@ const addSectionTitle = (document: PDFKit.PDFDocument, y: any, pageTitle: string
     return y;
 };
 
-const addSummary = (model, document, y, pageNumber) => {
+export const addSummary = (model, document, y, pageNumber) => {
     let vals = [];
     const RowData = composeRowsData(model, pageNumber);
     vals = [[true, 'Sr.No', 'Title', 'Count'], ...RowData];
@@ -258,7 +258,8 @@ const isPageEnd = (y: number, document: PDFKit.PDFDocument, head: string) => {
     }
     return y;
 };
-const composeRowsData = (model, pageNumber: number) => {
+
+const composeRowsData = (model) => {
     const rows = [];
     const pdfData: any[] = generatePDFData(model);
     let sequence = 1;

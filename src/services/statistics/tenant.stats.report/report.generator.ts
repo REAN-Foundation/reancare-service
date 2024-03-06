@@ -157,7 +157,8 @@ const isPageEnd = (y: number, document: PDFKit.PDFDocument, head: string) => {
     }
     return y;
 };
-const composeRowsData = (model, pageNumber: number) => {
+
+const composeRowsData = (model) => {
     const rows = [];
     const pdfData: any[] = generatePDFData(model);
     let sequence = 1;

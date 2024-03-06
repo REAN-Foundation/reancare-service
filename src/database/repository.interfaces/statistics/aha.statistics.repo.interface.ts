@@ -1,4 +1,4 @@
-import { AppName, CareplanCode, HealthSystem } from "../../../domain.types/statistics/aha/aha.type";
+import { CareplanCode, HealthSystem } from "../../../domain.types/statistics/aha/aha.type";
 
 ////////////////////////////////////////////////////////////////////
 export interface IAhaStatisticsRepo {

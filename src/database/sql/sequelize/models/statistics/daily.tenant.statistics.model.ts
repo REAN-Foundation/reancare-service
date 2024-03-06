@@ -25,7 +25,6 @@ export default class DailyTenantStatistics extends Model {
     })
     id: string;
 
-    
     @IsUUID(4)
     @ForeignKey(() => Tenant)
     @Column({

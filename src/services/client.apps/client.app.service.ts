@@ -14,6 +14,7 @@ import { Logger } from "../../common/logger";
 
 @injectable()
 export class ClientAppService {
+    
     constructor(@inject('IClientAppRepo') private _clientAppRepo: IClientAppRepo) {}
 
     create = async (model: ClientAppDomainModel): Promise<ClientAppDto> => {
@@ -99,14 +100,14 @@ export class ClientAppService {
                 let client = await this._clientAppRepo.getByCode(c.ClientCode);
                 if (client == null) {
                     const model: ClientAppDomainModel = {
-                        ClientName: c['ClientName'],
-                        ClientCode: c['ClientCode'],
-                        IsPrivileged: c['IsPrivileged'],
-                        Email: c['Email'],
-                        Password: c['Password'],
-                        ValidFrom: new Date(),
-                        ValidTill: new Date(2040, 12, 31),
-                        ApiKey: c['ApiKey'],
+                        ClientName   : c['ClientName'],
+                        ClientCode   : c['ClientCode'],
+                        IsPrivileged : c['IsPrivileged'],
+                        Email        : c['Email'],
+                        Password     : c['Password'],
+                        ValidFrom    : new Date(),
+                        ValidTill    : new Date(2040, 12, 31),
+                        ApiKey       : c['ApiKey'],
                     };
                     client = await this._clientAppRepo.create(model);
                     var str = JSON.stringify(client, null, '  ');
@@ -147,13 +148,13 @@ export class ClientAppService {
 
     private getClientCodePostfix() {
         return generate({
-            length: 8,
-            numbers: false,
-            lowercase: false,
-            uppercase: true,
-            symbols: false,
-            exclude: ',-@#$%^&*()',
+            length    : 8,
+            numbers   : false,
+            lowercase : false,
+            uppercase : true,
+            symbols   : false,
+            exclude   : ',-@#$%^&*()',
         });
     }
-}
 
+}

@@ -15,7 +15,6 @@ import UserTask from '../../../models/users/user/user.task.model';
 import Patient from '../../../models/users/patient/patient.model';
 import User from '../../../models/users/user/user.model';
 import { HelperRepo } from '../../common/helper.repo';
-import { id_ID } from '@faker-js/faker';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -161,7 +160,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         try {
             const consumptions = await MedicationConsumption.findAll({
                 where : {
-                    MedicationId   : id,
+                    MedicationId : id,
                 }
             });
             var dtos = consumptions.map(x => MedicationConsumptionMapper.toDetailsDto(x));

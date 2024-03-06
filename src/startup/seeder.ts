@@ -77,7 +77,8 @@ export class Seeder {
 
     _symptomTypeService: SymptomTypeService = Injector.Container.resolve(SymptomTypeService);
 
-    _symptomAssessmentTemplateService: SymptomAssessmentTemplateService = Injector.Container.resolve(SymptomAssessmentTemplateService);
+    _symptomAssessmentTemplateService: SymptomAssessmentTemplateService
+        = Injector.Container.resolve(SymptomAssessmentTemplateService);
 
     _fileResourceService: FileResourceService = Injector.Container.resolve(FileResourceService);
 

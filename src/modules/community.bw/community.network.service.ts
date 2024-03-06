@@ -51,10 +51,10 @@ export class CommunityNetworkService {
         @inject('IBridgeRepo') private _patientDonorsRepo: IBridgeRepo,
         @inject('IDonationRepo') private _donationRecordRepo: IDonationRepo,
         @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
-    ) { 
+    ) {
         this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
         this._volunteerService = Injector.Container.resolve(VolunteerService);
-        this._patientService = Injector.Container.resolve(PatientService); 
+        this._patientService = Injector.Container.resolve(PatientService);
     }
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {

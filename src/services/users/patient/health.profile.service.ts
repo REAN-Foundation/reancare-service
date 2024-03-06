@@ -5,7 +5,6 @@ import { HealthProfileDomainModel } from '../../../domain.types/users/patient/he
 import { HealthProfileDto } from '../../../domain.types/users/patient/health.profile/health.profile.dto';
 import { IBridgeRepo } from "../../../database/repository.interfaces/assorted/blood.donation/bridge.repo.interface";
 import { IPatientRepo } from "../../../database/repository.interfaces/users/patient/patient.repo.interface";
-import { TimeHelper } from "../../../common/time.helper";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

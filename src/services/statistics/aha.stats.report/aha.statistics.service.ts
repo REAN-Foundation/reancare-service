@@ -144,7 +144,7 @@ export class AhaStatisticsService {
         }
     };
 
-    private getEmailDetails = async (filePath: string, fileName: string) => {
+    private getEmailDetails = async (_filePath: string, _fileName: string) => {
         const emailService = new EmailService();
         // var body = await emailService.getTemplate('AHA.user.stats.template.html');
         var body = 'Hi This is test mail, Dont reply';

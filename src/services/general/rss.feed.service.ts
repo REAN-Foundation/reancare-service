@@ -10,9 +10,9 @@ import { Feed, FeedOptions } from "feed";
 import { Helper } from "../../common/helper";
 import { TimeHelper } from "../../common/time.helper";
 import { FileResourceService } from "./file.resource.service";
+import { Injector } from "../../startup/injector";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
-import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

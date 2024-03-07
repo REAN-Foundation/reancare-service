@@ -1,7 +1,7 @@
 export interface BloodGlucoseDto {
     id?               : string;
     EhrId?            : string;
-    PatientUserId     : string;
+    PatientUserId?    : string;
     TerraSummaryId?   : string;
     Provider?         : string;
     BloodGlucose      : number;

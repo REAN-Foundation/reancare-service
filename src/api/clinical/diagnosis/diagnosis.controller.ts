@@ -1,30 +1,23 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { DiagnosisValidator } from './diagnosis.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DiagnosisController extends BaseController {
+export class DiagnosisController {
 
     //#region member variables and constructors
 
-    _service: DiagnosisService = null;
+    _service: DiagnosisService = Injector.Container.resolve(DiagnosisService);
 
     _validator: DiagnosisValidator = new DiagnosisValidator();
 
-    _userService: UserService = null;
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(DiagnosisService);
-        this._userService = Injector.Container.resolve(UserService);
-    }
+    _userService: UserService = Injector.Container.resolve(UserService);
 
     //#endregion
 
@@ -32,8 +25,6 @@ export class DiagnosisController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Diagnosis.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -59,7 +50,6 @@ export class DiagnosisController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Diagnosis.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -78,7 +68,6 @@ export class DiagnosisController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Diagnosis.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -98,7 +87,6 @@ export class DiagnosisController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Diagnosis.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -123,7 +111,6 @@ export class DiagnosisController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Diagnosis.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingUser = await this._service.getById(id);

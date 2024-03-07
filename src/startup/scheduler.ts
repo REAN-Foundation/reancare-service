@@ -3,15 +3,15 @@ import * as CronSchedules from '../../seed.data/cron.schedules.json';
 import { Logger } from '../common/logger';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
 import { FileResourceService } from '../services/general/file.resource.service';
+import { Injector } from './injector';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
 import { CommunityNetworkService } from '../modules/community.bw/community.network.service';
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
 import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
 import { UserService } from '../services/users/user/user.service';
-import { StatisticsService } from '../services/statistics/statistics.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
-import { Injector } from './injector';
+import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -78,8 +78,9 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['DailyStatistics'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: creating overall statistics...');
-                var service = Injector.Container.resolve(StatisticsService);
-                await service.createDailyStatistics();
+                const dailyStatsService = Injector.Container.resolve(DailyStatisticsService);
+                await dailyStatsService.generateDailySystemStats();
+                await dailyStatsService.generateDailyStatsForAllTenants();
             })();
         });
     };

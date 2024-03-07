@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { AllergyController } from './allergy.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,18 +7,17 @@ import { AllergyController } from './allergy.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new AllergyController();
 
-    router.get('/allergen-categories', authenticator.authenticateClient, controller.getAllergenCategories);
-    router.get('/allergen-exposure-routes', authenticator.authenticateClient, controller.getAllergenExposureRoutes);
+    router.get('/allergen-categories', auth('Clinical.Allergy.GetAllergenCategories', true), controller.getAllergenCategories);
+    router.get('/allergen-exposure-routes', auth('Clinical.Allergy.GetAllergenExposureRoutes', true), controller.getAllergenExposureRoutes);
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getForPatient);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Clinical.Allergy.Create'), controller.create);
+    router.get('/for-patient/:patientUserId', auth('Clinical.Allergy.GetForPatient'), controller.getForPatient);
+    router.get('/search', auth('Clinical.Allergy.Search'), controller.search);
+    router.get('/:id', auth('Clinical.Allergy.GetById'), controller.getById);
+    router.put('/:id', auth('Clinical.Allergy.Update'), controller.update);
+    router.delete('/:id', auth('Clinical.Allergy.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/allergies', router);
 };

@@ -7,7 +7,7 @@ import { AddressService } from '../../services/general/address.service';
 import { PersonService } from '../../services/person/person.service';
 import { RoleService } from '../../services/role/role.service';
 import { UserService } from '../../services/users/user/user.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { PatientDomainModel } from '../../domain.types/users/patient/patient/patient.domain.model';
 import { PatientDetailsDto } from '../../domain.types/users/patient/patient/patient.dto';
 import { UserDetailsDto } from '../../domain.types/users/user/user.dto';
@@ -16,7 +16,6 @@ import { RoleDto } from '../../domain.types/role/role.dto';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { UserDomainModel } from '../../domain.types/users/user/user.domain.model';
-import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,34 +1,27 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { PulseService } from '../../../../services/clinical/biometrics/pulse.service';
+import { Injector } from '../../../../startup/injector';
 import { PulseValidator } from './pulse.validator';
-import { BaseController } from '../../../base.controller';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
-import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PulseController extends BaseController{
+export class PulseController{
 
     //#region member variables and constructors
 
-    _service: PulseService = null;
+    _service: PulseService = Injector.Container.resolve(PulseService);
 
     _validator: PulseValidator = new PulseValidator();
 
-    _ehrVitalService: EHRVitalService = new EHRVitalService();
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(PulseService);
-        this._ehrVitalService = Injector.Container.resolve(EHRVitalService);
-    }
+    _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
 
     //#endregion
 
@@ -36,8 +29,6 @@ export class PulseController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.Pulse.Create', request, response);
 
             const model = await this._validator.create(request);
             const pulse = await this._service.create(model);
@@ -65,7 +56,7 @@ export class PulseController extends BaseController{
                     },
                     RecordId       : pulse.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -79,8 +70,6 @@ export class PulseController extends BaseController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.Pulse.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const pulse = await this._service.getById(id);
@@ -98,8 +87,6 @@ export class PulseController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.Pulse.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -121,8 +108,6 @@ export class PulseController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.Pulse.Update', request, response);
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -155,7 +140,7 @@ export class PulseController extends BaseController{
                     },
                     RecordId       : updated.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -169,8 +154,6 @@ export class PulseController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.Pulse.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

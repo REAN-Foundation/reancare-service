@@ -1,17 +1,15 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { BaseController } from '../../../base.controller';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { Injector } from '../../../../startup/injector';
 import { UserService } from '../../../../services/users/user/user.service';
 import { HealthPriorityValidator } from './health.priority.validator';
 import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthPriorityController extends BaseController {
+export class HealthPriorityController {
 
     //#region member variables and constructors
     _service: HealthPriorityService = null;
@@ -21,7 +19,6 @@ export class HealthPriorityController extends BaseController {
     _validator: HealthPriorityValidator = new HealthPriorityValidator();
 
     constructor() {
-        super();
         this._service = Injector.Container.resolve(HealthPriorityService);
         this._userService = Injector.Container.resolve(UserService);
     }
@@ -32,8 +29,6 @@ export class HealthPriorityController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthPriority.Create', request, response);
 
             const model = await this._validator.create(request);
             const healthPriority = await this._service.create(model);
@@ -51,7 +46,6 @@ export class HealthPriorityController extends BaseController {
 
     getPatientHealthPriorities = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('HealthPriority.getPatientHealthPriorities', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -72,8 +66,6 @@ export class HealthPriorityController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HealthPriority.Search', request, response);
-
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -92,8 +84,6 @@ export class HealthPriorityController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthPriority.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -117,8 +107,6 @@ export class HealthPriorityController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthPriority.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

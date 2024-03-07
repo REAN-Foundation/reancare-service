@@ -1,20 +1,19 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BloodGlucoseService } from '../../../../services/clinical/biometrics/blood.glucose.service';
+import { Injector } from '../../../../startup/injector';
 import { BloodGlucoseValidator } from './blood.glucose.validator';
-import { BaseController } from '../../../base.controller';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
-import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodGlucoseController extends BaseController {
+export class BloodGlucoseController {
 
     //#region member variables and constructors
     _service: BloodGlucoseService = Injector.Container.resolve(BloodGlucoseService);
@@ -23,17 +22,12 @@ export class BloodGlucoseController extends BaseController {
 
     _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
 
-    constructor() {
-        super();
-    }
-
     //#endregion
 
     //#region Action methods
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Biometrics.BloodGlucose.Create', request, response);
 
             const model = await this._validator.create(request);
 
@@ -63,7 +57,7 @@ export class BloodGlucoseController extends BaseController {
                     },
                     RecordId       : bloodGlucose.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -77,7 +71,6 @@ export class BloodGlucoseController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Biometrics.BloodGlucose.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -96,7 +89,6 @@ export class BloodGlucoseController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Biometrics.BloodGlucose.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -119,7 +111,6 @@ export class BloodGlucoseController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Biometrics.BloodGlucose.Update', request, response);
 
             const model = await this._validator.update(request);
 
@@ -153,7 +144,7 @@ export class BloodGlucoseController extends BaseController {
                     },
                     RecordId       : updated.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -167,7 +158,6 @@ export class BloodGlucoseController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Biometrics.BloodGlucose.Delete', request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -193,5 +183,4 @@ export class BloodGlucoseController extends BaseController {
 
     //#endregion
 
-    //#region Privates
 }

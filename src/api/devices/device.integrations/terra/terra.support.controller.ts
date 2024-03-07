@@ -1,13 +1,12 @@
 import { Logger } from '../../../../common/logger';
 import { TeraWebhookValidator } from '../../../webhooks/providers/terra/terra.webhook.validator';
 import { TeraWebhookService } from '../../../../services/webhook/wearable.webhook.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { TeraWebhookActivityService } from '../../../../services/webhook/wearable.webhook.activity.service';
 import Terra from 'terra-api';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { WearableDeviceDetailsService } from '../../../../services/webhook/wearable.device.details.service';
-import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

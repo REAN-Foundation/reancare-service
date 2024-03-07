@@ -1,19 +1,17 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { BaseController } from '../../../base.controller';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { Injector } from '../../../../startup/injector';
 import { UserService } from '../../../../services/users/user/user.service';
 import { ActionPlanValidator } from './action.plan.validator';
 import { ActionPlanService } from '../../../../services/users/patient/action.plan.service';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { GoalService } from '../../../../services/users/patient/goal.service';
 import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
-import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ActionPlanController extends BaseController {
+export class ActionPlanController {
 
     //#region member variables and constructors
     _service: ActionPlanService = null;
@@ -27,7 +25,6 @@ export class ActionPlanController extends BaseController {
     _validator: ActionPlanValidator = new ActionPlanValidator();
 
     constructor() {
-        super();
         this._service = Injector.Container.resolve(ActionPlanService);
         this._userService = Injector.Container.resolve(UserService);
         this._goalService = Injector.Container.resolve(GoalService);
@@ -40,8 +37,6 @@ export class ActionPlanController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('ActionPlan.Create', request, response);
 
             const model = await this._validator.create(request);
             const actionPlan = await this._service.create(model);
@@ -59,7 +54,6 @@ export class ActionPlanController extends BaseController {
 
     getActionPlans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('ActionPlan.GetActionPlans', request, response);
 
             const goalId: uuid = await this._validator.getParamUuid(request, 'goalId');
 
@@ -79,7 +73,6 @@ export class ActionPlanController extends BaseController {
 
     getSelectedActionPlans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('ActionPlan.GetSelectedActionPlans', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -99,8 +92,6 @@ export class ActionPlanController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('ActionPlan.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -122,8 +113,6 @@ export class ActionPlanController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('ActionPlan.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -148,8 +137,6 @@ export class ActionPlanController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('ActionPlan.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

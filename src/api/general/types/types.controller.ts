@@ -1,10 +1,8 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, SeverityList, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { TypesService } from '../../../services/general/types.service';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
 import { AwardsFactsService } from '../../../modules/awards.facts/awards.facts.service';
 import { ReminderTypeList, RepeatAfterEveryUnitList } from '../../../domain.types/general/reminder/reminder.domain.model';
 import { TypesValidator } from './types.validator';
@@ -13,7 +11,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class TypesController extends BaseController {
+export class TypesController {
 
     //#region member variables and constructors
 
@@ -22,7 +20,6 @@ export class TypesController extends BaseController {
     _validator = new TypesValidator();
 
     constructor() {
-        super();
         this._service = Injector.Container.resolve(TypesService);
     }
 
@@ -32,7 +29,6 @@ export class TypesController extends BaseController {
 
     getPersonRoleTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Types.GetPersonRoleTypes', request, response, false);
 
             const types = await this._service.getPersonRoleTypes();
             if (types === null || types.length === 0) {
@@ -50,7 +46,6 @@ export class TypesController extends BaseController {
 
     getOrganizationTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Types.GetOrganizationTypes', request, response, false);
 
             const types = await this._service.getOrganizationTypes();
             if (types === null || types.length === 0) {
@@ -69,8 +64,6 @@ export class TypesController extends BaseController {
     getGenderTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Types.GetGenderTypes', request, response, false);
-
             const types = await this._service.getGenderTypes();
             if (types === null || types.length === 0) {
                 throw new ApiError(400, 'Cannot get gender types!');
@@ -88,8 +81,6 @@ export class TypesController extends BaseController {
     getBloodGroups = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Types.GetBloodGroups', request, response, false);
-
             ResponseHandler.success(request, response, 'Blood group types retrieved successfully!', 200, {
                 BloodGroups : BloodGroupList,
             });
@@ -100,8 +91,6 @@ export class TypesController extends BaseController {
 
     getRaceTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Types.GetRaceTypes', request, response, false);
 
             ResponseHandler.success(request, response, 'Race types retrieved successfully!', 200, {
                 RaceTypes : RaceTypeList,
@@ -114,8 +103,6 @@ export class TypesController extends BaseController {
     getEthnicityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Types.GetEthnicityTypes', request, response, false);
-
             ResponseHandler.success(request, response, 'Ethnicity types retrieved successfully!', 200, {
                 EthnicityTypes : EthnicityTypeList,
             });
@@ -126,8 +113,6 @@ export class TypesController extends BaseController {
 
     getMaritalStatuses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Types.GetMaritalStatuses', request, response, false);
 
             ResponseHandler.success(request, response, 'Marital status types retrieved successfully!', 200, {
                 MaritalStatuses : MaritalStatusList,
@@ -141,8 +126,6 @@ export class TypesController extends BaseController {
     getSeverities = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Types.GetSeverities', request, response, false);
-
             ResponseHandler.success(request, response, 'Severity types retrieved successfully!', 200, {
                 Severities : SeverityList,
             });
@@ -154,7 +137,6 @@ export class TypesController extends BaseController {
 
     getPriorityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('HealthPriority.GetPriorityTypes', request, response, false);
 
             const tags : string = request.query.tags as string ?? null;
             const priorityTypes = await this._service.getPriorityTypes(tags);
@@ -173,7 +155,6 @@ export class TypesController extends BaseController {
 
     getLabRecordTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Types.LabRecords', request, response, false);
 
             const displayName : string = request.query.displayName as string ?? null;
             const labRecordTypes = await this._service.getLabRecordTypes(displayName);
@@ -192,7 +173,6 @@ export class TypesController extends BaseController {
 
     getGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Types.GroupActivityTypes', request, response, false);
             const groupActivityTypes = AwardsFactsService._groupActivityTypes;
             ResponseHandler.success(request, response, 'Group activity types successfully!', 200, {
                 GroupActivityTypes : groupActivityTypes,
@@ -204,7 +184,6 @@ export class TypesController extends BaseController {
 
     getReminderTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Types.ReminderTypes', request, response, false);
             ResponseHandler.success(request, response, 'Reminder types successfully!', 200, {
                 ReminderTypes : ReminderTypeList,
             });
@@ -215,7 +194,6 @@ export class TypesController extends BaseController {
 
     getReminderRepeatAfterEveryTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Types.ReminderTypes', request, response, false);
             ResponseHandler.success(request, response, 'Reminder types successfully!', 200, {
                 RepeatAfterEveryUnitTypes : RepeatAfterEveryUnitList,
             });
@@ -226,7 +204,6 @@ export class TypesController extends BaseController {
 
     getQueryResponseTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Types.GetQueryResponseTypes', request, response, false);
 
             const types = await this._service.getQueryResponseTypes();
             if (types === null || types.length === 0) {
@@ -244,7 +221,6 @@ export class TypesController extends BaseController {
 
     getUserEngagementCategories = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Types.GetUserEngagementCategories', request, response, false);
             ResponseHandler.success(request, response, 'User engagement categories retrieved successfully!', 200, {
                 UserEngagementCategories : UserEngagementCategoryList,
             });
@@ -256,8 +232,6 @@ export class TypesController extends BaseController {
     // Priority type
     createPriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthPriorityType.Create', request, response);
 
             const domainModel = await this._validator.createPriorityType(request);
             const priorityType = await this._service.createPriorityType(domainModel);
@@ -277,8 +251,6 @@ export class TypesController extends BaseController {
     getPriorityTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HealthPriorityType.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const priorityType = await this._service.getPriorityTypeById(id);
             if (priorityType == null) {
@@ -295,8 +267,6 @@ export class TypesController extends BaseController {
 
     updatePriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthPriorityType.Update', request, response);
 
             const domainModel = await this._validator.updatePriorityType(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -320,8 +290,6 @@ export class TypesController extends BaseController {
 
     deletePriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthPriorityType.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getPriorityTypeById(id);
@@ -347,8 +315,6 @@ export class TypesController extends BaseController {
     createRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('RoleType.Create', request, response);
-
             const domainModel = await this._validator.createRoleType(request);
             const roleType = await this._service.createRoleType(domainModel);
             if (roleType  == null) {
@@ -367,8 +333,6 @@ export class TypesController extends BaseController {
     getRoleTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('RoleType.GetById', request, response);
-
             const id:number = parseInt(request.params.id);
             const roleType = await this._service.getRoleTypeById(id);
             if (roleType == null) {
@@ -385,8 +349,6 @@ export class TypesController extends BaseController {
 
     updateRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('RoleType.Update', request, response);
 
             const domainModel = await this._validator.updateRoleType(request);
             const id:number = parseInt(request.params.id);
@@ -410,8 +372,6 @@ export class TypesController extends BaseController {
 
     deleteRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('RoleType.Delete', request, response);
 
             const id:number = parseInt(request.params.id);
             const existingRecord = await this._service.getRoleTypeById(id);
@@ -437,8 +397,6 @@ export class TypesController extends BaseController {
     createLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecordType.Create', request, response);
-
             const model = await this._validator.createLabRecordType(request);
             const labRecordType = await this._service.createLabRecordType(model);
             if (labRecordType == null) {
@@ -456,8 +414,6 @@ export class TypesController extends BaseController {
     getLabRecordTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecordType.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const labRecordType = await this._service.getLabRecordTypeById(id);
             if (labRecordType == null) {
@@ -474,8 +430,6 @@ export class TypesController extends BaseController {
 
     updateLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecordType.Update', request, response);
 
             const domainModel = await this._validator.updateLabRecordType(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -499,8 +453,6 @@ export class TypesController extends BaseController {
 
     deleteLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecordType.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getLabRecordTypeById(id);
@@ -526,8 +478,6 @@ export class TypesController extends BaseController {
     createGoalType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('GoalType.Create', request, response);
-
             const model = await this._validator.createGoalType(request);
             const goalType = await this._service.createGoalType(model);
             if (goalType == null) {
@@ -545,8 +495,6 @@ export class TypesController extends BaseController {
     getGoalTypeById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('GoalType.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const goalType = await this._service.getGoalTypeById(id);
             if (goalType == null) {
@@ -563,7 +511,6 @@ export class TypesController extends BaseController {
 
     getGoalTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('GoalType.GetGoalTypes', request, response, false);
 
             const tags : string = request.query.tags as string ?? null;
             const goalTypes = await this._service.getGoalTypes(tags);
@@ -574,7 +521,7 @@ export class TypesController extends BaseController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} goal types retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 GoalTypes : goalTypes ,
             });
@@ -586,8 +533,6 @@ export class TypesController extends BaseController {
 
     updateGoalType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('GoalType.Update', request, response);
 
             const domainModel = await this._validator.updateGoalType(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -611,8 +556,6 @@ export class TypesController extends BaseController {
 
     deleteGoalType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('GoalType.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getGoalTypeById(id);

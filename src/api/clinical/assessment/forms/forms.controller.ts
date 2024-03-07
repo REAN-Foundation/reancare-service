@@ -1,7 +1,7 @@
 import express from 'express';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { FormDto } from '../../../../domain.types/clinical/assessment/form.types';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ThirdpartyApiCredentialsDto } from '../../../../domain.types/thirdparty/thirdparty.api.credentials';
@@ -9,20 +9,19 @@ import { AssessmentService } from '../../../../services/clinical/assessment/asse
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { FormsService } from '../../../../services/clinical/assessment/forms.service';
 import { ThirdpartyApiService } from '../../../../services/general/thirdparty.api.service';
+import { Injector } from '../../../../startup/injector';
 import { FormsValidator } from './forms.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
-import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { PatientDetailsDto } from '../../../../domain.types/users/patient/patient/patient.dto';
 import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
 import { UserService } from '../../../../services/users/user/user.service';
 import { PersonService } from '../../../../services/person/person.service';
 import { UserHelper } from '../../../users/user.helper';
-import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FormsController extends BaseController {
+export class FormsController {
 
     //#region member variables and constructors
 
@@ -44,10 +43,6 @@ export class FormsController extends BaseController {
 
     _userHelper: UserHelper = new UserHelper();
 
-    constructor() {
-        super();
-    }
-
     //#endregion
 
     //#region Action methods
@@ -55,7 +50,6 @@ export class FormsController extends BaseController {
     connect = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Forms.Connect', request, response);
             var connectionModel = await this._validator.connect(request);
 
             const provider = connectionModel.Provider;
@@ -98,8 +92,6 @@ export class FormsController extends BaseController {
     getFormsList = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Forms.GetFormsList', request, response);
-
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;
 
@@ -134,8 +126,6 @@ export class FormsController extends BaseController {
     importFormAsAssessmentTemplate = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Forms.ImportFormAsAssessmentTemplate', request, response);
-
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;
             const providerFormId = request.params.providerFormId;
@@ -169,8 +159,6 @@ export class FormsController extends BaseController {
 
     importFormSubmissions = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Forms.ImportFormSubmissions', request, response);
 
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;

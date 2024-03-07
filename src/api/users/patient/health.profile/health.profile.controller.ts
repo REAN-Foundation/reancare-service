@@ -1,39 +1,31 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../../domain.types/users/patient/health.profile/health.profile.dto';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
+import { Injector } from '../../../../startup/injector';
 import { HealthProfileValidator } from './health.profile.validator';
-import { BaseController } from '../../../base.controller';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
-import { Injector } from '../../../../startup/injector';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthProfileController extends BaseController {
+export class HealthProfileController {
 
     //#region member variables and constructors
 
-    _service: HealthProfileService = null;
+    _service: HealthProfileService = Injector.Container.resolve(HealthProfileService);
 
-    _patientService: PatientService = null;
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
 
-    _userDeviceDetailsService: UserDeviceDetailsService = null;
+    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
     _validator: HealthProfileValidator = new HealthProfileValidator();
 
     _ehrPatientService: EHRPatientService = Injector.Container.resolve(EHRPatientService);
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(HealthProfileService);
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
-    }
 
     //#endregion
 
@@ -41,8 +33,6 @@ export class HealthProfileController extends BaseController {
 
     getByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthProfile.GetByPatientUserId', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
@@ -62,8 +52,6 @@ export class HealthProfileController extends BaseController {
 
     updateByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HealthProfile.UpdateByPatientUserId', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
             const domainModel: HealthProfileDomainModel = await this._validator.update(request);

@@ -15,6 +15,8 @@ import { AwardsFactsService } from './modules/awards.facts/awards.facts.service'
 import { DatabaseClient } from './common/database.utils/dialect.clients/database.client';
 import { DatabaseSchemaType } from './common/database.utils/database.config';
 import { Injector } from './startup/injector';
+import ClientAppAuthMiddleware from './middlewares/client.app.auth.middleware';
+import { errorHandlerMiddleware } from './middlewares/error.handling.middleware';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +74,16 @@ export default class Application {
                 await Loader.scheduler.schedule();
             }
 
+            this._app.use(errorHandlerMiddleware);
+
+            //Handle unhandled rejections
+            process.on('unhandledRejection', (reason, promise) => {
+                Logger.instance().log('Unhandled Rejection!');
+                promise.catch(error => {
+                    Logger.instance().log(`Unhandled Rejection at: ${error.message}`);
+                });
+            });
+
             process.on('exit', code => {
                 Logger.instance().log(`Process exited with code: ${code}`);
             });
@@ -93,6 +105,8 @@ export default class Application {
                 this._app.use(express.json( { limit: '50mb' }));
                 this._app.use(helmet());
                 this._app.use(cors());
+
+                this._app.use(ClientAppAuthMiddleware.authenticateClient);
 
                 const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
 

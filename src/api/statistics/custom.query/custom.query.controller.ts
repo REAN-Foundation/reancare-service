@@ -1,7 +1,5 @@
-import express, { application } from 'express';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
+import express from 'express';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import * as path from 'path';
 import { CustomQueryService } from '../../../services/statistics/custom.query.service';
 import { CustomQueryValidator } from './custom.query.validator';
@@ -11,7 +9,7 @@ import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CustomQueryController extends BaseController {
+export class CustomQueryController {
 
     //#region member variables and constructors
     _service: CustomQueryService = null;
@@ -19,13 +17,11 @@ export class CustomQueryController extends BaseController {
     _validator = new CustomQueryValidator();
 
     constructor() {
-        super();
         this._service = Injector.Container.resolve(CustomQueryService);
     }
 
     executeQuery = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CustomQuery.ExecuteQuery', request, response, false);
             const model = await this._validator.validateQuery(request);
             const queryResponse = await this._service.executeQuery(model);
             const message = 'Query response retrieved successfully!';
@@ -47,8 +43,6 @@ export class CustomQueryController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CustomQuery.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const query = await this._service.getById(id);
@@ -66,7 +60,6 @@ export class CustomQueryController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CustomQuery.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -89,7 +82,6 @@ export class CustomQueryController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CustomQuery.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -121,7 +113,6 @@ export class CustomQueryController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CustomQuery.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

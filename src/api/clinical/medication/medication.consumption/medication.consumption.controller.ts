@@ -1,47 +1,34 @@
 import express from 'express';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { SchedulesForDayDto } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { MedicationConsumptionValidator } from './medication.consumption.validator';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { TimeHelper } from '../../../../common/time.helper';
-import { Injector } from '../../../../startup/injector';
-import { BaseController } from '../../../../api/base.controller';
 import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicationConsumptionController extends BaseController {
+export class MedicationConsumptionController {
 
     //#region member variables and constructors
 
-    _service: MedicationConsumptionService = null;
+    _service: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
-    _medicationService: MedicationService = null;
+    _medicationService: MedicationService = Injector.Container.resolve(MedicationService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _drugService: DrugService = null;
-
-    _authorizer: Authorizer = null;
+    _drugService: DrugService = Injector.Container.resolve(DrugService);
 
     _ehrMedicationService: EHRMedicationService = Injector.Container.resolve(EHRMedicationService);
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(MedicationConsumptionService);
-        this._medicationService = Injector.Container.resolve(MedicationService);
-        this._drugService = Injector.Container.resolve(DrugService);
-        this._authorizer = Loader.authorizer;
-    }
 
     //#endregion
 
@@ -49,9 +36,6 @@ export class MedicationConsumptionController extends BaseController {
 
     markListAsTaken = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkListAsTaken';
-            await this._authorizer.authorize(request, response);
-
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
                 throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
@@ -79,7 +63,7 @@ export class MedicationConsumptionController extends BaseController {
                     },
                     RecordId       : dto.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -94,9 +78,6 @@ export class MedicationConsumptionController extends BaseController {
 
     markListAsMissed = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkListAsMissed';
-            await this._authorizer.authorize(request, response);
-
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
                 throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
@@ -124,7 +105,7 @@ export class MedicationConsumptionController extends BaseController {
                     },
                     RecordId       : dto.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -139,21 +120,17 @@ export class MedicationConsumptionController extends BaseController {
 
     markAsTaken = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkAsTaken';
-            await this._authorizer.authorize(request, response);
-
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsTaken(consumptionId);
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
-
             await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
 
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
-            const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd);
+            const tempDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd);
             const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
             AwardsFactsService.addOrUpdateMedicationFact({
                 PatientUserId : dto.PatientUserId,
@@ -178,15 +155,11 @@ export class MedicationConsumptionController extends BaseController {
 
     markAsMissed = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkAsMissed';
-            await this._authorizer.authorize(request, response);
-
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsMissed(consumptionId);
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
-
             await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
 
             const patientUserId = dto.PatientUserId;
@@ -202,7 +175,7 @@ export class MedicationConsumptionController extends BaseController {
                 },
                 RecordId       : dto.id,
                 RecordDate     : tempDate,
-                RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                 RecordTimeZone : currentTimeZone,
             });
 
@@ -216,9 +189,6 @@ export class MedicationConsumptionController extends BaseController {
 
     deleteFutureMedicationSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.DeleteFutureMedicationSchedules';
-            await this._authorizer.authorize(request, response);
-
             const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
             const deletedCount = await this._service.deleteFutureMedicationSchedules(medicationId);
 
@@ -231,36 +201,8 @@ export class MedicationConsumptionController extends BaseController {
         }
     };
 
-    // updateTimeZoneForFutureMedicationSchedules = async (request: express.Request, response: express.Response)
-    //     : Promise<void> => {
-    //     try {
-    //         request.context = 'MedicationConsumption.UpdateFutureMedicationSchedulesForTimeZone';
-    //         await this._authorizer.authorize(request, response);
-    //
-
-    //         const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
-    //         const newTimeZone = await MedicationConsumptionValidator.getParam(request, 'newTimeZone');
-
-    //         const dtos = await this._service.updateTimeZoneForFutureMedicationSchedules(medicationId, newTimeZone);
-    //         if (dtos === null) {
-    //             throw new ApiError(422, `Unable to delete medication consumptions.`);
-    //         }
-
-    //         ResponseHandler.success(request, response,
-    //              'Updated time-zone for future medication schedules successfully!', 200, {
-    //             MedicationConsumptions : dtos,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetById';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await MedicationConsumptionValidator.getParam(request, 'id');
 
             const medicationConsumption = await this._service.getById(id);
@@ -278,9 +220,6 @@ export class MedicationConsumptionController extends BaseController {
 
     searchForPatient = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await MedicationConsumptionValidator.searchForPatient(request);
 
             const searchResults = await this._service.search(filters);
@@ -300,10 +239,6 @@ export class MedicationConsumptionController extends BaseController {
 
     getScheduleForDuration = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetMedicationSchedule';
-
-            await this._authorizer.authorize(request, response);
-
             const model = await MedicationConsumptionValidator.getScheduleForDuration(request);
 
             const dtos = await this._service.getScheduleForDuration(
@@ -325,11 +260,6 @@ export class MedicationConsumptionController extends BaseController {
 
     getScheduleForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            request.context = 'MedicationConsumption.GetMedicationScheduleForDay';
-
-            await this._authorizer.authorize(request, response);
-
             const model = await MedicationConsumptionValidator.getScheduleForDay(request);
 
             const schedules: SchedulesForDayDto = await this._service.getSchedulesForDay(
@@ -351,10 +281,6 @@ export class MedicationConsumptionController extends BaseController {
 
     getSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetMedicationConsumptionSummaryForDay';
-
-            await this._authorizer.authorize(request, response);
-
             const model = await MedicationConsumptionValidator.getSummaryForDay(request);
 
             const summary = await this._service.getSchedulesForDayByDrugs(
@@ -376,10 +302,6 @@ export class MedicationConsumptionController extends BaseController {
 
     getSummaryByCalendarMonths = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetSummaryByCalendarMonths';
-
-            await this._authorizer.authorize(request, response);
-
             const model = await MedicationConsumptionValidator.getSummaryByCalendarMonths(request);
 
             const summary = await this._service.getSummaryByCalendarMonths(

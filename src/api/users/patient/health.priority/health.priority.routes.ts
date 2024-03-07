@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { HealthPriorityController } from './health.priority.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,14 +7,13 @@ import { HealthPriorityController } from './health.priority.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new HealthPriorityController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientHealthPriorities);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('User.Patient.HealthPriority.Create'), controller.create);
+    router.get('/search', auth('User.Patient.HealthPriority.Search'), controller.search);
+    router.get('/for-patient/:patientUserId', auth('User.Patient.HealthPriority.getPatientHealthPriorities'), controller.getPatientHealthPriorities);
+    router.put('/:id', auth('User.Patient.HealthPriority.Update'), controller.update);
+    router.delete('/:id', auth('User.Patient.HealthPriority.Delete'), controller.delete);
 
     app.use('/api/v1/patient-health-priorities', router);
 };

@@ -2,7 +2,7 @@
 import { inject, injectable } from "tsyringe";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { BodyWeightStore } from "../../modules/ehr/services/body.weight.store";
-import { Loader } from "../../startup/loader";
+import { Injector } from "../../startup/injector";
 import { IPulseRepo } from "../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
 import { IBodyTemperatureRepo } from "../..//database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface";
 import { IBloodPressureRepo } from "../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface";
@@ -24,7 +24,6 @@ import { IBodyWeightRepo } from "../../database/repository.interfaces/clinical/b
 import { IBodyHeightRepo } from "../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { Logger } from "../../common/logger";
 import { IWearableDeviceDetailsRepo } from "../../database/repository.interfaces/webhook/webhook.wearable.device.details.repo.interface";
-import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +50,7 @@ export class TeraWebhookService {
             this._ehrBodyWeightStore = Injector.Container.resolve(BodyWeightStore);
         }
     }
-  
+
     auth = async (authDomainModel: AuthDomainModel) => {
 
         if (authDomainModel.User.ReferenceId) {
@@ -169,7 +168,7 @@ export class TeraWebhookService {
     body = async (bodyDomainModel: BodyDomainModel) => {
         const bodyData = bodyDomainModel.Data;
         bodyData.forEach(async body => {
-           
+
             const bloodPressureSamples = body.BloodPressureData.BloodPressureSamples;
             Logger.instance().log(`Incoming BP samples ${JSON.stringify(bloodPressureSamples, null, 2)}`);
             const recentBP = await this._bloodPressureRepo.getRecent(bodyDomainModel.User.ReferenceId);
@@ -217,66 +216,70 @@ export class TeraWebhookService {
             });
 
             let oxygenSamples = body.OxygenData.SaturationSamples;
-            oxygenSamples = oxygenSamples.sort((a, b) => {
-                return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
-            });
-            Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
-            const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
-            let filteredOxygenSamples = [];
-            if (recentOxygen != null) {
-                const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
-                const oxygenSample =  oxygenSamples[0];
-                const oldTimeStamp: any = new Date(recentOxygen.RecordDate).getTime();
-                const newTimeStamp: any = new Date(oxygenSample.TimeStamp).getTime();
-                const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
-                if (timeDiffrence > allowedDuration_in_sec) {
-                    filteredOxygenSamples.push(oxygenSample);
+            if (oxygenSamples.length !== 0 ) {
+                oxygenSamples = oxygenSamples.sort((a, b) => {
+                    return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
+                });
+                Logger.instance().log(`Incoming oxygen samples ${JSON.stringify(oxygenSamples, null, 2)}`);
+                const recentOxygen = await this._bloodOxygenSaturationRepo.getRecent(bodyDomainModel.User.ReferenceId);
+                let filteredOxygenSamples = [];
+                if (recentOxygen != null) {
+                    const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
+                    const oxygenSample =  oxygenSamples[0];
+                    const oldTimeStamp: any = new Date(recentOxygen.RecordDate).getTime();
+                    const newTimeStamp: any = new Date(oxygenSample.TimeStamp).getTime();
+                    const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
+                    if (timeDiffrence > allowedDuration_in_sec) {
+                        filteredOxygenSamples.push(oxygenSample);
+                    }
+                } else {
+                    filteredOxygenSamples = oxygenSamples;
                 }
-            } else {
-                filteredOxygenSamples = oxygenSamples;
+                Logger.instance().log(`Filterred oxygen samples ${JSON.stringify(filteredOxygenSamples, null, 2)}`);
+                filteredOxygenSamples.forEach(async bloodOxygen => {
+                    const bloodOxygenDomainModel = {
+                        PatientUserId         : bodyDomainModel.User.ReferenceId,
+                        Provider              : bodyDomainModel.User.Provider,
+                        BloodOxygenSaturation : bloodOxygen.Percentage,
+                        Unit                  : "%",
+                        RecordDate            : new Date(bloodOxygen.TimeStamp)
+                    };
+                    await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
+                });
             }
-            Logger.instance().log(`Filterred oxygen samples ${JSON.stringify(filteredOxygenSamples, null, 2)}`);
-            filteredOxygenSamples.forEach(async bloodOxygen => {
-                const bloodOxygenDomainModel = {
-                    PatientUserId         : bodyDomainModel.User.ReferenceId,
-                    Provider              : bodyDomainModel.User.Provider,
-                    BloodOxygenSaturation : bloodOxygen.Percentage,
-                    Unit                  : "%",
-                    RecordDate            : new Date(bloodOxygen.TimeStamp)
-                };
-                await this._bloodOxygenSaturationRepo.create(bloodOxygenDomainModel);
-            });
 
             var heartRateSamples = body.HeartData.HeartRateData.Detailed.HrSamples;
-            heartRateSamples = heartRateSamples.sort((a, b) => {
-                return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
-            });
-            Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
-            const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
-            let filteredPulseSamples = [];
-            if (recentPulse != null) {
-                const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
-                const pulseSample =  heartRateSamples[0];
-                const oldTimeStamp: any = new Date(recentPulse.RecordDate).getTime();
-                const newTimeStamp: any = new Date(pulseSample.TimeStamp).getTime();
-                const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
-                if (timeDiffrence > allowedDuration_in_sec) {
-                    filteredPulseSamples.push(pulseSample);
+            if (heartRateSamples.length !== 0 ) {
+                heartRateSamples = heartRateSamples.sort((a, b) => {
+                    return  new Date(b.TimeStamp).getTime() - new Date(a.TimeStamp).getTime();
+                });
+                Logger.instance().log(`Incoming pulse samples ${JSON.stringify(heartRateSamples, null, 2)}`);
+                const recentPulse = await this._pulseRepo.getRecent(bodyDomainModel.User.ReferenceId);
+                let filteredPulseSamples = [];
+                if (recentPulse != null) {
+                    const allowedDuration_in_sec = parseInt(process.env.MIN_PULSE_RECORDS_SAMPLING_DURATION_INSEC);
+                    const pulseSample =  heartRateSamples[0];
+                    const oldTimeStamp: any = new Date(recentPulse.RecordDate).getTime();
+                    const newTimeStamp: any = new Date(pulseSample.TimeStamp).getTime();
+                    const timeDiffrence = (newTimeStamp - oldTimeStamp) / 1000;
+                    if (timeDiffrence > allowedDuration_in_sec) {
+                        filteredPulseSamples.push(pulseSample);
+                    }
+                } else {
+                    filteredPulseSamples = [heartRateSamples[0]];
                 }
-            } else {
-                filteredPulseSamples = [heartRateSamples[0]];
+                Logger.instance().log(`Filterred pulse samples ${JSON.stringify(filteredPulseSamples, null, 2)}`);
+                filteredPulseSamples.forEach(async heartRate => {
+                    const heartRateDomainModel = {
+                        PatientUserId : bodyDomainModel.User.ReferenceId,
+                        Provider      : bodyDomainModel.User.Provider,
+                        Pulse         : heartRate.BPM,
+                        Unit          : "bpm",
+                        RecordDate    : new Date(heartRate.TimeStamp)
+                    };
+                    await this._pulseRepo.create(heartRateDomainModel);
+                });
             }
-            Logger.instance().log(`Filterred pulse samples ${JSON.stringify(filteredPulseSamples, null, 2)}`);
-            filteredPulseSamples.forEach(async heartRate => {
-                const heartRateDomainModel = {
-                    PatientUserId : bodyDomainModel.User.ReferenceId,
-                    Provider      : bodyDomainModel.User.Provider,
-                    Pulse         : heartRate.BPM,
-                    Unit          : "bpm",
-                    RecordDate    : new Date(heartRate.TimeStamp)
-                };
-                await this._pulseRepo.create(heartRateDomainModel);
-            });
 
             const tempSamples = body.TemperatureData.BodyTemperatureSamples;
             Logger.instance().log(`Incoming Temp samples ${JSON.stringify(tempSamples, null, 2)}`);
@@ -391,5 +394,5 @@ export class TeraWebhookService {
             }
         });
     };
-    
+
 }

@@ -2,21 +2,20 @@ import { LessThanOrEqual, Repository } from 'typeorm';
 import { AwardsFactsSource } from './awards.facts.db.connector';
 import { AwardsFact } from './awards.facts.service';
 import { SleepService } from '../../services/wellness/daily.records/sleep.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
 import { MentalHealthFact } from './models/mental.health.fact.model';
 import { MeditationService } from '../../services/wellness/exercise/meditation.service';
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
-import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////////////////////
 
 export const updateMentalHealthFact = async (model: AwardsFact) => {
 
     const mentalHealthfactRepository: Repository<MentalHealthFact> = AwardsFactsSource.getRepository(MentalHealthFact);
-    
+
     const mentalHealthService = await getService(model.Facts.Name);
 
     const lastRecords = await mentalHealthfactRepository.find({
@@ -30,7 +29,7 @@ export const updateMentalHealthFact = async (model: AwardsFact) => {
     });
     const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(model.PatientUserId);
     const tempDate = TimeHelper.subtractDuration(model.RecordDate, offsetMinutes, DurationType.Minute);
-    const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
+    const tempDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
     model.RecordDateStr = tempDateStr;
 
     await addOrUpdateMentalHealthRecord(model);

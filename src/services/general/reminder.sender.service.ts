@@ -85,6 +85,7 @@ export class ReminderSenderService {
                 else {
                     continue;
                 }
+                await TimeHelper.timeDelay(300);
             }
         }
         catch (error) {
@@ -110,9 +111,9 @@ export class ReminderSenderService {
     };
 
     private static sendReminderByTelegram = async (user, reminder, schedule): Promise<boolean> => {
-        const { messagingService, telegramChatId, message, clientName } =
+        const { messagingService, telegramChatId, message, clientName, buttonsIds } =
             await ReminderSenderService.getUserTelegramDetails(user, reminder, schedule);
-        const sent = await messagingService.sendTelegramMessage(telegramChatId, message, clientName);
+        const sent = await messagingService.sendTelegramMessage(telegramChatId, message, clientName, buttonsIds);
         await ReminderSenderService.markAsDelivered(sent, schedule.id);
         return true;
     };
@@ -190,8 +191,10 @@ export class ReminderSenderService {
         const telegramChatId = person.TelegramChatId;
         const templateData = JSON.parse(reminder.RawContent);
         const clientName = templateData.ClientName;
-        const message = ReminderSenderService.constructMessage(schedule, reminder);
-        return { messagingService, telegramChatId, message, clientName };
+        const message =
+            templateData.TextMessage ? templateData.TextMessage : ReminderSenderService.constructMessage(schedule, reminder);
+        const buttonsIds = templateData.ButtonsIds;
+        return { messagingService, telegramChatId, message, clientName, buttonsIds };
     }
 
     private static async getUserWhatsAppDetails(user: any, reminder: any, schedule: any) {
@@ -250,6 +253,7 @@ export class ReminderSenderService {
             throw new Error(`Email address not found for user ${user.PersonId}`);
         }
         var body = await emailService.getTemplate('reminder.template.html');
+        body.replace('{{FIRST_NAME}}', person.FirstName);
         body.replace('{{TITLE}}', reminder.Name);
         body.replace('{{SCHEDULE_TIME}}', dayjs(schedule.Schedule).format(`L LT`));
         const emailDetails: EmailDetails = {

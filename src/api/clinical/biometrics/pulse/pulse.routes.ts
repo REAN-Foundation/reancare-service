@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { PulseController } from './pulse.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -8,14 +8,13 @@ import { PulseController } from './pulse.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new PulseController();
 
-    router.post('/', authenticator.authenticateClient,authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Clinical.Biometrics.Pulse.Create'), controller.create);
+    router.get('/search', auth('Clinical.Biometrics.Pulse.Search'), controller.search);
+    router.get('/:id', auth('Clinical.Biometrics.Pulse.GetById'), controller.getById);
+    router.put('/:id', auth('Clinical.Biometrics.Pulse.Update'), controller.update);
+    router.delete('/:id', auth('Clinical.Biometrics.Pulse.Delete'), controller.delete);
 
     app.use('/api/v1/clinical/biometrics/pulse', router);
 };

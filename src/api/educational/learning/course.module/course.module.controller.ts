@@ -1,26 +1,20 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { CourseModuleService } from '../../../../services/educational/learning/course.module.service';
-import { CourseModuleValidator } from './course.module.validator';
-import { BaseController } from '../../../base.controller';
 import { Injector } from '../../../../startup/injector';
+import { CourseModuleValidator } from './course.module.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CourseModuleController extends BaseController {
+export class CourseModuleController {
 
     //#region member variables and constructors
 
-    _service: CourseModuleService = null;
+    _service: CourseModuleService = Injector.Container.resolve(CourseModuleService);
 
     _validator: CourseModuleValidator = new CourseModuleValidator();
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(CourseModuleService);
-    }
 
     //#endregion
 
@@ -28,8 +22,6 @@ export class CourseModuleController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('CourseModule.Create', request, response);
 
             const model = await this._validator.create(request);
             const courseModule = await this._service.create(model);
@@ -48,8 +40,6 @@ export class CourseModuleController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CourseModule.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const courseModule = await this._service.getById(id);
             if (courseModule == null) {
@@ -67,7 +57,6 @@ export class CourseModuleController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CourseModule.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
@@ -88,8 +77,6 @@ export class CourseModuleController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('CourseModule.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -113,8 +100,6 @@ export class CourseModuleController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('CourseModule.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

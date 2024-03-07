@@ -1,13 +1,14 @@
 import express from 'express';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { CohortService } from '../../../../services/community/cohort.service';
+import { Injector } from '../../../../startup/injector';
 import { PatientValidator } from './patient.validator';
 import { BaseUserController } from '../../base.user.controller';
 import { UserHelper } from '../../user.helper';
@@ -19,7 +20,6 @@ import { HealthProfileDomainModel } from '../../../../domain.types/users/patient
 import { RoleDto } from '../../../../domain.types/role/role.dto';
 import { Roles } from '../../../../domain.types/role/role.types';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
-import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +52,6 @@ export class PatientController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.Create', request, response, false);
 
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
@@ -82,7 +81,6 @@ export class PatientController extends BaseUserController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.GetByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const existingUser = await this._userService.getById(userId);
@@ -111,7 +109,6 @@ export class PatientController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.Search', request, response, false);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -130,7 +127,6 @@ export class PatientController extends BaseUserController {
 
     getPatientByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.GetPatientByPhone', request, response, false);
 
             if (request.currentClient.IsPrivileged) {
 
@@ -152,9 +148,37 @@ export class PatientController extends BaseUserController {
         }
     };
 
+    getByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            const phone: string = await request.params.phone as string;
+            const patientRole = await this._roleService.getByName(Roles.Patient);
+
+            const existingUser = await this._userService.getByPhoneAndRole(phone, patientRole.id);
+            if (existingUser == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            const tenantUser = await this._userService.isTenantUser(existingUser.id, tenantId);
+            if (!tenantUser) {
+                throw new ApiError(404, 'User is not associated with the tenant.');
+            }
+            const patient = await this._service.getByUserId(existingUser.id);
+            if (patient == null) {
+                throw new ApiError(404, 'Patient not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Patient retrieved successfully!', 200, {
+                Patient : patient,
+            });
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.UpdateByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const existingUser = await this._userService.getById(userId);
@@ -186,7 +210,7 @@ export class PatientController extends BaseUserController {
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
-            const updatedHealthProfile = await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
+            await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
@@ -202,10 +226,10 @@ export class PatientController extends BaseUserController {
             }
             await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
             const addresses = await this._personService.getAddresses(personDomainModel.id);
-            let location = null;
-            if (addresses.length >= 1) {
-                location = addresses[0].Location;
-            }
+            // let location = null;
+            // if (addresses.length >= 1) {
+            //     location = addresses[0].Location;
+            // }
 
             await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient, location);
 
@@ -222,7 +246,6 @@ export class PatientController extends BaseUserController {
 
     deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.DeleteByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const currentUserId = request.currentUser.UserId;

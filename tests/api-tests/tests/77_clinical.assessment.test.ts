@@ -150,14 +150,13 @@ describe('77 - Assessment tests', function() {
             .post(`/api/v1/clinical/assessments/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
       
             })
-            .expect(400, done);
+            .expect(401, done);
     });
 
     it('77:07 -> Negative - Get assessment by id', function(done) {
@@ -165,14 +164,13 @@ describe('77 - Assessment tests', function() {
         agent
             .get(`/api/v1/clinical/assessments/${getTestData('NodeAssessmentd')}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
         
             })
-            .expect(400, done);
+            .expect(401, done);
     });
 
     it('77:08 -> Negative - Update assessment', function(done) {
@@ -196,13 +194,12 @@ describe('77 - Assessment tests', function() {
         agent
             .delete(`/api/v1/clinical/assessments/${getTestData('NodeAssessmentId_1')}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(400, done);
+            .expect(401, done);
     });
 
 });

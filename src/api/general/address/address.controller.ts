@@ -1,38 +1,29 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AddressService } from '../../../services/general/address.service';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { AddressValidator } from './address.validator';
-import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AddressController extends BaseController {
+export class AddressController {
 
     //#region member variables and constructors
 
-    _service: AddressService = null;
+    _service: AddressService = Injector.Container.resolve(AddressService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _organizationService: OrganizationService = null;
+    _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
     _validator = new AddressValidator();
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(AddressService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._organizationService = Injector.Container.resolve(OrganizationService);
-    }
 
     //#endregion
 
@@ -40,8 +31,6 @@ export class AddressController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Address.Create', request, response);
 
             const domainModel = await this._validator.create(request);
             const address = await this._service.create(domainModel);
@@ -61,8 +50,6 @@ export class AddressController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Address.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const address = await this._service.getById(id);
             if (address == null) {
@@ -81,8 +68,6 @@ export class AddressController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Address.Search', request, response);
-
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -100,8 +85,6 @@ export class AddressController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Address.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -125,8 +108,6 @@ export class AddressController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Address.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingAddress = await this._service.getById(id);

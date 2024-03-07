@@ -1,27 +1,20 @@
 import express from 'express';
 import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { UserLearningService } from '../../../../services/educational/learning/user.learning.service';
-import { Loader } from '../../../../startup/loader';
-import { UserLearningValidator } from './user.learning.validator';
-import { BaseController } from '../../../base.controller';
 import { Injector } from '../../../../startup/injector';
+import { UserLearningValidator } from './user.learning.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserLearningController extends BaseController {
+export class UserLearningController {
 
     //#region member variables and constructors
 
-    _service: UserLearningService = null;
+    _service: UserLearningService = Injector.Container.resolve(UserLearningService);
 
     _validator: UserLearningValidator = new UserLearningValidator();
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(UserLearningService);
-    }
 
     //#endregion
 
@@ -29,7 +22,6 @@ export class UserLearningController extends BaseController {
 
     updateUserLearning = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserLearning.UpdateUserLearning', request, response);
             const model = await this._validator.updateUserLearning(request);
 
             const userLearning = await this._service.updateUserLearning(
@@ -54,7 +46,6 @@ export class UserLearningController extends BaseController {
 
     getLearningPathProgress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserLearning.GetCourseProgress', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const learningPathId: uuid = await this._validator.getParamUuid(request, 'learningPathId');
             const progress = await this._service.getLearningPathProgress(userId, learningPathId);
@@ -71,7 +62,6 @@ export class UserLearningController extends BaseController {
 
     getCourseProgress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserLearning.GetCourseProgress', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const courseId: uuid = await this._validator.getParamUuid(request, 'courseId');
             const progress = await this._service.getCourseProgress(userId, courseId);
@@ -88,7 +78,6 @@ export class UserLearningController extends BaseController {
 
     getModuleProgress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserLearning.GetModuleProgress', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const moduleId: uuid = await this._validator.getParamUuid(request, 'moduleId',);
             const progress = await this._service.getModuleProgress(userId, moduleId);
@@ -105,7 +94,6 @@ export class UserLearningController extends BaseController {
 
     getContentProgress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserLearning.GetContentProgress', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const contentId: uuid = await this._validator.getParamUuid(request, 'contentId');
             const progress = await this._service.getContentProgress(userId, contentId);
@@ -122,7 +110,6 @@ export class UserLearningController extends BaseController {
 
     getUserLearningPaths = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserLearning.GetUserLearningPaths', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const paths = await this._service.getUserLearningPaths(userId);
             if (paths == null) {
@@ -142,7 +129,6 @@ export class UserLearningController extends BaseController {
 
     getUserCourseContents = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('UserLearning.GetUserCourseContents', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const learningPathId: uuid = request.query['learningPathId'] as string ?? null;
             const contents = await this._service.getUserCourseContents(userId, learningPathId);

@@ -5,8 +5,8 @@ import { ClinicalInterpretation, ClinicalValidationStatus } from '../../../../do
 import { Severity } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomAssessmentService } from '../../../../services/clinical/symptom/symptom.assessment.service';
 import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
-import { BaseValidator, Where } from '../../../base.validator';
 import { Injector } from '../../../../startup/injector';
+import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -3,12 +3,11 @@ import { AwardsFactsSource } from './awards.facts.db.connector';
 import { AwardsFact } from './awards.facts.service';
 import { MedicationFact } from './models/medication.fact.model';
 import { MedicationConsumptionService } from '../../services/clinical/medication/medication.consumption.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
-import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +28,7 @@ export const updateMedicationFact = async (model: AwardsFact) => {
     Logger.instance().log(`Last records :: ${JSON.stringify(lastRecords)}`);
     const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(model.PatientUserId);
     const tempDate = TimeHelper.subtractDuration(model.RecordDate, offsetMinutes, DurationType.Minute);
-    const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
+    const tempDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
     model.RecordDateStr = tempDateStr;
 
     await addOrUpdateMedicationRecord(model);

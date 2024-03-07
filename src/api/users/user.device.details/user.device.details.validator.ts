@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, param, query, validationResult } from 'express-validator';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { Helper } from '../../../common/helper';
 import { UserDeviceDetailsDomainModel } from '../../../domain.types/users/user.device.details/user.device.domain.model';
 import { UserDeviceDetailsSearchFilters } from '../../../domain.types/users/user.device.details/user.device.search.types';

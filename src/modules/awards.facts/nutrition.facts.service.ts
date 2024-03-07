@@ -2,13 +2,12 @@ import { LessThanOrEqual, Repository } from 'typeorm';
 import { AwardsFactsSource } from './awards.facts.db.connector';
 import { AwardsFact } from './awards.facts.service';
 import { FoodConsumptionService } from '../../services/wellness/nutrition/food.consumption.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
 import { NutritionChoiceFact } from './models/nutrition.choice.fact.model';
 import { HelperRepo } from '../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
-import { Injector } from '../../startup/injector';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +27,7 @@ export const updateNutritionFact = async (model: AwardsFact) => {
     });
     const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(model.PatientUserId);
     const tempDate = TimeHelper.subtractDuration(model.RecordDate, offsetMinutes, DurationType.Minute);
-    const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
+    const tempDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
     model.RecordDateStr = tempDateStr;
 
     await addOrUpdateNutritionRecord(model);

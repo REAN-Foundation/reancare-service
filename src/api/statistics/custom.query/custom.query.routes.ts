@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { CustomQueryController } from './custom.query.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,14 +7,13 @@ import { CustomQueryController } from './custom.query.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new CustomQueryController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.executeQuery);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Statistics.CustomQuery.ExecuteQuery'), controller.executeQuery);
+    router.get('/search', auth('Statistics.CustomQuery.Search'), controller.search);
+    router.get('/:id', auth('Statistics.CustomQuery.GetById'), controller.getById);
+    router.put('/:id', auth('Statistics.CustomQuery.Update'), controller.update);
+    router.delete('/:id', auth('Statistics.CustomQuery.Delete'), controller.delete);
 
     app.use('/api/v1/custom-query', router);
 };

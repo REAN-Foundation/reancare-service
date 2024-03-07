@@ -1,5 +1,5 @@
 import express from 'express';
-import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQueryOption, CAssessmentQuestionNode, CScoringCondition } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentNodePath, CAssessmentPathCondition, CAssessmentQueryOption, CAssessmentQuestionNode, CScoringCondition } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
@@ -15,7 +15,6 @@ export class AssessmentTemplateValidator extends BaseValidator {
     }
 
     getDomainModel = (request: express.Request): AssessmentTemplateDomainModel => {
-
         const model: AssessmentTemplateDomainModel = {
             Type                        : request.body.Type ?? null,
             Title                       : request.body.Title ?? null,
@@ -26,6 +25,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
+            TenantId                    : request.body.TenantId ?? null,
         };
 
         return model;
@@ -36,9 +36,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         return this.getDomainModel(request);
     };
 
-    search = async (
-        request: express.Request
-    ): Promise<AssessmentTemplateSearchFilters> => {
+    search = async (request: express.Request): Promise<AssessmentTemplateSearchFilters> => {
         await this.validateString(request, 'title', Where.Query, false, false);
         await this.validateString(request, 'type', Where.Query, false, false, true);
         await this.validateString(request, 'displayCode', Where.Query, false, false, true);
@@ -48,7 +46,6 @@ export class AssessmentTemplateValidator extends BaseValidator {
     };
 
     private getFilter(request): AssessmentTemplateSearchFilters {
-
         var filters: AssessmentTemplateSearchFilters = {
             Title       : request.query.title ?? null,
             Type        : request.query.type ?? null,
@@ -59,7 +56,6 @@ export class AssessmentTemplateValidator extends BaseValidator {
     }
 
     update = async (request: express.Request): Promise<AssessmentTemplateDomainModel> => {
-
         await this.validateUpdateBody(request);
         const domainModel = this.getDomainModel(request);
         domainModel.id = await this.getParamUuid(request, 'id');
@@ -76,6 +72,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);
         await this.validateString(request, 'DisplayCode', Where.Body, false, false);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
+        await this.validateUuid(request, 'TenantId', Where.Body, true, false);
         this.validateRequest(request);
     }
 
@@ -95,9 +92,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
         return this.getDomainModel(request);
     };
 
-    addNode = async (request: express.Request):
-        Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
-
+    addNode = async (
+        request: express.Request
+    ): Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
         var templateId = await this.getParamUuid(request, 'id');
         await this.validateString(request, 'ParentNodeId', Where.Body, false, true);
         await this.validateString(request, 'NodeType', Where.Body, true, false);
@@ -112,7 +109,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         if (request.body.NodeType === AssessmentNodeType.Question) {
-            var questionNode : CAssessmentQuestionNode = {
+            var questionNode: CAssessmentQuestionNode = {
                 ParentNodeId      : request.body.ParentNodeId,
                 NodeType          : AssessmentNodeType.Question,
                 DisplayCode       : request.body.DisplayCode ?? Helper.generateDisplayCode('QNode'),
@@ -135,16 +132,15 @@ export class AssessmentTemplateValidator extends BaseValidator {
                         DisplayCode       : questionNode.DisplayCode + ':Option#' + o.Sequence.toString(),
                         Text              : o.Text,
                         ProviderGivenCode : o.ProviderGivenCode ?? null,
-                        Sequence          : o.Sequence
+                        Sequence          : o.Sequence,
                     };
                     options.push(option);
                 }
                 questionNode.Options = options;
             }
             return questionNode;
-        }
-        else if (request.body.NodeType === AssessmentNodeType.NodeList) {
-            var listNode : CAssessmentListNode = {
+        } else if (request.body.NodeType === AssessmentNodeType.NodeList) {
+            var listNode: CAssessmentListNode = {
                 ParentNodeId                : request.body.ParentNodeId,
                 NodeType                    : AssessmentNodeType.NodeList,
                 DisplayCode                 : Helper.generateDisplayCode('LNode'),
@@ -157,12 +153,11 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Score                       : request.body.Score ?? 0,
                 ChildrenNodeDisplayCodes    : [],
                 ChildrenNodeIds             : [],
-                ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce
+                ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce,
             };
             return listNode;
-        }
-        else {
-            var messageNode : CAssessmentMessageNode = {
+        } else {
+            var messageNode: CAssessmentMessageNode = {
                 ParentNodeId      : request.body.ParentNodeId,
                 NodeType          : AssessmentNodeType.Message,
                 Required          : true,
@@ -180,9 +175,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
         }
     };
 
-    updateNode = async (request: express.Request):
-    Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
-
+    updateNode = async (
+        request: express.Request
+    ): Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
         await this.validateString(request, 'Title', Where.Body, false, false);
         await this.validateString(request, 'ProviderGivenCode', Where.Body, false, false);
         await this.validateString(request, 'ProviderGivenId', Where.Body, false, false);
@@ -198,7 +193,6 @@ export class AssessmentTemplateValidator extends BaseValidator {
     };
 
     addScoringCondition = async (request: express.Request): Promise<CScoringCondition> => {
-
         await this.validateUuid(request, 'NodeId', Where.Body, false, false);
         await this.validateDecimal(request, 'ResolutionScore', Where.Body, false, true);
         await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);
@@ -228,7 +222,6 @@ export class AssessmentTemplateValidator extends BaseValidator {
     };
 
     updateScoringCondition = async (request: express.Request): Promise<CScoringCondition> => {
-
         await this.validateUuid(request, 'NodeId', Where.Body, false, false);
         await this.validateDecimal(request, 'ResolutionScore', Where.Body, false, true);
         await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);
@@ -244,9 +237,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         return request.body;
     };
 
-    searchNode = async (
-        request: express.Request
-    ): Promise<AssessmentNodeSearchFilters> => {
+    searchNode = async (request: express.Request): Promise<AssessmentNodeSearchFilters> => {
         await this.validateString(request, 'title', Where.Query, false, false);
         await this.validateString(request, 'nodeType', Where.Query, false, false, true);
         await this.validateString(request, 'templateId', Where.Query, false, false, true);
@@ -256,7 +247,6 @@ export class AssessmentTemplateValidator extends BaseValidator {
     };
 
     private getNodeFilter(request): AssessmentNodeSearchFilters {
-
         var filters: AssessmentNodeSearchFilters = {
             Title      : request.query.title ?? null,
             NodeType   : request.query.nodeType ?? null,
@@ -265,5 +255,94 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
         return this.updateBaseSearchFilters(request, filters);
     }
+
+    addPath = async (request: express.Request): Promise<CAssessmentNodePath> => {
+        await this.validateString(request, 'DisplayCode', Where.Body, false, false);
+        await this.validateUuid(request, 'NextNodeId', Where.Body, false, true);
+        await this.validateUuid(request, 'ConditionId', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsExitPath', Where.Body, false, false);
+        await this.validateString(request, 'MessageBeforeQuestion', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        var path: CAssessmentNodePath = {
+            DisplayCode           : request.body.DisplayCode ?? null,
+            NextNodeId            : request.body.NextNodeId ?? null,
+            ConditionId           : request.body.ConditionId ?? null,
+            IsExitPath            : request.body.IsExitPath ?? false,
+            MessageBeforeQuestion : request.body.MessageBeforeQuestion ?? null,
+        };
+        return path;
+    };
+
+    addPathCondition = async (request: express.Request): Promise<CAssessmentPathCondition> => {
+        await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);
+        await this.validateString(request, 'CompositionType', Where.Body, false, true);
+        await this.validateUuid(request, 'ParentConditionId', Where.Body, false, true);
+        await this.validateString(request, 'OperatorType', Where.Body, false, false);
+        await this.validateObject(request, 'FirstOperand', Where.Body, false, true);
+        await this.validateObject(request, 'SecondOperand', Where.Body, false, true);
+        await this.validateObject(request, 'ThirdOperand', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        var condition: CAssessmentPathCondition = {
+            PathId               : request.params.pathId,
+            NodeId               : request.params.nodeId,
+            ParentConditionId    : request.body.ParentConditionId ?? null,
+            IsCompositeCondition : request.body.IsCompositeCondition ?? false,
+            CompositionType      : request.body.CompositionType ?? null,
+            OperatorType         : request.body.OperatorType ?? null,
+            FirstOperand         : request.body.FirstOperand,
+            SecondOperand        : request.body.SecondOperand,
+            ThirdOperand         : request.body.ThirdOperand,
+            Children             : [],
+        };
+        return condition;
+    };
+
+    updatePath = async (request: express.Request): Promise<CAssessmentNodePath> => {
+        await this.validateString(request, 'DisplayCode', Where.Body, false, false);
+        await this.validateUuid(request, 'NextNodeId', Where.Body, false, true);
+        await this.validateUuid(request, 'ConditionId', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsExitPath', Where.Body, false, false);
+        await this.validateString(request, 'MessageBeforeQuestion', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        var path: CAssessmentNodePath = {
+            DisplayCode           : request.body.DisplayCode ?? null,
+            NextNodeId            : request.body.NextNodeId ?? null,
+            ConditionId           : request.body.ConditionId ?? null,
+            IsExitPath            : request.body.IsExitPath ?? false,
+            MessageBeforeQuestion : request.body.MessageBeforeQuestion ?? null,
+        };
+
+        return path;
+    };
+
+    updatePathCondition = async (request: express.Request): Promise<CAssessmentPathCondition> => {
+        await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);
+        await this.validateString(request, 'CompositionType', Where.Body, false, true);
+        await this.validateUuid(request, 'ParentConditionId', Where.Body, false, true);
+        await this.validateString(request, 'OperatorType', Where.Body, false, false);
+        await this.validateObject(request, 'FirstOperand', Where.Body, false, true);
+        await this.validateObject(request, 'SecondOperand', Where.Body, false, true);
+        await this.validateObject(request, 'ThirdOperand', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        var condition: CAssessmentPathCondition = {
+            IsCompositeCondition : request.body.IsCompositeCondition ?? false,
+            CompositionType      : request.body.CompositionType ?? null,
+            ParentConditionId    : request.body.ParentConditionId ?? null,
+            OperatorType         : request.body.OperatorType ?? null,
+            FirstOperand         : request.body.FirstOperand ?? null,
+            SecondOperand        : request.body.SecondOperand ?? null,
+            ThirdOperand         : request.body.ThirdOperand ?? null,
+            Children             : [],
+        };
+        return condition;
+    };
 
 }

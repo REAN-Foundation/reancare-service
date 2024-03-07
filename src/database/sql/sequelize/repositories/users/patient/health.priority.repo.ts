@@ -263,7 +263,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
                 var tags = JSON.stringify(updateModel.Tags);
                 healthPriorityType.Tags = tags;
             }
-            
+
             await healthPriorityType.save();
 
             return await HealthPriorityMapper.toTypeDto(healthPriorityType);

@@ -1,30 +1,23 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { StandService } from '../../../../services/wellness/daily.records/stand.service';
-import { StandValidator } from './stand.validator';
-import { BaseController } from '../../../base.controller';
-import { Logger } from '../../../../common/logger';
 import { Injector } from '../../../../startup/injector';
+import { StandValidator } from './stand.validator';
 import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StandController extends BaseController {
+export class StandController {
 
     //#region member variables and constructors
 
-    _service: StandService = null;
+    _service: StandService = Injector.Container.resolve(StandService);
 
     _validator: StandValidator = new StandValidator();
 
     _ehrPhysicalActivityService: EHRPhysicalActivityService = Injector.Container.resolve(EHRPhysicalActivityService);
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(StandService);
-    }
 
     //#endregion
 
@@ -32,7 +25,6 @@ export class StandController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -54,7 +46,6 @@ export class StandController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const stand = await this._service.getById(id);
@@ -72,7 +63,6 @@ export class StandController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -93,7 +83,6 @@ export class StandController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -120,7 +109,6 @@ export class StandController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.Stand.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingStand = await this._service.getById(id);

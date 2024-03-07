@@ -1,11 +1,10 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodPressureService } from '../../../../services/clinical/biometrics/blood.pressure.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodPressureValidator } from './blood.pressure.validator';
-import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
 import { PersonService } from '../../../../services/person/person.service';
@@ -13,33 +12,28 @@ import { HelperRepo } from '../../../../database/sql/sequelize/repositories/comm
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { PatientService } from '../../../../services/users/patient/patient.service';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { Injector } from '../../../../startup/injector';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodPressureController extends BaseController {
+export class BloodPressureController {
 
     //#region member variables and constructors
 
-    _service: BloodPressureService = null;
-
-    _personService: PersonService = null;
-
-    _patientService: PatientService = null;
-
     _validator: BloodPressureValidator = new BloodPressureValidator();
 
-    _ehrVitalService: EHRVitalService = new EHRVitalService();
+    _service: BloodPressureService = Injector.Container.resolve(BloodPressureService);
 
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(BloodPressureService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._ehrVitalService = Injector.Container.resolve(EHRVitalService);
-    }
+    _personService: PersonService = Injector.Container.resolve(PersonService);
+
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
+
+    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+
+    _ehrVitalService = Injector.Container.resolve(EHRVitalService);
 
     //#endregion
 
@@ -47,8 +41,6 @@ export class BloodPressureController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodPressure.Create', request, response);
 
             const model = await this._validator.create(request);
             const bloodPressure = await this._service.create(model);
@@ -83,7 +75,7 @@ export class BloodPressureController extends BaseController {
                     },
                     RecordId       : bloodPressure.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -97,8 +89,6 @@ export class BloodPressureController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodPressure.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bloodPressure = await this._service.getById(id);
@@ -116,8 +106,6 @@ export class BloodPressureController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodPressure.Search', request, response);
 
             Logger.instance().log(`trying to fetch data for search...`);
             const filters = await this._validator.search(request);
@@ -142,8 +130,6 @@ export class BloodPressureController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodPressure.Update', request, response);
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -179,7 +165,7 @@ export class BloodPressureController extends BaseController {
                     },
                     RecordId       : updated.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -193,8 +179,6 @@ export class BloodPressureController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Biometrics.BloodPressure.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

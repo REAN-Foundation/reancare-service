@@ -1,17 +1,14 @@
 import { inject, injectable } from "tsyringe";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { BodyWeightStore } from "../../modules/ehr/services/body.weight.store";
-import { Loader } from "../../startup/loader";
+import { Injector } from "../../startup/injector";
 import { ActivityDomainModel, ActivityType } from "../../domain.types/webhook/activity.domain.model";
-import { IStepCountRepo } from "../../database/repository.interfaces/wellness/daily.records/step.count.interface";
-import { ICalorieBalanceRepo } from "../../database/repository.interfaces/wellness/daily.records/calorie.balance.repo.interface";
 import { PhysicalActivityCategories, Intensity } from "../../domain.types/wellness/exercise/physical.activity/physical.activity.types";
 import { IPhysicalActivityRepo } from "../../database/repository.interfaces/wellness/exercise/physical.activity.repo.interface";
 import { PhysicalActivityDomainModel } from "../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model";
 import { ISleepRepo } from "../../database/repository.interfaces/wellness/daily.records/sleep.repo.interface";
 import { SleepDomainModel } from "../../domain.types/webhook/sleep.domain.model";
 import { ApiError } from "../../common/api.error";
-import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +27,7 @@ export class TeraWebhookActivityService {
     }
 
     activity = async (activityDomainModel: ActivityDomainModel) => {
-        
+
         const recentActivity = await this._physicalActivityRepo.getRecent(activityDomainModel.User.ReferenceId);
         let filteredActivitySamples = [];
         if (recentActivity != null) {
@@ -40,7 +37,7 @@ export class TeraWebhookActivityService {
             filteredActivitySamples = activityDomainModel.Data;
         }
         filteredActivitySamples.forEach(async activity => {
-            
+
             const durationInMin = activity.ActiveDurationsData.ActivitySeconds / 60;
             const category = await this.getActivityType(activity.MetaData.Type);
             const activityModel : PhysicalActivityDomainModel = {
@@ -61,7 +58,7 @@ export class TeraWebhookActivityService {
     };
 
     sleep = async (sleepDomainModel: SleepDomainModel) => {
-        
+
         const sleep = sleepDomainModel.Data;
         var existingSleepRecord = await this._sleepRepo.getByRecordDateAndPatientUserId(new Date(sleep.MetaData.StartTime.split('T')[0]),
             sleepDomainModel.User.ReferenceId);

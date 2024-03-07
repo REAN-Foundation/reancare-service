@@ -29,8 +29,8 @@ import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activi
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
-import { IDonorRepo } from "./../../database/repository.interfaces/users/donor.repo.interface";
-import { IDonationCommunicationRepo } from "../../database/repository.interfaces/clinical/donation/donation.communication.repo.interface";
+import { IDonorRepo } from "../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface";
+import { IDonationCommunicationRepo } from "../../database/repository.interfaces/assorted/blood.donation/communication.repo.interface";
 import { PatientDetailsDto } from "../../domain.types/users/patient/patient/patient.dto";
 import { EHRCareplanActivityService } from "../../modules/ehr.analytics/ehr.services/ehr.careplan.activity.service";
 import { Injector } from "../../startup/injector";
@@ -55,7 +55,7 @@ export class CareplanService implements IUserActionService {
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
         @inject('IDonationCommunicationRepo') private _donationCommunicationRepo: IDonationCommunicationRepo,
-        
+
     ) {}
 
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
@@ -167,7 +167,7 @@ export class CareplanService implements IUserActionService {
                     phoneNumber = patient.User.Person.Phone;
                 }
                 const payload = { PersonName: patient.User.Person.DisplayName };
-                
+
                 //Set fifth day reminder flag true for patient
                 if (activity.Type === "reminder_three") {
                     await this._donationCommunicationRepo.create(
@@ -545,7 +545,7 @@ export class CareplanService implements IUserActionService {
         }
     }
 
-    public async enrollAndCreateTask(enrollmentDetails ) {
+    public async enrollAndCreateTask(enrollmentDetails) {
 
         var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
         if (!enrollmentId) {
@@ -642,7 +642,7 @@ export class CareplanService implements IUserActionService {
             careplanStatus.CurrentWeek = currentWeek;
             careplanStatus.DayOfCurrentWeek = dayOfCurrentWeek;
         }
-        
+
         // total weeks
         var duration = Math.abs(end.getTime() - begin.getTime());
         var totalDays = Math.floor(duration / (1000 * 3600 * 24));

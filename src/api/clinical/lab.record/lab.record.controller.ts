@@ -1,29 +1,26 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
-import { BaseController } from '../../base.controller';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
+import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import { LabRecordValidator } from './lab.record.validator';
-import { EHRLabService } from '../../../modules/ehr.analytics/ehr.services/ehr.lab.service';
 import { Injector } from '../../../startup/injector';
+import { EHRLabService } from '../../../modules/ehr.analytics/ehr.services/ehr.lab.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class LabRecordController extends BaseController {
+export class LabRecordController {
 
     //#region member variables and constructors
-    _service: LabRecordService = null;
+
+    _service: LabRecordService = Injector.Container.resolve(LabRecordService);
+
+    _userService: UserService = Injector.Container.resolve(UserService);
+
+    _ehrLabService: EHRLabService = Injector.Container.resolve(EHRLabService);
 
     _validator: LabRecordValidator = new LabRecordValidator();
-
-    _ehrLabService: EHRLabService = new EHRLabService();
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(LabRecordService);
-        this._ehrLabService = Injector.Container.resolve(EHRLabService);
-    }
 
     //#endregion
 
@@ -31,8 +28,6 @@ export class LabRecordController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Create', request, response);
 
             const model = await this._validator.create(request);
             const labRecord = await this._service.create(model);
@@ -51,7 +46,6 @@ export class LabRecordController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('LabRecord.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -69,8 +63,6 @@ export class LabRecordController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -91,8 +83,6 @@ export class LabRecordController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecord.Update', request, response);
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -106,7 +96,7 @@ export class LabRecordController extends BaseController {
             }
 
             await this._ehrLabService.addEHRLabRecordForAppNames(updated);
-
+            
             ResponseHandler.success(request, response, `${updated.DisplayName} record updated successfully!`, 200, {
                 LabRecord : updated,
             });
@@ -117,8 +107,6 @@ export class LabRecordController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('LabRecord.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -143,4 +131,5 @@ export class LabRecordController extends BaseController {
     };
 
     //#endregion
+    
 }

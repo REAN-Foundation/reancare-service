@@ -53,7 +53,7 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
         try {
 
             Logger.instance().log(`Filters 2 , ${JSON.stringify(filters)}`);
-            
+
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
@@ -165,11 +165,11 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
             if (updateModel.Provider != null) {
                 bloodOxygenSaturation.Provider = updateModel.Provider;
             }
-    
+
             await bloodOxygenSaturation.save();
 
             return await BloodOxygenSaturationMapper.toDto(bloodOxygenSaturation);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -215,7 +215,7 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
                     VitalName         : "BloodOxygenSaturation",
                     VitalPrimaryValue : x.BloodOxygenSaturation,
                     Unit              : x.Unit,
-                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };
@@ -253,7 +253,7 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
                     VitalName         : "BloodOxygenSaturation",
                     VitalPrimaryValue : x.BloodOxygenSaturation,
                     Unit              : x.Unit,
-                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };

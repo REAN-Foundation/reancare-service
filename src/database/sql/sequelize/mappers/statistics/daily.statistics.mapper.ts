@@ -1,19 +1,42 @@
-import DailyStatistics from '../../models/statistics/daily.statistics.model';
-import { DailyStatisticsDto } from '../../../../../domain.types/statistics/daily.statistics/daily.statistics.dto';
+import DailySystemStatistics from '../../models/statistics/daily.system.statistics.model';
+import DailyTenantStatistics from '../../models/statistics/daily.tenant.statistics.model';
+import {
+    DailySystemStatisticsDto,
+    DailyTenantStatisticsDto
+} from '../../../../../domain.types/statistics/daily.statistics/daily.statistics.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class DailyStatisticsMapper {
 
-    static toDto = (dailyStatistics: DailyStatistics): DailyStatisticsDto => {
-        if (dailyStatistics == null) {
+    static toSystemStatsDto = (stats: DailySystemStatistics): DailySystemStatisticsDto => {
+        if (stats == null) {
             return null;
         }
-        const dto: DailyStatisticsDto = {
-            id              : dailyStatistics.id,
-            ReportDate      : dailyStatistics.ReportDate,
-            ReportTimestamp : dailyStatistics.ReportTimestamp,
-            Statistics      : JSON.parse(dailyStatistics.Statistics)
+        const dto: DailySystemStatisticsDto = {
+            id              : stats.id,
+            ResourceId      : stats.ResourceId,
+            ReportDate      : stats.ReportDate,
+            ReportTimestamp : stats.ReportTimestamp,
+            DashboardStats  : JSON.parse(stats.DashboardStats),
+            UserStats       : JSON.parse(stats.UserStats),
+            AHAStats        : JSON.parse(stats.AHAStats),
+        };
+        return dto;
+    };
+
+    static toTenantStatsDto = (stats: DailyTenantStatistics): DailyTenantStatisticsDto => {
+        if (stats == null) {
+            return null;
+        }
+        const dto: DailyTenantStatisticsDto = {
+            id              : stats.id,
+            TenantId        : stats.TenantId,
+            ResourceId      : stats.ResourceId,
+            ReportDate      : stats.ReportDate,
+            ReportTimestamp : stats.ReportTimestamp,
+            DashboardStats  : JSON.parse(stats.DashboardStats),
+            UserStats       : JSON.parse(stats.UserStats),
         };
         return dto;
     };

@@ -1,40 +1,26 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { EmergencyEventService } from '../../../services/clinical/emergency.event.service';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { RoleService } from '../../../services/role/role.service';
-import { Loader } from '../../../startup/loader';
 import { EmergencyEventValidator } from './emergency.event.validator';
-import { BaseController } from '../../../api/base.controller';
 import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EmergencyEventController extends BaseController {
+export class EmergencyEventController {
 
     //#region member variables and constructors
 
-    _service: EmergencyEventService = null;
+    _service: EmergencyEventService = Injector.Container.resolve(EmergencyEventService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _patientService: PatientService = null;
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
 
-    _organizationService: OrganizationService = null;
-
-    _authorizer: Authorizer = null;
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(EmergencyEventService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._patientService = Injector.Container.resolve(PatientService);
-        this._organizationService = Injector.Container.resolve(OrganizationService);
-        this._authorizer = Loader.authorizer;
-    }
+    _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
     //#endregion
 
@@ -42,9 +28,6 @@ export class EmergencyEventController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Create';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await EmergencyEventValidator.create(request);
 
             if (domainModel.PatientUserId != null) {
@@ -69,10 +52,6 @@ export class EmergencyEventController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.GetById';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await EmergencyEventValidator.getById(request);
 
             const emergencyEvent = await this._service.getById(id);
@@ -90,9 +69,6 @@ export class EmergencyEventController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Search';
-            await this._authorizer.authorize(request, response);
-
             const filters = await EmergencyEventValidator.search(request);
 
             const searchResults = await this._service.search(filters);
@@ -112,9 +88,6 @@ export class EmergencyEventController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Update';
-            await this._authorizer.authorize(request, response);
-
             const domainModel = await EmergencyEventValidator.update(request);
 
             const id: string = await EmergencyEventValidator.getById(request);
@@ -138,9 +111,6 @@ export class EmergencyEventController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Delete';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await EmergencyEventValidator.getById(request);
             const existingEmergencyEvent = await this._service.getById(id);
             if (existingEmergencyEvent == null) {

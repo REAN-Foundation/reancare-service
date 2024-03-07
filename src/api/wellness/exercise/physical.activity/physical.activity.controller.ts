@@ -1,37 +1,30 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserService } from '../../../../services/users/user/user.service';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
+import { Injector } from '../../../../startup/injector';
 import { PhysicalActivityValidator } from './physical.activity.validator';
-import { BaseController } from '../../../base.controller';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { Injector } from '../../../../startup/injector';
 import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PhysicalActivityController extends BaseController {
+export class PhysicalActivityController {
 
     //#region member variables and constructors
 
-    _service: PhysicalActivityService = null;
-
     _validator: PhysicalActivityValidator = new PhysicalActivityValidator();
 
-    _userService: UserService = null;
+    _service = Injector.Container.resolve(PhysicalActivityService);
+
+    _userService = Injector.Container.resolve(UserService);
 
     _ehrPhysicalActivityService: EHRPhysicalActivityService = Injector.Container.resolve(EHRPhysicalActivityService);
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(PhysicalActivityService);
-        this._userService = Injector.Container.resolve(UserService);
-    }
 
     //#endregion
 
@@ -39,7 +32,6 @@ export class PhysicalActivityController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -74,7 +66,7 @@ export class PhysicalActivityController extends BaseController {
                     },
                     RecordId       : physicalActivity.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -88,7 +80,6 @@ export class PhysicalActivityController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -107,7 +98,6 @@ export class PhysicalActivityController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -128,7 +118,6 @@ export class PhysicalActivityController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -159,7 +148,7 @@ export class PhysicalActivityController extends BaseController {
                     },
                     RecordId      : updated.id,
                     RecordDate    : timestamp,
-                    RecordDateStr : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                 });
             }
 
@@ -173,7 +162,6 @@ export class PhysicalActivityController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Exercise.PhysicalActivity.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const physicalActivity = await this._service.getById(id);

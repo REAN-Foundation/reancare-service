@@ -22,9 +22,9 @@ export class MessagingService {
         return await this._service.sendWhatsappMessage(toPhone, message);
     };
 
-    sendTelegramMessage = async (telegramChatId: string, message: string, clientName: string): Promise<boolean> => {
-        message = `You have ${message}`;
-        await this.sendMessage(clientName, "telegram", telegramChatId, "text", null, message, null);
+    sendTelegramMessage = async (telegramChatId: string, message: string, clientName: string,
+        buttonsIds): Promise<boolean> => {
+        await this.sendMessage(clientName, "telegram", telegramChatId, "inline_keyboard", null, message, buttonsIds);
         return true;
     };
 
@@ -39,7 +39,6 @@ export class MessagingService {
         if (message.Variables) {
             templateName = type;
             type = "template";
-
         }
         message = JSON.stringify(message);
         await this.sendMessage(provider, channel, toPhone, type, templateName, message, payload);
@@ -57,7 +56,7 @@ export class MessagingService {
         const options = {
             headers : headers
         };
-        
+
         const url = `${reanBotBaseUrl}${client}/${channel}/${urlToken}/send`;
         Logger.instance().log(`URL: ${url}`);
         Logger.instance().log(`Phone: ${toPhone}`);
@@ -88,5 +87,5 @@ export class MessagingService {
         };
         return clientName[provider] ?? provider;
     }
-    
+
 }

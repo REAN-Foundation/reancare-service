@@ -1,25 +1,23 @@
 import express from 'express';
 import { TerraPayload } from '../../../../domain.types/webhook/webhook.event';
 import { Logger } from '../../../../common/logger';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BaseUserController } from '../../../users/base.user.controller';
 import { TeraWebhookValidator } from './terra.webhook.validator';
 import { TeraWebhookService } from '../../../../services/webhook/wearable.webhook.service';
+import { Injector } from '../../../../startup/injector';
 import { TeraWebhookActivityService } from '../../../../services/webhook/wearable.webhook.activity.service';
 import { IWebhooksService } from '../../interfaces/webhooks.service.interface';
 import { TerraCache } from './terra.webhook.cache';
-import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class TeraWebhookController extends BaseUserController implements IWebhooksService {
 
-    _service: TeraWebhookService = null;
+    _service: TeraWebhookService = Injector.Container.resolve(TeraWebhookService);
 
     constructor() {
-        
         super();
-        this._service = Injector.Container.resolve(TeraWebhookService);
     }
 
     //#endregion
@@ -34,7 +32,7 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
             const terraPayload : TerraPayload = request.body;
             Logger.instance().log(`Tera webhook information ${JSON.stringify(terraPayload)}`);
             ResponseHandler.success(request, response, 'Message received successfully!', 200 );
-           
+
             switch (terraPayload.type) {
                 // case 'athlete': {
                 //     const athleteDomainModel = await TeraWebhookValidator.athlete(request);
@@ -126,7 +124,7 @@ export class TeraWebhookController extends BaseUserController implements IWebhoo
                 default:
                     Logger.instance().log(`Tera method ${terraPayload.type} not implemented. Terra payload information has: ${JSON.stringify(terraPayload)}`);
             }
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

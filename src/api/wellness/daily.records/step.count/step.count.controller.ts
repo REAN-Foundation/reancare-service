@@ -1,30 +1,23 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
-import { StepCountValidator } from './step.count.validator';
-import { BaseController } from '../../../base.controller';
-import { Logger } from '../../../../common/logger';
 import { Injector } from '../../../../startup/injector';
+import { StepCountValidator } from './step.count.validator';
 import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StepCountController extends BaseController {
+export class StepCountController {
 
     //#region member variables and constructors
 
-    _service: StepCountService = null;
+    _service: StepCountService = Injector.Container.resolve(StepCountService);
 
     _validator: StepCountValidator = new StepCountValidator();
 
     _ehrPhysicalActivityService: EHRPhysicalActivityService = Injector.Container.resolve(EHRPhysicalActivityService);
-
-    constructor() {
-        super();
-        this._service = Injector.Container.resolve(StepCountService);
-    }
 
     //#endregion
 
@@ -32,7 +25,6 @@ export class StepCountController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.Create', request, response);
 
             const domainModel = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
@@ -63,7 +55,6 @@ export class StepCountController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const stepCount = await this._service.getById(id);
@@ -81,7 +72,6 @@ export class StepCountController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -102,7 +92,6 @@ export class StepCountController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -129,7 +118,6 @@ export class StepCountController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingStepCount = await this._service.getById(id);
@@ -149,7 +137,5 @@ export class StepCountController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
-    //#endregion
 
 }

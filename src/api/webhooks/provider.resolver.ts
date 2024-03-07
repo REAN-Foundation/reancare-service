@@ -1,9 +1,8 @@
 import { ConfigurationManager } from "../../config/configuration.manager";
-import { Loader } from "../../startup/loader";
+import { Injector } from "../../startup/injector";
 import Dictionary from "../../common/dictionary";
 import { IWebhooksService } from "./interfaces/webhooks.service.interface";
 import { TeraWebhookController } from "./providers/terra/terra.webhook.controller";
-import { Injector } from "../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////
 

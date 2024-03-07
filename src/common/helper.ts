@@ -8,7 +8,7 @@ import { generate } from 'generate-password';
 import mime = require('mime-types');
 import path from 'path';
 import { ConfigurationManager } from '../config/configuration.manager';
-import { Gender, OSType } from '../domain.types/miscellaneous/system.types';
+import { Gender, OSType, uuid } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
 import Countries from './misc/countries';
@@ -636,17 +636,150 @@ export class Helper {
         return sorted;
     };
 
+    public static getServiceName = () => {
+        const environment = process.env.NODE_ENV ?? '';
+        const name = process.env.SERVICE_NAME ?? 'rean-care-service';
+        const serviceName = `${name}-${environment}`;
+        return serviceName;
+    };
+
+    public static convertStringListToJsonObject = (privileges: string[], separator = '.'): any => {
+        const privilegeMap = {};
+        for (var p of privileges) {
+            var tokens = p.split(separator);
+            var currentLevel = privilegeMap;
+            for (var i = 0; i < tokens.length; i++) {
+                var key = tokens[i];
+                if (i === tokens.length - 1 && Array.isArray(currentLevel)) {
+                    currentLevel.push(key);
+                    continue;
+                }
+                if (Helper.hasProperty(currentLevel, key)) {
+                    currentLevel = currentLevel[key];
+                    continue;
+                }
+                else {
+                    if (i === tokens.length - 2) {
+                        currentLevel[key] = [];
+                        currentLevel = currentLevel[key];
+                    }
+                    else {
+                        currentLevel[key] = {};
+                        currentLevel = currentLevel[key];
+                    }
+                }
+            }
+        }
+        return privilegeMap;
+    };
+
+    public static convertPrivilegeListToPrivilegeMap = (privileges: string[]): any => {
+        const privilegeMap = {};
+        for (var p of privileges) {
+            var tokens = p.split('.');
+            var currentLevel = privilegeMap;
+            for (var i = 0; i < tokens.length; i++) {
+                var key = tokens[i];
+                if (Helper.hasProperty(currentLevel, key)) {
+                    currentLevel = currentLevel[key];
+                    continue;
+                }
+                else {
+                    if (i === tokens.length - 1) {
+                        currentLevel[key] = {
+                            Enabled : true,
+                        };
+                        currentLevel = currentLevel[key];
+                    }
+                    else {
+                        currentLevel[key] = {};
+                        currentLevel = currentLevel[key];
+                    }
+                }
+            }
+        }
+        return privilegeMap;
+    };
+
+    public static convertPrivilegeMapToPrivilegeList = (privilegeMap) => {
+        const x = (privilegeMap) => {
+            const privileges = [];
+            const keys = Object.keys(privilegeMap);
+            for (var key of keys) {
+                var value = privilegeMap[key];
+                if (typeof value === "object") {
+                    var subPrivileges = x(value);
+                    for (var subPrivilege of subPrivileges) {
+                        privileges.push(key + "." + subPrivilege);
+                    }
+                } else {
+                    privileges.push(key);
+                }
+            }
+            return privileges;
+        };
+
+        const list = x(privilegeMap);
+
+        const tokenValue = (privilegeMap, tokens) => {
+            var currentLevel = privilegeMap;
+            for (var i = 0; i < tokens.length; i++) {
+                var key = tokens[i];
+                if (Helper.hasProperty(currentLevel, key)) {
+                    currentLevel = currentLevel[key];
+                    continue;
+                }
+                else {
+                    return undefined;
+                }
+            }
+            return currentLevel;
+        };
+        const refined = [];
+        for (var i = 0; i < list.length; i++) {
+            var p = list[i];
+            const tokens = p.split('.');
+            var value = tokenValue(privilegeMap, tokens);
+            if (p.endsWith(".Enabled")) {
+                p = p.replace(/\.Enabled$/, '');
+            }
+            refined.push({
+                [p] : value,
+            });
+        }
+        return refined;
+    };
+
+    public static loadJSONSeedFile = (file: string) => {
+        var filepath = path.join(process.cwd(), 'seed.data', file);
+        var fileBuffer = fs.readFileSync(filepath, 'utf8');
+        const obj = JSON.parse(fileBuffer);
+        return obj;
+    };
+
     public static parseIntegerFromString = (input: string): number | null => {
         try {
-          // Attempt to parse the integer from the input string
-          const digitRegex = /^[0-9]+$/;
-          digitRegex.test(input);
-          const parsedInt = digitRegex.test(input) ? parseInt(input, 10) : null;
-          return parsedInt;
+            // Attempt to parse the integer from the input string
+            const digitRegex = /^[0-9]+$/;
+            digitRegex.test(input);
+            const parsedInt = digitRegex.test(input) ? parseInt(input, 10) : null;
+            return parsedInt;
         } catch (error: any) {
-          Logger.instance().log(`Error: ${error.message}`);
-          return null;
+            Logger.instance().log(`Error: ${error.message}`);
+            return null;
         }
+    };
+
+    public static constructFileDownloadURL = (fileResourceId: uuid): string => {
+        if (!fileResourceId) {
+            return null;
+        }
+        const url = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + fileResourceId + '/download';
+        return url;
+    };
+
+    public static replaceAll = (str: string, find: string, replace: string): string => {
+        return str.replace(new RegExp(find, 'g'), replace);
     };
 
 }

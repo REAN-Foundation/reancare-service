@@ -144,7 +144,7 @@ export class ChatRepo implements IChatRepo {
                 search.where['IsGroupconversation'] = filters.IsGroupconversation;
 
             }
-            
+
             const { pageIndex, limit, order, orderByColum } = this.updateSearch(filters, search);
             const foundResults = await Conversation.findAndCountAll(search);
             const dtos = foundResults.rows.map(x => ChatMapper.toDto(x));
@@ -158,7 +158,7 @@ export class ChatRepo implements IChatRepo {
                 Items          : dtos,
             };
             return searchResults;
-           
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

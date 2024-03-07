@@ -3,3 +3,9 @@ export enum PersonIdentificationType {
     PassportNumber = 'PassportNumber',
     SocialSecurityNumber = "SocialSecurityNumber"
 }
+
+export interface GenderDetails {
+    Gender: string,
+    Count: number,
+    Ratio: string
+}

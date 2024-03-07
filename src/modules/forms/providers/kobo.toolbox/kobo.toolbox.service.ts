@@ -92,7 +92,7 @@ export class KoboToolboxService  implements IFormsService {
         if (!form) {
             throw new ApiError(404, 'Form does not exist!');
         }
-        
+
         var providerFormCode = form.ProviderCode;
         var options = this.getRequestOptions(connectionModel.Token);
         var url = connectionModel.SecondaryUrl + `v2/assets/${providerFormCode}.xls`;
@@ -106,7 +106,7 @@ export class KoboToolboxService  implements IFormsService {
         // const buffer = await needle.get(url, options);
         // fs.writeFileSync(filepath, buffer);
         // return filepath;
-        
+
         var ws = fs.createWriteStream(filepath);
         const buffer = await needle.get(url, options);
         return new Promise((resolve, reject) => {
@@ -136,7 +136,7 @@ export class KoboToolboxService  implements IFormsService {
         await fs.promises.mkdir(downloadFolderPath, { recursive: true });
         var filepath = path.join(downloadFolderPath, filename);
         var writer = fs.createWriteStream(filepath);
-       
+
         var ws = fs.createWriteStream(filepath);
         const buffer = await needle.get(fileUrl, options);
         return new Promise((resolve, reject) => {
@@ -184,7 +184,7 @@ export class KoboToolboxService  implements IFormsService {
         }
         return value;
     }
-    
+
     //#endregion
 
     private toFormDto = (metadata: any) => {

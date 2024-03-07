@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { ActionPlanController } from './action.plan.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,15 +7,14 @@ import { ActionPlanController } from './action.plan.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new ActionPlanController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getSelectedActionPlans);
-    router.get('/by-goal/:goalId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getActionPlans);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('User.Patient.ActionPlan.Create'), controller.create);
+    router.get('/search', auth('User.Patient.ActionPlan.Search'), controller.search);
+    router.get('/for-patient/:patientUserId', auth('User.Patient.ActionPlan.GetSelectedActionPlans'), controller.getSelectedActionPlans);
+    router.get('/by-goal/:goalId', auth('User.Patient.ActionPlan.GetActionPlans'), controller.getActionPlans);
+    router.put('/:id', auth('User.Patient.ActionPlan.Update'), controller.update);
+    router.delete('/:id', auth('User.Patient.ActionPlan.Delete'), controller.delete);
 
     app.use('/api/v1/action-plans', router);
 };

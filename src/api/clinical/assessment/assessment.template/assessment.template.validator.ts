@@ -9,21 +9,23 @@ import { AssessmentNodeSearchFilters } from '../../../../domain.types/clinical/a
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class AssessmentTemplateValidator extends BaseValidator {
+
     constructor() {
         super();
     }
 
     getDomainModel = (request: express.Request): AssessmentTemplateDomainModel => {
         const model: AssessmentTemplateDomainModel = {
-            Type: request.body.Type ?? null,
-            Title: request.body.Title ?? null,
-            Description: request.body.Description ?? null,
-            DisplayCode: request.body.DisplayCode ?? null,
-            ScoringApplicable: request.body.ScoringApplicable ?? false,
-            ProviderAssessmentCode: request.body.ProviderAssessmentCode ?? null,
-            Provider: request.body.Provider ?? null,
-            ServeListNodeChildrenAtOnce: request.body.ServeListNodeChildrenAtOnce ?? null,
-            TotalNumberOfQuestions: request.body.TotalNumberOfQuestions ?? null,
+            Type                        : request.body.Type ?? null,
+            Title                       : request.body.Title ?? null,
+            Description                 : request.body.Description ?? null,
+            DisplayCode                 : request.body.DisplayCode ?? null,
+            ScoringApplicable           : request.body.ScoringApplicable ?? false,
+            ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
+            Provider                    : request.body.Provider ?? null,
+            ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
+            TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
+            TenantId                    : request.body.TenantId ?? null,
         };
 
         return model;
@@ -45,9 +47,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     private getFilter(request): AssessmentTemplateSearchFilters {
         var filters: AssessmentTemplateSearchFilters = {
-            Title: request.query.title ?? null,
-            Type: request.query.type ?? null,
-            DisplayCode: request.query.displayCode ?? null,
+            Title       : request.query.title ?? null,
+            Type        : request.query.type ?? null,
+            DisplayCode : request.query.displayCode ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -70,6 +72,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);
         await this.validateString(request, 'DisplayCode', Where.Body, false, false);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
+        await this.validateUuid(request, 'TenantId', Where.Body, true, false);
         this.validateRequest(request);
     }
 
@@ -107,29 +110,29 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
         if (request.body.NodeType === AssessmentNodeType.Question) {
             var questionNode: CAssessmentQuestionNode = {
-                ParentNodeId: request.body.ParentNodeId,
-                NodeType: AssessmentNodeType.Question,
-                DisplayCode: request.body.DisplayCode ?? Helper.generateDisplayCode('QNode'),
-                QueryResponseType: request.body.QueryResponseType,
-                Required: true,
-                ProviderGivenId: request.body.ProviderGivenId ?? null,
-                ProviderGivenCode: request.body.ProviderGivenCode ?? null,
-                Title: request.body.Title,
-                Description: request.body.Description ?? null,
-                TemplateId: templateId,
-                Score: request.body.Score ?? 0,
-                CorrectAnswer: request.body.CorrectAnswer ? JSON.stringify(request.body.CorrectAnswer) : null,
-                Options: [],
-                RawData: request.body.RawData ? JSON.stringify(request.body.RawData) : null,
+                ParentNodeId      : request.body.ParentNodeId,
+                NodeType          : AssessmentNodeType.Question,
+                DisplayCode       : request.body.DisplayCode ?? Helper.generateDisplayCode('QNode'),
+                QueryResponseType : request.body.QueryResponseType,
+                Required          : true,
+                ProviderGivenId   : request.body.ProviderGivenId ?? null,
+                ProviderGivenCode : request.body.ProviderGivenCode ?? null,
+                Title             : request.body.Title,
+                Description       : request.body.Description ?? null,
+                TemplateId        : templateId,
+                Score             : request.body.Score ?? 0,
+                CorrectAnswer     : request.body.CorrectAnswer ? JSON.stringify(request.body.CorrectAnswer) : null,
+                Options           : [],
+                RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
             };
             if (request.body.Options && request.body.Options.length > 0) {
                 var options: CAssessmentQueryOption[] = [];
                 for (var o of request.body.Options) {
                     var option: CAssessmentQueryOption = {
-                        DisplayCode: questionNode.DisplayCode + ':Option#' + o.Sequence.toString(),
-                        Text: o.Text,
-                        ProviderGivenCode: o.ProviderGivenCode ?? null,
-                        Sequence: o.Sequence,
+                        DisplayCode       : questionNode.DisplayCode + ':Option#' + o.Sequence.toString(),
+                        Text              : o.Text,
+                        ProviderGivenCode : o.ProviderGivenCode ?? null,
+                        Sequence          : o.Sequence,
                     };
                     options.push(option);
                 }
@@ -138,35 +141,35 @@ export class AssessmentTemplateValidator extends BaseValidator {
             return questionNode;
         } else if (request.body.NodeType === AssessmentNodeType.NodeList) {
             var listNode: CAssessmentListNode = {
-                ParentNodeId: request.body.ParentNodeId,
-                NodeType: AssessmentNodeType.NodeList,
-                DisplayCode: Helper.generateDisplayCode('LNode'),
-                Required: true,
-                ProviderGivenId: request.body.ProviderGivenId ?? null,
-                ProviderGivenCode: request.body.ProviderGivenCode ?? null,
-                Title: request.body.Title,
-                Description: request.body.Description ?? null,
-                TemplateId: templateId,
-                Score: request.body.Score ?? 0,
-                ChildrenNodeDisplayCodes: [],
-                ChildrenNodeIds: [],
-                ServeListNodeChildrenAtOnce: request.body.ServeListNodeChildrenAtOnce,
+                ParentNodeId                : request.body.ParentNodeId,
+                NodeType                    : AssessmentNodeType.NodeList,
+                DisplayCode                 : Helper.generateDisplayCode('LNode'),
+                Required                    : true,
+                ProviderGivenId             : request.body.ProviderGivenId ?? null,
+                ProviderGivenCode           : request.body.ProviderGivenCode ?? null,
+                Title                       : request.body.Title,
+                Description                 : request.body.Description ?? null,
+                TemplateId                  : templateId,
+                Score                       : request.body.Score ?? 0,
+                ChildrenNodeDisplayCodes    : [],
+                ChildrenNodeIds             : [],
+                ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce,
             };
             return listNode;
         } else {
             var messageNode: CAssessmentMessageNode = {
-                ParentNodeId: request.body.ParentNodeId,
-                NodeType: AssessmentNodeType.Message,
-                Required: true,
-                ProviderGivenId: request.body.ProviderGivenId ?? null,
-                ProviderGivenCode: request.body.ProviderGivenCode ?? null,
-                Title: request.body.Title,
-                Description: request.body.Description ?? null,
-                TemplateId: templateId,
-                Score: request.body.Score ?? 0,
-                Message: request.body.Message,
-                Acknowledged: false,
-                RawData: request.body.RawData ? JSON.stringify(request.body.RawData) : null,
+                ParentNodeId      : request.body.ParentNodeId,
+                NodeType          : AssessmentNodeType.Message,
+                Required          : true,
+                ProviderGivenId   : request.body.ProviderGivenId ?? null,
+                ProviderGivenCode : request.body.ProviderGivenCode ?? null,
+                Title             : request.body.Title,
+                Description       : request.body.Description ?? null,
+                TemplateId        : templateId,
+                Score             : request.body.Score ?? 0,
+                Message           : request.body.Message,
+                Acknowledged      : false,
+                RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
             };
             return messageNode;
         }
@@ -204,16 +207,16 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         var condition: CScoringCondition = {
-            TemplateId: request.params.id,
-            NodeId: request.body.NodeId ?? null,
-            ResolutionScore: request.body.ResolutionScore ?? null,
-            IsCompositeCondition: request.body.IsCompositeCondition ?? false,
-            CompositionType: request.body.CompositionType ?? null,
-            ParentConditionId: request.body.ParentConditionId ?? null,
-            OperatorType: request.body.OperatorType ?? null,
-            FirstOperand: request.body.FirstOperand,
-            SecondOperand: request.body.SecondOperand,
-            ThirdOperand: request.body.ThirdOperand,
+            TemplateId           : request.params.id,
+            NodeId               : request.body.NodeId ?? null,
+            ResolutionScore      : request.body.ResolutionScore ?? null,
+            IsCompositeCondition : request.body.IsCompositeCondition ?? false,
+            CompositionType      : request.body.CompositionType ?? null,
+            ParentConditionId    : request.body.ParentConditionId ?? null,
+            OperatorType         : request.body.OperatorType ?? null,
+            FirstOperand         : request.body.FirstOperand,
+            SecondOperand        : request.body.SecondOperand,
+            ThirdOperand         : request.body.ThirdOperand,
         };
         return condition;
     };
@@ -245,9 +248,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     private getNodeFilter(request): AssessmentNodeSearchFilters {
         var filters: AssessmentNodeSearchFilters = {
-            Title: request.query.title ?? null,
-            NodeType: request.query.nodeType ?? null,
-            TemplateId: request.query.templateId ?? null,
+            Title      : request.query.title ?? null,
+            NodeType   : request.query.nodeType ?? null,
+            TemplateId : request.query.templateId ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -263,11 +266,11 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         var path: CAssessmentNodePath = {
-            DisplayCode          : request.body.DisplayCode ?? null,
-            NextNodeId           : request.body.NextNodeId ?? null,
-            ConditionId          : request.body.ConditionId ?? null,
-            IsExitPath           : request.body.IsExitPath ?? false,
-            MessageBeforeQuestion: request.body.MessageBeforeQuestion ?? null,
+            DisplayCode           : request.body.DisplayCode ?? null,
+            NextNodeId            : request.body.NextNodeId ?? null,
+            ConditionId           : request.body.ConditionId ?? null,
+            IsExitPath            : request.body.IsExitPath ?? false,
+            MessageBeforeQuestion : request.body.MessageBeforeQuestion ?? null,
         };
         return path;
     };
@@ -284,16 +287,16 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         var condition: CAssessmentPathCondition = {
-            PathId: request.params.pathId,
-            NodeId: request.params.nodeId,
-            ParentConditionId: request.body.ParentConditionId ?? null,
-            IsCompositeCondition: request.body.IsCompositeCondition ?? false,
-            CompositionType: request.body.CompositionType ?? null,
-            OperatorType: request.body.OperatorType ?? null,
-            FirstOperand: request.body.FirstOperand,
-            SecondOperand: request.body.SecondOperand,
-            ThirdOperand: request.body.ThirdOperand,
-            Children: [],
+            PathId               : request.params.pathId,
+            NodeId               : request.params.nodeId,
+            ParentConditionId    : request.body.ParentConditionId ?? null,
+            IsCompositeCondition : request.body.IsCompositeCondition ?? false,
+            CompositionType      : request.body.CompositionType ?? null,
+            OperatorType         : request.body.OperatorType ?? null,
+            FirstOperand         : request.body.FirstOperand,
+            SecondOperand        : request.body.SecondOperand,
+            ThirdOperand         : request.body.ThirdOperand,
+            Children             : [],
         };
         return condition;
     };
@@ -308,11 +311,11 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         var path: CAssessmentNodePath = {
-            DisplayCode          : request.body.DisplayCode ?? null,
-            NextNodeId           : request.body.NextNodeId ?? null,
-            ConditionId          : request.body.ConditionId ?? null,
-            IsExitPath           : request.body.IsExitPath ?? false,
-            MessageBeforeQuestion: request.body.MessageBeforeQuestion ?? null,
+            DisplayCode           : request.body.DisplayCode ?? null,
+            NextNodeId            : request.body.NextNodeId ?? null,
+            ConditionId           : request.body.ConditionId ?? null,
+            IsExitPath            : request.body.IsExitPath ?? false,
+            MessageBeforeQuestion : request.body.MessageBeforeQuestion ?? null,
         };
 
         return path;
@@ -330,15 +333,16 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         var condition: CAssessmentPathCondition = {
-            IsCompositeCondition: request.body.IsCompositeCondition ?? false,
-            CompositionType: request.body.CompositionType ?? null,
-            ParentConditionId: request.body.ParentConditionId ?? null,
-            OperatorType: request.body.OperatorType ?? null,
-            FirstOperand: request.body.FirstOperand ?? null,
-            SecondOperand: request.body.SecondOperand ?? null,
-            ThirdOperand: request.body.ThirdOperand ?? null,
-            Children: [],
+            IsCompositeCondition : request.body.IsCompositeCondition ?? false,
+            CompositionType      : request.body.CompositionType ?? null,
+            ParentConditionId    : request.body.ParentConditionId ?? null,
+            OperatorType         : request.body.OperatorType ?? null,
+            FirstOperand         : request.body.FirstOperand ?? null,
+            SecondOperand        : request.body.SecondOperand ?? null,
+            ThirdOperand         : request.body.ThirdOperand ?? null,
+            Children             : [],
         };
         return condition;
     };
+
 }

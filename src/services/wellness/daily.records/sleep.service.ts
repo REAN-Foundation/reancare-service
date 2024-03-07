@@ -4,8 +4,6 @@ import { ISleepRepo } from "../../../database/repository.interfaces/wellness/dai
 import { SleepDomainModel } from '../../../domain.types/wellness/daily.records/sleep/sleep.domain.model';
 import { SleepDto } from '../../../domain.types/wellness/daily.records/sleep/sleep.dto';
 import { SleepSearchFilters, SleepSearchResults } from '../../../domain.types/wellness/daily.records/sleep/sleep.search.types';
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,23 +46,6 @@ export class SleepService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._sleepRepo.getAllUserResponsesBefore(patientUserId, date);
-    };
-
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: SleepDomainModel, appName?: string) => {
-        if (model.SleepDuration) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.MentalWellBeing,
-                model.SleepDuration,
-                model.Unit,
-                'Sleep',
-                null,
-                appName,
-                model.RecordDate ? model.RecordDate : null
-            );
-        }
     };
 
 }

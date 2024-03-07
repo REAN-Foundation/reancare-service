@@ -16,10 +16,10 @@ export interface MedicationSearchFilters {
     EndDateTo?                : Date;
     CreatedDateFrom?          : Date;
     CreatedDateTo?            : Date;
-    OrderBy                   : string;
-    Order                     : string;
-    PageIndex                 : number;
-    ItemsPerPage              : number;
+    OrderBy?                  : string;
+    Order?                    : string;
+    PageIndex?                : number;
+    ItemsPerPage?             : number;
 }
 
 export interface MedicationSearchResults {

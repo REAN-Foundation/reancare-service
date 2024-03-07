@@ -4,7 +4,7 @@ import { INotificationService } from '../notification.service.interface';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class MockNotificationService implements INotificationService {
-    
+
     init = () => {
         return true;
     };
@@ -23,7 +23,7 @@ export class MockNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-    
+
     sendNotificationToMultipleDevice = async (
         deviceTokens: string[],
         message: any): Promise<any> => {
@@ -37,7 +37,7 @@ export class MockNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-    
+
     sendMessageToTopic = async (topic: string, message: any): Promise<string> => {
         try {
             message.topic = topic;
@@ -49,7 +49,7 @@ export class MockNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-    
+
     formatNotificationMessage = (notificationType: string, title: string, body: any): any => {
         return {
             type  : notificationType,
@@ -57,7 +57,7 @@ export class MockNotificationService implements INotificationService {
             body  : body
         };
     };
-    
+
     formatNotificationMessageWithData = (notificationType: string, title: string, body: any, customData: any): any => {
         return {
             type  : notificationType,
@@ -66,5 +66,5 @@ export class MockNotificationService implements INotificationService {
             data  : customData
         };
     };
-       
+
 }

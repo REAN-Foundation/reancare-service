@@ -56,7 +56,7 @@ describe('LabOrganization resource: Storage, retrieval', () => {
         });
         var extractedEmail = emailElement ? emailElement.value : '';
         expect(extractedEmail.toLowerCase()).toEqual(model.ContactEmail.toLowerCase());
-       
+
     });
 
     it('Delete lab organization resource, then empty resource is returned for next query.', async () => {

@@ -6,12 +6,12 @@ import { EmergencyEventDto } from "./emergency.event.dto";
 export interface EmergencyEventSearchFilters {
     PatientUserId?: string;
     MedicalPractitionerUserId?: string;
-    EmergencyDateFrom: Date;
-    EmergencyDateTo: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+    EmergencyDateFrom?: Date;
+    EmergencyDateTo?: Date;
+    OrderBy?: string;
+    Order?: string;
+    PageIndex?: number;
+    ItemsPerPage?: number;
 }
 
 export interface EmergencyEventSearchResults {

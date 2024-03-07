@@ -20,7 +20,7 @@ describe('63 - Body temperature tests', function() {
             .post(`/api/v1/clinical/biometrics/body-temperatures`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BodyTemperature.id, 'BodyTemperatureId_1');
@@ -46,7 +46,7 @@ describe('63 - Body temperature tests', function() {
             .get(`/api/v1/clinical/biometrics/body-temperatures/${getTestData('BodyTemperatureId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BodyTemperature).to.have.property('id');
                 expect(response.body.Data.BodyTemperature).to.have.property('EhrId');
@@ -69,7 +69,7 @@ describe('63 - Body temperature tests', function() {
             .get(`/api/v1/clinical/biometrics/body-temperatures/search${loadBodyTemperatureQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BodyTemperatureRecords).to.have.property('TotalCount');
                 expect(response.body.Data.BodyTemperatureRecords).to.have.property('RetrievedCount');
@@ -90,7 +90,7 @@ describe('63 - Body temperature tests', function() {
             .put(`/api/v1/clinical/biometrics/body-temperatures/${getTestData('BodyTemperatureId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
 
@@ -116,7 +116,7 @@ describe('63 - Body temperature tests', function() {
             .delete(`/api/v1/clinical/biometrics/body-temperatures/${getTestData('BodyTemperatureId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -131,7 +131,7 @@ describe('63 - Body temperature tests', function() {
             .post(`/api/v1/clinical/biometrics/body-temperatures`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BodyTemperature.id, 'BodyTemperatureId');
@@ -158,7 +158,7 @@ describe('63 - Body temperature tests', function() {
             .post(`/api/v1/clinical/biometrics/body-temperatures`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -173,7 +173,7 @@ describe('63 - Body temperature tests', function() {
         agent
             .get(`/api/v1/clinical/biometrics/body-temperatures/search${loadBodyTemperatureQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -187,7 +187,7 @@ describe('63 - Body temperature tests', function() {
             .delete(`/api/v1/clinical/biometrics/body-temperatures/${getTestData('BodyTemperatureId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

@@ -20,6 +20,7 @@ describe('03 - Api client tests', function () {
             .post(`/api/v1/api-clients/`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
             .expect((response) => {
                 setTestData(response.body.Data.Client.id, 'ApiClientId');
@@ -44,6 +45,7 @@ describe('03 - Api client tests', function () {
             .post(`/api/v1/api-clients/`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
             .expect((response) => {
                 setTestData(response.body.Data.Client.id, 'ApiClientTimeId');
@@ -67,6 +69,7 @@ describe('03 - Api client tests', function () {
             .get(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect((response) => {
                 expect(response.body.Data.Client).to.have.property('id');
                 expect(response.body.Data.Client).to.have.property('ClientName');
@@ -84,6 +87,7 @@ describe('03 - Api client tests', function () {
             .get(`/api/v1/api-clients/${getTestData('ClientCode')}/current-api-key`)
             .set('Content-Type', 'application/json')
             .auth(`${getTestData("ClientCode")}`, `${process.env.TEST_CLIENT_PASSWORD}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -99,6 +103,7 @@ describe('03 - Api client tests', function () {
             .put(`/api/v1/api-clients/${getTestData('ClientCode')}/renew-api-key`)
             .set('Content-Type', 'application/json')
             .auth(`${getTestData("ClientCode")}`, `${process.env.TEST_CLIENT_PASSWORD}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -113,15 +118,16 @@ describe('03 - Api client tests', function () {
             .get(`/api/v1/api-clients/search${loadApiClientQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect(response => {
-                expect(response.body.Data.ApiClientRecords).to.have.property('TotalCount');
-                expect(response.body.Data.ApiClientRecords).to.have.property('RetrievedCount');
-                expect(response.body.Data.ApiClientRecords).to.have.property('PageIndex');
-                expect(response.body.Data.ApiClientRecords).to.have.property('ItemsPerPage');
-                expect(response.body.Data.ApiClientRecords).to.have.property('Order');
-                expect(response.body.Data.ApiClientRecords.TotalCount).to.greaterThan(0);
-                expect(response.body.Data.ApiClientRecords.RetrievedCount).to.greaterThan(0);
-                expect(response.body.Data.ApiClientRecords.Items.length).to.greaterThan(0);
+                expect(response.body.Data.ClientAppRecords).to.have.property('TotalCount');
+                expect(response.body.Data.ClientAppRecords).to.have.property('RetrievedCount');
+                expect(response.body.Data.ClientAppRecords).to.have.property('PageIndex');
+                expect(response.body.Data.ClientAppRecords).to.have.property('ItemsPerPage');
+                expect(response.body.Data.ClientAppRecords).to.have.property('Order');
+                expect(response.body.Data.ClientAppRecords.TotalCount).to.greaterThan(0);
+                expect(response.body.Data.ClientAppRecords.RetrievedCount).to.greaterThan(0);
+                expect(response.body.Data.ClientAppRecords.Items.length).to.greaterThan(0);
             })
             .expect(200, done);
     });
@@ -133,6 +139,7 @@ describe('03 - Api client tests', function () {
             .put(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body.Data.Client).to.have.property('id');
@@ -153,6 +160,7 @@ describe('03 - Api client tests', function () {
             .delete(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -167,6 +175,7 @@ describe('03 - Api client tests', function () {
             .post(`/api/v1/api-clients/`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
             .expect((response) => {
                 setTestData(response.body.Data.Client.id, 'ApiClientId');
@@ -190,12 +199,13 @@ describe('03 - Api client tests', function () {
         agent
             .post(`/api/v1/api-clients/`)
             .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('03:10 -> Negative - Get api client by id', function (done) {
@@ -203,6 +213,7 @@ describe('03 - Api client tests', function () {
             .get(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -218,6 +229,7 @@ describe('03 - Api client tests', function () {
             .put(`/api/v1/api-clients/${getTestData('ClientCode')}/renew-api-key`)
             .set('Content-Type', 'application/json')
             .auth(`${getTestData("ClientCode")}`, `xyz`)
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -231,11 +243,12 @@ describe('03 - Api client tests', function () {
         agent
             .delete(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(401, done);
     });
     
 });

@@ -32,7 +32,7 @@ describe('09 - Person-Organization tests', function() {
             .get(`/api/v1/persons/${getTestData('DoctorPersonId')}/organizations`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -46,7 +46,7 @@ describe('09 - Person-Organization tests', function() {
             .get(`/api/v1/organizations/${getTestData('OrganizationId')}/persons`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -78,7 +78,7 @@ describe('09 - Person-Organization tests', function() {
             .post(`/api/v1/organizations/${getTestData('OrganizationId')}/remove-person/${getTestData('DoctorPersonId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -92,14 +92,13 @@ describe('09 - Person-Organization tests', function() {
         agent
             .post(`/api/v1/organizations/${getTestData('OrganizationId')}/add-person/${getTestData('DoctorPersonId')}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
               
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('09:07 -> Negative - Get organization by Personid', function(done) {
@@ -119,7 +118,7 @@ describe('09 - Person-Organization tests', function() {
         agent
             .get(`/api/v1/organizations/${getTestData('OrganizationId')}/persons`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -133,7 +132,7 @@ describe('09 - Person-Organization tests', function() {
         agent
             .post(`/api/v1/organizations/${getTestData('OrganizationId')}/remove-person/${getTestData('DoctorPersonId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

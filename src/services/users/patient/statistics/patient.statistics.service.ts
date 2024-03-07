@@ -575,7 +575,8 @@ export class PatientStatisticsService {
             //pageNumber = this.addSleepPage(document, reportModel, pageNumber);
             pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
             this.addDailyAssessmentPage(document, reportModel, pageNumber);
-
+            
+            this.setPageNumbers(document);
             document.end();
 
             const localFilePath = await PDFGenerator.savePDFLocally(writeStream, absFilepath);
@@ -618,6 +619,18 @@ export class PatientStatisticsService {
     //#endregion
 
     //#region Pages
+
+    private setPageNumbers = (document: PDFKit.PDFDocument) => {
+        const pageRange: {
+            start: number,
+            count: number
+        } = document.bufferedPageRange();
+        for (let i = pageRange.start ; i < pageRange.count; i++ ) {
+            document.switchToPage(i);
+            PDFGenerator.addOrderPageNumber(document, i + 1, pageRange.count);
+        }
+        document.flushPages();
+    };
 
     private addMainPage = (document, model, pageNumber) => {
         var y = addTop(document, model, null, false);

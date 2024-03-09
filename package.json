@@ -23,7 +23,7 @@
     "@aws-sdk/client-ses": "^3.370.0",
     "@faker-js/faker": "^8.0.2",
     "@aws-sdk/credential-provider-node": "^3.501.0",
-    "@aws-sdk/lib-storage": "^3.405.0",
+    "@aws-sdk/lib-storage": "^3.503.1",
     "@aws-sdk/s3-request-presigner": "^3.498.0",
     "@types/bcryptjs": "^2.4.3",
     "@types/adm-zip": "^0.5.1",

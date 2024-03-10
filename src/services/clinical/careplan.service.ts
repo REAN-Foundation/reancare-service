@@ -685,33 +685,6 @@ export class CareplanService implements IUserActionService {
         return await this._handler.scheduleDailyHighRiskCareplan(provider);
     };
 
-    public addEHRRecord = (planName: string, planCode : string, model: CareplanActivityDto, appName?: string, healthSystemHospitalDetails?: PatientDetailsDto) => {
-        EHRAnalyticsHandler.addCareplanActivityRecord(
-            appName,
-            model.PatientUserId,
-            model.id,
-            model.EnrollmentId,
-            model.Provider,
-            planName,
-            planCode,
-            model.Type,
-            model.Category,
-            model.ProviderActionId,
-            model.Title,
-            model.Description,
-            model.Url,
-            'English',
-            model.ScheduledAt,
-            model.CompletedAt,
-            model.Sequence,
-            model.Frequency,
-            model.Status,
-            healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
-            healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
-            model.CreatedAt ? new Date(model.CreatedAt) : null
-        );
-    };
-
     //#endregion
 
 }

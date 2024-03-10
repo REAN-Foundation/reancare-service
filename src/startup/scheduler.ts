@@ -10,17 +10,6 @@ import { CommunityNetworkService } from '../modules/community.bw/community.netwo
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
 import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
 import { UserService } from '../services/users/user/user.service';
-import { EHRAssessmentService } from '../modules/ehr.analytics/ehr.assessment.service';
-import { EHRCareplanActivityService } from '../modules/ehr.analytics/ehr.careplan.activity.service';
-import { EHRVitalService } from '../modules/ehr.analytics/ehr.vital.service';
-import { EHRLabService } from '../modules/ehr.analytics/ehr.lab.service';
-import { EHRMentalWellBeingService } from '../modules/ehr.analytics/ehr.mental.wellbeing.service';
-import { EHRPhysicalActivityService } from '../modules/ehr.analytics/ehr.physical.activity.service';
-import { EHRNutritionService } from '../modules/ehr.analytics/ehr.nutrition.service';
-import { EHRSymptomService } from '../modules/ehr.analytics/ehr.symptom.service';
-import { EHRMedicationService } from '../modules/ehr.analytics/ehr.medication.service';
-import { EHRAnalyticsHandler } from '../modules/ehr.analytics/ehr.analytics.handler';
-import { StatisticsService } from '../services/statistics/statistics.service';
 import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
 import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
@@ -178,7 +167,7 @@ export class Scheduler {
                 const careplanService = Injector.Container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
                 const nextMinutes = 15;
-                const userTaskService = Loader.container.resolve(UserTaskSenderService);
+                const userTaskService = Injector.Container.resolve(UserTaskSenderService);
                 await userTaskService.sendUserTasks(nextMinutes);
             })();
         });

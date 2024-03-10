@@ -521,4 +521,8 @@ export class TimeHelper {
 
     static timeDelay = ms => new Promise(res => setTimeout(res, ms));
 
+    static getDateTimeStamp = (date: Date): string => {
+        date = new Date(date.toISOString().split("T")[0]);
+        return date.getTime().toString();
+    };
 }

@@ -21,4 +21,5 @@ export interface CareplanActivityDomainModel {
     Sequence         : number;
     Frequency        : number;
     Status           : string;
+    RawContent?      : string;
 }

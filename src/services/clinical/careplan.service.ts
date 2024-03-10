@@ -421,6 +421,7 @@ export class CareplanService implements IUserActionService {
     public getActivities = async (patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]> => {
         return await this._careplanRepo.getActivities(patientUserId, startTime, endTime);
     };
+
     private getAssessment = async (
         activity: CareplanActivityDto,
         template: AssessmentTemplateDto,
@@ -496,7 +497,7 @@ export class CareplanService implements IUserActionService {
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
 
-            var scheduledDate = TimeHelper.timestamp(activity.ScheduledAt);
+            var scheduledDate = TimeHelper.getDateTimeStamp(activity.ScheduledAt);
             if (!activitiesGroupedByDate[scheduledDate]) {
                 activitiesGroupedByDate[scheduledDate] = [];
             }
@@ -516,22 +517,11 @@ export class CareplanService implements IUserActionService {
 
             activities.forEach( async (activity) => {
                 let startTime = null;
-
-                if (activity.Provider === 'AHA') {
-                    var dayStartStr = activity.ScheduledAt.toISOString();
-                    var dayStart = TimeHelper.getDateWithTimezone(dayStartStr, timezoneOffset);
-                    dayStart = TimeHelper.addDuration(dayStart, 7, DurationType.Hour); // Start at 7:00 AM
-                    var scheduleDelay = (activity.Sequence - 1) * 1;
-                    startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
-                    var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
-
-                } else {
-                    var dayStartStr = activity.ScheduledAt;
-                    const offset = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
-                    startTime = TimeHelper.addDuration(new Date(dayStartStr), offset, DurationType.Minute);
-                    Logger.instance().log(`UTC Date: ${startTime}`);
-                    var endTime = TimeHelper.addDuration(startTime, 16, DurationType.Hour);
-                }
+                var dayStartStr = activity.ScheduledAt;
+                const offset = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
+                startTime = TimeHelper.addDuration(new Date(dayStartStr), offset, DurationType.Minute);
+                Logger.instance().log(`UTC Date: ${startTime}`);
+                var endTime = TimeHelper.addDuration(startTime, 16, DurationType.Hour);
 
                 var userTaskModel: UserTaskDomainModel = {
                     UserId             : activity.PatientUserId,
@@ -719,30 +709,30 @@ export class CareplanService implements IUserActionService {
     };
 
     public addEHRRecord = (planName: string, planCode : string, model: CareplanActivityDto, appName?: string, healthSystemHospitalDetails?: PatientDetailsDto) => {
-            EHRAnalyticsHandler.addCareplanActivityRecord(
-                appName,
-                model.PatientUserId,
-                model.id,
-                model.EnrollmentId,     
-                model.Provider,               
-                planName,      
-                planCode,                
-                model.Type,            
-                model.Category,        
-                model.ProviderActionId,
-                model.Title,           
-                model.Description,     
-                model.Url,
-                'English',       
-                model.ScheduledAt,
-                model.CompletedAt,     
-                model.Sequence,        
-                model.Frequency,       
-                model.Status,
-                healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
-                healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
-                model.CreatedAt ? new Date(model.CreatedAt) : null
-            );
+        EHRAnalyticsHandler.addCareplanActivityRecord(
+            appName,
+            model.PatientUserId,
+            model.id,
+            model.EnrollmentId,
+            model.Provider,
+            planName,
+            planCode,
+            model.Type,
+            model.Category,
+            model.ProviderActionId,
+            model.Title,
+            model.Description,
+            model.Url,
+            'English',
+            model.ScheduledAt,
+            model.CompletedAt,
+            model.Sequence,
+            model.Frequency,
+            model.Status,
+            healthSystemHospitalDetails.HealthSystem ? healthSystemHospitalDetails.HealthSystem : null,
+            healthSystemHospitalDetails.AssociatedHospital ? healthSystemHospitalDetails.AssociatedHospital : null,
+            model.CreatedAt ? new Date(model.CreatedAt) : null
+        );
     };
 
     //#endregion

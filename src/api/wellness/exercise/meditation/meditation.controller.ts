@@ -1,34 +1,27 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { MeditationService } from '../../../../services/wellness/exercise/meditation.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { MeditationValidator } from './meditation.validator';
-import { BaseController } from '../../../base.controller';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../../common/logger';
+import { EHRMentalWellBeingService } from '../../../../modules/ehr.analytics/ehr.services/ehr.mental.wellbeing.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MeditationController extends BaseController{
+export class MeditationController {
 
     //#region member variables and constructors
 
-    _service: MeditationService = null;
+    _service: MeditationService = Injector.Container.resolve(MeditationService);
 
     _validator: MeditationValidator = new MeditationValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(MeditationService); 
-    }
+    _ehrMentalWellBeingService: EHRMentalWellBeingService = Injector.Container.resolve(EHRMentalWellBeingService);
 
     //#endregion
 
@@ -37,22 +30,13 @@ export class MeditationController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Exercise.Meditation.Create', request, response);
-
             const model = await this._validator.create(request);
             const meditation = await this._service.create(model);
             if (meditation == null) {
                 throw new ApiError(400, 'Cannot create record for meditation!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(meditation.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, meditation.id, null, meditation, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${meditation.PatientUserId}`);
-            }
+            await this._ehrMentalWellBeingService.addEHRMeditationForAppNames(meditation);
 
             if (meditation.DurationInMins) {
                 var timestamp = meditation.EndTime ?? meditation.StartTime;
@@ -72,7 +56,7 @@ export class MeditationController extends BaseController{
                     },
                     RecordId       : meditation.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -87,8 +71,6 @@ export class MeditationController extends BaseController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Exercise.Meditation.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const meditation = await this._service.getById(id);
@@ -106,8 +88,6 @@ export class MeditationController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Exercise.Meditation.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -129,8 +109,6 @@ export class MeditationController extends BaseController{
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Exercise.Meditation.Update', request, response);
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -143,14 +121,7 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Unable to update meditation record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, updated, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrMentalWellBeingService.addEHRMeditationForAppNames(updated);
 
             ResponseHandler.success(request, response, 'Meditation record updated successfully!', 200, {
                 Meditation : updated,
@@ -162,8 +133,6 @@ export class MeditationController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Exercise.Meditation.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

@@ -1,5 +1,3 @@
-import { Logger } from '../../../common/logger';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../../common/api.error';
 import { IAssessmentHelperRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface';
@@ -33,9 +31,9 @@ import {
     BooleanQueryAnswer,
     CAssessmentListNode } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Loader } from '../../../startup/loader';
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { ConditionProcessor } from './condition.processor';
+import { Injector } from '../../../startup/injector';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +47,7 @@ export class AssessmentService {
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
     ) {
-        this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
+        this._conditionProcessor = Injector.Container.resolve(ConditionProcessor);
     }
 
     public create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
@@ -79,6 +77,9 @@ export class AssessmentService {
 
     public getById = async (id: string): Promise<AssessmentDto> => {
         var assessment = await this._assessmentRepo.getById(id);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${id} cannot be found!`);
+        }
         var responses = await this._assessmentHelperRepo.getUserResponses(id);
         assessment.UserResponses = responses;
         return assessment;
@@ -98,6 +99,9 @@ export class AssessmentService {
 
     public startAssessment = async (id: uuid): Promise<AssessmentQueryDto | AssessmentQueryListDto> => {
         var assessment = await this._assessmentRepo.getById(id);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${id} cannot be found!`);
+        }
         if (assessment.Status === ProgressStatus.InProgress &&
             assessment.StartedAt !== null) {
             throw new Error('Assessment is already in progress.');
@@ -662,10 +666,11 @@ export class AssessmentService {
                 next = await this.messageNodeAsQueryDto(nextNode, assessment);
             }
             const response: AssessmentQuestionResponseDto = {
-                AssessmentId : assessment.id,
-                Parent       : currentQueryDto,
-                Answer       : answerDto,
-                Next         : next,
+                AssessmentId      : assessment.id,
+                Parent            : currentQueryDto,
+                Answer            : answerDto,
+                Next              : next,
+                MessageBeforeNext : chosenPath.MessageBeforeQuestion
             };
             return response;
         }
@@ -824,7 +829,7 @@ export class AssessmentService {
 
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         if (answerDto.ResponseType === QueryResponseType.Biometrics) {
-            const biometricsHelper = Loader.container.resolve(AssessmentBiometricsHelper);
+            const biometricsHelper = Injector.Container.resolve(AssessmentBiometricsHelper);
             await biometricsHelper.persistBiometrics(assessment.PatientUserId, answerDto);
         }
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
@@ -1109,55 +1114,6 @@ export class AssessmentService {
         }
         return null;
     };
-
-    public addEHRRecord = async (answerResponse: any, assessment?: any, options?: any, appName?: string ) => {
-
-        Logger.instance().log(`AnswerResponse: ${JSON.stringify(answerResponse)}`);
-        Logger.instance().log(`Assessment: ${JSON.stringify(assessment, null, 2)}`);
-
-        var assessmentRecord = {
-            AppName        : appName,
-            PatientUserId  : assessment.PatientUserId,
-            AssessmentId   : assessment.id,
-            TemplateId     : assessment.AssessmentTemplateId,
-            NodeId         : answerResponse ? answerResponse.Answer.NodeId                                           : null,
-            Title          : assessment.Title,
-            Question       : answerResponse ? answerResponse.Answer.Title                                            : null,
-            SubQuestion    : answerResponse && answerResponse.Answer.SubQuestion ? answerResponse.Answer.SubQuestion : null,
-            QuestionType   : answerResponse ? answerResponse.Answer.ResponseType                                     : null,
-            AnswerOptions  : options ? JSON.stringify(options.Options)                                               : null,
-            AnswerValue    : null,
-            AnswerReceived : null,
-            AnsweredOn     : assessment.CreatedAt,
-            Status         : assessment.Status ?? null,
-            Score          : assessment.Score ?? null,
-            AdditionalInfo : null,
-            StartedAt      : assessment.StartedAt ?? null,
-            FinishedAt     : assessment.FinishedAt ?? null,
-            RecordDate     : assessment.CreatedAt ? new Date(assessment.CreatedAt) : null
-        };
-
-        Logger.instance().log(`AssessmentRecord: ${JSON.stringify(assessmentRecord, null, 2)}`);
-
-        if (answerResponse && answerResponse.Answer.ResponseType === 'Single Choice Selection') {
-            assessmentRecord['AnswerValue'] = answerResponse.Answer.ChosenOption.Sequence;
-            assessmentRecord['AnswerReceived'] = answerResponse.Answer.ChosenOption.Text;
-            EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-        } else if (answerResponse && answerResponse.Answer.ResponseType === 'Multi Choice Selection') {
-            var responses = answerResponse.Answer.ChosenOptions;
-            for await (var r of responses) {
-                assessmentRecord['AnswerValue'] = r.Sequence;
-                assessmentRecord['AnswerReceived'] = r.Text;
-                var a = JSON.parse(JSON.stringify(assessmentRecord));
-                EHRAnalyticsHandler.addAssessmentRecord(a);
-            }
-        } else {
-            EHRAnalyticsHandler.addAssessmentRecord(assessmentRecord);
-
-        }
-        
-    };
-
 
     //#endregion
 

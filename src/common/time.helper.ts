@@ -506,7 +506,7 @@ export class TimeHelper {
         return diff;
     };
 
-    static formatDateToLocal_YYYY_MM_DD = async (date : Date) => {
+    static formatDateToLocal_YYYY_MM_DD = (date : Date) => {
         Logger.instance().log(`Date :: ${date}`);
         const mnth = ("0" + (date.getMonth() + 1)).slice(-2);
         const day = ("0" + date.getDate()).slice(-2);
@@ -525,5 +525,4 @@ export class TimeHelper {
         date = new Date(date.toISOString().split("T")[0]);
         return date.getTime().toString();
     };
-    
 }

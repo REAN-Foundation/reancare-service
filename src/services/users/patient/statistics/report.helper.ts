@@ -45,10 +45,6 @@ export interface TableRowProperties {
 
 export const addTableRow = (
     document: PDFKit.PDFDocument, y: any, tableProperties: TableRowProperties) => {
-
-    // const labelX = 135;
-    // const valueX = 360;
-
     document
         .fontSize(tableProperties.FontSize)
         .fillColor("#444444");
@@ -81,7 +77,7 @@ export const addRectangularChartImage = (
     document.image(chart.location, 125, y, { width: imageWidth, align: 'center' });
     document.moveDown();
     y = y + 135;
-    addText(document, title, 80, y, 10, titleColor, 'center');
+    addText(document, title, 80, y, 12, titleColor, 'center');
     return y;
 };
 

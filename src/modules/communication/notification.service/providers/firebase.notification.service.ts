@@ -2,12 +2,11 @@ import * as admin from 'firebase-admin';
 import { Logger } from '../../../../common/logger';
 import { INotificationService } from '../notification.service.interface';
 import fs from 'fs';
-import { url } from 'inspector';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class FirebaseNotificationService implements INotificationService {
-    
+
     init = () => {
         try {
             const accountCreds = fs.readFileSync(process.env.FCM_GOOGLE_APPLICATION_CREDENTIALS).toString();
@@ -38,11 +37,11 @@ export class FirebaseNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-    
+
     sendNotificationToMultipleDevice = async (
         deviceTokens: string[],
         message: any): Promise<any> => {
-    
+
         try {
             message.tokens = deviceTokens;
             Logger.instance().log(`Sending notification to tokens: ${deviceTokens}.`);
@@ -54,7 +53,7 @@ export class FirebaseNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-    
+
     sendMessageToTopic = async (topic: string, message: any): Promise<string> => {
         try {
             message.topic = topic;
@@ -67,10 +66,10 @@ export class FirebaseNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-    
+
     formatNotificationMessage = (notificationType: string, title: string, body: any, url = null): any => {
         var message = {
-            data : { 
+            data : {
                 type         : notificationType,
                 title        : title,
                 body         : body,
@@ -116,7 +115,7 @@ export class FirebaseNotificationService implements INotificationService {
         Logger.instance().log(`Notification Payload: ${JSON.stringify(message)}`);
         return message;
     };
-    
+
     formatNotificationMessageWithData = (notificationType: string, title: string, body: any, customData: any): any => {
         var message = {
             data : {
@@ -159,5 +158,5 @@ export class FirebaseNotificationService implements INotificationService {
         };
         return message;
     };
-       
+
 }

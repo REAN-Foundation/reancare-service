@@ -1,6 +1,6 @@
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { BaseSearchFilters, BaseSearchResults } from "../../miscellaneous/base.search.types";
-import { DailyStatisticsDto } from "./daily.statistics.dto";
+import { DailySystemStatisticsDto } from "./daily.statistics.dto";
 
 export interface DailyStatisticsSearchFilters extends BaseSearchFilters {
     id?                             : uuid
@@ -9,5 +9,5 @@ export interface DailyStatisticsSearchFilters extends BaseSearchFilters {
    }
 
 export interface DailyStatisticsSearchResults extends BaseSearchResults {
-    Items : DailyStatisticsDto[];
+    Items : DailySystemStatisticsDto[];
 }

@@ -20,7 +20,7 @@ describe('62 - Body weight tests', function() {
             .post(`/api/v1/clinical/biometrics/body-weights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BodyWeight.id, 'BodyWeightId_1');
@@ -46,7 +46,7 @@ describe('62 - Body weight tests', function() {
             .get(`/api/v1/clinical/biometrics/body-weights/${getTestData('BodyWeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BodyWeight).to.have.property('id');
                 expect(response.body.Data.BodyWeight).to.have.property('EhrId');
@@ -66,7 +66,7 @@ describe('62 - Body weight tests', function() {
             .get(`/api/v1/clinical/biometrics/body-weights/search${loadBodyWeightQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BodyWeightRecords).to.have.property('TotalCount');
                 expect(response.body.Data.BodyWeightRecords).to.have.property('RetrievedCount');
@@ -87,7 +87,7 @@ describe('62 - Body weight tests', function() {
             .put(`/api/v1/clinical/biometrics/body-weights/${getTestData('BodyWeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.BodyWeight).to.have.property('id');
@@ -111,7 +111,7 @@ describe('62 - Body weight tests', function() {
             .delete(`/api/v1/clinical/biometrics/body-weights/${getTestData('BodyWeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -126,7 +126,7 @@ describe('62 - Body weight tests', function() {
             .post(`/api/v1/clinical/biometrics/body-weights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BodyWeight.id, 'BodyWeightId');
@@ -153,7 +153,7 @@ describe('62 - Body weight tests', function() {
             .post(`/api/v1/clinical/biometrics/body-weights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -169,7 +169,7 @@ describe('62 - Body weight tests', function() {
             .get(`/api/v1/clinical/biometrics/body-weights/${getTestData('BodyWeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

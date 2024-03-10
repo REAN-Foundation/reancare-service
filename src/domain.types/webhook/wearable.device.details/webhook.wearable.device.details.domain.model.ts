@@ -1,4 +1,4 @@
-import { uuid } from "aws-sdk/clients/customerprofiles";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 export interface WearableDeviceDetailsDomainModel {
   id?                : uuid;

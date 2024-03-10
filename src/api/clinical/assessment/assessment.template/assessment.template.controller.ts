@@ -3,20 +3,19 @@ import fs from 'fs';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AssessmentTemplateFileConverter } from '../../../../services/clinical/assessment/assessment.template.file.converter';
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { AssessmentTemplateValidator } from './assessment.template.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AssessmentTemplateController extends BaseController{
+export class AssessmentTemplateController{
 
     //#region member variables and constructors
 
@@ -29,9 +28,8 @@ export class AssessmentTemplateController extends BaseController{
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
-        super();
-        this._service = Loader.container.resolve(AssessmentTemplateService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._service = Injector.Container.resolve(AssessmentTemplateService);
+        this._fileResourceService = Injector.Container.resolve(FileResourceService);
     }
 
     //#endregion
@@ -40,8 +38,6 @@ export class AssessmentTemplateController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.Create', request, response);
 
             const model = await this._validator.create(request);
             const assessmentTemplate = await this._service.create(model);
@@ -60,8 +56,6 @@ export class AssessmentTemplateController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const assessmentTemplate = await this._service.getById(id);
             if (assessmentTemplate == null) {
@@ -78,8 +72,6 @@ export class AssessmentTemplateController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -101,8 +93,6 @@ export class AssessmentTemplateController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -127,8 +117,6 @@ export class AssessmentTemplateController extends BaseController{
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -151,7 +139,6 @@ export class AssessmentTemplateController extends BaseController{
     export = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.Export', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const assessmentTemplate = await this._service.getById(id);
@@ -179,8 +166,6 @@ export class AssessmentTemplateController extends BaseController{
 
     importFromFile = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('AssessmentTemplate.ImportFromFile', request, response);
 
             const uploadModels = this._fileResourceValidator.getUploadDomainModel(request);
             if (uploadModels.length === 0) {
@@ -217,8 +202,6 @@ export class AssessmentTemplateController extends BaseController{
     importFromJson = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.ImportFromJson', request, response);
-
             const templateModel = JSON.parse(request.body);
 
             var assessmentTemplate = await this._service.import(templateModel);
@@ -237,9 +220,6 @@ export class AssessmentTemplateController extends BaseController{
 
     addNode = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.AddNode', request, response);
-
             const model:CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode
                 = await this._validator.addNode(request);
 
@@ -259,8 +239,6 @@ export class AssessmentTemplateController extends BaseController{
 
     updateNode = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.UpdateNode', request, response);
 
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             var updates = await this._validator.updateNode(request);
@@ -287,8 +265,6 @@ export class AssessmentTemplateController extends BaseController{
     deleteNode = async (request: express.Request, response: express.Response) => {
         try {
 
-            await this.setContext('AssessmentTemplate.DeleteNode', request, response);
-
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const deleted: boolean = await this._service.deleteNode(nodeId);
             if (!deleted) {
@@ -307,8 +283,6 @@ export class AssessmentTemplateController extends BaseController{
     getNode = async (request: express.Request, response: express.Response) => {
         try {
 
-            await this.setContext('AssessmentTemplate.GetNode', request, response);
-
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const assessmentNode: CAssessmentNode = await this._service.getNode(nodeId);
             if (assessmentNode == null) {
@@ -326,8 +300,6 @@ export class AssessmentTemplateController extends BaseController{
 
     addScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.AddScoringCondition', request, response);
 
             const model:CScoringCondition
                 = await this._validator.addScoringCondition(request);
@@ -348,8 +320,6 @@ export class AssessmentTemplateController extends BaseController{
 
     updateScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.UpdateScoringCondition', request, response);
 
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
             Logger.instance().log(`Updating scoring condition for assessment template - ${templateId}`);
@@ -379,8 +349,6 @@ export class AssessmentTemplateController extends BaseController{
     deleteScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
 
-            await this.setContext('AssessmentTemplate.DeleteScoringCondition', request, response);
-
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
             const deleted: boolean = await this._service.deleteScoringCondition(conditionId);
             if (!deleted) {
@@ -398,8 +366,6 @@ export class AssessmentTemplateController extends BaseController{
 
     getScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
-            await this.setContext('AssessmentTemplate.GetScoringCondition', request, response);
 
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
             const condition: CScoringCondition = await this._service.getScoringCondition(conditionId);
@@ -419,8 +385,6 @@ export class AssessmentTemplateController extends BaseController{
     searchNode = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('AssessmentTemplate.SearchNode', request, response);
-
             const filters = await this._validator.searchNode(request);
             const searchResults = await this._service.searchNode(filters);
 
@@ -438,6 +402,217 @@ export class AssessmentTemplateController extends BaseController{
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    addPath = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const model = await this._validator.addPath(request);
+            const path = await this._service.addPath(nodeId, model);
+            if (path == null) {
+                throw new ApiError(400, 'Cannot create record for path!');
+            }
+            ResponseHandler.success(request, response, 'Path record created successfully!', 201, {
+                NodePath : path,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updatePath = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const updates = await this._validator.updatePath(request);
+            const path = await this._service.updatePath(pathId, updates);
+            if (path == null) {
+                throw new ApiError(400, 'Cannot update record for path!');
+            }
+            ResponseHandler.success(request, response, 'Path record updated successfully!', 200, {
+                NodePath : path,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deletePath = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const deleted = await this._service.deletePath(pathId);
+            if (!deleted) {
+                throw new ApiError(400, 'Cannot remove record for path!');
+            }
+            ResponseHandler.success(request, response, 'Path record removed successfully!', 200, {
+                Deleted : deleted,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPath = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const path = await this._service.getPath(pathId);
+            if (path == null) {
+                throw new ApiError(404, 'Cannot retrieve record for path!');
+            }
+            ResponseHandler.success(request, response, 'Path record retrieved successfully!', 200, {
+                NodePath : path,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getNodePaths = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const paths = await this._service.getNodePaths(nodeId);
+            ResponseHandler.success(request, response, 'Node paths retrieved successfully!', 200, {
+                NodePaths : paths,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    addPathCondition = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const model = await this._validator.addPathCondition(request);
+            const condition = await this._service.addPathCondition(pathId, model);
+            if (condition == null) {
+                throw new ApiError(400, 'Cannot create record for path condition!');
+            }
+            ResponseHandler.success(request, response, 'Path condition record created successfully!', 201, {
+                PathCondition : condition,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updatePathCondition = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            // const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const updates = await this._validator.updatePathCondition(request);
+            const condition = await this._service.updatePathCondition(conditionId, updates);
+            if (condition == null) {
+                throw new ApiError(400, 'Cannot update record for path condition!');
+            }
+            ResponseHandler.success(request, response, 'Path condition record updated successfully!', 200, {
+                PathCondition : condition,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deletePathCondition = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            // const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const deleted = await this._service.deletePathCondition(conditionId);
+            if (!deleted) {
+                throw new ApiError(400, 'Cannot remove record for path condition!');
+            }
+            ResponseHandler.success(request, response, 'Path condition record removed successfully!', 200, {
+                Deleted : deleted,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPathCondition = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const condition = await this._service.getPathCondition(conditionId, nodeId, pathId);
+            if (condition == null) {
+                throw new ApiError(404, 'Cannot retrieve record for path condition!');
+            }
+            ResponseHandler.success(request, response, 'Path condition record retrieved successfully!', 200, {
+                PathCondition : condition,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPathConditionsForPath = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const conditions = await this._service.getPathConditionForPath(pathId);
+            ResponseHandler.success(request, response, 'Path conditions retrieved successfully!', 200, {
+                PathConditions : conditions,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    setNextNodeToPath = async (request: express.Request, response: express.Response) => {
+        try {
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const nextNodeId: uuid = await this._validator.getParamUuid(request, 'nextNodeId');
+            const updatedPath = await this._service.setNextNodeToPath(nodeId, pathId, nextNodeId);
+            if (updatedPath == null) {
+                throw new ApiError(400, 'Cannot update record for path!');
+            }
+            ResponseHandler.success(request, response, 'Path record updated successfully!', 200, {
+                NodePath : updatedPath,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    private async checkNodeAndTemplate(nodeId: string, templateId: string) {
+        const node = await this._service.getNode(nodeId);
+        if (node == null) {
+            throw new ApiError(404, 'Cannot find node to add path!');
+        }
+        if (node.NodeType !== 'Question') {
+            throw new ApiError(400, 'Only question nodes can have paths!');
+        }
+        if (node.TemplateId !== templateId) {
+            throw new ApiError(400, 'Node does not belong to the template!');
+        }
+    }
 
     //#endregion
 

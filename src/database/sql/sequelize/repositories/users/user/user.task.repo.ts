@@ -600,7 +600,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                     Finished  : true
                 }
             });
-                
+
             stats.push({
                 DayStr     : dayStr,
                 Finished   : finished,

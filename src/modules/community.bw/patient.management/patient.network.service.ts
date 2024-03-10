@@ -77,5 +77,5 @@ export class PatientNetworkService implements IBloodWarriorService {
             return x.Provider === provider && x.Enabled;
         });
     }
-    
+
 }

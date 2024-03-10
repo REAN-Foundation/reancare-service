@@ -1,1 +1,43 @@
-<b>You have a reminder: {{TITLE}} set at {{SCHEDULE_TIME}}. Thank you.</b>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reminder: {{TITLE}}</title>
+</head>
+
+<body>
+    <table width="100%" cellspacing="0" cellpadding="0" bgcolor="#f7f7f7">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <table width="600" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="border: 1px solid #e0e0e0;">
+                    <tr>
+                        <td style="padding: 30px;">
+                            <h1>Reminder: {{TITLE}}</h1>
+                            <p>
+                                Dear {{FIRST_NAME}},
+                            </p>
+                            <p>
+                                This is a friendly reminder for an upcoming event:
+                            </p>
+                            <p>
+                                <strong>Event Title:</strong> {{TITLE}}
+                                <br>
+                                <strong>Scheduled Time:</strong> {{SCHEDULE_TIME}}
+                            </p>
+                            <p>
+                                If you require any assistance, please don't hesitate to reach out to our support team at <a href="mailto:{{PLATFORM_SUPPORT_EMAIL}}">{{PLATFORM_SUPPORT_EMAIL}}</a>.
+                            </p>
+                            <p>Best regards,</p>
+                            <p>The {{PLATFORM_NAME}} Team</p>
+                            <p><a href="{{PLATFORM_WEBSITE}}">{{PLATFORM_WEBSITE}}</a></p>
+                            <p>Email: <a href="mailto:{{PLATFORM_SUPPORT_EMAIL}}">{{PLATFORM_SUPPORT_EMAIL}}</a></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

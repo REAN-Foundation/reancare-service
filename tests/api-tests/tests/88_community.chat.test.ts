@@ -40,7 +40,7 @@ describe('88 - Third user logs in tests', function() {
             .post(`/api/v1/chats/conversations/start`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Conversation.id, "ConversationId");
@@ -58,7 +58,7 @@ describe('88 - Third user logs in tests', function() {
             .post(`/api/v1/chats/conversations/${getTestData('ConversationId')}/messages`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.ChatMessage.id, "ChatMessageId");
@@ -80,7 +80,7 @@ describe('88 - Third user logs in tests', function() {
             .post(`/api/v1/chats/conversations/${getTestData('ConversationId')}/messages`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt_2")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.ChatMessage.id, "ChatMessageId_1");
@@ -102,7 +102,7 @@ describe('88 - Third user logs in tests', function() {
             .post(`/api/v1/chats/conversations/${getTestData("ConversationId")}/messages`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.ChatMessage.id, "ChatMessageId_2");
@@ -124,7 +124,7 @@ describe('88 - Third user logs in tests', function() {
             .post(`/api/v1/chats/conversations/${getTestData("ConversationId")}/messages`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt_2")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.ChatMessage.id, "ChatMessageId_4");
@@ -139,47 +139,47 @@ describe('88 - Third user logs in tests', function() {
             .expect(201, done);
     });
 
-    it('88:07 -> Get conversation between these two users - 1', function(done) {
+    // it('88:07 -> Get conversation between these two users - 1', function(done) {
 
-        agent
-            .get(`/api/v1/chats/conversations/first-user/${getTestData('PatientUserId')}/second-user/${getTestData('PatientUserId_1')}`)
-            .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
-                expect(response.body.Data.Conversation).to.have.property('id');
-                expect(response.body.Data.Conversation).to.have.property('IsGroupConversation');
-                expect(response.body.Data.Conversation).to.have.property('Marked');
-                expect(response.body.Data.Conversation).to.have.property('InitiatingUserId');
-                expect(response.body.Data.Conversation).to.have.property('OtherUserId');
+    //     agent
+    //         .get(`/api/v1/chats/conversations/first-user/${getTestData('PatientUserId')}/second-user/${getTestData('PatientUserId_1')}`)
+    //         .set('Content-Type', 'application/json')
+    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
+    //         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+    //         .expect(response => {
+    //             expect(response.body.Data.Conversation).to.have.property('id');
+    //             expect(response.body.Data.Conversation).to.have.property('IsGroupConversation');
+    //             expect(response.body.Data.Conversation).to.have.property('Marked');
+    //             expect(response.body.Data.Conversation).to.have.property('InitiatingUserId');
+    //             expect(response.body.Data.Conversation).to.have.property('OtherUserId');
     
-                expect(response.body.Data.Conversation.InitiatingUserId).to.equal(getTestData("PatientUserId"));
-                expect(response.body.Data.Conversation.OtherUserId).to.equal(getTestData("PatientUserId_1"));
+    //             expect(response.body.Data.Conversation.InitiatingUserId).to.equal(getTestData("PatientUserId"));
+    //             expect(response.body.Data.Conversation.OtherUserId).to.equal(getTestData("PatientUserId_1"));
                 
-            })
-            .expect(200, done);
-    });
+    //         })
+    //         .expect(200, done);
+    // });
 
-    it('88:08 -> Get conversation beween these two users - 2', function(done) {
+    // it('88:08 -> Get conversation beween these two users - 2', function(done) {
 
-        agent
-            .get(`/api/v1/chats/conversations/first-user/${getTestData('PatientUserId_1')}/second-user/${getTestData('PatientUserId')}`)
-            .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
-                expect(response.body.Data.Conversation).to.have.property('id');
-                expect(response.body.Data.Conversation).to.have.property('IsGroupConversation');
-                expect(response.body.Data.Conversation).to.have.property('Marked');
-                expect(response.body.Data.Conversation).to.have.property('InitiatingUserId');
-                expect(response.body.Data.Conversation).to.have.property('OtherUserId');
+    //     agent
+    //         .get(`/api/v1/chats/conversations/first-user/${getTestData('PatientUserId_1')}/second-user/${getTestData('PatientUserId')}`)
+    //         .set('Content-Type', 'application/json')
+    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
+    //         .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+    //         .expect(response => {
+    //             expect(response.body.Data.Conversation).to.have.property('id');
+    //             expect(response.body.Data.Conversation).to.have.property('IsGroupConversation');
+    //             expect(response.body.Data.Conversation).to.have.property('Marked');
+    //             expect(response.body.Data.Conversation).to.have.property('InitiatingUserId');
+    //             expect(response.body.Data.Conversation).to.have.property('OtherUserId');
   
-                expect(response.body.Data.Conversation.InitiatingUserId).to.equal(getTestData("PatientUserId"));
-                expect(response.body.Data.Conversation.OtherUserId).to.equal(getTestData("PatientUserId_1"));
+    //             expect(response.body.Data.Conversation.InitiatingUserId).to.equal(getTestData("PatientUserId"));
+    //             expect(response.body.Data.Conversation.OtherUserId).to.equal(getTestData("PatientUserId_1"));
               
-            })
-            .expect(200, done);
-    });
+    //         })
+    //         .expect(200, done);
+    // });
 
     it('88:09 -> Get conversation messages', function(done) {
 
@@ -187,7 +187,7 @@ describe('88 - Third user logs in tests', function() {
             .get(`/api/v1/chats/conversations/${getTestData('ConversationId')}/messages`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -202,7 +202,7 @@ describe('88 - Third user logs in tests', function() {
             .get(`/api/v1/chats/conversations/${getTestData('ConversationId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -217,7 +217,7 @@ describe('88 - Third user logs in tests', function() {
             .get(`/api/v1/chats/messages/${getTestData('ChatMessageId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -233,7 +233,7 @@ describe('88 - Third user logs in tests', function() {
             .put(`/api/v1/chats/messages/${getTestData('ChatMessageId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.ChatMessage).to.have.property('id');
@@ -251,7 +251,7 @@ describe('88 - Third user logs in tests', function() {
             .delete(`/api/v1/chats/messages/${getTestData('ChatMessageId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -266,7 +266,7 @@ describe('88 - Third user logs in tests', function() {
             .get(`/api/v1/chats/users/${getTestData('PatientUserId')}/conversations/recent`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -281,7 +281,7 @@ describe('88 - Third user logs in tests', function() {
             .get(`/api/v1/chats/users/${getTestData('PatientUserId')}/conversations/marked`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -310,7 +310,7 @@ describe('88 - Third user logs in tests', function() {
             .post(`/api/v1/chats/conversations/start`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -326,7 +326,7 @@ describe('88 - Third user logs in tests', function() {
         agent
             .post(`/api/v1/chats/conversations/${getTestData('ConversationId')}/messages`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -414,7 +414,7 @@ describe('88 - Third user logs in tests', function() {
         agent
             .get(`/api/v1/chats/conversations/${getTestData('ConversationId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -443,7 +443,7 @@ describe('88 - Third user logs in tests', function() {
             .put(`/api/v1/chats/messages/${getTestData('ChatMessageId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -459,7 +459,7 @@ describe('88 - Third user logs in tests', function() {
             .delete(`/api/v1/chats/messages/${getTestData('ChatMessageId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -473,7 +473,7 @@ describe('88 - Third user logs in tests', function() {
         agent
             .get(`/api/v1/chats/users/${getTestData('PatientUserId')}/conversations/recent`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

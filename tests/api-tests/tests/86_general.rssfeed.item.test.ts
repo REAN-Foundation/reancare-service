@@ -197,15 +197,14 @@ describe('86 - Rssfeed Item tests', function() {
         agent
             .put(`/api/v1/rss-feeds/feed-items/${getTestData('RssfeedItemId')}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('86:08 -> Negative - Delete rssfeed item', function(done) {

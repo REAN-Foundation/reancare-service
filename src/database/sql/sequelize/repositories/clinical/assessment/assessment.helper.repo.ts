@@ -45,6 +45,7 @@ import ScoringCondition from '../../../models/clinical/assessment/scoring.condit
 import { AssessmentNodeSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { AssessmentNodeSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { Op } from 'sequelize';
+import { cat } from 'shelljs';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -1147,6 +1148,246 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
     };
 
+    addPath = async (nodeId: uuid, path: CAssessmentNodePath): Promise<CAssessmentNodePath> => {
+        try {
+            const displayCode = path.DisplayCode ?? Helper.generateDisplayCode('Path');
+            const parentNode = await AssessmentNode.findByPk(nodeId);
+            const nextNode = path.NextNodeId ? await AssessmentNode.findByPk(path.NextNodeId) : null;
+            const entity = {
+                DisplayCode          : displayCode,
+                ParentNodeId         : parentNode.id,
+                NextNodeId           : nextNode ? nextNode.id         : null,
+                NextNodeDisplayCode  : nextNode ? nextNode.DisplayCode: null,
+                ConditionId          : null,
+                IsExitPath           : path.IsExitPath,
+                MessageBeforeQuestion: path.MessageBeforeQuestion,
+            };
+            var thisPath = await AssessmentNodePath.create(entity);
+            return AssessmentHelperMapper.toPathDto(thisPath);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getPath = async (pathId: uuid): Promise<CAssessmentNodePath> => {
+        try {
+            var path = await AssessmentNodePath.findByPk(pathId);
+            return AssessmentHelperMapper.toPathDto(path);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    updatePath = async (pathId: string, updates: any): Promise<CAssessmentNodePath> => {
+        try {
+            var path = await AssessmentNodePath.findByPk(pathId);
+            if (Helper.hasProperty(updates, 'NextNodeId')) {
+                path.NextNodeId = updates['NextNodeId'];
+            }
+            if (Helper.hasProperty(updates, 'IsExitPath')) {
+                path.IsExitPath = updates['IsExitPath'];
+            }
+            if (Helper.hasProperty(updates, 'ConditionId')) {
+                path.ConditionId = updates['ConditionId'];
+            }
+            if (Helper.hasProperty(updates, 'MessageBeforeQuestion')) {
+                path.MessageBeforeQuestion = updates['MessageBeforeQuestion'];
+            }
+            path = await path.save();
+            return AssessmentHelperMapper.toPathDto(path);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    deletePath = async (pathId: string): Promise<boolean> => {
+        try {
+            if (!pathId) {
+                throw new ApiError(400, `Path not found!`);
+            }
+            var path = await AssessmentNodePath.findByPk(pathId);
+            if (!path) {
+                throw new ApiError(404, `Path not found!`);
+            }
+            if (path.ConditionId != null) {
+                await this.deletePathCondition(path.ConditionId);
+            }
+            const count = await AssessmentNodePath.destroy({
+                where : {
+                    id : pathId
+                }
+            });
+            return count === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getNodePaths = async (nodeId: string): Promise<CAssessmentNodePath[]> => {
+        try {
+            const paths = await AssessmentNodePath.findAll({
+                where : {
+                    ParentNodeId : nodeId
+                }
+            });
+            const pathDtos = paths.map(x => AssessmentHelperMapper.toPathDto(x));
+            return pathDtos;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    setNextNodeToPath = async (parentNodeId: string, pathId: string, nextNodeId: string)
+        : Promise<CAssessmentNodePath> => {
+        try {
+            var path = await AssessmentNodePath.findByPk(pathId);
+            if (!path) {
+                throw new ApiError(404, `Path not found!`);
+            }
+            var nextNode = await AssessmentNode.findByPk(nextNodeId);
+            if (!nextNode) {
+                throw new ApiError(404, `Next node not found!`);
+            }
+            path.NextNodeId = nextNode.id;
+            path.NextNodeDisplayCode = nextNode.DisplayCode;
+            await path.save();
+            return AssessmentHelperMapper.toPathDto(path);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    addPathCondition = async (pathId: string, condition: CAssessmentPathCondition)
+        : Promise<CAssessmentPathCondition> => {
+        try {
+            const path = await AssessmentNodePath.findByPk(pathId);
+            if (!path) {
+                throw new ApiError(404, `Path not found!`);
+            }
+            if (condition.DisplayCode == null || condition.DisplayCode == undefined) {
+                condition.DisplayCode = Helper.generateDisplayCode('Condition');
+            }
+            const record = await AssessmentPathCondition.create({
+                DisplayCode          : condition.DisplayCode,
+                NodeId               : path.ParentNodeId,
+                PathId               : path.id,
+                ParentConditionId    : null,
+                IsCompositeCondition : condition.IsCompositeCondition,
+                CompositionType      : condition.CompositionType ?? ConditionCompositionType.And,
+                OperatorType         : condition.OperatorType,
+                FirstOperandName     : condition.FirstOperand.Name,
+                FirstOperandValue    : condition.FirstOperand.Value,
+                FirstOperandDataType : condition.FirstOperand.DataType,
+                SecondOperandName    : condition.SecondOperand.Name,
+                SecondOperandValue   : condition.SecondOperand.Value,
+                SecondOperandDataType: condition.SecondOperand.DataType,
+                ThirdOperandName     : condition.ThirdOperand ? condition.ThirdOperand.Name : null,
+                ThirdOperandValue    : condition.ThirdOperand ? condition.ThirdOperand.Value : null,
+                ThirdOperandDataType : condition.ThirdOperand ? condition.ThirdOperand.DataType : null,
+            });
+            path.ConditionId = record.id;
+            await path.save();
+            return AssessmentHelperMapper.toConditionDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    updatePathCondition = async (conditionId: string, updates: CAssessmentPathCondition)
+        : Promise<CAssessmentPathCondition> => {
+        try {
+            const condition = await AssessmentPathCondition.findByPk(conditionId);
+            if (!condition) {
+                throw new ApiError(404, `Condition not found!`);
+            }
+            if (updates.DisplayCode) {
+                condition.DisplayCode = updates.DisplayCode;
+            }
+            if (updates.IsCompositeCondition) {
+                condition.IsCompositeCondition = updates.IsCompositeCondition;
+            }
+            if (updates.CompositionType) {
+                condition.CompositionType = updates.CompositionType;
+            }
+            if (updates.OperatorType) {
+                condition.OperatorType = updates.OperatorType;
+            }
+            if (updates.FirstOperand) {
+                condition.FirstOperandName = updates.FirstOperand.Name;
+                condition.FirstOperandValue = updates.FirstOperand.Value as any;
+                condition.FirstOperandDataType = updates.FirstOperand.DataType;
+            }
+            if (updates.SecondOperand) {
+                condition.SecondOperandName = updates.SecondOperand.Name;
+                condition.SecondOperandValue = updates.SecondOperand.Value as any;
+                condition.SecondOperandDataType = updates.SecondOperand.DataType;
+            }
+            if (updates.ThirdOperand) {
+                condition.ThirdOperandName = updates.ThirdOperand.Name;
+                condition.ThirdOperandValue = updates.ThirdOperand.Value as any;
+                condition.ThirdOperandDataType = updates.ThirdOperand.DataType;
+            }
+            await condition.save();
+            return AssessmentHelperMapper.toConditionDto(condition);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    deletePathCondition = async (conditionId: uuid) => {
+        try {
+            var condition = await AssessmentPathCondition.findByPk(conditionId);
+            if (condition) {
+                var children = await AssessmentPathCondition.findAll({
+                    where: {
+                        ParentConditionId: condition.id
+                    }
+                });
+                if (children.length > 0) {
+                    var ids = children.map(x => x.id);
+                    for await (var id of ids) {
+                        await this.deletePathCondition(id);
+                    }
+                }
+                await condition.destroy();
+            }
+            return true;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getPathConditionForPath = async (pathId: string): Promise<CAssessmentPathCondition> => {
+        try {
+            const path = await AssessmentNodePath.findByPk(pathId);
+            if (!path) {
+                throw new ApiError(404, `Path not found!`);
+            }
+            if (!path.ConditionId) {
+                return null;
+            }
+            const conditon = await this.getPathCondition(path.ConditionId, path.ParentNodeId, pathId);
+            return conditon;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+    
     //#endregion
 
 }

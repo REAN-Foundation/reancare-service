@@ -23,6 +23,7 @@ import { BodyWeightDto } from '../../../domain.types/clinical/biometrics/body.we
 import { PulseDomainModel } from '../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
 import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.dto';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { Logger } from '../../../common/logger';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,45 +43,59 @@ export class AssessmentBiometricsHelper {
 
     public persistBiometrics = async (patientUserId: uuid, answer: BiometricQueryAnswer) => {
         
-        if (answer.Values.length === 0) {
-            throw new Error(`Invalid biometrics values!`);
+        if (answer.Values === undefined || answer.Values === null) {
+            Logger.instance().log(`No biometrics values found!`);
+            return;
         }
-        for await (var v of answer.Values) {
-            
-            const type = v.BiometricsType;
-
-            switch (type) {
-                case BiometricsType.BloodGlucose: {
-                    await this.addBloodGlucose(v, patientUserId);
-                    break;
-                }
-                case BiometricsType.BloodOxygenSaturation: {
-                    await this.addBloodOxygenSaturation(v, patientUserId);
-                    break;
-                }
-                case BiometricsType.BloodPressure: {
-                    await this.addBloodPressure(v, patientUserId);
-                    break;
-                }
-                case BiometricsType.BodyHeight: {
-                    await this.addBodyHeight(v, patientUserId);
-                    break;
-                }
-                case BiometricsType.BodyWeight: {
-                    await this.addBodyWeight(v, patientUserId);
-                    break;
-                }
-                case BiometricsType.BodyTemperature: {
-                    await this.addBodyTemperature(v, patientUserId);
-                    break;
-                }
-                case BiometricsType.Pulse: {
-                    await this.addPulse(v, patientUserId);
-                    break;
-                }
+        if (Array.isArray(answer.Values)) {
+            const biometricsList = answer.Values as any[];
+            if (biometricsList.length === 0) {
+                throw new Error(`Invalid biometrics values!`);
+            }
+            for await (var val of biometricsList) {
+                await this.addBiometricValue(val, patientUserId);
             }
         }
+        else {
+            const biometrics = answer.Values as AssessmentBiometrics;
+            await this.addBiometricValue(biometrics, patientUserId);
+        }
     };
+
+    private async addBiometricValue(val: any, patientUserId: string) {
+        const type = val.BiometricsType;
+
+        switch (type) {
+            case BiometricsType.BloodGlucose: {
+                await this.addBloodGlucose(val, patientUserId);
+                break;
+            }
+            case BiometricsType.BloodOxygenSaturation: {
+                await this.addBloodOxygenSaturation(val, patientUserId);
+                break;
+            }
+            case BiometricsType.BloodPressure: {
+                await this.addBloodPressure(val, patientUserId);
+                break;
+            }
+            case BiometricsType.BodyHeight: {
+                await this.addBodyHeight(val, patientUserId);
+                break;
+            }
+            case BiometricsType.BodyWeight: {
+                await this.addBodyWeight(val, patientUserId);
+                break;
+            }
+            case BiometricsType.BodyTemperature: {
+                await this.addBodyTemperature(val, patientUserId);
+                break;
+            }
+            case BiometricsType.Pulse: {
+                await this.addPulse(val, patientUserId);
+                break;
+            }
+        }
+    }
 
     //#region Privates
 

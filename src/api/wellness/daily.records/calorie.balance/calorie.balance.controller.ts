@@ -1,15 +1,14 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { CalorieBalanceService } from '../../../../services/wellness/daily.records/calorie.balance.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { CalorieBalanceValidator } from './calorie.balance.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CalorieBalanceController extends BaseController{
+export class CalorieBalanceController{
 
     //#region member variables and constructors
 
@@ -18,8 +17,7 @@ export class CalorieBalanceController extends BaseController{
     _validator: CalorieBalanceValidator = new CalorieBalanceValidator();
 
     constructor() {
-        super();
-        this._service = Loader.container.resolve(CalorieBalanceService);
+        this._service = Injector.Container.resolve(CalorieBalanceService);
     }
 
     //#endregion
@@ -28,8 +26,6 @@ export class CalorieBalanceController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.CalorieBalance.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -49,8 +45,6 @@ export class CalorieBalanceController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('DailyRecords.CalorieBalance.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const calorieBalance = await this._service.getById(id);
             if (calorieBalance == null) {
@@ -67,8 +61,6 @@ export class CalorieBalanceController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.CalorieBalance.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -87,8 +79,6 @@ export class CalorieBalanceController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.CalorieBalance.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -112,8 +102,6 @@ export class CalorieBalanceController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('DailyRecords.CalorieBalance.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

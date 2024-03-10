@@ -1,5 +1,5 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { CareplanController } from './careplan.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -7,16 +7,15 @@ import { CareplanController } from './careplan.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new CareplanController();
 
-    router.get('/eligibility/:patientUserId/providers/:provider/careplans/:careplanCode', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientEligibility);
-    router.get('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAvailableCareplans);
-    router.post('/patients/:patientUserId/enroll', authenticator.authenticateClient, authenticator.authenticateUser, controller.enroll);
-    router.get('/patients/:patientUserId/enrollments', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientEnrollments);
-    router.get('/:id/fetch-tasks', authenticator.authenticateClient, authenticator.authenticateUser, controller.fetchTasks);
-    router.get('/:id/weekly-status', authenticator.authenticateClient, authenticator.authenticateUser, controller.getWeeklyStatus);
-    router.post('/patients/update-risk', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateRisk);
+    router.get('/eligibility/:patientUserId/providers/:provider/careplans/:careplanCode', auth('Clinical.Careplan.GetPatientEligibility'), controller.getPatientEligibility);
+    router.get('/', auth('Clinical.Careplan.GetAvailableCareplans'), controller.getAvailableCareplans);
+    router.post('/patients/:patientUserId/enroll', auth('Clinical.Careplan.Enroll'), controller.enroll);
+    router.get('/patients/:patientUserId/enrollments', auth('Clinical.Careplan.GetPatientEnrollments'), controller.getPatientEnrollments);
+    router.get('/:id/fetch-tasks', auth('Clinical.Careplan.FetchTasks'), controller.fetchTasks);
+    router.get('/:id/weekly-status', auth('Clinical.Careplan.GetWeeklyStatus'), controller.getWeeklyStatus);
+    router.post('/patients/update-risk', auth('Clinical.Careplan.UpdateRisk'), controller.updateRisk);
 
     app.use('/api/v1/care-plans', router);
 };

@@ -436,10 +436,13 @@ export class ReminderValidator extends BaseValidator {
         if (date == null || date.toString() === 'Invalid Date') {
             throw new InputValidationError(["Invalid When-Date value!"]);
         }
-        const dt = TimeHelper.subtractDuration(new Date(), 1, DurationType.Day);
-        if (dt > date) {
-            throw new InputValidationError(["When-Date cannot be in the past!"]);
-        }
+        //GMU Document processor issue: Incomming date is in EST time zone
+        //TODO: Need to consider EST time zone
+
+        // const dt = TimeHelper.subtractDuration(new Date(), 1, DurationType.Day);
+        // if (dt > date) {
+        //     throw new InputValidationError(["When-Date cannot be in the past!"]);
+        // }
     };
 
     private validateRepeatAfterEveryNUnit = (request: express.Request): void => {

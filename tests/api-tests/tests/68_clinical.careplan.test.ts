@@ -42,7 +42,7 @@ describe.skip('68 - Patient tests', function() {
                 assert.exists(response.body.Data.User, 'Login user details exist.');
                 expect(response.body.Data.User).to.have.property('id');
                 setTestData(response.body.Data.AccessToken, "PatientJwt_1");
-                setTestData(response.body.Data.User.UserId, "PatientUserId_1");
+                setTestData(response.body.Data.User.UserId, "PatientUserId_5");
 
             })
             .expect(200, done);
@@ -97,7 +97,7 @@ describe.skip('68 - Patient tests', function() {
         loadEnrollmentCreateModel();
         const createModel = getTestData("EnrollmentCreateModel");
         agent
-            .post(`/api/v1/care-plans/patients/${getTestData("PatientUserId")}/enroll`)
+            .post(`/api/v1/care-plans/patients/${getTestData("PatientUserId_5")}/enroll`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
@@ -236,7 +236,7 @@ export const loadEnrollmentCreateModel = async (
 ) => {
     const model = {
         Provider  : "AHA",
-        PlanCode  : "Cholesterol",
+        PlanCode  : "HFMotivator",
         StartDate : "2024-08-17"
     };
     setTestData(model, "EnrollmentCreateModel");

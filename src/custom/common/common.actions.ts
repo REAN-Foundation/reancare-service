@@ -1,4 +1,3 @@
-import { Loader } from '../../startup/loader';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
@@ -12,6 +11,7 @@ import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { CustomTaskService } from '../../services/users/user/custom.task.service';
 import { CustomTaskDomainModel } from '../../domain.types/users/custom.task/custom.task.domain.model';
 import { ApiError } from '../../common/api.error';
+import { Injector } from '../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,10 +26,10 @@ export class CommonActions {
     _assessmentTemplateService: AssessmentTemplateService = null;
 
     constructor() {
-        this._customTaskService = Loader.container.resolve(CustomTaskService);
-        this._assessmentService = Loader.container.resolve(AssessmentService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
-        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
+        this._customTaskService = Injector.Container.resolve(CustomTaskService);
+        this._assessmentService = Injector.Container.resolve(AssessmentService);
+        this._userTaskService = Injector.Container.resolve(UserTaskService);
+        this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
     }
 
     //#region Public

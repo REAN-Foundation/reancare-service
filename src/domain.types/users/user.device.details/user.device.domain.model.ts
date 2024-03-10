@@ -11,3 +11,8 @@ export interface UserDeviceDetailsDomainModel {
     AppVersion?       : string;
     ChangeCount?      : number;
 }
+
+export interface DeviceDetails {
+    OSType?: string;
+    Count?: number;
+}

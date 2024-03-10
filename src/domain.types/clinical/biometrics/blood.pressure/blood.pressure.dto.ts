@@ -2,9 +2,9 @@
 export interface BloodPressureDto {
     id?              : string;
     EhrId?           : string;
-    PatientUserId    : string;
-    TerraSummaryId?   : string;
-    Provider?         : string;
+    PatientUserId?   : string;
+    TerraSummaryId?  : string;
+    Provider?        : string;
     Systolic         : number;
     Diastolic        : number;
     Unit             : string;

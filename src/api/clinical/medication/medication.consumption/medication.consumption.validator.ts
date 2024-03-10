@@ -4,7 +4,7 @@ import { Helper } from '../../../../common/helper';
 import { MedicationConsumptionScheduleDomainModel, MedicationConsumptionSummaryDomainModel } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
 import { MedicationConsumptionSearchFilters } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +67,7 @@ export class MedicationConsumptionValidator {
 
     static getScheduleForDay = async (request: express.Request): Promise<MedicationConsumptionScheduleDomainModel> => {
 
-        var userService = Loader.container.resolve(UserService);
+        var userService = Injector.Container.resolve(UserService);
         var date = await userService.getDateInUserTimeZone(request.params.patientUserId, request.query.date as string);
 
         const model: MedicationConsumptionScheduleDomainModel = {
@@ -80,7 +80,7 @@ export class MedicationConsumptionValidator {
 
     static getSummaryForDay = async (request: express.Request): Promise<MedicationConsumptionSummaryDomainModel> => {
 
-        var userService = Loader.container.resolve(UserService);
+        var userService = Injector.Container.resolve(UserService);
         var date = await userService.getDateInUserTimeZone(request.params.patientUserId, request.query.date as string);
 
         const model: MedicationConsumptionSummaryDomainModel = {

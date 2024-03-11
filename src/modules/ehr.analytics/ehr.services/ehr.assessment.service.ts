@@ -166,7 +166,7 @@ export class EHRAssessmentService {
                     }
                 );
             }
-        })
+        });
         return JSON.stringify(filteredOptions);
     };
 

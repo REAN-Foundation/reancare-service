@@ -340,7 +340,7 @@ export class AssessmentController {
                     }
                 }
                 var updatedAssessment = await this._service.getById(assessment.id);
-                updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore'])
+                updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore']);
                 await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
             }
 

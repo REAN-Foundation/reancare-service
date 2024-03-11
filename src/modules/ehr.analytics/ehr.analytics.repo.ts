@@ -55,9 +55,9 @@ export class EHRAnalyticsRepo {
             staticData = await StaticEHRData.create(entity);
         } else {
             if (staticData.DoctorPersonId_1) {
-                details.DoctorPersonId_2 = details.DoctorPersonId_1
+                details.DoctorPersonId_2 = details.DoctorPersonId_1;
                 details.DoctorPersonId_1 = null;
-                staticData.DoctorPersonId_2 = details.DoctorPersonId_2
+                staticData.DoctorPersonId_2 = details.DoctorPersonId_2;
             }
             staticData = this.updateEntity(staticData, details, appName);
             staticData = await staticData.save();

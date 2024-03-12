@@ -180,16 +180,17 @@ export class ReanCareplanService implements ICareplanService {
             var entity: CareplanActivity = {
                 ParticipantId          : activity.ParticipantId,
                 EnrollmentId           : activity.EnrollmentId,
-                Provider               : this.providerName(),
+                Provider               : null,
                 ProviderActionId       : activity.id,
                 Title                  : activity.Asset.Name,
-                Type                   : activity.Asset.TemplateName,
-                PlanCode               : activity.Asset.AssetCode,
-                Description            : JSON.stringify(templateVariables),
+                Type                   : activity.AssetType,
+                Category               : activity.AssetType,
+                Description            : activity.Description,
                 Language               : 'English',
                 ScheduledAt            : activity.ScheduledDate,
                 TimeSlot               : activity.TimeSlot,
-                IsRegistrationActivity : activity.IsRegistrationActivity
+                IsRegistrationActivity : activity.IsRegistrationActivity,
+                RawContent             : JSON.stringify(activity.Asset)
             };
 
             activityEntities.push(entity);

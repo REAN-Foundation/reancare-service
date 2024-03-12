@@ -10,6 +10,7 @@ import { CommunityNetworkService } from '../modules/community.bw/community.netwo
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
 import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
 import { UserService } from '../services/users/user/user.service';
+import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 import { EHRAssessmentService } from '../modules/ehr.analytics/ehr.assessment.service';
 import { EHRCareplanActivityService } from '../modules/ehr.analytics/ehr.careplan.activity.service';
 import { EHRVitalService } from '../modules/ehr.analytics/ehr.vital.service';
@@ -181,6 +182,9 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const careplanService = Loader.container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
+                const nextMinutes = 15;
+                const userTaskService = Loader.container.resolve(UserTaskSenderService);
+                await userTaskService.sendUserTasks(nextMinutes);
             })();
         });
     };

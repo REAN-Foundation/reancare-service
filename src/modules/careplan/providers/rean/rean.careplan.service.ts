@@ -133,7 +133,8 @@ export class ReanCareplanService implements ICareplanService {
             EndDate        : TimeHelper.addDuration(model.StartDate,240,DurationType.Day),
             EnrollmentDate : new Date(),
             WeekOffset     : model.WeekOffset,
-            DayOffset      : model.DayOffset
+            DayOffset      : model.DayOffset,
+            IsTest         : model.IsTest,
         };
 
         var url = process.env.CAREPLAN_API_BASE_URL + '/enrollments';

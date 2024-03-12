@@ -24,4 +24,5 @@ export interface EnrollmentDomainModel {
     HasHighRisk?    : boolean;
     Channel?        : string;
     TenantName?     : string;
+    IsTest?         : boolean;
 }

@@ -23,6 +23,7 @@ export class CareplanValidator extends BaseValidator {
             WeekOffset    : request.body.WeekOffset,
             Channel       : request.body.Channel,
             TenantName    : request.body.TenantName,
+            IsTest        : request.body.IsTest ?? false,
         };
 
         return model;
@@ -65,6 +66,7 @@ export class CareplanValidator extends BaseValidator {
         await this.validateInt(request, 'WeekOffset', Where.Body, false, false);
         await this.validateString(request, 'TenantName', Where.Body, false, false);
         await this.validateString(request, 'Channel', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsTest', Where.Body, false, false);
         this.validateRequest(request);
     }
 

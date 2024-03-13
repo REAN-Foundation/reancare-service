@@ -20,12 +20,16 @@ import {
     addNoDataDisplayFirstColumn,
     addNoDataDisplaySecondColumn,
     addSecondColumnSectionTitle,
-    addText
+    addText,
+    addFirstColumnSectionTitle1,
+    addNoDataDisplaySecondColumn1,
+    FIRST_COLUMN_START
 } from "./stat.report.commons";
+import { Settings } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////////
 
-export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: any) => {
+export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: any, columSequence: number) => {
 
     const sectionTitle = 'Lab Values and Body Weight';
     const icon = Helper.getIconsPath('blood-lipids.png');
@@ -62,7 +66,6 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
     vals.push([false, useBodyWeightKg ? 'Body weight (lbs)' : 'Body weight (Kg)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
     vals.push([false, useLpaUnit ? 'Lipoprotein (nmo/L)' : 'Lipoprotein (mg/dL)', labValues.Lipids.Lpa.StartingLpa.toFixed(1), labValues.Lipids.Lpa.CurrentLpa.toFixed(1), labValues.Lipids.Lpa.TotalLpaChange.toFixed(1)]);
 
-
     for (var r of vals) {
         const row: TableRowProperties = {
             IsHeaderRow : r[0],
@@ -92,31 +95,46 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
     return y;
 };
 
-export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: any) => {
+export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: any, reportSettings: Settings) => {
     const rowShift = 143;
+    let columSequence = 0;
     var yFrozen = y;
-    y = addLabValuesTable(model, document, y);
-    var yOfLabValues = y + 20;
+    let yOfLabValues;
+    if (reportSettings.LabValues) {
+        y = addLabValuesTable(model, document, y, columSequence);
+        columSequence += 1;
+        yOfLabValues = y + 20;
+    }
     y = yFrozen;
-    y = addSleepSummary(y, document, model);
-    yFrozen = yOfLabValues;
+    if (reportSettings.SleepHistory) {
+        y = addSleepSummary1(y, document, model, columSequence);
+        columSequence += 1;
+        // yFrozen = yOfLabValues;
+    }
     y = yFrozen;
-    y = addMedicationSummary(y, document, model);
-    y = yFrozen;
-    // y = addCurrentMedications(document, model.Stats.Medication.CurrentMedications, y);
-    y = addBodyWeightSummary(y, document, model);
-    yFrozen += rowShift;
-    y = yFrozen;
-    y = addNutritionQuestionSummary(y, document, model);
-    y = yFrozen;
-    y = addDailyMovementQuestionSummary(y, document, model);
-    yFrozen += rowShift;
-    y = yFrozen;
-    y = addSymptomSummary(y, document, model);
-    y = yFrozen;
-    y = addMoodsSummary(y, document, model);
-    yFrozen += rowShift;
-    y = yFrozen;
+    if (reportSettings.MedicationAdherence) {
+        y = addMedicationSummary1(y, document, model, columSequence);
+    }
+    // y = yFrozen;
+    // y = addSleepSummary(y, document, model);
+    // yFrozen = yOfLabValues;
+    // y = yFrozen;
+    // y = addMedicationSummary(y, document, model);
+    // y = yFrozen;
+    // // y = addCurrentMedications(document, model.Stats.Medication.CurrentMedications, y);
+    // y = addBodyWeightSummary(y, document, model);
+    // yFrozen += rowShift;
+    // y = yFrozen;
+    // y = addNutritionQuestionSummary(y, document, model);
+    // y = yFrozen;
+    // y = addDailyMovementQuestionSummary(y, document, model);
+    // yFrozen += rowShift;
+    // y = yFrozen;
+    // y = addSymptomSummary(y, document, model);
+    // y = yFrozen;
+    // y = addMoodsSummary(y, document, model);
+    // yFrozen += rowShift;
+    // y = yFrozen;
     return y;
 };
 
@@ -171,6 +189,61 @@ export const createSummaryCharts = async (data) => {
             location
         });
     }
+
+    return locations;
+};
+
+export const createSummaryCharts1 = async (data) => {
+    var locations = [];
+
+    let location = await createSleep_BarChart(data?.Sleep?.LastMonth, 'SleepSummary_LastMonth');
+    if (location) {
+        locations.push({
+            key : 'SleepSummary_LastMonth',
+            location
+        });
+    }
+
+    location = await createMedicationConsumption_DonutChart(data?.Medication?.LastMonth?.Daily, 'MedicationsSummary_LastMonth');
+    if (location) {
+        locations.push({
+            key : 'MedicationsSummary_LastMonth',
+            location
+        });
+    }
+
+    // location = await createBodyWeight_LineChart(data?.Biometrics?.LastMonth?.BodyWeight?.History, 'BodyWeightSummary_LastMonth', data.Biometrics.LastMonth.BodyWeight.CountryCode);
+    // if (location) {
+    //     locations.push({
+    //         key : 'BodyWeightSummary_LastMonth',
+    //         location
+    //     });
+    // }
+
+    // location = await createNutritionQueryForMonth_GroupedBarChart(data?.Nutrition?.LastMonth?.QuestionnaireStats, 'NutritionQuestionSummary_LastMonth');
+    // if (location) {
+    //     locations.push({
+    //         key : 'NutritionQuestionSummary_LastMonth',
+    //         location
+    //     });
+    // }
+
+    // location = await createFeelings_DonutChart(data?.DailyAssessent?.LastMonth, 'SymptomsSummary_LastMonth');
+    // if (location) {
+    //     locations.push({
+    //         key : 'SymptomsSummary_LastMonth',
+    //         location
+    //     });
+    // }
+
+    // location = await createMoodsSummaryChart_HorizontalBarChart(
+    //     data?.DailyAssessent?.LastMonth, 'MoodsSummary_LastMonth');
+    // if (location) {
+    //     locations.push({
+    //         key : 'MoodsSummary_LastMonth',
+    //         location
+    //     });
+    // }
 
     return locations;
 };
@@ -261,7 +334,6 @@ const createNutritionQueryForMonth_GroupedBarChart = async (stats: any, filename
     options.ShowYAxis       = false;
     options.XAxisTimeScaled = true;
 
-
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
 
@@ -312,6 +384,36 @@ function addSleepSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     return y;
 }
 
+function addSleepSummary1(y: any, document: PDFKit.PDFDocument, model: any, columSequence: number) {
+    const chartImage = 'SleepSummary_LastMonth';
+    const sectionTitle = 'Sleep';
+    const title = 'Over 30 days';
+    const titleColor = '#505050';
+    const icon = Helper.getIconsPath('sleep.png');
+    if (columSequence % 2) {
+        y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);
+    } else {
+        y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
+    }
+
+    if (!chartExists(model, chartImage)) {
+        if (columSequence % 2) {
+            y = addNoDataDisplaySecondColumn(document, y);
+        } else {
+            y = addNoDataDisplayFirstColumn(document, y);
+        }
+    } else {
+        y = y + 20;
+        const imageWidth = 200;
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        document.image(chart.location, ((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START) + 5, y, { width: imageWidth, align: 'center' });
+        document.moveDown();
+        addText(document, title, ((columSequence % 2) ? SECOND_COLUMN_START - 10 : FIRST_COLUMN_START - 10 ), y + 80, 6, titleColor, 'left');
+        y = y + 135;
+    }
+    return y;
+}
+
 function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) {
     const chartImage = 'MedicationsSummary_LastMonth';
     const sectionTitle = 'Medication Adherence';
@@ -339,6 +441,49 @@ function addMedicationSummary(y: any, document: PDFKit.PDFDocument, model: any) 
         //const legendRowOffset = 10;
         // y = addLegend(document, y, legend, legendStartX, legendFontSize, colorStripWidth, 6, 5, legendRowOffset);
         y = addCurrentMedications(document, model.Stats.Medication.CurrentMedications, y);
+        y = yFrozen + imageWidth + 25;
+
+        y = y + 2;
+    }
+    return y;
+}
+
+function addMedicationSummary1(y: any, document: PDFKit.PDFDocument, model: any, columSequence: number) {
+    const chartImage = 'MedicationsSummary_LastMonth';
+    const sectionTitle = 'Medication Adherence';
+    const icon = Helper.getIconsPath('medications.png');
+    if (columSequence % 2) {
+        y = addSecondColumnSectionTitle(document, y, sectionTitle, icon);
+    } else {
+        y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
+    }
+
+    if (!chartExists(model, chartImage)) {
+        if (columSequence % 2) {
+            y = addNoDataDisplaySecondColumn(document, y);
+        } else {
+            y = addNoDataDisplayFirstColumn(document, y);
+        }
+        
+    } else {
+        y = y + 9;
+
+        const imageWidth = 90;
+        const startX = 55;
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        document.image(chart.location, ((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START) + 5, y, { width: imageWidth, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+
+        const yFrozen = y;
+        //const legendY = 10;
+        //y = yFrozen + legendY;
+        //const legendFontSize = 9;
+        //const legendStartX = startX + 135;
+        //const colorStripWidth = 20;
+        //const legendRowOffset = 10;
+        // y = addLegend(document, y, legend, legendStartX, legendFontSize, colorStripWidth, 6, 5, legendRowOffset);
+        y = addCurrentMedications1(document, model.Stats.Medication.CurrentMedications, y, columSequence);
         y = yFrozen + imageWidth + 25;
 
         y = y + 2;
@@ -382,6 +527,65 @@ function addCurrentMedications(document, medications, y) {
     return y;
 }
 
+function addCurrentMedications1(document, medications, y, columSequence: number) {
+    //const icon = Helper.getIconsPath('current-medications.png');
+    //y = addSectionTitle(document, y, "Current Medications", icon);
+
+    if (medications.length === 0) {
+        return null;
+    }
+
+    const tableTop = y + 21;
+    const ITEM_HEIGHT = 15;
+    let medicationsCount = medications.length;
+
+    if (medicationsCount > 5) {
+        medicationsCount = 5;
+    }
+
+    for (let i = 0; i < medicationsCount; i++) {
+
+        const medication = medications[i];
+        const position = tableTop + (i * ITEM_HEIGHT);
+        y = position;
+
+        generateMedicationTableRow1(
+            document,
+            position,
+            (i + 1).toString(),
+            medication.DrugName,
+            medication.Frequency,
+            medication.FrequencyUnit,
+            columSequence
+        );
+    }
+
+    y = y + ITEM_HEIGHT + 5;
+    return y;
+}
+
+const generateMedicationTableRow1 = (
+    document: PDFKit.PDFDocument,
+    y,
+    index,
+    drug,
+    frequency,
+    frequencyUnit,
+    columSequence: number
+) => {
+    var schedule = (frequency ? frequency + ' ' : '') + frequencyUnit;
+    const d = schedule;
+    const medication = drug.slice(0,15) + ', ' + d;
+    document
+        .fontSize(9)
+        .font('Helvetica')
+        .text(index, 160, y)
+        .text(medication, ((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START) + 125, y, { align: "left" })
+        // .text(medication, 175, y, { align: "left" })
+        //.text(dose + ' ' + dosageUnit, 330, y, { align: "right" })
+        .moveDown();
+};
+
 const generateMedicationTableRow = (
     document: PDFKit.PDFDocument,
     y,
@@ -398,6 +602,7 @@ const generateMedicationTableRow = (
         .font('Helvetica')
         .text(index, 160, y)
         .text(medication, 175, y, { align: "left" })
+        // .text(medication, 175, y, { align: "left" })
         //.text(dose + ' ' + dosageUnit, 330, y, { align: "right" })
         .moveDown();
 };

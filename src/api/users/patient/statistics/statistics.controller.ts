@@ -113,24 +113,24 @@ export class StatisticsController {
         }
     };
 
-    getPatientStatsReport = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
-            const clientCode = request.currentClient.ClientCode;
+    // getPatientStatsReport = async (request: express.Request, response: express.Response): Promise<void> => {
+    //     try {
+    //         const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
+    //         const clientCode = request.currentClient.ClientCode;
 
-            this.triggerReportGeneration(patientUserId, clientCode);
-            ResponseHandler.success(
-                request,
-                response,
-                'Your health report is getting downloaded, please check in the medical records after few minutes!',
-                200,
-                {
-                    ReportUrl : "",
-                });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
+    //         this.triggerReportGeneration(patientUserId, clientCode);
+    //         ResponseHandler.success(
+    //             request,
+    //             response,
+    //             'Your health report is getting downloaded, please check in the medical records after few minutes!',
+    //             200,
+    //             {
+    //                 ReportUrl : "",
+    //             });
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // };
     //#endregion
 
     //#region Privates
@@ -195,23 +195,23 @@ export class StatisticsController {
     };
     //#endregion
 
-    private triggerReportGeneration = async (patientUserId: string, clientCode: string): Promise<any> => {
-        const stats = await this._service.getPatientStats(patientUserId);
-        const patient = await this._patientService.getByUserId(patientUserId);
-        const reportModel = this._service.getReportModel(patient, stats, clientCode);
-        if (reportModel.ImageResourceId != null) {
-            const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
-            reportModel.ProfileImagePath = profileImageLocation ??
-                Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
-        }
-        else {
-            reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
-        }
-        const { filename, localFilePath } = await this._service.generateReport(reportModel);
-        const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
-        this.sendMessageForReportUpdate(reportUrl, reportModel);
-        return reportUrl;
-    };
+    // private triggerReportGeneration = async (patientUserId: string, clientCode: string): Promise<any> => {
+    //     const stats = await this._service.getPatientStats(patientUserId);
+    //     const patient = await this._patientService.getByUserId(patientUserId);
+    //     const reportModel = this._service.getReportModel(patient, stats, clientCode);
+    //     if (reportModel.ImageResourceId != null) {
+    //         const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
+    //         reportModel.ProfileImagePath = profileImageLocation ??
+    //             Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
+    //     }
+    //     else {
+    //         reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
+    //     }
+    //     const { filename, localFilePath } = await this._service.generateReport(reportModel);
+    //     const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
+    //     this.sendMessageForReportUpdate(reportUrl, reportModel);
+    //     return reportUrl;
+    // };
 
     private triggerReportGeneration1 = async (patientUserId: string, clientCode: string, reportSettings: Settings):
      Promise<any> => {

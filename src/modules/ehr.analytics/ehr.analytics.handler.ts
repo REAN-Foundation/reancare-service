@@ -12,6 +12,8 @@ import { ConfigurationManager } from "../../config/configuration.manager";
 import { EHRMedicationDomainModel } from "./ehr.domain.models/ehr.medication.domain.model";
 import { EHRCareplanActivityDomainModel } from "./ehr.domain.models/ehr.careplan.activity.domain.model";
 import { EHRAssessmentDomainModel } from "./ehr.domain.models/ehr.assessment.domain.model";
+import { Injector } from "../../startup/injector";
+import { UserService } from "../../services/users/user/user.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -141,18 +143,20 @@ export class EHRAnalyticsHandler {
 
     //#region Add records
 
-    static addStringRecord = (
+    static addStringRecord = async (
         patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        type: EHRRecordTypes,
-        primaryValue: string,
-        primaryUnit?: string,
-        primaryName?: string,
-        name?: string,
-        appName?: string,
-        recordDate?: Date
+        recordId     : uuid,
+        provider     : string,
+        type         : EHRRecordTypes,
+        primaryValue : string,
+        primaryUnit? : string,
+        primaryName? : string,
+        name?        : string,
+        appName?     : string,
+        recordDate?  : Date
     ) => {
+        var eligible = await EHRAnalyticsHandler.checkAppEligiblity(appName, patientUserId);
+        if (eligible) {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
             RecordId      : recordId,
@@ -167,18 +171,19 @@ export class EHRAnalyticsHandler {
 
         };
         EHRAnalyticsHandler.add(model);
+        }
     };
 
     static addDateRecord = (
         patientUserId: uuid,
-        recordId: uuid,
-        provider: string,
-        type: EHRRecordTypes,
-        primaryValue: Date,
-        primaryUnit?: string,
-        primaryName?: string,
-        name?: string,
-        appName?: string,
+        recordId     : uuid,
+        provider     : string,
+        type         : EHRRecordTypes,
+        primaryValue : Date,
+        primaryUnit? : string,
+        primaryName? : string,
+        name?        : string,
+        appName?     : string,
     ) => {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
@@ -195,7 +200,7 @@ export class EHRAnalyticsHandler {
         EHRAnalyticsHandler.add(model);
     };
 
-    static addIntegerRecord = (
+    static addIntegerRecord = async (
         patientUserId : uuid,
         recordId      : uuid,
         provider      : string,
@@ -207,6 +212,8 @@ export class EHRAnalyticsHandler {
         appName      ?: string,
         recordDate   ?: Date,
     ) => {
+        var eligible = await EHRAnalyticsHandler.checkAppEligiblity(appName, patientUserId);
+        if (eligible) {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
             RecordId      : recordId,
@@ -221,9 +228,10 @@ export class EHRAnalyticsHandler {
 
         };
         EHRAnalyticsHandler.add(model);
+        }
     };
 
-    static addFloatRecord = (
+    static addFloatRecord = async (
         patientUserId : uuid,
         recordId      : uuid,
         provider      : string,
@@ -235,6 +243,8 @@ export class EHRAnalyticsHandler {
         appName      ?: string,
         recordDate   ?: Date,
     ) => {
+        var eligible = await EHRAnalyticsHandler.checkAppEligiblity(appName, patientUserId);
+        if (eligible) {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
             RecordId      : recordId,
@@ -249,9 +259,10 @@ export class EHRAnalyticsHandler {
 
         };
         EHRAnalyticsHandler.add(model);
+        }
     };
 
-    static addBooleanRecord = (
+    static addBooleanRecord = async (
         patientUserId : uuid,
         recordId      : uuid,
         provider      : string,
@@ -264,6 +275,8 @@ export class EHRAnalyticsHandler {
         recordDate   ?: Date,
 
     ) => {
+        var eligible = await EHRAnalyticsHandler.checkAppEligiblity(appName, patientUserId);
+        if (eligible) {
         var model:EHRDynamicRecordDomainModel = {
             PatientUserId : patientUserId,
             RecordId      : recordId,
@@ -278,9 +291,10 @@ export class EHRAnalyticsHandler {
 
         };
         EHRAnalyticsHandler.add(model);
+        }
     };
 
-    static addMedicationRecord = (
+    static addMedicationRecord = async (
         appName           : string,
         recordId          : uuid,
         patientUserId     : uuid,
@@ -295,6 +309,8 @@ export class EHRAnalyticsHandler {
         isCancelled?      : boolean,
         recordDate?       : Date
     ) => {
+        var eligible = await EHRAnalyticsHandler.checkAppEligiblity(appName, patientUserId);
+        if (eligible) {
         var model:EHRMedicationDomainModel = {
             AppName           : appName,
             RecordId          : recordId,
@@ -312,9 +328,10 @@ export class EHRAnalyticsHandler {
 
         };
         EHRAnalyticsHandler.addMedication(model);
+        }
     };
 
-    static addCareplanActivityRecord = (
+    static addCareplanActivityRecord = async (
         appName            : string,
         patientUserId      : uuid,
         recordId           : uuid,
@@ -338,6 +355,8 @@ export class EHRAnalyticsHandler {
         associatedHospital?: string,
         recordDate?        : Date
     ) => {
+        var eligible = await EHRAnalyticsHandler.checkAppEligiblity(appName, patientUserId);
+        if (eligible) {
         var model:EHRCareplanActivityDomainModel = {
             AppName            : appName,
             RecordId           : recordId,
@@ -364,11 +383,31 @@ export class EHRAnalyticsHandler {
 
         };
         EHRAnalyticsHandler.addCareplanActivity(model);
+        }
     };
 
-    static addAssessmentRecord = (assessmentRecord: any) => {
-        var model:EHRAssessmentDomainModel = assessmentRecord;
-        EHRAnalyticsHandler.addAssessment(model);
+    static addAssessmentRecord = async (assessmentRecord: any) => {
+        var eligible = await EHRAnalyticsHandler.checkAppEligiblity(assessmentRecord.AppName, assessmentRecord.PatientUserId);
+        if (eligible) {
+            var model:EHRAssessmentDomainModel = assessmentRecord;
+            EHRAnalyticsHandler.addAssessment(model);
+        }
+    };
+
+    static checkAppEligiblity = async (appNames: string, patientUserId: string) => {
+        if (appNames.length === 0) {
+            return false;
+        } else {
+            const eligibleToAddInEhrRecords =
+            appNames.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+            appNames.indexOf('REAN HealthGuru') >= 0 ||
+            appNames.indexOf('HF Helper') >= 0;
+
+            var userService = Injector.Container.resolve(UserService);
+            const userDetails = await userService.getById(patientUserId);
+
+            return eligibleToAddInEhrRecords && !userDetails.IsTestUser;
+        }
     };
 
 }

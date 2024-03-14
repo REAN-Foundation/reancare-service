@@ -29,19 +29,15 @@ export class StepCountController {
             const domainModel = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
             const provider = request.body.Provider;
-
-            if (provider) {
-                var existingRecord =
-                    await this._service.getByRecordDateAndPatientUserId(recordDate, request.body.PatientUserId, provider);
-                if (existingRecord !== null) {
-                    var stepCount = await this._service.update(existingRecord.id, domainModel);
-                } else {
-                    var stepCount = await this._service.create(domainModel);
-                }
+        
+            var existingRecord =
+                await this._service.getByRecordDateAndPatientUserId(recordDate, request.body.PatientUserId, provider);
+            if (existingRecord !== null) {
+                var stepCount = await this._service.update(existingRecord.id, domainModel);
             } else {
-                stepCount = await this._service.create(domainModel);
+                var stepCount = await this._service.create(domainModel);
             }
-
+        
             if (stepCount == null) {
                 throw new ApiError(400, 'Cannot create Step Count!');
             }

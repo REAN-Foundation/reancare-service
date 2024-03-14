@@ -8,6 +8,7 @@ import { PatientService } from '../../../services/users/patient/patient.service'
 import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
+import { PatientAppNameCache } from '../../../modules/ehr.analytics/patient.appname.cache';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -196,6 +197,12 @@ export class UserDeviceDetailsController {
             userDeviceDetails = await this._service.update(existingRecord.id, userDeviceDetailsDomainModel);
         } else {
             userDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
+        }
+
+        var existingAppNames = await PatientAppNameCache.get(request.body.UserId);
+        if (existingAppNames.indexOf(request.body.AppName) === -1) {
+            existingAppNames.push(request.body.AppName);
+            PatientAppNameCache.add(request.body.UserId, existingAppNames);
         }
 
         Logger.instance().log(JSON.stringify(userDeviceDetails));

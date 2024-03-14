@@ -12,11 +12,11 @@ import { HealthProfileDto } from "../../../domain.types/users/patient/health.pro
 @injectable()
 export class EHRPatientService {
 
-    public addEHRRecordPatientForAppNames = async (model: PatientDetailsDto) => {
+    public addEHRRecordPatientForAppNames = async (model: PatientDetailsDto, location?: string) => {
         try {
             const appNames = await PatientAppNameCache.get(model.UserId);
             for await (var appName of appNames) {
-                this.addEHRRecord(model, appName);
+                this.addEHRRecord(model, appName, location);
             }
         } catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message)}`);
@@ -50,7 +50,7 @@ export class EHRPatientService {
         }
     };
 
-    public addEHRRecord = (model: PatientDetailsDto, appName?: string) => {
+    public addEHRRecord = (model: PatientDetailsDto, appName?: string, location?: string) => {
         const user = model?.User;
         const person = user?.Person;
         const healthProfile = model?.HealthProfile;

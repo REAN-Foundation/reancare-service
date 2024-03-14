@@ -363,7 +363,8 @@ export const addNoDataDisplayFirstColumn = (document: PDFKit.PDFDocument, y: num
         .text("Data not available!", 65, y, { align: "left" })
         .moveDown();
 
-    y = y + 120;
+    // y = y + 120;
+    y = y + 25;
 
     return y;
 };
@@ -393,7 +394,8 @@ export const addNoDataDisplaySecondColumn = (document: PDFKit.PDFDocument, y: nu
         .text("Data not available!", SECOND_COLUMN_START + 10, y, { align: "left" })
         .moveDown();
 
-    y = y + 120;
+    // y = y + 120;
+    y = y + 25;
 
     return y;
 };

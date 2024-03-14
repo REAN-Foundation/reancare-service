@@ -74,23 +74,23 @@ export const createPhysicalActivityCharts = async (data) => {
     var locations = [];
     let location = '';
 
-    location = await createExerciseCalorieForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
-    locations.push({
-        key : 'Exercise_CaloriesBurned_LastMonth',
-        location
-    });
+    // location = await createExerciseCalorieForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+    // locations.push({
+    //     key : 'Exercise_CaloriesBurned_LastMonth',
+    //     location
+    // });
 
-    location = await createExerciseMoveMinutesForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
-    locations.push({
-        key : 'Exercise_MoveMinutes_LastMonth',
-        location
-    });
+    // location = await createExerciseMoveMinutesForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+    // locations.push({
+    //     key : 'Exercise_MoveMinutes_LastMonth',
+    //     location
+    // });
 
-    location = await createExerciseQuestionForMonth_BarChart(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_LastMonth');
-    locations.push({
-        key : 'Exercise_Questionnaire_LastMonth',
-        location
-    });
+    // location = await createExerciseQuestionForMonth_BarChart(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_LastMonth');
+    // locations.push({
+    //     key : 'Exercise_Questionnaire_LastMonth',
+    //     location
+    // });
 
     location = await createExerciseQuestions_DonutChart(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_Overall_LastMonth');
     locations.push({

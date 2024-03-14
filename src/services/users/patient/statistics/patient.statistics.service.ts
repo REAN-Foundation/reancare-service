@@ -724,6 +724,35 @@ export class PatientStatisticsService {
         //     StartAt  : new Date("2024-03-11 06:23:23"),
         //     EndAt    : new Date("2024-03-11 06:23:23")
         // };
+        // reportModel.Stats.Nutrition = {
+        //     LastMonth : {
+        //         QQuestionnaireStats : [
+        //             {
+                        
+        //             }
+        //         ]
+        //     }
+        // };
+        reportModel.Stats.PhysicalActivity = {
+            LastMonth : {
+                QuestionnaireStats : {
+                    Stats : [
+                        {
+                            Response : 1
+                        },
+                        {
+                            Response : 1
+                        },
+                        {
+                            Response : 0
+                        },
+                        {
+                            Response : 1
+                        }
+                    ]
+                }
+            }
+        };
         reportModel.ClientCode = "REANPTNT";
         reportModel.Medication = {
             LastMonth : {
@@ -791,7 +820,20 @@ export class PatientStatisticsService {
         reportModel.Stats.Biometrics = {
             LastMonth : {
                 BodyWeight : {
-                    // History: [],
+                    History : [
+                        {
+                            DayStr     : "2024-03-12 06:23:23",
+                            BodyWeight : 60
+                        },
+                        {
+                            DayStr     : "2024-03-13 06:23:23",
+                            BodyWeight : 70
+                        },
+                        {
+                            DayStr     : "2024-03-14 06:23:23",
+                            BodyWeight : 80
+                        }
+                    ],
                     // CountryCode: "+91",
                     // AverageBodyWeight: null,
                     StartingBodyWeight : 90,
@@ -961,10 +1003,12 @@ export class PatientStatisticsService {
 
         let imageLocations = await createSummaryCharts1(reportModel.Stats);
         chartImagePaths.push(...imageLocations);
-        // imageLocations = await createNutritionCharts(reportModel.Stats.Nutrition);
-        // chartImagePaths.push(...imageLocations);
-        // imageLocations = await createPhysicalActivityCharts(reportModel.Stats.PhysicalActivity);
-        // chartImagePaths.push(...imageLocations);
+
+        imageLocations = await createNutritionCharts(reportModel.Stats.Nutrition);
+        chartImagePaths.push(...imageLocations);
+        
+        imageLocations = await createPhysicalActivityCharts(reportModel.Stats.PhysicalActivity);
+        chartImagePaths.push(...imageLocations);
         // imageLocations = await createBiometricsCharts(reportModel.Stats.Biometrics);
         // chartImagePaths.push(...imageLocations);
         // let imageLocations = await createSleepTrendCharts(reportModel.Stats.Sleep);

@@ -23,6 +23,7 @@ export function addTop(document: any, model: any, title: string = null, addToNew
     const headerTitle = title ?? model.ReportTitle;
     y = addHeader(document, headerTitle, y, model.HeaderImagePath);
     y = addReportDate(y, document, model);
+    // addFooter(document, "https://www.heart.org/", model.FooterImagePath);
     return y;
 }
 

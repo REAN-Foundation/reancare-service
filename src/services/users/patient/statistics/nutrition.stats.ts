@@ -83,6 +83,7 @@ export const addNutritionServingsStats = (document, model, y) => {
 };
 
 export const createNutritionCharts = async (data) => {
+
     var locations = [];
 
     //Calories
@@ -212,7 +213,7 @@ const createNutritionQueryForMonth_StackedBarChart = async (stats: any, filename
     }
     const temp = stats.map(c => {
         return {
-            x : new Date (c.DayStr),
+            x : new Date(c.DayStr),
             y : c.Response,
             z : c.Type,
         };
@@ -231,7 +232,6 @@ const createNutritionQueryForMonth_StackedBarChart = async (stats: any, filename
     options.FontSize        = '12px';
     options.ShowYAxis       = false;
     options.XAxisTimeScaled = true;
-
 
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };
@@ -268,7 +268,7 @@ const createNutritionServingsForMonth_BarChart = async (stats: any, filename: st
     }
     const temp = stats.map(c => {
         return {
-            x : new Date (c.DayStr),
+            x : new Date(c.DayStr),
             y : c.Servings,
             z : c.Type
         };
@@ -285,7 +285,6 @@ const createNutritionServingsForMonth_BarChart = async (stats: any, filename: st
     options.Colors          = colors;
     options.FontSize        = '12px';
     options.XAxisTimeScaled = true;
-
 
     return await ChartGenerator.createStackedBarChart(temp, options, filename);
 };

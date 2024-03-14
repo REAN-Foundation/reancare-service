@@ -294,56 +294,68 @@ export const createSummaryCharts = async (data) => {
     return locations;
 };
 
-export const createSummaryCharts1 = async (data) => {
+export const createSummaryCharts1 = async (data, reportSetting: Settings) => {
     var locations = [];
-
-    let location = await createSleep_BarChart(data?.Sleep?.LastMonth, 'SleepSummary_LastMonth');
-    if (location) {
-        locations.push({
-            key : 'SleepSummary_LastMonth',
-            location
-        });
+    let location;
+    if (reportSetting.SleepHistory) {
+        location = await createSleep_BarChart(data?.Sleep?.LastMonth, 'SleepSummary_LastMonth');
+        if (location) {
+            locations.push({
+                key : 'SleepSummary_LastMonth',
+                location
+            });
+        }
     }
 
-    location = await createMedicationConsumption_DonutChart(data?.Medication?.LastMonth?.Daily, 'MedicationsSummary_LastMonth');
-    if (location) {
-        locations.push({
-            key : 'MedicationsSummary_LastMonth',
-            location
-        });
+    if (reportSetting.MedicationAdherence) {
+        location = await createMedicationConsumption_DonutChart(data?.Medication?.LastMonth?.Daily, 'MedicationsSummary_LastMonth');
+        if (location) {
+            locations.push({
+                key : 'MedicationsSummary_LastMonth',
+                location
+            });
+        }
     }
 
-    location = await createBodyWeight_LineChart(data?.Biometrics?.LastMonth?.BodyWeight?.History, 'BodyWeightSummary_LastMonth', data.Biometrics.LastMonth.BodyWeight.CountryCode);
-    if (location) {
-        locations.push({
-            key : 'BodyWeightSummary_LastMonth',
-            location
-        });
+    if (reportSetting.BodyWeight) {
+        location = await createBodyWeight_LineChart(data?.Biometrics?.LastMonth?.BodyWeight?.History, 'BodyWeightSummary_LastMonth', data.Biometrics.LastMonth.BodyWeight.CountryCode);
+        if (location) {
+            locations.push({
+                key : 'BodyWeightSummary_LastMonth',
+                location
+            });
+        }
     }
 
-    location = await createNutritionQueryForMonth_GroupedBarChart(data?.Nutrition?.LastMonth?.QuestionnaireStats, 'NutritionQuestionSummary_LastMonth');
-    if (location) {
-        locations.push({
-            key : 'NutritionQuestionSummary_LastMonth',
-            location
-        });
+    if (reportSetting.FoodAndNutrition) {
+        location = await createNutritionQueryForMonth_GroupedBarChart(data?.Nutrition?.LastMonth?.QuestionnaireStats, 'NutritionQuestionSummary_LastMonth');
+        if (location) {
+            locations.push({
+                key : 'NutritionQuestionSummary_LastMonth',
+                location
+            });
+        }
     }
 
-    location = await createFeelings_DonutChart(data?.DailyAssessent?.LastMonth, 'SymptomsSummary_LastMonth');
-    if (location) {
-        locations.push({
-            key : 'SymptomsSummary_LastMonth',
-            location
-        });
+    if (reportSetting.MoodAndSymptoms) {
+        location = await createFeelings_DonutChart(data?.DailyAssessent?.LastMonth, 'SymptomsSummary_LastMonth');
+        if (location) {
+            locations.push({
+                key : 'SymptomsSummary_LastMonth',
+                location
+            });
+        }
     }
 
-    location = await createMoodsSummaryChart_HorizontalBarChart(
-        data?.DailyAssessent?.LastMonth, 'MoodsSummary_LastMonth');
-    if (location) {
-        locations.push({
-            key : 'MoodsSummary_LastMonth',
-            location
-        });
+    if (reportSetting.MoodAndSymptoms) {
+        location = await createMoodsSummaryChart_HorizontalBarChart(
+            data?.DailyAssessent?.LastMonth, 'MoodsSummary_LastMonth');
+        if (location) {
+            locations.push({
+                key : 'MoodsSummary_LastMonth',
+                location
+            });
+        }
     }
 
     return locations;
@@ -823,7 +835,7 @@ function addNutritionQuestionSummary1(y: any, document: PDFKit.PDFDocument, mode
         document.image(chart.location, startX, y, { width: imageWidth, align: 'center', height: 80 });
         document.fontSize(7);
         document.moveDown();
-        addText(document, title, startX - 350, y + 82, 6, titleColor, 'center');
+        // addText(document, title, 550, y + 82, 6, titleColor, 'center');
 
         const legendY = 25;
         y = yFrozen + legendY;
@@ -840,6 +852,7 @@ function addNutritionQuestionSummary1(y: any, document: PDFKit.PDFDocument, mode
         });
         y = addLegend(document, y, legend, legendStartX, legendFontSize, colorStripWidth, 6, 5, legendRowOffset);
     }
+    y = y + 45;
     return y;
 }
 

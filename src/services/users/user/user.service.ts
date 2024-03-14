@@ -194,13 +194,7 @@ export class UserService {
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
         var tenant = await this.checkTenant(user);
 
-        var isTenantUser = await this._userRepo.isTenantUser(user.id, loginModel.TenantId);
-        if (!isTenantUser) {
-            throw new ApiError(401, 'User does not belong to the given tenant.');
-        }
-
         var isTestUser = await this.isInternalTestUser(loginModel.Phone);
-
         if (!isTestUser) {
             const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
             if (!storedOtp) {

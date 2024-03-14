@@ -226,12 +226,12 @@ export class PatientController extends BaseUserController {
             }
             await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
             const addresses = await this._personService.getAddresses(personDomainModel.id);
-            // let location = null;
-            // if (addresses.length >= 1) {
-            //     location = addresses[0].Location;
-            // }
+            let location = null;
+            if (addresses.length >= 1) {
+                location = addresses[0].Location;
+            }
 
-            await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient);
+            await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient, location);
 
             const patient = await this._service.getByUserId(userId);
 

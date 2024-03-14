@@ -86,7 +86,7 @@ export const queryUsersWithMissingDeviceDetail =    `SELECT COUNT(*) AS count FR
                                                         AND
                                                         id NOT IN 
                                                         (
-                                                        SELECT UserId from tenant_stats.user_device_details
+                                                        SELECT UserId from user_device_details
                                                         )`;
                                                         
 //Query to get the unique users in device details table

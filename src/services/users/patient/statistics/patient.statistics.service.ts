@@ -23,7 +23,7 @@ import { IPatientRepo } from "../../../../database/repository.interfaces/users/p
 import { IHealthProfileRepo } from "../../../../database/repository.interfaces/users/patient/health.profile.repo.interface";
 import { addBottom, addFooter, addTop } from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
-import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
+import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholStats, addLipidStats, createBiometricsCharts, createBiometricsCharts1 } from "./biometrics.stats";
 import { createCalorieBalanceChart } from "./calorie.balance.stats";
 import { createCareplanCharts } from "./careplan.stats";
 import { addDailyAssessmentsStats, createDailyAssessentCharts } from "./daily.assessments.stats";
@@ -35,7 +35,7 @@ import { addUserTasksStats, createUserTaskCharts } from "./user.tasks.stats";
 import { addHealthJourney, addReportMetadata } from "./main.page";
 import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
-import { addSummaryGraphs, createSummaryCharts } from "./summary.page";
+import { addSummaryGraphs, createSummaryCharts, createSummaryCharts1 } from "./summary.page";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 import { IBloodOxygenSaturationRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface";
 import { IPulseRepo } from "../../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
@@ -51,8 +51,16 @@ import { PulseDto } from "../../../../domain.types/clinical/biometrics/pulse/pul
 import { EmergencyEventDto } from "../../../../domain.types/clinical/emergency.event/emergency.event.dto";
 import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
 import { MedicationDto } from "../../../../domain.types/clinical/medication/medication/medication.dto";
+import { Settings } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const BODY_WEIGHT_SECTION_SIZE = 325;
+export const BLOOD_GLUCOSE_SECTION_SIZE = 340;
+export const BLOOD_PRESSURE_SECTION_SIZE = 394;
+export const SLEEP_HISTORY_SECTION_SIZE = 274;
+export const START_INDEX = 91;
+export const SPACE_BEFORE_SECTION_HEAD = 15;
+export const FOOTER_SIZE = 41;
 
 @injectable()
 export class PatientStatisticsService {
@@ -239,6 +247,172 @@ export class PatientStatisticsService {
         return healthSummary;
     };
 
+    public getPatientStats1 = async (patientUserId: uuid, reportSetting: Settings) => {
+
+        //Nutrition
+        let nutrition = null;
+        if (reportSetting.FoodAndNutrition) {
+            const nutritionLastMonth = await this._foodConsumptionRepo.getStats(patientUserId, 1);
+            nutrition = {
+                LastMonth : nutritionLastMonth,
+            };
+        }
+
+        //Physical activity
+        let physicalActivityTrend = null;
+        if (reportSetting.ExerciseAndPhysicalActivity) {
+            const exerciseLastMonth = await this._physicalActivityRepo.getStats(patientUserId, 1);
+            physicalActivityTrend = {
+                LastMonth : exerciseLastMonth,
+            };
+        }
+
+        //Body weight, Lab values
+        const patient = await this._patientRepo.getByUserId(patientUserId);
+        const user = await this._userRepo.getById(patient.UserId);
+        const person = await this._personRepo.getById(user.PersonId);
+        var countryCode = person.Phone.split("-")[0];
+
+        /*if (countryCode === '+1' || countryCode === '+44'){
+            const weight = weightStr.split("-")[1];
+            weightStr = weight;
+            weightUnits = 'lbs';
+        } else {
+            const weight = weightStr.split("-")[0];
+            weightStr = weight;
+            var weightUnits = 'Kg';
+        }*/
+        let currentBodyWeight = null;
+        if (reportSetting.BodyWeight) {
+            currentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
+        }
+
+        let biometrics = null;
+        if (reportSetting.LabValues || reportSetting.BodyWeight || reportSetting.BloodPressure) {
+            const last6MonthsLabStats = await this.getLabValueStats(patientUserId, countryCode, 6);
+            const lastMonthLabStats = await this.getLabValueStats(patientUserId, countryCode, 1);
+    
+            biometrics = {
+                Last6Months : last6MonthsLabStats,
+                LastMonth   : lastMonthLabStats,
+            };
+        }
+
+        //BMI calculation
+       
+        let currentHeight = null;
+        let heightUnits = 'cm';
+        var weightUnits = 'Kg';
+    
+        const currentWeight = currentBodyWeight ? currentBodyWeight.BodyWeight : null;
+        const heightDto = await this._bodyHeightRepo.getRecent(patientUserId);
+        if (heightDto) {
+            currentHeight = heightDto.BodyHeight;
+            heightUnits = heightDto.Unit;
+        }
+        var { bmi, weightStr, heightStr } =
+                Helper.calculateBMI(currentHeight, heightUnits, currentWeight, weightUnits);
+
+        //Daily assessments
+        let dailyAssessmentTrend = null;
+        if (reportSetting.MoodAndSymptoms) {
+            const dailyAssessmentsLast6Months = await this._dailyAssessmentRepo.getStats(patientUserId, 6);
+            const dailyAssessmentsLastMonth = await this._dailyAssessmentRepo.getStats(patientUserId, 1);
+            dailyAssessmentTrend = {
+                Last6Months : dailyAssessmentsLast6Months,
+                LastMonth   : dailyAssessmentsLastMonth,
+            };
+        }
+
+        //Sleep trend
+        let sleepTrend = null;
+        if (reportSetting.SleepHistory) {
+            const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
+            const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 3);
+            const sumSleepHours = sleepStatsForLast6Months.reduce((acc, x) => acc + x.SleepDuration, 0);
+            var i = 0;
+            if (sleepStatsForLast6Months.length > 0) {
+                for await (var s of sleepStatsForLast6Months) {
+                    if (s.SleepDuration !== 0) {
+                        i = i + 1;
+                    }
+                }
+            }
+            const averageSleepHours = sleepStatsForLast6Months.length === 0 ? null : sumSleepHours / i;
+            const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
+            sleepTrend = {
+                LastMonth           : sleepStatsForLastMonth,
+                Last6Months         : sleepStatsForLast6Months,
+                AverageForLastMonth : averageSleepHoursStr,
+            };
+        }
+
+        //Medication trends
+        let medicationTrend = null;
+        if (reportSetting.MedicationAdherence) {
+            const medsLastMonth = await this._medicationConsumptionRepo.getStats(patientUserId, 1);
+            const currentMedications = await this._medicationRepo.getCurrentMedications(patientUserId);
+            medicationTrend = {
+                LastMonth          : medsLastMonth,
+                CurrentMedications : currentMedications,
+            };
+        }
+
+        //User engagement
+        let userTasksTrend = null;
+        if (reportSetting.DailyTaskStatus) {
+            const userTasksForLastMonth = await this._userTaskRepo.getStats(patientUserId, 1);
+            const userEngagementForLast6Months = await this._userTaskRepo.getUserEngagementStats(patientUserId, 6);
+            userTasksTrend = {
+                LastMonth   : userTasksForLastMonth,
+                Last6Months : userEngagementForLast6Months,
+            };
+        }
+
+        //Health journey / Careplan stats
+        let careplanStats = {
+            Enrollment      : null,
+            CurrentProgress : null,
+        };
+        if (reportSetting.HealthJourney) {
+            
+            const activeEnrollments = await this._careplanRepo.getPatientEnrollments(patientUserId, true);
+            const careplanEnrollment = activeEnrollments.length > 0 ? activeEnrollments[0] : null;
+            if (careplanEnrollment != null) {
+                const start = careplanEnrollment.StartAt;
+                const end = careplanEnrollment.EndAt;
+                const current = new Date();
+                let totalDays = TimeHelper.dayDiff(start, end);
+                if (totalDays === 0) {
+                    totalDays = 1;
+                }
+                const covered = TimeHelper.dayDiff(start, current);
+                const percentageCompletion = covered / totalDays;
+                careplanStats = {
+                    Enrollment      : careplanEnrollment,
+                    CurrentProgress : percentageCompletion,
+                };
+            }
+        }
+
+        const stats = {
+            WeightStr        : weightStr,
+            CountryCode      : countryCode,
+            HeightStr        : heightStr,
+            BodyMassIndex    : bmi,
+            Nutrition        : nutrition,
+            PhysicalActivity : physicalActivityTrend,
+            Biometrics       : biometrics,
+            Sleep            : sleepTrend,
+            Medication       : medicationTrend,
+            DailyAssessent   : dailyAssessmentTrend,
+            UserEngagement   : userTasksTrend,
+            Careplan         : careplanStats,
+        };
+
+        return stats;
+    };
+
     public getPatientStats = async (patientUserId: uuid) => {
 
         //Nutrition
@@ -380,10 +554,13 @@ export class PatientStatisticsService {
         return stats;
     };
 
-    public generateReport = async (reportModel: any) => {
-        return await this.generateReportPDF(reportModel);
-    };
+    // public generateReport = async (reportModel: any) => {
+    //     return await this.generateReportPDF(reportModel);
+    // };
 
+    public generateReport1 = async (reportModel: any, reportSettings: Settings) => {
+        return await this.generateReportPDF1(reportModel, reportSettings);
+    };
     //#endregion
 
     //#region Report
@@ -541,9 +718,79 @@ export class PatientStatisticsService {
         };
     };
 
-    private generateReportPDF = async (reportModel: any) => {
-        const chartImagePaths = await this.generateChartImages(reportModel);
-        return await this.exportReportToPDF(reportModel, chartImagePaths);
+    // private generateReportPDF = async (reportModel: any) => {
+    //     const chartImagePaths = await this.generateChartImages(reportModel);
+    //     return await this.exportReportToPDF(reportModel, chartImagePaths);
+    // };
+
+    private generateReportPDF1 = async (reportModel: any, reportSettings: Settings) => {
+        const chartImagePaths = await this.generateChartImages1(reportModel, reportSettings);
+        return await this.exportReportToPDF1(reportModel, chartImagePaths, reportSettings);
+    };
+
+    private exportReportToPDF1 = async (reportModel: any, chartImagePaths: any, reportSettings: Settings) => {
+        try {
+            var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Health-history');
+            var writeStream = fs.createWriteStream(absFilepath);
+            const reportTitle = `Health History`;
+            reportModel.ReportTitle = reportTitle;
+            reportModel.ChartImagePaths = chartImagePaths;
+            reportModel.Author = 'REAN Foundation';
+            reportModel.TotalPages = 7;
+            reportModel.HeaderImagePath = './assets/images/AHA_header_2.png';
+            reportModel.FooterImagePath = './assets/images/AHA_footer_1.png';
+            
+            var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
+
+            let pageNumber = 1;
+            reportModel.TotalPages = 11;
+            pageNumber = this.addMainPage(document, reportModel, reportSettings.HealthJourney);
+            const isOptionsEnabled = reportSettings.LabValues ||
+                                    reportSettings.SleepHistory ||
+                                    reportSettings.MedicationAdherence ||
+                                    reportSettings.BodyWeight ||
+                                    reportSettings.FoodAndNutrition ||
+                                    reportSettings.MoodAndSymptoms ||
+                                    reportSettings.ExerciseAndPhysicalActivity;
+            if (isOptionsEnabled) {
+                pageNumber = this.addSummaryPage(document, reportModel, reportSettings);
+            }
+            
+            if (reportSettings.LabValues) {
+                pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
+                pageNumber = this.addBiometricsPageD(document, reportModel, pageNumber);
+            }
+
+            if (reportSettings.MedicationAdherence) {
+                pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
+            }
+
+            if (reportSettings.ExerciseAndPhysicalActivity) {
+                pageNumber = this.addExercisePage(document, reportModel, pageNumber);
+            }
+
+            if (reportSettings.FoodAndNutrition) {
+                pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
+            }
+
+            if (reportSettings.MoodAndSymptoms) {
+                this.addDailyAssessmentPage(document, reportModel, pageNumber);
+            }
+            
+            if  (reportSettings.DailyTaskStatus) {
+                pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
+            }
+            this.addHealthHistoryPage(document, reportModel, reportSettings);
+                 
+            this.setPageNumbers(document);
+            document.end();
+
+            const localFilePath = await PDFGenerator.savePDFLocally(writeStream, absFilepath);
+            return { filename, localFilePath };
+        }
+        catch (error) {
+            throw new Error(`Unable to generate assessment report! ${error.message}`);
+        }
     };
 
     private exportReportToPDF = async (reportModel: any, chartImagePaths: any) => {
@@ -562,19 +809,19 @@ export class PatientStatisticsService {
 
             let pageNumber = 1;
             reportModel.TotalPages = 11;
-            pageNumber = this.addMainPage(document, reportModel, pageNumber);
-            pageNumber = this.addSummaryPage(document, reportModel, pageNumber);
-            pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
-            pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
-            pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
-            pageNumber = this.addBiometricsPageD(document, reportModel, pageNumber);
-            pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
-            pageNumber = this.addExercisePage(document, reportModel, pageNumber);
-            pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
-            // pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
-            //pageNumber = this.addSleepPage(document, reportModel, pageNumber);
-            pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
-            this.addDailyAssessmentPage(document, reportModel, pageNumber);
+            pageNumber = this.addMainPage(document, reportModel, true);
+            // pageNumber = this.addSummaryPage(document, reportModel, pageNumber);
+            // pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
+            // pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
+            // pageNumber = this.addBiometricsPageC(document, reportModel, pageNumber);
+            // pageNumber = this.addBiometricsPageD(document, reportModel, pageNumber);
+            // pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
+            // pageNumber = this.addExercisePage(document, reportModel, pageNumber);
+            // pageNumber = this.addNutritionPageA(document, reportModel, pageNumber);
+            // // pageNumber = this.addNutritionPageB(document, reportModel, pageNumber);
+            // //pageNumber = this.addSleepPage(document, reportModel, pageNumber);
+            // pageNumber = this.addUserEngagementPage(document, reportModel, pageNumber);
+            // this.addDailyAssessmentPage(document, reportModel, pageNumber);
             
             this.setPageNumbers(document);
             document.end();
@@ -587,6 +834,55 @@ export class PatientStatisticsService {
         }
     };
 
+    public generateChartImages1 = async (
+        reportModel: any, reportSetting: Settings): Promise<any> => {
+
+        const chartImagePaths = [];
+
+        let imageLocations = await createSummaryCharts1(reportModel.Stats, reportSetting);
+        chartImagePaths.push(...imageLocations);
+
+        if (reportSetting.FoodAndNutrition) {
+            imageLocations = await createNutritionCharts(reportModel.Stats.Nutrition);
+            chartImagePaths.push(...imageLocations);
+        }
+        
+        if (reportSetting.ExerciseAndPhysicalActivity) {
+            imageLocations = await createPhysicalActivityCharts(reportModel.Stats.PhysicalActivity);
+            chartImagePaths.push(...imageLocations);
+        }
+
+        imageLocations = await createBiometricsCharts1(reportModel.Stats.Biometrics, reportSetting);
+        chartImagePaths.push(...imageLocations);
+        if (reportSetting.SleepHistory) {
+            imageLocations = await createSleepTrendCharts(reportModel.Stats.Sleep);
+            chartImagePaths.push(...imageLocations);
+        }
+        if (reportSetting.MedicationAdherence) {
+            imageLocations = await createMedicationTrendCharts(reportModel.Stats.Medication);
+            chartImagePaths.push(...imageLocations);
+        }
+        if (reportSetting.MoodAndSymptoms) {
+            imageLocations = await createDailyAssessentCharts(reportModel.Stats.DailyAssessent);
+            chartImagePaths.push(...imageLocations);
+        }
+        if (reportSetting.DailyTaskStatus) {
+            imageLocations = await createUserTaskCharts(reportModel.Stats.UserEngagement);
+            chartImagePaths.push(...imageLocations);
+    
+        }
+      
+        if (reportSetting.HealthJourney) {
+            imageLocations = await createCareplanCharts(reportModel.Stats.Careplan);
+            chartImagePaths.push(...imageLocations);
+        }
+        
+        imageLocations = await createCalorieBalanceChart(reportModel);
+        chartImagePaths.push(...imageLocations);
+
+        return chartImagePaths;
+    };
+
     public generateChartImages = async (
         reportModel: any): Promise<any> => {
 
@@ -594,24 +890,26 @@ export class PatientStatisticsService {
 
         let imageLocations = await createSummaryCharts(reportModel.Stats);
         chartImagePaths.push(...imageLocations);
-        imageLocations = await createNutritionCharts(reportModel.Stats.Nutrition);
-        chartImagePaths.push(...imageLocations);
+
+        // imageLocations = await createNutritionCharts(reportModel.Stats.Nutrition);
+        // chartImagePaths.push(...imageLocations);
+        
         imageLocations = await createPhysicalActivityCharts(reportModel.Stats.PhysicalActivity);
         chartImagePaths.push(...imageLocations);
-        imageLocations = await createBiometricsCharts(reportModel.Stats.Biometrics);
-        chartImagePaths.push(...imageLocations);
-        imageLocations = await createSleepTrendCharts(reportModel.Stats.Sleep);
-        chartImagePaths.push(...imageLocations);
-        imageLocations = await createMedicationTrendCharts(reportModel.Stats.Medication);
-        chartImagePaths.push(...imageLocations);
-        imageLocations = await createDailyAssessentCharts(reportModel.Stats.DailyAssessent);
-        chartImagePaths.push(...imageLocations);
-        imageLocations = await createUserTaskCharts(reportModel.Stats.UserEngagement);
-        chartImagePaths.push(...imageLocations);
+        // imageLocations = await createBiometricsCharts(reportModel.Stats.Biometrics);
+        // chartImagePaths.push(...imageLocations);
+        // let imageLocations = await createSleepTrendCharts(reportModel.Stats.Sleep);
+        // chartImagePaths.push(...imageLocations);
+        // imageLocations = await createMedicationTrendCharts(reportModel.Stats.Medication);
+        // chartImagePaths.push(...imageLocations);
+        // imageLocations = await createDailyAssessentCharts(reportModel.Stats.DailyAssessent);
+        // chartImagePaths.push(...imageLocations);
+        // imageLocations = await createUserTaskCharts(reportModel.Stats.UserEngagement);
+        // chartImagePaths.push(...imageLocations);
         imageLocations = await createCareplanCharts(reportModel.Stats.Careplan);
         chartImagePaths.push(...imageLocations);
-        imageLocations = await createCalorieBalanceChart(reportModel);
-        chartImagePaths.push(...imageLocations);
+        // imageLocations = await createCalorieBalanceChart(reportModel);
+        // chartImagePaths.push(...imageLocations);
 
         return chartImagePaths;
     };
@@ -632,29 +930,32 @@ export class PatientStatisticsService {
         document.flushPages();
     };
 
-    private addMainPage = (document, model, pageNumber) => {
+    private addMainPage = (document, model, healthJourney: boolean) => {
         var y = addTop(document, model, null, false);
         y = addReportMetadata(document, model, y);
         // y = addReportSummary(document, model, y);
 
-        var clientList = ["HCHLSTRL", "REANPTNT"];
-        if (clientList.indexOf(model.ClientCode) >= 0) {
-            addHealthJourney(document, model, y);
+        if (healthJourney) {
+            var clientList = ["HCHLSTRL", "REANPTNT"];
+            if (clientList.indexOf(model.ClientCode) >= 0) {
+                addHealthJourney(document, model, y);
+            }
         }
-        addBottom(document, pageNumber, model);
+        
+        // addBottom(document, pageNumber, model);
         addFooter(document, "https://www.heart.org/", model.FooterImagePath);
-        pageNumber += 1;
+        const pageNumber = 1;
         return pageNumber;
     };
 
-    private addSummaryPage = (document, model, pageNumber) => {
+    private addSummaryPage = (document, model, reportSettings) => {
         var y = addTop(document, model, 'Summary over Last 30 Days');
         //y = addLabValuesTable(model, document, y);
         //y = y + 15;
-        addSummaryGraphs(model, document, y);
-        addBottom(document, pageNumber, model);
+        addSummaryGraphs(model, document, y, reportSettings);
+        // addBottom(document, pageNumber, model);
         addFooter(document, '', model.FooterImagePath);
-        pageNumber += 1;
+        const pageNumber = 1;
         return pageNumber;
     };
 
@@ -663,10 +964,87 @@ export class PatientStatisticsService {
         y = addBodyWeightStats(model, document, y);
         y = y + 15;
         addBloodGlucoseStats(model, document, y);
-        addBottom(document, pageNumber, model);
-        addFooter(document, '', model.FooterImagePath);
+        // addBottom(document, pageNumber, model);
+        // addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
+    };
+
+    private addHealthHistoryPage = (document, model, reportSetting: Settings) => {
+        const isOptionsEnabled = reportSetting.BodyWeight ||
+                               reportSetting.BloodGlucose ||
+                               reportSetting.BloodPressure ||
+                               reportSetting.SleepHistory;
+
+        if (isOptionsEnabled) {
+            let y = addTop(document, model);
+            addFooter(document, '', model.FooterImagePath);
+            if (reportSetting.BodyWeight) {
+                y = this.isPageEnd(y, document, model, 'BodyWeight');
+                y = addBodyWeightStats(model, document, y);
+            }
+    
+            if (reportSetting.BloodGlucose) {
+                y = this.isPageEnd(y, document, model, 'BloodGlucose');
+                if (y !== START_INDEX) {
+                    y = y + SPACE_BEFORE_SECTION_HEAD;
+                }
+                y = addBloodGlucoseStats(model, document, y);
+            }
+    
+            if (reportSetting.BloodPressure) {
+                y = this.isPageEnd(y, document, model, 'BloodPressure');
+                if (y !== START_INDEX) {
+                    y = y + SPACE_BEFORE_SECTION_HEAD;
+                }
+                y = addBloodPressureStats(model, document, y);
+            }
+    
+            if (reportSetting.SleepHistory) {
+                y = this.isPageEnd(y, document, model, 'SleepHistory');
+                if (y !== START_INDEX) {
+                    y = y + SPACE_BEFORE_SECTION_HEAD;
+                }
+                y = addSleepStats(model, document, y);
+            }
+        }
+        
+    };
+
+    private isPageEnd = (y: number, document: PDFKit.PDFDocument, model: any, context: string) => {
+        if (context === 'BodyWeight') {
+            if (y + BODY_WEIGHT_SECTION_SIZE > document.page.maxY() - FOOTER_SIZE) {
+                y = addTop(document, model);
+                addFooter(document, '', model.FooterImagePath);
+                return y;
+            }
+        }
+        
+        if (context === 'BloodGlucose') {
+            if (y + BLOOD_GLUCOSE_SECTION_SIZE > document.page.maxY() - FOOTER_SIZE) {
+                y = addTop(document, model);
+                addFooter(document, '', model.FooterImagePath);
+                return y;
+            }
+        }
+
+        if (context === 'BloodPressure') {
+            if (y + BLOOD_PRESSURE_SECTION_SIZE > document.page.maxY() - FOOTER_SIZE) {
+                y = addTop(document, model);
+                addFooter(document, '', model.FooterImagePath);
+                return y;
+            }
+        }
+
+        if (context === 'SleepHistory') {
+            if (y + SLEEP_HISTORY_SECTION_SIZE > document.page.maxY() - FOOTER_SIZE) {
+                y = addTop(document, model);
+                addFooter(document, '', model.FooterImagePath);
+                return y;
+            }
+        }
+
+        return y;
     };
 
     private addBiometricsPageB = (document, model, pageNumber) => {
@@ -683,7 +1061,7 @@ export class PatientStatisticsService {
     private addBiometricsPageC = (document, model, pageNumber) => {
         var y = addTop(document, model);
         addLipidStats(model, document, y);
-        addBottom(document, pageNumber, model);
+        // addBottom(document, pageNumber, model);
         addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
@@ -703,7 +1081,7 @@ export class PatientStatisticsService {
         y = addMedicationStats(document, model, y);
         const currentMedications = model.Stats.Medication.CurrentMedications;
         addCurrentMedications(document, currentMedications, y);
-        addBottom(document, pageNumber, model);
+        // addBottom(document, pageNumber, model);
         addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
@@ -713,7 +1091,7 @@ export class PatientStatisticsService {
         var y = addTop(document, model);
         y = addNutritionQuestionnaire(document, model, y);
         addNutritionServingsStats(document, model, y);
-        addBottom(document, pageNumber, model);
+        // addBottom(document, pageNumber, model);
         addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
@@ -739,7 +1117,7 @@ export class PatientStatisticsService {
     private addExercisePage = (document, model, pageNumber) => {
         var y = addTop(document, model);
         addExerciseStats(document, model, y);
-        addBottom(document, pageNumber, model);
+        // addBottom(document, pageNumber, model);
         addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
@@ -748,7 +1126,7 @@ export class PatientStatisticsService {
     private addUserEngagementPage = (document, model, pageNumber) => {
         var y = addTop(document, model);
         addUserTasksStats(document, model, y);
-        addBottom(document, pageNumber, model);
+        // addBottom(document, pageNumber, model);
         addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;
@@ -757,7 +1135,7 @@ export class PatientStatisticsService {
     private addDailyAssessmentPage = (document, model, pageNumber) => {
         var y = addTop(document, model);
         addDailyAssessmentsStats(document, model, y);
-        addBottom(document, pageNumber, model);
+        // addBottom(document, pageNumber, model);
         addFooter(document, '', model.FooterImagePath);
         pageNumber += 1;
         return pageNumber;

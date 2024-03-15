@@ -1,3 +1,4 @@
+import { Settings } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
 import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { LineChartOptions, ChartColors, MultiLineChartOptions } from "../../../../modules/charts/chart.options";
@@ -228,7 +229,7 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         //chartExists(model, 'HDL_Last6Months') ||
         //chartExists(model, 'LDL_Last6Months') ||
         //chartExists(model, 'TotalCholesterol_Last6Months') ||
-        chartExists(model, 'Triglyceride_Last6Months') ||
+        chartExists(model, 'Triglyceride_Last6Months') &&
         chartExists(model, 'A1C_Last6Months');
 
     if (!exists) {
@@ -282,6 +283,32 @@ export const createBiometricsCharts = async (data) => {
     locations.push(...bloodGlucoseLocations);
     const cholesterolLocations = await createCholesterolCharts(data.Last6Months.Lipids);
     locations.push(...cholesterolLocations);
+
+    return locations;
+};
+
+export const createBiometricsCharts1 = async (data, reportSetting: Settings) => {
+    var locations = [];
+    if (reportSetting.BodyWeight) {
+        const bodyWeightLocations =
+        await createBodyWeightCharts(data.Last6Months.BodyWeight.History, data.Last6Months.BodyWeight.CountryCode);
+        locations.push(...bodyWeightLocations);
+    }
+    
+    if (reportSetting.BloodPressure) {
+        const bloddPressureLocations = await createBloodPressureCharts(data.Last6Months.BloodPressure.History);
+        locations.push(...bloddPressureLocations);
+    }
+
+    if (reportSetting.BloodGlucose) {
+        const bloodGlucoseLocations = await createBloodGlucoseCharts(data.Last6Months.BloodGlucose.History);
+        locations.push(...bloodGlucoseLocations);
+    }
+
+    if (reportSetting.LabValues) {
+        const cholesterolLocations = await createCholesterolCharts(data.Last6Months.Lipids);
+        locations.push(...cholesterolLocations);
+    }
 
     return locations;
 };

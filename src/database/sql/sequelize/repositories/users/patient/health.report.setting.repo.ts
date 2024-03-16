@@ -1,16 +1,16 @@
-import { HealthReportSettingDomainModel } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { HealthReportSettingsDomainModel } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import HealthReport from '../../../models/users/patient/health.report.model';
 import { HealthReportSettingMapper } from '../../../mappers/users/patient/health.report.setting.mapper';
-import { IHealthReportSettingRepo } from '../../../../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
+import { IHealthReportSettingsRepo } from '../../../../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
 
 ///////////////////////////////////////////////////////////////////////
 
-export class HealthReportSettingRepo implements IHealthReportSettingRepo{
+export class HealthReportSettingsRepo implements IHealthReportSettingsRepo {
 
-    create = async (model: HealthReportSettingDomainModel)
-    : Promise<HealthReportSettingDomainModel> => {
+    create = async (model: HealthReportSettingsDomainModel)
+    : Promise<HealthReportSettingsDomainModel> => {
         try {
             const entity = {
                 PatientUserId : model.PatientUserId,
@@ -24,7 +24,7 @@ export class HealthReportSettingRepo implements IHealthReportSettingRepo{
         }
     };
 
-    getByUserId = async (patientUserId: string): Promise<HealthReportSettingDomainModel> => {
+    getByUserId = async (patientUserId: string): Promise<HealthReportSettingsDomainModel> => {
         try {
             const healthReportSetting = await HealthReport.findOne({
                 where : {
@@ -40,8 +40,8 @@ export class HealthReportSettingRepo implements IHealthReportSettingRepo{
 
     updateByUserId = async (
         patientUserId: string,
-        model: HealthReportSettingDomainModel)
-        : Promise<HealthReportSettingDomainModel> => {
+        model: HealthReportSettingsDomainModel)
+        : Promise<HealthReportSettingsDomainModel> => {
 
         try {
             const healthReportSetting = await HealthReport.findOne({

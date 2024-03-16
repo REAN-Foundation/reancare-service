@@ -1,12 +1,12 @@
-import { HealthReportSettingDto } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.dto';
-import { HealthReportSettingDomainModel } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { HealthReportSettingsDto } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.dto';
+import { HealthReportSettingsDomainModel } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 
-export interface IHealthReportSettingRepo {
+export interface IHealthReportSettingsRepo {
 
-    create(entity: HealthReportSettingDomainModel): Promise<HealthReportSettingDto>;
+    create(entity: HealthReportSettingsDomainModel): Promise<HealthReportSettingsDto>;
 
-    getByUserId(userId: string): Promise<HealthReportSettingDto>;
+    getByUserId(userId: string): Promise<HealthReportSettingsDto>;
 
-    updateByUserId(userId: string, updateModel: HealthReportSettingDomainModel): Promise<HealthReportSettingDto>;
+    updateByUserId(userId: string, updateModel: HealthReportSettingsDomainModel): Promise<HealthReportSettingsDto>;
 
 }

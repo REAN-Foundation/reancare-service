@@ -30,6 +30,8 @@ import { IUserTaskRepo } from '../../../database/repository.interfaces/users/use
 import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
 import { Loader } from '../../../startup/loader';
 import { AuthHandler } from '../../../auth/auth.handler';
+import { HealthReportSettingsDomainModel, ReportFrequency } from '../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { IHealthReportSettingsRepo } from '../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +51,8 @@ export class UserService {
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-        @inject('ITenantRepo') private _tenantRepo: ITenantRepo
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
+        @inject('IHealthReportSettingsRepo') private _healthReportSettingsRepo: IHealthReportSettingsRepo
     ) {}
 
     //#region Publics
@@ -70,6 +73,7 @@ export class UserService {
         if (dto == null) {
             return null;
         }
+        await this.createUserDefaultHealthReportSettings(dto);
         dto = await this.updateDetailsDto(dto);
         await this.generateLoginOtp(model, dto);
         return dto;
@@ -609,6 +613,28 @@ export class UserService {
 
         const extractedString = parts.slice(0, 2).join(':');
         return extractedString;
+    };
+
+    private createUserDefaultHealthReportSettings = async (user) => {
+        const model: HealthReportSettingsDomainModel = {
+            PatientUserId : user.id,
+            Preference    : {
+                ReportFrequency             : ReportFrequency.MONTH,
+                HealthJourney               : true,
+                MedicationAdherence         : true,
+                BodyWeight                  : true,
+                BloodGlucose                : true,
+                BloodPressure               : true,
+                SleepHistory                : true,
+                LabValues                   : true,
+                ExerciseAndPhysicalActivity : true,
+                FoodAndNutrition            : true,
+                DailyTaskStatus             : true,
+                MoodAndSymptoms             : true
+            }
+        };
+        
+        await this._healthReportSettingsRepo.create(model);
     };
 
     //#endregion

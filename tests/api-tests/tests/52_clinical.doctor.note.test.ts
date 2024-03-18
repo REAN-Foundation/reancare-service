@@ -22,7 +22,7 @@ describe('52 - Doctor note tests', function() {
             .post(`/api/v1/clinical/doctor-notes/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.DoctorNote.id, 'DoctorNoteId_1');
@@ -50,7 +50,7 @@ describe('52 - Doctor note tests', function() {
             .get(`/api/v1/clinical/doctor-notes/${getTestData('DoctorNoteId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.DoctorNote).to.have.property('id');
                 expect(response.body.Data.DoctorNote).to.have.property('PatientUserId');
@@ -74,7 +74,7 @@ describe('52 - Doctor note tests', function() {
             .get(`/api/v1/clinical/doctor-notes/search/${getTestData("PatientUserId")}${loadDoctorNoteQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.DoctorNotes).to.have.property('TotalCount');
                 expect(response.body.Data.DoctorNotes).to.have.property('RetrievedCount');
@@ -95,7 +95,7 @@ describe('52 - Doctor note tests', function() {
             .put(`/api/v1/clinical/doctor-notes/${getTestData('DoctorNoteId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.DoctorNote).to.have.property('id');
@@ -119,7 +119,7 @@ describe('52 - Doctor note tests', function() {
             .delete(`/api/v1/clinical/doctor-notes/${getTestData('DoctorNoteId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -134,7 +134,7 @@ describe('52 - Doctor note tests', function() {
             .post(`/api/v1/clinical/doctor-notes/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.DoctorNote.id, 'DoctorNoteId');
@@ -163,7 +163,7 @@ describe('52 - Doctor note tests', function() {
             .post(`/api/v1/clinical/doctor-notes/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -178,7 +178,7 @@ describe('52 - Doctor note tests', function() {
         agent
             .get(`/api/v1/clinical/doctor-notes/search/${getTestData("PatientUserId")}${loadDoctorNoteQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -192,7 +192,7 @@ describe('52 - Doctor note tests', function() {
             .delete(`/api/v1/clinical/doctor-notes/${getTestData('DoctorNoteId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

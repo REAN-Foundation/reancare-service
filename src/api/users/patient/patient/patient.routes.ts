@@ -1,19 +1,19 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { PatientController } from './patient.controller';
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new PatientController();
 
-    router.post('/', authenticator.authenticateClient, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/byPhone', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientByPhone);
-    router.get('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByUserId);
-    router.put('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateByUserId);
-    router.delete('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteByUserId);
+    router.post('/', auth('User.Patient.Patient.Create', true), controller.create);
+    router.get('/search', auth('User.Patient.Patient.Search'), controller.search);
+    router.get('/byPhone', auth('User.Patient.Patient.GetPatientByPhone'), controller.getPatientByPhone);
+    router.get('/:tenantId/by-phone/:phone', auth('User.Patient.Patient.GetByPhone'), controller.getByPhone);
+    router.get('/:userId', auth('User.Patient.Patient.GetByUserId', true), controller.getByUserId);
+    router.put('/:userId', auth('User.Patient.Patient.UpdateByUserId'), controller.updateByUserId);
+    router.delete('/:userId', auth('User.Patient.Patient.DeleteByUserId'), controller.deleteByUserId);
 
     app.use('/api/v1/patients', router);
 };

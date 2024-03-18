@@ -15,11 +15,13 @@ export interface IStatisticsRepo {
 
     getUsersByAge(filters: StatisticSearchFilters): Promise<any>;
 
+    getYearWiseAgeDetails(filter): Promise<any>;
+
     getUsersByMaritalStatus(filters: StatisticSearchFilters): Promise<any>;
 
     getUsersByDeviceDetail(filters: StatisticSearchFilters): Promise<any>;
 
-    getUsersByEnrollment(filters: StatisticSearchFilters): Promise<any>;
+    // getUsersByEnrollment(filters: StatisticSearchFilters): Promise<any>;
 
     updateAppDownloadCount(appDownloadDomainModel: AppDownloadDomainModel): Promise<AppDownloadDto>;
 
@@ -38,5 +40,17 @@ export interface IStatisticsRepo {
     getUsersByBiometrics(filters: StatisticSearchFilters): Promise<any>;
     
     getAllYears(): Promise<any>;
+
+    getYearWiseUserCount(filter): Promise<any>;
+
+    getYearWiseDeviceDetails(filter, getYearWiseDeviceDetails): Promise<any>;
+
+    getYearWiseGenderDetails(filter): Promise<any>;
+
+    getYearWiseMaritalDetails(filter): Promise<any>;
+
+    getYearWiseMajorAilmentDistributionDetails(filter): Promise<any>;
+
+    getYearWiseAddictionDistributionDetails(filter, yearWiseUserCount): Promise<any>;
 
 }

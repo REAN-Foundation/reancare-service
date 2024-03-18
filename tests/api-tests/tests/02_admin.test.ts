@@ -41,6 +41,7 @@ export const loadAdminLoginModel = async (
             UserName: "admin",
             Password: `${process.env.TEST_ADMIN_PASSWORD}`,
             LoginRoleId: getTestData("adminRoleId"),
+            TenantCode: "default"
         };
         setTestData(model, 'AdminLoginModel');
     };

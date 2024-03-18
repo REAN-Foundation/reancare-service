@@ -1,7 +1,7 @@
 export interface BloodOxygenSaturationDto {
     id?                  : string;
     EhrId?               : string;
-    PatientUserId        : string;
+    PatientUserId?        : string;
     PatientId?           : string;
     TerraSummaryId?      : string;
     Provider?            : string;

@@ -77,6 +77,7 @@ describe('04 - Patient tests', function() {
             .get(`/api/v1/users/by-phone/${firstPatientPhoneNumber}/role/${getTestData("patientRoleId")}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -141,7 +142,7 @@ describe('04 - Patient tests', function() {
             .get(`/api/v1/patients/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -176,7 +177,7 @@ describe('04 - Patient tests', function() {
             .put(`/api/v1/patients/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.Patient.User.Person).to.have.property('id');
@@ -197,7 +198,7 @@ describe('04 - Patient tests', function() {
             .put(`/api/v1/patients/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -221,7 +222,7 @@ export const loadPatientPhoneCreateFirstModel = async (
 ) => {
     const model = {
         Phone : faker.phone.number('+91-##########'),
-          
+        TenantId: getTestData("TenantId") 
     };
     setTestData(model, "PatientPhoneCreateFirstModel");
 };
@@ -232,6 +233,7 @@ export const loadPatientLoginFirstModel = async (
             Phone: secondPatientPhoneNumber,
             Password: patientPassword,
             LoginRoleId: getTestData("patientRoleId"),
+            TenantId: getTestData("TenantId") 
         };
         setTestData(model, 'PatientLoginFirstModel');
 };
@@ -242,6 +244,7 @@ export const loadPatientCreateWithPhoneFirstModel = async (
             Phone: secondPatientPhoneNumber,
             Password: patientPassword,
             LoginRoleId: getTestData("patientRoleId"),
+            TenantId: getTestData("TenantId")
         };
         setTestData(model, 'PatientCreateWithPhoneFirstModel');
 };
@@ -252,6 +255,7 @@ export const loadPatientCreateFirstModel = async (
         FirstName : faker.person.firstName(),
         Email     : faker.internet.exampleEmail(),
         Phone     : firstPatientPhoneNumber,
+        TenantId: getTestData("TenantId")
     };
     setTestData(model, "PatientCreateFirstModel");
 };
@@ -304,6 +308,17 @@ export const loadAddressUpdateModel = async (
     
     };
     setTestData(model, "AddressUpdateModel");
+};
+
+export const loadPatientGeModel = async (
+    ) => {
+        const model = {
+            Phone: secondPatientPhoneNumber,
+            Password: patientPassword,
+            LoginRoleId: getTestData("patientRoleId"),
+            TenantId: getTestData("TenantId") 
+        };
+        setTestData(model, 'PatientLoginFirstModel');
 };
 
 function loadPatientQueryString() {

@@ -173,14 +173,13 @@ describe('83 - Notice tests', function() {
         agent
             .post(`/api/v1/general/notices/`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('83:07 -> Negative - Get Notice by id', function(done) {
@@ -204,15 +203,14 @@ describe('83 - Notice tests', function() {
         agent
             .put(`/api/v1/general/notices/${getTestData('NoticeId')}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
 });

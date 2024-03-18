@@ -1,9 +1,9 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AddressDomainModel } from '../../../../domain.types/general/address/address.domain.model';
-import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
+import { EmergencyContactRoleList } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { AddressService } from '../../../../services/general/address.service';
 import { OrganizationService } from '../../../../services/general/organization.service';
@@ -11,52 +11,37 @@ import { EmergencyContactService } from '../../../../services/users/patient/emer
 import { PersonService } from '../../../../services/person/person.service';
 import { RoleService } from '../../../../services/role/role.service';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { EmergencyContactValidator } from './emergency.contact.validator';
-import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HospitalService } from '../../../../services/hospitals/hospital.service';
 import { HealthSystemService } from '../../../../services/hospitals/health.system.service';
-import { Logger } from '../../../../common/logger';
+import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EmergencyContactController extends BaseController {
+export class EmergencyContactController {
 
     //#region member variables and constructors
 
-    _service: EmergencyContactService = null;
-
-    _roleService: RoleService = null;
-
     _validator: EmergencyContactValidator = new EmergencyContactValidator();
 
-    _orgService: OrganizationService = null;
+    _service: EmergencyContactService = Injector.Container.resolve(EmergencyContactService);
 
-    _personService: PersonService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _userService: UserService = null;
+    _orgService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
-    _addressService: AddressService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _healthSystemService: HealthSystemService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _hospitalService: HospitalService = null;
+    _addressService: AddressService = Injector.Container.resolve(AddressService);
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _healthSystemService = Injector.Container.resolve(HealthSystemService);
 
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(EmergencyContactService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._orgService = Loader.container.resolve(OrganizationService);
-        this._userService = Loader.container.resolve(UserService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._healthSystemService = Loader.container.resolve(HealthSystemService);
-        this._hospitalService = Loader.container.resolve(HospitalService);
-        this._authorizer = Loader.authorizer;
-    }
+    _hospitalService = Injector.Container.resolve(HospitalService);
+
+    _ehrPatientService = Injector.Container.resolve(EHRPatientService);
 
     //#endregion
 
@@ -75,7 +60,6 @@ export class EmergencyContactController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.Create', request, response);
 
             const domainModel = await this._validator.create(request);
 
@@ -166,21 +150,7 @@ export class EmergencyContactController extends BaseController {
                 throw new ApiError(400, 'Cannot create patientEmergencyContact!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(domainModel.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
-                        await EHRAnalyticsHandler.addOrUpdatePatient(
-                            domainModel.PatientUserId,
-                            {
-                                DoctorPersonId_1 : patientEmergencyContact.ContactPersonId
-                            }, appName
-                        );
-                    }
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${domainModel.PatientUserId}`);
-            }
+            await this._ehrPatientService.addEHRRecordEmergencyContactForAppNames(patientEmergencyContact);
 
             ResponseHandler.success(request, response, 'Emergency contact created successfully!', 201, {
                 EmergencyContact : patientEmergencyContact,
@@ -192,10 +162,6 @@ export class EmergencyContactController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Emergency.Contact.GetById';
-
-            await this._authorizer.authorize(request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const patientEmergencyContact = await this._service.getById(id);
@@ -213,7 +179,6 @@ export class EmergencyContactController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -234,7 +199,6 @@ export class EmergencyContactController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -260,8 +224,6 @@ export class EmergencyContactController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Emergency.Contact.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingEmergencyContact = await this._service.getById(id);
             if (existingEmergencyContact == null) {
@@ -283,7 +245,6 @@ export class EmergencyContactController extends BaseController {
 
     getHealthSystems = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.GetHealthSystems', request, response);
 
             const healthSystems = await this._healthSystemService.getHealthSystemsWithTags(request.query.planName as string);
             if (healthSystems.length === 0) {
@@ -301,7 +262,6 @@ export class EmergencyContactController extends BaseController {
 
     getHealthSystemHospitals = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Emergency.Contact.GetHealthSystemHospitals', request, response);
 
             const healthSystemId : uuid = request.params.healthSystemId;
             const healthSystemHospitals = await this._hospitalService.getHospitalsForHealthSystem(healthSystemId);

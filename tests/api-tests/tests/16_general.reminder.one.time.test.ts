@@ -21,7 +21,7 @@ describe('16 - One time reminder tests', function() {
             .post(`/api/v1/reminders/one-time/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Reminder.id, 'OneTimeReminderId_1');
@@ -49,7 +49,7 @@ describe('16 - One time reminder tests', function() {
             .get(`/api/v1/reminders/${getTestData('OneTimeReminderId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Reminder).to.have.property('id');
                 expect(response.body.Data.Reminder).to.have.property('UserId');
@@ -74,7 +74,7 @@ describe('16 - One time reminder tests', function() {
             .get(`/api/v1/reminders/search${loadOneTimeReminderQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Reminders).to.have.property('TotalCount');
                 expect(response.body.Data.Reminders).to.have.property('RetrievedCount');
@@ -94,7 +94,7 @@ describe('16 - One time reminder tests', function() {
             .delete(`/api/v1/reminders/${getTestData('OneTimeReminderId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -109,7 +109,7 @@ describe('16 - One time reminder tests', function() {
             .post(`/api/v1/reminders/one-time/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Reminder.id, 'OneTimeReminderId');
@@ -138,7 +138,7 @@ describe('16 - One time reminder tests', function() {
         agent
             .post(`/api/v1/reminders/one-time/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -152,7 +152,7 @@ describe('16 - One time reminder tests', function() {
         agent
             .get(`/api/v1/reminders/${getTestData('OneTimeReminderId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

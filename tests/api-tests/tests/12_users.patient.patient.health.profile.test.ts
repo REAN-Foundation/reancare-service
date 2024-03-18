@@ -71,7 +71,7 @@ describe('12 - Patient health profile tests', function() {
             .put(`/api/v1/patient-health-profiles/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.HealthProfile).to.have.property('id');
@@ -141,7 +141,7 @@ describe('12 - Patient health profile tests', function() {
             .put(`/api/v1/patient-health-profiles/${getTestData('PatientUserId1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

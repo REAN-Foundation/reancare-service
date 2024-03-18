@@ -1,5 +1,7 @@
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto } from '../../../../domain.types/users/user/user.dto';
+import { TenantDto } from '../../../../domain.types/tenant/tenant.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -11,13 +13,17 @@ export interface IUserRepo {
 
     create(userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 
-    getById(id: string): Promise<UserDetailsDto>;
+    getById(id: uuid): Promise<UserDetailsDto>;
 
-    updateLastLogin(id: string): Promise<void>;
+    getByPersonId(personId: uuid): Promise<UserDetailsDto>;
 
-    delete(id: string): Promise<boolean>;
+    updateLastLogin(id: uuid): Promise<void>;
 
-    getUserByPersonIdAndRole(personId: string, loginRoleId: number): Promise<UserDetailsDto>;
+    delete(id: uuid): Promise<boolean>;
+
+    getUserByPersonIdAndRole(personId: uuid, loginRoleId: number): Promise<UserDetailsDto>;
+
+    getUserByTenantIdAndRole(tenantId: uuid, roleName: string): Promise<UserDetailsDto>;
 
     userNameExists(userName: string): Promise<boolean>;
 
@@ -27,9 +33,15 @@ export interface IUserRepo {
 
     getUserWithUserName(userName: string): Promise<UserDetailsDto>;
 
-    update(id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
+    update(id: uuid, userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 
-    getUserHashedPassword(id: string): Promise<string>;
+    getUserHashedPassword(id: uuid): Promise<string>;
+
+    checkUsersWithoutTenants(): Promise<void>;
+
+    isTenantUser(userId: uuid, tenantId: uuid): Promise<boolean>;
+
+    getTenantsForUser(userId: uuid): Promise<TenantDto[]>;
 
     getAllRegisteredUsers(): Promise<any[]>;
 

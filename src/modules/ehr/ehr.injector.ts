@@ -15,7 +15,7 @@ export class EhrInjector {
         var ehrEnabled = ConfigurationManager.EhrEnabled();
 
         if (ehrEnabled) {
-            
+
             const ehrSpec = ConfigurationManager.EhrSpecification();
 
             if (ehrSpec === 'FHIR') {

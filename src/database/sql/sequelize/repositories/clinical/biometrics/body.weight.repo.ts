@@ -229,7 +229,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                     VitalName         : "BodyWeight",
                     VitalPrimaryValue : x.BodyWeight,
                     Unit              : x.Unit,
-                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };
@@ -267,7 +267,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                     VitalName         : "BodyWeight",
                     VitalPrimaryValue : x.BodyWeight,
                     Unit              : x.Unit,
-                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };

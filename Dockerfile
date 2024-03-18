@@ -16,6 +16,9 @@ COPY package*.json /app/
 RUN npm install -g typescript
 COPY src ./src
 COPY tsconfig.json ./
+RUN npm cache clean --force
+RUN rm -rf node_modules
+# RUN npm rm @types/glob @types/rimraf minimatch @types/minimatch
 RUN npm install
 RUN npm run build
 

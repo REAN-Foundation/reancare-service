@@ -25,6 +25,7 @@ export interface PersonDetailsDto {
     LivingAlone?               : boolean;
     WorkedPriorToStroke?       : boolean;
     ImageResourceId            : string;
+    ProfileImageURL           ?: string;
     Roles                      : PersonRoleDto[];
     ActiveSince                : Date;
     Addresses                  : AddressDto[];

@@ -1,25 +1,23 @@
 import 'reflect-metadata';
-import { DependencyContainer } from 'tsyringe';
-
-import { DatabaseInjector } from "../database/database.injector";
 import { ModuleInjector } from '../modules/module.injector';
+import { DependencyContainer, container } from 'tsyringe';
 import { AuthInjector } from '../auth/auth.injector';
+import { DatabaseInjector } from '../database/database.injector';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class Injector {
 
-    static registerInjections(container: DependencyContainer) {
+    private static _container: DependencyContainer = container;
 
-        //Auth
-        AuthInjector.registerInjections(container);
+    public static get Container() {
+        return Injector._container;
+    }
 
-        //Database
-        DatabaseInjector.registerInjections(container);
-
-        //Modules
-        ModuleInjector.registerInjections(container);
-
+    static registerInjections() {
+        AuthInjector.registerInjections(Injector.Container);
+        DatabaseInjector.registerInjections(Injector.Container);
+        ModuleInjector.registerInjections(Injector.Container);
     }
 
 }

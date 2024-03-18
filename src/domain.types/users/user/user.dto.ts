@@ -6,6 +6,8 @@ export interface UserDetailsDto {
     id             : uuid;
     PersonId       : uuid;
     TenantId       : uuid;
+    TenantCode    ?: string;
+    TenantName    ?: string;
     Person         : PersonDetailsDto;
     RoleId         : number;
     Role           : RoleDto;

@@ -22,7 +22,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentTemplate.id, 'AssessmentTemplateScoreId');
@@ -52,7 +52,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentQuestionNodeId');
@@ -78,7 +78,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentQuestionNodeId_1');
@@ -107,7 +107,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentQuestionNodeId_2');
@@ -133,7 +133,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentQuestionNodeId_3');
@@ -158,7 +158,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentQuestionNodeId_4');
@@ -182,7 +182,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .get(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.AssessmentTemplate).to.have.property('id');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('DisplayCode');
@@ -214,7 +214,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .put(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.AssessmentTemplate).to.have.property('id');
@@ -255,15 +255,14 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
         agent
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}/nodes`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('73:11 -> Negative - Create QuestionNodeList Q1.1 question', function(done) {
@@ -272,15 +271,14 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
         agent
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}/nodes`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
                 
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('73:12 -> Negative - Add question node to template- Q 2', function(done) {
@@ -289,15 +287,14 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
         agent
             .post(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}/nodes`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
 });
@@ -307,6 +304,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
 export const loadKCCQAssessmentTemplateCreateModel = async (
 ) => {
     const model = {
+        TenantId                    : getTestData("TenantId"),
         Title                       : faker.lorem.word(5),
         Description                 : faker.lorem.word(15),
         Type                        : getRandomEnumValue(AssessmentType),

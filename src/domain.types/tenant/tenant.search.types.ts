@@ -4,7 +4,7 @@ import { TenantDto } from "./tenant.dto";
 ///////////////////////////////////////////////////////////////////////////////////
 
 export interface TenantSearchFilters extends BaseSearchFilters {
-    Name   : string;
+    Name  ?: string;
     Code  ?: string;
     Phone? : string;
     Email? : string;

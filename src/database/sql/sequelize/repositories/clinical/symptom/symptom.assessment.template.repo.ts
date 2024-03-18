@@ -262,7 +262,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
                     }
                 });
         }
-        
+
         await this.recalculateSymptomIndices(id);
         return await this.getById(id);
     };

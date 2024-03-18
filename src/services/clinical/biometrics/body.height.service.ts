@@ -1,14 +1,11 @@
 import { BiometricsHeightStore } from "../../../modules/ehr/services/biometrics.height.store";
-import { Loader } from "../../../startup/loader";
 import { inject, injectable } from "tsyringe";
 import { IBodyHeightRepo } from "../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { BodyHeightDomainModel } from '../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
 import { BodyHeightDto } from '../../../domain.types/clinical/biometrics/body.height/body.height.dto';
 import { BodyHeightSearchFilters, BodyHeightSearchResults } from '../../../domain.types/clinical/biometrics/body.height/body.height.search.types';
 import { ConfigurationManager } from "../../../config/configuration.manager";
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
+import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +18,7 @@ export class BodyHeightService {
         @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBiometricsHeightStore = Loader.container.resolve(BiometricsHeightStore);
+            this._ehrBiometricsHeightStore = Injector.Container.resolve(BiometricsHeightStore);
         }
     }
 
@@ -54,20 +51,6 @@ export class BodyHeightService {
 
     delete = async (id: string): Promise<boolean> => {
         return await this._bodyHeightRepo.delete(id);
-    };
-
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyHeightDomainModel, appName?: string) => {
-        if (model.BodyHeight) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, provider, EHRRecordTypes.BodyHeight, model.BodyHeight, model.Unit, null, null, appName, 
-                model.RecordDate ? model.RecordDate : null
-            );
-
-            //Also add it to the static record
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                BodyHeight : model.BodyHeight
-            }, appName);
-        }
     };
 
 }

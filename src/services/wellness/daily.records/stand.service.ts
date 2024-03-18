@@ -1,6 +1,3 @@
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
 import { inject, injectable } from "tsyringe";
 import { IStandRepo } from "../../../database/repository.interfaces/wellness/daily.records/stand.repo.interface";
 import { StandDomainModel } from '../../../domain.types/wellness/daily.records/stand/stand.domain.model';
@@ -35,23 +32,5 @@ export class StandService {
     delete = async (id: string): Promise<boolean> => {
         return await this._standRepo.delete(id);
     };
-
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: StandDomainModel, appName?: string) => {
-        if (model.Stand) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.PhysicalActivity,
-                model.Stand,
-                model.Unit,
-                'Stand',
-                null,
-                appName,
-                model.RecordDate ? model.RecordDate : null
-            );
-        }
-    };
-
 
 }

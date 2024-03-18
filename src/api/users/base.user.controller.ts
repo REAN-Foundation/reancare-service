@@ -1,4 +1,3 @@
-import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { Logger } from '../../common/logger';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
@@ -6,13 +5,12 @@ import { AddressService } from '../../services/general/address.service';
 import { PersonService } from '../../services/person/person.service';
 import { RoleService } from '../../services/role/role.service';
 import { UserService } from '../../services/users/user/user.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { AddressValidator } from '../general/address/address.validator';
-import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BaseUserController extends BaseController {
+export class BaseUserController {
 
     _personService: PersonService = null;
 
@@ -22,15 +20,11 @@ export class BaseUserController extends BaseController {
 
     _roleService: RoleService = null;
 
-    _authorizer: Authorizer = null;
-
     constructor() {
-        super();
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._authorizer = Loader.authorizer;
+        this._userService = Injector.Container.resolve(UserService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._addressService = Injector.Container.resolve(AddressService);
     }
 
     async createOrUpdateDefaultAddress(request, personId: string): Promise<void> {

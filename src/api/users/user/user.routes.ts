@@ -1,31 +1,40 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
 import { UserController } from './user.controller';
+import { auth } from '../../../auth/auth.handler';
+
+////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new UserController();
 
-    //Note:
-    //For user controller, there will not be end-points for create, update and delete.
-    //User will not be directly created/updated/deleted, but through user type specific
-    //entity controllers such patient, doctor, etc.
+    router.get('/by-phone/:phone/role/:roleId',
+        auth('User.User.GetUserByRoleAndPhone', true), controller.getTenantUserByRoleAndPhone);
 
-    router.get('/by-phone/:phone/role/:roleId', authenticator.authenticateClient, controller.getByPhoneAndRole);
-    router.get('/by-email/:email/role/:roleId', authenticator.authenticateClient, controller.getByEmailAndRole);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
+    router.get('/by-email/:email/role/:roleId',
+        auth('User.User.GetUserByRoleAndEmail', true), controller.getTenantUserByRoleAndEmail);
 
-    //router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.post('/login-with-password', authenticator.authenticateClient, controller.loginWithPassword);
+    router.get('/tenants/:tenantId/roles/:roleId/phones/:phone',
+        auth('User.User.GetTenantUserByRoleAndPhone', true), controller.getTenantUserByRoleAndPhone);
+        
+    router.get('/tenants/:tenantId/roles/:roleId/emails/:email',
+        auth('User.User.GetTenantUserByRoleAndEmail', true), controller.getTenantUserByRoleAndEmail);
 
-    //router.post('/reset-password', authenticator.authenticateClient, controller.resetPassword);
-    router.post('/generate-otp', authenticator.authenticateClient, controller.generateOtp);
-    router.post('/login-with-otp', authenticator.authenticateClient, controller.loginWithOtp);
-    router.post('/logout', authenticator.authenticateClient, authenticator.authenticateUser, controller.logout);
+    router.get('/:phone/tenants', auth('User.User.GetTenantsForUserWithPhone', true), controller.getTenantsForUserWithPhone);
+    router.get('/:email/tenants', auth('User.User.GetTenantsForUserWithEmail', true), controller.getTenantsForUserWithEmail);
+    router.get('/:id', auth('User.User.GetById'), controller.getById);
 
-    router.post('/access-token/:refreshToken', authenticator.authenticateClient, controller.rotateUserAccessToken);
+    //router.get('/search', auth('User.User.Search'), controller.search);
+    router.post('/login-with-password', auth('User.User.LoginWithPassword', true), controller.loginWithPassword);
+
+    //router.post('/reset-password', auth('User.User.ResetPassword', true), controller.resetPassword);
+    router.post('/generate-otp', auth('User.User.GenerateOtp', true), controller.generateOtp);
+    router.post('/login-with-otp', auth('User.User.LoginWithOtp', true), controller.loginWithOtp);
+    router.post('/logout', auth('User.User.Logout'), controller.logout);
+
+    router.post('/access-token/:refreshToken', auth('User.User.RotateUserAccessToken', true), controller.rotateUserAccessToken);
+    router.post('/', auth('User.User.Create', true), controller.create);
 
     app.use('/api/v1/users', router);
 };

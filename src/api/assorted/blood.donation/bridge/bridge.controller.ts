@@ -1,0 +1,132 @@
+import express from 'express';
+import { BridgeService } from '../../../../services/assorted/blood.donation/bridge.service';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { BridgeValidator } from './bridge.validator';
+import { Injector } from '../../../../startup/injector';
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+export class BridgeController {
+
+    //#region member variables and constructors
+
+    _service: BridgeService = null;
+
+    _validator: BridgeValidator = new BridgeValidator();
+
+    constructor() {
+        this._service = Injector.Container.resolve(BridgeService);
+    }
+
+    //#endregion
+
+    //#region Action methods
+
+    create = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const domainModel = await this._validator.create(request);
+
+            const patientDonors = await this._service.create(domainModel);
+            if (patientDonors == null) {
+                throw new ApiError(400, 'Cannot create Blood bridge!');
+            }
+
+            ResponseHandler.success(request, response, 'Blood bridge created successfully!', 201, {
+                PatientDonors : patientDonors,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+
+            const doctorNote = await this._service.getById(id);
+            if (doctorNote == null) {
+                throw new ApiError(404, 'Blood bridge not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Blood bridge retrieved successfully!', 200, {
+                PatientDonors : doctorNote,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    search = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const filters = await this._validator.search(request);
+
+            const searchResults = await this._service.search(filters);
+
+            const count = searchResults.Items.length;
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} blood bridge records retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, { PatientDonors: searchResults });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const domainModel = await this._validator.update(request);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+
+            const doctorNote = await this._service.getById(id);
+            if (doctorNote == null) {
+                throw new ApiError(404, 'Blood bridge not found.');
+            }
+
+            const updated = await this._service.update(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update blood bridge record!');
+            }
+
+            ResponseHandler.success(request, response, 'Blood bridge record updated successfully!', 200, {
+                PatientDonors : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const doctorNote = await this._service.getById(id);
+            if (doctorNote == null) {
+                throw new ApiError(404, 'Blood bridge not found.');
+            }
+
+            const deleted = await this._service.delete(id);
+            if (!deleted) {
+                throw new ApiError(400, 'Blood bridge cannot be deleted.');
+            }
+
+            ResponseHandler.success(request, response, 'Blood bridge record deleted successfully!', 200, {
+                Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    //#endregion
+
+}

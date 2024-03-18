@@ -17,6 +17,7 @@ declare global{
             clientAppRoutes      : boolean; //This flag indicates that the request is for the client app specific endpoints
             singleResourceRequest: boolean;
             patientOwnedResource : boolean;
+            customAuthorization  : boolean;
         }
     }
 }

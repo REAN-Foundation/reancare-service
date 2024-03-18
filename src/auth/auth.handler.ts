@@ -16,7 +16,7 @@ export type AuthMiddleware =
 
 export class AuthHandler {
 
-    public static handle = (context:string, allowAnonymous = false): AuthMiddleware[] => {
+    public static handle = (context:string, allowAnonymous = false, customAuthorization = false): AuthMiddleware[] => {
 
         var middlewares: AuthMiddleware[] = [];
 
@@ -35,6 +35,7 @@ export class AuthHandler {
             request.allowAnonymous = allowAnonymous;
             request.singleResourceRequest = this.isSingleResourceRequest(request);
             request.patientOwnedResource = false;
+            request.customAuthorization = customAuthorization;
 
             next();
         };

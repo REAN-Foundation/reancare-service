@@ -106,8 +106,14 @@ export class PermissionHandler {
             return resourceOwnerId_CreateReq === currentUser.UserId;
         }
         else if (request.singleResourceRequest) {
-            // Patient can get, update or delete only his own resources
-            return request.resourceOwnerUserId === currentUser.UserId;
+            if (!request.resourceOwnerUserId) {
+                // Patient can get, update or delete only his own resources
+                return request.resourceOwnerUserId === currentUser.UserId;
+            }
+            //Ownership cannot be determined for the resource
+            //Return true and let the request specific handler handle it
+            request.customAuthorization = true;
+            return true;
         }
         else if (request.requestType === 'Search') {
             // Patient can search only his own resources
@@ -154,8 +160,14 @@ export class PermissionHandler {
                 return resourceOwnerId_CreateReq === currentUser.UserId;
             }
             else if (request.singleResourceRequest) {
-                // Doctor can get, update or delete only his own resources
-                return request.resourceOwnerUserId === currentUser.UserId;
+                if (!request.resourceOwnerUserId) {
+                    // Doctor can get, update or delete only his own resources
+                    return request.resourceOwnerUserId === currentUser.UserId;
+                }
+                //Ownership cannot be determined for the resource
+                //Return true and let the request specific handler handle it
+                request.customAuthorization = true;
+                return true;
             }
             else if (request.requestType === 'Search') {
                 const queryParams = request.query;

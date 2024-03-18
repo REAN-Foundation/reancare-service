@@ -106,7 +106,7 @@ export class PermissionHandler {
             return resourceOwnerId_CreateReq === currentUser.UserId;
         }
         else if (request.singleResourceRequest) {
-            if (!request.resourceOwnerUserId) {
+            if (request.resourceOwnerUserId) {
                 // Patient can get, update or delete only his own resources
                 return request.resourceOwnerUserId === currentUser.UserId;
             }
@@ -160,7 +160,7 @@ export class PermissionHandler {
                 return resourceOwnerId_CreateReq === currentUser.UserId;
             }
             else if (request.singleResourceRequest) {
-                if (!request.resourceOwnerUserId) {
+                if (request.resourceOwnerUserId) {
                     // Doctor can get, update or delete only his own resources
                     return request.resourceOwnerUserId === currentUser.UserId;
                 }

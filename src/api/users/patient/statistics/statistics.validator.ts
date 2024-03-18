@@ -58,7 +58,7 @@ export class StatisticsValidator  extends BaseValidator {
 
     private async validateBody(request: express.Request, create = true): Promise<void> {
 
-        await this.validateString(request, 'ReportFrequency', Where.Body, true, false);
+        await this.validateString(request, 'ReportFrequency', Where.Body, create, false);
         await this.validateBoolean(request, 'HealthJourney', Where.Body, true, false);
         await this.validateBoolean(request, 'MedicationAdherence', Where.Body, true, false);
         await this.validateBoolean(request, 'BodyWeight', Where.Body, true, false);

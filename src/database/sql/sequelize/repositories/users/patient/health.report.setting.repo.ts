@@ -17,8 +17,8 @@ export class HealthReportSettingsRepo implements IHealthReportSettingsRepo {
                 PatientUserId : model.PatientUserId,
                 Preference    : JSON.stringify(model.Preference)
             };
-            const healthReportSetting = await HealthReport.create(entity);
-            return HealthReportSettingMapper.toDto(healthReportSetting);
+            const healthReportSettings = await HealthReport.create(entity);
+            return HealthReportSettingMapper.toDto(healthReportSettings);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -27,37 +27,34 @@ export class HealthReportSettingsRepo implements IHealthReportSettingsRepo {
 
     getReportSettingsByUserId = async (patientUserId: string): Promise<HealthReportSettingsDto> => {
         try {
-            const healthReportSetting = await HealthReport.findOne({
+            const healthReportSettings = await HealthReport.findOne({
                 where : {
                     PatientUserId : patientUserId
                 }
             });
-            return HealthReportSettingMapper.toDto(healthReportSetting);
+            return HealthReportSettingMapper.toDto(healthReportSettings);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    updateReportSettingsByUserId = async (
-        patientUserId: string,
-        model: HealthReportSettingsDomainModel)
+    updateReportSettingsByUserId = async (patientUserId: string, model: HealthReportSettingsDomainModel)
         : Promise<HealthReportSettingsDto> => {
-
         try {
-            const healthReportSetting = await HealthReport.findOne({
+            const healthReportSettings = await HealthReport.findOne({
                 where : {
                     PatientUserId : patientUserId
                 }
             });
-            if (healthReportSetting == null) {
+            if (healthReportSettings == null) {
                 throw new Error("Cannot find health report settings for the patient.");
             }
             
-            healthReportSetting.Preference = JSON.stringify(model.Preference);
-            await healthReportSetting.save();
+            healthReportSettings.Preference = JSON.stringify(model.Preference);
+            await healthReportSettings.save();
 
-            return HealthReportSettingMapper.toDto(healthReportSetting);
+            return HealthReportSettingMapper.toDto(healthReportSettings);
 
         } catch (error) {
             Logger.instance().log(error.message);

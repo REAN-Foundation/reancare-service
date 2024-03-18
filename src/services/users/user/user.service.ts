@@ -619,7 +619,7 @@ export class UserService {
         const model: HealthReportSettingsDomainModel = {
             PatientUserId : user.id,
             Preference    : {
-                ReportFrequency             : ReportFrequency.MONTH,
+                ReportFrequency             : ReportFrequency.Month,
                 HealthJourney               : true,
                 MedicationAdherence         : true,
                 BodyWeight                  : true,
@@ -634,7 +634,7 @@ export class UserService {
             }
         };
         
-        await this._healthReportSettingsRepo.create(model);
+        await this._healthReportSettingsRepo.createReportSettings(model);
     };
 
     //#endregion

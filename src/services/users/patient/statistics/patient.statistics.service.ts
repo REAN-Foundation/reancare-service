@@ -248,7 +248,7 @@ export class PatientStatisticsService {
     };
 
     public getPatientStats = async (patientUserId: uuid, reportSetting: Settings = {
-        ReportFrequency             : ReportFrequency.WEEK,
+        ReportFrequency             : ReportFrequency.Month,
         HealthJourney               : true,
         MedicationAdherence         : true,
         BodyWeight                  : true,

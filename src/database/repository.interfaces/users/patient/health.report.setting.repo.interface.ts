@@ -3,10 +3,11 @@ import { HealthReportSettingsDomainModel } from '../../../../domain.types/users/
 
 export interface IHealthReportSettingsRepo {
 
-    create(entity: HealthReportSettingsDomainModel): Promise<HealthReportSettingsDto>;
+    createReportSettings (model: HealthReportSettingsDomainModel): Promise<HealthReportSettingsDto>;
 
-    getByUserId(userId: string): Promise<HealthReportSettingsDto>;
+    getReportSettingsByUserId(userId: string): Promise<HealthReportSettingsDto>;
 
-    updateByUserId(userId: string, updateModel: HealthReportSettingsDomainModel): Promise<HealthReportSettingsDto>;
+    updateReportSettingsByUserId (userId: string, updateModel: HealthReportSettingsDomainModel)
+        : Promise<HealthReportSettingsDto>;
 
 }

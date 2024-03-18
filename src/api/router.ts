@@ -89,7 +89,6 @@ import { register as registerHospitalRoutes } from './hospitals/hospital/hospita
 import { register as registerDailyStatisticsRoutes } from './statistics/daily.statistics/daily.statistics.routes';
 import { register as registerAhaStatisticsRoutes } from './statistics/aha.statistics/aha.statistics.routes';
 import { register as registerTenantFeatureSettingRoutes } from './tenant/settings/tenant.settings.routes';
-import { register as registerHeathReportSettingRoutes } from './users/patient/statistics/health.report.setting/health.report.setting.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -203,7 +202,6 @@ export class Router {
                 registerDailyStatisticsRoutes(this._app);
                 registerAhaStatisticsRoutes(this._app);
                 registerTenantFeatureSettingRoutes(this._app);
-                registerHeathReportSettingRoutes(this._app);
 
                 resolve(true);
 

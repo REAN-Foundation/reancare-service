@@ -4,13 +4,14 @@ import { Logger } from '../../../../../../common/logger';
 import HealthReport from '../../../models/users/patient/health.report.model';
 import { HealthReportSettingMapper } from '../../../mappers/users/patient/health.report.setting.mapper';
 import { IHealthReportSettingsRepo } from '../../../../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
+import { HealthReportSettingsDto } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class HealthReportSettingsRepo implements IHealthReportSettingsRepo {
 
-    create = async (model: HealthReportSettingsDomainModel)
-    : Promise<HealthReportSettingsDomainModel> => {
+    createReportSettings = async (model: HealthReportSettingsDomainModel)
+    : Promise<HealthReportSettingsDto> => {
         try {
             const entity = {
                 PatientUserId : model.PatientUserId,
@@ -24,7 +25,7 @@ export class HealthReportSettingsRepo implements IHealthReportSettingsRepo {
         }
     };
 
-    getByUserId = async (patientUserId: string): Promise<HealthReportSettingsDomainModel> => {
+    getReportSettingsByUserId = async (patientUserId: string): Promise<HealthReportSettingsDto> => {
         try {
             const healthReportSetting = await HealthReport.findOne({
                 where : {
@@ -38,10 +39,10 @@ export class HealthReportSettingsRepo implements IHealthReportSettingsRepo {
         }
     };
 
-    updateByUserId = async (
+    updateReportSettingsByUserId = async (
         patientUserId: string,
         model: HealthReportSettingsDomainModel)
-        : Promise<HealthReportSettingsDomainModel> => {
+        : Promise<HealthReportSettingsDto> => {
 
         try {
             const healthReportSetting = await HealthReport.findOne({

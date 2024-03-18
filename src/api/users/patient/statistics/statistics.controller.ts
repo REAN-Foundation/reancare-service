@@ -20,6 +20,7 @@ import { ApiError } from '../../../../common/api.error';
 import { UserService } from '../../../../services/users/user/user.service';
 import { HealthReportSettingService } from '../../../../services/users/patient/health.report.setting.service';
 import { HealthReportSettingsDomainModel, Settings } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -87,11 +88,11 @@ export class StatisticsController {
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const clientCode = request.currentClient.ClientCode;
             
-            let reportSettings = await this._healthReportSettingService.getByUserId(patientUserId);
+            let reportSettings = await this._healthReportSettingService.getReportSettingsByUserId(patientUserId);
 
             if (!reportSettings) {
                 const model = this.getHealthReportSettingModel(patientUserId);
-                reportSettings = await this._healthReportSettingService.create(model);
+                reportSettings = await this._healthReportSettingService.createReportSettings(model);
                 if (!reportSettings) {
                     reportSettings.Preference = model.Preference;
                 }
@@ -108,6 +109,77 @@ export class StatisticsController {
                 {
                     ReportUrl : "",
                 });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createReportSettings = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            
+            const createModel = await this._validator.create(request);
+            createModel.PatientUserId = userId;
+            const reportSetting = await this._healthReportSettingService.createReportSettings(createModel);
+
+            if (reportSetting == null) {
+                throw new ApiError(400, 'Cannot create health report setting!');
+            }
+            ResponseHandler.success(request, response, 'Health report setting created successfully!', 201, {
+                Setting : reportSetting,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    getReportSettingsByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            
+            const isUserExits = await this._userService.getById(userId);
+            if (!isUserExits) {
+                throw new ApiError(404, 'User not found.');
+            }
+            const existingSettings = await this._healthReportSettingService.getReportSettingsByUserId(userId);
+            if (existingSettings == null) {
+                throw new ApiError(404, 'Patient health report settings not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Patient health report settings retrieved successfully!', 200, {
+                Settings : existingSettings,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateReportSettingsByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+
+            const existingSettings = await this._healthReportSettingService.getReportSettingsByUserId(userId);
+            if (existingSettings == null) {
+                throw new ApiError(404, 'Patient health report settings not found.');
+            }
+
+            const updateModel = await this._validator.update(request);
+            updateModel.PatientUserId = userId;
+
+            const updatedReportSetting = await this._healthReportSettingService.updateReportSettingsByUserId(
+                userId,
+                updateModel
+            );
+            if (updatedReportSetting == null) {
+                throw new ApiError(400, 'Unable to update patient health report settings!');
+            }
+
+            ResponseHandler.success(request, response, 'Patient health report settings updated successfully!', 200, {
+                Settings : updatedReportSetting,
+            });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

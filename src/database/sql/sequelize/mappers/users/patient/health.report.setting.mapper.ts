@@ -1,11 +1,11 @@
-import HealthReport from '../../../models/users/patient/health.report.model';
+import HealthReportSetting from '../../../models/users/patient/health.report.setting.model';
 import { HealthReportSettingsDto } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class HealthReportSettingMapper {
 
-    static toDto = (healthReportSetting: HealthReport): HealthReportSettingsDto => {
+    static toDto = (healthReportSetting: HealthReportSetting): HealthReportSettingsDto => {
 
         if (healthReportSetting == null){
             return null;

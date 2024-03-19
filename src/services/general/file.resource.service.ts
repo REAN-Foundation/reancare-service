@@ -267,6 +267,10 @@ export class FileResourceService {
         return await this._fileResourceRepo.getById(id);
     };
 
+    isPublicResource = async (id: string): Promise<boolean> => {
+        return await this._fileResourceRepo.isPublicResource(id);
+    };
+
     getVersionByVersionId = async (id: string, versionId: string): Promise<FileResourceMetadata> => {
         var version = await this._fileResourceRepo.getVersionByVersionId(id, versionId);
         version.SourceFilePath = null;

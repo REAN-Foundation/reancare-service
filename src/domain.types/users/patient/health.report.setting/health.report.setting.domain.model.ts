@@ -1,10 +1,11 @@
-export interface HealthReportSettingDomainModel {
+export interface HealthReportSettingsDomainModel {
     id?: string;
     PatientUserId?: string;
     Preference?: Settings;
 }
 
 export interface Settings {
+    ReportFrequency?: ReportFrequency;
     HealthJourney: boolean;
     MedicationAdherence: boolean;
     BodyWeight: boolean;
@@ -17,3 +18,11 @@ export interface Settings {
     DailyTaskStatus: boolean;
     MoodAndSymptoms: boolean;
 }
+
+export enum ReportFrequency {
+    Week = "Week",
+    Month = "Month",
+    SixMonth = "SixMonth",
+    Year = "Year",
+}
+

@@ -706,13 +706,11 @@
                 "UpdateByUserId": false
             },
             "Statistics": {
-                "Report": {
-                    "Create": true,
-                    "GetByUserId": true,
-                    "UpdateByUserId": true
-                },
                 "GetPatientStats": true,
-                "GetPatientStatsReport": true
+                "GetPatientStatsReport": true,
+                "GetReportSettingsByUserId": true,
+                "UpdateReportSettingsByUserId": false,
+                "CreateReportSettings": false
             }
         },
         "User": {

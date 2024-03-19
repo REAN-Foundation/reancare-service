@@ -18,4 +18,15 @@ export const register = (app: express.Application): void => {
     router.delete('/:id', auth('Devices.Wearables.Delete'), controller.delete);
 
     app.use('/api/v1/devices/wearables', router);
+
+    // Obsolute routes. Will be discontinued in future
+    const obsoluteRouter = express.Router();
+    obsoluteRouter.post('/', auth('Devices.Wearables.Create'), controller.create);
+    obsoluteRouter.get('/search', auth('Devices.Wearables.Search'), controller.search);
+    obsoluteRouter.get('/patients/:patientUserId', auth('Devices.Wearables.GetUserWearables'), controller.getPatientWearableDeviceDetails);
+    obsoluteRouter.get('/:id', auth('Devices.Wearables.GetById'), controller.getById);
+    obsoluteRouter.put('/:id', auth('Devices.Wearables.Update'), controller.update);
+    obsoluteRouter.delete('/:id', auth('Devices.Wearables.Delete'), controller.delete);
+
+    app.use('/api/v1/wearable-device-details', obsoluteRouter);
 };

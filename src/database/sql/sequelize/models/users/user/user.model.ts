@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 import Person from '../../person/person.model';
 import Role from '../../role/role.model';
 import Tenant from '../../tenant/tenant.model';
-import HealthReport from '../patient/health.report.model';
+import HealthReportSetting from '../patient/health.report.setting.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -108,8 +108,8 @@ export default class User extends Model {
     })
     IsTestUser: boolean;
 
-    @HasOne(() => HealthReport)
-    HealthReport: HealthReport;
+    @HasOne(() => HealthReportSetting)
+    HealthReportSetting: HealthReportSetting;
 
     @Column
     @CreatedAt

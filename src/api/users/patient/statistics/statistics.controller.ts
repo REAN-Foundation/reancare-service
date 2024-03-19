@@ -19,7 +19,7 @@ import { Injector } from '../../../../startup/injector';
 import { ApiError } from '../../../../common/api.error';
 import { UserService } from '../../../../services/users/user/user.service';
 import { HealthReportSettingService } from '../../../../services/users/patient/health.report.setting.service';
-import { HealthReportSettingsDomainModel, Settings } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { HealthReportSettingsDomainModel, ReportFrequency, Settings } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -272,6 +272,7 @@ export class StatisticsController {
         const model: HealthReportSettingsDomainModel = {
             PatientUserId : patientUserId,
             Preference    : {
+                ReportFrequency             : ReportFrequency.Month,
                 HealthJourney               : true,
                 MedicationAdherence         : true,
                 BodyWeight                  : true,

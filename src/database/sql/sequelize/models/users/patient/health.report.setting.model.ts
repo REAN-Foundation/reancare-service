@@ -4,18 +4,18 @@ import {
     Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import User from '../../users/user/user.model';
+import User from '../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'HealthReport',
-    tableName       : 'patient_health_reports',
+    modelName       : 'HealthReportSetting',
+    tableName       : 'patient_report_settings',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class HealthReport extends Model {
+export default class HealthReportSetting extends Model {
 
     @IsUUID(4)
     @PrimaryKey

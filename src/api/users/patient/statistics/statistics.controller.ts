@@ -19,7 +19,8 @@ import { Injector } from '../../../../startup/injector';
 import { ApiError } from '../../../../common/api.error';
 import { UserService } from '../../../../services/users/user/user.service';
 import { HealthReportSettingService } from '../../../../services/users/patient/health.report.setting.service';
-import { HealthReportSettingDomainModel, Settings } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { HealthReportSettingsDomainModel, ReportFrequency, Settings } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -82,16 +83,16 @@ export class StatisticsController {
         }
     };
 
-    getPatientStatsReport1 = async (request: express.Request, response: express.Response): Promise<void> => {
+    getPatientStatsReport = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const clientCode = request.currentClient.ClientCode;
             
-            let reportSettings = await this._healthReportSettingService.getByUserId(patientUserId);
+            let reportSettings = await this._healthReportSettingService.getReportSettingsByUserId(patientUserId);
 
             if (!reportSettings) {
                 const model = this.getHealthReportSettingModel(patientUserId);
-                reportSettings = await this._healthReportSettingService.create(model);
+                reportSettings = await this._healthReportSettingService.createReportSettings(model);
                 if (!reportSettings) {
                     reportSettings.Preference = model.Preference;
                 }
@@ -99,7 +100,7 @@ export class StatisticsController {
 
             const settings = reportSettings.Preference;
 
-            this.triggerReportGeneration1(patientUserId, clientCode, settings);
+            this.triggerReportGeneration(patientUserId, clientCode, settings);
             ResponseHandler.success(
                 request,
                 response,
@@ -113,24 +114,77 @@ export class StatisticsController {
         }
     };
 
-    // getPatientStatsReport = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
-    //         const clientCode = request.currentClient.ClientCode;
+    createReportSettings = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            
+            const createModel = await this._validator.create(request);
+            createModel.PatientUserId = userId;
+            const reportSetting = await this._healthReportSettingService.createReportSettings(createModel);
 
-    //         this.triggerReportGeneration(patientUserId, clientCode);
-    //         ResponseHandler.success(
-    //             request,
-    //             response,
-    //             'Your health report is getting downloaded, please check in the medical records after few minutes!',
-    //             200,
-    //             {
-    //                 ReportUrl : "",
-    //             });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
+            if (reportSetting == null) {
+                throw new ApiError(400, 'Cannot create health report settings!');
+            }
+            ResponseHandler.success(request, response, 'Health report settings created successfully!', 201, {
+                Setting : reportSetting,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    getReportSettingsByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            
+            const isUserExits = await this._userService.getById(userId);
+            if (!isUserExits) {
+                throw new ApiError(404, 'User not found.');
+            }
+            const existingSettings = await this._healthReportSettingService.getReportSettingsByUserId(userId);
+            if (existingSettings == null) {
+                throw new ApiError(404, 'Patient health report settings not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Patient health report settings retrieved successfully!', 200, {
+                Settings : existingSettings,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateReportSettingsByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+
+            const existingSettings = await this._healthReportSettingService.getReportSettingsByUserId(userId);
+            if (existingSettings == null) {
+                throw new ApiError(404, 'Patient health report settings not found.');
+            }
+
+            const updateModel = await this._validator.update(request);
+            updateModel.PatientUserId = userId;
+
+            const updatedReportSetting = await this._healthReportSettingService.updateReportSettingsByUserId(
+                userId,
+                updateModel
+            );
+            if (updatedReportSetting == null) {
+                throw new ApiError(400, 'Unable to update patient health report settings!');
+            }
+
+            ResponseHandler.success(request, response, 'Patient health report settings updated successfully!', 200, {
+                Settings : updatedReportSetting,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
     //#region Privates
@@ -195,27 +249,9 @@ export class StatisticsController {
     };
     //#endregion
 
-    // private triggerReportGeneration = async (patientUserId: string, clientCode: string): Promise<any> => {
-    //     const stats = await this._service.getPatientStats(patientUserId);
-    //     const patient = await this._patientService.getByUserId(patientUserId);
-    //     const reportModel = this._service.getReportModel(patient, stats, clientCode);
-    //     if (reportModel.ImageResourceId != null) {
-    //         const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
-    //         reportModel.ProfileImagePath = profileImageLocation ??
-    //             Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
-    //     }
-    //     else {
-    //         reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
-    //     }
-    //     const { filename, localFilePath } = await this._service.generateReport(reportModel);
-    //     const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
-    //     this.sendMessageForReportUpdate(reportUrl, reportModel);
-    //     return reportUrl;
-    // };
-
-    private triggerReportGeneration1 = async (patientUserId: string, clientCode: string, reportSettings: Settings):
+    private triggerReportGeneration = async (patientUserId: string, clientCode: string, reportSettings: Settings):
      Promise<any> => {
-        const stats = await this._service.getPatientStats1(patientUserId, reportSettings);
+        const stats = await this._service.getPatientStats(patientUserId, reportSettings);
         const patient = await this._patientService.getByUserId(patientUserId);
         const reportModel = this._service.getReportModel(patient, stats, clientCode);
         if (reportModel.ImageResourceId != null) {
@@ -226,16 +262,17 @@ export class StatisticsController {
         else {
             reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
         }
-        const { filename, localFilePath } = await this._service.generateReport1(reportModel, reportSettings);
+        const { filename, localFilePath } = await this._service.generateReport(reportModel, reportSettings);
         const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
         this.sendMessageForReportUpdate(reportUrl, reportModel);
         return reportUrl;
     };
 
     private getHealthReportSettingModel = (patientUserId: string) => {
-        const model: HealthReportSettingDomainModel = {
+        const model: HealthReportSettingsDomainModel = {
             PatientUserId : patientUserId,
             Preference    : {
+                ReportFrequency             : ReportFrequency.Month,
                 HealthJourney               : true,
                 MedicationAdherence         : true,
                 BodyWeight                  : true,

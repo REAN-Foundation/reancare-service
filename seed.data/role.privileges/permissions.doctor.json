@@ -707,7 +707,10 @@
             },
             "Statistics": {
                 "GetPatientStats": false,
-                "GetPatientStatsReport": false
+                "GetPatientStatsReport": false,
+                "GetReportSettingsByUserId": true,
+                "UpdateReportSettingsByUserId": true,
+                "CreateReportSettings": true
             }
         },
         "User": {

@@ -158,8 +158,8 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
 
     y = addSectionTitle(document, y, sectionTitle, icon);
 
-    const exists = chartExists(model, 'HDL_Last6Months') ||
-        chartExists(model, 'LDL_Last6Months') ||
+    const exists = chartExists(model, 'HDL_Last6Months') &&
+        chartExists(model, 'LDL_Last6Months') &&
         chartExists(model, 'TotalCholesterol_Last6Months');
         //chartExists(model, 'Triglyceride_Last6Months') ||
         //chartExists(model, 'A1C_Last6Months');
@@ -259,7 +259,7 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.CurrentA1CLevel.toString();
         y = addLabeledText(document, 'Current A1C Level (%)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.TotalA1CLevelChange.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLe1vel.TotalA1CLevelChange.toString();
         y = addLabeledText(document, 'Total change in A1C Level (%)', value, y);
 
         value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.LastMeasuredA1C?.toLocaleDateString();
@@ -271,23 +271,7 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
     return y;
 };
 
-export const createBiometricsCharts = async (data) => {
-    var locations = [];
-
-    const bodyWeightLocations =
-        await createBodyWeightCharts(data.Last6Months.BodyWeight.History, data.Last6Months.BodyWeight.CountryCode);
-    locations.push(...bodyWeightLocations);
-    const bloddPressureLocations = await createBloodPressureCharts(data.Last6Months.BloodPressure.History);
-    locations.push(...bloddPressureLocations);
-    const bloodGlucoseLocations = await createBloodGlucoseCharts(data.Last6Months.BloodGlucose.History);
-    locations.push(...bloodGlucoseLocations);
-    const cholesterolLocations = await createCholesterolCharts(data.Last6Months.Lipids);
-    locations.push(...cholesterolLocations);
-
-    return locations;
-};
-
-export const createBiometricsCharts1 = async (data, reportSetting: Settings) => {
+export const createBiometricsCharts = async (data, reportSetting: Settings) => {
     var locations = [];
     if (reportSetting.BodyWeight) {
         const bodyWeightLocations =

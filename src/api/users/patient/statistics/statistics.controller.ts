@@ -118,6 +118,11 @@ export class StatisticsController {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
             
+            const isUserExits = await this._userService.getById(userId);
+            if (!isUserExits) {
+                throw new ApiError(404, 'User not found.');
+            }
+
             const createModel = await this._validator.create(request);
             createModel.PatientUserId = userId;
             const reportSetting = await this._healthReportSettingService.createReportSettings(createModel);
@@ -143,9 +148,14 @@ export class StatisticsController {
             if (!isUserExits) {
                 throw new ApiError(404, 'User not found.');
             }
-            const existingSettings = await this._healthReportSettingService.getReportSettingsByUserId(userId);
+
+            let existingSettings = await this._healthReportSettingService.getReportSettingsByUserId(userId);
             if (existingSettings == null) {
-                throw new ApiError(404, 'Patient health report settings not found.');
+                const model: HealthReportSettingsDomainModel = this.getHealthReportSettingModel(userId);
+                existingSettings = await this._healthReportSettingService.createReportSettings(model);
+                if (existingSettings == null) {
+                    throw new ApiError(400, 'Cannot create health report settings!');
+                }
             }
 
             ResponseHandler.success(request, response, 'Patient health report settings retrieved successfully!', 200, {
@@ -159,10 +169,19 @@ export class StatisticsController {
     updateReportSettingsByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-
-            const existingSettings = await this._healthReportSettingService.getReportSettingsByUserId(userId);
+            
+            const isUserExits = await this._userService.getById(userId);
+            if (!isUserExits) {
+                throw new ApiError(404, 'User not found.');
+            }
+            
+            let existingSettings = await this._healthReportSettingService.getReportSettingsByUserId(userId);
             if (existingSettings == null) {
-                throw new ApiError(404, 'Patient health report settings not found.');
+                const model: HealthReportSettingsDomainModel = this.getHealthReportSettingModel(userId);
+                existingSettings = await this._healthReportSettingService.createReportSettings(model);
+                if (existingSettings == null) {
+                    throw new ApiError(400, 'Cannot create health report settings!');
+                }
             }
 
             const updateModel = await this._validator.update(request);

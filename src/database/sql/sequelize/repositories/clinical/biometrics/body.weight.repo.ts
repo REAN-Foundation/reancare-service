@@ -10,6 +10,8 @@ import { BodyWeightMapper } from '../../../mappers/clinical/biometrics/body.weig
 import BodyWeight from '../../../models/clinical/biometrics/body.weight.model';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { HelperRepo } from '../../common/helper.repo';
+import { Helper } from '../../../../../../common/helper';
+import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -170,9 +172,11 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         }
     };
 
-    getStats = async (patientUserId: string, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: string, frequency: ReportFrequency): Promise<any> => {
         try {
-            const records = await this.getRecords(patientUserId, numMonths);
+            const duration = Helper.frequencyToDuration(frequency);
+            const durationType = Helper.frequencyToDurationType(frequency);
+            const records = await this.getRecords(patientUserId, duration, durationType);
             return records.map(x => {
                 const dayStr = x.CreatedAt.toISOString()
                     .split('T')[0];
@@ -280,9 +284,9 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         }
     };
 
-    private async getRecords(patientUserId: string, months: number) {
+    private async getRecords(patientUserId: string, duration: number, durationType: DurationType) {
         const today = new Date();
-        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const from = TimeHelper.subtractDuration(new Date(), duration, durationType);
         const result = await BodyWeight.findAll({
             where : {
                 PatientUserId : patientUserId,

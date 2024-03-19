@@ -261,11 +261,12 @@ export class PatientStatisticsService {
         DailyTaskStatus             : true,
         MoodAndSymptoms             : true,
     }) => {
-
+        
+        const numDays = this.frequenctToDays(reportSetting.ReportFrequency);
         //Nutrition
         let nutrition = null;
         if (reportSetting.FoodAndNutrition) {
-            const nutritionLastMonth = await this._foodConsumptionRepo.getStats(patientUserId, 1);
+            const nutritionLastMonth = await this._foodConsumptionRepo.getStats(patientUserId, numDays);
             nutrition = {
                 LastMonth : nutritionLastMonth,
             };
@@ -274,7 +275,7 @@ export class PatientStatisticsService {
         //Physical activity
         let physicalActivityTrend = null;
         if (reportSetting.ExerciseAndPhysicalActivity) {
-            const exerciseLastMonth = await this._physicalActivityRepo.getStats(patientUserId, 1);
+            const exerciseLastMonth = await this._physicalActivityRepo.getStats(patientUserId, numDays);
             physicalActivityTrend = {
                 LastMonth : exerciseLastMonth,
             };
@@ -302,12 +303,13 @@ export class PatientStatisticsService {
 
         let biometrics = null;
         if (reportSetting.LabValues || reportSetting.BodyWeight || reportSetting.BloodPressure) {
-            const last6MonthsLabStats = await this.getLabValueStats(patientUserId, countryCode, 6);
-            const lastMonthLabStats = await this.getLabValueStats(patientUserId, countryCode, 1);
+            const last6MonthsLabStats =
+            await this.getLabValueStats(patientUserId, countryCode, reportSetting.ReportFrequency);
+            // const lastMonthLabStats = await this.getLabValueStats(patientUserId, countryCode, 1);
     
             biometrics = {
                 Last6Months : last6MonthsLabStats,
-                LastMonth   : lastMonthLabStats,
+                LastMonth   : last6MonthsLabStats,
             };
         }
 
@@ -433,12 +435,12 @@ export class PatientStatisticsService {
 
     //#region Report
 
-    private getLabValueStats = async (patientUserId: uuid, countryCode: string, numberOfMonths = 1) => {
+    private getLabValueStats = async (patientUserId: uuid, countryCode: string, frequency: ReportFrequency) => {
 
-        const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, numberOfMonths);
-        const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, numberOfMonths);
-        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, numberOfMonths);
-        var bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, numberOfMonths);
+        const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, frequency);
+        const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, frequency);
+        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, frequency);
+        var bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, frequency);
 
         //Body weight
         const startingBodyWeight = bodyWeightStats.length > 0 ?
@@ -862,6 +864,20 @@ export class PatientStatisticsService {
         addFooter(document, '', model.FooterImagePath);
     };
 
+    private frequenctToDays = (frequency: ReportFrequency): number => {
+        if (frequency === 'WEEK') {
+            return 7;
+        }
+        if (frequency === 'MONTH') {
+            return 30;
+        }
+        if (frequency === 'SIXMONTH') {
+            return 30 * 6;
+        }
+        if (frequency === 'YEAR') {
+            return 365;
+        }
+    };
     //#endregion
 
 }

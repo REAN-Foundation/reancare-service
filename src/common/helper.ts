@@ -12,8 +12,9 @@ import { Gender, OSType, uuid } from '../domain.types/miscellaneous/system.types
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
 import Countries from './misc/countries';
-import { DateStringFormat } from '../domain.types/miscellaneous/time.types';
+import { DateStringFormat, DurationType } from '../domain.types/miscellaneous/time.types';
 import { Logger } from './logger';
+import { ReportFrequency } from '../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -780,6 +781,33 @@ export class Helper {
 
     public static replaceAll = (str: string, find: string, replace: string): string => {
         return str.replace(new RegExp(find, 'g'), replace);
+    };
+
+    public static frequencyToDuration = (frequency: ReportFrequency): number => {
+        if (frequency === ReportFrequency.WEEK) {
+            return 1;
+        }
+        if (frequency === ReportFrequency.MONTH) {
+            return 1;
+        }
+        if (frequency === ReportFrequency.SIXMONTH) {
+            return 6;
+        }
+        if (frequency === ReportFrequency.YEAR) {
+            return 1;
+        }
+    };
+
+    public static frequencyToDurationType = (frequency: ReportFrequency): DurationType => {
+        if (frequency === ReportFrequency.WEEK) {
+            return DurationType.Week;
+        }
+        if (frequency === ReportFrequency.MONTH || frequency === ReportFrequency.SIXMONTH) {
+            return DurationType.Month;
+        }
+        if (frequency === ReportFrequency.YEAR) {
+            return DurationType.Year;
+        }
     };
 
 }

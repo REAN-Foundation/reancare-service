@@ -1,17 +1,17 @@
 import HealthReport from '../../../models/users/patient/health.report.model';
-import { HealthReportSettingDto } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.dto';
+import { HealthReportSettingsDto } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class HealthReportSettingMapper {
 
-    static toDto = (healthReportSetting: HealthReport): HealthReportSettingDto => {
+    static toDto = (healthReportSetting: HealthReport): HealthReportSettingsDto => {
 
         if (healthReportSetting == null){
             return null;
         }
 
-        const dto: HealthReportSettingDto = {
+        const dto: HealthReportSettingsDto = {
             id            : healthReportSetting.id,
             PatientUserId : healthReportSetting.PatientUserId,
             Preference    : JSON.parse(healthReportSetting.Preference),

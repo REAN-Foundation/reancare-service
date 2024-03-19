@@ -12,7 +12,7 @@ export const register = (app: express.Application): void => {
     router.get('/byPhone', auth('User.Patient.Patient.GetPatientByPhone'), controller.getPatientByPhone);
     router.get('/:tenantId/by-phone/:phone', auth('User.Patient.Patient.GetByPhone'), controller.getByPhone);
     router.get('/:userId', auth('User.Patient.Patient.GetByUserId'), controller.getByUserId);
-    router.put('/:userId', auth('User.Patient.Patient.UpdateByUserId', true), controller.updateByUserId);
+    router.put('/:userId', auth('User.Patient.Patient.UpdateByUserId'), controller.updateByUserId);
     router.delete('/:userId', auth('User.Patient.Patient.DeleteByUserId'), controller.deleteByUserId);
 
     app.use('/api/v1/patients', router);

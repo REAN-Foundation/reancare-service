@@ -20,9 +20,9 @@ export interface Settings {
 }
 
 export enum ReportFrequency {
-    WEEK = "WEEK",
-    MONTH = "MONTH",
-    SIXMONTH = "SIXMONTH",
-    YEAR = "YEAR",
+    Week = "Week",
+    Month = "Month",
+    SixMonth = "SixMonth",
+    Year = "Year",
 }
 

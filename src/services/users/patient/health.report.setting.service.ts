@@ -15,18 +15,18 @@ export class HealthReportSettingService {
 
     //#region Public
 
-    public create = async (healthReportSettingDomainModel: HealthReportSettingsDomainModel):
+    public createReportSettings = async (healthReportSettingDomainModel: HealthReportSettingsDomainModel):
      Promise<HealthReportSettingsDto> => {
-        return this._healthReportSettingRepo.create(healthReportSettingDomainModel);
+        return this._healthReportSettingRepo.createReportSettings(healthReportSettingDomainModel);
     };
 
-    public getByUserId = async (id: string): Promise<HealthReportSettingsDto> => {
-        return await this._healthReportSettingRepo.getByUserId(id);
+    public getReportSettingsByUserId = async (id: string): Promise<HealthReportSettingsDto> => {
+        return await this._healthReportSettingRepo.getReportSettingsByUserId(id);
     };
 
-    public updateByUserId = async (id: string, model: HealthReportSettingsDomainModel):
+    public updateReportSettingsByUserId = async (id: string, model: HealthReportSettingsDomainModel):
      Promise<HealthReportSettingsDto> => {
-        return await this._healthReportSettingRepo.updateByUserId(id, model);
+        return await this._healthReportSettingRepo.updateReportSettingsByUserId(id, model);
     };
 
     //#endregion

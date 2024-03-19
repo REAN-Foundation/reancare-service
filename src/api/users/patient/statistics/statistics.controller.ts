@@ -123,9 +123,9 @@ export class StatisticsController {
             const reportSetting = await this._healthReportSettingService.createReportSettings(createModel);
 
             if (reportSetting == null) {
-                throw new ApiError(400, 'Cannot create health report setting!');
+                throw new ApiError(400, 'Cannot create health report settings!');
             }
-            ResponseHandler.success(request, response, 'Health report setting created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Health report settings created successfully!', 201, {
                 Setting : reportSetting,
             });
 

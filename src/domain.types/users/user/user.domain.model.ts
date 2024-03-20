@@ -9,6 +9,7 @@ export interface UserDomainModel {
     id              ?: string;
     Person          ?: PersonDomainModel;
     TenantId        ?: uuid;
+    TenantCode      ?: string;
     UserName        ?: string;
     Password        ?: string;
     DefaultTimeZone ?: string;

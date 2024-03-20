@@ -333,6 +333,7 @@
     "General.Address.GetById",
     "General.Address.Search",
     "General.Address.Update",
+    "General.Location.Create",
     "General.FileResource.Delete",
     "General.FileResource.DeleteVersionByVersionId",
     "General.FileResource.DownloadById",

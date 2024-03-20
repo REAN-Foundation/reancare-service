@@ -60,13 +60,14 @@ export class UserService {
     public create = async (model: UserDomainModel) => {
         // timezone sanitization
         if (model.DefaultTimeZone) {
-            const defaultTimezone = this.sanitizeTimezone(model.DefaultTimeZone);
-            model.DefaultTimeZone = defaultTimezone;
-            model.CurrentTimeZone = defaultTimezone;
+            model.DefaultTimeZone = this.sanitizeTimezone(model.DefaultTimeZone);
+            // model.DefaultTimeZone = defaultTimezone;
+            // model.CurrentTimeZone = defaultTimezone;
         }
-        if (model.CurrentTimeZone) {
-            const currentTimezone = model.CurrentTimeZone ?? model.DefaultTimeZone;
-            model.CurrentTimeZone = this.sanitizeTimezone(currentTimezone);
+        if (model.CurrentTimeZone != null) {
+            model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);    
+        } else {
+            model.CurrentTimeZone = this.sanitizeTimezone(model.DefaultTimeZone);
         }
 
         var dto = await this._userRepo.create(model);
@@ -118,10 +119,12 @@ export class UserService {
 
         if (model.DefaultTimeZone != null) {
             model.DefaultTimeZone = this.sanitizeTimezone(model.DefaultTimeZone);
-            model.CurrentTimeZone = model.DefaultTimeZone;
+            // model.CurrentTimeZone = model.DefaultTimeZone;
         }
         if (model.CurrentTimeZone != null) {
             model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);
+        } else {
+            model.CurrentTimeZone = this.sanitizeTimezone(model.DefaultTimeZone);
         }
         var dto = await this._userRepo.update(id, model);
         dto = await this.updateDetailsDto(dto);

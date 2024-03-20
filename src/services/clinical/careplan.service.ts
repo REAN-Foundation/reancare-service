@@ -496,7 +496,7 @@ export class CareplanService implements IUserActionService {
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
 
-            var scheduledDate = TimeHelper.getDateTimeStamp(activity.ScheduledAt);
+            var scheduledDate = TimeHelper.timestamp(activity.ScheduledAt);
             if (!activitiesGroupedByDate[scheduledDate]) {
                 activitiesGroupedByDate[scheduledDate] = [];
             }
@@ -515,12 +515,21 @@ export class CareplanService implements IUserActionService {
             });
 
             activities.forEach( async (activity) => {
+
                 let startTime = null;
-                var dayStartStr = activity.ScheduledAt;
-                const offset = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
-                startTime = TimeHelper.addDuration(new Date(dayStartStr), offset, DurationType.Minute);
-                Logger.instance().log(`UTC Date: ${startTime}`);
-                var endTime = TimeHelper.addDuration(startTime, 16, DurationType.Hour);
+                const dayStartStr = activity.ScheduledAt.toISOString();
+                const isTimeZero = TimeHelper.isTimeZero(dayStartStr);
+                if (isTimeZero === true) {
+                    var dayStart = TimeHelper.getDateWithTimezone(dayStartStr, timezoneOffset);
+                    dayStart = TimeHelper.addDuration(dayStart, 7, DurationType.Hour); // Start at 7:00 AM
+                    var scheduleDelay = (activity.Sequence - 1) * 1;
+                    startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
+                } else {
+                    const offset = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
+                    startTime = TimeHelper.addDuration(new Date(dayStartStr), offset, DurationType.Minute);
+                    Logger.instance().log(`UTC Date: ${startTime}`);
+                }
+                var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
 
                 var userTaskModel: UserTaskDomainModel = {
                     UserId             : activity.PatientUserId,

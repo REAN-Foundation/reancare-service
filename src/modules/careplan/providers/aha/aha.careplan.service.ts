@@ -270,10 +270,6 @@ export class AhaCareplanService implements ICareplanService {
         var activities = response.body.data.activities;
         var activityEntities: CareplanActivity[] = [];
 
-        activities.sort((a, b) => {
-            return a.sequence - b.sequence;
-        });
-
         activities.forEach(activity => {
 
             const tmp = activity.title ? activity.title : '';
@@ -285,11 +281,6 @@ export class AhaCareplanService implements ICareplanService {
             const languagePreference = 'en-US';
             var activityUrl = this.extractUrl(activity.url, activity, languagePreference);
 
-            // Attaching 7am time to all the activities
-            let scheduledAt = TimeHelper.addDuration(activity.scheduledAt, 7, DurationType.Hour); // Start at 7:00 AM
-            var scheduleDelay = (activity.sequence - 1) * 1;
-            scheduledAt = TimeHelper.addDuration(scheduledAt, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
-
             var entity: CareplanActivity = {
                 EnrollmentId     : enrollmentId,
                 Provider         : this.providerName(),
@@ -300,7 +291,7 @@ export class AhaCareplanService implements ICareplanService {
                 Description      : description,
                 Url              : activityUrl,
                 Language         : 'English',
-                ScheduledAt      : scheduledAt,
+                ScheduledAt      : activity.scheduledAt,
                 Sequence         : activity.sequence,
                 Frequency        : activity.frequency,
                 Status           : status,

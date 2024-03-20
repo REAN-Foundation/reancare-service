@@ -73,6 +73,7 @@ export default class ClientAppAuthMiddleware
             if (!apiKey) {
                 const isPublicResourceDownload = await this.isPublicResourceDownloadRequest(request);
                 if (isPublicResourceDownload) {
+                    request.publicUrl = true;
                     return res;
                 }
                 res = {
@@ -120,7 +121,17 @@ export default class ClientAppAuthMiddleware
         if (!fileResourceService) {
             return false;
         }
-        const resourceId = request.params.id;
+        // Not sure why request.params.resourceId is not working !!!
+        // Finding it from Url
+        let tokens = requestUrl.split('/api/v1/file-resources/');
+        if (tokens.length < 2) {
+            return false;
+        }
+        tokens = tokens[1].split('/download');
+        if (tokens.length < 1) {
+            return false;
+        }
+        const resourceId = tokens[0];
         if (!resourceId) {
             return false;
         }

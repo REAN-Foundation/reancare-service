@@ -865,16 +865,16 @@ export class PatientStatisticsService {
     };
 
     private frequenctToDays = (frequency: ReportFrequency): number => {
-        if (frequency === 'WEEK') {
+        if (frequency === ReportFrequency.Week) {
             return 7;
         }
-        if (frequency === 'MONTH') {
+        if (frequency === ReportFrequency.Month) {
             return 30;
         }
-        if (frequency === 'SIXMONTH') {
+        if (frequency === ReportFrequency.SixMonth) {
             return 30 * 6;
         }
-        if (frequency === 'YEAR') {
+        if (frequency === ReportFrequency.Year) {
             return 365;
         }
     };

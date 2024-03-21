@@ -723,7 +723,6 @@ export class PatientStatisticsService {
         var y = addTop(document, model, null, false);
         y = addReportMetadata(document, model, y);
         // y = addReportSummary(document, model, y);
-
         if (healthJourney) {
             var clientList = ["HCHLSTRL", "REANPTNT"];
             if (clientList.indexOf(model.ClientCode) >= 0) {

@@ -10,7 +10,7 @@ import {
     chartExists,
     RECTANGULAR_CHART_HEIGHT,
     RECTANGULAR_CHART_WIDTH } from "./report.helper";
-import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.commons";
+import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +53,7 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
             value = totalChange.toFixed();
             y = addLabeledText(document, 'Total Change in Body Weight (Kg)', value, y);
 
-            value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
+            value = new Date(model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate).toLocaleDateString();
             y = addLabeledText(document, 'Last Measured Date', value, y);
         } else {
             let value = startingWeight.toFixed();
@@ -65,7 +65,7 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
             value = totalChange.toFixed();
             y = addLabeledText(document, 'Total Change in Body Weight (lbs)', value, y);
 
-            value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
+            value = new Date(model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate).toLocaleDateString(),
             y = addLabeledText(document, 'Last Measured Date', value, y);
         }
         
@@ -109,7 +109,7 @@ export const addBloodPressureStats = (model: any, document: PDFKit.PDFDocument, 
         value = model.Stats.Biometrics.Last6Months.BloodPressure.TotalChangeDiastolic.toString();
         y = addLabeledText(document, 'Total Change in Diastolic BP (mmHg)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
     }
 
@@ -142,7 +142,7 @@ export const addBloodGlucoseStats = (model: any, document: PDFKit.PDFDocument, y
         value = model.Stats.Biometrics.Last6Months.BloodGlucose.TotalChange.toString();
         y = addLabeledText(document, 'Total Change in Blood Glucose (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
     }
 
@@ -179,7 +179,7 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
         value = model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.TotalCholesterolChange.toString();
         y = addLabeledText(document, 'Total change in Total Cholesterol (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.LastMeasuredChol?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.LastMeasuredChol).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 35;
@@ -194,7 +194,7 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
         value = model.Stats.Biometrics.Last6Months.Lipids.HDL.TotalHDLChange.toString();
         y = addLabeledText(document, 'Total change in HDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.HDL.LastMeasuredHDL?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.HDL.LastMeasuredHDL).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 35;
@@ -209,7 +209,7 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
         value = model.Stats.Biometrics.Last6Months.Lipids.LDL.TotalLDLChange.toString();
         y = addLabeledText(document, 'Total change in LDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.LDL.LastMeasuredLDL?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.LDL.LastMeasuredLDL).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
     }
@@ -247,7 +247,8 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         value = model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange.toString();
         y = addLabeledText(document, 'Total change in Triglyceride Level (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.LastMeasuredTrigly?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.LastMeasuredTrigly)
+            .toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 55;
@@ -259,10 +260,10 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.CurrentA1CLevel.toString();
         y = addLabeledText(document, 'Current A1C Level (%)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLe1vel.TotalA1CLevelChange.toString();
+        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.TotalA1CLevelChange.toString();
         y = addLabeledText(document, 'Total change in A1C Level (%)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.LastMeasuredA1C?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.LastMeasuredA1C).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 53;

@@ -65,7 +65,7 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
             value = totalChange.toFixed();
             y = addLabeledText(document, 'Total Change in Body Weight (lbs)', value, y);
 
-            value = new Date(model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate).toLocaleDateString(),
+            value = new Date(model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate).toLocaleDateString();
             y = addLabeledText(document, 'Last Measured Date', value, y);
         }
         

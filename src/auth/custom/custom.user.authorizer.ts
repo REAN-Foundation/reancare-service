@@ -28,11 +28,14 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
                 //For all other endpoints, this check is not applicable.
                 return true;
             }
-            const currentUser = request.currentUser;
             const context = request.context;
             if (context == null || context === 'undefined') {
                 return false;
             }
+            if (request.publicUrl) {
+                return true;
+            }
+            const currentUser = request.currentUser;
             if (currentUser == null) {
                 return false;
             }

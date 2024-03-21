@@ -3,6 +3,7 @@ import { AuthenticationResult } from "../domain.types/auth/auth.domain.types";
 import { CurrentClient } from "../domain.types/miscellaneous/current.client";
 import { Injector } from "../startup/injector";
 import { ClientAppService } from "../services/client.apps/client.app.service";
+import { FileResourceService } from "../services/general/file.resource.service";
 import { ResponseHandler } from "../common/handlers/response.handler";
 import { Logger } from "../common/logger";
 import { ClientAppController } from "../api/client.apps/client.app.controller";
@@ -70,6 +71,11 @@ export default class ClientAppAuthMiddleware
             let apiKey: string = request.headers['x-api-key'] as string;
 
             if (!apiKey) {
+                const isPublicResourceDownload = await this.isPublicResourceDownloadRequest(request);
+                if (isPublicResourceDownload) {
+                    request.publicUrl = true;
+                    return res;
+                }
                 res = {
                     Result        : false,
                     Message       : 'Missing API key for the client',
@@ -102,5 +108,35 @@ export default class ClientAppAuthMiddleware
         return res;
     };
 
-}
+    private static isPublicResourceDownloadRequest = async (request: express.Request): Promise<boolean> => {
+        const requestUrl = request.originalUrl;
+        const downloadUrl = requestUrl.includes('/api/v1/file-resources') &&
+                            requestUrl.includes('/download') && request.method === 'GET';
+        if (!downloadUrl) {
+            return false;
+        }
+        
+        //Check if the download request is for a public resource
+        const fileResourceService = Injector.Container.resolve(FileResourceService);
+        if (!fileResourceService) {
+            return false;
+        }
+        // Not sure why request.params.resourceId is not working !!!
+        // Finding it from Url
+        let tokens = requestUrl.split('/api/v1/file-resources/');
+        if (tokens.length < 2) {
+            return false;
+        }
+        tokens = tokens[1].split('/download');
+        if (tokens.length < 1) {
+            return false;
+        }
+        const resourceId = tokens[0];
+        if (!resourceId) {
+            return false;
+        }
+        const isPublicResource = await fileResourceService.isPublicResource(resourceId);
+        return isPublicResource;
+    };
 
+}

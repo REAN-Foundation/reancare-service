@@ -17,6 +17,8 @@ import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
 import { Injector } from '../../../startup/injector';
 import { AuthHandler } from '../../../auth/auth.handler';
+import { IMedicationRepo } from '../../../database/repository.interfaces/clinical/medication/medication.repo.interface';
+import { IMedicationConsumptionRepo } from '../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +36,7 @@ export class PatientService {
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
+        
     ) {
         if (ConfigurationManager.EhrEnabled()) {
             this._ehrPatientStore = Injector.Container.resolve(PatientStore);
@@ -150,8 +153,8 @@ export class PatientService {
                 return persons[0];
             }
             return null;
-        };
-
+        }
+   
     //#endregion
 
     //#region Privates
@@ -195,7 +198,7 @@ export class PatientService {
         dto.ImageResourceId = user.Person.ImageResourceId;
         return dto;
     };
-
+    
     //#endregion
 
 }

@@ -20,6 +20,10 @@ import { HealthProfileDomainModel } from '../../../../domain.types/users/patient
 import { RoleDto } from '../../../../domain.types/role/role.dto';
 import { Roles } from '../../../../domain.types/role/role.types';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
+import { MedicationService } from '../../../../services/clinical/medication/medication.service';
+import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
+import { TimeHelper } from '../../../../common/time.helper';
+import { MedicationFrequencyUnits } from '../../../../domain.types/clinical/medication/medication/medication.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +41,10 @@ export class PatientController extends BaseUserController {
     _patientHealthProfileService: HealthProfileService = Injector.Container.resolve(HealthProfileService);
 
     _cohortService: CohortService = Injector.Container.resolve(CohortService);
+
+    _medicationService: MedicationService = Injector.Container.resolve(MedicationService);
+
+    _medicationConsumptionService: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
     _ehrPatientService: EHRPatientService = Injector.Container.resolve(EHRPatientService);
 
@@ -194,6 +202,13 @@ export class PatientController extends BaseUserController {
                 const IsTestUser = await this._userHelper.isTestUser(userDomainModel);
                 userDomainModel.IsTestUser = IsTestUser;
             }
+
+            // if timezone change detected then delete future medication schedules and create new one
+            if (existingUser.CurrentTimeZone != request.body.CurrentTimeZone) {
+                await this._userService.update(userId, { CurrentTimeZone : request.body.CurrentTimeZone }); 
+                this.deleteAndCreateFutureMedicationSchedules(userId);
+            }
+
             const updatedUser = await this._userService.update(userId, userDomainModel);
             if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
@@ -336,6 +351,20 @@ export class PatientController extends BaseUserController {
             }
         }
     }
+
+    private deleteAndCreateFutureMedicationSchedules = async (patientUserId: string): Promise<boolean> => {
+        var medications = await this._medicationService.getByPatientUserId(patientUserId);
+        for await ( var m of medications) {
+            if (m.FrequencyUnit !== 'Other') {
+                var deletedMedicationCount = await this._medicationConsumptionService.deleteFutureMedicationSchedules(m.id);
+                var startDate = await this._userService.getDateInUserTimeZone(m.PatientUserId, new Date().toISOString().split('T')[0]);
+                m.Duration = deletedMedicationCount;
+                m.StartDate = startDate;
+                await this._medicationConsumptionService.create(m);
+            }
+        }
+        return true;
+    };
 
     //#endregion
 

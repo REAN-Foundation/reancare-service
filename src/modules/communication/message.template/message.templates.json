@@ -17,7 +17,7 @@
     "StrokeSurveyNotification": {
         "NotificationType": "Web",
         "Title"           : "Heart & Stroke Helper Survey",
-        "Body"            : "Please take a moment to complete our Heart & Stroke Helper Survey form.",
+        "Body"            : "Tell us what you think about the Heart & Stroke Helper app and receive a $10 gift card!",
         "Url"             : "https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk"
     }
 }    

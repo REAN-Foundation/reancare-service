@@ -17,8 +17,6 @@ import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
 import { Injector } from '../../../startup/injector';
 import { AuthHandler } from '../../../auth/auth.handler';
-import { IMedicationRepo } from '../../../database/repository.interfaces/clinical/medication/medication.repo.interface';
-import { IMedicationConsumptionRepo } from '../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -153,7 +151,7 @@ export class PatientService {
                 return persons[0];
             }
             return null;
-        }
+        };
    
     //#endregion
 

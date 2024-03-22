@@ -22,8 +22,6 @@ import { Roles } from '../../../../domain.types/role/role.types';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
-import { TimeHelper } from '../../../../common/time.helper';
-import { MedicationFrequencyUnits } from '../../../../domain.types/clinical/medication/medication/medication.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

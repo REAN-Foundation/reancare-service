@@ -121,7 +121,7 @@ export class UserService {
         if (model.CurrentTimeZone != null) {
             model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);
         } else if (model.DefaultTimeZone != null) {
-            model.CurrentTimeZone = model.DefaultTimeZone;;
+            model.CurrentTimeZone = model.DefaultTimeZone;
         } 
         var dto = await this._userRepo.update(id, model);
         dto = await this.updateDetailsDto(dto);

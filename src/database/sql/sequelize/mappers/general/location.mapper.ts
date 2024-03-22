@@ -11,7 +11,7 @@ export class LocationMapper {
             return null;
         }
     
-        const dto: LocationDto = {
+        const dto : LocationDto = {
             id              : location.id,
             PatientUserId   : location.PatientUserId,
             City            : location.City,
@@ -19,7 +19,7 @@ export class LocationMapper {
             Lattitude       : location.Lattitude,
             CurrentTimezone : location.CurrentTimezone,
             IsActive        : location.IsActive,
-        }
+        };
         return dto;
     };
 

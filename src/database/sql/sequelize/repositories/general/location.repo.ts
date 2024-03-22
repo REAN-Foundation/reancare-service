@@ -5,7 +5,6 @@ import { LocationDomainModel } from '../../../../../domain.types/general/locatio
 import { LocationDto } from '../../../../../domain.types/general/location/location.dto';
 import Location from '../../../../../database/sql/sequelize/models/general/location.model';
 import { LocationMapper } from '../../mappers/general/location.mapper';
-import { isNullOrUndefined } from 'util';
 
 ///////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,4 @@
 import express from 'express';
-import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { RoleService } from '../../../services/role/role.service';
 import { LocationValidator } from './location.validator';
@@ -42,7 +41,7 @@ export class LocationController {
 
             var existingRecord = await this._service.getExistingRecord(locationDetails);
 
-            if(existingRecord == null) {
+            if (existingRecord == null) {
                 // set all existing record as inactive                
                 await this._service.invalidateExistingRecords(request.body.PatientUserId);
                 var location = await this._service.create(domainModel);
@@ -54,9 +53,9 @@ export class LocationController {
             const patient = await this._patientService.getByUserId(request.body.PatientUserId);
 
             if (patient.User.CurrentTimeZone !== request.body.CurrentTimezone) {
-                patient.User.CurrentTimeZone = request.body.CurrentTimezone
+                patient.User.CurrentTimeZone = request.body.CurrentTimezone;
                 const updatedDetails = await this._userService.update(request.body.PatientUserId, { CurrentTimeZone : patient.User.CurrentTimeZone });
-                Logger.instance().log(`Updated timezone in user table :: ${JSON.stringify(updatedDetails.CurrentTimeZone)}`)
+                Logger.instance().log(`Updated timezone in user table :: ${JSON.stringify(updatedDetails.CurrentTimeZone)}`);
             }
 
             ResponseHandler.success(request, response, 'Location record created successfully!', 201, {

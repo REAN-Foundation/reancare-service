@@ -770,7 +770,7 @@ export class MedicationConsumptionService implements IUserActionService {
             medicationDrugNames.push(medicationSchedule.DrugName);
         });
 
-        var duration = TimeHelper.getTimezoneOffsets(user.DefaultTimeZone, DurationType.Minute);
+        var duration = TimeHelper.getTimezoneOffsets(user.CurrentTimeZone, DurationType.Minute);
         var updatedTime = TimeHelper.subtractDuration(
             medicationSchedules[0].TimeScheduleEnd, duration, DurationType.Minute);
 

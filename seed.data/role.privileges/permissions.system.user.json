@@ -456,6 +456,9 @@
             "Search": true,
             "Update": false
         },
+        "Location": {
+            "Create": true
+        },
         "FileResource": {
             "Delete": false,
             "DeleteVersionByVersionId": false,

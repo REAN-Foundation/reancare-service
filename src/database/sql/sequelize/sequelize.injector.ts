@@ -98,6 +98,7 @@ import { DailyStatisticsRepo } from './repositories/statistics/daily.statistics.
 import { AhaStatisticsRepo } from './repositories/statistics/aha.statistics.repo';
 import { TenantSettingsRepo } from './repositories/tenant/tenant.settings.repo';
 import { HealthReportSettingsRepo } from './repositories/users/patient/health.report.setting.repo';
+import { LocationRepo } from './repositories/general/location.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -204,7 +205,8 @@ export class SequelizeInjector {
         container.register('IDailyStatisticsRepo', DailyStatisticsRepo);
         container.register('IAhaStatisticsRepo', AhaStatisticsRepo);
         container.register('ITenantSettingsRepo',TenantSettingsRepo);
-        container.register('IHealthReportSettingsRepo',HealthReportSettingsRepo);
+        container.register('IHealthReportSettingRepo',HealthReportSettingsRepo);
+        container.register('ILocationRepo',LocationRepo);
     }
 
 }

@@ -49,6 +49,10 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             const missingToken = token == null || token === 'null' || token === undefined;
             const allowAnonymous = request.allowAnonymous;
 
+            if (request.publicUrl) {
+                return res;
+            }
+
             if ( missingToken && !allowAnonymous) {
                 res = {
                     Result        : false,

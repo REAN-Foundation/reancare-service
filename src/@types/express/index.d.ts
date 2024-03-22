@@ -18,6 +18,7 @@ declare global{
             singleResourceRequest: boolean;
             patientOwnedResource : boolean;
             customAuthorization  : boolean;
+            publicUrl            : boolean;
         }
     }
 }

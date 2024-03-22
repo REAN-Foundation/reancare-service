@@ -219,8 +219,9 @@ export const addHealthJourney = (document: PDFKit.PDFDocument, model: any, y: nu
     }
     const planName = journey.PlanName;
     // const enrollmentId = journey.EnrollmentId ? journey.EnrollmentId.toString() : journey.EnrollmentStringId;
-    const startDate = journey.StartAt?.toLocaleDateString();
-    const endDate = journey.EndAt?.toLocaleDateString();
+    const startDate = new Date(journey.StartAt).toLocaleDateString();
+    const endDate = new Date(journey.EndAt).toLocaleDateString();
+ 
     const icon = Helper.getIconsPath('health-journey.png');
     y = y + 20;
     y = addSectionTitle(document, y, 'Health Journey', icon);

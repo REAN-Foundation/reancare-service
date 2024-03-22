@@ -50,6 +50,7 @@ export class PatientValidator extends BaseValidator {
                 DefaultTimeZone : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone : request.body.CurrentTimeZone ?? null,
                 TenantId        : request.body.TenantId ?? null,
+                TenantCode      : request.body.TenantCode ?? null,
             },
             HealthProfile : {
                 BloodGroup           : request.body.BloodGroup ?? null,
@@ -178,6 +179,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
         await this.validateBoolean(request, 'IsRemindersLoaded', Where.Body, false, true);
         await this.validateUuid(request, 'TenantId', Where.Body, false, true);
+        await this.validateString(request, 'TenantCode', Where.Body, false, true);
         await this.validateUuid(request, 'CohortId', Where.Body, false, true);
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);
         await this.validateString(request, 'UserName', Where.Body, false, true);

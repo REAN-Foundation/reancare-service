@@ -350,7 +350,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                     recordDate = x.CreatedAt;
                 }
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
-                const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
+                const recordDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
                 Logger.instance().log(`RecordDate: ${tempDate} RecordDateStr: ${recordDateStr}`);
                 return {
                     RecordId                    : x.id,
@@ -397,7 +397,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                     PatientUserId               : x.PatientUserId,
                     PhysicalActivityQuestionAns : x.PhysicalActivityQuestionAns,
                     RecordDate                  : tempDate,
-                    RecordDateStr               : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr               : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
                     RecordTimeZone              : currentTimeZone,
                 };
             });

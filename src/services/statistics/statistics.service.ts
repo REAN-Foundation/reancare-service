@@ -3,10 +3,17 @@ import { IStatisticsRepo } from "../../database/repository.interfaces/statistics
 import { AppDownloadDto } from "../../domain.types/statistics/app.download.dto";
 import { AppDownloadDomainModel } from "../../domain.types/statistics/app.download.domain.model";
 import { StatisticSearchFilters } from "../../domain.types/statistics/statistics.search.type";
-import { YearWiseDeviceDetails, YearWiseUsers } from "../../domain.types/statistics/daily.statistics/daily.statistics.dto";
 import { IDailyStatisticsRepo } from "../../database/repository.interfaces/statistics/daily.statistics.repo.interface";
-import { DailyStatisticsDomainModel } from "../../domain.types/statistics/daily.statistics/daily.statistics.domain.model";
 import { Logger } from "../../common/logger";
+import path from "path";
+import { exportStatsReportToPDF } from "./tenant.stats.report/report.generator";
+import { FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
+import { TimeHelper } from "../../common/time.helper";
+import { DateStringFormat } from "../../domain.types/miscellaneous/time.types";
+import { FileResourceService } from "../general/file.resource.service";
+import { Injector } from "../../startup/injector";
+import { exportStatsChartReportToPDF } from "./tenant.stats.report/chart.report.generator";
+import { createUsersAgeTrendCharts, createUsersGenderTrendCharts, createYearWiseUserTrendCharts } from "./chart/user.chart";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,10 +53,6 @@ export class StatisticsService {
         return await this._statisticsRepo.getUsersByDeviceDetail(filters);
     };
 
-    getUsersByEnrollment = async (filters: StatisticSearchFilters): Promise<any> => {
-        return await this._statisticsRepo.getUsersByEnrollment(filters);
-    };
-
     updateAppDownloadCount = async (appDownloadDomainModel: AppDownloadDomainModel ): Promise<AppDownloadDto> => {
         return await this._statisticsRepo.updateAppDownloadCount(appDownloadDomainModel);
     };
@@ -86,98 +89,153 @@ export class StatisticsService {
         return await this._statisticsRepo.getAllYears();
     };
 
-    createDailyStatistics = async () => {
+    createSystemDashboardStats = async (): Promise<any> => {
         try {
             const filter = {};
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
-            const appDownload = await this._statisticsRepo.getAppDownlodCount();
             const allYears = await this._statisticsRepo.getAllYears();
-            const yearWiseUserCount = await this.getYearWiseUserCount(allYears);
-            yearWiseUserCount.sort(this.compare);
-            const yearWiseDeviceDetails = await this.getYearWiseDeviceDetails(allYears);
-            yearWiseDeviceDetails.sort(this.compare);
+            const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount(filter);
+            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails(filter, yearWiseUserCount);
+
+            const yearWiseAgeDetails = await this._statisticsRepo.getYearWiseAgeDetails(allYears);
             const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
+            
+            const yearWiseGenderDetails = await this._statisticsRepo.getYearWiseGenderDetails(filter);
             const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
+
+            const yearWiseMaritalDetails = await this._statisticsRepo.getYearWiseMaritalDetails(filter);
             const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
-            const countryWiseUsers = await this._statisticsRepo.getUsersByCountry(filter);
+
+            const yearWiseMajorAilmentDistributionDetails =
+            await this._statisticsRepo.getYearWiseMajorAilmentDistributionDetails(filter);
             const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
+
+            const yearWiseAddictionDistributionDetails =
+            await this._statisticsRepo.getYearWiseAddictionDistributionDetails(filter, yearWiseUserCount);
             const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
-           
-            const statisticsData = {
+
+            const dashboardStats = {
                 UserStatistics : {
-                    UsersCountStats          : usersCountStats,
-                    DeviceDetailWiseUsers    : deviceDetailWiseUsers,
-                    AppDownload              : appDownload,
-                    YearWiseUserCount        : yearWiseUserCount,
-                    YearWiseDeviceDetails    : yearWiseDeviceDetails,
-                    AgeWiseUsers             : ageWiseUsers,
-                    GenderWiseUsers          : genderWiseUsers,
-                    MaritalStatusWiseUsers   : maritalStatusWiseUsers,
-                    CountryWiseUsers         : countryWiseUsers,
-                    MajorAilmentDistribution : majorAilmentDistribution,
-                    AddictionDistribution    : addictionDistribution
+                    UsersCountStats                         : usersCountStats,
+                    DeviceDetailWiseUsers                   : deviceDetailWiseUsers,
+                    YearWiseUserCount                       : yearWiseUserCount,
+                    YearWiseDeviceDetails                   : yearWiseDeviceDetails,
+                    YearWiseAgeDetails                      : yearWiseAgeDetails,
+                    AgeWiseUsers                            : ageWiseUsers,
+                    YearWiseGenderDetails                   : yearWiseGenderDetails,
+                    GenderWiseUsers                         : genderWiseUsers,
+                    YearWiseMaritalDetails                  : yearWiseMaritalDetails,
+                    MaritalStatusWiseUsers                  : maritalStatusWiseUsers,
+                    YearWiseMajorAilmentDistributionDetails : yearWiseMajorAilmentDistributionDetails,
+                    MajorAilmentDistribution                : majorAilmentDistribution,
+                    YearWiseAddictionDistributionDetails    : yearWiseAddictionDistributionDetails,
+                    AddictionDistribution                   : addictionDistribution
                 },
             };
-    
-            const dailyStatisticsDomainModel: DailyStatisticsDomainModel = {
-                ReportDate      : new Date(),
-                ReportTimestamp : new Date(),
-                Statistics      : JSON.stringify(statisticsData)
-            };
-    
-            const dailyStatistics = await this._dailyStatisticsRepo.create(dailyStatisticsDomainModel);
-            if (dailyStatistics) {
-                Logger.instance().log('Daily users stattistics created successfully.');
-            } else {
-                Logger.instance().log('Error in creating daily users stattistics.');
-            }
+
+            return dashboardStats;
         } catch (error) {
-            Logger.instance().log(`Error in creating daily users stattistics:${error.message}`);
+            Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
         }
     };
 
-    private getYearWiseUserCount = async (allYears) => {
-        const yearWiseUserCount:YearWiseUsers[] = [];
-        for (let i = 0; i < allYears.length; i++) {
-            const user: YearWiseUsers = {};
-            user.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-            if (user.Year) {
-                const yearWiseUserCount = await this._statisticsRepo.getUsersCount({ Year: user.Year });
-                user.UserCount = yearWiseUserCount.TotalUsers.Count;
-            }
-            if (user.Year) {
-                yearWiseUserCount.push(user);
-            }
+    createTenantDashboardStats = async (tenantId: string): Promise<any> => {
+        try {
+            const filter = { TenantId: tenantId };
+ 
+            const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
+
+            const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
+
+            const yearWiseUserCount = await this._statisticsRepo.getYearWiseUserCount(filter);
+
+            const yearWiseDeviceDetails = await this._statisticsRepo.getYearWiseDeviceDetails(filter, yearWiseUserCount);
+
+            const yearWiseAgeDetails = await this._statisticsRepo.getYearWiseAgeDetails(filter);
+            const ageWiseUsers = await this._statisticsRepo.getUsersByAge(filter);
+            
+            const yearWiseGenderDetails = await this._statisticsRepo.getYearWiseGenderDetails(filter);
+            const genderWiseUsers = await this._statisticsRepo.getUsersByGender(filter);
+
+            const yearWiseMaritalDetails = await this._statisticsRepo.getYearWiseMaritalDetails(filter);
+            const maritalStatusWiseUsers = await this._statisticsRepo.getUsersByMaritalStatus(filter);
+
+            const yearWiseMajorAilmentDistributionDetails =
+            await this._statisticsRepo.getYearWiseMajorAilmentDistributionDetails(filter);
+            const majorAilmentDistribution = await this._statisticsRepo.getUsersByMajorAilment(filter);
+
+            const yearWiseAddictionDistributionDetails =
+            await this._statisticsRepo.getYearWiseAddictionDistributionDetails(filter, yearWiseUserCount);
+            const addictionDistribution  = await this._statisticsRepo.getUsersByAddiction(filter);
+
+            const dashboardStats = {
+                UserStatistics : {
+                    UsersCountStats                         : usersCountStats,
+                    DeviceDetailWiseUsers                   : deviceDetailWiseUsers,
+                    YearWiseUserCount                       : yearWiseUserCount,
+                    YearWiseDeviceDetails                   : yearWiseDeviceDetails,
+                    YearWiseAgeDetails                      : yearWiseAgeDetails,
+                    AgeWiseUsers                            : ageWiseUsers,
+                    YearWiseGenderDetails                   : yearWiseGenderDetails,
+                    GenderWiseUsers                         : genderWiseUsers,
+                    YearWiseMaritalDetails                  : yearWiseMaritalDetails,
+                    MaritalStatusWiseUsers                  : maritalStatusWiseUsers,
+                    YearWiseMajorAilmentDistributionDetails : yearWiseMajorAilmentDistributionDetails,
+                    MajorAilmentDistribution                : majorAilmentDistribution,
+                    YearWiseAddictionDistributionDetails    : yearWiseAddictionDistributionDetails,
+                    AddictionDistribution                   : addictionDistribution
+                },
+            };
+
+            return dashboardStats;
+
+        } catch (error) {
+            Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
         }
-        return yearWiseUserCount;
     };
 
-    private getYearWiseDeviceDetails = async(allYears) => {
-        const yearWiseDeviceDetails: YearWiseDeviceDetails[] = [];
-        for (let i = 0; i < allYears.length; i++) {
-            const deviceDetails: YearWiseDeviceDetails = {};
-            deviceDetails.Year = allYears[i]._previousDataValues.year ? allYears[i]._previousDataValues.year : null;
-            if (deviceDetails.Year) {
-                const yearWiseDeviceDetails =
-                await this._statisticsRepo.getUsersByDeviceDetail({ Year: deviceDetails.Year });
-                deviceDetails.DeviceDetails = yearWiseDeviceDetails;
-            }
-            if (deviceDetails.Year) {
-                yearWiseDeviceDetails.push(deviceDetails);
-            }
+    generateStatsReport = async (reportModel: any) => {
+        try {
+            return await exportStatsReportToPDF(reportModel);
+        } catch (error) {
+            Logger.instance().log(`Error in creating stats report in pdf :${error.message}`);
         }
-        return yearWiseDeviceDetails;
+    };
+
+    public generateChartImages = async (
+        reportModel: any): Promise<any> => {
+
+        const chartImagePaths = [];
+        let imageLocations = await createYearWiseUserTrendCharts(reportModel.YearWiseUserCount);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createUsersAgeTrendCharts(reportModel.AgeWiseUsers);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await createUsersGenderTrendCharts(reportModel.GenderWiseUsers);
+        chartImagePaths.push(...imageLocations);
+        return chartImagePaths;
     };
     
-    private compare = (a,b) => {
-        if ( a.Year < b.Year ) {
-            return -1;
+    generateStatsChartReport = async (reportModel: any) => {
+        try {
+            const chartImagePaths = await this.generateChartImages(reportModel);
+            return await exportStatsChartReportToPDF(reportModel, chartImagePaths);
+        } catch (error) {
+            Logger.instance().log(`Error in creating stats report in pdf :${error.message}`);
         }
-        if ( a.Year > b.Year ) {
-            return 1;
+    };
+
+    uploadFile = async (sourceLocation: string): Promise<FileResourceDto> => {
+        try {
+            const filename = path.basename(sourceLocation);
+            const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+            const storageKey = `resources/${dateFolder}/${filename}`;
+            const fileResourceService = Injector.Container.resolve(FileResourceService);
+            return await fileResourceService.uploadLocal(sourceLocation, storageKey, true);
+        } catch (error) {
+            Logger.instance().log(`Error in uploading pdf :${error.message}`);
         }
-        return 0;
+        
     };
 
 }

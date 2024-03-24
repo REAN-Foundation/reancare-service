@@ -38,8 +38,7 @@ export class CustomActionsHandler {
 
     public scheduleCareplanRegistrationReminders = async () => {
         try {
-                await this._ahaActions.scheduleCareplanRegistrationReminders();
-
+            await this._ahaActions.scheduleCareplanRegistrationReminders();
         }
         catch (error) {
             Logger.instance().log(`Error sending reminders for careplan registration.`);
@@ -48,8 +47,7 @@ export class CustomActionsHandler {
 
     public scheduleCareplanRegistrationRemindersForOldUsers = async () => {
         try {
-                await this._ahaActions.scheduleCareplanRegistrationRemindersForOldUsers();
-
+            await this._ahaActions.scheduleCareplanRegistrationRemindersForOldUsers();
         }
         catch (error) {
             Logger.instance().log(`Error sending reminders to old users for careplan registration.`);

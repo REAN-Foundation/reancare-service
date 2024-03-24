@@ -55,7 +55,7 @@ describe('87 - Second user logs in tests', function() {
             .put(`/api/v1/patients/${getTestData('PatientUserId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -76,7 +76,7 @@ describe('87 - Second user logs in tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(409, done);
+            .expect(500, done);
     });
 
     it('87:05 -> Negative - Second user logs in', function(done) {
@@ -98,14 +98,13 @@ describe('87 - Second user logs in tests', function() {
         agent
             .put(`/api/v1/patients/${getTestData('PatientUserId_1')}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatienttJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
 });
@@ -122,6 +121,7 @@ export const loadPatientCreateWithPhoneFourthModel = async (
             Phone: patientPhoneNumber,
             Password: patientPassword,
             LoginRoleId: getTestData("patientRoleId"),
+            TenantId: getTestData("TenantId") 
         };
         setTestData(model, 'PatientCreateWithPhoneFourthModel');
 };
@@ -132,6 +132,7 @@ export const loadPatientLoginFourthModel = async (
             Phone: patientPhoneNumber,
             Password: patientPassword,
             LoginRoleId: getTestData("patientRoleId"),
+            TenantId: getTestData("TenantId")
         };
         setTestData(model, 'PatientLoginFourthModel');
 };

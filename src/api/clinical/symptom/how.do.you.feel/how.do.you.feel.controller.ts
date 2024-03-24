@@ -1,30 +1,23 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.do.you.feel.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { HowDoYouFeelValidator } from './how.do.you.feel.validator';
-import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../../common/logger';
+import { EHRHowDoYouFeelService } from '../../../../modules/ehr.analytics/ehr.services/ehr.how.do.you.feel.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HowDoYouFeelController extends BaseController{
+export class HowDoYouFeelController {
 
     //#region member variables and constructors
 
-    _service: HowDoYouFeelService = null;
+    _service: HowDoYouFeelService = Injector.Container.resolve(HowDoYouFeelService);
 
     _validator: HowDoYouFeelValidator = new HowDoYouFeelValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(HowDoYouFeelService);  
-    }
+    _ehrHowDoYouFeelService: EHRHowDoYouFeelService = Injector.Container.resolve(EHRHowDoYouFeelService);
 
     //#endregion
 
@@ -33,22 +26,12 @@ export class HowDoYouFeelController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HowDoYouFeel.Create', request, response);
-
             const model = await this._validator.create(request);
             const howDoYouFeel = await this._service.create(model);
             if (howDoYouFeel == null) {
                 throw new ApiError(400, 'Cannot create record for how do you feel!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(howDoYouFeel.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, howDoYouFeel.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${howDoYouFeel.PatientUserId}`);
-            }
+            await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(howDoYouFeel);
 
             ResponseHandler.success(request, response, 'How do you feel record created successfully!', 201, {
                 HowDoYouFeel : howDoYouFeel,
@@ -60,8 +43,6 @@ export class HowDoYouFeelController extends BaseController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HowDoYouFeel.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const howDoYouFeel = await this._service.getById(id);
@@ -79,8 +60,6 @@ export class HowDoYouFeelController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('HowDoYouFeel.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -100,8 +79,6 @@ export class HowDoYouFeelController extends BaseController{
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('HowDoYouFeel.Update', request, response);
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -114,15 +91,8 @@ export class HowDoYouFeelController extends BaseController{
                 throw new ApiError(400, 'Unable to update how do you feel record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, updated.id, null, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(updated);
+            
             ResponseHandler.success(request, response, 'How do you feel record updated successfully!', 200, {
                 HowDoYouFeel : updated,
             });
@@ -133,8 +103,6 @@ export class HowDoYouFeelController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Nutrition.FoodConsumption.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

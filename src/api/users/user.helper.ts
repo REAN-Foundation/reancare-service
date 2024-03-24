@@ -7,7 +7,8 @@ import { AddressService } from '../../services/general/address.service';
 import { PersonService } from '../../services/person/person.service';
 import { RoleService } from '../../services/role/role.service';
 import { UserService } from '../../services/users/user/user.service';
-import { Loader } from '../../startup/loader';
+import { TenantService } from '../../services/tenant/tenant.service';
+import { Injector } from '../../startup/injector';
 import { PatientDomainModel } from '../../domain.types/users/patient/patient/patient.domain.model';
 import { PatientDetailsDto } from '../../domain.types/users/patient/patient/patient.dto';
 import { UserDetailsDto } from '../../domain.types/users/user/user.dto';
@@ -16,6 +17,7 @@ import { RoleDto } from '../../domain.types/role/role.dto';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { UserDomainModel } from '../../domain.types/users/user/user.domain.model';
+import { TenantDto } from '../../domain.types/tenant/tenant.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,13 +35,16 @@ export class UserHelper {
 
     _patientHealthProfileService: HealthProfileService = null;
 
+    _tenantService: TenantService = null;
+
     constructor() {
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
+        this._userService = Injector.Container.resolve(UserService);
+        this._roleService = Injector.Container.resolve(RoleService);
+        this._personService = Injector.Container.resolve(PersonService);
+        this._addressService = Injector.Container.resolve(AddressService);
+        this._patientService = Injector.Container.resolve(PatientService);
+        this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
+        this._tenantService = Injector.Container.resolve(TenantService);
     }
 
     createPatient = async(createModel: PatientDomainModel): Promise<[PatientDetailsDto, boolean]> => {
@@ -155,8 +160,20 @@ export class UserHelper {
         const userModel = createModel.User;
         const isTestUser = await this.isTestUser(userModel);
         userModel.IsTestUser = isTestUser;
+        let tenant: TenantDto = null;
+        if (userModel.TenantId === null) {
+            const tenantCode = userModel.TenantCode ?? 'default';
+            tenant = await this._tenantService.getTenantWithCode(tenantCode);
+        }
+        else {
+            tenant = await this._tenantService.getById(userModel.TenantId);
+        }
+        if (tenant == null) {
+            throw new ApiError(404, 'Tenant not found!');
+        }
+        userModel.TenantId = tenant.id;
 
-        var user = await this._userService.create(createModel.User);
+        var user = await this._userService.create(userModel);
         if (!user) {
             throw new ApiError(500, 'Error creating missing user definition!');
         }

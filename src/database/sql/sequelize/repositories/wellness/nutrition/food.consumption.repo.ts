@@ -698,7 +698,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                     recordDate = x.CreatedAt;
                 }
                 const tempDate = TimeHelper.addDuration(recordDate, offsetMinutes, DurationType.Minute);
-                const recordDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
+                const recordDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate);
                 return {
                     RecordId       : x.id,
                     PatientUserId  : x.PatientUserId,
@@ -744,7 +744,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                     PatientUserId  : x.PatientUserId,
                     UserResponse   : x.UserResponse,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(recordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });

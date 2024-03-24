@@ -23,7 +23,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentTemplate.id, 'NodeAssessmentTemplateId');
@@ -55,7 +55,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, "AssessmentNodeSCQId");
@@ -85,7 +85,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeMCQId');
@@ -113,7 +113,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeListId');
@@ -139,7 +139,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeTextTypeId');
@@ -169,7 +169,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeDateTypeId');
@@ -197,7 +197,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeBooleanTypeId');
@@ -225,7 +225,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeMessageTypeId');
@@ -251,7 +251,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.AssessmentTemplate).to.have.property('id');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Title');
@@ -275,7 +275,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}/nodes/${getTestData('AssessmentNodeMessageTypeId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
@@ -297,7 +297,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
         agent
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -331,7 +331,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
         agent
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -365,7 +365,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
         agent
             .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -408,6 +408,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
 export const loadCustomAssessmentCreateModel = async (
 ) => {
     const model = {
+        TenantId               : getTestData("TenantId"),
         Title                  : faker.lorem.word(5),
         Description            : faker.lorem.word(15),
         Type                   : getRandomEnumValue(AssessmentType),

@@ -24,22 +24,20 @@ export interface ITenantRepo {
 
     search(filters: TenantSearchFilters): Promise<TenantSearchResults>;
 
+    tenantCount(): Promise<number>;
+
     update(id: uuid, model: TenantDomainModel): Promise<TenantDto>;
 
     delete(id: uuid): Promise<boolean>;
 
-    addUserAsAdminToTenant(id: uuid, userId: uuid): Promise<boolean>;
+    promoteTenantUserAsAdmin(id: uuid, userId: uuid): Promise<boolean>;
 
-    removeUserAsAdminFromTenant(id: uuid, userId: uuid): Promise<boolean>;
-
-    addUserAsModeratorToTenant(id: uuid, userId: uuid): Promise<boolean>;
-
-    removeUserAsModeratorFromTenant(id: uuid, userId: uuid): Promise<boolean>;
+    demoteAdmin(id: uuid, userId: uuid): Promise<boolean>;
 
     getTenantStats(id: uuid): Promise<any>;
 
     getTenantAdmins(id: uuid): Promise<any[]>;
 
-    getTenantModerators(id: uuid): Promise<any[]>;
+    getTenantRegularUsers(id: uuid): Promise<any[]>;
 
 }

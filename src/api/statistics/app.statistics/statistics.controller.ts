@@ -1,25 +1,18 @@
-import express, { application } from 'express';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
+import express from 'express';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { StatisticsService } from '../../../services/statistics/statistics.service';
 import { StatistcsValidator } from './statistics.validator';
 import { ApiError } from '../../../common/api.error';
-import * as path from 'path';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StatisticsController extends BaseController {
+export class StatisticsController {
 
     //#region member variables and constructors
-    _service: StatisticsService = null;
+    _service: StatisticsService = Injector.Container.resolve(StatisticsService);
 
     _validator = new StatistcsValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(StatisticsService);
-    }
 
     //#endregion
 
@@ -27,7 +20,6 @@ export class StatisticsController extends BaseController {
 
     getUsersCount = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersCount', request, response);
             const filters = await this._validator.searchFilter(request);
             const usersCountStats  = await this._service.getUsersCount(filters);
             const message = 'Users count stats retrieved successfully!';
@@ -40,7 +32,6 @@ export class StatisticsController extends BaseController {
 
     getUsersStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersStats', request, response);
             const filters = await this._validator.searchFilter(request);
             const usersStats = await this._service.getUsersStats(filters);
             const message = 'Users stats retrieved successfully!';
@@ -54,7 +45,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByRole', request, response);
             const filters = await this._validator.searchFilter(request);
             const roleDistribution = await this._service.getUsersByRole(filters);
             const message = 'Role wise distribution retrieved successfully!';
@@ -68,7 +58,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByGender = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByGender', request, response);
             const filters = await this._validator.searchFilter(request);
             const genderWiseUsers = await this._service.getUsersByGender(filters);
             const message = 'Gender wise users retrieved successfully!';
@@ -82,7 +71,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByAge = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByAge', request, response);
             const filters = await this._validator.searchFilterForAge(request);
             const ageWiseUsers = await this._service.getUsersByAge(filters);
             const message = 'Age wise users retrieved successfully!';
@@ -96,7 +84,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByMaritalStatus = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByMaritalStatus', request, response);
             const filters = await this._validator.searchFilter(request);
             const maritalStatusWiseUsers = await this._service.getUsersByMaritalStatus(filters);
             const message = 'Marital status wise users retrieved successfully!';
@@ -110,7 +97,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByDeviceDetail = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByDeviceDetail', request, response);
             const filters = await this._validator.searchFilter(request);
             const deviceDetailWiseUsers = await this._service.getUsersByDeviceDetail(filters);
             const message = 'Device detail wise users retrieved successfully!';
@@ -122,23 +108,8 @@ export class StatisticsController extends BaseController {
         }
     };
 
-    getUsersByEnrollment = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            await this.setContext('Statistics.GetUsersByEnrollment', request, response);
-            const filters = await this._validator.searchFilter(request);
-            const enrollmentUsers = await this._service.getUsersByEnrollment(filters);
-            const message = 'Enrollment users retrieved successfully!';
-            ResponseHandler.success(request, response,message, 200, {
-                EnrollmentUsers : enrollmentUsers });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     updateAppDownloadCount = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Statistics.UpdateAppDownloadCount', request, response);
 
             const model = await this._validator.updateAppDownloads(request);
             const appDownload = await this._service.updateAppDownloadCount(model);
@@ -157,8 +128,6 @@ export class StatisticsController extends BaseController {
     getAppDownlodCount = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Statistics.GetAppDownlodCount', request, response);
-
             const appDownload = await this._service.getAppDownlodCount();
             if (appDownload == null) {
                 throw new ApiError(404, 'App Download  not found.');
@@ -174,7 +143,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByCountry = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByCountry', request, response);
             const filters = await this._validator.searchFilter(request);
             const countryWiseUsers = await this._service.getUsersByCountry(filters);
             const message = 'Country wise users retrieved successfully!';
@@ -187,7 +155,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByMajorAilment = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByMajorAilment', request, response);
             const filters = await this._validator.searchFilter(request);
             const majorAilmentDistribution = await this._service.getUsersByMajorAilment(filters);
             const message = 'Major ailment distribution wise users retrieved successfully!';
@@ -200,7 +167,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByObesity = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByObesity', request, response);
             const filters = await this._validator.searchFilter(request);
             const obesityDistribution = await this._service.getUsersByObesity(filters);
             const message = 'Obesity distribution wise users retrieved successfully!';
@@ -213,7 +179,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByAddiction = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByAddiction', request, response);
             const filters = await this._validator.searchFilter(request);
             const addictionDistribution  = await this._service.getUsersByAddiction(filters);
             const message = 'Addiction distribution of users retrieved successfully!';
@@ -226,7 +191,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByHealthPillar = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByHealthPillar', request, response);
             const filters = await this._validator.searchFilter(request);
             const healthPillarDistribution  = await this._service.getUsersByHealthPillar(filters);
             const message = 'Health pillar distribution of users retrieved successfully!';
@@ -239,7 +203,6 @@ export class StatisticsController extends BaseController {
 
     getUsersByBiometrics = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetUsersByBiometrics', request, response);
             const filters = await this._validator.searchFilter(request);
             const biometrics = await this._service.getUsersByBiometrics(filters);
             const message = 'Biometrics distribution retrieved successfully!';
@@ -253,7 +216,6 @@ export class StatisticsController extends BaseController {
 
     getAllYears = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Statistics.GetAllYears', request, response);
             const allYears = await this._service.getAllYears();
             const message = 'Years retrieved successfully!';
             ResponseHandler.success(request, response,message, 200, {

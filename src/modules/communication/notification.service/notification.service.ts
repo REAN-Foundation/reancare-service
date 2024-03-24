@@ -27,7 +27,7 @@ export class NotificationService {
     formatNotificationMessage = (notificationType: string, title: string, body: any, url?: string): any => {
         return this._service.formatNotificationMessage(notificationType, title, body, url);
     };
-    
+
     formatNotificationMessageWithData = (notificationType: string, title: string, body: any, customData: any): any => {
         return this._service.formatNotificationMessageWithData(notificationType, title, body, customData);
     };

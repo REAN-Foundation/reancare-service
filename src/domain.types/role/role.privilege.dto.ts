@@ -1,6 +1,9 @@
 
 export interface RolePrivilegeDto {
-    id       : string,
-    RoleId   : number;
-    Privilege: string;
+    id        : string,
+    RoleId    : number;
+    RoleName  : string;
+    Privilege : string;
+    Scope     : string;
+    Enabled   : boolean;
 }

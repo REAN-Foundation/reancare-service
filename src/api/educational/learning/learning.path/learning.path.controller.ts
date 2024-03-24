@@ -1,26 +1,20 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { LearningPathService } from '../../../../services/educational/learning/learning.path.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { LearningPathValidator } from './learning.path.validator';
-import { BaseController } from '../../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class LearningPathController extends BaseController {
+export class LearningPathController {
 
     //#region member variables and constructors
 
-    _service: LearningPathService = null;
+    _service: LearningPathService = Injector.Container.resolve(LearningPathService);
 
     _validator: LearningPathValidator = new LearningPathValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(LearningPathService);
-    }
 
     //#endregion
 
@@ -28,7 +22,6 @@ export class LearningPathController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('LearningPath.Create', request, response);
 
             const model = await this._validator.create(request);
 
@@ -48,8 +41,6 @@ export class LearningPathController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LearningPath.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const learningPath = await this._service.getById(id);
@@ -67,7 +58,6 @@ export class LearningPathController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('LearningPath.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -90,7 +80,6 @@ export class LearningPathController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('LearningPath.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -115,7 +104,6 @@ export class LearningPathController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('LearningPath.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

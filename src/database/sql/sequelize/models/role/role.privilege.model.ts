@@ -9,7 +9,8 @@ import {
     IsUUID,
     PrimaryKey,
     IsInt,
-    ForeignKey
+    ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -48,6 +49,16 @@ export default class RolePrivilege extends Model {
         allowNull : false,
     })
     RoleId: number;
+
+    @BelongsTo(() => Role)
+    Role: Role;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    IsRevoked: boolean;
 
     @Column
     @CreatedAt

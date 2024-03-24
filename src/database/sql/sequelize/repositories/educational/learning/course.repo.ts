@@ -138,7 +138,7 @@ export class CourseRepo implements ICourseRepo {
             if (updateModel.DurationInDays != null) {
                 course.DurationInDays = updateModel.DurationInDays;
             }
-         
+
             await course.save();
             return await CourseMapper.toDto(course);
 
@@ -198,7 +198,7 @@ export class CourseRepo implements ICourseRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     private addLearningPaths = async (courseId: string, learningPathIds: string[]) => {
         if (learningPathIds !== null && learningPathIds.length > 0) {
             for await (var learningPathId of learningPathIds) {
@@ -228,5 +228,5 @@ export class CourseRepo implements ICourseRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
 }

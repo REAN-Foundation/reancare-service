@@ -1,21 +1,20 @@
 import express from 'express';
 import { HospitalController } from './hospital.controller';
-import { Loader } from '../../../startup/loader';
-
+import { auth } from '../../../auth/auth.handler';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
+
     const controller = new HospitalController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/health-systems/:healthSystemId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getHospitalsForHealthSystem);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Hospital.Create'), controller.create);
+    router.get('/health-systems/:healthSystemId', auth('Hospital.GetHospitalsForHealthSystem'), controller.getHospitalsForHealthSystem);
+    router.get('/search', auth('Hospital.Search'), controller.search);
+    router.get('/:id', auth('Hospital.GetById'), controller.getById);
+    router.put('/:id', auth('Hospital.Update'), controller.update);
+    router.delete('/:id', auth('Hospital.Delete'), controller.delete);
 
     app.use('/api/v1/hospitals', router);
 };

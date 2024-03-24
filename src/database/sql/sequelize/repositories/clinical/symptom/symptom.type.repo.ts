@@ -27,7 +27,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             };
             const symptom = await SymptomType.create(entity);
             return SymptomTypeMapper.toDto(symptom);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -57,7 +57,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     search = async (filters: SymptomTypeSearchFilters): Promise<SymptomTypeSearchResults> => {
         try {
             const search = { where: {} };
@@ -65,7 +65,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             if (filters.Symptom != null) {
                 search.where['Symptom'] = { [Op.like]: '%' + filters.Symptom + '%' };
             }
-            
+
             if (filters.Tag != null) {
                 search.where['Tags'] = { [Op.like]: '%' + filters.Tag + '%' };
             }

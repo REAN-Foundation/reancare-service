@@ -1,3 +1,4 @@
+import { Settings } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
 import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { LineChartOptions, ChartColors, MultiLineChartOptions } from "../../../../modules/charts/chart.options";
@@ -9,7 +10,7 @@ import {
     chartExists,
     RECTANGULAR_CHART_HEIGHT,
     RECTANGULAR_CHART_WIDTH } from "./report.helper";
-import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.commons";
+import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +53,7 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
             value = totalChange.toFixed();
             y = addLabeledText(document, 'Total Change in Body Weight (Kg)', value, y);
 
-            value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
+            value = new Date(model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate).toLocaleDateString();
             y = addLabeledText(document, 'Last Measured Date', value, y);
         } else {
             let value = startingWeight.toFixed();
@@ -64,7 +65,7 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
             value = totalChange.toFixed();
             y = addLabeledText(document, 'Total Change in Body Weight (lbs)', value, y);
 
-            value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
+            value = new Date(model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate).toLocaleDateString();
             y = addLabeledText(document, 'Last Measured Date', value, y);
         }
         
@@ -108,7 +109,7 @@ export const addBloodPressureStats = (model: any, document: PDFKit.PDFDocument, 
         value = model.Stats.Biometrics.Last6Months.BloodPressure.TotalChangeDiastolic.toString();
         y = addLabeledText(document, 'Total Change in Diastolic BP (mmHg)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
     }
 
@@ -141,7 +142,7 @@ export const addBloodGlucoseStats = (model: any, document: PDFKit.PDFDocument, y
         value = model.Stats.Biometrics.Last6Months.BloodGlucose.TotalChange.toString();
         y = addLabeledText(document, 'Total Change in Blood Glucose (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
     }
 
@@ -157,8 +158,8 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
 
     y = addSectionTitle(document, y, sectionTitle, icon);
 
-    const exists = chartExists(model, 'HDL_Last6Months') ||
-        chartExists(model, 'LDL_Last6Months') ||
+    const exists = chartExists(model, 'HDL_Last6Months') &&
+        chartExists(model, 'LDL_Last6Months') &&
         chartExists(model, 'TotalCholesterol_Last6Months');
         //chartExists(model, 'Triglyceride_Last6Months') ||
         //chartExists(model, 'A1C_Last6Months');
@@ -178,7 +179,7 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
         value = model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.TotalCholesterolChange.toString();
         y = addLabeledText(document, 'Total change in Total Cholesterol (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.LastMeasuredChol?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.TotalCholesterol.LastMeasuredChol).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 35;
@@ -193,7 +194,7 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
         value = model.Stats.Biometrics.Last6Months.Lipids.HDL.TotalHDLChange.toString();
         y = addLabeledText(document, 'Total change in HDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.HDL.LastMeasuredHDL?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.HDL.LastMeasuredHDL).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 35;
@@ -208,7 +209,7 @@ export const addLipidStats = (model: any, document: PDFKit.PDFDocument, y: any) 
         value = model.Stats.Biometrics.Last6Months.Lipids.LDL.TotalLDLChange.toString();
         y = addLabeledText(document, 'Total change in LDL (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.LDL.LastMeasuredLDL?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.LDL.LastMeasuredLDL).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
     }
@@ -228,7 +229,7 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         //chartExists(model, 'HDL_Last6Months') ||
         //chartExists(model, 'LDL_Last6Months') ||
         //chartExists(model, 'TotalCholesterol_Last6Months') ||
-        chartExists(model, 'Triglyceride_Last6Months') ||
+        chartExists(model, 'Triglyceride_Last6Months') &&
         chartExists(model, 'A1C_Last6Months');
 
     if (!exists) {
@@ -246,7 +247,8 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         value = model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange.toString();
         y = addLabeledText(document, 'Total change in Triglyceride Level (mg/dL)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.LastMeasuredTrigly?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.TriglycerideLevel.LastMeasuredTrigly)
+            .toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 55;
@@ -261,7 +263,7 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
         value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.TotalA1CLevelChange.toString();
         y = addLabeledText(document, 'Total change in A1C Level (%)', value, y);
 
-        value = model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.LastMeasuredA1C?.toLocaleDateString();
+        value = new Date(model.Stats.Biometrics.Last6Months.Lipids.A1CLevel.LastMeasuredA1C).toLocaleDateString();
         y = addLabeledText(document, 'Last Measured Date', value, y);
 
         y = y + 53;
@@ -270,18 +272,28 @@ export const addCholStats = (model: any, document: PDFKit.PDFDocument, y: any) =
     return y;
 };
 
-export const createBiometricsCharts = async (data) => {
+export const createBiometricsCharts = async (data, reportSetting: Settings) => {
     var locations = [];
-
-    const bodyWeightLocations =
+    if (reportSetting.BodyWeight) {
+        const bodyWeightLocations =
         await createBodyWeightCharts(data.Last6Months.BodyWeight.History, data.Last6Months.BodyWeight.CountryCode);
-    locations.push(...bodyWeightLocations);
-    const bloddPressureLocations = await createBloodPressureCharts(data.Last6Months.BloodPressure.History);
-    locations.push(...bloddPressureLocations);
-    const bloodGlucoseLocations = await createBloodGlucoseCharts(data.Last6Months.BloodGlucose.History);
-    locations.push(...bloodGlucoseLocations);
-    const cholesterolLocations = await createCholesterolCharts(data.Last6Months.Lipids);
-    locations.push(...cholesterolLocations);
+        locations.push(...bodyWeightLocations);
+    }
+    
+    if (reportSetting.BloodPressure) {
+        const bloddPressureLocations = await createBloodPressureCharts(data.Last6Months.BloodPressure.History);
+        locations.push(...bloddPressureLocations);
+    }
+
+    if (reportSetting.BloodGlucose) {
+        const bloodGlucoseLocations = await createBloodGlucoseCharts(data.Last6Months.BloodGlucose.History);
+        locations.push(...bloodGlucoseLocations);
+    }
+
+    if (reportSetting.LabValues) {
+        const cholesterolLocations = await createCholesterolCharts(data.Last6Months.Lipids);
+        locations.push(...cholesterolLocations);
+    }
 
     return locations;
 };

@@ -6,6 +6,7 @@ import { PDFGenerator } from "../../../../modules/reports/pdf.generator";
 
 export type Alignment = "left" | "right" | "center";
 export const SECOND_COLUMN_START = 310;
+export const FIRST_COLUMN_START = 50;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +23,7 @@ export function addTop(document: any, model: any, title: string = null, addToNew
     const headerTitle = title ?? model.ReportTitle;
     y = addHeader(document, headerTitle, y, model.HeaderImagePath);
     y = addReportDate(y, document, model);
+    // addFooter(document, "https://www.heart.org/", model.FooterImagePath);
     return y;
 }
 
@@ -223,6 +225,44 @@ export const addLabeledEntry = (
         .moveDown();
 };
 
+export const addFirstColumnSectionTitle1 = (
+    document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null, columSequence: number): number => {
+    y = y + 14;
+
+    document
+        .roundedRect(((columSequence % 2) ? 310 : 50), y, 230, 35, 2)
+        .lineWidth(0.1)
+        .fillOpacity(0.8)
+        .fill("#e8ecef");
+
+    y = y + 10;
+
+    if (icon) {
+        document.image(icon, 65, y, { width: 16 });
+    }
+
+    y = y + 4;
+
+    document
+        .fillOpacity(1.0)
+        .lineWidth(1)
+        .fill("#444444");
+
+    document
+        .fillColor("#444444")
+        .font('Helvetica')
+        .fontSize(12);
+
+    document
+        .font('Helvetica-Bold')
+        .text(pageTitle, 92, y, { align: "left" })
+        .moveDown();
+
+    y = y + 17;
+
+    return y;
+};
+
 export const addFirstColumnSectionTitle = (
     document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
     y = y + 14;
@@ -260,7 +300,6 @@ export const addFirstColumnSectionTitle = (
 
     return y;
 };
-
 export const addSecondColumnSectionTitle = (
     document: PDFKit.PDFDocument, y: number, pageTitle: string, icon: string = null): number => {
     y = y + 14;
@@ -325,7 +364,8 @@ export const addNoDataDisplayFirstColumn = (document: PDFKit.PDFDocument, y: num
         .text("Data not available!", 65, y, { align: "left" })
         .moveDown();
 
-    y = y + 120;
+    // y = y + 120;
+    y = y + 25;
 
     return y;
 };
@@ -353,6 +393,37 @@ export const addNoDataDisplaySecondColumn = (document: PDFKit.PDFDocument, y: nu
     document
         .font('Helvetica-Bold')
         .text("Data not available!", SECOND_COLUMN_START + 10, y, { align: "left" })
+        .moveDown();
+
+    // y = y + 120;
+    y = y + 25;
+
+    return y;
+};
+
+export const addNoDataDisplaySecondColumn1 = (document: PDFKit.PDFDocument, y: number, columSequence: number): number => {
+    y = y + 60;
+
+    document
+        .roundedRect(((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START), y, 200, 35, 2)
+        .lineWidth(0.1)
+        .fillOpacity(0.8)
+        .fill(ChartColors.Salmon);
+
+    y = y + 13;
+
+    document
+        .fillOpacity(1.0)
+        .fill("#444444");
+
+    document
+        .fillColor("#444444")
+        .font('Helvetica')
+        .fontSize(10);
+
+    document
+        .font('Helvetica-Bold')
+        .text("Data not available!", ((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START) + 10, y, { align: "left" })
         .moveDown();
 
     y = y + 120;

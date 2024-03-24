@@ -27,6 +27,8 @@ export interface IFileResourceRepo {
 
     getVersionNames(id: string): Promise<string[]>;
 
+    isPublicResource(id: string): Promise<boolean>;
+
     search(filters: FileResourceSearchFilters): Promise<FileResourceSearchResults>;
 
     rename(id: string, newFileName: string): Promise<boolean>;

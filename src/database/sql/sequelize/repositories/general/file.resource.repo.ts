@@ -75,6 +75,14 @@ export class FileResourceRepo implements IFileResourceRepo {
         return dto;
     };
 
+    isPublicResource = async (id: string): Promise<boolean> => {
+        const resource = await FileResource.findByPk(id);
+        if (resource == null) {
+            return false;
+        }
+        return resource.IsPublicResource;
+    };
+
     update = async (id: string, model: FileResourceUpdateModel): Promise<FileResourceDetailsDto> => {
 
         var references: FileResourceReference[] = [];

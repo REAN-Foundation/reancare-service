@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { MeditationController } from './meditation.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -8,14 +8,13 @@ import { MeditationController } from './meditation.controller';
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new MeditationController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth('Wellness.Exercise.Meditation.Create'), controller.create);
+    router.get('/search', auth('Wellness.Exercise.Meditation.Search'), controller.search);
+    router.get('/:id', auth('Wellness.Exercise.Meditation.GetById'), controller.getById);
+    router.put('/:id', auth('Wellness.Exercise.Meditation.Update'), controller.update);
+    router.delete('/:id', auth('Wellness.Exercise.Meditation.Delete'), controller.delete);
 
     app.use('/api/v1/wellness/exercise/meditations', router);
 };

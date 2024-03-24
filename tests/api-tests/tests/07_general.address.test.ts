@@ -20,7 +20,7 @@ describe('07 - Address tests', function() {
             .post(`/api/v1/addresses/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Address.id, 'AddressId_1');
@@ -56,7 +56,7 @@ describe('07 - Address tests', function() {
             .get(`/api/v1/addresses/${getTestData('AddressId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Address).to.have.property('id');
                 expect(response.body.Data.Address).to.have.property('Type');
@@ -87,7 +87,7 @@ describe('07 - Address tests', function() {
             .get(`/api/v1/addresses/search${loadAddressQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Addresses).to.have.property('TotalCount');
                 expect(response.body.Data.Addresses).to.have.property('RetrievedCount');
@@ -108,7 +108,7 @@ describe('07 - Address tests', function() {
             .put(`/api/v1/addresses/${getTestData('AddressId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.Address).to.have.property('id');
@@ -142,7 +142,7 @@ describe('07 - Address tests', function() {
             .delete(`/api/v1/addresses/${getTestData('AddressId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -157,7 +157,7 @@ describe('07 - Address tests', function() {
             .post(`/api/v1/addresses/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Address.id, 'AddressId');
@@ -194,7 +194,7 @@ describe('07 - Address tests', function() {
         agent
             .post(`/api/v1/addresses/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -209,7 +209,7 @@ describe('07 - Address tests', function() {
             .get(`/api/v1/addresses/${getTestData('AddressId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -224,7 +224,7 @@ describe('07 - Address tests', function() {
         agent
             .put(`/api/v1/addresses/${getTestData('AddressId')}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

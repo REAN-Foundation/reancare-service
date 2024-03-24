@@ -436,7 +436,7 @@ export class ReminderValidator extends BaseValidator {
         if (date == null || date.toString() === 'Invalid Date') {
             throw new InputValidationError(["Invalid When-Date value!"]);
         }
-        const dt = TimeHelper.subtractDuration(new Date(), 1, DurationType.Day);
+        const dt = TimeHelper.subtractDuration(new Date(), 2, DurationType.Day);
         if (dt > date) {
             throw new InputValidationError(["When-Date cannot be in the past!"]);
         }

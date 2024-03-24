@@ -209,7 +209,8 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
                 where : {
                     Schedule : {
                         [Op.between] : [from, to]
-                    }
+                    },
+                    IsDelivered : false
                 },
                 include : [
                     {

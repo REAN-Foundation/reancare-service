@@ -116,7 +116,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['Reminders'], () => {
             (async () => {
                 Logger.instance().log('Running scheducled jobs: Reminders...');
-                const nextMinutes = 15;
+                const nextMinutes = 14;
                 await ReminderSenderService.sendReminders(nextMinutes);
             })();
         });

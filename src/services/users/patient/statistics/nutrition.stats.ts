@@ -16,7 +16,7 @@ export const addNutritionQuestionnaire = (document, model, y) => {
 
     const titleColor = '#505050';
     let chartImage = 'Nutrition_CaloriesConsumed_LastMonth';
-    let detailedTitle = 'Calorie Consumption for Last Month';
+    let detailedTitle = `Calorie Consumption for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     let sectionTitle = 'Food and Nutrition - Calories';
     let icon = Helper.getIconsPath('nutrition.png');
 
@@ -57,7 +57,7 @@ export const addNutritionQuestionnaire = (document, model, y) => {
 export const addNutritionServingsStats = (document, model, y) => {
 
     const chartImage = 'Nutrition_Servings_LastMonth';
-    const detailedTitle = 'Servings History for Last Month';
+    const detailedTitle = `Servings History for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Food and Nutrition - Servings';
 

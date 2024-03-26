@@ -20,7 +20,7 @@ export const addMedicationStats = (document, model, y) => {
     const titleColor = '#505050';
     const legend = getMedicationStatusCategoryColors();
     let chartImage = 'MedicationsOverall_LastMonth';
-    const title = 'Medication Adherence for Last Month';
+    const title = `Medication Adherence for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     if (!chartExists(model, chartImage)) {
         y = addNoDataDisplay(document, y);
     } else {
@@ -30,7 +30,7 @@ export const addMedicationStats = (document, model, y) => {
     y = y + 7;
 
     chartImage = 'MedicationsHistory_LastMonth';
-    const detailedTitle = 'Medication History for Last Month';
+    const detailedTitle = `Medication History for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const sectionTitle = 'Medication History';
     const icon = Helper.getIconsPath('medications.png');
 

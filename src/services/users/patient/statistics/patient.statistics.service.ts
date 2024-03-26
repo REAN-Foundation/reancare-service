@@ -331,8 +331,10 @@ export class PatientStatisticsService {
         //Daily assessments
         let dailyAssessmentTrend = null;
         if (reportSetting.MoodAndSymptoms) {
-            const dailyAssessmentsLast6Months = await this._dailyAssessmentRepo.getStats(patientUserId, 6);
-            const dailyAssessmentsLastMonth = await this._dailyAssessmentRepo.getStats(patientUserId, 1);
+            const dailyAssessmentsLast6Months =
+            await this._dailyAssessmentRepo.getStats(patientUserId, reportSetting.ReportFrequency);
+            const dailyAssessmentsLastMonth =
+            await this._dailyAssessmentRepo.getStats(patientUserId, reportSetting.ReportFrequency);
             dailyAssessmentTrend = {
                 Last6Months : dailyAssessmentsLast6Months,
                 LastMonth   : dailyAssessmentsLastMonth,
@@ -342,8 +344,9 @@ export class PatientStatisticsService {
         //Sleep trend
         let sleepTrend = null;
         if (reportSetting.SleepHistory) {
-            const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
-            const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 3);
+            const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, reportSetting.ReportFrequency);
+            // const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, reportSetting.ReportFrequency);
+            const sleepStatsForLast6Months = sleepStatsForLastMonth;
             const sumSleepHours = sleepStatsForLast6Months.reduce((acc, x) => acc + x.SleepDuration, 0);
             var i = 0;
             if (sleepStatsForLast6Months.length > 0) {
@@ -365,7 +368,7 @@ export class PatientStatisticsService {
         //Medication trends
         let medicationTrend = null;
         if (reportSetting.MedicationAdherence) {
-            const medsLastMonth = await this._medicationConsumptionRepo.getStats(patientUserId, 1);
+            const medsLastMonth = await this._medicationConsumptionRepo.getStats(patientUserId, numDays);
             const currentMedications = await this._medicationRepo.getCurrentMedications(patientUserId);
             medicationTrend = {
                 LastMonth          : medsLastMonth,
@@ -376,8 +379,8 @@ export class PatientStatisticsService {
         //User engagement
         let userTasksTrend = null;
         if (reportSetting.DailyTaskStatus) {
-            const userTasksForLastMonth = await this._userTaskRepo.getStats(patientUserId, 1);
-            const userEngagementForLast6Months = await this._userTaskRepo.getUserEngagementStats(patientUserId, 6);
+            const userTasksForLastMonth = await this._userTaskRepo.getStats(patientUserId, numDays);
+            const userEngagementForLast6Months = await this._userTaskRepo.getUserEngagementStats(patientUserId, numDays);
             userTasksTrend = {
                 LastMonth   : userTasksForLastMonth,
                 Last6Months : userEngagementForLast6Months,
@@ -604,7 +607,7 @@ export class PatientStatisticsService {
             reportModel.TotalPages = 7;
             reportModel.HeaderImagePath = './assets/images/AHA_header_2.png';
             reportModel.FooterImagePath = './assets/images/AHA_footer_1.png';
-            
+            reportModel['ReportFrequency'] = reportSettings.ReportFrequency;
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             reportModel.TotalPages = 11;
@@ -736,7 +739,7 @@ export class PatientStatisticsService {
     };
 
     private addSummaryPage = (document, model, reportSettings) => {
-        var y = addTop(document, model, 'Summary over Last 30 Days');
+        var y = addTop(document, model, `Summary over Last ${Helper.frequencyToDays(reportSettings.ReportFrequency)}`);
         addSummaryGraphs(model, document, y, reportSettings);
         addFooter(document, '', model.FooterImagePath);
     };

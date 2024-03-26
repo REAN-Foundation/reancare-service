@@ -784,30 +784,45 @@ export class Helper {
     };
 
     public static frequencyToDuration = (frequency: ReportFrequency): number => {
-        if (frequency === ReportFrequency.WEEK) {
+        if (frequency === ReportFrequency.Week) {
             return 1;
         }
-        if (frequency === ReportFrequency.MONTH) {
+        if (frequency === ReportFrequency.Month) {
             return 1;
         }
-        if (frequency === ReportFrequency.SIXMONTH) {
+        if (frequency === ReportFrequency.SixMonth) {
             return 6;
         }
-        if (frequency === ReportFrequency.YEAR) {
+        if (frequency === ReportFrequency.Year) {
             return 1;
         }
     };
 
     public static frequencyToDurationType = (frequency: ReportFrequency): DurationType => {
-        if (frequency === ReportFrequency.WEEK) {
+        if (frequency === ReportFrequency.Week) {
             return DurationType.Week;
         }
-        if (frequency === ReportFrequency.MONTH || frequency === ReportFrequency.SIXMONTH) {
+        if (frequency === ReportFrequency.Month || frequency === ReportFrequency.SixMonth) {
             return DurationType.Month;
         }
-        if (frequency === ReportFrequency.YEAR) {
+        if (frequency === ReportFrequency.Year) {
             return DurationType.Year;
         }
     };
+
+    public static frequencyToDays(frequency: ReportFrequency):string {
+        if (frequency === ReportFrequency.Week) {
+            return '7 Days';
+        }
+        if (frequency === ReportFrequency.Month) {
+            return 'Month';
+        }
+        if (frequency === ReportFrequency.SixMonth) {
+            return '6 Months';
+        }
+        if (frequency === ReportFrequency.Year) {
+            return ' Year';
+        }
+    }
 
 }

@@ -17,20 +17,20 @@ import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
     const chartImage = 'BodyWeight_Last6Months';
-    var detailedTitle = 'Body Weight (Kg) Trend Over 6 Months';
+    var detailedTitle = `Body Weight (Kg) Trend Over ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Body Weight';
 
     const icon = Helper.getIconsPath('body-weight.png');
     y = addSectionTitle(document, y, sectionTitle, icon);
 
-    var detailedTitle = 'Body Weight (lbs) Trend Over 6 Months';
+    var detailedTitle = `Body Weight (lbs) Trend Over ${Helper.frequencyToDays(model.ReportFrequency)}`;
     var startingWeight = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight * 2.20462;
     var currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight * 2.20462;
     var totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange * 2.20462;
 
     if (model.Stats.CountryCode === '+91'){
-        detailedTitle = 'Body Weight (Kg) Trend Over 6 Months';
+        detailedTitle = `Body Weight (Kg) Trend Over ${Helper.frequencyToDays(model.ReportFrequency)}`;
         startingWeight = model.Stats.Biometrics.Last6Months.BodyWeight.StartingBodyWeight;
         currentWeight = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight;
         totalChange = model.Stats.Biometrics.Last6Months.BodyWeight.TotalChange;
@@ -77,7 +77,7 @@ export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: 
 export const addBloodPressureStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
     const chartImage = 'BloodPressure_Last6Months';
-    const detailedTitle = 'Blood Pressure Trend Over 6 Months';
+    const detailedTitle = `Blood Pressure Trend Over ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Blood Pressure';
     const icon = Helper.getIconsPath('blood-pressure.png');
@@ -119,7 +119,7 @@ export const addBloodPressureStats = (model: any, document: PDFKit.PDFDocument, 
 export const addBloodGlucoseStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
     const chartImage = 'BloodGlucose_Last6Months';
-    const detailedTitle = 'Blood Glucose Trend Over 6 Months';
+    const detailedTitle = `Blood Glucose Trend Over ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Blood Glucose';
     const icon = Helper.getIconsPath('blood-sugar.png');

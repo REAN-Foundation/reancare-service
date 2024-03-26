@@ -56,9 +56,9 @@ export const addUserTasksStats = (document, model, y) => {
         y = y + 23;
         y = addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor, 165, 225);
         y = y + 23;
-        let value = model.Stats.UserEngagement.Last6Months.Finished.toFixed();
+        let value = model.Stats.UserEngagement.UserEngagementStats.Finished.toFixed();
         y = addLabeledText(document, 'Finished Tasks', value, y);
-        value = model.Stats.UserEngagement.Last6Months.Unfinished.toFixed();
+        value = model.Stats.UserEngagement.UserEngagementStats.Unfinished.toFixed();
         y = addLabeledText(document, 'Unfinished Tasks', value, y);
     }
 
@@ -77,17 +77,17 @@ export const addUserTasksStats = (document, model, y) => {
 export const createUserTaskCharts = async (data) => {
     var locations = [];
 
-    let location = await createUserTasks_StackedBarChart(data.LastMonth.TaskStats, 'UserTasks_LastMonth');
+    let location = await createUserTasks_StackedBarChart(data.UserTasksStats.TaskStats, 'UserTasks_LastMonth');
     locations.push({
         key : 'UserTasks_LastMonth',
         location
     });
-    location = await createUserEngagement_DonutChart(data.Last6Months, 'UserEngagement_Last6Months');
+    location = await createUserEngagement_DonutChart(data.UserEngagementStats, 'UserEngagement_Last6Months');
     locations.push({
         key : 'UserEngagement_Last6Months',
         location
     });
-    location = await createUserEngagement_CircularProgress(data.Last6Months, 'UserEngagementRatio_Last6Months');
+    location = await createUserEngagement_CircularProgress(data.UserEngagementStats, 'UserEngagementRatio_Last6Months');
     locations.push({
         key : 'UserEngagementRatio_Last6Months',
         location

@@ -266,18 +266,18 @@ export class PatientStatisticsService {
         //Nutrition
         let nutrition = null;
         if (reportSetting.FoodAndNutrition) {
-            const nutritionLastMonth = await this._foodConsumptionRepo.getStats(patientUserId, numDays);
+            const nutritionStats = await this._foodConsumptionRepo.getStats(patientUserId, numDays);
             nutrition = {
-                LastMonth : nutritionLastMonth,
+                Stats : nutritionStats,
             };
         }
 
         //Physical activity
         let physicalActivityTrend = null;
         if (reportSetting.ExerciseAndPhysicalActivity) {
-            const exerciseLastMonth = await this._physicalActivityRepo.getStats(patientUserId, numDays);
+            const exerciseStats = await this._physicalActivityRepo.getStats(patientUserId, numDays);
             physicalActivityTrend = {
-                LastMonth : exerciseLastMonth,
+                Stats : exerciseStats,
             };
         }
 
@@ -303,13 +303,11 @@ export class PatientStatisticsService {
 
         let biometrics = null;
         if (reportSetting.LabValues || reportSetting.BodyWeight || reportSetting.BloodPressure) {
-            const last6MonthsLabStats =
+            const stats =
             await this.getLabValueStats(patientUserId, countryCode, reportSetting.ReportFrequency);
-            // const lastMonthLabStats = await this.getLabValueStats(patientUserId, countryCode, 1);
-    
+       
             biometrics = {
-                Last6Months : last6MonthsLabStats,
-                LastMonth   : last6MonthsLabStats,
+                Stats : stats
             };
         }
 
@@ -331,36 +329,30 @@ export class PatientStatisticsService {
         //Daily assessments
         let dailyAssessmentTrend = null;
         if (reportSetting.MoodAndSymptoms) {
-            const dailyAssessmentsLast6Months =
-            await this._dailyAssessmentRepo.getStats(patientUserId, reportSetting.ReportFrequency);
-            const dailyAssessmentsLastMonth =
+            const dailyAssessmentsStats =
             await this._dailyAssessmentRepo.getStats(patientUserId, reportSetting.ReportFrequency);
             dailyAssessmentTrend = {
-                Last6Months : dailyAssessmentsLast6Months,
-                LastMonth   : dailyAssessmentsLastMonth,
+                Stats : dailyAssessmentsStats
             };
         }
 
         //Sleep trend
         let sleepTrend = null;
         if (reportSetting.SleepHistory) {
-            const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, reportSetting.ReportFrequency);
-            // const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, reportSetting.ReportFrequency);
-            const sleepStatsForLast6Months = sleepStatsForLastMonth;
-            const sumSleepHours = sleepStatsForLast6Months.reduce((acc, x) => acc + x.SleepDuration, 0);
+            const sleepStats = await this._sleepRepo.getStats(patientUserId, reportSetting.ReportFrequency);
+            const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
             var i = 0;
-            if (sleepStatsForLast6Months.length > 0) {
-                for await (var s of sleepStatsForLast6Months) {
+            if (sleepStats.length > 0) {
+                for await (var s of sleepStats) {
                     if (s.SleepDuration !== 0) {
                         i = i + 1;
                     }
                 }
             }
-            const averageSleepHours = sleepStatsForLast6Months.length === 0 ? null : sumSleepHours / i;
+            const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / i;
             const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
             sleepTrend = {
-                LastMonth           : sleepStatsForLastMonth,
-                Last6Months         : sleepStatsForLast6Months,
+                Stats               : sleepStats,
                 AverageForLastMonth : averageSleepHoursStr,
             };
         }
@@ -368,10 +360,10 @@ export class PatientStatisticsService {
         //Medication trends
         let medicationTrend = null;
         if (reportSetting.MedicationAdherence) {
-            const medsLastMonth = await this._medicationConsumptionRepo.getStats(patientUserId, numDays);
+            const medsStats = await this._medicationConsumptionRepo.getStats(patientUserId, numDays);
             const currentMedications = await this._medicationRepo.getCurrentMedications(patientUserId);
             medicationTrend = {
-                LastMonth          : medsLastMonth,
+                Stats              : medsStats,
                 CurrentMedications : currentMedications,
             };
         }
@@ -379,11 +371,11 @@ export class PatientStatisticsService {
         //User engagement
         let userTasksTrend = null;
         if (reportSetting.DailyTaskStatus) {
-            const userTasksForLastMonth = await this._userTaskRepo.getStats(patientUserId, numDays);
-            const userEngagementForLast6Months = await this._userTaskRepo.getUserEngagementStats(patientUserId, numDays);
+            const userTasksStats = await this._userTaskRepo.getStats(patientUserId, numDays);
+            const userEngagementStats = await this._userTaskRepo.getUserEngagementStats(patientUserId, numDays);
             userTasksTrend = {
-                LastMonth   : userTasksForLastMonth,
-                Last6Months : userEngagementForLast6Months,
+                UserTasksStats      : userTasksStats,
+                UserEngagementStats : userEngagementStats
             };
         }
 

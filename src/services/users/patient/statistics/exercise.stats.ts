@@ -92,7 +92,7 @@ export const createPhysicalActivityCharts = async (data) => {
     //     location
     // });
 
-    location = await createExerciseQuestions_DonutChart(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_Overall_LastMonth');
+    location = await createExerciseQuestions_DonutChart(data.Stats.QuestionnaireStats.Stats, 'Exercise_Questionnaire_Overall_LastMonth');
     locations.push({
         key : 'Exercise_Questionnaire_Overall_LastMonth',
         location

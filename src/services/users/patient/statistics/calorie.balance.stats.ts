@@ -94,8 +94,8 @@ const getCalorieBalanceColors = () => {
 
 const getCalorieBalanceStats = (stats) => {
     const balance = [];
-    const nutrition = stats.Nutrition?.LastMonth?.CalorieStats;
-    const exercise = stats.PhysicalActivity?.LastMonth?.CalorieStats;
+    const nutrition = stats.Nutrition?.Stats?.CalorieStats;
+    const exercise = stats.PhysicalActivity?.Stats?.CalorieStats;
     if (!nutrition || nutrition.length === 0) {
         return [];
     }

@@ -83,17 +83,17 @@ const addMoodsStats = (
 export const createDailyAssessentCharts = async (data) => {
     var locations = [];
 
-    let location = await createFeelings_DonutChart(data.Last6Months, 'DailyAssessments_Feelings_Last6Months');
+    let location = await createFeelings_DonutChart(data.Stats, 'DailyAssessments_Feelings_Last6Months');
     locations.push({
         key : 'DailyAssessments_Feelings_Last6Months',
         location
     });
-    location = await createMoods_DonutChart(data.Last6Months, 'DailyAssessments_Moods_Last6Months');
+    location = await createMoods_DonutChart(data.Stats, 'DailyAssessments_Moods_Last6Months');
     locations.push({
         key : 'DailyAssessments_Moods_Last6Months',
         location
     });
-    location = await createEnergyLevels_BubbleChart(data.Last6Months, 'DailyAssessments_EnergyLevels_Last6Months');
+    location = await createEnergyLevels_BubbleChart(data.Stats, 'DailyAssessments_EnergyLevels_Last6Months');
     locations.push({
         key : 'DailyAssessments_EnergyLevels_Last6Months',
         location

@@ -32,17 +32,17 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 
     var useBodyWeightKg = false;
-    var startingWeight = model.Stats.Biometrics.LastMonth.BodyWeight.StartingBodyWeight;
-    var currentWeight = model.Stats.Biometrics.LastMonth.BodyWeight.CurrentBodyWeight;
-    var totalChange = model.Stats.Biometrics.LastMonth.BodyWeight.TotalChange;
+    var startingWeight = model.Stats.Biometrics.Stats.BodyWeight.StartingBodyWeight;
+    var currentWeight = model.Stats.Biometrics.Stats.BodyWeight.CurrentBodyWeight;
+    var totalChange = model.Stats.Biometrics.Stats.BodyWeight.TotalChange;
     if (model.Stats.CountryCode !== '+91'){
         useBodyWeightKg = true;
-        startingWeight = model.Stats.Biometrics.LastMonth.BodyWeight.StartingBodyWeight * 2.20462;
-        currentWeight = model.Stats.Biometrics.LastMonth.BodyWeight.CurrentBodyWeight * 2.20462;
-        totalChange = model.Stats.Biometrics.LastMonth.BodyWeight.TotalChange * 2.20462;
+        startingWeight = model.Stats.Biometrics.Stats.BodyWeight.StartingBodyWeight * 2.20462;
+        currentWeight = model.Stats.Biometrics.Stats.BodyWeight.CurrentBodyWeight * 2.20462;
+        totalChange = model.Stats.Biometrics.Stats.BodyWeight.TotalChange * 2.20462;
     }
 
-    const labValues = model.Stats.Biometrics.LastMonth;
+    const labValues = model.Stats.Biometrics.Stats;
 
     var useLpaUnit = false;
     if (labValues.Lipids.Lpa.Unit !== 'mg/dL') {
@@ -212,7 +212,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     var locations = [];
     let location;
     if (reportSetting.SleepHistory) {
-        location = await createSleep_BarChart(data?.Sleep?.LastMonth, 'SleepSummary_LastMonth');
+        location = await createSleep_BarChart(data?.Sleep?.Stats, 'SleepSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'SleepSummary_LastMonth',
@@ -222,7 +222,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     }
 
     if (reportSetting.MedicationAdherence) {
-        location = await createMedicationConsumption_DonutChart(data?.Medication?.LastMonth?.Daily, 'MedicationsSummary_LastMonth');
+        location = await createMedicationConsumption_DonutChart(data?.Medication?.Stats?.Daily, 'MedicationsSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'MedicationsSummary_LastMonth',
@@ -232,7 +232,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     }
 
     if (reportSetting.BodyWeight) {
-        location = await createBodyWeight_LineChart(data?.Biometrics?.LastMonth?.BodyWeight?.History, 'BodyWeightSummary_LastMonth', data.Biometrics.LastMonth.BodyWeight.CountryCode);
+        location = await createBodyWeight_LineChart(data?.Biometrics?.Stats?.BodyWeight?.History, 'BodyWeightSummary_LastMonth', data.Biometrics.Stats.BodyWeight.CountryCode);
         if (location) {
             locations.push({
                 key : 'BodyWeightSummary_LastMonth',
@@ -242,7 +242,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     }
 
     if (reportSetting.FoodAndNutrition) {
-        location = await createNutritionQueryForMonth_GroupedBarChart(data?.Nutrition?.LastMonth?.QuestionnaireStats, 'NutritionQuestionSummary_LastMonth');
+        location = await createNutritionQueryForMonth_GroupedBarChart(data?.Nutrition?.Stats?.QuestionnaireStats, 'NutritionQuestionSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'NutritionQuestionSummary_LastMonth',
@@ -252,7 +252,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     }
 
     if (reportSetting.MoodAndSymptoms) {
-        location = await createFeelings_DonutChart(data?.DailyAssessent?.LastMonth, 'SymptomsSummary_LastMonth');
+        location = await createFeelings_DonutChart(data?.DailyAssessent?.Stats, 'SymptomsSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'SymptomsSummary_LastMonth',
@@ -263,7 +263,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
 
     if (reportSetting.MoodAndSymptoms) {
         location = await createMoodsSummaryChart_HorizontalBarChart(
-            data?.DailyAssessent?.LastMonth, 'MoodsSummary_LastMonth');
+            data?.DailyAssessent?.Stats, 'MoodsSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'MoodsSummary_LastMonth',

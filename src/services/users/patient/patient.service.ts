@@ -34,6 +34,7 @@ export class PatientService {
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
+        
     ) {
         if (ConfigurationManager.EhrEnabled()) {
             this._ehrPatientStore = Injector.Container.resolve(PatientStore);
@@ -151,7 +152,7 @@ export class PatientService {
             }
             return null;
         };
-
+   
     //#endregion
 
     //#region Privates
@@ -195,7 +196,7 @@ export class PatientService {
         dto.ImageResourceId = user.Person.ImageResourceId;
         return dto;
     };
-
+    
     //#endregion
 
 }

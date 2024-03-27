@@ -351,7 +351,7 @@ export class PatientController extends BaseUserController {
     }
 
     private deleteAndCreateFutureMedicationSchedules = async (patientUserId: string): Promise<boolean> => {
-        var medications = await this._medicationService.getByPatientUserId(patientUserId);
+        var medications = await this._medicationService.getCurrentMedications(patientUserId);
         for await ( var m of medications) {
             if (m.FrequencyUnit !== 'Other') {
                 var deletedMedicationCount = await this._medicationConsumptionService.deleteFutureMedicationSchedules(m.id);

@@ -629,8 +629,7 @@ export class UserService {
                 LabValues                   : true,
                 ExerciseAndPhysicalActivity : true,
                 FoodAndNutrition            : true,
-                DailyTaskStatus             : true,
-                MoodAndSymptoms             : true
+                DailyTaskStatus             : true
             }
         };
         

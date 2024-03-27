@@ -259,7 +259,6 @@ export class PatientStatisticsService {
         ExerciseAndPhysicalActivity : true,
         FoodAndNutrition            : true,
         DailyTaskStatus             : true,
-        MoodAndSymptoms             : true,
     }) => {
         
         const numDays = this.frequenctToDays(reportSetting.ReportFrequency);
@@ -327,14 +326,14 @@ export class PatientStatisticsService {
                 Helper.calculateBMI(currentHeight, heightUnits, currentWeight, weightUnits);
 
         //Daily assessments
-        let dailyAssessmentTrend = null;
+        /*let dailyAssessmentTrend = null;
         if (reportSetting.MoodAndSymptoms) {
             const dailyAssessmentsStats =
             await this._dailyAssessmentRepo.getStats(patientUserId, reportSetting.ReportFrequency);
             dailyAssessmentTrend = {
                 Stats : dailyAssessmentsStats
             };
-        }
+        }*/
 
         //Sleep trend
         let sleepTrend = null;
@@ -415,7 +414,6 @@ export class PatientStatisticsService {
             Biometrics       : biometrics,
             Sleep            : sleepTrend,
             Medication       : medicationTrend,
-            DailyAssessent   : dailyAssessmentTrend,
             UserEngagement   : userTasksTrend,
             Careplan         : careplanStats,
         };
@@ -609,7 +607,6 @@ export class PatientStatisticsService {
                                     reportSettings.MedicationAdherence ||
                                     reportSettings.BodyWeight ||
                                     reportSettings.FoodAndNutrition ||
-                                    reportSettings.MoodAndSymptoms ||
                                     reportSettings.ExerciseAndPhysicalActivity;
             if (isOptionsEnabled) {
                 this.addSummaryPage(document, reportModel, reportSettings);
@@ -632,9 +629,9 @@ export class PatientStatisticsService {
                 this.addNutritionPageA(document, reportModel);
             }
 
-            if (reportSettings.MoodAndSymptoms) {
+            /*if (reportSettings.MoodAndSymptoms) {
                 this.addDailyAssessmentPage(document, reportModel);
-            }
+            }*/
             
             if  (reportSettings.DailyTaskStatus) {
                 this.addUserEngagementPage(document, reportModel);
@@ -680,10 +677,12 @@ export class PatientStatisticsService {
             imageLocations = await createMedicationTrendCharts(reportModel.Stats.Medication);
             chartImagePaths.push(...imageLocations);
         }
-        if (reportSetting.MoodAndSymptoms) {
+
+        /*if (reportSetting.MoodAndSymptoms) {
             imageLocations = await createDailyAssessentCharts(reportModel.Stats.DailyAssessent);
             chartImagePaths.push(...imageLocations);
-        }
+        }*/
+        
         if (reportSetting.DailyTaskStatus) {
             imageLocations = await createUserTaskCharts(reportModel.Stats.UserEngagement);
             chartImagePaths.push(...imageLocations);

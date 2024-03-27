@@ -187,7 +187,8 @@ export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: an
     } else {
         yFrozen = y;
     }
-    if (reportSettings.MoodAndSymptoms) {
+
+    /* if (reportSettings.MoodAndSymptoms) {
         if (!(columSequence % 2) && isLabValue) {
             y = yOfLabValues;
             yFrozen = y;
@@ -210,7 +211,7 @@ export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: an
         }
         y = addMoodsSummary(y, document, model, columSequence);
         columSequence += 1;
-    }
+    }*/
     return y;
 };
 
@@ -257,7 +258,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
         }
     }
 
-    if (reportSetting.MoodAndSymptoms) {
+    /*if (reportSetting.MoodAndSymptoms) {
         location = await createFeelings_DonutChart(data?.DailyAssessent?.Stats, 'SymptomsSummary_LastMonth');
         if (location) {
             locations.push({
@@ -276,7 +277,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
                 location
             });
         }
-    }
+    }*/
 
     return locations;
 };

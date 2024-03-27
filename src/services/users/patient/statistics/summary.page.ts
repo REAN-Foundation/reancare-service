@@ -2,7 +2,7 @@ import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { BarChartOptions, ChartColors, LineChartOptions, MultiBarChartOptions } from "../../../../modules/charts/chart.options";
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
-import { createFeelings_DonutChart, getFeelingsColors } from "./daily.assessments.stats";
+import { getFeelingsColors } from "./daily.assessments.stats";
 import { createMedicationConsumption_DonutChart } from "./medication.stats";
 import { getNutritionQuestionCategoryColors } from "./nutrition.stats";
 import {

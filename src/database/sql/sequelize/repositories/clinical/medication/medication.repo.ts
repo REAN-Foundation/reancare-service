@@ -59,6 +59,21 @@ export class MedicationRepo implements IMedicationRepo {
         }
     };
 
+    getByPatientUserId = async (patientUserId: string): Promise<MedicationDto[]> => {
+        try {
+            const medications = await Medication.findAll({
+                where : {
+                    PatientUserId : patientUserId
+                }
+            });
+            return medications.map(x => MedicationMapper.toDto(x));
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     getCurrentMedications = async (patientUserId: string): Promise<MedicationDto[]> => {
         try {
 

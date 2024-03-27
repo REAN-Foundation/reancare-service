@@ -112,10 +112,10 @@ export class PersonRepo implements IPersonRepo {
         try {
             const entity = {
                 Prefix                    : personDomainModel.Prefix ?? '',
-                FirstName                 : personDomainModel.FirstName,
+                FirstName                 : personDomainModel.FirstName ?? null,
                 MiddleName                : personDomainModel.MiddleName ?? null,
-                LastName                  : personDomainModel.LastName,
-                Phone                     : personDomainModel.Phone,
+                LastName                  : personDomainModel.LastName ?? null,
+                Phone                     : personDomainModel.Phone ?? null,
                 Email                     : personDomainModel.Email ?? null,
                 TelegramChatId            : personDomainModel.TelegramChatId ?? null,
                 Gender                    : personDomainModel.Gender ?? 'Unknown',
@@ -124,7 +124,7 @@ export class PersonRepo implements IPersonRepo {
                 Race                      : personDomainModel.Race ?? null,
                 Ethnicity                 : personDomainModel.Ethnicity ?? null,
                 BirthDate                 : personDomainModel.BirthDate ?? null,
-                Age                       : personDomainModel.Age,
+                Age                       : personDomainModel.Age ?? null,
                 StrokeSurvivorOrCaregiver : personDomainModel.StrokeSurvivorOrCaregiver ?? null,
                 LivingAlone               : personDomainModel.LivingAlone ?? null,
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke ?? null,

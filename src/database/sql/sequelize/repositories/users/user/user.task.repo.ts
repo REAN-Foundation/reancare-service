@@ -489,9 +489,9 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
         try {
-            const numDays = 30 * numMonths;
+            // const numDays = 30 * numMonths;
             const { stats, totalFinished, totalUnfinished } = await this.getDayByDayStats(patientUserId, numDays);
             return {
                 TaskStats       : stats,
@@ -504,9 +504,9 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
-    getUserEngagementStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getUserEngagementStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
         try {
-            const numDays = 30 * numMonths;
+            // const numDays = 30 * numMonths;
             var start = TimeHelper.subtractDuration(new Date(), numDays, DurationType.Day);
             var end = new Date();
 

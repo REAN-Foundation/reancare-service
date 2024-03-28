@@ -2,7 +2,7 @@ import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { BarChartOptions, ChartColors, LineChartOptions, MultiBarChartOptions } from "../../../../modules/charts/chart.options";
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
-import { createFeelings_DonutChart, getFeelingsColors } from "./daily.assessments.stats";
+import { getFeelingsColors } from "./daily.assessments.stats";
 import { createMedicationConsumption_DonutChart } from "./medication.stats";
 import { getNutritionQuestionCategoryColors } from "./nutrition.stats";
 import {
@@ -25,24 +25,24 @@ import { Settings } from "../../../../domain.types/users/patient/health.report.s
 
 //////////////////////////////////////////////////////////////////////////////////
 
-export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: any, columSequence: number) => {
+export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: any, reportSettings: Settings) => {
 
     const sectionTitle = 'Lab Values and Body Weight';
     const icon = Helper.getIconsPath('blood-lipids.png');
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 
     var useBodyWeightKg = false;
-    var startingWeight = model.Stats.Biometrics.LastMonth.BodyWeight.StartingBodyWeight;
-    var currentWeight = model.Stats.Biometrics.LastMonth.BodyWeight.CurrentBodyWeight;
-    var totalChange = model.Stats.Biometrics.LastMonth.BodyWeight.TotalChange;
+    var startingWeight = model.Stats.Biometrics.Stats.BodyWeight.StartingBodyWeight;
+    var currentWeight = model.Stats.Biometrics.Stats.BodyWeight.CurrentBodyWeight;
+    var totalChange = model.Stats.Biometrics.Stats.BodyWeight.TotalChange;
     if (model.Stats.CountryCode !== '+91'){
         useBodyWeightKg = true;
-        startingWeight = model.Stats.Biometrics.LastMonth.BodyWeight.StartingBodyWeight * 2.20462;
-        currentWeight = model.Stats.Biometrics.LastMonth.BodyWeight.CurrentBodyWeight * 2.20462;
-        totalChange = model.Stats.Biometrics.LastMonth.BodyWeight.TotalChange * 2.20462;
+        startingWeight = model.Stats.Biometrics.Stats.BodyWeight.StartingBodyWeight * 2.20462;
+        currentWeight = model.Stats.Biometrics.Stats.BodyWeight.CurrentBodyWeight * 2.20462;
+        totalChange = model.Stats.Biometrics.Stats.BodyWeight.TotalChange * 2.20462;
     }
 
-    const labValues = model.Stats.Biometrics.LastMonth;
+    const labValues = model.Stats.Biometrics.Stats;
 
     var useLpaUnit = false;
     if (labValues.Lipids.Lpa.Unit !== 'mg/dL') {
@@ -51,15 +51,21 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
 
     const vals = [];
     vals.push([true, 'Value', 'Starting', 'Current', 'Change']);
-    vals.push([false, 'Blood Glucose (mg/dL)', labValues.BloodGlucose.StartingBloodGlucose, labValues.BloodGlucose.CurrentBloodGlucose, labValues.BloodGlucose.TotalChange]);
-    vals.push([false, 'BP (mmHg) - Systolic', labValues.BloodPressure.StartingSystolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureSystolic, labValues.BloodPressure.TotalChangeSystolic]);
-    vals.push([false, 'BP (mmHg) - Diastolic', labValues.BloodPressure.StartingDiastolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureDiastolic, labValues.BloodPressure.TotalChangeDiastolic]);
+    if (reportSettings.BloodGlucose) {
+        vals.push([false, 'Blood Glucose (mg/dL)', labValues.BloodGlucose.StartingBloodGlucose, labValues.BloodGlucose.CurrentBloodGlucose, labValues.BloodGlucose.TotalChange]);
+    }
+    if (reportSettings.BloodPressure) {
+        vals.push([false, 'BP (mmHg) - Systolic', labValues.BloodPressure.StartingSystolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureSystolic, labValues.BloodPressure.TotalChangeSystolic]);
+        vals.push([false, 'BP (mmHg) - Diastolic', labValues.BloodPressure.StartingDiastolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureDiastolic, labValues.BloodPressure.TotalChangeDiastolic]);
+    }
     vals.push([false, 'Total Cholesterol (mg/dL)', labValues.Lipids.TotalCholesterol.StartingTotalCholesterol, labValues.Lipids.TotalCholesterol.CurrentTotalCholesterol, labValues.Lipids.TotalCholesterol.TotalCholesterolChange]);
     vals.push([false, 'HDL (mg/dL)', labValues.Lipids.HDL.StartingHDL, labValues.Lipids.HDL.CurrentHDL, labValues.Lipids.HDL.TotalHDLChange]);
     vals.push([false, 'LDL (mg/dL)', labValues.Lipids.LDL.StartingLDL, labValues.Lipids.LDL.CurrentLDL, labValues.Lipids.LDL.TotalLDLChange]);
     vals.push([false, 'Triglyceride (mg/dL)', labValues.Lipids.TriglycerideLevel.StartingTriglycerideLevel, labValues.Lipids.TriglycerideLevel.CurrentTriglycerideLevel, labValues.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange]);
     vals.push([false, 'A1C level (%)', labValues.Lipids.A1CLevel.StartingA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.CurrentA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.TotalA1CLevelChange.toFixed(1)]);
-    vals.push([false, useBodyWeightKg ? 'Body weight (lbs)' : 'Body weight (Kg)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
+    if (reportSettings.BodyWeight) {
+        vals.push([false, useBodyWeightKg ? 'Body weight (lbs)' : 'Body weight (Kg)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
+    }
     vals.push([false, useLpaUnit ? 'Lipoprotein (nmo/L)' : 'Lipoprotein (mg/dL)', labValues.Lipids.Lpa.StartingLpa.toFixed(1), labValues.Lipids.Lpa.CurrentLpa.toFixed(1), labValues.Lipids.Lpa.TotalLpaChange.toFixed(1)]);
 
     for (var r of vals) {
@@ -97,7 +103,7 @@ export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: an
     var yFrozen = y;
     let yOfLabValues;
     if (reportSettings.LabValues) {
-        y = addLabValuesTable(model, document, y, columSequence);
+        y = addLabValuesTable(model, document, y, reportSettings);
         columSequence += 1;
         yOfLabValues = y + 20;
     }
@@ -181,7 +187,8 @@ export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: an
     } else {
         yFrozen = y;
     }
-    if (reportSettings.MoodAndSymptoms) {
+
+    /* if (reportSettings.MoodAndSymptoms) {
         if (!(columSequence % 2) && isLabValue) {
             y = yOfLabValues;
             yFrozen = y;
@@ -204,7 +211,7 @@ export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: an
         }
         y = addMoodsSummary(y, document, model, columSequence);
         columSequence += 1;
-    }
+    }*/
     return y;
 };
 
@@ -212,7 +219,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     var locations = [];
     let location;
     if (reportSetting.SleepHistory) {
-        location = await createSleep_BarChart(data?.Sleep?.LastMonth, 'SleepSummary_LastMonth');
+        location = await createSleep_BarChart(data?.Sleep?.Stats, 'SleepSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'SleepSummary_LastMonth',
@@ -222,7 +229,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     }
 
     if (reportSetting.MedicationAdherence) {
-        location = await createMedicationConsumption_DonutChart(data?.Medication?.LastMonth?.Daily, 'MedicationsSummary_LastMonth');
+        location = await createMedicationConsumption_DonutChart(data?.Medication?.Stats?.Daily, 'MedicationsSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'MedicationsSummary_LastMonth',
@@ -232,7 +239,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     }
 
     if (reportSetting.BodyWeight) {
-        location = await createBodyWeight_LineChart(data?.Biometrics?.LastMonth?.BodyWeight?.History, 'BodyWeightSummary_LastMonth', data.Biometrics.LastMonth.BodyWeight.CountryCode);
+        location = await createBodyWeight_LineChart(data?.Biometrics?.Stats?.BodyWeight?.History, 'BodyWeightSummary_LastMonth', data.Biometrics.Stats.BodyWeight.CountryCode);
         if (location) {
             locations.push({
                 key : 'BodyWeightSummary_LastMonth',
@@ -242,7 +249,7 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
     }
 
     if (reportSetting.FoodAndNutrition) {
-        location = await createNutritionQueryForMonth_GroupedBarChart(data?.Nutrition?.LastMonth?.QuestionnaireStats, 'NutritionQuestionSummary_LastMonth');
+        location = await createNutritionQueryForMonth_GroupedBarChart(data?.Nutrition?.Stats?.QuestionnaireStats, 'NutritionQuestionSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'NutritionQuestionSummary_LastMonth',
@@ -251,8 +258,8 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
         }
     }
 
-    if (reportSetting.MoodAndSymptoms) {
-        location = await createFeelings_DonutChart(data?.DailyAssessent?.LastMonth, 'SymptomsSummary_LastMonth');
+    /*if (reportSetting.MoodAndSymptoms) {
+        location = await createFeelings_DonutChart(data?.DailyAssessent?.Stats, 'SymptomsSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'SymptomsSummary_LastMonth',
@@ -263,14 +270,14 @@ export const createSummaryCharts = async (data, reportSetting: Settings) => {
 
     if (reportSetting.MoodAndSymptoms) {
         location = await createMoodsSummaryChart_HorizontalBarChart(
-            data?.DailyAssessent?.LastMonth, 'MoodsSummary_LastMonth');
+            data?.DailyAssessent?.Stats, 'MoodsSummary_LastMonth');
         if (location) {
             locations.push({
                 key : 'MoodsSummary_LastMonth',
                 location
             });
         }
-    }
+    }*/
 
     return locations;
 };

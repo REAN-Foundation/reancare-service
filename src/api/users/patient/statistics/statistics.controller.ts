@@ -302,7 +302,6 @@ export class StatisticsController {
                 ExerciseAndPhysicalActivity : true,
                 FoodAndNutrition            : true,
                 DailyTaskStatus             : true,
-                MoodAndSymptoms             : true
             }
         };
         return model;

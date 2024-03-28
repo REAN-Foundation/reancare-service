@@ -17,6 +17,8 @@ import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { LabRecordTypeSearchFilters, LabRecordTypeSearchResults }
     from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types';
+import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { Helper } from '../../../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -307,9 +309,11 @@ export class LabRecordRepo implements ILabRecordRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, frequency: ReportFrequency): Promise<any> => {
         try {
-            const records = await this.getRecords(patientUserId, numMonths);
+            const duration = Helper.frequencyToDuration(frequency);
+            const durationType = Helper.frequencyToDurationType(frequency);
+            const records = await this.getRecords(patientUserId, duration, durationType);
             const records_ = records.map(x => {
                 const dayStr = x.RecordedAt.toISOString()
                     .split('T')[0];
@@ -392,9 +396,9 @@ export class LabRecordRepo implements ILabRecordRepo {
         }
     };
 
-    getRecords = async (patientUserId: string, months: number): Promise<any> => {
+    getRecords = async (patientUserId: string, duration: number, durationType: DurationType): Promise<any> => {
         const today = new Date();
-        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const from = TimeHelper.subtractDuration(new Date(), duration, durationType);
         const records = await LabRecord.findAll({
             where : {
                 PatientUserId : patientUserId,

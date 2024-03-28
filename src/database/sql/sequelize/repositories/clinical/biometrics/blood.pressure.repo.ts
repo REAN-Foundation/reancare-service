@@ -11,6 +11,8 @@ import { IBloodPressureRepo } from '../../../../../repository.interfaces/clinica
 import { BloodPressureMapper } from '../../../mappers/clinical/biometrics/blood.pressure.mapper';
 import BloodPressure from '../../../models/clinical/biometrics/blood.pressure.model';
 import { HelperRepo } from '../../common/helper.repo';
+import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { Helper } from '../../../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -202,9 +204,12 @@ export class BloodPressureRepo implements IBloodPressureRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, frequency: ReportFrequency): Promise<any> => {
         try {
-            const records = await this.getRecords(patientUserId, numMonths);
+            const duration = Helper.frequencyToDuration(frequency);
+            const durationType = Helper.frequencyToDurationType(frequency);
+
+            const records = await this.getRecords(patientUserId, duration, durationType);
             return records.map(x => {
                 const dayStr = x.CreatedAt.toISOString()
                     .split('T')[0];
@@ -220,9 +225,9 @@ export class BloodPressureRepo implements IBloodPressureRepo {
         }
     };
 
-    private async getRecords(patientUserId: string, months: number) {
+    private async getRecords(patientUserId: string, duration: number, durationType: DurationType) {
         const today = new Date();
-        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const from = TimeHelper.subtractDuration(new Date(), duration, durationType);
         const result = await BloodPressure.findAll({
             where : {
                 PatientUserId : patientUserId,

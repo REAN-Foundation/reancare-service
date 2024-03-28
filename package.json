@@ -50,7 +50,7 @@
       "express-fileupload": "^1.2.1",
       "express-validator": "^6.15.0",
       "feed": "^4.2.2",
-      "firebase-admin": "^11.6.0",
+      "firebase-admin": "^12.0.0",
       "generate-password": "^1.7.0",
       "googleapis": "^95.0.0",
       "helmet": "^5.1.1",

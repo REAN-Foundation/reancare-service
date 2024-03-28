@@ -3,7 +3,7 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ComplaintService } from '../../../services/clinical/complaint.service';
-import { DoctorService } from '../../../services/users/doctor.service';
+import { DoctorService } from '../../../services/users/doctor/doctor.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { ComplaintValidator } from './complaint.validator';
 import { Injector } from '../../../startup/injector';

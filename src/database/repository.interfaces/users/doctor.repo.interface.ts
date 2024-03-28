@@ -8,6 +8,8 @@ export interface IDoctorRepo {
 
     getByUserId(userId: string): Promise<DoctorDetailsDto>;
 
+    getByPersonId(personId: string): Promise<DoctorDetailsDto>;
+
     updateByUserId(userId: string, updateModel: DoctorDomainModel): Promise<DoctorDetailsDto>;
 
     search(filters: DoctorSearchFilters): Promise<DoctorSearchResults>;

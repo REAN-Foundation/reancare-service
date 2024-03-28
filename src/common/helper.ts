@@ -397,6 +397,9 @@ export class Helper {
     }
 
     static validatePhone(phone: string) {
+        if (!phone) {
+            return phone;
+        }
         const tokens = phone.split('-');
         const countryCode = tokens[0];
         const phoneNumber = tokens[1];

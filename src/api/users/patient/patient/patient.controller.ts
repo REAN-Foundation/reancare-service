@@ -348,7 +348,7 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(409, 'Phone number already exists with other patient!');
             }
         }
-    };
+    }
 
     private deleteAndCreateFutureMedicationSchedules = async (patientUserId: string): Promise<boolean> => {
         var medications = await this._medicationService.getCurrentMedications(patientUserId);

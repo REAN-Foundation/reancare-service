@@ -165,6 +165,9 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const careplanService = Injector.Container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
+                const nextMinutes = 15;
+                const userTaskService = Loader.container.resolve(UserTaskSenderService);
+                await userTaskService.sendUserTasks(nextMinutes);
             })();
         });
     };

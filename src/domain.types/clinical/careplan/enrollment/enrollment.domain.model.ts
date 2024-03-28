@@ -22,4 +22,7 @@ export interface EnrollmentDomainModel {
     Complication?   : string;
     Phone?          : string;
     HasHighRisk?    : boolean;
+    Channel?        : string;
+    TenantName?     : string;
+    IsTest?         : boolean;
 }

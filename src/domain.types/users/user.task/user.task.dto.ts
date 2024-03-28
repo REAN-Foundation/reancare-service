@@ -15,6 +15,8 @@ export interface UserTaskDto {
     ScheduledStartTime?   : Date;
     ScheduledEndTime?     : Date;
     Status?               : ProgressStatus;
+    Channel?              : string;
+    TenantName?           : string;
     Started?              : boolean;
     StartedAt?            : Date;
     Finished              : boolean;

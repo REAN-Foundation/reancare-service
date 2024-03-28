@@ -19,4 +19,6 @@ export interface TaskBase {
     CancellationReason?  : string;
     IsRecurrent?         : boolean;
     RecurrenceScheduleId?: string;
+    Channel?             : string;
+    TenantName?          : string;
 }

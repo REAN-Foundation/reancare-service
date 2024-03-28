@@ -59,7 +59,7 @@ import { UserEngagementService } from './statistics/user.engagement.service';
 import { TenantService } from './tenant/tenant.service';
 import { CustomTaskService } from './users/user/custom.task.service';
 import { UserDeviceDetailsService } from './users/user/user.device.details.service';
-import { DoctorService } from './users/doctor.service';
+import { DoctorService } from './users/doctor/doctor.service';
 import { ActionPlanService } from './users/patient/action.plan.service';
 import { DocumentService } from './users/patient/document.service';
 import { EmergencyContactService } from './users/patient/emergency.contact.service';

@@ -35,6 +35,17 @@ export class UserRepo implements IUserRepo {
         return null;
     };
 
+    getByUserName = async (userName: string): Promise<UserDetailsDto> => {
+        const user = await User.findOne({ where: { UserName: userName } });
+        if (user == null) {
+            return null;
+        }
+        const person = await Person.findByPk(user.PersonId);
+        const personDto = await PersonMapper.toDetailsDto(person);
+        const tenant = await Tenant.findByPk(user.TenantId);
+        return UserMapper.toDetailsDto(user, tenant, personDto);
+    };
+
     getUserByTenantIdAndRole = async (tenantId: string, roleName: string): Promise<UserDetailsDto> => {
         if (!Helper.isStr(tenantId) || !Helper.isStr(roleName)) {
             return null;

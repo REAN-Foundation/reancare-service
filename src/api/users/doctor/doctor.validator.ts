@@ -29,6 +29,7 @@ export class DoctorValidator {
                     ImageResourceId : request.body.ImageResourceId ?? null,
                 },
                 id               : request.params.userId,
+                UserName         : request.body.UserName ?? null,
                 Password         : request.body.Password ?? null,
                 DefaultTimeZone  : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
@@ -70,7 +71,7 @@ export class DoctorValidator {
 
         if (create) {
             await body('Phone')
-                .exists()
+                .optional()
                 .notEmpty()
                 .trim()
                 .escape()
@@ -94,6 +95,11 @@ export class DoctorValidator {
             .isEmail()
             .escape()
             .normalizeEmail()
+            .run(request);
+
+        await body('UserName').optional()
+            .trim()
+            .escape()
             .run(request);
 
         await body('FirstName').optional()

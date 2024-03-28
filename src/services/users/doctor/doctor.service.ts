@@ -1,20 +1,21 @@
-import { ConfigurationManager } from '../../config/configuration.manager';
+import { ConfigurationManager } from '../../../config/configuration.manager';
 import { inject, injectable } from 'tsyringe';
-import { ApiError } from '../../common/api.error';
-import { IAddressRepo } from '../../database/repository.interfaces/general/address.repo.interface';
-import { IDoctorRepo } from '../../database/repository.interfaces/users/doctor.repo.interface';
-import { IOrganizationRepo } from '../../database/repository.interfaces/general/organization.repo.interface';
-import { IOtpRepo } from '../../database/repository.interfaces/users/user/otp.repo.interface';
-import { IPersonRepo } from '../../database/repository.interfaces/person/person.repo.interface';
-import { IPersonRoleRepo } from '../../database/repository.interfaces/person/person.role.repo.interface';
-import { IRoleRepo } from '../../database/repository.interfaces/role/role.repo.interface';
-import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
-import { DoctorDomainModel } from '../../domain.types/users/doctor/doctor.domain.model';
-import { DoctorDetailsDto, DoctorDto } from '../../domain.types/users/doctor/doctor.dto';
-import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../../domain.types/users/doctor/doctor.search.types';
-import { Roles } from '../../domain.types/role/role.types';
-import { DoctorStore } from '../../modules/ehr/services/doctor.store';
-import { Injector } from '../../startup/injector';
+import { ApiError } from '../../../common/api.error';
+import { IAddressRepo } from '../../../database/repository.interfaces/general/address.repo.interface';
+import { IDoctorRepo } from '../../../database/repository.interfaces/users/doctor.repo.interface';
+import { IOrganizationRepo } from '../../../database/repository.interfaces/general/organization.repo.interface';
+import { IOtpRepo } from '../../../database/repository.interfaces/users/user/otp.repo.interface';
+import { IPersonRepo } from '../../../database/repository.interfaces/person/person.repo.interface';
+import { IPersonRoleRepo } from '../../../database/repository.interfaces/person/person.role.repo.interface';
+import { IRoleRepo } from '../../../database/repository.interfaces/role/role.repo.interface';
+import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
+import { DoctorDomainModel } from '../../../domain.types/users/doctor/doctor.domain.model';
+import { DoctorDetailsDto, DoctorDto } from '../../../domain.types/users/doctor/doctor.dto';
+import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../../../domain.types/users/doctor/doctor.search.types';
+import { Roles } from '../../../domain.types/role/role.types';
+import { DoctorStore } from '../../../modules/ehr/services/doctor.store';
+import { Injector } from '../../../startup/injector';
+import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,8 +56,25 @@ export class DoctorService {
         return dto;
     };
 
+    public checkforExistingPersonWithRole = async (
+        domainModel: DoctorDomainModel, roleId: number): Promise<PersonDetailsDto> => {
+
+        const persons = await this._personRepo.getAllPersonsWithPhoneAndRole(
+            domainModel.User.Person.Phone, roleId);
+        if (persons.length > 0) {
+            return persons[0];
+        }
+        return null;
+    };
+
     public getByUserId = async (id: string): Promise<DoctorDetailsDto> => {
         var dto = await this._doctorRepo.getByUserId(id);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
+    };
+
+    public getByPersonId = async (personId: string): Promise<DoctorDetailsDto> => {
+        var dto = await this._doctorRepo.getByPersonId(personId);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
@@ -83,18 +101,20 @@ export class DoctorService {
         return dto;
     };
 
-    public doctorExists = async (domainModel: DoctorDomainModel): Promise<boolean> => {
+    public doctorExists = async (model: DoctorDomainModel): Promise<boolean> => {
 
         const role = await this._roleRepo.getByName(Roles.Doctor);
         if (role == null) {
             throw new ApiError(404, 'Role- ' + Roles.Doctor + ' does not exist!');
         }
-        const persons = await this._personRepo.getAllPersonsWithPhoneAndRole(
-            domainModel.User.Person.Phone,
-            role.id
-        );
-        if (persons.length > 0) {
-            return true;
+        if (model.User.Person.Phone != null && model.User.Person.Phone.length > 0) {
+            const persons = await this._personRepo.getAllPersonsWithPhoneAndRole(
+                model.User.Person.Phone,
+                role.id
+            );
+            if (persons.length > 0) {
+                return true;
+            }
         }
         return false;
     };

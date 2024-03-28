@@ -38,9 +38,20 @@ export class PersonRoleRepo implements IPersonRoleRepo {
                 RoleName : role.RoleName
             };
 
+            const existing = await PersonRole.findOne({
+                where : {
+                    PersonId : personId,
+                    RoleId   : roleId
+                }
+            });
+            if (existing) {
+                return await PersonRoleMapper.toDto(existing);
+            }
+
             const personRole = await PersonRole.create(entity);
             const dto = await PersonRoleMapper.toDto(personRole);
             return dto;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

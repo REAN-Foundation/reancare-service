@@ -530,7 +530,7 @@ const generateMedicationTableRow = (
     document
         .fontSize(9)
         .font('Helvetica')
-        .text(index, 160, y)
+        .text(index, ((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START) + 110, y)
         .text(medication, ((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START) + 125, y, { align: "left" })
         // .text(medication, 175, y, { align: "left" })
         //.text(dose + ' ' + dosageUnit, 330, y, { align: "right" })

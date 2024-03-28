@@ -19,7 +19,7 @@ export class StepCountRepo implements IStepCountRepo {
                 TerraSummaryId : createModel.TerraSummaryId ?? null,
                 Provider       : createModel.Provider ?? null,
                 StepCount      : createModel.StepCount ?? null,
-                Unit           : createModel.Unit ?? null,
+                Unit           : createModel.Unit ?? 'steps',
                 RecordDate     : createModel.RecordDate ?? null,
             };
             const stepCount = await StepCount.create(entity);
@@ -59,13 +59,22 @@ export class StepCountRepo implements IStepCountRepo {
     getByRecordDateAndPatientUserId = async (date: Date, patientUserId: string, provider?: string): Promise<StepCountDto> => {
         try {
             const new_date = new Date(date);
-            const allStepCount =  await StepCount.findOne({
-                where : {
-                    RecordDate    : new_date,
-                    PatientUserId : patientUserId,
-                    Provider      : provider
-                }
-            });
+            var allStepCount = null;
+            var whereClause = {
+                RecordDate    : new_date,
+                PatientUserId : patientUserId,
+            };
+
+            if (provider != null) {
+                whereClause["Provider"] = provider;
+                allStepCount =  await StepCount.findOne({
+                    where : whereClause,
+                });
+            } else {
+                allStepCount =  await StepCount.findOne({
+                    where : whereClause,
+                });
+            }
             //const providerStepCount = allStepCount.filter(step => step.Provider !== null);
 
             return StepCountMapper.toDto(allStepCount);

@@ -27,7 +27,7 @@ import { Settings } from "../../../../domain.types/users/patient/health.report.s
 
 export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: any, reportSettings: Settings) => {
 
-    const sectionTitle = 'Lab Values and Body Weight';
+    const sectionTitle = 'Lab Values and Vitals';
     const icon = Helper.getIconsPath('blood-lipids.png');
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 
@@ -58,16 +58,18 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
         vals.push([false, 'BP (mmHg) - Systolic', labValues.BloodPressure.StartingSystolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureSystolic, labValues.BloodPressure.TotalChangeSystolic]);
         vals.push([false, 'BP (mmHg) - Diastolic', labValues.BloodPressure.StartingDiastolicBloodPressure, labValues.BloodPressure.CurrentBloodPressureDiastolic, labValues.BloodPressure.TotalChangeDiastolic]);
     }
-    vals.push([false, 'Total Cholesterol (mg/dL)', labValues.Lipids.TotalCholesterol.StartingTotalCholesterol, labValues.Lipids.TotalCholesterol.CurrentTotalCholesterol, labValues.Lipids.TotalCholesterol.TotalCholesterolChange]);
-    vals.push([false, 'HDL (mg/dL)', labValues.Lipids.HDL.StartingHDL, labValues.Lipids.HDL.CurrentHDL, labValues.Lipids.HDL.TotalHDLChange]);
-    vals.push([false, 'LDL (mg/dL)', labValues.Lipids.LDL.StartingLDL, labValues.Lipids.LDL.CurrentLDL, labValues.Lipids.LDL.TotalLDLChange]);
-    vals.push([false, 'Triglyceride (mg/dL)', labValues.Lipids.TriglycerideLevel.StartingTriglycerideLevel, labValues.Lipids.TriglycerideLevel.CurrentTriglycerideLevel, labValues.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange]);
-    vals.push([false, 'A1C level (%)', labValues.Lipids.A1CLevel.StartingA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.CurrentA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.TotalA1CLevelChange.toFixed(1)]);
+    if (reportSettings.LabValues) {
+        vals.push([false, 'Total Cholesterol (mg/dL)', labValues.Lipids.TotalCholesterol.StartingTotalCholesterol, labValues.Lipids.TotalCholesterol.CurrentTotalCholesterol, labValues.Lipids.TotalCholesterol.TotalCholesterolChange]);
+        vals.push([false, 'HDL (mg/dL)', labValues.Lipids.HDL.StartingHDL, labValues.Lipids.HDL.CurrentHDL, labValues.Lipids.HDL.TotalHDLChange]);
+        vals.push([false, 'LDL (mg/dL)', labValues.Lipids.LDL.StartingLDL, labValues.Lipids.LDL.CurrentLDL, labValues.Lipids.LDL.TotalLDLChange]);
+        vals.push([false, 'Triglyceride (mg/dL)', labValues.Lipids.TriglycerideLevel.StartingTriglycerideLevel, labValues.Lipids.TriglycerideLevel.CurrentTriglycerideLevel, labValues.Lipids.TriglycerideLevel.TotalTriglycerideLevelChange]);
+        vals.push([false, 'A1C level (%)', labValues.Lipids.A1CLevel.StartingA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.CurrentA1CLevel.toFixed(1), labValues.Lipids.A1CLevel.TotalA1CLevelChange.toFixed(1)]);
+        vals.push([false, useLpaUnit ? 'Lipoprotein (nmo/L)' : 'Lipoprotein (mg/dL)', labValues.Lipids.Lpa.StartingLpa.toFixed(1), labValues.Lipids.Lpa.CurrentLpa.toFixed(1), labValues.Lipids.Lpa.TotalLpaChange.toFixed(1)]);
+    }
     if (reportSettings.BodyWeight) {
         vals.push([false, useBodyWeightKg ? 'Body weight (lbs)' : 'Body weight (Kg)', startingWeight?.toFixed(1), currentWeight?.toFixed(1), totalChange?.toFixed(1)]);
     }
-    vals.push([false, useLpaUnit ? 'Lipoprotein (nmo/L)' : 'Lipoprotein (mg/dL)', labValues.Lipids.Lpa.StartingLpa.toFixed(1), labValues.Lipids.Lpa.CurrentLpa.toFixed(1), labValues.Lipids.Lpa.TotalLpaChange.toFixed(1)]);
-
+    
     for (var r of vals) {
         const row: TableRowProperties = {
             IsHeaderRow : r[0],
@@ -102,7 +104,12 @@ export const addSummaryGraphs = (model: any, document: PDFKit.PDFDocument, y: an
     let isLabValue: boolean = reportSettings.LabValues;
     var yFrozen = y;
     let yOfLabValues;
-    if (reportSettings.LabValues) {
+    if (
+        reportSettings.LabValues ||
+        reportSettings.BodyWeight ||
+        reportSettings.BloodGlucose ||
+        reportSettings.BloodPressure
+    ) {
         y = addLabValuesTable(model, document, y, reportSettings);
         columSequence += 1;
         yOfLabValues = y + 20;
@@ -530,7 +537,7 @@ const generateMedicationTableRow = (
     document
         .fontSize(9)
         .font('Helvetica')
-        .text(index, 160, y)
+        .text(index, ((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START) + 110, y)
         .text(medication, ((columSequence % 2) ? SECOND_COLUMN_START : FIRST_COLUMN_START) + 125, y, { align: "left" })
         // .text(medication, 175, y, { align: "left" })
         //.text(dose + ' ' + dosageUnit, 330, y, { align: "right" })

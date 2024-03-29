@@ -15,6 +15,8 @@ export interface IUserRepo {
 
     getById(id: uuid): Promise<UserDetailsDto>;
 
+    getByUserName(userName: string): Promise<UserDetailsDto>;
+
     getByPersonId(personId: uuid): Promise<UserDetailsDto>;
 
     updateLastLogin(id: uuid): Promise<void>;

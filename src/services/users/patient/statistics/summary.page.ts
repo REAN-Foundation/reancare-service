@@ -27,7 +27,7 @@ import { Settings } from "../../../../domain.types/users/patient/health.report.s
 
 export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: any, reportSettings: Settings) => {
 
-    const sectionTitle = 'Lab Values and Body Weight';
+    const sectionTitle = 'Lab Values and Vitals';
     const icon = Helper.getIconsPath('blood-lipids.png');
     y = addFirstColumnSectionTitle(document, y, sectionTitle, icon);
 

@@ -20,6 +20,8 @@ import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analy
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { RoleDto } from '../../../../domain.types/role/role.dto';
 import { Roles } from '../../../../domain.types/role/role.types';
+import { MedicationService } from '../../../../services/clinical/medication/medication.service';
+import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +47,10 @@ export class PatientController extends BaseUserController {
 
     _cohortService: CohortService = null;
 
+    _medicationService: MedicationService = null;
+
+    _medicationConsumptionService: MedicationConsumptionService = null;
+
     _validator = new PatientValidator();
 
     constructor() {
@@ -55,6 +61,8 @@ export class PatientController extends BaseUserController {
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
         this._cohortService = Loader.container.resolve(CohortService);
+        this._medicationService = Loader.container.resolve(MedicationService);
+        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
     }
 
     //#endregion
@@ -189,6 +197,13 @@ export class PatientController extends BaseUserController {
                 const IsTestUser = await this._userHelper.isTestUser(userDomainModel);
                 userDomainModel.IsTestUser = IsTestUser;
             }
+
+            // if timezone change detected then delete future medication schedules and create new one
+            if (existingUser.CurrentTimeZone != request.body.CurrentTimeZone) {
+                await this._userService.update(userId, { CurrentTimeZone : request.body.CurrentTimeZone }); 
+                this.deleteAndCreateFutureMedicationSchedules(userId);
+            }
+
             const updatedUser = await this._userService.update(userId, userDomainModel);
             if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
@@ -343,6 +358,24 @@ export class PatientController extends BaseUserController {
             }
         }
     }
+
+    private deleteAndCreateFutureMedicationSchedules = async (patientUserId: string): Promise<boolean> => {
+        var medications = await this._medicationService.getCurrentMedications(patientUserId);
+        for await ( var m of medications) {
+            if (m.FrequencyUnit !== 'Other') {
+                var deletedMedicationCount = await this._medicationConsumptionService.deleteFutureMedicationSchedules(m.id);
+                var startDate = await this._userService.getDateInUserTimeZone(m.PatientUserId, new Date().toISOString().split('T')[0]);
+                if (m.FrequencyUnit === 'Weekly' || m.FrequencyUnit === 'Monthly') {
+                    m.Duration = deletedMedicationCount;
+                } else if (m.FrequencyUnit === 'Daily') {
+                    m.Duration = Math.ceil(deletedMedicationCount / m.Frequency);
+                }
+                m.StartDate = startDate;
+                await this._medicationConsumptionService.create(m);
+            }
+        }
+        return true;
+    };
 
     //#endregion
 

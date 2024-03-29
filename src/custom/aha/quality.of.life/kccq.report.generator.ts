@@ -44,7 +44,7 @@ const getReportModel = (
     assessment: AssessmentDto,
     score: any) => {
 
-    const timezone = patient.User?.DefaultTimeZone ?? '+05:30';
+    const timezone = patient.User?.CurrentTimeZone ?? patient.User?.DefaultTimeZone ?? '+05:30';
     const date = assessment.FinishedAt ?? new Date();
     const patientName = patient.User.Person.DisplayName;
     const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);

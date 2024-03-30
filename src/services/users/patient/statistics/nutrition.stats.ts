@@ -57,7 +57,7 @@ export const addNutritionQuestionnaire = (document, model, y) => {
 export const addNutritionServingsStats = (document, model, y) => {
 
     const chartImage = 'Nutrition_Servings_LastMonth';
-    const detailedTitle = 'Servings History for Last Month';
+    const detailedTitle = `Servings History for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Food and Nutrition - Servings';
 

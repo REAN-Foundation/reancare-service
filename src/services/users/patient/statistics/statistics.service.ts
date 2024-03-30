@@ -624,12 +624,8 @@ export class StatisticsService {
         } = document.bufferedPageRange();
         for (let i = pageRange.start ; i < pageRange.count; i++ ) {
             document.switchToPage(i);
-            PDFGenerator.addOrderPageNumber(document, i + 1, pageRange.start);
+            PDFGenerator.addOrderPageNumber(document, i + 1, pageRange.count);
         }
-        // for (i = pageRange.start, end = pageRange.start + pageRange.count, pageRange.start <= end; i < end; i++;) {
-        //     doc.switchToPage(i);
-        //     doc.text(`Page ${i + 1} of ${range.count}`);
-        //   }
         document.flushPages();
     };
 

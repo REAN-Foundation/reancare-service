@@ -12,8 +12,9 @@ import { Gender, OSType } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
 import Countries from './misc/countries';
-import { DateStringFormat } from '../domain.types/miscellaneous/time.types';
+import { DateStringFormat, DurationType } from '../domain.types/miscellaneous/time.types';
 import { Logger } from './logger';
+import { ReportFrequency } from '../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -638,15 +639,57 @@ export class Helper {
 
     public static parseIntegerFromString = (input: string): number | null => {
         try {
-          // Attempt to parse the integer from the input string
-          const digitRegex = /^[0-9]+$/;
-          digitRegex.test(input);
-          const parsedInt = digitRegex.test(input) ? parseInt(input, 10) : null;
-          return parsedInt;
+            // Attempt to parse the integer from the input string
+            const digitRegex = /^[0-9]+$/;
+            digitRegex.test(input);
+            const parsedInt = digitRegex.test(input) ? parseInt(input, 10) : null;
+            return parsedInt;
         } catch (error: any) {
-          Logger.instance().log(`Error: ${error.message}`);
-          return null;
+            Logger.instance().log(`Error: ${error.message}`);
+            return null;
         }
     };
+
+    public static frequencyToDuration = (frequency: ReportFrequency): number => {
+        if (frequency === ReportFrequency.Week) {
+            return 1;
+        }
+        if (frequency === ReportFrequency.Month) {
+            return 1;
+        }
+        if (frequency === ReportFrequency.SixMonth) {
+            return 6;
+        }
+        if (frequency === ReportFrequency.Year) {
+            return 1;
+        }
+    };
+
+    public static frequencyToDurationType = (frequency: ReportFrequency): DurationType => {
+        if (frequency === ReportFrequency.Week) {
+            return DurationType.Week;
+        }
+        if (frequency === ReportFrequency.Month || frequency === ReportFrequency.SixMonth) {
+            return DurationType.Month;
+        }
+        if (frequency === ReportFrequency.Year) {
+            return DurationType.Year;
+        }
+    };
+
+    public static frequencyToDays(frequency: ReportFrequency):string {
+        if (frequency === ReportFrequency.Week) {
+            return '7 Days';
+        }
+        if (frequency === ReportFrequency.Month) {
+            return 'Month';
+        }
+        if (frequency === ReportFrequency.SixMonth) {
+            return '6 Months';
+        }
+        if (frequency === ReportFrequency.Year) {
+            return ' Year';
+        }
+    }
 
 }

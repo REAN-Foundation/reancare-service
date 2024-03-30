@@ -489,9 +489,8 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
         try {
-            const numDays = 30 * numMonths;
             const { stats, totalFinished, totalUnfinished } = await this.getDayByDayStats(patientUserId, numDays);
             return {
                 TaskStats       : stats,

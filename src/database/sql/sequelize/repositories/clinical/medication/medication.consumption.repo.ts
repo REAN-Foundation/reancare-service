@@ -161,7 +161,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         try {
             const consumptions = await MedicationConsumption.findAll({
                 where : {
-                    MedicationId   : id,
+                    MedicationId : id,
                 }
             });
             var dtos = consumptions.map(x => MedicationConsumptionMapper.toDetailsDto(x));
@@ -502,9 +502,9 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
         try {
-            const numDays = 30 * numMonths;
+            // const numDays = 30 * numMonths;
             return await this.getDayByDayStats(patientUserId, numDays);
         } catch (error) {
             Logger.instance().log(error.message);

@@ -6,6 +6,8 @@ import { LabRecordDomainModel } from "../../../../domain.types/clinical/lab.reco
 import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
 import { LabRecordSearchResults } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
 import { LabRecordSearchFilters } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types";
+import { ReportFrequency } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
+import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 
 export interface ILabRecordRepo {
 
@@ -29,9 +31,9 @@ export interface ILabRecordRepo {
 
     getTypeByDisplayName(displayName: string): Promise<any>;
 
-    getStats(patientUserId: string, numMonths: number): Promise<any>;
+    getStats(patientUserId: string, frequency: ReportFrequency): Promise<any>;
 
-    getRecords(patientUserId: string, numMonths: number): Promise<any>;
+    getRecords(patientUserId: string, duration: number, durationType: DurationType): Promise<any>;
 
     getRecent(patientUserId: string, displayName: string): Promise<LabRecordDto>;
     

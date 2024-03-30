@@ -1,5 +1,4 @@
 import { Helper } from "../../../../common/helper";
-import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { BarChartOptions, ChartColors } from "../../../../modules/charts/chart.options";
 import {
@@ -37,7 +36,7 @@ export const addSleepStats = (model, document, y) => {
 
 export const createSleepTrendCharts = async (data) => {
     var locations = [];
-    const location = await createSleepTrend_BarChart(data.Last6Months, 'SleepHours_LastMonth');
+    const location = await createSleepTrend_BarChart(data.Stats, 'SleepHours_LastMonth');
     locations.push({
         key : 'SleepHours_LastMonth',
         location

@@ -169,9 +169,9 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
-    public getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    public getStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
         try {
-            const numDays = 30 * numMonths;
+            // const numDays = 30 * numMonths;
             const questionnaireStats = await this.getQuestionnaireStats(patientUserId, numDays);
             const calorieStats = await this.getDayByDayCalorieStats(patientUserId, numDays);
             return {

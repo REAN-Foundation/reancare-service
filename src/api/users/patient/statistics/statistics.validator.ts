@@ -32,7 +32,6 @@ export class StatisticsValidator  extends BaseValidator {
                 ExerciseAndPhysicalActivity : request.body.ExerciseAndPhysicalActivity,
                 FoodAndNutrition            : request.body.FoodAndNutrition,
                 DailyTaskStatus             : request.body.DailyTaskStatus,
-                MoodAndSymptoms             : request.body.MoodAndSymptoms
             }
             
         };
@@ -69,7 +68,6 @@ export class StatisticsValidator  extends BaseValidator {
         await this.validateBoolean(request, 'ExerciseAndPhysicalActivity', Where.Body, true, false);
         await this.validateBoolean(request, 'FoodAndNutrition', Where.Body, true, false);
         await this.validateBoolean(request, 'DailyTaskStatus', Where.Body, true, false);
-        await this.validateBoolean(request, 'MoodAndSymptoms', Where.Body, true, false);
         
         this.validateRequest(request);
         if (!Object.values(ReportFrequency).includes(request.body.ReportFrequency)) {
@@ -89,7 +87,6 @@ export class StatisticsValidator  extends BaseValidator {
         await this.validateBoolean(request, 'ExerciseAndPhysicalActivity', Where.Body, true, false);
         await this.validateBoolean(request, 'FoodAndNutrition', Where.Body, true, false);
         await this.validateBoolean(request, 'DailyTaskStatus', Where.Body, true, false);
-        await this.validateBoolean(request, 'MoodAndSymptoms', Where.Body, true, false);
         
         this.validateRequest(request);
 

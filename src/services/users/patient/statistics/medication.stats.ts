@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
@@ -20,7 +19,7 @@ export const addMedicationStats = (document, model, y) => {
     const titleColor = '#505050';
     const legend = getMedicationStatusCategoryColors();
     let chartImage = 'MedicationsOverall_LastMonth';
-    const title = 'Medication Adherence for Last Month';
+    const title = `Medication Adherence for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     if (!chartExists(model, chartImage)) {
         y = addNoDataDisplay(document, y);
     } else {
@@ -30,7 +29,7 @@ export const addMedicationStats = (document, model, y) => {
     y = y + 7;
 
     chartImage = 'MedicationsHistory_LastMonth';
-    const detailedTitle = 'Medication History for Last Month';
+    const detailedTitle = `Medication History for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const sectionTitle = 'Medication History';
     const icon = Helper.getIconsPath('medications.png');
 
@@ -95,16 +94,16 @@ export const addCurrentMedications = (document, medications, y) => {
 export const createMedicationTrendCharts = async (data) => {
     var locations = [];
 
-    if (data.LastMonth.length === 0) {
+    if (data.Stats.length === 0) {
         return locations;
     }
 
-    let location = await createMedication_BarChart(data.LastMonth.Daily, 'MedicationsHistory_LastMonth');
+    let location = await createMedication_BarChart(data.Stats.Daily, 'MedicationsHistory_LastMonth');
     locations.push({
         key : 'MedicationsHistory_LastMonth',
         location
     });
-    location = await createMedicationConsumption_DonutChart(data.LastMonth.Daily, 'MedicationsOverall_LastMonth');
+    location = await createMedicationConsumption_DonutChart(data.Stats.Daily, 'MedicationsOverall_LastMonth');
     locations.push({
         key : 'MedicationsOverall_LastMonth',
         location

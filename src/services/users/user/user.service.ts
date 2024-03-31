@@ -59,14 +59,13 @@ export class UserService {
 
     public create = async (model: UserDomainModel) => {
         // timezone sanitization
-        if (model.DefaultTimeZone) {
-            const defaultTimezone = this.sanitizeTimezone(model.DefaultTimeZone);
-            model.DefaultTimeZone = defaultTimezone;
-            model.CurrentTimeZone = defaultTimezone;
+        if (model.DefaultTimeZone != null) {
+            model.DefaultTimeZone = this.sanitizeTimezone(model.DefaultTimeZone);
         }
-        if (model.CurrentTimeZone) {
-            const currentTimezone = model.CurrentTimeZone ?? model.DefaultTimeZone;
-            model.CurrentTimeZone = this.sanitizeTimezone(currentTimezone);
+        if (model.CurrentTimeZone != null) {
+            model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);    
+        } else if (model.DefaultTimeZone != null) {
+            model.CurrentTimeZone = model.DefaultTimeZone;
         }
 
         var dto = await this._userRepo.create(model);
@@ -96,6 +95,12 @@ export class UserService {
         return dto;
     };
 
+    public getByUserName = async (userName: string): Promise<UserDetailsDto> => {
+        var dto = await this._userRepo.getByUserName(userName);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
+    };
+
     public getUserRoleName = async (userId: string): Promise<string> => {
         var dto = await this._userRepo.getById(userId);
         dto = await this.updateDetailsDto(dto);
@@ -118,11 +123,12 @@ export class UserService {
 
         if (model.DefaultTimeZone != null) {
             model.DefaultTimeZone = this.sanitizeTimezone(model.DefaultTimeZone);
-            model.CurrentTimeZone = model.DefaultTimeZone;
         }
         if (model.CurrentTimeZone != null) {
             model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);
-        }
+        } else if (model.DefaultTimeZone != null) {
+            model.CurrentTimeZone = model.DefaultTimeZone;
+        } 
         var dto = await this._userRepo.update(id, model);
         dto = await this.updateDetailsDto(dto);
         return dto;
@@ -266,13 +272,13 @@ export class UserService {
 
         let person: PersonDetailsDto = null;
 
-        if (otpDetails.Phone) {
+        if (otpDetails.Phone && otpDetails.Phone?.length > 0) {
             person = await this._personRepo.getPersonWithPhone(otpDetails.Phone);
             if (person == null) {
                 const message = 'User does not exist with phone(' + otpDetails.Phone + ')';
                 throw new ApiError(404, message);
             }
-        } else if (otpDetails.Email) {
+        } else if (otpDetails.Email && otpDetails.Email?.length > 0) {
             person = await this._personRepo.getPersonWithEmail(otpDetails.Email);
             if (person == null) {
                 const message = 'User does not exist with email(' + otpDetails.Email + ')';
@@ -454,14 +460,13 @@ export class UserService {
 
     public seedSystemAdmin = async () => {
         try {
-            const exists = await this._userRepo.userNameExists('super-admin');
+            const SeededSystemAdmin = Helper.loadJSONSeedFile('system.admin.seed.json');
+            const exists = await this._userRepo.userNameExists(SeededSystemAdmin.UserName);
             if (exists) {
                 return;
             }
 
-            const SeededSystemAdmin = Helper.loadJSONSeedFile('system.admin.seed.json');
             const tenant = await this._tenantRepo.getTenantWithCode('default');
-
             const role = await this._roleRepo.getByName(Roles.SystemAdmin);
 
             const userDomainModel: UserDomainModel = {
@@ -629,8 +634,7 @@ export class UserService {
                 LabValues                   : true,
                 ExerciseAndPhysicalActivity : true,
                 FoodAndNutrition            : true,
-                DailyTaskStatus             : true,
-                MoodAndSymptoms             : true
+                DailyTaskStatus             : true
             }
         };
         

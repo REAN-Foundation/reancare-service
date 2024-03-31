@@ -18,6 +18,9 @@ import { AddressDomainModel } from '../../domain.types/general/address/address.d
 import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { UserDomainModel } from '../../domain.types/users/user/user.domain.model';
 import { TenantDto } from '../../domain.types/tenant/tenant.dto';
+import { DoctorDomainModel } from '../../domain.types/users/doctor/doctor.domain.model';
+import { DoctorDetailsDto } from '../../domain.types/users/doctor/doctor.dto';
+import { DoctorService } from '../../services/users/doctor/doctor.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +36,8 @@ export class UserHelper {
 
     _patientService: PatientService = null;
 
+    _doctorService: DoctorService = null;
+
     _patientHealthProfileService: HealthProfileService = null;
 
     _tenantService: TenantService = null;
@@ -45,6 +50,7 @@ export class UserHelper {
         this._patientService = Injector.Container.resolve(PatientService);
         this._patientHealthProfileService = Injector.Container.resolve(HealthProfileService);
         this._tenantService = Injector.Container.resolve(TenantService);
+        this._doctorService = Injector.Container.resolve(DoctorService);
     }
 
     createPatient = async(createModel: PatientDomainModel): Promise<[PatientDetailsDto, boolean]> => {
@@ -53,12 +59,29 @@ export class UserHelper {
         var user: UserDetailsDto = null;
         var patient: PatientDetailsDto = null;
 
-        const role: RoleDto = await this._roleService.getByName(Roles.Patient);
-        if (role == null) {
+        const patientRole: RoleDto = await this._roleService.getByName(Roles.Patient);
+        if (patientRole == null) {
             throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
         }
 
-        person = await this._patientService.checkforExistingPersonWithRole(createModel, role.id);
+        if (createModel.User.Person.Phone != null && createModel.User.Person.Phone.length > 0) {
+            person = await this._patientService.checkforExistingPersonWithRole(createModel, patientRole.id);
+        }
+
+        //Check if the user exists with the same username
+        //We are allowing some patient's coming from the bot to be created without phone number or email
+        if (person == null && createModel.User.UserName != null) {
+            user = await this._userService.getByUserName(createModel.User.UserName);
+            if (user != null) {
+                person = user.Person;
+                if (user.Role.id === patientRole.id) {
+                    const existingPatient = await this._patientService.getByUserId(user.id);
+                    const healthProfile = await this._patientHealthProfileService.getByPatientUserId(user.id);
+                    existingPatient.HealthProfile = healthProfile;
+                    return [ existingPatient, false ];
+                }
+            }
+        }
 
         //NOTE: Currently we are not allowing multiple patients to share same phone number,
         // but in future, we will be. For example, family members sharing the same phone number.
@@ -70,12 +93,14 @@ export class UserHelper {
                 return [ patient, false ];
             }
             //Person exists but patient does not exist, check if the user exists or not!
-            user = await this._userService.getByPhoneAndRole(createModel.User.Person.Phone, role.id);
             if (!user) {
-                //User with patient role does not exist for this person, create one
-                user = await this.createUser(person, createModel, role.id);
-                createModel.User.id = user.id;
-                createModel.UserId = user.id;
+                user = await this._userService.getByPhoneAndRole(createModel.User.Person.Phone, patientRole.id);
+                if (!user) {
+                    //User with patient role does not exist for this person, create one
+                    user = await this.createUser(person, createModel, patientRole.id);
+                    createModel.User.id = user.id;
+                    createModel.UserId = user.id;
+                }
             }
         }
         else {
@@ -83,11 +108,21 @@ export class UserHelper {
             if (person == null) {
                 throw new ApiError(400, 'Cannot create person!');
             }
-            user = await this.createUser(person, createModel, role.id);
+            user = await this.createUser(person, createModel, patientRole.id);
             createModel.User.id = user.id;
             createModel.UserId = user.id;
         }
-        patient = await this.createPatientWithHealthProfile(createModel, user, person, role.id);
+
+        if (user != null) {
+            const existingPatient = await this._patientService.getByUserId(user.id);
+            if (existingPatient != null) {
+                const healthProfile = await this._patientHealthProfileService.getByPatientUserId(user.id);
+                existingPatient.HealthProfile = healthProfile;
+                return [ existingPatient, false ];
+            }
+        }
+
+        patient = await this.createPatientWithHealthProfile(createModel, user, person, patientRole.id);
         if (!patient) {
             throw new ApiError(500, `An error has occurred while creating patient!`);
         }
@@ -112,7 +147,7 @@ export class UserHelper {
         let healthProfile = await this._patientHealthProfileService.createDefault(user.id);
         patient.HealthProfile = healthProfile;
 
-        if (person.Phone !== null) {
+        if (person.Phone !== null && person.Phone.length > 0) {
             var otpDetails = {
                 Phone   : person.Phone,
                 Email   : null,
@@ -221,5 +256,79 @@ export class UserHelper {
 
         return createModel;
     }
+
+    createDoctor = async(createModel: DoctorDomainModel): Promise<[DoctorDetailsDto, boolean]> => {
+
+        var person: PersonDetailsDto = null;
+        var user: UserDetailsDto = null;
+        var doctor: DoctorDetailsDto = null;
+
+        const doctorRole: RoleDto = await this._roleService.getByName(Roles.Doctor);
+        if (doctorRole == null) {
+            throw new ApiError(404, 'Role- ' + Roles.Doctor + ' does not exist!');
+        }
+
+        if (createModel.User.Person.Phone != null && createModel.User.Person.Phone.length > 0) {
+            person = await this._doctorService.checkforExistingPersonWithRole(createModel, doctorRole.id);
+        }
+
+        //Check if the user exists with the same username
+        //We are allowing some patient's coming from the bot to be created without phone number or email
+        if (person == null && createModel.User.UserName != null) {
+            user = await this._userService.getByUserName(createModel.User.UserName);
+            if (user != null) {
+                person = user.Person;
+                if (user.Role.id === doctorRole.id) {
+                    const existingDoctor = await this._doctorService.getByUserId(user.id);
+                    return [ existingDoctor, false ];
+                }
+            }
+        }
+
+        if (person) {
+            //Person with a doctor role exists
+            doctor = await this._doctorService.getByPersonId(person.id);
+            if (doctor != null) {
+                return [ doctor, false ];
+            }
+            //Person exists but doctor does not exist, check if the user exists or not!
+            if (!user) {
+                user = await this._userService.getByPhoneAndRole(createModel.User.Person.Phone, doctorRole.id);
+                if (!user) {
+                    //User with doctor role does not exist for this person, create one
+                    user = await this.createUser(person, createModel, doctorRole.id);
+                    createModel.User.id = user.id;
+                    createModel.UserId = user.id;
+                }
+            }
+        }
+        else {
+            person = await this._personService.create(createModel.User.Person);
+            if (person == null) {
+                throw new ApiError(400, 'Cannot create person!');
+            }
+            user = await this.createUser(person, createModel, doctorRole.id);
+            createModel.User.id = user.id;
+            createModel.UserId = user.id;
+        }
+
+        if (user != null) {
+            const existingDoctor = await this._doctorService.getByUserId(user.id);
+            if (existingDoctor != null) {
+                return [ existingDoctor, false ];
+            }
+        }
+        createModel.User.Person.id = person.id;
+        createModel.PersonId = person.id;
+        var doctor = await this._doctorService.create(createModel);
+        if (doctor == null) {
+            throw new ApiError(400, 'Cannot create doctor!');
+        }
+
+        const address = await this.addAddress(createModel, person);
+        doctor.User.Person.Addresses = [address];
+
+        return [ doctor, true ];
+    };
 
 }

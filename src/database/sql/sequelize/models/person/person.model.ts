@@ -60,7 +60,7 @@ export default class Person extends Model {
     @Length({ max: 24 })
     @Column({
         type      : DataType.STRING(24),
-        allowNull : false,
+        allowNull : true,
     })
     Phone: string;
 

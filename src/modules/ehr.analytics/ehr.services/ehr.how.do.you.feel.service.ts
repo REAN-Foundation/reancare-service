@@ -14,7 +14,7 @@ export class EHRHowDoYouFeelService {
         model: HowDoYouFeelDto,
         appName?: string) => {
 
-        if (model.Feeling === '1') {
+        if (model.Feeling == '1') {
             EHRAnalyticsHandler.addStringRecord(
                 model.PatientUserId,
                 model.id,
@@ -24,11 +24,12 @@ export class EHRHowDoYouFeelService {
                 null,
                 'Better',
                 null,
-                appName
+                appName,
+                model.RecordDate ? model.RecordDate : null
             );
         }
 
-        if (model.Feeling === '0') {
+        if (model.Feeling == '0') {
             EHRAnalyticsHandler.addStringRecord(
                 model.PatientUserId,
                 model.id,
@@ -37,11 +38,13 @@ export class EHRHowDoYouFeelService {
                 model.Feeling,
                 null,
                 'Same',
-                appName
+                null,
+                appName,
+                model.RecordDate ? model.RecordDate : null
             );
         }
 
-        if (model.Feeling === '-1') {
+        if (model.Feeling == '-1') {
             EHRAnalyticsHandler.addStringRecord(
                 model.PatientUserId,
                 model.id,
@@ -50,7 +53,9 @@ export class EHRHowDoYouFeelService {
                 model.Feeling,
                 null,
                 'Worse',
-                appName
+                null,
+                appName,
+                model.RecordDate ? model.RecordDate : null
             );
         }
     };

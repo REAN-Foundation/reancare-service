@@ -96,6 +96,7 @@ export class PatientValidator extends BaseValidator {
                     ImageResourceId           : body.ImageResourceId !== undefined ? body.ImageResourceId                    : undefined,
                 },
                 Password        : body.Password ?? null,
+                UserName        : body.UserName ?? null,
                 DefaultTimeZone : body.DefaultTimeZone ?? null,
                 CurrentTimeZone : body.CurrentTimeZone ?? null,
                 TenantId        : body.TenantId ?? null,
@@ -161,6 +162,7 @@ export class PatientValidator extends BaseValidator {
 
         await this.validateString(request, 'Phone', Where.Body, create, false);
         await this.validateEmail(request, 'Email', Where.Body, false, true);
+        await this.validateString(request, 'UserName', Where.Body, false, true, false, 6, 12);
         await this.validateString(request, 'TelegramChatId', Where.Body, false, true);
         await this.validateString(request, 'Prefix', Where.Body, false, true);
         await this.validateString(request, 'FirstName', Where.Body, false, true);

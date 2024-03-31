@@ -1,4 +1,5 @@
 
+import { ReportFrequency } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
 import { BloodPressureDomainModel } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model";
 import { BloodPressureDto } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
 import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types";
@@ -16,7 +17,7 @@ export interface IBloodPressureRepo {
 
     delete(id: string): Promise<boolean>;
 
-    getStats(patientUserId: string, numMonths: number): Promise<any>;
+    getStats(patientUserId: string, frequency: ReportFrequency): Promise<any>;
 
     getRecent(patientUserId: string): Promise<BloodPressureDto>;
 

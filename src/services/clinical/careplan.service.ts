@@ -490,7 +490,9 @@ export class CareplanService implements IUserActionService {
 
         var userDto = await this._userRepo.getById(patientUserId);
         var timezoneOffset = '+05:30';
-        if (userDto.DefaultTimeZone !== null) {
+        if (userDto.CurrentTimeZone !== null) {
+            timezoneOffset = userDto.CurrentTimeZone;
+        } else if (userDto.DefaultTimeZone !== null) {
             timezoneOffset = userDto.DefaultTimeZone;
         }
 

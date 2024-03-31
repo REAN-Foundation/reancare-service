@@ -1,5 +1,4 @@
 import { Helper } from "../../../../common/helper";
-import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { ChartColors, MultiBarChartOptions, PieChartOptions, CircularProgressChartOptions } from "../../../../modules/charts/chart.options";
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
@@ -12,14 +11,14 @@ import {
     RECTANGULAR_CHART_WIDTH,
     SQUARE_CHART_HEIGHT,
     SQUARE_CHART_WIDTH } from "./report.helper";
-import { addSectionTitle, addNoDataDisplay, addText, addLegend } from "./stat.report.commons";
+import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 
 export const addUserTasksStats = (document, model, y) => {
 
     let chartImage = 'UserTasks_LastMonth';
-    let detailedTitle = 'Daily Tasks Status for Last Month';
+    let detailedTitle = `Daily Tasks Status for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const title = 'Days of the month';
     let sectionTitle = 'Daily Task Status History';
@@ -49,7 +48,7 @@ export const addUserTasksStats = (document, model, y) => {
     y = addSectionTitle(document, y, sectionTitle, icon);
 
     chartImage = 'UserEngagementRatio_Last6Months';
-    detailedTitle = 'User Engagement Ratio for Last 6 Months';
+    detailedTitle = `User Engagement Ratio for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
 
     if (!chartExists(model, chartImage)) {
         y = addNoDataDisplay(document, y);
@@ -57,9 +56,9 @@ export const addUserTasksStats = (document, model, y) => {
         y = y + 23;
         y = addSquareChartImage(document, model, chartImage, y, detailedTitle, titleColor, 165, 225);
         y = y + 23;
-        let value = model.Stats.UserEngagement.Last6Months.Finished.toFixed();
+        let value = model.Stats.UserEngagement.UserEngagementStats.Finished.toFixed();
         y = addLabeledText(document, 'Finished Tasks', value, y);
-        value = model.Stats.UserEngagement.Last6Months.Unfinished.toFixed();
+        value = model.Stats.UserEngagement.UserEngagementStats.Unfinished.toFixed();
         y = addLabeledText(document, 'Unfinished Tasks', value, y);
     }
 
@@ -78,17 +77,17 @@ export const addUserTasksStats = (document, model, y) => {
 export const createUserTaskCharts = async (data) => {
     var locations = [];
 
-    let location = await createUserTasks_StackedBarChart(data.LastMonth.TaskStats, 'UserTasks_LastMonth');
+    let location = await createUserTasks_StackedBarChart(data.UserTasksStats.TaskStats, 'UserTasks_LastMonth');
     locations.push({
         key : 'UserTasks_LastMonth',
         location
     });
-    location = await createUserEngagement_DonutChart(data.Last6Months, 'UserEngagement_Last6Months');
+    location = await createUserEngagement_DonutChart(data.UserEngagementStats, 'UserEngagement_Last6Months');
     locations.push({
         key : 'UserEngagement_Last6Months',
         location
     });
-    location = await createUserEngagement_CircularProgress(data.Last6Months, 'UserEngagementRatio_Last6Months');
+    location = await createUserEngagement_CircularProgress(data.UserEngagementStats, 'UserEngagementRatio_Last6Months');
     locations.push({
         key : 'UserEngagementRatio_Last6Months',
         location

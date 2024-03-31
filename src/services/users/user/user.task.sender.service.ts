@@ -24,7 +24,7 @@ export class UserTaskSenderService {
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
-        this._assessmentService = Loader.container.resolve(AssessmentService);
+        this._assessmentService = Injector.Container.resolve(AssessmentService);
     }
 
     public sendUserTasks = async (timePeriod: number) => {
@@ -115,7 +115,7 @@ export class UserTaskSenderService {
 
     private async finishTask(sent: boolean, userTaskId: uuid) {
         if (sent) {
-            const userTaskRepo = Loader.container.resolve<IUserTaskRepo>('IUserTaskRepo');
+            const userTaskRepo = Injector.Container.resolve<IUserTaskRepo>('IUserTaskRepo');
             const delivered = await userTaskRepo.finishTask(userTaskId);
             Logger.instance().log(delivered ? `Schedule marked as delivered` : `Schedule could not be marked as delivered`);
         }

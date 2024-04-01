@@ -28,6 +28,8 @@ export class UserTaskMapper {
             ScheduledStartTime   : task.ScheduledStartTime,
             ScheduledEndTime     : task.ScheduledEndTime,
             Status               : status,
+            Channel              : task.Channel,
+            TenantName           : task.TenantName,
             Started              : task.Started,
             StartedAt            : task.StartedAt,
             Finished             : task.Finished,

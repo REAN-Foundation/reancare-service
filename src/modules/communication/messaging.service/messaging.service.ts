@@ -47,7 +47,7 @@ export class MessagingService {
         return true;
     };
 
-    private async sendMessage (provider, channel, toPhone, type, templateName, message, payload) {
+    public async sendMessage (provider, channel, toPhone, type, templateName, message, payload) {
         const reanBotBaseUrl = process.env.REANBOT_BACKEND_BASE_URL;
         const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
         const client = await this.getClientByProvider(provider);
@@ -75,6 +75,8 @@ export class MessagingService {
         if (resp1.statusCode !== 200) {
             Logger.instance().log(`Failed to send message to phone number: ${toPhone}`);
             return false;
+        } else {
+            return true;
         }
     }
 

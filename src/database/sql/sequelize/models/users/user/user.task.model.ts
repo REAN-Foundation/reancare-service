@@ -6,6 +6,7 @@ import {
 import { v4 } from 'uuid';
 import { UserTaskCategory, UserTaskCategoryList } from '../../../../../../domain.types/users/user.task/user.task.types';
 import User from './user.model';
+import { NotificationTypeList } from '../../../../../../domain.types/general/reminder/reminder.domain.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -98,6 +99,21 @@ export default class UserTask extends Model {
         allowNull : true,
     })
     ScheduledEndTime: Date;
+
+    @Column({
+        type         : DataType.ENUM,
+        allowNull    : false,
+        values       : NotificationTypeList,
+        defaultValue : 'MobilePush',
+    })
+    Channel: string;
+
+    @Length({ max: 64 })
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
+    TenantName: string;
 
     @Column({
         type         : DataType.BOOLEAN,

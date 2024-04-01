@@ -266,21 +266,26 @@ export class StatisticsController {
 
     private triggerReportGeneration = async (patientUserId: string, clientCode: string, reportSettings: Settings):
      Promise<any> => {
-        const stats = await this._service.getPatientStats(patientUserId, reportSettings);
-        const patient = await this._patientService.getByUserId(patientUserId);
-        const reportModel = this._service.getReportModel(patient, stats, clientCode);
-        if (reportModel.ImageResourceId != null) {
-            const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
-            reportModel.ProfileImagePath = profileImageLocation ??
-                Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
+        try {
+            const stats = await this._service.getPatientStats(patientUserId, reportSettings);
+            const patient = await this._patientService.getByUserId(patientUserId);
+            const reportModel = this._service.getReportModel(patient, stats, clientCode);
+            if (reportModel.ImageResourceId != null) {
+                const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
+                reportModel.ProfileImagePath = profileImageLocation ??
+                    Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
+            }
+            else {
+                reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
+            }
+            const { filename, localFilePath } = await this._service.generateReport(reportModel, reportSettings);
+            const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
+            this.sendMessageForReportUpdate(reportUrl, reportModel);
+            return reportUrl;
+        } catch (error) {
+            Logger.instance().log('Error in generating report:' + error.message);
         }
-        else {
-            reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
-        }
-        const { filename, localFilePath } = await this._service.generateReport(reportModel, reportSettings);
-        const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
-        this.sendMessageForReportUpdate(reportUrl, reportModel);
-        return reportUrl;
+        
     };
 
     private getHealthReportSettingModel = (patientUserId: string) => {

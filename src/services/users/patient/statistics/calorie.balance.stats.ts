@@ -15,7 +15,7 @@ import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.comm
 export const addCalorieBalanceStats = (document, model, y) => {
 
     const chartImage = 'CalorieBalance_LastMonth';
-    const detailedTitle = 'Calorie Balance for Last Month';
+    const detailedTitle = `Calorie Balance for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Calorie Balance - Consumption and Burn';
 
@@ -94,8 +94,8 @@ const getCalorieBalanceColors = () => {
 
 const getCalorieBalanceStats = (stats) => {
     const balance = [];
-    const nutrition = stats.Nutrition?.LastMonth?.CalorieStats;
-    const exercise = stats.PhysicalActivity?.LastMonth?.CalorieStats;
+    const nutrition = stats.Nutrition?.Stats?.CalorieStats;
+    const exercise = stats.PhysicalActivity?.Stats?.CalorieStats;
     if (!nutrition || nutrition.length === 0) {
         return [];
     }

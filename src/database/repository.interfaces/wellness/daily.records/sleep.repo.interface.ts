@@ -1,4 +1,5 @@
 
+import { ReportFrequency } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
 import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { SleepDomainModel } from "../../../../domain.types/wellness/daily.records/sleep/sleep.domain.model";
 import { SleepDto } from "../../../../domain.types/wellness/daily.records/sleep/sleep.dto";
@@ -20,7 +21,7 @@ export interface ISleepRepo {
 
     delete(id: uuid): Promise<boolean>;
 
-    getStats(patientUserId: string, numMonths: number): Promise<any>;
+    getStats(patientUserId: string, frequency: ReportFrequency): Promise<any>;
 
     getByRecordDateAndPatientUserId(recordDate: Date, patientUserId: string): Promise<SleepDto>;
 

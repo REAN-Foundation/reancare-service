@@ -1,3 +1,4 @@
+import { ReportFrequency } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { BloodGlucoseDomainModel } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 import { BloodGlucoseDto } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
 import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types';
@@ -14,7 +15,7 @@ export interface IBloodGlucoseRepo {
 
     delete(id: string): Promise<boolean>;
 
-    getStats(patientUserId: string, numMonths: number): Promise<any>;
+    getStats(patientUserId: string, frequency: ReportFrequency): Promise<any>;
 
     getRecent(patientUserId: string): Promise<BloodGlucoseDto>;
 

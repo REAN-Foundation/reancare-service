@@ -11,6 +11,8 @@ import BloodGlucose from "../../../models/clinical/biometrics/blood.glucose.mode
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { HelperRepo } from '../../common/helper.repo';
+import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { Helper } from '../../../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -182,9 +184,11 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, frequency: ReportFrequency): Promise<any> => {
         try {
-            const records = await this.getRecords(patientUserId, numMonths);
+            const duration = Helper.frequencyToDuration(frequency);
+            const durationType = Helper.frequencyToDurationType(frequency);
+            const records = await this.getRecords(patientUserId, duration, durationType);
             return records.map(x => {
                 const dayStr = x.RecordDate.toISOString()
                     .split('T')[0];
@@ -200,9 +204,9 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
         }
     };
 
-    private async getRecords(patientUserId: string, months: number) {
+    private async getRecords(patientUserId: string, duration: number, durationType: DurationType) {
         const today = new Date();
-        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const from = TimeHelper.subtractDuration(new Date(), duration, durationType);
         const result = await BloodGlucose.findAll({
             where : {
                 PatientUserId : patientUserId,

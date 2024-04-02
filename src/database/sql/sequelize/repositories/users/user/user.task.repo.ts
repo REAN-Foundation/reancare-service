@@ -14,6 +14,8 @@ import { UserTaskMapper } from '../../../mappers/users/user/user.task.mapper';
 import User from '../../../models/users/user/user.model';
 import UserTask from '../../../models/users/user/user.task.model';
 import { HelperRepo } from '../../common/helper.repo';
+import { NotificationType } from '../../../../../../domain.types/general/reminder/reminder.domain.model';
+import CareplanActivity from '../../../models/clinical/careplan/careplan.activity.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -30,6 +32,8 @@ export class UserTaskRepo implements IUserTaskRepo {
                 ActionId           : model.ActionId ?? null,
                 ScheduledStartTime : model.ScheduledStartTime ?? null,
                 ScheduledEndTime   : model.ScheduledEndTime ?? null,
+                Channel            : model.Channel ?? NotificationType.MobilePush,
+                TenantName         : model.TenantName ?? 'AHA',
             };
             const userTask = await UserTask.create(entity);
             return UserTaskMapper.toDto(userTask);
@@ -489,9 +493,8 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
         try {
-            const numDays = 30 * numMonths;
             const { stats, totalFinished, totalUnfinished } = await this.getDayByDayStats(patientUserId, numDays);
             return {
                 TaskStats       : stats,
@@ -609,5 +612,36 @@ export class UserTaskRepo implements IUserTaskRepo {
         stats.sort((a, b) => new Date(a.DayStr).getTime() - new Date(b.DayStr).getTime());
         return { stats, totalFinished, totalUnfinished };
     }
+
+    getUserTasksOfSelectiveChannel = async (timePeriod): Promise<any[]> => {
+        try {
+            const from = new Date();
+            const to = TimeHelper.addDuration(from, timePeriod, DurationType.Minute);
+
+            const foundResults = await UserTask.findAndCountAll({
+                where : {
+                    Channel : {
+                        [Op.or] : [NotificationType.Telegram, NotificationType.WhatsApp]
+                    },
+                    ScheduledStartTime : {
+                        [Op.gte] : from,
+                        [Op.lt ] : to,
+                    },
+                    Cancelled : false,
+                    Finished  : false,
+                }
+            });
+
+            const dtos: UserTaskDto[] = [];
+            for (const userTask of foundResults.rows) {
+                const dto = UserTaskMapper.toDto(userTask);
+                dtos.push(dto);
+            }
+            return dtos;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
 
 }

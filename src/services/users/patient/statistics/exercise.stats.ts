@@ -34,7 +34,7 @@ export const addExerciseStats = (document, model, y) => {
     // }
 
     let chartImage = 'Exercise_MoveMinutes_LastMonth';
-    const detailedTitle = 'Move Minutes for Last Month';
+    const detailedTitle = `Move Minutes for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Exercise and Physical Activity';
     const icon = Helper.getIconsPath('exercise.png');
@@ -74,25 +74,30 @@ export const createPhysicalActivityCharts = async (data) => {
     var locations = [];
     let location = '';
 
-    location = await createExerciseCalorieForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+    // location = await createExerciseCalorieForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+    // locations.push({
+    //     key : 'Exercise_CaloriesBurned_LastMonth',
+    //     location
+    // });
+    
+    location = await createExerciseCalorieForMonth_BarChart(data.Stats.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
     locations.push({
         key : 'Exercise_CaloriesBurned_LastMonth',
         location
     });
+    // location = await createExerciseMoveMinutesForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+    // locations.push({
+    //     key : 'Exercise_MoveMinutes_LastMonth',
+    //     location
+    // });
 
-    location = await createExerciseMoveMinutesForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
-    locations.push({
-        key : 'Exercise_MoveMinutes_LastMonth',
-        location
-    });
+    // location = await createExerciseQuestionForMonth_BarChart(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_LastMonth');
+    // locations.push({
+    //     key : 'Exercise_Questionnaire_LastMonth',
+    //     location
+    // });
 
-    location = await createExerciseQuestionForMonth_BarChart(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_LastMonth');
-    locations.push({
-        key : 'Exercise_Questionnaire_LastMonth',
-        location
-    });
-
-    location = await createExerciseQuestions_DonutChart(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_Overall_LastMonth');
+    location = await createExerciseQuestions_DonutChart(data.Stats.QuestionnaireStats.Stats, 'Exercise_Questionnaire_Overall_LastMonth');
     locations.push({
         key : 'Exercise_Questionnaire_Overall_LastMonth',
         location

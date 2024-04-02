@@ -219,7 +219,8 @@ export class CareplanRepo implements ICareplanRepo {
                     ScheduledAt      : activity.ScheduledAt,
                     Sequence         : activity.Sequence ?? count,
                     Frequency        : activity.Frequency ?? 1,
-                    Status           : activity.Status
+                    Status           : activity.Status,
+                    RawContent       : activity.RawContent ?? null
                 };
                 count++;
                 activityEntities.push(entity);

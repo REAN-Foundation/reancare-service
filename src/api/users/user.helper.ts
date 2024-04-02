@@ -16,6 +16,9 @@ import { RoleDto } from '../../domain.types/role/role.dto';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { UserDomainModel } from '../../domain.types/users/user/user.domain.model';
+import { HealthReportSettingsDomainModel } from '../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { ReportFrequency } from '../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { HealthReportSettingsService } from '../../services/users/patient/health.report.setting.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +35,8 @@ export class UserHelper {
     _patientService: PatientService = null;
 
     _patientHealthProfileService: HealthProfileService = null;
+    
+    _healthReportSettingsService: HealthReportSettingsService = null;
 
     constructor() {
         this._userService = Loader.container.resolve(UserService);
@@ -40,6 +45,7 @@ export class UserHelper {
         this._addressService = Loader.container.resolve(AddressService);
         this._patientService = Loader.container.resolve(PatientService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
+        this._healthReportSettingsService = Loader.container.resolve(HealthReportSettingsService);
     }
 
     createPatient = async(createModel: PatientDomainModel): Promise<[PatientDetailsDto, boolean]> => {
@@ -81,6 +87,7 @@ export class UserHelper {
             user = await this.createUser(person, createModel, role.id);
             createModel.User.id = user.id;
             createModel.UserId = user.id;
+            await this.createUserDefaultHealthReportSettings(user);
         }
         patient = await this.createPatientWithHealthProfile(createModel, user, person, role.id);
         if (!patient) {
@@ -204,5 +211,26 @@ export class UserHelper {
 
         return createModel;
     }
+
+    private createUserDefaultHealthReportSettings = async (user) => {
+        const model: HealthReportSettingsDomainModel = {
+            PatientUserId : user.id,
+            Preference    : {
+                ReportFrequency             : ReportFrequency.Month,
+                HealthJourney               : true,
+                MedicationAdherence         : true,
+                BodyWeight                  : true,
+                BloodGlucose                : true,
+                BloodPressure               : true,
+                SleepHistory                : true,
+                LabValues                   : true,
+                ExerciseAndPhysicalActivity : true,
+                FoodAndNutrition            : true,
+                DailyTaskStatus             : true
+            }
+        };
+        
+        await this._healthReportSettingsService.createReportSettings(model);
+    };
 
 }

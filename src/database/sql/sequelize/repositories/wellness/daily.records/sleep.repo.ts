@@ -11,6 +11,8 @@ import { SleepMapper } from '../../../mappers/wellness/daily.records/sleep.mappe
 import Sleep from '../../../models/wellness/daily.records/sleep.model';
 import { HelperRepo } from '../../common/helper.repo';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { Helper } from '../../../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -181,11 +183,14 @@ export class SleepRepo implements ISleepRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, frequency: ReportFrequency): Promise<any> => {
         try {
             // const numDays = 30 * numMonths;
             // const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
-            const records = await this.getSleepRecords(patientUserId, numMonths, DurationType.Month);
+            const duration = Helper.frequencyToDuration(frequency);
+            const durationType = Helper.frequencyToDurationType(frequency);
+            
+            const records = await this.getSleepRecords(patientUserId, duration, durationType);
             if (records.length === 0) {
                 return [];
             }
@@ -194,9 +199,10 @@ export class SleepRepo implements ISleepRepo {
                     .split('T')[0];
                 return {
                     SleepDuration : x.SleepDuration,
-                    DayStr    : dayStr,
+                    DayStr        : dayStr,
                 };
             });
+
             // const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
             // const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
             // const stats = [];
@@ -213,6 +219,7 @@ export class SleepRepo implements ISleepRepo {
             // }
             // Logger.instance().log(JSON.stringify(stats));
             // return stats;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

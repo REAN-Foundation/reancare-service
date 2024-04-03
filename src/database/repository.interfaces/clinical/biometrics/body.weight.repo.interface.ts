@@ -1,3 +1,4 @@
+import { ReportFrequency } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
 import { BodyWeightDomainModel } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model";
 import { BodyWeightDto } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.dto";
 import { BodyWeightSearchFilters, BodyWeightSearchResults } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types";
@@ -14,7 +15,7 @@ export interface IBodyWeightRepo {
 
     delete(id: string): Promise<boolean>;
 
-    getStats(patientUserId: string, numMonths: number): Promise<any>;
+    getStats(patientUserId: string, frequency: ReportFrequency): Promise<any>;
 
     getRecent(patientUserId: string): Promise<BodyWeightDto>;
 

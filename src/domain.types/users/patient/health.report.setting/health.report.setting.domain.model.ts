@@ -16,7 +16,6 @@ export interface Settings {
     ExerciseAndPhysicalActivity:boolean;
     FoodAndNutrition: boolean;
     DailyTaskStatus: boolean;
-    MoodAndSymptoms: boolean;
 }
 
 export enum ReportFrequency {

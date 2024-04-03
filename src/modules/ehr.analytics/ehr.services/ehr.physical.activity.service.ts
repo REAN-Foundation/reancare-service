@@ -33,7 +33,7 @@ export class EHRPhysicalActivityService {
             EHRAnalyticsHandler.addFloatRecord(
                 model.PatientUserId,
                 model.id,
-                null,
+                model.Provider ? model.Provider : null,
                 EHRRecordTypes.PhysicalActivity,
                 model.StepCount,
                 model.Unit,
@@ -50,7 +50,7 @@ export class EHRPhysicalActivityService {
             EHRAnalyticsHandler.addBooleanRecord(
                 model.PatientUserId,
                 model.id,
-                model.Provider,
+                model.Provider ? model.Provider : null,
                 EHRRecordTypes.PhysicalActivity,
                 model.PhysicalActivityQuestionAns,
                 null,
@@ -65,7 +65,7 @@ export class EHRPhysicalActivityService {
             EHRAnalyticsHandler.addFloatRecord(
                 model.PatientUserId,
                 model.id,
-                model.Provider,
+                model.Provider ? model.Provider : null,
                 EHRRecordTypes.PhysicalActivity,
                 model.DurationInMin,
                 'mins',

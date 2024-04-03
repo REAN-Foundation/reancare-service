@@ -259,24 +259,24 @@ export class PatientStatisticsService {
         ExerciseAndPhysicalActivity : true,
         FoodAndNutrition            : true,
         DailyTaskStatus             : true,
-        MoodAndSymptoms             : true,
     }) => {
-
+        
+        const numDays = this.frequenctToDays(reportSetting.ReportFrequency);
         //Nutrition
         let nutrition = null;
         if (reportSetting.FoodAndNutrition) {
-            const nutritionLastMonth = await this._foodConsumptionRepo.getStats(patientUserId, 1);
+            const nutritionStats = await this._foodConsumptionRepo.getStats(patientUserId, numDays);
             nutrition = {
-                LastMonth : nutritionLastMonth,
+                Stats : nutritionStats,
             };
         }
 
         //Physical activity
         let physicalActivityTrend = null;
         if (reportSetting.ExerciseAndPhysicalActivity) {
-            const exerciseLastMonth = await this._physicalActivityRepo.getStats(patientUserId, 1);
+            const exerciseStats = await this._physicalActivityRepo.getStats(patientUserId, numDays);
             physicalActivityTrend = {
-                LastMonth : exerciseLastMonth,
+                Stats : exerciseStats,
             };
         }
 
@@ -302,12 +302,11 @@ export class PatientStatisticsService {
 
         let biometrics = null;
         if (reportSetting.LabValues || reportSetting.BodyWeight || reportSetting.BloodPressure) {
-            const last6MonthsLabStats = await this.getLabValueStats(patientUserId, countryCode, 6);
-            const lastMonthLabStats = await this.getLabValueStats(patientUserId, countryCode, 1);
-    
+            const stats =
+            await this.getLabValueStats(patientUserId, countryCode, reportSetting.ReportFrequency);
+       
             biometrics = {
-                Last6Months : last6MonthsLabStats,
-                LastMonth   : lastMonthLabStats,
+                Stats : stats
             };
         }
 
@@ -327,35 +326,32 @@ export class PatientStatisticsService {
                 Helper.calculateBMI(currentHeight, heightUnits, currentWeight, weightUnits);
 
         //Daily assessments
-        let dailyAssessmentTrend = null;
+        /*let dailyAssessmentTrend = null;
         if (reportSetting.MoodAndSymptoms) {
-            const dailyAssessmentsLast6Months = await this._dailyAssessmentRepo.getStats(patientUserId, 6);
-            const dailyAssessmentsLastMonth = await this._dailyAssessmentRepo.getStats(patientUserId, 1);
+            const dailyAssessmentsStats =
+            await this._dailyAssessmentRepo.getStats(patientUserId, reportSetting.ReportFrequency);
             dailyAssessmentTrend = {
-                Last6Months : dailyAssessmentsLast6Months,
-                LastMonth   : dailyAssessmentsLastMonth,
+                Stats : dailyAssessmentsStats
             };
-        }
+        }*/
 
         //Sleep trend
         let sleepTrend = null;
         if (reportSetting.SleepHistory) {
-            const sleepStatsForLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
-            const sleepStatsForLast6Months = await this._sleepRepo.getStats(patientUserId, 3);
-            const sumSleepHours = sleepStatsForLast6Months.reduce((acc, x) => acc + x.SleepDuration, 0);
+            const sleepStats = await this._sleepRepo.getStats(patientUserId, reportSetting.ReportFrequency);
+            const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
             var i = 0;
-            if (sleepStatsForLast6Months.length > 0) {
-                for await (var s of sleepStatsForLast6Months) {
+            if (sleepStats.length > 0) {
+                for await (var s of sleepStats) {
                     if (s.SleepDuration !== 0) {
                         i = i + 1;
                     }
                 }
             }
-            const averageSleepHours = sleepStatsForLast6Months.length === 0 ? null : sumSleepHours / i;
+            const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / i;
             const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
             sleepTrend = {
-                LastMonth           : sleepStatsForLastMonth,
-                Last6Months         : sleepStatsForLast6Months,
+                Stats               : sleepStats,
                 AverageForLastMonth : averageSleepHoursStr,
             };
         }
@@ -363,10 +359,10 @@ export class PatientStatisticsService {
         //Medication trends
         let medicationTrend = null;
         if (reportSetting.MedicationAdherence) {
-            const medsLastMonth = await this._medicationConsumptionRepo.getStats(patientUserId, 1);
+            const medsStats = await this._medicationConsumptionRepo.getStats(patientUserId, numDays);
             const currentMedications = await this._medicationRepo.getCurrentMedications(patientUserId);
             medicationTrend = {
-                LastMonth          : medsLastMonth,
+                Stats              : medsStats,
                 CurrentMedications : currentMedications,
             };
         }
@@ -374,11 +370,11 @@ export class PatientStatisticsService {
         //User engagement
         let userTasksTrend = null;
         if (reportSetting.DailyTaskStatus) {
-            const userTasksForLastMonth = await this._userTaskRepo.getStats(patientUserId, 1);
-            const userEngagementForLast6Months = await this._userTaskRepo.getUserEngagementStats(patientUserId, 6);
+            const userTasksStats = await this._userTaskRepo.getStats(patientUserId, numDays);
+            const userEngagementStats = await this._userTaskRepo.getUserEngagementStats(patientUserId, numDays);
             userTasksTrend = {
-                LastMonth   : userTasksForLastMonth,
-                Last6Months : userEngagementForLast6Months,
+                UserTasksStats      : userTasksStats,
+                UserEngagementStats : userEngagementStats
             };
         }
 
@@ -418,7 +414,6 @@ export class PatientStatisticsService {
             Biometrics       : biometrics,
             Sleep            : sleepTrend,
             Medication       : medicationTrend,
-            DailyAssessent   : dailyAssessmentTrend,
             UserEngagement   : userTasksTrend,
             Careplan         : careplanStats,
         };
@@ -433,12 +428,12 @@ export class PatientStatisticsService {
 
     //#region Report
 
-    private getLabValueStats = async (patientUserId: uuid, countryCode: string, numberOfMonths = 1) => {
+    private getLabValueStats = async (patientUserId: uuid, countryCode: string, frequency: ReportFrequency) => {
 
-        const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, numberOfMonths);
-        const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, numberOfMonths);
-        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, numberOfMonths);
-        var bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, numberOfMonths);
+        const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, frequency);
+        const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, frequency);
+        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, frequency);
+        var bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, frequency);
 
         //Body weight
         const startingBodyWeight = bodyWeightStats.length > 0 ?
@@ -602,7 +597,7 @@ export class PatientStatisticsService {
             reportModel.TotalPages = 7;
             reportModel.HeaderImagePath = './assets/images/AHA_header_2.png';
             reportModel.FooterImagePath = './assets/images/AHA_footer_1.png';
-            
+            reportModel['ReportFrequency'] = reportSettings.ReportFrequency;
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
             reportModel.TotalPages = 11;
@@ -612,7 +607,6 @@ export class PatientStatisticsService {
                                     reportSettings.MedicationAdherence ||
                                     reportSettings.BodyWeight ||
                                     reportSettings.FoodAndNutrition ||
-                                    reportSettings.MoodAndSymptoms ||
                                     reportSettings.ExerciseAndPhysicalActivity;
             if (isOptionsEnabled) {
                 this.addSummaryPage(document, reportModel, reportSettings);
@@ -635,9 +629,9 @@ export class PatientStatisticsService {
                 this.addNutritionPageA(document, reportModel);
             }
 
-            if (reportSettings.MoodAndSymptoms) {
+            /*if (reportSettings.MoodAndSymptoms) {
                 this.addDailyAssessmentPage(document, reportModel);
-            }
+            }*/
             
             if  (reportSettings.DailyTaskStatus) {
                 this.addUserEngagementPage(document, reportModel);
@@ -683,10 +677,12 @@ export class PatientStatisticsService {
             imageLocations = await createMedicationTrendCharts(reportModel.Stats.Medication);
             chartImagePaths.push(...imageLocations);
         }
-        if (reportSetting.MoodAndSymptoms) {
+
+        /*if (reportSetting.MoodAndSymptoms) {
             imageLocations = await createDailyAssessentCharts(reportModel.Stats.DailyAssessent);
             chartImagePaths.push(...imageLocations);
-        }
+        }*/
+        
         if (reportSetting.DailyTaskStatus) {
             imageLocations = await createUserTaskCharts(reportModel.Stats.UserEngagement);
             chartImagePaths.push(...imageLocations);
@@ -723,7 +719,6 @@ export class PatientStatisticsService {
         var y = addTop(document, model, null, false);
         y = addReportMetadata(document, model, y);
         // y = addReportSummary(document, model, y);
-
         if (healthJourney) {
             var clientList = ["HCHLSTRL", "REANPTNT"];
             if (clientList.indexOf(model.ClientCode) >= 0) {
@@ -735,7 +730,7 @@ export class PatientStatisticsService {
     };
 
     private addSummaryPage = (document, model, reportSettings) => {
-        var y = addTop(document, model, 'Summary over Last 30 Days');
+        var y = addTop(document, model, `Summary over Last ${Helper.frequencyToDays(reportSettings.ReportFrequency)}`);
         addSummaryGraphs(model, document, y, reportSettings);
         addFooter(document, '', model.FooterImagePath);
     };
@@ -862,6 +857,20 @@ export class PatientStatisticsService {
         addFooter(document, '', model.FooterImagePath);
     };
 
+    private frequenctToDays = (frequency: ReportFrequency): number => {
+        if (frequency === ReportFrequency.Week) {
+            return 7;
+        }
+        if (frequency === ReportFrequency.Month) {
+            return 30;
+        }
+        if (frequency === ReportFrequency.SixMonth) {
+            return 30 * 6;
+        }
+        if (frequency === ReportFrequency.Year) {
+            return 365;
+        }
+    };
     //#endregion
 
 }

@@ -59,6 +59,7 @@ export class StepCountValidator extends BaseValidator {
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateInt(request, 'StepCount', Where.Body, true, false);
         await this.validateString(request, 'Unit', Where.Body, true, true);
+        await this.validateString(request, 'Provider', Where.Body, false, true);
         await this.validateDate(request, 'RecordDate', Where.Body, false, false);
 
         this.validateRequest(request);
@@ -69,6 +70,7 @@ export class StepCountValidator extends BaseValidator {
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
         await this.validateInt(request, 'StepCount', Where.Body, false, false);
         await this.validateString(request, 'Unit', Where.Body, false, false);
+        await this.validateString(request, 'Provider', Where.Body, false, false);
         await this.validateDate(request, 'RecordDate', Where.Body, false, false);
 
         this.validateRequest(request);

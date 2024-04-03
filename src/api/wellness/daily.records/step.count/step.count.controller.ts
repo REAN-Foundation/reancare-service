@@ -28,7 +28,7 @@ export class StepCountController {
 
             const domainModel = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
-            const provider = request.body.Provider;
+            const provider = request.body.Provider ?? null;
         
             var existingRecord =
                 await this._service.getByRecordDateAndPatientUserId(recordDate, request.body.PatientUserId, provider);

@@ -16,7 +16,7 @@ export const addNutritionQuestionnaire = (document, model, y) => {
 
     const titleColor = '#505050';
     let chartImage = 'Nutrition_CaloriesConsumed_LastMonth';
-    let detailedTitle = 'Calorie Consumption for Last Month';
+    let detailedTitle = `Calorie Consumption for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     let sectionTitle = 'Food and Nutrition - Calories';
     let icon = Helper.getIconsPath('nutrition.png');
 
@@ -57,7 +57,7 @@ export const addNutritionQuestionnaire = (document, model, y) => {
 export const addNutritionServingsStats = (document, model, y) => {
 
     const chartImage = 'Nutrition_Servings_LastMonth';
-    const detailedTitle = 'Servings History for Last Month';
+    const detailedTitle = `Servings History for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Food and Nutrition - Servings';
 
@@ -87,25 +87,25 @@ export const createNutritionCharts = async (data) => {
     var locations = [];
 
     //Calories
-    let location = await createNutritionCalorie_LineChart(data.LastMonth.CalorieStats, 'Nutrition_CaloriesConsumed_LastMonth');
+    let location = await createNutritionCalorie_LineChart(data.Stats.CalorieStats, 'Nutrition_CaloriesConsumed_LastMonth');
     locations.push({
         key : 'Nutrition_CaloriesConsumed_LastMonth',
         location
     });
-    location = await createNutritionCalorie_BarChart(data.LastMonth.CalorieStats, 'Nutrition_CaloriesConsumed_LastWeek');
+    location = await createNutritionCalorie_BarChart(data.Stats.CalorieStats, 'Nutrition_CaloriesConsumed_LastWeek');
     locations.push({
         key : 'Nutrition_CaloriesConsumed_LastWeek',
         location
     });
 
-    if (data.LastMonth.QuestionnaireStats) {
+    if (data.Stats.QuestionnaireStats) {
 
         //Questionnaire
 
         const qstats = [
-            ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices.Stats),
-            ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions.Stats),
-            ...(data.LastMonth.QuestionnaireStats.LowSaltFoods.Stats),
+            ...(data.Stats.QuestionnaireStats.HealthyFoodChoices.Stats),
+            ...(data.Stats.QuestionnaireStats.HealthyProteinConsumptions.Stats),
+            ...(data.Stats.QuestionnaireStats.LowSaltFoods.Stats),
         ];
         location = await createNutritionQueryForWeek_BarChart(qstats, 'Nutrition_QuestionnaireResponses_LastWeek');
         locations.push({
@@ -121,11 +121,11 @@ export const createNutritionCharts = async (data) => {
         //Servings
 
         const servingsStats = [
-            ...(data.LastMonth.QuestionnaireStats.VegetableServings.Stats),
-            ...(data.LastMonth.QuestionnaireStats.FruitServings.Stats),
-            ...(data.LastMonth.QuestionnaireStats.WholeGrainServings.Stats),
-            ...(data.LastMonth.QuestionnaireStats.SeafoodServings.Stats),
-            ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings.Stats),
+            ...(data.Stats.QuestionnaireStats.VegetableServings.Stats),
+            ...(data.Stats.QuestionnaireStats.FruitServings.Stats),
+            ...(data.Stats.QuestionnaireStats.WholeGrainServings.Stats),
+            ...(data.Stats.QuestionnaireStats.SeafoodServings.Stats),
+            ...(data.Stats.QuestionnaireStats.SugaryDrinksServings.Stats),
         ];
         location = await createNutritionServingsForMonth_BarChart(servingsStats, 'Nutrition_Servings_LastMonth');
         locations.push({

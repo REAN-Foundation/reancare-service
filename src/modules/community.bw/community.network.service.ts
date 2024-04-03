@@ -353,10 +353,12 @@ export class CommunityNetworkService {
 
         var userDto = await this._userRepo.getById(patientUserId);
         var timezoneOffset = '+05:30';
-        if (userDto.DefaultTimeZone !== null) {
+        if (userDto.CurrentTimeZone !== null) {
+            timezoneOffset = userDto.CurrentTimeZone;
+        } else if (userDto.DefaultTimeZone !== null) {
             timezoneOffset = userDto.DefaultTimeZone;
         }
-
+        
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
 

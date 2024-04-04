@@ -74,7 +74,7 @@ export const addLabValuesTable = (model: any, document: PDFKit.PDFDocument, y: a
         const row: TableRowProperties = {
             IsHeaderRow : r[0],
             FontSize    : 9,
-            RowOffset   : 16,
+            RowOffset   : 8,
             Columns     : [
                 {
                     XOffset : 50,

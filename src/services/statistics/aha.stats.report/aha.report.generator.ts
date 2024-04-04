@@ -32,12 +32,9 @@ export const exportAHAStatsReportToPDF = async (reportModel: any) => {
         let y = addStatsPage(document, pdfModel, false);
 
         for (let i = 0; i < reportModel.CareplanStats.length; i++) {
-            y = addCholesterolStats(reportModel.CareplanStats[i], document, y);
+            y = addCareplanStats(reportModel.CareplanStats[i], document, y);
         }
-        
-        for (let i = 0; i < reportModel.CareplanHealthSystemStats.length; i++) {
-            y = addCareplanHealthSystemStats(reportModel.CareplanHealthSystemStats[i], document, y);
-        }
+        y = addCareplanHealthSystemStats(reportModel, document, y);
 
         setPageNumbers(document);
         document.end();
@@ -70,8 +67,8 @@ const addStatsPage = (document: PDFKit.PDFDocument, pdfModel: any, addToNewPage:
     return y;
 };
 
-const addCholesterolStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
-    y = addCholesterolTable(model, document, y);
+const addCareplanStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
+    y = addCareplanTable(model, document, y);
     return y;
 };
 
@@ -80,21 +77,21 @@ const addCareplanHealthSystemStats = (model: any, document: PDFKit.PDFDocument, 
     return y;
 };
 
-const addCholesterolTable = (model: any, document: PDFKit.PDFDocument, y: any) => {
-    const sectionTitle = `${model.Careplan} Careplan Statistics`;
+const addCareplanTable = (model: any, document: PDFKit.PDFDocument, y: any) => {
+    const sectionTitle = `${model.Careplan}`;
     y = isPageEnd(y, document, 'SectionTitle');
     y = addCholesterolSectionTitle(document, y, sectionTitle);
     y = isPageEnd(y, document, 'Row');
-    y = addSummary(model, document, y, 1, 'Careplan');
+    y = addCareplanSummary(model, document, y, 1, 'Careplan');
     return y;
 };
 
 const addHealthSystemTable = (model: any, document: PDFKit.PDFDocument, y: any) => {
-    const sectionTitle = `${model.CareplanCode} - ${model.HealthSystem} Statistics`;
+    const sectionTitle = `Health System Statistics`;
     y = isPageEnd(y, document, 'SectionTitle');
     y = addCholesterolSectionTitle(document, y, sectionTitle);
     y = isPageEnd(y, document, 'Row');
-    y = addSummary(model, document, y, 1, 'HealthSystem');
+    y = addHealthSystemSummary(model, document, y, 1, 'HealthSystem');
     return y;
 };
 
@@ -129,7 +126,7 @@ const addCholesterolSectionTitle = (document: PDFKit.PDFDocument, y: any, pageTi
     return y;
 };
 
-const addSummary = (model, document, y, pageNumber, sectionTitle) => {
+const addCareplanSummary = (model, document, y, pageNumber, sectionTitle) => {
     let vals = [];
     const RowData = composeRowsData(model, pageNumber, sectionTitle);
     vals = [[true, 'Sr.No', 'Title', 'Count'], ...RowData];
@@ -141,15 +138,57 @@ const addSummary = (model, document, y, pageNumber, sectionTitle) => {
             Columns     : [
                 {
                     XOffset : 50,
-                    Text    : r[1]
+                    Text    : r[1],
+                    Width   : 50
                 },
                 {
                     XOffset : 110,
-                    Text    : r[2]
+                    Text    : r[2],
+                    Width   : 384
                 },
                 {
                     XOffset : 504,
-                    Text    : r[3]
+                    Text    : r[3],
+                    Width   : 100
+                },
+            ]
+        };
+        y = isPageEnd(y, document, 'Row');
+        y = addTableRow(document, y, row);
+ 
+    }
+    return y;
+};
+
+const addHealthSystemSummary = (model, document, y, pageNumber, sectionTitle) => {
+    let vals = [];
+    const RowData = composeRowsData(model, pageNumber, sectionTitle);
+    vals = [[true, 'Sr.No', 'Careplan', 'Health System', 'Registration Count'], ...RowData];
+    for (var r of vals) {
+        const row: TableRowProperties = {
+            IsHeaderRow : r[0],
+            FontSize    : 14,
+            RowOffset   : SpaceBetweenRow,
+            Columns     : [
+                {
+                    XOffset : 50,
+                    Text    : r[1],
+                    Width   : 50
+                },
+                {
+                    XOffset : 110,
+                    Text    : r[2],
+                    Width   : 150
+                },
+                {
+                    XOffset : 250,
+                    Text    : r[3],
+                    Width   : 190
+                },
+                {
+                    XOffset : 450,
+                    Text    : r[4],
+                    Width   : 100
                 },
             ]
         };
@@ -189,14 +228,12 @@ const composeRowsData = (model, pageNumber: number, sectionTitle: string) => {
     }
 
     if (sectionTitle === 'HealthSystem') {
-        rows.push([false, sequence, `${model.CareplanCode}- ${model.HealthSystem} registration count`, model.CareplanEnrollmentCount]);
-        sequence += 1;
-
-        const patientCountForHospital = model.PatientCountForHospital;
-        patientCountForHospital.forEach(element => {
-            rows.push([false, sequence, `${element.HospitalName}`, element.PatientCount]);
-            sequence += 1;
-        });
+        for (let i = 0; i < model.CareplanHealthSystemStats.length; i++) {
+            if (model.CareplanHealthSystemStats[i].Enrollments) {
+                rows.push([false, sequence, `${model.CareplanHealthSystemStats[i].Careplan}`, `${model.CareplanHealthSystemStats[i].HealthSystem}`, `${model.CareplanHealthSystemStats[i].Enrollments}`]);
+                sequence += 1;
+            }
+        }
     }
     return rows;
 };

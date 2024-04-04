@@ -34,6 +34,7 @@ export const addLabeledText = (
 export interface TableColumnProperties {
     XOffset: number;
     Text   : string;
+    Width?: number;
 }
 
 export interface TableRowProperties {
@@ -59,13 +60,18 @@ export const addTableRow = (
         document.font('Helvetica');
     }
 
+    let positionY = 0;
     for (var c of tableProperties.Columns) {
-        document.text(c.Text, c.XOffset, y, { align: "left" });
+        if (c.Width) {
+            document.text(c.Text, c.XOffset, y, { align: "left", width: c.Width });
+            positionY = document.y > positionY ? document.y : positionY;
+        } else {
+            document.text(c.Text, c.XOffset, y, { align: "left" });
+            positionY = document.y > positionY ? document.y : positionY;
+        }
     }
-    document
-        .moveDown();
-
-    return y;
+    
+    return positionY;
 };
 
 export const addRectangularChartImage = (

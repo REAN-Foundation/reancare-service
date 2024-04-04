@@ -31,13 +31,13 @@ export interface IAhaStatisticsRepo {
 
     getTotalDeletedDoctors(): Promise<number>;
 
-    getTotalEnrollments(careplanCode:CareplanCode, tenantId: string): Promise<number>;
+    getTotalEnrollments(careplanCode: string, tenantId: string): Promise<number>;
 
-    getTotalActiveEnrollments(careplanCode:CareplanCode, tenantId: string): Promise<number>;
+    getTotalActiveEnrollments(careplanCode: string, tenantId: string): Promise<number>;
 
-    getTotalDeletedEnrollments(careplanCode:CareplanCode, tenantId: string): Promise<number>;
+    getTotalDeletedEnrollments(careplanCode: string, tenantId: string): Promise<number>;
 
-    getHealthSystemEnrollmentCount(careplanCode:CareplanCode, healthSystem : HealthSystem, tenantId: string): Promise<any>;
+    getHealthSystemEnrollmentCount(careplanCode: any, healthSystem : string, tenantId: string): Promise<any>;
 
     getListOfCareplan(tenantId: string): Promise<any>;
 

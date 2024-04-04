@@ -50,7 +50,7 @@ export class AhaStatisticsService {
             const listOfHealthSystem = await this._ahaStatisticsRepo.getListOfHealthSystem();
             const careplanHealthSystemStats = [];
             for (let i = 0; i < listOfCareplans.length; i++) {
-                for (let j = 0; listOfHealthSystem.length; j++) {
+                for (let j = 0; j < listOfHealthSystem.length; j++) {
                     const careplanHealthSystem = await this._ahaStatisticsRepo.getHealthSystemEnrollmentCount(
                         listOfCareplans[i],
                         listOfHealthSystem[j],

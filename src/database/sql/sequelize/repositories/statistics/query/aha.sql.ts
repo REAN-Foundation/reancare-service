@@ -36,7 +36,7 @@ export const queryTotalActiveEnrollments = `SELECT COUNT(DISTINCT(careplan_enrol
                                                         )`;
 
 // Query to get the total deleted enrollments for the selected careplan
-export const queryTotalDeletedEnrollments = `SELECT COUNT(DISTINCT(careplan_enrollment.PatientUserId)) AS totalActiveEnrollments
+export const queryTotalDeletedEnrollments = `SELECT COUNT(DISTINCT(careplan_enrollment.PatientUserId)) AS totalDeletedEnrollments
                                             FROM careplan_enrollments as careplan_enrollment 
                                             WHERE careplan_enrollment.PlanCode = '{{careplanCode}}'
                                                 AND careplan_enrollment.PatientUserId

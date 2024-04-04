@@ -166,6 +166,7 @@ export class CAssessmentTemplate {
     FileResourceId?              : uuid; //Assessment template storage file
     RootNodeDisplayCode?         : string;
     Nodes                        : CAssessmentNode[];
+    TenantId?                    : uuid;
     CreatedAt?                   : Date;
     UpdatedAt?                   : Date;
     CreatedBy?                   : uuid;

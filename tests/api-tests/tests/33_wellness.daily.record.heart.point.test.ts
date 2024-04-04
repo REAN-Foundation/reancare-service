@@ -149,7 +149,7 @@ describe('33 - Heart points records tests', function() {
             .post(`/api/v1/wellness/daily-records/heart-points/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -165,7 +165,7 @@ describe('33 - Heart points records tests', function() {
             .get(`/api/v1/wellness/daily-records/heart-points/${getTestData('HeartPointId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -179,7 +179,7 @@ describe('33 - Heart points records tests', function() {
         agent
             .put(`/api/v1/wellness/daily-records/heart-points/${getTestData('HeartPointId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

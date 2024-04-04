@@ -5,6 +5,7 @@ import { Injector } from '../../startup/injector';
 import { UserService } from '../../services/users/user/user.service';
 import { RolePrivilegeService } from '../../services/role/role.privilege.service';
 import { PermissionHandler } from './permission.handler';
+import { ActionScope } from '../auth.types';
 
 //////////////////////////////////////////////////////////////
 
@@ -21,23 +22,16 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
 
     public authorize = async (request: express.Request): Promise<boolean> => {
         try {
-            if (request.clientAppRoutes) {
-                //This check is applicable only for the client app
-                //specific endpoints.
-                //Authorization for this is handled separately.
-                //For all other endpoints, this check is not applicable.
-                return true;
-            }
+
             const context = request.context;
             if (context == null || context === 'undefined') {
                 return false;
             }
-            if (request.publicUrl) {
+
+            // If the resource is not public, then the user must be authenticated
+            if (request.actionScope != ActionScope.Public &&
+                request.currentUser == null) {
                 return true;
-            }
-            const currentUser = request.currentUser;
-            if (currentUser == null) {
-                return false;
             }
 
             const hasPermission = await PermissionHandler.checkPermissions(request);

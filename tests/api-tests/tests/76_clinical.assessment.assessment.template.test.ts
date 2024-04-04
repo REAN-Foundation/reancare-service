@@ -275,7 +275,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}/nodes/${getTestData('AssessmentNodeMessageTypeId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
@@ -381,7 +381,7 @@ describe('76 - Custom Assessment - Add nodes', function() {
             .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

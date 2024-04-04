@@ -20,7 +20,7 @@ describe('81 - Notification tests', function() {
             .post(`/api/v1/general/notifications/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Notification.id, 'NotificationId_1');
@@ -48,7 +48,7 @@ describe('81 - Notification tests', function() {
             .get(`/api/v1/general/notifications/${getTestData('NotificationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Notification).to.have.property('UserId');
                 expect(response.body.Data.Notification).to.have.property('Title');
@@ -72,7 +72,7 @@ describe('81 - Notification tests', function() {
             .get(`/api/v1/general/notifications/search${loadNotificationQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -87,7 +87,7 @@ describe('81 - Notification tests', function() {
             .put(`/api/v1/general/notifications/${getTestData('NotificationId_1')}/mark-as-read`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.Notification).to.have.property('UserId');
@@ -108,7 +108,7 @@ describe('81 - Notification tests', function() {
             .put(`/api/v1/general/notifications/${getTestData('NotificationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.Notification).to.have.property('UserId');
@@ -133,7 +133,7 @@ describe('81 - Notification tests', function() {
             .delete(`/api/v1/general/notifications/${getTestData('NotificationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -148,7 +148,7 @@ describe('81 - Notification tests', function() {
             .post(`/api/v1/general/notifications/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Notification.id, 'NotificationId');
@@ -177,7 +177,7 @@ describe('81 - Notification tests', function() {
         agent
             .post(`/api/v1/general/notifications/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -193,7 +193,7 @@ describe('81 - Notification tests', function() {
             .get(`/api/v1/general/notifications/${getTestData('NotificationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -207,7 +207,7 @@ describe('81 - Notification tests', function() {
         agent
             .put(`/api/v1/general/notifications/${getTestData('NotificationId')}/mark-as-read`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

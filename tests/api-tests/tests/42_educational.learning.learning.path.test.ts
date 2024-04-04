@@ -9,7 +9,7 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('42 - Laerning path tests', function() {
+describe('42 - Learning path tests', function() {
 
     var agent = request.agent(infra._app);
 
@@ -51,7 +51,7 @@ describe('42 - Laerning path tests', function() {
             .get(`/api/v1/educational/learning-paths/${getTestData('LearningPathId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.LearningPath).to.have.property('id');
                 expect(response.body.Data.LearningPath).to.have.property('Name');
@@ -77,7 +77,7 @@ describe('42 - Laerning path tests', function() {
             .get(`/api/v1/educational/learning-paths/search${loadLearningPathQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');

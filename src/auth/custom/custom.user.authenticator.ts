@@ -2,7 +2,7 @@ import express from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Logger } from '../../common/logger';
 import { IUserAuthenticator } from '../interfaces/user.authenticator.interface';
-import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
+import { AuthResult } from '../auth.types';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { UserService } from '../../services/users/user/user.service';
@@ -25,7 +25,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
 
     public authenticate = async (
         request: express.Request
-    ): Promise<AuthenticationResult> => {
+    ): Promise<AuthResult> => {
         try {
             if (request.clientAppRoutes) {
                 //This check is applicable only for the client app
@@ -37,7 +37,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
                     HttpErrorCode : 200,
                 };
             }
-            var res: AuthenticationResult = {
+            var res: AuthResult = {
                 Result        : true,
                 Message       : 'Authenticated',
                 HttpErrorCode : 200,

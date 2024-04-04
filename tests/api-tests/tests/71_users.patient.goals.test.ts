@@ -9,7 +9,7 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('71 - Health priority tests', function() {
+describe('71 - Patient goal tests', function() {
 
     var agent = request.agent(infra._app);
 
@@ -182,14 +182,14 @@ describe('71 - Health priority tests', function() {
             .post(`/api/v1/patient-goals/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(403, done);
     });
 
     it('71:08 -> Negative - Get goal by id', function(done) {
@@ -198,13 +198,13 @@ describe('71 - Health priority tests', function() {
             .get(`/api/v1/patient-goals/${getTestData('GoalId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
                 
             })
-            .expect(404, done);
+            .expect(403, done);
     });
 
     it('71:09 -> Negative - Delete goal', function(done) {
@@ -213,12 +213,12 @@ describe('71 - Health priority tests', function() {
             .delete(`/api/v1/patient-goals/${getTestData('GoalId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(404, done);
+            .expect(403, done);
     });
 
 });

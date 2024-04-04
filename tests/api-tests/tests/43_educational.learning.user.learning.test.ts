@@ -20,7 +20,7 @@ describe('43 - User learning tests', function() {
             .get(`/api/v1/educational/user-learnings/${getTestData("PatientUserId")}/learning-paths`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -34,7 +34,7 @@ describe('43 - User learning tests', function() {
             .get(`/api/v1/educational/user-learnings/${getTestData("PatientUserId")}/course-contents`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -48,7 +48,7 @@ describe('43 - User learning tests', function() {
             .get(`/api/v1/educational/user-learnings/${getTestData("PatientUserId")}/learning-paths/${getTestData("LearningPathId")}/progress`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -62,7 +62,7 @@ describe('43 - User learning tests', function() {
             .get(`/api/v1/educational/user-learnings/${getTestData("PatientUserId")}/courses/${getTestData("CourseId")}/progress`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -76,7 +76,7 @@ describe('43 - User learning tests', function() {
             .get(`/api/v1/educational/user-learnings/${getTestData("PatientUserId")}/modules/${getTestData("CourseModuleId")}/progress`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -90,7 +90,7 @@ describe('43 - User learning tests', function() {
             .get(`/api/v1/educational/user-learnings/${getTestData("PatientUserId")}/contents/${getTestData("CourseContentId")}/progress`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -106,7 +106,7 @@ describe('43 - User learning tests', function() {
             .put(`/api/v1/educational/user-learnings/${getTestData("PatientUserId")}/contents/${getTestData("CourseContentId")}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.courseContent).to.have.property('UserId');

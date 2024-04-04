@@ -48,7 +48,7 @@ describe('39 - Course tests', function() {
             .get(`/api/v1/educational/courses/${getTestData('CourseId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Course).to.have.property('id');
                 expect(response.body.Data.Course).to.have.property('Name');
@@ -71,7 +71,7 @@ describe('39 - Course tests', function() {
             .get(`/api/v1/educational/courses/search${loadCourseQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Courses).to.have.property('TotalCount');
                 expect(response.body.Data.Courses).to.have.property('RetrievedCount');

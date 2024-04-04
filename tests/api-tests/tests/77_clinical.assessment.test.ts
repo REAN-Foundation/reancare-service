@@ -164,7 +164,7 @@ describe('77 - Assessment tests', function() {
         agent
             .get(`/api/v1/clinical/assessments/${getTestData('NodeAssessmentd')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -194,7 +194,7 @@ describe('77 - Assessment tests', function() {
         agent
             .delete(`/api/v1/clinical/assessments/${getTestData('NodeAssessmentId_1')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

@@ -2,7 +2,7 @@ import  request  from 'supertest';
 import { assert, expect } from 'chai';
 import  Application  from '../../../src/app';
 import { describe, it } from 'mocha';
-import { setTestData } from '../init';
+import { getTestData, setTestData } from '../init';
 
 const infra = Application.instance();
 
@@ -61,7 +61,43 @@ describe('01 - Type tests', function() {
             .expect(200, done);
     });
 
-    it('01:04 -> Negative - Get person role', function(done) {
+    it('01:04 -> Get severity list', function(done) {
+        agent
+            .get(`/api/v1/types/severities/`)
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .expect(response => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('success');
+            })
+            .expect(200, done);
+    });
+
+    it('01:05 -> Get blood groups', function(done) {
+        agent
+            .get(`/api/v1/types/blood-groups/`)
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .expect(response => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('success');
+            })
+            .expect(200, done);
+    });
+
+    it('01:06 -> Get marital status', function(done) {
+        agent
+            .get(`/api/v1/types/marital-statuses/`)
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .expect(response => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('success');
+            })
+            .expect(200, done);
+    });
+
+    it('01:07 -> Negative - Get person role', function(done) {
         agent
             .get(`/api/v1/types/person-roles/`)
             .set('Content-Type', 'application/json')
@@ -72,7 +108,7 @@ describe('01 - Type tests', function() {
             .expect(401, done);
     });
 
-    it('01:05 -> Negative - Get gender types', function(done) {
+    it('01:08 -> Negative - Get gender types', function(done) {
         agent
             .get(`/api/v1/types/genders/`)
             .set('Content-Type', 'application/json')
@@ -83,6 +119,31 @@ describe('01 - Type tests', function() {
             .expect(401, done);
     });
 
+    it('01:09 -> Negative - Get severity list', function(done) {
+        agent
+            .get(`/api/v1/types/severities/`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .expect(response => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('failure');
+            })
+            .expect(401, done);
+    });
+
+    it('01:10 -> Negative - Get blood groups', function(done) {
+        agent
+            .get(`/api/v1/types/blood-groups/`)
+            .set('Content-Type', 'application/json')
+            .expect(response => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('failure');
+            })
+            .expect(401, done);
+    });
+
 });
+
+
 
 ///////////////////////////////////////////////////////////////////////////

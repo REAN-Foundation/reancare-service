@@ -60,7 +60,7 @@ describe('85 - Rssfeed tests', function() {
             .get(`/api/v1/rss-feeds/${getTestData('RssfeedId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Rssfeed).to.have.property('Title');
                 expect(response.body.Data.Rssfeed).to.have.property('Description');
@@ -96,7 +96,7 @@ describe('85 - Rssfeed tests', function() {
             .get(`/api/v1/rss-feeds/search${loadRssfeedQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.RssfeedRecords).to.have.property('TotalCount');
                 expect(response.body.Data.RssfeedRecords).to.have.property('RetrievedCount');
@@ -224,7 +224,7 @@ describe('85 - Rssfeed tests', function() {
         agent
             .get(`/api/v1/rss-feeds/search${loadRssfeedQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -238,7 +238,7 @@ describe('85 - Rssfeed tests', function() {
             .delete(`/api/v1/rss-feeds/${getTestData('RssfeedId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

@@ -51,7 +51,7 @@ describe('83 - Notice tests', function() {
             .get(`/api/v1/general/notices/${getTestData('NoticeId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Notice).to.have.property('Title');
                 expect(response.body.Data.Notice).to.have.property('Description');
@@ -79,7 +79,7 @@ describe('83 - Notice tests', function() {
             .get(`/api/v1/general/notices/search${loadNoticeQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.NoticeRecords).to.have.property('TotalCount');
                 expect(response.body.Data.NoticeRecords).to.have.property('RetrievedCount');
@@ -188,13 +188,13 @@ describe('83 - Notice tests', function() {
             .get(`/api/v1/general/notices/${getTestData('NoticeId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
                 
             })
-            .expect(404, done);
+            .expect(403, done);
     });
 
     it('83:08 -> Negative - Update Notice', function(done) {

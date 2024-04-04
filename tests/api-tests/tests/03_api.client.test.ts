@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
@@ -59,7 +59,6 @@ describe('03 - Api client tests', function () {
 
                 expect(response.body.Data.Client.Phone).to.equal(getTestData('ApiClientValidityCreateModel').Phone);
                 expect(response.body.Data.Client.Email).to.equal(getTestData('ApiClientValidityCreateModel').Email);
-                
             })
             .expect(201, done);
     });
@@ -82,16 +81,15 @@ describe('03 - Api client tests', function () {
             .expect(200, done);
     });
 
-    it('03:04 -> Get current api key', function(done) {
+    it('03:04 -> Get current api key', function (done) {
         agent
             .get(`/api/v1/api-clients/${getTestData('ClientCode')}/current-api-key`)
             .set('Content-Type', 'application/json')
-            .auth(`${getTestData("ClientCode")}`, `${process.env.TEST_CLIENT_PASSWORD}`)
+            .auth(`${getTestData('ClientCode')}`, `${process.env.TEST_CLIENT_PASSWORD}`)
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
-
             })
             .expect(200, done);
     });
@@ -102,7 +100,7 @@ describe('03 - Api client tests', function () {
         agent
             .put(`/api/v1/api-clients/${getTestData('ClientCode')}/renew-api-key`)
             .set('Content-Type', 'application/json')
-            .auth(`${getTestData("ClientCode")}`, `${process.env.TEST_CLIENT_PASSWORD}`)
+            .auth(`${getTestData('ClientCode')}`, `${process.env.TEST_CLIENT_PASSWORD}`)
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(updateModel)
             .expect((response) => {
@@ -112,14 +110,14 @@ describe('03 - Api client tests', function () {
             .expect(200, done);
     });
 
-    it('03:06 -> Search api client records', function(done) {
+    it('03:06 -> Search api client records', function (done) {
         loadApiClientQueryString();
         agent
             .get(`/api/v1/api-clients/search${loadApiClientQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body.Data.ClientAppRecords).to.have.property('TotalCount');
                 expect(response.body.Data.ClientAppRecords).to.have.property('RetrievedCount');
                 expect(response.body.Data.ClientAppRecords).to.have.property('PageIndex');
@@ -147,7 +145,6 @@ describe('03 - Api client tests', function () {
                 expect(response.body.Data.Client).to.have.property('Phone');
                 expect(response.body.Data.Client).to.have.property('Email');
 
-
                 expect(response.body.Data.Client.Phone).to.equal(getTestData('ApiClientUpdateModel').Phone);
                 expect(response.body.Data.Client.Email).to.equal(getTestData('ApiClientUpdateModel').Email);
             })
@@ -155,7 +152,6 @@ describe('03 - Api client tests', function () {
     });
 
     it('03:08 -> Delete api client', function (done) {
-
         agent
             .delete(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
@@ -217,7 +213,6 @@ describe('03 - Api client tests', function () {
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-              
             })
             .expect(403, done);
     });
@@ -228,7 +223,7 @@ describe('03 - Api client tests', function () {
         agent
             .put(`/api/v1/api-clients/${getTestData('ClientCode')}/renew-api-key`)
             .set('Content-Type', 'application/json')
-            .auth(`${getTestData("ClientCode")}`, `xyz`)
+            .auth(`${getTestData('ClientCode')}`, `xyz`)
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(updateModel)
             .expect((response) => {
@@ -239,7 +234,6 @@ describe('03 - Api client tests', function () {
     });
 
     it('03:12 -> Negative - Delete api client', function (done) {
-
         agent
             .delete(`/api/v1/api-clients/${getTestData('ApiClientId')}`)
             .set('Content-Type', 'application/json')
@@ -250,59 +244,51 @@ describe('03 - Api client tests', function () {
             })
             .expect(401, done);
     });
-    
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadApiClientCreateModel = async (
-) => {
+export const loadApiClientCreateModel = async () => {
     const model = {
         ClientName: faker.person.fullName(),
         Password: `${process.env.TEST_CLIENT_PASSWORD}`,
-        Phone : faker.phone.number('+91-##########'),
-        Email: faker.internet.exampleEmail()    
+        Phone: faker.phone.number(),
+        Email: faker.internet.exampleEmail(),
     };
     setTestData(model, 'ApiClientCreateModel');
 };
-    
-export const loadApiClientValidityCreateModel = async (
-) => {
+
+export const loadApiClientValidityCreateModel = async () => {
     const model = {
         ClientName: faker.person.fullName(),
         Password: `${process.env.TEST_CLIENT_PASSWORD}`,
-        Phone : faker.phone.number('+91-##########'),
+        Phone: faker.phone.number(),
         Email: faker.internet.exampleEmail(),
-        ValidFrom  : pastDateString,
-        ValidTill  : futureDateString   
+        ValidFrom: pastDateString,
+        ValidTill: futureDateString,
     };
     setTestData(model, 'ApiClientValidityCreateModel');
 };
 
-export const loadApiKeyUpdateModel = async (
-) => {
+export const loadApiKeyUpdateModel = async () => {
     const model = {
-        ValidFrom  : pastDateString,
-        ValidTill  : futureDateString     
+        ValidFrom: pastDateString,
+        ValidTill: futureDateString,
     };
     setTestData(model, 'ApiKeyUpdateModel');
 };
 
-export const loadApiClientUpdateModel = async (
-) => {
+export const loadApiClientUpdateModel = async () => {
     const model = {
         ClientName: faker.person.fullName(),
-        Phone : faker.phone.number('+91-##########'),
-        Email: faker.internet.exampleEmail(),  
+        Phone: faker.phone.number(),
+        Email: faker.internet.exampleEmail(),
     };
     setTestData(model, 'ApiClientUpdateModel');
 };
 
-export const loadNegativeApiKeyUpdateModel = async (
-) => {
-    const model = {
-    
-    };
+export const loadNegativeApiKeyUpdateModel = async () => {
+    const model = {};
     setTestData(model, 'ApiKeyUpdateModel');
 };
 

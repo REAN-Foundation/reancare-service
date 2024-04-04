@@ -146,7 +146,7 @@ describe('29 - Nutrition water consumption tests', function() {
             .post(`/api/v1/wellness/nutrition/water-consumptions/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -162,7 +162,7 @@ describe('29 - Nutrition water consumption tests', function() {
             .get(`/api/v1/wellness/nutrition/water-consumptions/${getTestData('WaterId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -176,7 +176,7 @@ describe('29 - Nutrition water consumption tests', function() {
         agent
             .put(`/api/v1/wellness/nutrition/water-consumptions/${getTestData('WaterId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

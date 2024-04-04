@@ -71,14 +71,14 @@ describe('67 - Daily assessment tests', function() {
             .post(`/api/v1/clinical/daily-assessments/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(403, done);
     });
 
     it('67:04 -> Negative - Search daily assessment records', function(done) {
@@ -86,7 +86,7 @@ describe('67 - Daily assessment tests', function() {
         agent
             .get(`/api/v1/clinical/daily-assessments/search${loadDailyAssessmentQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

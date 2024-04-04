@@ -22,7 +22,7 @@ describe('50 - Diagnosis tests', function() {
             .post(`/api/v1/clinical/diagnoses/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Diagnosis.id, 'DiagnosisId_1');
@@ -55,7 +55,7 @@ describe('50 - Diagnosis tests', function() {
             .get(`/api/v1/clinical/diagnoses/${getTestData('DiagnosisId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Diagnosis).to.have.property('id');
                 expect(response.body.Data.Diagnosis).to.have.property('MedicalPractitionerUserId');
@@ -84,7 +84,7 @@ describe('50 - Diagnosis tests', function() {
             .get(`/api/v1/clinical/diagnoses/search${loadDiagnosisQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Diagnosis).to.have.property('TotalCount');
                 expect(response.body.Data.Diagnosis).to.have.property('RetrievedCount');
@@ -135,7 +135,7 @@ describe('50 - Diagnosis tests', function() {
             .delete(`/api/v1/clinical/diagnoses/${getTestData('DiagnosisId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -150,7 +150,7 @@ describe('50 - Diagnosis tests', function() {
             .post(`/api/v1/clinical/diagnoses/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Diagnosis.id, 'DiagnosisId');
@@ -183,7 +183,7 @@ describe('50 - Diagnosis tests', function() {
         agent
             .post(`/api/v1/clinical/diagnoses/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -212,7 +212,7 @@ describe('50 - Diagnosis tests', function() {
             .delete(`/api/v1/clinical/diagnoses/${getTestData('DiagnosisId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

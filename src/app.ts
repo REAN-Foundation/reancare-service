@@ -106,18 +106,9 @@ export default class Application {
                 this._app.use(helmet());
                 this._app.use(cors());
 
-                this._app.use(ClientAppAuthMiddleware.authenticateClient);
-
-                const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
-
-                this._app.use(fileUpload({
-                    limits            : { fileSize: MAX_UPLOAD_FILE_SIZE },
-                    preserveExtension : true,
-                    createParentPath  : true,
-                    parseNested       : true,
-                    useTempFiles      : true,
-                    tempFileDir       : '/tmp/uploads/'
-                }));
+                //TODO: Move this to upload specific routes. Use router.use() method
+                this.useFileUploadMiddleware();
+                
                 resolve(true);
             }
             catch (error) {
@@ -146,6 +137,19 @@ export default class Application {
         });
     };
 
+
+    private useFileUploadMiddleware() {
+        const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
+
+        this._app.use(fileUpload({
+            limits: { fileSize: MAX_UPLOAD_FILE_SIZE },
+            preserveExtension: true,
+            createParentPath: true,
+            parseNested: true,
+            useTempFiles: true,
+            tempFileDir: '/tmp/uploads/'
+        }));
+    }
 }
 
 async function connectDatabase_Primary() {

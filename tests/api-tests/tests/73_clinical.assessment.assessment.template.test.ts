@@ -182,7 +182,7 @@ describe('73 - KCCQAssessmentTemplate tests', function() {
             .get(`/api/v1/clinical/assessment-templates/${getTestData('AssessmentTemplateScoreId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.AssessmentTemplate).to.have.property('id');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('DisplayCode');

@@ -47,7 +47,7 @@ describe('38 - Knowledge nuggets tests', function() {
             .get(`/api/v1/educational/knowledge-nuggets/${getTestData('KnowledgeNuggetId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.KnowledgeNugget).to.have.property('id');
                 expect(response.body.Data.KnowledgeNugget).to.have.property('TopicName');
@@ -84,7 +84,7 @@ describe('38 - Knowledge nuggets tests', function() {
             .get(`/api/v1/educational/knowledge-nuggets/search${loadKnowledgeNuggetQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.KnowledgeNuggetRecords).to.have.property('TotalCount');
                 expect(response.body.Data.KnowledgeNuggetRecords).to.have.property('RetrievedCount');
@@ -185,13 +185,13 @@ describe('38 - Knowledge nuggets tests', function() {
             .get(`/api/v1/educational/knowledge-nuggets/${getTestData('KnowledgeNuggetId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(404, done);
+            .expect(403, done);
     });
 
     it('38:09 -> Negative - Update knowledge nugget', function(done) {

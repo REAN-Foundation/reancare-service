@@ -47,7 +47,7 @@ describe('53 - Symptom type tests', function() {
             .get(`/api/v1/clinical/symptom-types/${getTestData('SymptomTypeId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.SymptomType).to.have.property('id');
                 expect(response.body.Data.SymptomType).to.have.property('Symptom');
@@ -70,7 +70,7 @@ describe('53 - Symptom type tests', function() {
             .get(`/api/v1/clinical/symptom-types/search${loadSymptomQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.SymptomTypes).to.have.property('TotalCount');
                 expect(response.body.Data.SymptomTypes).to.have.property('RetrievedCount');
@@ -171,7 +171,7 @@ describe('53 - Symptom type tests', function() {
             .get(`/api/v1/clinical/symptom-types/${getTestData('SymptomTypeId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

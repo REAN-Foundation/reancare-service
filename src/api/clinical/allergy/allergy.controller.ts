@@ -30,7 +30,6 @@ export class AllergyController {
             ResponseHandler.success(request, response, 'Allergen categories retrieved successfully!', 200, {
                 AllergenCategories : AllergenCategoriesList,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

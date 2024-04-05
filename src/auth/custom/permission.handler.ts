@@ -36,7 +36,8 @@ export class PermissionHandler {
         }
 
         // 1. Check if the current role has permission for this context
-        const hasRoleBasedPermission = await PermissionHandler.hasRoleBasedPermission(currentUser.CurrentRoleId, context);
+        const hasRoleBasedPermission = 
+            await PermissionHandler.hasRoleBasedPermission(currentUser.CurrentRoleId, context);
         if (!hasRoleBasedPermission) {
             return false;
         }

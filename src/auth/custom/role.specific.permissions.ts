@@ -51,8 +51,12 @@ export class RoleBasedPermissionHandler {
     };
 
     private static getResourceOwner_CreateRequest = (request: any): string => {
+
         var resourceOwnerUserId = null;
-        if (request.requestType === 'Create') {
+        
+        if (request.requestType === RequestType.CreateMany || 
+            request.requestType === RequestType.CreateOne) {
+
             //By default, any resource associated with patient is owned by the patient
             //This includes clinical entities, wellness entities, etc.
             if (request.body.PatientUserId != null && request.body.PatientUserId !== undefined) {
@@ -74,7 +78,8 @@ export class RoleBasedPermissionHandler {
         currentUser: CurrentUser
     ): Promise<boolean> => {
         // Handle create requests for Patient Roles
-        const isCreateRequest = request.requestType === 'Create';
+        const isCreateRequest = request.requestType === RequestType.CreateOne || 
+                                request.requestType === RequestType.CreateMany;
         const resourceOwnerId_CreateReq = this.getResourceOwner_CreateRequest(request);
 
         if (isCreateRequest && request.patientOwnedResource) {
@@ -118,7 +123,8 @@ export class RoleBasedPermissionHandler {
         request: express.Request,
         currentUser: CurrentUser
     ): Promise<boolean> => {
-        const isCreateRequest = request.requestType === 'Create';
+        const isCreateRequest = request.requestType === RequestType.CreateOne || 
+                                request.requestType === RequestType.CreateMany;
         const resourceOwnerId_CreateReq = this.getResourceOwner_CreateRequest(request);
         const isPatientOwnedResource = request.patientOwnedResource;
 

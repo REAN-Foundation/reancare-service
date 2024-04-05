@@ -72,7 +72,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);
         await this.validateString(request, 'DisplayCode', Where.Body, false, false);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
-        await this.validateUuid(request, 'TenantId', Where.Body, true, false);
+        await this.validateUuid(request, 'TenantId', Where.Body, false, true);
         this.validateRequest(request);
     }
 

@@ -17,6 +17,7 @@ import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { Injector } from '../../../../startup/injector';
 import { TenantService } from '../../../../services/tenant/tenant.service';
+import { Logger } from '../../../../common/logger';
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +27,7 @@ export class AhaAssessmentConverter {
 
         var tenantService = Injector.Container.resolve(TenantService);
         var tenant = await tenantService.getTenantWithCode('default');
+        Logger.instance().log(`Tenant : ${JSON.stringify(tenant)}`);
 
         var template: CAssessmentTemplate = new CAssessmentTemplate();
         template.Type = AssessmentType.Careplan;
@@ -67,7 +69,7 @@ export class AhaAssessmentConverter {
                 }
             }
         }
-
+        Logger.instance().log(`Template : ${JSON.stringify(template)}`);
         return template;
     };
 

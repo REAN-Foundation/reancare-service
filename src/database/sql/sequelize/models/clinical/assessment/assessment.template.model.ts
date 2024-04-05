@@ -47,7 +47,7 @@ export default class AssessmentTemplate extends Model {
     @ForeignKey(() => Tenant)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     TenantId: string;
 

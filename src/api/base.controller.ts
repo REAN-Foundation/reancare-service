@@ -22,7 +22,7 @@ export class BaseController {
         resourceTenantId: uuid): Promise<void> => {
         request.resourceOwnerUserId = resourceOwnerUserId;
         request.resourceTenantId = resourceTenantId;
-        const permitted = await RoleBasedPermissionHandler.checkRoleSpecificPermissions(request);
+        const permitted = await RoleBasedPermissionHandler.check(request);
         if (!permitted) {
             throw new ApiError(403, 'Permission denied.');
         }
@@ -34,7 +34,7 @@ export class BaseController {
         resourceTenantId: uuid): Promise<void> => {
         request.resourceOwnerUserId = resourceOwnerUserId;
         request.resourceTenantId = resourceTenantId;
-        const permitted = await RoleBasedPermissionHandler.checkRoleSpecificPermissions(request);
+        const permitted = await RoleBasedPermissionHandler.check(request);
         if (!permitted) {
             throw new ApiError(403, 'Permission denied.');
         }

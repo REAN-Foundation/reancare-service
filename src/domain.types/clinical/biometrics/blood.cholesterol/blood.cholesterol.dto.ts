@@ -4,6 +4,7 @@ export interface BloodCholesterolDto {
     id?                : uuid;
     EhrId?             : uuid;
     PatientUserId?     : uuid;
+    TenantId?          : uuid;
     TotalCholesterol?  : number;
     HDL?               : number;
     LDL?               : number;

@@ -17,6 +17,7 @@ import {
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
 import Person from '../../person/person.model';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -63,6 +64,14 @@ export default class BloodCholesterol extends Model {
         allowNull : false,
     })
     PatientUserId: string;
+
+    // @IsUUID(4)
+    // @ForeignKey(() => Tenant)
+    // @Column({
+    //     type      : DataType.UUID,
+    //     allowNull : false,
+    // })
+    // TenantId: string;
 
     @IsDecimal
     @Column({

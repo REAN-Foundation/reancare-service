@@ -1,10 +1,10 @@
 
-///////////////////////////////////////////////////////////////////////////////////////
-
 import express from "express"
 import { uuid } from "../domain.types/miscellaneous/system.types";
-import { RoleBasedPermissionHandler } from "../auth/custom/role.specific.permissions";
 import { ApiError } from "../common/api.error";
+import { PermissionHandler } from "../auth/custom/permission.handler";
+
+///////////////////////////////////////////////////////////////////////////////////////
 
 export class BaseController {
 
@@ -12,9 +12,9 @@ export class BaseController {
 
     constructor() {
     }
+    
     //#endregion
 
-    //#region Action methods
 
     public authorizeOne = async (
         request: express.Request, 
@@ -22,19 +22,7 @@ export class BaseController {
         resourceTenantId: uuid): Promise<void> => {
         request.resourceOwnerUserId = resourceOwnerUserId;
         request.resourceTenantId = resourceTenantId;
-        const permitted = await RoleBasedPermissionHandler.check(request);
-        if (!permitted) {
-            throw new ApiError(403, 'Permission denied.');
-        }
-    };
-
-    public authorizeSearch = async (
-        request: express.Request, 
-        resourceOwnerUserId: uuid, 
-        resourceTenantId: uuid): Promise<void> => {
-        request.resourceOwnerUserId = resourceOwnerUserId;
-        request.resourceTenantId = resourceTenantId;
-        const permitted = await RoleBasedPermissionHandler.check(request);
+        const permitted = await PermissionHandler.checkFineGrained(request);
         if (!permitted) {
             throw new ApiError(403, 'Permission denied.');
         }

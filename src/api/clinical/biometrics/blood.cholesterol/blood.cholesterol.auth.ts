@@ -61,13 +61,54 @@ export class BloodCholesterolAuth {
     static authorizeSearch = async (
         request: express.Request,
         searchFilters: BloodCholesterolSearchFilters) => {
+
+        const currentUser = request.currentUser;
+        const ownership = request.ownership;
+        const actionScope = request.actionScope;
+        const isOwner = request.resourceOwnerUserId === currentUser.UserId;
+        const areTenantsSame = request.resourceTenantId === currentUser.TenantId;
+
+        const customAuthorization = request.customAuthorization;
+
         if (searchFilters.PatientUserId != null) {
+
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                throw new ApiError(403, `Unauthorized`);
+                searchFilters['TenantId'] = currentUser.TenantId;
+                
+                
+                if (actionScope === ActionScope.Tenant) {
+                    
+                }
+                if (ownership === ResourceOwnership.Owner) {
+                    if (actionScope === ActionScope.Owner) {
+                        throw new ApiError(403, `Unauthorized`);
+                        //Handle it through custom authorization
+                        // return customAuthorization;
+                    }
+    
+                }
             }
+            else {
+                searchFilters.PatientUserId = currentUser.UserId;
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+
+        else if(searchFilters.PatientUserId === request.currentUser.UserId) {
+
+        if (searchFilters.PatientUserId != null) {
+
         }
 
         searchFilters.PatientUserId = request.currentUser.UserId;
+        searchFilters.TenantId = request.currentUser.TenantId;
+
         searchFilters.
     };
+
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+

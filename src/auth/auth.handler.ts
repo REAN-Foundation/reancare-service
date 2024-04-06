@@ -5,16 +5,14 @@ import { Injector } from '../startup/injector';
 import { ResponseHandler } from '../common/handlers/response.handler';
 import { ErrorHandler } from '../common/handlers/error.handler';
 import { uuid } from '../domain.types/miscellaneous/system.types';
-import { ResourceHandler } from './custom/resource.handler';
 import { AuthOptions, RequestType, ResourceOwnership, ActionScope } from './auth.types';
-import { Client } from 'twilio/lib/base/BaseTwilio';
 import ClientAppAuthMiddleware from '../middlewares/client.app.auth.middleware';
 
-////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 export type AuthMiddleware =
     (request: Request, response: Response, next: NextFunction)
     => Promise<void>;
-////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class AuthHandler {
 
@@ -34,21 +32,19 @@ export class AuthHandler {
             request.requestType = options.RequestType;
             request.resourceId = this.getResourceId(request, resourceIdIdentifier);
             request.ownership = options.Ownership;
-            request.actionScope = options.Visibility;
+            request.actionScope = options.ActionScope;
             request.clientAppAuth = options.ClientAppAuth != null ? options.ClientAppAuth : false;
-            request.controllerAuth = options.ControllerAuth != null ? options.ControllerAuth : false;
-            request.customAuthorization = options.CustomAuthorizationFun != null;
+            request.customAuthorization = options.CustomAuthorization != null;
             next();
         };
         middlewares.push(contextSetter);
 
         //Line-up the auth middleware chain
-        const controllerAuth = options.ControllerAuth != null ? options.ControllerAuth : false;
         const clientAppAuth = options.ClientAppAuth != null ? options.ClientAppAuth : false;
-        const noCustomAuthorization = options.CustomAuthorizationFun == null && controllerAuth === false;
+        const noCustomAuthorization = options.CustomAuthorization == null;
         const systemOwnedResource = options.Ownership === ResourceOwnership.System ||
                                     options.Ownership === ResourceOwnership.NotApplicable;
-        const publicAccess = options.Visibility === ActionScope.Public;
+        const publicAccess = options.ActionScope === ActionScope.Public;
 
         // Client app authentication could be turned off for certain endpoints. e.g. public file downloads, etc.
         if (clientAppAuth === true) {

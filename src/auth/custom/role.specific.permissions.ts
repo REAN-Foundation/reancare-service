@@ -32,6 +32,64 @@ export class RoleBasedPermissionHandler {
         return await this.checkPermissions(request, currentUser);
     };
 
+    private static checkForXOne = (
+        ownership: ResourceOwnership,
+        actionScope: ActionScope,
+        isOwner: boolean,
+        areTenantsSame: boolean,
+        hasConsent: boolean
+    ): boolean => {
+
+        //visible to the individual owner only
+        if (ownership === ResourceOwnership.Owner) {
+            if (actionScope === ActionScope.Owner) {
+                return isOwner;
+            }
+            if (actionScope === ActionScope.Tenant) {
+                return areTenantsSame;
+            }
+            if (actionScope === ActionScope.System) {
+                return hasConsent;
+            }
+            return false;
+        }
+        else if (ownership === ResourceOwnership.Tenant) {
+            return areTenantsSame;
+        }
+        else if (ownership === ResourceOwnership.System) {
+            return true;
+        }
+        return false;
+    };
+
+    private static checkCreateOne = (
+        ownership: ResourceOwnership,
+        actionScope: ActionScope,
+        isOwner: boolean,
+        areTenantsSame: boolean,
+        hasConsent: boolean
+    ): boolean => {
+
+        if (ownership === ResourceOwnership.Owner) {
+            if (actionScope === ActionScope.Owner) {
+                return isOwner;
+            }
+            if (actionScope === ActionScope.Tenant) {
+                return areTenantsSame && hasConsent;
+            }
+            if (actionScope === ActionScope.System) {
+                return hasConsent;
+            }
+        }
+        else if (ownership === ResourceOwnership.Tenant) {
+            return areTenantsSame;
+        }
+        else if (ownership === ResourceOwnership.System) {
+            return true;
+        }
+        return false;
+        
+    }
 
     private static checkPermissions = async (request: express.Request, currentUser: CurrentUser) => {
 
@@ -41,88 +99,22 @@ export class RoleBasedPermissionHandler {
         const isOwner = request.resourceOwnerUserId === currentUser.UserId;
         const areTenantsSame = request.resourceTenantId === currentUser.TenantId;
         const hasConsent = await this.hasConsent(request);
-        const customAuthorization = request.customAuthorization || request.controllerAuth;
+        const customAuthorization = request.customAuthorization;
 
         //Check if it is single resource request...
         if (requestType === RequestType.GetOne || 
             requestType === RequestType.UpdateOne || 
             requestType === RequestType.DeleteOne) {
-
             //visible to the individual owner only
-            if (ownership === ResourceOwnership.Owner) {
-                if (actionScope === ActionScope.Owner) {
-                    return isOwner;
-                }
-                if (actionScope === ActionScope.Tenant) {
-                    return areTenantsSame;
-                }
-                if (actionScope === ActionScope.System) {
-                    return hasConsent;
-                }
-            }
-            else if (ownership === ResourceOwnership.Tenant) {
-                return areTenantsSame;
-            }
-            else if (ownership === ResourceOwnership.System) {
-                return true;
-            }
-        }
-        
-        if (requestType === RequestType.Search) {
-
-            if (request.query == null || request.query === undefined) {
-                request.query = {};
-            }
-
-            //Check if the search request is limited to the tenant
-            if (ownership === ResourceOwnership.Owner) {
-                if (actionScope === ActionScope.Owner) {
-                    //Handle it through custom authorization
-                    return customAuthorization;
-                }
-                if (actionScope === ActionScope.Tenant) {
-                    request.query['tenantId'] = currentUser.TenantId;
-                    return true;
-                }
-            }
-            
-            if (ownership === ResourceOwnership.Tenant) {
-                request.query['tenantId'] = currentUser.TenantId;
-                return true;
-            }
-            if (ownership === ResourceOwnership.System) {
-                if (actionScope === ActionScope.System ||
-                    actionScope === ActionScope.Public) {
-                    return true;
-                }
-                else if (actionScope === ActionScope.Tenant) {
-                    request.query['tenantId'] = currentUser.TenantId;
-                    return true;
-                }
-            }
-            return false;
+            return this.checkForXOne(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
         }
         if (requestType === RequestType.CreateOne) {
-            if (ownership === ResourceOwnership.Owner) {
-                if (actionScope === ActionScope.Owner) {
-                    return isOwner;
-                }
-                if (actionScope === ActionScope.Tenant) {
-                    return areTenantsSame && hasConsent;
-                }
-                if (actionScope === ActionScope.System) {
-                    return hasConsent;
-                }
-            }
-            else if (ownership === ResourceOwnership.Tenant) {
-                return areTenantsSame;
-            }
-            else if (ownership === ResourceOwnership.System) {
-                return true;
-            }
+            return this.checkCreateOne(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
         }
-        //Rest of the permissions are checked for role based permissions
-        return false;
+        if (requestType === RequestType.Search) {
+            return true;
+        }
+        return customAuthorization;
     };
 
     private static hasConsent = async (request: express.Request)
@@ -140,6 +132,7 @@ export class RoleBasedPermissionHandler {
     };
 
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 

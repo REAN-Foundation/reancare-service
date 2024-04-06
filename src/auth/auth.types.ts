@@ -14,7 +14,6 @@ export enum ResourceOwnership {
     Owner         = 'Owner',
     Tenant        = 'Tenant',
     System        = 'System',
-    NotApplicable = 'NotApplicable',
 }
 
 // This enums tells about - who can access a resource
@@ -45,8 +44,7 @@ export interface AuthOptions {
     RequestType           ?: RequestType;
     ClientAppAuth          : boolean;
     ResourceIdName        ?: string | number;
-    ControllerAuth        ?: boolean;           // Authorization is done at the controller level
-    CustomAuthorizationFun?: (request: any) => Promise<AuthResult>;
+    CustomAuthorization   ?: boolean;
     AlternateAuth         ?: boolean;
 }
 
@@ -55,9 +53,8 @@ export const DefaultAuthOptions: AuthOptions = {
     ActionScope            : ActionScope.Owner,
     Ownership              : ResourceOwnership.Owner,
     RequestType            : RequestType.Custom,
-    ClientAppAuth          : true,
     ResourceIdName         : 'id',
-    ControllerAuth         : false,
-    CustomAuthorizationFun : null,
+    ClientAppAuth          : true,
+    CustomAuthorization    : false,
     AlternateAuth          : false,
 };

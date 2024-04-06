@@ -16,7 +16,6 @@ declare global{
             resourceOwnerUserId  : string | null | undefined;
             resourceTenantId     : string | null | undefined;
             clientAppAuth        : boolean; //This flag indicates that the request is for the client app specific endpoints
-            controllerAuth       : boolean; //This flag indicates that the authorization is done at the controller level
             customAuthorization  : boolean; //This flag indicates that the authorization is done using a custom function
         }
     }

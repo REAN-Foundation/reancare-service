@@ -25,7 +25,7 @@ export class PermissionHandler {
 
         // const systemOwnedResource = request.ownership === ResourceOwnership.System;
         const publicAccess = request.actionScope === ActionScope.Public;
-        const customAuthorization = request.customAuthorization || request.controllerAuth;
+        const customAuthorization = request.customAuthorization;
         
         const currentUser = request.currentUser ?? null;
         if (!currentUser) {

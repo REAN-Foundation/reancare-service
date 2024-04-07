@@ -1,9 +1,3 @@
-import { RoleBasedPermissionHandler } from '../../../../auth/custom/role.specific.permissions';
-import express from 'express';
-import { BloodCholesterolDomainModel } from '../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.domain.model';
-import { BloodCholesterolSearchFilters } from '../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.search.types';
-import { ApiError } from '../../../../common/api.error';
-import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { 
     AuthOptions, 
     RequestType, 

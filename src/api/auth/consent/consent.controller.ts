@@ -11,6 +11,7 @@ import { TenantService } from '../../../services/tenant/tenant.service';
 import { Injector } from '../../../startup/injector';
 import { ConsentCreateModel, ConsentSearchFilters } from '../../../domain.types/auth/consent.types';
 import { BaseController } from '../../../api/base.controller';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -73,7 +74,7 @@ export class ConsentController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters: ConsentSearchFilters = await this._validator.search(request);
-            await this.authorizeSearch(request, filters.OwnerUserId, filters.TenantId);
+            await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -126,6 +127,33 @@ export class ConsentController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    //#endregion
+
+    //#region Authorization methods
+
+    authorizeSearch = async (request: express.Request, searchFilters: ConsentSearchFilters)
+        : Promise<ConsentSearchFilters> => {
+
+        const currentUser = request.currentUser;
+    
+        if (searchFilters.OwnerUserId != null) {
+            if (searchFilters.OwnerUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.OwnerUserId, 
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.OwnerUserId = currentUser.UserId;
+        }
+        return searchFilters;
     };
 
     //#endregion

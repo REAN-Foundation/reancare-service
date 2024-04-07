@@ -34,16 +34,15 @@ export class AuthHandler {
             request.ownership = options.Ownership;
             request.actionScope = options.ActionScope;
             request.clientAppAuth = options.ClientAppAuth != null ? options.ClientAppAuth : false;
-            request.customAuthorization = options.CustomAuthorization != null;
+            request.customAuthorization = options.CustomAuthorization ? options.CustomAuthorization : false;
+            request.alternateAuth = options.AlternateAuth ? options.AlternateAuth : false;
             next();
         };
         middlewares.push(contextSetter);
 
         //Line-up the auth middleware chain
         const clientAppAuth = options.ClientAppAuth != null ? options.ClientAppAuth : false;
-        const noCustomAuthorization = options.CustomAuthorization == null;
-        const systemOwnedResource = options.Ownership === ResourceOwnership.System ||
-                                    options.Ownership === ResourceOwnership.NotApplicable;
+        const systemOwnedResource = options.Ownership === ResourceOwnership.System;
         const publicAccess = options.ActionScope === ActionScope.Public;
 
         // Client app authentication could be turned off for certain endpoints. e.g. public file downloads, etc.
@@ -68,9 +67,6 @@ export class AuthHandler {
         if (publicAccess && systemOwnedResource) {
             return middlewares;
         }
-
-        // var resourceHandler = new ResourceHandler();
-        // middlewares.push(resourceHandler.extractResourceInfo);
 
         var authorizer = Injector.Container.resolve(UserAuthorizer);
         middlewares.push(authorizer.authorize);

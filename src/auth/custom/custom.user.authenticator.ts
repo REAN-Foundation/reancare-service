@@ -2,7 +2,7 @@ import express from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Logger } from '../../common/logger';
 import { IUserAuthenticator } from '../interfaces/user.authenticator.interface';
-import { AuthResult } from '../auth.types';
+import { ActionScope, AuthResult } from '../auth.types';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { UserService } from '../../services/users/user/user.service';
@@ -27,33 +27,29 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
         request: express.Request
     ): Promise<AuthResult> => {
         try {
-            if (request.clientAppRoutes) {
-                //This check is applicable only for the client app
-                //specific endpoints. For all other endpoints, this
-                //check is not applicable.
-                return {
-                    Result        : true,
-                    Message       : 'Authenticated',
-                    HttpErrorCode : 200,
-                };
-            }
             var res: AuthResult = {
                 Result        : true,
                 Message       : 'Authenticated',
                 HttpErrorCode : 200,
             };
+            if (!request.clientAppAuth && request.alternateAuth) {
+                // Cuurently, this check is applicable only for the specific endpoints, where
+                // there is a need to allow alternate authentication mechanism. 
+                // For example, client-app specific endpoints like renew and get API keys. Here we
+                // using basic authentication (username and password) instead of JWT token.
+                // For all other endpoints, this check is not applicable.
+                return res;
+            }
+            const publicAccess = request.actionScope === ActionScope.Public;
+            const customAuthorization = request.customAuthorization;
 
             const authHeader = request.headers['authorization'];
             const token = authHeader && authHeader.split(' ')[1];
 
             const missingToken = token == null || token === 'null' || token === undefined;
-            const allowAnonymous = request.allowAnonymous;
+            const allowWithoutToken = publicAccess && customAuthorization;
 
-            if (request.publicUrl) {
-                return res;
-            }
-
-            if ( missingToken && !allowAnonymous) {
+            if ( missingToken && !allowWithoutToken) {
                 res = {
                     Result        : false,
                     Message       : 'Unauthorized user access',

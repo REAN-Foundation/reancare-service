@@ -8,36 +8,17 @@ import { Roles } from "../../domain.types/role/role.types";
 import { Logger } from "../../common/logger";
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 
-//////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 
 export class PermissionHandler {
 
     public static checkRoleBasedPermissions = async (request: express.Request): Promise<boolean> => {
+        const currentUser = request.currentUser;
+        const roleId = currentUser.CurrentRoleId;
         const context = request.context;
-        if (context == null || context === 'undefined') {
-            return false;
-        }
-
-        // const systemOwnedResource = request.ownership === ResourceOwnership.System;
-        const publicAccess = request.actionScope === ActionScope.Public;
-        const customAuthorization = request.customAuthorization;
-
-        const currentUser = request.currentUser ?? null;
-        if (!currentUser) {
-            //If the user is not authenticated, then check if the resource access is public
-            if (publicAccess && customAuthorization) {
-                return true;
-            }
-        }
-
-        // Check if the current role has permission for this context
-        const hasRoleBasedPermission = await PermissionHandler.hasRoleBasedPermission(
-            currentUser.CurrentRoleId, context);
-        if (!hasRoleBasedPermission) {
-            return false;
-        }
-
-        return true;
+        const rolePrivilegeService = Injector.Container.resolve(RolePrivilegeService);
+        const hasPrivilege = await rolePrivilegeService.hasPrivilegeForRole(roleId, context);
+        return hasPrivilege;
     };
 
     public static checkConsent = async (
@@ -77,15 +58,6 @@ export class PermissionHandler {
         }
 
         return await this.checkByRequestType(request, currentUser);
-    };
-
-    private static hasRoleBasedPermission = async (roleId, context) => {
-        const rolePrivilegeService = Injector.Container.resolve(RolePrivilegeService);
-        const hasPrivilege = await rolePrivilegeService.hasPrivilegeForRole(roleId, context);
-        if (!hasPrivilege) {
-            return false;
-        }
-        return true;
     };
 
     private static checkForXOne = (
@@ -148,6 +120,7 @@ export class PermissionHandler {
         const areTenantsSame = request.resourceTenantId === currentUser.TenantId;
         const hasConsent = await this.hasConsent(request);
         const customAuthorization = request.customAuthorization;
+        const systemOwnedResource = request.ownership === ResourceOwnership.System;
 
         //Check if it is single resource request...
         if (

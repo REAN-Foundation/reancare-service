@@ -58,11 +58,11 @@ export class BloodCholesterolController extends BiometricsController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
+
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
-
             const message =
                 count === 0
                     ? 'No records found!'

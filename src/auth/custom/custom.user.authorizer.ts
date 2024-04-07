@@ -28,13 +28,22 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
                 return false;
             }
 
-            // If the resource is not public, then the user must be authenticated
-            if (request.actionScope != ActionScope.Public &&
-                request.currentUser == null) {
-                return true;
+            const publicAccess = request.actionScope === ActionScope.Public;
+            const customAuthorization = request.customAuthorization;
+    
+            const currentUser = request.currentUser ?? null;
+            if (!currentUser) {
+                //If the user is not authenticated, then check if the resource access is public
+                if (publicAccess && customAuthorization) {
+                    // Custom authorization is required for public access. 
+                    // To check whether a particular resource is available for public access, e.g. a profile image download
+                    return true;
+                }
+                // If the resource is not public, then the user must be authenticated
+                return false;
             }
 
-            const hasPermission = await PermissionHandler.checkPermissions(request);
+            const hasPermission = await PermissionHandler.checkRoleBasedPermissions(request);
             return hasPermission;
 
         } catch (error) {

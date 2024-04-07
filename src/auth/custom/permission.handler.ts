@@ -87,6 +87,31 @@ export class PermissionHandler {
         return false;
     };
 
+    private static checkXMany = (
+        ownership: ResourceOwnership,
+        actionScope: ActionScope,
+        isOwner: boolean,
+        areTenantsSame: boolean,
+        hasConsent: boolean
+    ): boolean => {
+        if (ownership === ResourceOwnership.Owner) {
+            if (actionScope === ActionScope.Owner) {
+                return isOwner;
+            }
+            if (actionScope === ActionScope.Tenant) {
+                return areTenantsSame;
+            }
+            if (actionScope === ActionScope.System) {
+                return hasConsent;
+            }
+        } else if (ownership === ResourceOwnership.Tenant) {
+            return areTenantsSame;
+        } else if (ownership === ResourceOwnership.System) {
+            return true;
+        }
+        return false;
+    };
+
     private static checkCreateOne = (
         ownership: ResourceOwnership,
         actionScope: ActionScope,
@@ -137,6 +162,12 @@ export class PermissionHandler {
         if (requestType === RequestType.Search) {
             return true;
         }
+        if (requestType === RequestType.GetMany ||
+            requestType === RequestType.UpdateMany ||
+            requestType === RequestType.DeleteMany) {
+            return this.checkXMany(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
+        }
+
         return customAuthorization;
     };
 

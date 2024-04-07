@@ -23,22 +23,26 @@ export class BaseController {
         resourceOwnerUserId?: uuid, 
         resourceTenantId?: uuid): Promise<void> => {
 
+        let ownerUserId = resourceOwnerUserId ?? null;
         let tenantId = resourceTenantId ?? null;
+
+        // ownerUserId = ownerUserId ?? request.currentUser?.UserId;
+
+        if (ownerUserId) {
+            const userService = Injector.Container.resolve(UserService);
+            var user = await userService.getById(ownerUserId);
+            if (user) {
+                ownerUserId = user.id;
+                tenantId = tenantId ?? user.TenantId;
+            }
+        }
+
         if (tenantId == null) {
+            // If tenant is not provided, get the default tenant
             const tenantService = Injector.Container.resolve(TenantService);
             var tenant = await tenantService.getTenantWithCode('default');
             if (tenant) {
                 tenantId = tenant.id;
-            }
-        }
-
-        let ownerUserId = resourceOwnerUserId ?? null;
-        if (ownerUserId == null) {
-            const currentUserId = request.currentUser?.UserId;
-            const userService = Injector.Container.resolve(UserService);
-            var user = await userService.getById(currentUserId);
-            if (user) {
-                ownerUserId = user.id;
             }
         }
 
@@ -50,7 +54,5 @@ export class BaseController {
             throw new ApiError(403, 'Permission denied.');
         }
     };
-
-    public authorize
 
 }

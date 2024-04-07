@@ -4,6 +4,7 @@ import {
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
 import Bridge from './bridge.model';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -35,6 +36,14 @@ export default class Donation extends Model {
     })
     PatientUserId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TenantId: string;
+    
     @IsUUID(4)
     @ForeignKey(() => Bridge)
     @Column({

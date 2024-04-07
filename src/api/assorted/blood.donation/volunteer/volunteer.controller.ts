@@ -9,6 +9,7 @@ import { UserDomainModel } from '../../../../domain.types/users/user/user.domain
 import { BaseUserController } from '../../../users/base.user.controller';
 import { VolunteerValidator } from './volunteer.validator';
 import { Injector } from '../../../../startup/injector';
+import { VolunteerSearchFilters } from '../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,40 +30,40 @@ export class VolunteerController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const volunteerDomainModel = await VolunteerValidator.create(request);
+            const model = await VolunteerValidator.create(request);
 
             //Throw an error if donor with same name and phone number exists
-            const donorExists = await this._service.volunteerExists(volunteerDomainModel);
+            const donorExists = await this._service.volunteerExists(model);
             if (donorExists) {
                 throw new ApiError(400, 'Cannot create volunteer! Volunteer with same phone number exists.');
             }
 
             const userName = await this._userService.generateUserName(
-                volunteerDomainModel.User.Person.FirstName,
-                volunteerDomainModel.User.Person.LastName
+                model.User.Person.FirstName,
+                model.User.Person.LastName
             );
 
             const displayId = await this._userService.generateUserDisplayId(
                 Roles.Volunteer,
-                volunteerDomainModel.User.Person.Phone
+                model.User.Person.Phone
             );
 
             const displayName = Helper.constructPersonDisplayName(
-                volunteerDomainModel.User.Person.Prefix,
-                volunteerDomainModel.User.Person.FirstName,
-                volunteerDomainModel.User.Person.LastName
+                model.User.Person.Prefix,
+                model.User.Person.FirstName,
+                model.User.Person.LastName
             );
 
-            volunteerDomainModel.User.Person.DisplayName = displayName;
-            volunteerDomainModel.User.UserName = userName;
-            volunteerDomainModel.DisplayId = displayId;
+            model.User.Person.DisplayName = displayName;
+            model.User.UserName = userName;
+            model.DisplayId = displayId;
 
-            const userDomainModel = volunteerDomainModel.User;
+            const userDomainModel = model.User;
             const personDomainModel = userDomainModel.Person;
 
             //Create a person first
 
-            let person = await this._personService.getPersonWithPhone(volunteerDomainModel.User.Person.Phone);
+            let person = await this._personService.getPersonWithPhone(model.User.Person.Phone);
             if (person == null) {
                 person = await this._personService.create(personDomainModel);
                 if (person == null) {
@@ -71,7 +72,7 @@ export class VolunteerController extends BaseUserController {
             }
 
             const role = await this._roleService.getByName(Roles.Volunteer);
-            volunteerDomainModel.PersonId = person.id;
+            model.PersonId = person.id;
             userDomainModel.Person.id = person.id;
             userDomainModel.RoleId = role.id;
 
@@ -79,12 +80,12 @@ export class VolunteerController extends BaseUserController {
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
-            volunteerDomainModel.UserId = user.id;
+            model.UserId = user.id;
 
             //KK: Note - Please add user to appointment service here...
 
-            volunteerDomainModel.DisplayId = displayId;
-            const volunteer = await this._service.create(volunteerDomainModel);
+            model.DisplayId = displayId;
+            const volunteer = await this._service.create(model);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create volunteer!');
             }
@@ -115,7 +116,7 @@ export class VolunteerController extends BaseUserController {
             if (volunteer == null) {
                 throw new ApiError(404, 'Volunteer not found.');
             }
-
+            await this.authorizeOne(request, null, volunteer.TenantId);
             ResponseHandler.success(request, response, 'Volunteer retrieved successfully!', 200, {
                 Volunteer : volunteer,
             });
@@ -127,7 +128,7 @@ export class VolunteerController extends BaseUserController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters = await VolunteerValidator.search(request);
-
+            await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -151,6 +152,7 @@ export class VolunteerController extends BaseUserController {
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, null, existingUser.TenantId);
 
             const userDomainModel: UserDomainModel = donorDomainModel.User;
             const updatedUser = await this._userService.update(donorDomainModel.User.id, userDomainModel);
@@ -189,7 +191,7 @@ export class VolunteerController extends BaseUserController {
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
-
+            await this.authorizeOne(request, null, existingUser.TenantId);
             const deleted = await this._personService.delete(existingUser.PersonId);
             await this._service.deleteByUserId(userId);
             if (!deleted) {
@@ -205,5 +207,19 @@ export class VolunteerController extends BaseUserController {
     };
 
     //#endregion
+    //#region Authorization methods
 
+    authorizeSearch = (
+        request: express.Request,
+        filters: VolunteerSearchFilters) => {
+        const currentUserRole = request.currentUser.CurrentRole;
+            if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
+                currentUserRole === Roles.Volunteer || currentUserRole === Roles.TenantAdmin ||
+                currentUserRole === Roles.TenantUser || currentUserRole === Roles.Donor) {
+            return filters;
+        }
+        throw new ApiError(403, 'Unauthorized');
+    };
+
+    //#endregion
 }

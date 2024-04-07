@@ -46,6 +46,7 @@ export interface AuthOptions {
     ResourceIdName        ?: string | number;
     CustomAuthorization   ?: boolean;
     AlternateAuth         ?: boolean;
+    userRegistration      ?: boolean;
 }
 
 export const DefaultAuthOptions: AuthOptions = {
@@ -57,4 +58,5 @@ export const DefaultAuthOptions: AuthOptions = {
     ClientAppAuth          : true,
     CustomAuthorization    : false,
     AlternateAuth          : false,
+    userRegistration       : false,
 };

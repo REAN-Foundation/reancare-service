@@ -8,6 +8,7 @@ import { UserDto } from "../../../users/user/user.dto";
 export interface DonorDetailsDto {
     id?                : string;
     UserId?            : string;
+    TenantId?          : string;
     PersonId?          : string;
     DisplayId?         : string,
     EhrId?             : string;
@@ -25,6 +26,7 @@ export interface DonorDetailsDto {
 export interface DonorDto {
     id          : string;
     UserId      : string;
+    TenantId    : string;
     DisplayId   : string;
     EhrId       : string;
     DisplayName : string;

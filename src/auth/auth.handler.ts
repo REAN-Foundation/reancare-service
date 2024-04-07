@@ -58,6 +58,12 @@ export class AuthHandler {
             }
         }
 
+        // If the request is about the user registration. For example, Sign-up, etc.
+        const userRegistration = options.userRegistration != null ? options.userRegistration : false;
+        if (userRegistration) {
+            return middlewares;
+        }
+        
         // Perform user authentication
         var userAuthenticator = Injector.Container.resolve(UserAuthenticator);
         middlewares.push(userAuthenticator.authenticate);

@@ -72,12 +72,3 @@ export class ClientAppAuth {
     };
 
 }
-
-  // CustomAuthorization: async (request: any) => {
-  //     const authResult: AuthResult = {
-  //         Result       : true,
-  //         Message      : 'Authorized',
-  //         HttpErrorCode: 200,
-  //     };
-  //     return authResult;
-  // },

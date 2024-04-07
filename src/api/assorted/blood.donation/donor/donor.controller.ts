@@ -9,6 +9,7 @@ import { UserDomainModel } from '../../../../domain.types/users/user/user.domain
 import { DonorValidator } from './donor.validator';
 import { BaseUserController } from '../../../users/base.user.controller';
 import { Injector } from '../../../../startup/injector';
+import { DonorSearchFilters } from '../../../../domain.types/assorted/blood.donation/donor/donor.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,11 +17,10 @@ export class DonorController extends BaseUserController {
 
     //#region member variables and constructors
 
-    _service: DonorService = null;
+    _service: DonorService = Injector.Container.resolve(DonorService);
 
     constructor() {
         super();
-        this._service = Injector.Container.resolve(DonorService);
     }
 
     //#endregion
@@ -105,17 +105,15 @@ export class DonorController extends BaseUserController {
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: string = await DonorValidator.getByUserId(request);
-
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
-
             const donor = await this._service.getByUserId(userId);
             if (donor == null) {
                 throw new ApiError(404, 'Donor not found.');
             }
-
+            await this.authorizeOne(request, null, donor.TenantId);
             ResponseHandler.success(request, response, 'Donor retrieved successfully!', 200, {
                 Donor : donor,
             });
@@ -127,7 +125,7 @@ export class DonorController extends BaseUserController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters = await DonorValidator.search(request);
-
+            await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -151,6 +149,7 @@ export class DonorController extends BaseUserController {
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, null, existingUser.TenantId);
 
             const userDomainModel: UserDomainModel = donorDomainModel.User;
             const updatedUser = await this._userService.update(donorDomainModel.User.id, userDomainModel);
@@ -189,7 +188,7 @@ export class DonorController extends BaseUserController {
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
-
+            await this.authorizeOne(request, null, existingUser.TenantId);
             const deleted = await this._personService.delete(existingUser.PersonId);
             await this._service.deleteByUserId(userId);
             if (!deleted) {
@@ -202,6 +201,22 @@ export class DonorController extends BaseUserController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    //#endregion
+
+    //#region Authorization methods
+
+    authorizeSearch = (
+        request: express.Request,
+        filters: DonorSearchFilters) => {
+        const currentUserRole = request.currentUser.CurrentRole;
+            if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
+                currentUserRole === Roles.Volunteer || currentUserRole === Roles.TenantAdmin ||
+                currentUserRole === Roles.TenantUser || currentUserRole === Roles.Donor) {
+            return filters;
+        }
+        throw new ApiError(403, 'Unauthorized');
     };
 
     //#endregion

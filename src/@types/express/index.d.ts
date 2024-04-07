@@ -18,6 +18,7 @@ declare global{
             clientAppAuth        : boolean; //This flag indicates that the request is for the client app specific endpoints
             customAuthorization  : boolean; //This flag indicates that the authorization is done using a custom function
             alternateAuth        : boolean; //This flag indicates that the request is for the alternate authentication
+            userRegistration     : boolean; //This flag indicates that the request is for user registration
         }
     }
 }

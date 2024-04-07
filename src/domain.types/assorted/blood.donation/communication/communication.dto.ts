@@ -3,6 +3,7 @@ import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 export interface DonationCommunicationDto {
     id                         : uuid;
     PatientUserId?             : uuid;
+    TenantId?                  : uuid;
     DonorUserId?               : uuid;
     VolunteerUserId?           : uuid,
     FifthDayReminderFlag?      : boolean;

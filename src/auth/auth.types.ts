@@ -11,9 +11,9 @@ export interface UserAuthorizationOptions {
 
 // This enums tells about - who owns a resource
 export enum ResourceOwnership {
-    Owner         = 'Owner',
-    Tenant        = 'Tenant',
-    System        = 'System',
+    Owner  = 'Owner',
+    Tenant = 'Tenant',
+    System = 'System',
 }
 
 // This enums tells about - who can access a resource

@@ -8,39 +8,38 @@ import {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DonorAuth {
+export class BloodPressureAuth {
 
-    static _baseContext = `Assorted.BloodDonation.Donor`;
+    static _baseContext = `Clinical.Biometrics.BloodPressure`;
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context         : `${this._baseContext}.Create`,
-        Ownership       : ResourceOwnership.Tenant,
-        ActionScope     : ActionScope.Public,
-        RequestType     : RequestType.CreateOne,
-        userRegistration: true,
+        Context    : `${this._baseContext}.Create`,
+        Ownership  : ResourceOwnership.Owner,
+        ActionScope: ActionScope.Tenant,
+        RequestType: RequestType.CreateOne,
     };
 
-    static updateByUserId: AuthOptions = {
+    static update: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.UpdateByUserId`,
-        Ownership  : ResourceOwnership.Tenant,
+        Context    : `${this._baseContext}.Update`,
+        Ownership  : ResourceOwnership.Owner,
         ActionScope: ActionScope.Tenant,
         RequestType: RequestType.UpdateOne,
     };
 
-    static deleteByUserId: AuthOptions = {
+    static delete: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.DeleteByUserId`,
-        Ownership  : ResourceOwnership.Tenant,
+        Context    : `${this._baseContext}.Delete`,
+        Ownership  : ResourceOwnership.Owner,
         ActionScope: ActionScope.Tenant,
         RequestType: RequestType.DeleteOne,
     };
 
-    static getByUserId: AuthOptions = {
+    static getById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetBByUserId`,
-        Ownership  : ResourceOwnership.Tenant,
+        Context    : `${this._baseContext}.GetById`,
+        Ownership  : ResourceOwnership.Owner,
         ActionScope: ActionScope.Tenant,
         RequestType: RequestType.GetOne,
     };
@@ -48,10 +47,9 @@ export class DonorAuth {
     static search: AuthOptions = {
         ...DefaultAuthOptions,
         Context            : `${this._baseContext}.Search`,
-        Ownership          : ResourceOwnership.Tenant,
+        Ownership          : ResourceOwnership.Owner,
         ActionScope        : ActionScope.Tenant,
         RequestType        : RequestType.Search,
         CustomAuthorization: true,
     };
-
 }

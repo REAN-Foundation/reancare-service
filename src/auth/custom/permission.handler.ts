@@ -73,7 +73,7 @@ export class PermissionHandler {
                 return isOwner;
             }
             if (actionScope === ActionScope.Tenant) {
-                return areTenantsSame;
+                return areTenantsSame && hasConsent;
             }
             if (actionScope === ActionScope.System) {
                 return hasConsent;
@@ -153,7 +153,6 @@ export class PermissionHandler {
             requestType === RequestType.UpdateOne ||
             requestType === RequestType.DeleteOne
         ) {
-            //visible to the individual owner only
             return this.checkForXOne(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
         }
         if (requestType === RequestType.CreateOne) {

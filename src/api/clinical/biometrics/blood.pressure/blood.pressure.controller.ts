@@ -16,10 +16,11 @@ import { Injector } from '../../../../startup/injector';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { BiometricsController } from '../biometrics.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodPressureController {
+export class BloodPressureController extends BiometricsController {
 
     //#region member variables and constructors
 
@@ -35,6 +36,10 @@ export class BloodPressureController {
 
     _ehrVitalService = Injector.Container.resolve(EHRVitalService);
 
+    constructor() {
+        super();
+    }
+
     //#endregion
 
     //#region Action methods
@@ -43,6 +48,7 @@ export class BloodPressureController {
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeUser(request, model.PatientUserId);
             const bloodPressure = await this._service.create(model);
             if (bloodPressure == null) {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
@@ -91,13 +97,13 @@ export class BloodPressureController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const bloodPressure = await this._service.getById(id);
-            if (bloodPressure == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, ' Blood pressure record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             ResponseHandler.success(request, response, 'Blood pressure record retrieved successfully!', 200, {
-                BloodPressure : bloodPressure,
+                BloodPressure : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -108,7 +114,8 @@ export class BloodPressureController {
         try {
 
             Logger.instance().log(`trying to fetch data for search...`);
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             Logger.instance().log(`Validations passed:: ${JSON.stringify(filters)}`);
             const searchResults = await this._service.search(filters);
             Logger.instance().log(`result length.: ${searchResults.Items.length}`);
@@ -133,11 +140,11 @@ export class BloodPressureController {
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Blood Pressure record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
@@ -181,18 +188,18 @@ export class BloodPressureController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Blood pressure record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Blood pressure record cannot be deleted.');
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(record.id);
 
             ResponseHandler.success(request, response, 'Blood pressure record deleted successfully!', 200, {
                 Deleted : true,

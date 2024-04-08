@@ -7,10 +7,12 @@ import { DoctorService } from '../../../services/users/doctor/doctor.service';
 import { PatientService } from '../../../services/users/patient/patient.service';
 import { ComplaintValidator } from './complaint.validator';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { UserService } from '../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ComplaintController {
+export class ComplaintController extends BaseController{
 
     //#region member variables and constructors
 
@@ -37,7 +39,7 @@ export class ComplaintController {
                     throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
                 }
             }
-
+            await this.authorizeUser(request, domainModel.PatientUserId);
             if (domainModel.MedicalPractitionerUserId != null) {
                 var organization = await this._doctorService.getByUserId(domainModel.MedicalPractitionerUserId);
                 if (organization == null) {
@@ -62,7 +64,7 @@ export class ComplaintController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-
+            await this.authorizeUser(request, id);
             const complaint = await this._service.getById(id);
             if (complaint == null) {
                 throw new ApiError(404, 'Complaint not found.');
@@ -80,7 +82,7 @@ export class ComplaintController {
         try {
 
             const filters = await this._validator.search(request);
-
+            await this.authorizeUser(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.length;
@@ -103,6 +105,7 @@ export class ComplaintController {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingComplaint = await this._service.getById(id);
+            await this.authorizeUser(request, existingComplaint.PatientUserId);
             if (existingComplaint == null) {
                 throw new ApiError(404, 'Complaint not found.');
             }
@@ -125,6 +128,7 @@ export class ComplaintController {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingComplaint = await this._service.getById(id);
+            await this.authorizeUser(request, existingComplaint.PatientUserId);
             if (existingComplaint == null) {
                 throw new ApiError(404, 'Complaint not found.');
             }
@@ -143,5 +147,17 @@ export class ComplaintController {
     };
 
     //#endregion
+
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService: UserService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
 }

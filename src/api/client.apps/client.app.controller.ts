@@ -58,7 +58,7 @@ export class ClientAppController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            let filters = await ClientAppValidator.search(request);
+            const filters = await ClientAppValidator.search(request);
             this.authorizeSearch(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;

@@ -1,5 +1,5 @@
 
-import express from "express"
+import express from "express";
 import { uuid } from "../domain.types/miscellaneous/system.types";
 import { ApiError } from "../common/api.error";
 import { PermissionHandler } from "../auth/custom/permission.handler";
@@ -19,8 +19,8 @@ export class BaseController {
     //#endregion
 
     public authorizeOne = async (
-        request: express.Request, 
-        resourceOwnerUserId?: uuid, 
+        request: express.Request,
+        resourceOwnerUserId?: uuid,
         resourceTenantId?: uuid): Promise<void> => {
 
         let ownerUserId = resourceOwnerUserId ?? null;

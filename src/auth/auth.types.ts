@@ -50,13 +50,13 @@ export interface AuthOptions {
 }
 
 export const DefaultAuthOptions: AuthOptions = {
-    Context                : null,
-    ActionScope            : ActionScope.Owner,
-    Ownership              : ResourceOwnership.Owner,
-    RequestType            : RequestType.Custom,
-    ResourceIdName         : 'id',
-    ClientAppAuth          : true,
-    CustomAuthorization    : false,
-    AlternateAuth          : false,
-    userRegistration       : false,
+    Context             : null,
+    ActionScope         : ActionScope.Owner,
+    Ownership           : ResourceOwnership.Owner,
+    RequestType         : RequestType.Custom,
+    ResourceIdName      : 'id',
+    ClientAppAuth       : true,
+    CustomAuthorization : false,
+    AlternateAuth       : false,
+    userRegistration    : false,
 };

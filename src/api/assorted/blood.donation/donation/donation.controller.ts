@@ -125,24 +125,24 @@ export class DonationController extends BaseController {
     authorizeSearch = async (
         request: express.Request,
         filters: DonationSearchFilters): Promise<DonationSearchFilters> => {
-            const currentUserId = request.currentUser.UserId;
-            const currentUserRole = request.currentUser.CurrentRole;
+        const currentUserId = request.currentUser.UserId;
+        const currentUserRole = request.currentUser.CurrentRole;
     
-            if (filters.PatientUserId === currentUserId ||
+        if (filters.PatientUserId === currentUserId ||
                 filters.VolunteerUserId === currentUserId ||
                 filters.DonorUserId === currentUserId) {
-                return filters;
-            }
+            return filters;
+        }
             
-            if (filters.PatientUserId !== currentUserId &&
+        if (filters.PatientUserId !== currentUserId &&
                 filters.VolunteerUserId !== currentUserId) {
-                if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
+            if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
                     currentUserRole === Roles.Volunteer || currentUserRole === Roles.TenantAdmin ||
                     currentUserRole === Roles.TenantUser) {
-                    return filters;
-                }
-                throw new ApiError(403, 'Unauthorized');
+                return filters;
             }
+            throw new ApiError(403, 'Unauthorized');
+        }
     };
 
     //#endregion

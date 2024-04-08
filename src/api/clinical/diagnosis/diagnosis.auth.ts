@@ -8,9 +8,9 @@ import {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ComplaintAuth {
+export class DiagnosisAuth {
 
-    static _baseContext = `Clinical.Complaint`;
+    static _baseContext = `Clinical.Diagnosis`;
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
@@ -46,10 +46,11 @@ export class ComplaintAuth {
 
     static search: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.Search`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.Search,
+        Context             : `${this._baseContext}.Search`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
     };
 
 }

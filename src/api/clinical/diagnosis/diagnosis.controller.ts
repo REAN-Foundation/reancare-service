@@ -6,10 +6,13 @@ import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { DiagnosisValidator } from './diagnosis.validator';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { DiagnosisSearchFilters } from '../../../domain.types/clinical/diagnosis/diagnosis.search.types';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DiagnosisController {
+export class DiagnosisController extends BaseController{
 
     //#region member variables and constructors
 
@@ -27,7 +30,7 @@ export class DiagnosisController {
         try {
 
             const domainModel = await this._validator.create(request);
-
+            await this.authorizeUser(request, domainModel.PatientUserId);
             if (domainModel.PatientUserId != null) {
                 const person = await this._userService.getById(domainModel.PatientUserId);
                 if (person == null) {
@@ -57,7 +60,7 @@ export class DiagnosisController {
             if (diagnosis == null) {
                 throw new ApiError(404, 'Diagnosis record not found.');
             }
-
+            await this.authorizeUser(request, diagnosis.Patient.UserId);
             ResponseHandler.success(request, response, 'Diagnosis retrieved successfully!', 200, {
                 Diagnosis : diagnosis,
             });
@@ -69,8 +72,8 @@ export class DiagnosisController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
-
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -95,7 +98,7 @@ export class DiagnosisController {
             if (existingUser == null) {
                 throw new ApiError(404, 'Diagnosis record not found.');
             }
-
+            await this.authorizeUser(request, existingUser.Patient.UserId);
             const updatedDiagnosis = await this._service.update(id, domainModel);
             if (updatedDiagnosis == null) {
                 throw new ApiError(400, 'Unable to update diagnosis record!');
@@ -117,7 +120,7 @@ export class DiagnosisController {
             if (existingUser == null) {
                 throw new ApiError(404, 'Diagnosis record not found.');
             }
-
+            await this.authorizeUser(request, existingUser.Patient.UserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Diagnosis record cannot be deleted.');
@@ -129,6 +132,40 @@ export class DiagnosisController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+    
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const user = await this._userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
+
+    private authorizeSearch = async (
+        request: express.Request,
+        searchFilters: DiagnosisSearchFilters): Promise<DiagnosisSearchFilters> => {
+
+        const currentUser = request.currentUser;
+        
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
     };
 
     //#endregion

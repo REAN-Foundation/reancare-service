@@ -1,3 +1,4 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
 export interface TemplateSymptomTypesDto {
     Index?          : number;
@@ -10,6 +11,7 @@ export interface TemplateSymptomTypesDto {
 
 export interface SymptomAssessmentTemplateDto {
     id?                 : string,
+    TenantId?           : uuid;
     Title?              : string;
     Description?        : string;
     Tags?               : string;

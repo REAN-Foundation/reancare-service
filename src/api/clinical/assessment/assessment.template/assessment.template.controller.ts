@@ -12,24 +12,28 @@ import { FileResourceService } from '../../../../services/general/file.resource.
 import { Injector } from '../../../../startup/injector';
 import { AssessmentTemplateValidator } from './assessment.template.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
+import { BaseController } from '../../../../api/base.controller';
+import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
+import { AssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AssessmentTemplateController{
+export class AssessmentTemplateController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: AssessmentTemplateService = null;
+    _service: AssessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
-    _fileResourceService: FileResourceService = null;
+    _fileResourceService: FileResourceService = Injector.Container.resolve(FileResourceService);
 
     _validator: AssessmentTemplateValidator = new AssessmentTemplateValidator();
 
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
-        this._service = Injector.Container.resolve(AssessmentTemplateService);
-        this._fileResourceService = Injector.Container.resolve(FileResourceService);
+        super();
     }
 
     //#endregion
@@ -40,6 +44,7 @@ export class AssessmentTemplateController{
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeOne(request, null, model.TenantId);
             const assessmentTemplate = await this._service.create(model);
             if (assessmentTemplate == null) {
                 throw new ApiError(400, 'Cannot create record for assessment Template!');
@@ -55,13 +60,12 @@ export class AssessmentTemplateController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const assessmentTemplate = await this._service.getById(id);
+            const assessmentTemplate: AssessmentTemplateDto = await this._service.getById(id);
             if (assessmentTemplate == null) {
                 throw new ApiError(404, 'Assessment template record not found.');
             }
-
+            await this.authorizeOne(request, null, assessmentTemplate.TenantId);
             ResponseHandler.success(request, response, 'Assessment template record retrieved successfully!', 200, {
                 AssessmentTemplate : assessmentTemplate,
             });
@@ -73,7 +77,8 @@ export class AssessmentTemplateController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -100,6 +105,7 @@ export class AssessmentTemplateController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Assessment template record not found.');
             }
+            await this.authorizeOne(request, null, existingRecord.TenantId);
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
@@ -122,7 +128,7 @@ export class AssessmentTemplateController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Assessment template record not found.');
             }
-
+            await this.authorizeOne(request, null, existingRecord.TenantId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Assessment template record cannot be deleted.');
@@ -145,6 +151,7 @@ export class AssessmentTemplateController{
             if (assessmentTemplate == null) {
                 throw new ApiError(404, 'Cannot find assessment Template!');
             }
+            await this.authorizeOne(request, null, assessmentTemplate.TenantId);
 
             var templateObj: CAssessmentTemplate = await this._service.readTemplateObjToExport(assessmentTemplate.id);
 
@@ -190,6 +197,14 @@ export class AssessmentTemplateController{
                 throw new ApiError(400, 'Cannot import assessment Template!');
             }
 
+            // Ensure that the imported template belongs to the current user's tenant
+            const currentUserTenantId = request.currentUser.TenantId;
+            if (assessmentTemplate.TenantId !== currentUserTenantId && 
+                currentUserTenantId != null) {
+                const updates: AssessmentTemplateDomainModel = { TenantId: currentUserTenantId };
+                await this._service.update(assessmentTemplate.id, updates);
+            }
+
             ResponseHandler.success(request, response, 'Assessment template imported successfully!', 201, {
                 AssessmentTemplate : assessmentTemplate,
             });
@@ -209,6 +224,14 @@ export class AssessmentTemplateController{
                 throw new ApiError(400, 'Cannot import assessment Template!');
             }
 
+            // Ensure that the imported template belongs to the current user's tenant
+            const currentUserTenantId = request.currentUser.TenantId;
+            if (assessmentTemplate.TenantId !== currentUserTenantId &&
+                currentUserTenantId != null) {
+                const updates: AssessmentTemplateDomainModel = { TenantId: currentUserTenantId };
+                await this._service.update(assessmentTemplate.id, updates);
+            }
+
             ResponseHandler.success(request, response, 'Assessment template imported successfully!', 201, {
                 AssessmentTemplate : assessmentTemplate,
             });
@@ -223,6 +246,8 @@ export class AssessmentTemplateController{
             const model:CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode
                 = await this._validator.addNode(request);
 
+            await this.authorizeTemplateAccess(request);
+            
             const assessmentNode = await this._service.addNode(model);
             if (assessmentNode == null) {
                 throw new ApiError(400, 'Cannot create record for assessment node!');
@@ -242,7 +267,7 @@ export class AssessmentTemplateController{
 
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             var updates = await this._validator.updateNode(request);
-
+            await this.authorizeTemplateAccess(request);
             var assessmentNode: CAssessmentNode = await this._service.getNode(nodeId);
             if (assessmentNode == null) {
                 throw new ApiError(404, 'Cannot retrieve record for assessment node!');
@@ -266,6 +291,7 @@ export class AssessmentTemplateController{
         try {
 
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            await this.authorizeTemplateAccess(request);
             const deleted: boolean = await this._service.deleteNode(nodeId);
             if (!deleted) {
                 throw new ApiError(400, 'Cannot remove record for assessment node!');
@@ -284,6 +310,7 @@ export class AssessmentTemplateController{
         try {
 
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            await this.authorizeTemplateAccess(request);
             const assessmentNode: CAssessmentNode = await this._service.getNode(nodeId);
             if (assessmentNode == null) {
                 throw new ApiError(404, 'Cannot retrieve record for assessment node!');
@@ -300,7 +327,8 @@ export class AssessmentTemplateController{
 
     addScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
+            await this.authorizeTemplateAccess(request);
+            
             const model:CScoringCondition
                 = await this._validator.addScoringCondition(request);
 
@@ -320,7 +348,8 @@ export class AssessmentTemplateController{
 
     updateScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
+            await this.authorizeTemplateAccess(request);
+            
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
             Logger.instance().log(`Updating scoring condition for assessment template - ${templateId}`);
 
@@ -348,7 +377,8 @@ export class AssessmentTemplateController{
 
     deleteScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
+            await this.authorizeTemplateAccess(request);
+            
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
             const deleted: boolean = await this._service.deleteScoringCondition(conditionId);
             if (!deleted) {
@@ -366,7 +396,8 @@ export class AssessmentTemplateController{
 
     getScoringCondition = async (request: express.Request, response: express.Response) => {
         try {
-
+            await this.authorizeTemplateAccess(request);
+            
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
             const condition: CScoringCondition = await this._service.getScoringCondition(conditionId);
             if (condition == null) {
@@ -382,11 +413,13 @@ export class AssessmentTemplateController{
         }
     };
 
-    searchNode = async (request: express.Request, response: express.Response): Promise<void> => {
+    searchNodes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.searchNode(request);
-            const searchResults = await this._service.searchNode(filters);
+            let filters = await this._validator.searchNodes(request);
+            filters = await this.authorizeSearch(request, filters);
+            
+            const searchResults = await this._service.searchNodes(filters);
 
             const count = searchResults.Items.length;
 
@@ -405,6 +438,8 @@ export class AssessmentTemplateController{
 
     addPath = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
             await this.checkNodeAndTemplate(nodeId, templateId);
@@ -423,6 +458,8 @@ export class AssessmentTemplateController{
 
     updatePath = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
@@ -442,6 +479,8 @@ export class AssessmentTemplateController{
 
     deletePath = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
@@ -460,6 +499,8 @@ export class AssessmentTemplateController{
 
     getPath = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
@@ -478,6 +519,8 @@ export class AssessmentTemplateController{
 
     getNodePaths = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
             await this.checkNodeAndTemplate(nodeId, templateId);
@@ -492,6 +535,8 @@ export class AssessmentTemplateController{
 
     addPathCondition = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
@@ -511,6 +556,8 @@ export class AssessmentTemplateController{
 
     updatePathCondition = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             // const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
@@ -531,6 +578,8 @@ export class AssessmentTemplateController{
 
     deletePathCondition = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             // const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
@@ -550,6 +599,8 @@ export class AssessmentTemplateController{
 
     getPathCondition = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
@@ -569,6 +620,8 @@ export class AssessmentTemplateController{
 
     getPathConditionsForPath = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
@@ -584,6 +637,8 @@ export class AssessmentTemplateController{
 
     setNextNodeToPath = async (request: express.Request, response: express.Response) => {
         try {
+            await this.authorizeTemplateAccess(request);
+            
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
             const pathId: uuid = await this._validator.getParamUuid(request, 'pathId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
@@ -616,4 +671,31 @@ export class AssessmentTemplateController{
 
     //#endregion
 
+    //#region Authorization
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchFilters> => {
+
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                throw new ApiError(403, 'Forbidden');
+            }
+        }
+        else {
+            searchFilters.TenantId = request.currentUser.TenantId;
+        }
+        return searchFilters;
+    };
+
+    authorizeTemplateAccess = async (request: express.Request): Promise<void> => {
+        const templateId = await this._validator.getParamUuid(request, 'id');
+        const assessmentTemplate = await this._service.getById(templateId);
+        if (assessmentTemplate == null) {
+            throw new ApiError(404, 'Cannot find assessment Template!');
+        }
+        await this.authorizeOne(request, null, assessmentTemplate.TenantId);
+    };
+
+    //#endregion
 }

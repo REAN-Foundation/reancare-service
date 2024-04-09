@@ -137,8 +137,8 @@ export class AssessmentTemplateService {
         return await this._assessmentHelperRepo.deleteScoringCondition(conditionId);
     };
 
-    public searchNode = async (filters: AssessmentNodeSearchFilters): Promise<AssessmentNodeSearchResults> => {
-        return await this._assessmentHelperRepo.searchNode(filters);
+    public searchNodes = async (filters: AssessmentNodeSearchFilters): Promise<AssessmentNodeSearchResults> => {
+        return await this._assessmentHelperRepo.searchNodes(filters);
     };
 
     addPath = async (nodeId: uuid, path: CAssessmentNodePath): Promise<CAssessmentNodePath> => {

@@ -5,19 +5,22 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomAssessmentTemplateService } from '../../../../services/clinical/symptom/symptom.assessment.template.service';
 import { Injector } from '../../../../startup/injector';
 import { SymptomAssessmentTemplateValidator } from './symptom.assessment.template.validator';
+import { BaseController } from '../../../base.controller';
+import { SymptomAssessmentTemplateDomainModel } from '../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model';
+import { SymptomAssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomAssessmentTemplateController {
+export class SymptomAssessmentTemplateController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: SymptomAssessmentTemplateService = null;
+    _service: SymptomAssessmentTemplateService = Injector.Container.resolve(SymptomAssessmentTemplateService);
 
     _validator: SymptomAssessmentTemplateValidator = new SymptomAssessmentTemplateValidator();
 
     constructor() {
-        this._service = Injector.Container.resolve(SymptomAssessmentTemplateService);
+        super();
     }
 
     //#endregion
@@ -27,9 +30,9 @@ export class SymptomAssessmentTemplateController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.create(request);
-
-            const template = await this._service.create(domainModel);
+            const model: SymptomAssessmentTemplateDomainModel = await this._validator.create(request);
+            await this.authorizeOne(request, null, model.TenantId);
+            const template = await this._service.create(model);
             if (template == null) {
                 throw new ApiError(400, 'Cannot create template!');
             }
@@ -47,13 +50,14 @@ export class SymptomAssessmentTemplateController {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const template = await this._service.getById(id);
-            if (template == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
+            await this.authorizeOne(request, null, record.TenantId);
 
             ResponseHandler.success(request, response, 'Symptom assessment template retrieved successfully!', 200, {
-                SymptomAssessmentTemplate : template,
+                SymptomAssessmentTemplate : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -63,8 +67,8 @@ export class SymptomAssessmentTemplateController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
-
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -86,10 +90,11 @@ export class SymptomAssessmentTemplateController {
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const exists = await this._service.exists(id);
-            if (!exists) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
+            await this.authorizeOne(request, null, record.TenantId);
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
@@ -109,10 +114,11 @@ export class SymptomAssessmentTemplateController {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const exists = await this._service.exists(id);
-            if (!exists) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
+            await this.authorizeOne(request, null, record.TenantId);
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
@@ -175,4 +181,22 @@ export class SymptomAssessmentTemplateController {
 
     //#endregion
 
+    //#region Authorization
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: SymptomAssessmentTemplateSearchFilters): Promise<SymptomAssessmentTemplateSearchFilters> => {
+
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                throw new ApiError(403, 'Forbidden');
+            }
+        }
+        else {
+            searchFilters.TenantId = request.currentUser.TenantId;
+        }
+        return searchFilters;
+    };
+
+    //#endregion
 }

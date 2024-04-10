@@ -12,10 +12,7 @@ import { UserService } from "../services/users/user/user.service";
 export class BaseController {
 
     //#region member variables and constructors
-
-    constructor() {
-    }
-    
+   
     //#endregion
 
     public authorizeOne = async (

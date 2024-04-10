@@ -1,5 +1,6 @@
 export interface AddressDto {
     id          : string;
+    TenantId   ?: string;
     Type        : string;
     AddressLine : string;
     City        : string;

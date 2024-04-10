@@ -8,48 +8,48 @@ import {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ConsentAuth {
+export class AddressAuth {
 
-    static _baseContext = `Auth.Consent`;
+    static _baseContext = `General.Address`;
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Create`,
-        ActionScope: ActionScope.Owner,
         Ownership  : ResourceOwnership.Owner,
+        ActionScope: ActionScope.Tenant,
         RequestType: RequestType.CreateOne,
     };
 
     static update: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Update`,
-        ActionScope: ActionScope.Owner,
         Ownership  : ResourceOwnership.Owner,
+        ActionScope: ActionScope.Tenant,
         RequestType: RequestType.UpdateOne,
     };
 
     static delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Delete`,
-        ActionScope: ActionScope.Owner,
         Ownership  : ResourceOwnership.Owner,
-        RequestType: RequestType.DeleteOne,
-    };
-
-    static search: AuthOptions = {
-        ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Search`,
         ActionScope: ActionScope.Tenant,
-        Ownership  : ResourceOwnership.Owner,
-        RequestType: RequestType.Search,
+        RequestType: RequestType.DeleteOne,
     };
 
     static getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.GetById`,
-        ActionScope: ActionScope.Tenant,
         Ownership  : ResourceOwnership.Owner,
+        ActionScope: ActionScope.Tenant,
         RequestType: RequestType.GetOne,
     };
-    
+
+    static search: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context    : `${this._baseContext}.Search`,
+        Ownership  : ResourceOwnership.Owner,
+        ActionScope: ActionScope.Tenant,
+        RequestType: RequestType.Search,
+    };
+
 }

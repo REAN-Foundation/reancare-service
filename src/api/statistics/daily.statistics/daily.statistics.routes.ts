@@ -10,7 +10,7 @@ export const register = (app: express.Application): void => {
 
     router.get('/tenants/:tenantId', auth('Statistics.DailyStatistics.GetDailyTenantStats'), controller.getDailyTenantStats);
    
-    router.get('/', auth('Statistics.DailyStatistics.GetDailyTenantStats'), controller.getDailySystemStats);
+    router.get('/', auth('Statistics.DailyStatistics.GetDailySystemStats'), controller.getDailySystemStats);
 
     app.use('/api/v1/daily-stats', router);
 

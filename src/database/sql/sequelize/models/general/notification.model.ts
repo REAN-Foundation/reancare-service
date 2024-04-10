@@ -45,6 +45,13 @@ export default class Notification extends Model {
     })
     UserId: string;
 
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TenantId: string;
+
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,

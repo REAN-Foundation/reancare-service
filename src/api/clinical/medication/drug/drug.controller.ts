@@ -5,10 +5,11 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { Injector } from '../../../../startup/injector';
 import { DrugValidator } from './drug.validator';
+import { BaseController } from '../../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DrugController{
+export class DrugController extends BaseController{
 
     //#region member variables and constructors
 
@@ -22,7 +23,7 @@ export class DrugController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const model = await this._validator.create(request);
             const drug = await this._service.create(model);
             if (drug == null) {
@@ -39,8 +40,8 @@ export class DrugController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const drug = await this._service.getById(id);
             if (drug == null) {
                 throw new ApiError(404, 'Drug record not found.');
@@ -56,7 +57,7 @@ export class DrugController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -78,6 +79,7 @@ export class DrugController{
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Drug record not found.');
@@ -100,6 +102,7 @@ export class DrugController{
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Drug record not found.');

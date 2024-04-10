@@ -15,12 +15,19 @@ import {
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
+import { Injector } from '../../../../startup/injector';
+import { TenantService } from '../../../../services/tenant/tenant.service';
+import { Logger } from '../../../../common/logger';
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 export class AhaAssessmentConverter {
 
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<CAssessmentTemplate> => {
+
+        var tenantService = Injector.Container.resolve(TenantService);
+        var tenant = await tenantService.getTenantWithCode('default');
+        Logger.instance().log(`Tenant : ${JSON.stringify(tenant)}`);
 
         var template: CAssessmentTemplate = new CAssessmentTemplate();
         template.Type = AssessmentType.Careplan;
@@ -29,6 +36,7 @@ export class AhaAssessmentConverter {
         template.DisplayCode = Helper.generateDisplayCode('AssessmtTmpl');
         template.Provider = 'AHA';
         template.Version = '1.0';
+        template.TenantId = tenant.id;
 
         //Root node
         const rootNodeDisplayCode = Helper.generateDisplayCode('RNode');
@@ -61,7 +69,7 @@ export class AhaAssessmentConverter {
                 }
             }
         }
-
+        Logger.instance().log(`Template : ${JSON.stringify(template)}`);
         return template;
     };
 

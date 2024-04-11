@@ -1,3 +1,10 @@
+import { UserDto } from "../../users/user/user.dto";
+import { uuid } from "../../miscellaneous/system.types";
+import { BaseSearchFilters } from "../../miscellaneous/base.search.types";
+import { BaseSearchResults } from "../../miscellaneous/base.search.types";
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 export enum OrganizationTypes {
     Clinic                            = 'Clinic',
     Hospital                          = 'Hospital',
@@ -37,3 +44,57 @@ export const OrganizationTypeList: OrganizationTypes [] = [
     OrganizationTypes.SocialHealth,
     OrganizationTypes.Unknown,
 ];
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+export interface OrganizationDomainModel {
+    id                              ?: uuid,
+    Type                             : string;
+    Name                             : string;
+    ContactUserId                   ?: uuid;
+    TenantId                        ?: uuid;
+    ContactPhone                    ?: string;
+    ContactEmail                    ?: string;
+    ParentOrganizationId            ?: uuid;
+    About                           ?: string;
+    OperationalSince                ?: Date;
+    AddressIds                      ?: uuid[];
+    ImageResourceId                 ?: uuid;
+    IsHealthFacility                ?: boolean;
+    NationalHealthFacilityRegistryId?: string;
+}
+
+export interface OrganizationDto {
+
+    id                              ?: uuid,
+    TenantId                        ?: uuid;
+    Type                            ?: string;
+    Name                            ?: string;
+    ContactUserId                   ?: uuid;
+    ContactUser                     ?: UserDto;
+    ContactPhone                    ?: string;
+    ContactEmail                    ?: string;
+    ParentOrganizationId            ?: uuid;
+    About                           ?: string;
+    OperationalSince                ?: Date;
+    AddressIds                      ?: uuid[];
+    ImageResourceId                 ?: uuid;
+    IsHealthFacility                ?: boolean;
+    NationalHealthFacilityRegistryId?: string;
+}
+
+export interface OrganizationSearchFilters extends BaseSearchFilters {
+    Type                ?: string;
+    Name                ?: string;
+    ContactUserId       ?: uuid;
+    ContactPhone        ?: string;
+    ContactEmail        ?: string;
+    OperationalSinceFrom : Date;
+    OperationalSinceTo   : Date;
+    CreatedDateFrom      : Date;
+    CreatedDateTo        : Date;
+}
+
+export interface OrganizationSearchResults extends BaseSearchResults {
+    Items: OrganizationDto[];
+}

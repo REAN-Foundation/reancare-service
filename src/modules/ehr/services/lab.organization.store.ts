@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { ILabOrganizationStore } from '../interfaces/lab.organization.store.interface';
 import { injectable, inject } from "tsyringe";
-import { OrganizationDomainModel } from '../../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../domain.types/general/organization/organization.types';
 
 ///////////////////////////////////////////////////////////////////
 

@@ -14,10 +14,11 @@ export class UserAuth {
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.Create`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.CreateOne,
+        Context          : `${this._baseContext}.Create`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.CreateOne,
+        UserRegistration : true
     };
 
     static loginWithPassword: AuthOptions = {

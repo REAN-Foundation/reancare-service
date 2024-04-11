@@ -40,14 +40,6 @@ export class NotificationAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static markAsRead: AuthOptions = {
-        ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.MarkAsRead`,
-        Ownership   : ResourceOwnership.Tenant,
-        ActionScope : ActionScope.Owner,
-        RequestType : RequestType.UpdateOne,
-    };
-
     static update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
@@ -62,6 +54,30 @@ export class NotificationAuth {
         Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.DeleteOne,
+    };
+
+    static markAsRead: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.MarkAsRead`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Owner,
+        RequestType : RequestType.UpdateOne,
+    };
+
+    static send: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.Send`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.UpdateOne,
+    };
+
+    static sendToUser: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.SendToUser`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.UpdateOne,
     };
 
 }

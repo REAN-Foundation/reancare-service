@@ -4,7 +4,8 @@ import {
     NotificationDto, 
     NotificationUpdateModel, 
     NotificationSearchResults, 
-    NotificationSearchFilters 
+    NotificationSearchFilters, 
+    UserNotification
 } from "../../domain.types/general/notification/notification.types";
 import { inject, injectable } from "tsyringe";
 
@@ -12,6 +13,9 @@ import { inject, injectable } from "tsyringe";
 
 @injectable()
 export class NotificationService {
+    createNotificationForUser(userNotification: UserNotification) {
+        throw new Error('Method not implemented.');
+    }
 
     constructor(
         @inject('INotificationRepo') private _notificationRepo: INotificationRepo,

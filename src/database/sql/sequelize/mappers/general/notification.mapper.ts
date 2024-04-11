@@ -1,6 +1,6 @@
 
 import { NotificationDto } from "../../../../../domain.types/general/notification/notification.dto";
-import NotificationModel from '../../models/general/notification.model';
+import NotificationModel from '../../models/general/notification/notification.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

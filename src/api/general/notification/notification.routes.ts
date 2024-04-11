@@ -13,6 +13,8 @@ export const register = (app: express.Application): void => {
     router.post('/', auth(NotificationAuth.create), controller.create);
     router.get('/search', auth(NotificationAuth.search), controller.search);
     router.get('/:id', auth(NotificationAuth.getById), controller.getById);
+    router.post('/:id/send', auth(NotificationAuth.send), controller.send);
+    router.get('/:id/send-to-user/:userId', auth(NotificationAuth.sendToUser), controller.sendToUser);
     router.put('/:id/mark-as-read/:userId', auth(NotificationAuth.markAsRead), controller.markAsRead);
     router.put('/:id', auth(NotificationAuth.update), controller.update);
     router.delete('/:id', auth(NotificationAuth.delete), controller.delete);

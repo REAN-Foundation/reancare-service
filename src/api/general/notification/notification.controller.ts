@@ -60,54 +60,6 @@ export class NotificationController extends BaseController {
         }
     };
 
-    sendToUser = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const notification = await this._service.getById(id);
-            if (notification == null) {
-                throw new ApiError(404, 'Notification not found.');
-            }
-            await this.authorize(request, notification);
-            const userNotification = await this._service.sendToUser(id, userId);
-            // const domainModel: UserNotification = {
-            //     id       : userNotification.id,
-            //     UserId   : userNotification.UserId,
-            //     NotificationId : userNotification.NotificationId,
-            //     ReadOn   : new Date(),
-            // };
-            ResponseHandler.success(request, response, 'Notification created successfully!', 201, {
-                Notification : notification,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    }
-
-    markAsRead = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const notification = await this._service.getById(id);
-            if (notification == null) {
-                throw new ApiError(404, 'Notification not found.');
-            }
-            const userNotification = await this._service.getUserNotification(id, userId);
-            if (userNotification == null) {
-                throw new ApiError(404, 'User notification not found.');
-            }
-            const updated = await this._service.markAsRead(id, userId);
-            if (updated == null) {
-                throw new ApiError(400, 'Marked a notification as read!');
-            }
-            ResponseHandler.success(request, response, 'Notification updated successfully!', 200, {
-                Notification : updated,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
@@ -175,6 +127,80 @@ export class NotificationController extends BaseController {
         }
     };
 
+    sendToUser = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const notification = await this._service.getById(id);
+            if (notification == null) {
+                throw new ApiError(404, 'Notification not found.');
+            }
+            await this.authorize(request, notification);
+
+            const userNotification: UserNotification = {
+                NotificationId : notification.id,
+                UserId         : userId,
+                ReadOn         : null,
+            };
+            const created = await this._service.createNotificationForUser(userNotification);
+            if (created == null) {
+                throw new ApiError(400, 'Could not create a notification for the user!');
+            }
+
+            await this.sendNotifications(notification);
+
+            ResponseHandler.success(request, response, 'Notification created successfully!', 201, {
+                Notification : notification,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    send = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const notification = await this._service.getById(id);
+            if (notification == null) {
+                throw new ApiError(404, 'Notification not found.');
+            }
+            await this.authorize(request, notification);
+
+            await this.sendNotifications(notification);
+
+            ResponseHandler.success(request, response, 'Notification sent successfully!', 200, {
+                Notification : notification,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    markAsRead = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const notification = await this._service.getById(id);
+            if (notification == null) {
+                throw new ApiError(404, 'Notification not found.');
+            }
+            const userNotification = await this._service.getUserNotification(id, userId);
+            if (userNotification == null) {
+                throw new ApiError(404, 'User notification not found.');
+            }
+            const updated = await this._service.markAsRead(id, userId);
+            if (updated == null) {
+                throw new ApiError(400, 'Marked a notification as read!');
+            }
+            ResponseHandler.success(request, response, 'Notification updated successfully!', 200, {
+                Notification : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
     //#region Authorization
@@ -230,5 +256,12 @@ export class NotificationController extends BaseController {
     };
 
     //#endregion
+
+    sendNotifications = async (notification: NotificationDto) => {
+        // TODO: Send notification to user through notification service
+        //Target
+        //Channel
+        //Type
+    }
 
 }

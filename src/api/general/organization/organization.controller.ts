@@ -329,5 +329,4 @@ export class OrganizationController extends BaseController {
         return searchFilters;
     };
 
-
 }

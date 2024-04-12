@@ -18,12 +18,11 @@ import { HealthPrioritySearchFilters } from '../../../domain.types/users/patient
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export type PatientBaseSearchFilters = 
-    ActionPlanSearchFilters |
-    DocumentSearchFilters |
-    EmergencyContactSearchFilters |
-    GoalSearchFilters |
-    HealthPrioritySearchFilters;
+export type PatientBaseSearchFilters =  ActionPlanSearchFilters 
+    | DocumentSearchFilters 
+    | EmergencyContactSearchFilters 
+    | GoalSearchFilters 
+    | HealthPrioritySearchFilters;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,6 +34,7 @@ export class PatientBaseController extends BaseController {
             request: express.Request,
             searchFilters: PatientBaseSearchFilters
         ): Promise<PatientBaseSearchFilters> => {
+            
             const currentUser = request.currentUser;
             const currentRole = request.currentUser.CurrentRole;
     

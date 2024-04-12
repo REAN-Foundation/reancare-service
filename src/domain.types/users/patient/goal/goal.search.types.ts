@@ -2,7 +2,7 @@ import { BaseSearchFilters, BaseSearchResults } from "../../../miscellaneous/bas
 import { GoalDto } from "./goal.dto";
 
 export interface GoalSearchFilters extends BaseSearchFilters {
-    PatientUserId        : string;
+    PatientUserId       ?: string;
     Provider?            : string;
     ProviderEnrollmentId?: string;
     ProviderCareplanName?: string;

@@ -8,14 +8,12 @@ import { ActionPlanService } from '../../../../services/users/patient/action.pla
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { GoalService } from '../../../../services/users/patient/goal.service';
 import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
-import { BaseController } from '../../../../api/base.controller';
 import { ActionPlanSearchFilters } from '../../../../domain.types/users/patient/action.plan/action.plan.search.types';
-import { PermissionHandler } from '../../../../auth/custom/permission.handler';
-import { Roles } from '../../../../domain.types/role/role.types';
+import { PatientBaseController } from '../patient.base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ActionPlanController extends BaseController {
+export class ActionPlanController extends PatientBaseController {
     //#region member variables and constructors
     _service: ActionPlanService = Injector.Container.resolve(ActionPlanService);
 
@@ -158,41 +156,4 @@ export class ActionPlanController extends BaseController {
 
     //#endregion
 
-    //#region  Authorization methods
-
-    authorizeSearch = async (
-        request: express.Request,
-        searchFilters: ActionPlanSearchFilters
-    ): Promise<ActionPlanSearchFilters> => {
-        const currentUser = request.currentUser;
-        const currentRole = request.currentUser.CurrentRole;
-
-        if (searchFilters.PatientUserId != null) {
-            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const permitted = await PermissionHandler.checkConsent(
-                    searchFilters.PatientUserId,
-                    currentUser.UserId,
-                    request.context
-                );
-                if (!permitted) {
-                    throw new ApiError(403, 'Permission denied.');
-                }
-            }
-        } else {
-            if (currentRole === Roles.Patient) {
-                searchFilters.PatientUserId = currentUser.UserId;
-            } else {
-                if (
-                    currentRole !== Roles.TenantAdmin &&
-                    currentRole !== Roles.SystemAdmin &&
-                    currentRole !== Roles.SystemUser
-                ) {
-                    throw new ApiError(403, 'Permission denied.');
-                }
-            }
-        }
-        return searchFilters;
-    };
-
-    //#endregion
 }

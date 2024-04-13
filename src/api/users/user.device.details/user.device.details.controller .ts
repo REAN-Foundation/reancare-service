@@ -9,10 +9,11 @@ import { FirebaseNotificationService } from '../../../modules/communication/noti
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
 import { PatientAppNameCache } from '../../../modules/ehr.analytics/patient.appname.cache';
+import { BaseUserController } from '../base.user.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserDeviceDetailsController {
+export class UserDeviceDetailsController extends BaseUserController {
 
     //#region member variables and constructors
 
@@ -44,14 +45,14 @@ export class UserDeviceDetailsController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: string = await UserDeviceDetailsValidator.getById(request);
-
-            const UserDeviceDetails = await this._service.getById(id);
-            if (UserDeviceDetails == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, ' User device details record not found.');
             }
+            await this.authorizeOne(request, record.UserId);
 
             ResponseHandler.success(request, response, 'User device details record retrieved successfully!', 200, {
-                UserDeviceDetails : UserDeviceDetails,
+                UserDeviceDetails : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -61,7 +62,8 @@ export class UserDeviceDetailsController {
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: string = await UserDeviceDetailsValidator.getById(request);
-
+            const userId = request.params.userId;
+            await this.authorizeOne(request, userId);
             const UserDeviceDetails = await this._service.getByUserId(id);
             if (UserDeviceDetails == null) {
                 throw new ApiError(404, 'User device details record not found.');
@@ -106,7 +108,7 @@ export class UserDeviceDetailsController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'User device details record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.UserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update user device details record!');

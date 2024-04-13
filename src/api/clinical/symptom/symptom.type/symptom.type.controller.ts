@@ -5,10 +5,13 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { SymptomTypeValidator } from './symptom.type.validator';
 import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
+import { BaseController } from '../../../../api/base.controller';
+import { SymptomTypeSearchFilters } from '../../../../domain.types/clinical/symptom/symptom.type/symptom.type.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomTypeController {
+export class SymptomTypeController extends BaseController {
 
     //#region member variables and constructors
 
@@ -29,7 +32,7 @@ export class SymptomTypeController {
             if (symptomType == null) {
                 throw new ApiError(400, 'Cannot create symptom type!');
             }
-
+            await this.authorizeOne(request, symptomType.PatientUserId, null);
             ResponseHandler.success(request, response, 'Symptom type created successfully!', 201, {
                 SymptomType : symptomType,
             });
@@ -47,7 +50,7 @@ export class SymptomTypeController {
             if (symptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-
+            await this.authorizeOne(request, symptomType.PatientUserId, null);
             ResponseHandler.success(request, response, 'Symptom type retrieved successfully!', 200, {
                 SymptomType : symptomType,
             });
@@ -59,8 +62,8 @@ export class SymptomTypeController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
-
+            let filters: SymptomTypeSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -86,7 +89,7 @@ export class SymptomTypeController {
             if (existingSymptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-
+            await this.authorizeOne(request, existingSymptomType.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update symptom type record!');
@@ -108,7 +111,7 @@ export class SymptomTypeController {
             if (existingSymptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-
+            await this.authorizeOne(request, existingSymptomType.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Symptom type cannot be deleted.');
@@ -124,4 +127,27 @@ export class SymptomTypeController {
 
     //#endregion
 
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: SymptomTypeSearchFilters): Promise<SymptomTypeSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 }

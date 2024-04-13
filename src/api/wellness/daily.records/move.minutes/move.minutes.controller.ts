@@ -5,10 +5,13 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { MoveMinutesService } from '../../../../services/wellness/daily.records/move.minutes.service';
 import { Injector } from '../../../../startup/injector';
 import { MoveMinutesValidator } from './move.minutes.validator';
+import { MoveMinutesSearchFilters } from '../../../../domain.types/wellness/daily.records/move.minutes/move.minutes.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { BaseController } from '../../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MoveMinutesController{
+export class MoveMinutesController extends BaseController {
 
     //#region member variables and constructors
 
@@ -16,8 +19,10 @@ export class MoveMinutesController{
 
     _validator: MoveMinutesValidator = new MoveMinutesValidator();
 
+    _moveMinuteService: MoveMinutesService = Injector.Container.resolve(MoveMinutesService);
+
     constructor() {
-        this._service = Injector.Container.resolve(MoveMinutesService);
+        super();
     }
 
     //#endregion
@@ -32,7 +37,7 @@ export class MoveMinutesController{
             if (moveMinutes == null) {
                 throw new ApiError(400, 'Cannot create record for daily move minutes!');
             }
-
+            await this.authorizeOne(request, moveMinutes.PatientUserId, null);
             ResponseHandler.success(request, response, 'Daily move minutes record created successfully!', 201, {
                 MoveMinutes : moveMinutes,
             });
@@ -49,7 +54,7 @@ export class MoveMinutesController{
             if (moveMinutes == null) {
                 throw new ApiError(404, 'Daily move minutes record not found.');
             }
-
+            await this.authorizeOne(request, moveMinutes.PatientUserId, null);
             ResponseHandler.success(request, response, 'Daily move minutes record retrieved successfully!', 200, {
                 MoveMinutes : moveMinutes,
             });
@@ -61,7 +66,8 @@ export class MoveMinutesController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
 
@@ -87,7 +93,7 @@ export class MoveMinutesController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Daily move minutes record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update daily move minutes record!');
@@ -109,7 +115,7 @@ export class MoveMinutesController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Daily move minutes record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Daily move minutes record cannot be deleted.');
@@ -124,5 +130,29 @@ export class MoveMinutesController{
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: MoveMinutesSearchFilters): Promise<MoveMinutesSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

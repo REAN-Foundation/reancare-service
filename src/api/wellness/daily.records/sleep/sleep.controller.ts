@@ -11,10 +11,13 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRMentalWellBeingService } from '../../../../modules/ehr.analytics/ehr.services/ehr.mental.wellbeing.service';
 import { SleepDto } from '../../../../domain.types/wellness/daily.records/sleep/sleep.dto';
+import { BaseController } from '../../../../api/base.controller';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { SleepSearchFilters } from '../../../../domain.types/wellness/daily.records/sleep/sleep.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SleepController{
+export class SleepController extends BaseController {
 
     //#region member variables and constructors
 
@@ -47,7 +50,7 @@ export class SleepController{
             }
 
             await this._ehrMentalWellbeingService.addEHRSleepForAppNames(sleep);
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             if (sleep.SleepDuration) {
                 var timestamp = sleep.RecordDate;
                 if (!timestamp) {
@@ -87,7 +90,7 @@ export class SleepController{
             if (sleepRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
             }
-
+            await this.authorizeOne(request, sleepRecord.PatientUserId, null);
             ResponseHandler.success(request, response, 'Sleep record retrieved successfully!', 200, {
                 SleepRecord : sleepRecord,
             });
@@ -99,7 +102,8 @@ export class SleepController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -123,7 +127,7 @@ export class SleepController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update sleep record!');
@@ -146,7 +150,7 @@ export class SleepController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Sleep record cannot be deleted.');
@@ -161,5 +165,29 @@ export class SleepController{
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: SleepSearchFilters): Promise<SleepSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

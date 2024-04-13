@@ -6,10 +6,13 @@ import { StandService } from '../../../../services/wellness/daily.records/stand.
 import { Injector } from '../../../../startup/injector';
 import { StandValidator } from './stand.validator';
 import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
+import { BaseController } from '../../../../api/base.controller';
+import { StandSearchFilters } from '../../../../domain.types/wellness/daily.records/stand/stand.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StandController {
+export class StandController extends BaseController {
 
     //#region member variables and constructors
 
@@ -34,7 +37,7 @@ export class StandController {
             }
 
             await this._ehrPhysicalActivityService.addEHRRecordStandForAppNames(stand);
-
+            await this.authorizeOne(request, stand.PatientUserId, null);
             ResponseHandler.success(request, response, 'Stand record created successfully!', 201, {
                 Stand : stand,
 
@@ -52,7 +55,7 @@ export class StandController {
             if (stand == null) {
                 throw new ApiError(404, 'Stand record not found.');
             }
-
+            await this.authorizeOne(request, stand.PatientUserId, null);
             ResponseHandler.success(request, response, 'Stand record retrieved successfully!', 200, {
                 Stand : stand,
             });
@@ -64,8 +67,8 @@ export class StandController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
-
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -91,7 +94,7 @@ export class StandController {
             if (existingStand == null) {
                 throw new ApiError(404, 'Stand record not found.');
             }
-
+            await this.authorizeOne(request, existingStand.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update stand record!');
@@ -115,7 +118,7 @@ export class StandController {
             if (existingStand == null) {
                 throw new ApiError(404, 'Stand record not found.');
             }
-
+            await this.authorizeOne(request, existingStand.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Stand record cannot be deleted.');
@@ -130,5 +133,29 @@ export class StandController {
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: StandSearchFilters): Promise<StandSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

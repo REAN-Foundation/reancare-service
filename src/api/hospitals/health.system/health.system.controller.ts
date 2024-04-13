@@ -8,10 +8,11 @@ import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { HealthSystemValidator } from './health.system.validator';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthSystemController {
+export class HealthSystemController extends BaseController {
 
     //#region member variables and constructors
 
@@ -31,7 +32,7 @@ export class HealthSystemController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.create(request);
             const hospitalSystem = await this._service.create(domainModel);
             if (hospitalSystem == null) {
@@ -49,7 +50,7 @@ export class HealthSystemController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const hospitalSystem = await this._service.getById(id);
             if (hospitalSystem == null) {
@@ -67,7 +68,7 @@ export class HealthSystemController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -85,7 +86,7 @@ export class HealthSystemController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHealthSystem = await this._service.getById(id);
@@ -108,7 +109,7 @@ export class HealthSystemController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHealthSystem = await this._service.getById(id);
             if (existingHealthSystem == null) {
@@ -130,7 +131,7 @@ export class HealthSystemController {
 
     getHealthSystemsWithTags = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const tags = request.query.tags as string;
             const hospitalSystems = await this._service.getHealthSystemsWithTags(tags);
 

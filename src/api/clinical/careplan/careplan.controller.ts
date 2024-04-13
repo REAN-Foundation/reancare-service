@@ -9,10 +9,12 @@ import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { Logger } from '../../../common/logger';
 import { CommunityNetworkService } from '../../../modules/community.bw/community.network.service';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CareplanController {
+export class CareplanController extends BaseController {
 
     //#region member variables and constructors
     _service: CareplanService = Injector.Container.resolve(CareplanService);
@@ -45,7 +47,7 @@ export class CareplanController {
         try {
 
             const model = await this._validator.enroll(request);
-
+            await this.authorizeUser(request, model.PatientUserId);
             var startDate = new Date(model.StartDateStr);
 
             Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
@@ -102,6 +104,7 @@ export class CareplanController {
             const careplanCode = request.params.careplanCode;
 
             const patient = await this._userService.getById(patientUserId);
+            await this.authorizeUser(request, patient.id);
             const eligibility = await this._service.getPatientEligibility(patient, provider, careplanCode);
             ResponseHandler.success(request, response, 'Patient eligibility for careplan retrieved successfully!', 200, {
                 Eligibility : eligibility,
@@ -115,6 +118,7 @@ export class CareplanController {
         try {
 
             const patientUserId = request.params.patientUserId;
+            await this.authorizeUser(request, patientUserId);
             var isActive = request.query.isActive === 'true' ? true : false;
             const enrollments = await this._service.getPatientEnrollments(patientUserId, isActive);
             ResponseHandler.success(request, response, 'Patient enrollments retrieved successfully!', 200, {
@@ -130,6 +134,7 @@ export class CareplanController {
         try {
 
             const careplanId = request.params.id;
+
             const fetched = await this._service.fetchTasks(careplanId);
             if (!fetched) {
                 ResponseHandler.failure(request, response, 'Problem encountered fetching careplan tasks!', 500);
@@ -173,5 +178,14 @@ export class CareplanController {
     };
 
     //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const user = await this._userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
 }

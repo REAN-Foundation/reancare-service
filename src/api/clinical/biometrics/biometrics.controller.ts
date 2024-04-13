@@ -36,7 +36,7 @@ export class BiometricsController extends BaseController {
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
                 const hasConsent = PermissionHandler.checkConsent(
-                    searchFilters.PatientUserId, 
+                    searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context
                 );

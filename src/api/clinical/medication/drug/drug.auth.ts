@@ -8,14 +8,14 @@ import {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodCholesterolAuth {
+export class DrugAuth {
 
-    static _baseContext = `Clinical.Biometrics.BloodCholesterol`;
+    static _baseContext = `Clinical.Medications.Drug`;
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.CreateOne,
     };
@@ -23,7 +23,7 @@ export class BloodCholesterolAuth {
     static update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.UpdateOne,
     };
@@ -31,7 +31,7 @@ export class BloodCholesterolAuth {
     static delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.DeleteOne,
     };
@@ -39,7 +39,7 @@ export class BloodCholesterolAuth {
     static getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -47,13 +47,10 @@ export class BloodCholesterolAuth {
     static search: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.Search`,
-        Ownership           : ResourceOwnership.Owner,
+        Ownership           : ResourceOwnership.Tenant,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.Search,
         CustomAuthorization : true,
     };
 
 }
-
-///////////////////////////////////////////////////////////////////////////////////////
-

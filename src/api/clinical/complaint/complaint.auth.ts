@@ -4,13 +4,13 @@ import {
     ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
-} from '../../../../auth/auth.types';
+} from '../../../auth/auth.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodCholesterolAuth {
+export class ComplaintAuth {
 
-    static _baseContext = `Clinical.Biometrics.BloodCholesterol`;
+    static _baseContext = `Clinical.Complaint`;
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
@@ -46,11 +46,10 @@ export class BloodCholesterolAuth {
 
     static search: AuthOptions = {
         ...DefaultAuthOptions,
-        Context             : `${this._baseContext}.Search`,
-        Ownership           : ResourceOwnership.Owner,
-        ActionScope         : ActionScope.Tenant,
-        RequestType         : RequestType.Search,
-        CustomAuthorization : true,
+        Context     : `${this._baseContext}.Search`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.Search,
     };
 
 }

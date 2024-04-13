@@ -4,13 +4,13 @@ import {
     ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
-} from '../../../../auth/auth.types';
+} from '../../../auth/auth.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodCholesterolAuth {
+export class DoctorNoteAuth {
 
-    static _baseContext = `Clinical.Biometrics.BloodCholesterol`;
+    static _baseContext = `Clinical.DoctorNote`;
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,

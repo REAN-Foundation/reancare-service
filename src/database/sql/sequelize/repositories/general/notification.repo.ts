@@ -3,10 +3,10 @@ import { NotificationSearchFilters, NotificationSearchResults } from '../../../.
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { INotificationRepo } from '../../../../../database/repository.interfaces/general/notification.repo.interface';
-import { NotificationDomainModel } from '../../../../../domain.types/general/notification/notification.domain.model';
+import { NotificationDomainModel } from '../../../../../domain.types/general/notification/notification.types';
 import { NotificationDto } from '../../../../../domain.types/general/notification/notification.dto';
 import { NotificationMapper } from '../../mappers/general/notification.mapper';
-import NotificationModel from '../../models/general/notification.model';
+import NotificationModel from '../../models/general/notification/notification.model';
 import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////

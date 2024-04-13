@@ -10,10 +10,11 @@ import { HealthProfileValidator } from './health.profile.validator';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
+import { PatientBaseController } from '../patient.base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthProfileController {
+export class HealthProfileController extends PatientBaseController {
 
     //#region member variables and constructors
 
@@ -35,7 +36,7 @@ export class HealthProfileController {
         try {
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-
+            await this.authorizeOne(request, patientUserId);
             const healthProfile : HealthProfileDto = await this._service.getByPatientUserId(patientUserId);
             if (healthProfile == null) {
                 throw new ApiError(404, 'Patient health profile not found.');
@@ -54,14 +55,15 @@ export class HealthProfileController {
         try {
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-            const domainModel: HealthProfileDomainModel = await this._validator.update(request);
+            await this.authorizeOne(request, patientUserId);
+            const model: HealthProfileDomainModel = await this._validator.update(request);
 
-            const existingHealthProfile = await this._service.getByPatientUserId(patientUserId);
-            if (existingHealthProfile == null) {
+            const record = await this._service.getByPatientUserId(patientUserId);
+            if (record == null) {
                 throw new ApiError(404, 'Patient health profile not found.');
             }
 
-            const updated = await this._service.updateByPatientUserId(patientUserId, domainModel);
+            const updated = await this._service.updateByPatientUserId(patientUserId, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update Patient health profile record!');
             }

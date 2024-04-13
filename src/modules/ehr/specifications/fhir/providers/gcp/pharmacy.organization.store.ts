@@ -1,6 +1,6 @@
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
-import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.types';
 import { IPharmacyOrganizationStore } from '../../../../interfaces/pharmacy.organization.store.interface';
 
 ////////////////////////////////////////////////////////////////////////////////

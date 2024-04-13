@@ -1,5 +1,5 @@
 import express from 'express';
-import { OrganizationDomainModel } from '../../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../domain.types/general/organization/organization.types';
 import { OrganizationSearchFilters } from '../../../domain.types/general/organization/organization.search.types';
 import { BaseValidator, Where } from '../../../api/base.validator';
 

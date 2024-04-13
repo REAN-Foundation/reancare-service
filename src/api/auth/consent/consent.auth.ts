@@ -40,7 +40,7 @@ export class ConsentAuth {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Search`,
         ActionScope: ActionScope.Tenant,
-        Ownership  : ResourceOwnership.System,
+        Ownership  : ResourceOwnership.Owner,
         RequestType: RequestType.Search,
     };
 
@@ -48,7 +48,7 @@ export class ConsentAuth {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.GetById`,
         ActionScope: ActionScope.Tenant,
-        Ownership  : ResourceOwnership.Tenant,
+        Ownership  : ResourceOwnership.Owner,
         RequestType: RequestType.GetOne,
     };
     

@@ -1,4 +1,4 @@
-import { NotificationDomainModel } from "../../../domain.types/general/notification/notification.domain.model";
+import { NotificationDomainModel } from "../../../domain.types/general/notification/notification.types";
 import { NotificationDto } from "../../../domain.types/general/notification/notification.dto";
 import { NotificationSearchResults } from "../../../domain.types/general/notification/notification.search.types";
 import { NotificationSearchFilters } from "../../../domain.types/general/notification/notification.search.types";

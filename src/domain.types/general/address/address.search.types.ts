@@ -4,6 +4,7 @@ import { AddressDto } from "./address.dto";
 export interface AddressSearchFilters extends BaseSearchFilters {
     Type?           : string;
     PersonId?       : string;
+    TenantId?       : string;
     OrganizationId? : string;
     AddressLine?    : string;
     City?           : string;

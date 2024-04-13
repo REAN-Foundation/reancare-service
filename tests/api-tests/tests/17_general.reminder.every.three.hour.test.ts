@@ -4,7 +4,7 @@ import  Application  from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
-import { NotificationType, RepeatAfterEveryNUnit } from '../../../src/domain.types/general/reminder/reminder.domain.model';
+import { ReminderNotificationType, RepeatAfterEveryNUnit } from '../../../src/domain.types/general/reminder/reminder.domain.model';
 import { endDate, getRandomEnumValue, startDate } from '../utils';
 
 const infra = Application.instance();

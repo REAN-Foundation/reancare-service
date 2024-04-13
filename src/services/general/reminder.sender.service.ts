@@ -1,6 +1,6 @@
 import { IReminderScheduleRepo } from "../../database/repository.interfaces/general/reminder.schedule.repo.interface";
 import {
-    NotificationType
+    ReminderNotificationType
 } from '../../domain.types/general/reminder/reminder.domain.model';
 import { Logger } from "../../common/logger";
 import { Loader } from "../../startup/loader";
@@ -64,22 +64,22 @@ export class ReminderSenderService {
                 const reminder = schedule.Reminder;
                 const notificationType = reminder.NotificationType;
 
-                if (notificationType === NotificationType.SMS) {
+                if (notificationType === ReminderNotificationType.SMS) {
                     await this.sendReminderBySMS(user, reminder, schedule);
                 }
-                else if (notificationType === NotificationType.WhatsApp) {
+                else if (notificationType === ReminderNotificationType.WhatsApp) {
                     await this.sendReminderByWhatsApp(user, reminder, schedule);
                 }
-                else if (notificationType === NotificationType.Email) {
+                else if (notificationType === ReminderNotificationType.Email) {
                     await this.sendReminderByEmail(user, reminder, schedule);
                 }
-                else if (notificationType === NotificationType.Webhook) {
+                else if (notificationType === ReminderNotificationType.Webhook) {
                     await this.sendReminderByWebhook(user, reminder, schedule);
                 }
-                else if (notificationType === NotificationType.MobilePush) {
+                else if (notificationType === ReminderNotificationType.MobilePush) {
                     await this.sendReminderByMobilePush(user, reminder, schedule);
                 }
-                else if (notificationType === NotificationType.Telegram) {
+                else if (notificationType === ReminderNotificationType.Telegram) {
                     await this.sendReminderByTelegram(user, reminder, schedule);
                 }
                 else {

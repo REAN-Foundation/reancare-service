@@ -1,7 +1,7 @@
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { IHospitalOrganizationStore } from '../../../../interfaces/hospital.organization.store.interface';
-import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.types';
 
 ////////////////////////////////////////////////////////////////////////////////
 

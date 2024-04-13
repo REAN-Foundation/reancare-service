@@ -13,7 +13,15 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../users/user/user.model';
+import User from '../../users/user/user.model';
+import { 
+    NotificationTarget,
+    NotificationTargetList,
+    NotificationChannel,
+    NotificationChannelList,
+    NotificationType,
+    NotificationTypeList,
+} from '../../../../../../domain.types/general/notification/notification.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -38,19 +46,35 @@ export default class Notification extends Model {
     id: string;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    UserId: string;
+    TenantId: string;
 
     @Column({
-        type         : DataType.BOOLEAN,
+        type         : DataType.ENUM,
+        values       : NotificationTargetList,
+        defaultValue : NotificationTarget.User,
         allowNull    : false,
-        defaultValue : false,
     })
-    BroadcastToAll: boolean;
+    Target: string;
+
+    @Column({
+        type         : DataType.ENUM,
+        values       : NotificationTypeList,
+        defaultValue : NotificationType.Info,
+        allowNull    : false,
+    })
+    Type: string;
+
+    @Column({
+        type         : DataType.ENUM,
+        values       : NotificationChannelList,
+        defaultValue : NotificationChannel.MobilePush,
+        allowNull    : false,
+    })
+    Channel: string;
 
     @Column({
         type      : DataType.STRING(256),
@@ -71,12 +95,6 @@ export default class Notification extends Model {
     ImageUrl: string;
 
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    Type: string;
-
-    @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
@@ -87,12 +105,14 @@ export default class Notification extends Model {
         allowNull : true,
     })
     SentOn: Date;
-
+    
+    @IsUUID(4)
+    @ForeignKey(() => User)
     @Column({
-        type      : DataType.DATE,
+        type      : DataType.UUID,
         allowNull : true,
     })
-    ReadOn: Date;
+    CreatedByUserId: string;
 
     @Column
     @CreatedAt

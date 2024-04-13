@@ -1,7 +1,7 @@
 import { AddressDto } from "../../domain.types/general/address/address.dto";
 import { inject, injectable } from "tsyringe";
 import { IOrganizationRepo } from "../../database/repository.interfaces/general/organization.repo.interface";
-import { OrganizationDomainModel } from '../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../domain.types/general/organization/organization.types';
 import { OrganizationDto } from '../../domain.types/general/organization/organization.dto';
 import { OrganizationSearchFilters, OrganizationSearchResults } from '../../domain.types/general/organization/organization.search.types';
 import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';

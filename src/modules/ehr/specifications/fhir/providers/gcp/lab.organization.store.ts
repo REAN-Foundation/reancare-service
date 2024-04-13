@@ -1,4 +1,4 @@
-import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.types';
 import { ILabOrganizationStore } from '../../../../interfaces/lab.organization.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';

@@ -11,10 +11,6 @@ import { UserService } from "../services/users/user/user.service";
 
 export class BaseController {
 
-    //#region member variables and constructors
-   
-    //#endregion
-
     public authorizeOne = async (
         request: express.Request,
         resourceOwnerUserId?: uuid,

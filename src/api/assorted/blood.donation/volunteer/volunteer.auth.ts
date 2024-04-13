@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../../auth/auth.types';
@@ -14,44 +14,44 @@ export class VolunteerAuth {
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context         : `${this._baseContext}.Create`,
-        Ownership       : ResourceOwnership.Tenant,
-        ActionScope     : ActionScope.Tenant,
-        RequestType     : RequestType.CreateOne,
-        userRegistration: true,
+        Context          : `${this._baseContext}.Create`,
+        Ownership        : ResourceOwnership.Tenant,
+        ActionScope      : ActionScope.Tenant,
+        RequestType      : RequestType.CreateOne,
+        UserRegistration : true,
     };
 
     static updateByUserId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.UpdateByUserId`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.UpdateOne,
+        Context     : `${this._baseContext}.UpdateByUserId`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
     };
 
     static deleteByUserId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.DeleteByUserId`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.DeleteOne,
+        Context     : `${this._baseContext}.DeleteByUserId`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
     };
 
     static getByUserId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetByUserId`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.GetOne,
+        Context     : `${this._baseContext}.GetByUserId`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
     };
 
     static search: AuthOptions = {
         ...DefaultAuthOptions,
-        Context            : `${this._baseContext}.Search`,
-        Ownership          : ResourceOwnership.Tenant,
-        ActionScope        : ActionScope.Tenant,
-        RequestType        : RequestType.Search,
-        CustomAuthorization: true,
+        Context             : `${this._baseContext}.Search`,
+        Ownership           : ResourceOwnership.Tenant,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
     };
 
 }

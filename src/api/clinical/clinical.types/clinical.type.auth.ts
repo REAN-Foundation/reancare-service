@@ -15,25 +15,24 @@ export class ClinicalTypeAuth {
     static getClinicalValidationStatuses: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetClinicalValidationStatuses`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetMany,
     };
 
     static getInterpretations: AuthOptions = {
         ...DefaultAuthOptions,
-        Context             : `${this._baseContext}.GetInterpretations`,
-        Ownership           : ResourceOwnership.Owner,
-        ActionScope         : ActionScope.Tenant,
-        RequestType         : RequestType.GetOne,
-        CustomAuthorization : true,
+        Context     : `${this._baseContext}.GetInterpretations`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
     };
 
     static getSeverities: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetSeverities`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetOne,
     };
 

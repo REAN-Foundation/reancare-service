@@ -1,10 +1,10 @@
 import { INotificationRepo } from "../../database/repository.interfaces/general/notification.repo.interface";
-import { 
-    NotificationCreateModel, 
-    NotificationDto, 
-    NotificationUpdateModel, 
-    NotificationSearchResults, 
-    NotificationSearchFilters, 
+import {
+    NotificationCreateModel,
+    NotificationDto,
+    NotificationUpdateModel,
+    NotificationSearchResults,
+    NotificationSearchFilters,
     UserNotification
 } from "../../domain.types/general/notification/notification.types";
 import { inject, injectable } from "tsyringe";
@@ -13,6 +13,7 @@ import { inject, injectable } from "tsyringe";
 
 @injectable()
 export class NotificationService {
+
     createNotificationForUser(userNotification: UserNotification) {
         throw new Error('Method not implemented.');
     }
@@ -30,7 +31,8 @@ export class NotificationService {
     };
 
     markAsRead = async (id: string, notificatioId: string): Promise<NotificationDto> => {
-        return await this._notificationRepo.markAsRead(id, notificatioId);
+        // return await this._notificationRepo.markAsRead(id, notificatioId);
+        return await this._notificationRepo.markAsRead(id, {});
     };
 
     search = async (filters: NotificationSearchFilters): Promise<NotificationSearchResults> => {
@@ -52,6 +54,5 @@ export class NotificationService {
     getUserNotification = async (id: string, userId: string) => {
         throw new Error('Method not implemented.');
     };
-
 
 }

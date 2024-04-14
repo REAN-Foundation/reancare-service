@@ -27,6 +27,9 @@ export class PermissionHandler {
         context: string
     ) => {
         const consentService = Injector.Container.resolve(ConsentService);
+        if (resourceOwnerUserId === requesterUserId) {
+            return true;
+        }
         const consents = await consentService.getActiveConsents(
             resourceOwnerUserId,
             requesterUserId,

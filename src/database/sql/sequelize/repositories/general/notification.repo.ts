@@ -1,10 +1,8 @@
 
-import { NotificationSearchFilters, NotificationSearchResults } from '../../../../../domain.types/general/notification/notification.search.types';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { INotificationRepo } from '../../../../../database/repository.interfaces/general/notification.repo.interface';
-import { NotificationDomainModel } from '../../../../../domain.types/general/notification/notification.types';
-import { NotificationDto } from '../../../../../domain.types/general/notification/notification.dto';
+import { NotificationDomainModel, NotificationDto, NotificationSearchFilters, NotificationSearchResults } from '../../../../../domain.types/general/notification/notification.types';
 import { NotificationMapper } from '../../mappers/general/notification.mapper';
 import NotificationModel from '../../models/general/notification/notification.model';
 import { Op } from 'sequelize';
@@ -52,8 +50,9 @@ export class NotificationRepo implements INotificationRepo {
         try {
             const notification = await NotificationModel.findByPk(id);
 
-            if (updateModel.ReadOn != null && notification.BroadcastToAll !== true) {
-                notification.ReadOn = updateModel.ReadOn;
+            if (updateModel.ReadOn != null && updateModel.BroadcastToAll !== true) {
+                // notification.ReadOn = updateModel.ReadOn;
+                notification.SentOn = updateModel.ReadOn;
             }
 
             await notification.save();
@@ -172,7 +171,7 @@ export class NotificationRepo implements INotificationRepo {
                 notification.SentOn = updateModel.SentOn;
             }
             if (updateModel.ReadOn != null) {
-                notification.ReadOn = updateModel.ReadOn;
+                // notification.ReadOn = updateModel.ReadOn;
             }
 
             if (updateModel.ImageUrl != null) {
@@ -182,7 +181,7 @@ export class NotificationRepo implements INotificationRepo {
                 notification.Type = updateModel.Type;
             }
             if (updateModel.BroadcastToAll != null) {
-                notification.BroadcastToAll = updateModel.BroadcastToAll;
+                // notification.BroadcastToAll = updateModel.BroadcastToAll;
             }
 
             await notification.save();

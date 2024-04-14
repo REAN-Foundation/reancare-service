@@ -53,14 +53,14 @@ export const NotificationChannelList: NotificationChannel [] = [
 
 export interface NotificationCreateModel {
     id?             : uuid;
-    TenantId       ?: uuid;
-    Target          : NotificationTarget;
-    Type            : NotificationType;
-    Channel         : NotificationChannel;
+    TenantId?       : uuid;
+    Target?         : NotificationTarget;
+    Type?           : NotificationType;
+    Channel?        : NotificationChannel;
     Title?          : string;
     Body?           : string;
     Payload?        : string;
-    ImageUrl       ?: string;
+    ImageUrl?       : string;
     SentOn?         : Date;
     CreatedByUserId?: uuid;
 }

@@ -5,10 +5,11 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { CourseModuleService } from '../../../../services/educational/learning/course.module.service';
 import { Injector } from '../../../../startup/injector';
 import { CourseModuleValidator } from './course.module.validator';
+import { BaseController } from '../../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CourseModuleController {
+export class CourseModuleController extends BaseController {
 
     //#region member variables and constructors
 
@@ -24,6 +25,7 @@ export class CourseModuleController {
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeOne(request, null, null);
             const courseModule = await this._service.create(model);
             if (courseModule == null) {
                 throw new ApiError(400, 'Can not create course module!');
@@ -41,6 +43,7 @@ export class CourseModuleController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const courseModule = await this._service.getById(id);
             if (courseModule == null) {
                 throw new ApiError(404, 'Course module not found.');
@@ -58,6 +61,7 @@ export class CourseModuleController {
         try {
 
             const filters = await this._validator.search(request);
+            await this.authorizeOne(request, null, null);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -79,6 +83,7 @@ export class CourseModuleController {
         try {
 
             const domainModel = await this._validator.update(request);
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -102,6 +107,7 @@ export class CourseModuleController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Course module not found.');

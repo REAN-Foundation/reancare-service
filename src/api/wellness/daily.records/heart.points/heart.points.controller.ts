@@ -5,10 +5,13 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HeartPointsService } from '../../../../services/wellness/daily.records/heart.points.service';
 import { Injector } from '../../../../startup/injector';
 import { HeartPointValidator } from './heart.points.validator';
+import { BaseController } from '../../../../api/base.controller';
+import { HeartPointsSearchFilters } from '../../../../domain.types/wellness/daily.records/heart.points/heart.points.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HeartPointController{
+export class HeartPointController extends BaseController{
 
     //#region member variables and constructors
 
@@ -16,8 +19,10 @@ export class HeartPointController{
 
     _validator: HeartPointValidator = new HeartPointValidator();
 
+    _heartPointservice: HeartPointsService = Injector.Container.resolve(HeartPointsService);
+
     constructor() {
-        this._service = Injector.Container.resolve(HeartPointsService);
+        super();
     }
 
     //#endregion
@@ -32,7 +37,7 @@ export class HeartPointController{
             if (heartPoint == null) {
                 throw new ApiError(400, 'Cannot create record for heart Points!');
             }
-
+            await this.authorizeOne(request, heartPoint.PatientUserId, null);
             ResponseHandler.success(request, response, 'Heart points record created successfully!', 201, {
                 HeartPoints : heartPoint,
             });
@@ -49,7 +54,7 @@ export class HeartPointController{
             if (heartPoint == null) {
                 throw new ApiError(404, 'Heart points record not found.');
             }
-
+            await this.authorizeOne(request, heartPoint.PatientUserId, null);
             ResponseHandler.success(request, response, 'Heart points record retrieved successfully!', 200, {
                 HeartPoints : heartPoint,
             });
@@ -61,7 +66,8 @@ export class HeartPointController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -85,7 +91,7 @@ export class HeartPointController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Heart points record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update heart points record!');
@@ -107,7 +113,7 @@ export class HeartPointController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Heart points record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Heart points record cannot be deleted.');
@@ -122,5 +128,29 @@ export class HeartPointController{
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: HeartPointsSearchFilters): Promise<HeartPointsSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

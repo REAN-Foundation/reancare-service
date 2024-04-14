@@ -5,10 +5,11 @@ import { TenantSettingsValidator } from './tenant.settings.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Injector } from '../../../startup/injector';
 import { TenantSettingsTypes, TenantSettingsTypesList } from '../../../domain.types/tenant/tenant.settings.types';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class TenantSettingsController {
+export class TenantSettingsController extends BaseController {
 
     //#region member variables and constructors
 
@@ -30,7 +31,8 @@ export class TenantSettingsController {
 
     getTenantSettingsByType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const tenantId: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            await this.authorizeOne(request, null, tenantId);
             let settings = await this._service.getTenantSettings(tenantId);
             if (!settings) {
                 throw new Error(`Tenant settings not found for tenant: ${tenantId}`);
@@ -50,7 +52,8 @@ export class TenantSettingsController {
 
     getTenantSettings = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const tenantId: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            await this.authorizeOne(request, null, tenantId);
             const settings = await this._service.getTenantSettings(tenantId);
             if (!settings) {
                 throw new Error(`Tenant settings not found for tenant: ${tenantId}`);
@@ -65,7 +68,8 @@ export class TenantSettingsController {
 
     updateTenantSettingsByType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const tenantId: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            await this.authorizeOne(request, null, tenantId);
             const settingsType: string = await this._validator.getParamStr(request, 'settingsType');
             const types = TenantSettingsTypesList.map(x => x.toLowerCase());
             if (!types.includes(settingsType.toLowerCase())) {
@@ -84,7 +88,8 @@ export class TenantSettingsController {
 
     updateTenantSettings = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const tenantId: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            await this.authorizeOne(request, null, tenantId);
             const settings = await this._validator.updateTenantSettings(request);
             const updated = await this._service.updateTenantSettings(tenantId, settings);
             ResponseHandler.success(request, response, 'Tenant settings updated successfully!', 200, {

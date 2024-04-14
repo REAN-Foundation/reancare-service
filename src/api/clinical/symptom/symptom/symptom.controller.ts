@@ -5,10 +5,14 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomService } from '../../../../services/clinical/symptom/symptom.service';
 import { Injector } from '../../../../startup/injector';
 import { SymptomValidator } from './symptom.validator';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { SymptomSearchFilters } from '../../../../domain.types/clinical/symptom/symptom/symptom.search.types';
+import { BaseController } from '../../../../api/base.controller';
+import { SymptomDomainModel } from '../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomController {
+export class SymptomController extends BaseController {
 
     //#region member variables and constructors
 
@@ -22,11 +26,12 @@ export class SymptomController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const domainModel = await this._validator.create(request);
+            const domainModel: SymptomDomainModel = await this._validator.create(request);
             const symptom = await this._service.create(domainModel);
             if (symptom == null) {
                 throw new ApiError(400, 'Cannot create symptom!');
             }
+            await this.authorizeOne(request, symptom.id, null);
             ResponseHandler.success(request, response, 'Symptom created successfully!', 201, {
                 Symptom : symptom,
             });
@@ -42,6 +47,7 @@ export class SymptomController {
             if (symptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
+            await this.authorizeOne(request, symptom.PatientUserId, null);
             ResponseHandler.success(request, response, 'Symptom retrieved successfully!', 200, {
                 Symptom : symptom,
             });
@@ -52,7 +58,8 @@ export class SymptomController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await this._validator.search(request);
+            let filters: SymptomSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -73,6 +80,7 @@ export class SymptomController {
             if (existingSymptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
+            await this.authorizeOne(request, existingSymptom.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update symptom record!');
@@ -92,6 +100,7 @@ export class SymptomController {
             if (existingSymptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
+            await this.authorizeOne(request, existingSymptom.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Symptom cannot be deleted.');
@@ -105,5 +114,29 @@ export class SymptomController {
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: SymptomSearchFilters): Promise<SymptomSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

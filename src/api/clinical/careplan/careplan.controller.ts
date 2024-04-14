@@ -11,6 +11,7 @@ import { CommunityNetworkService } from '../../../modules/community.bw/community
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -103,9 +104,9 @@ export class CareplanController extends BaseController {
             const provider = request.params.provider;
             const careplanCode = request.params.careplanCode;
 
-            const patient = await this._userService.getById(patientUserId);
-            await this.authorizeUser(request, patient.id);
-            const eligibility = await this._service.getPatientEligibility(patient, provider, careplanCode);
+            const user = await this._userService.getById(patientUserId);
+            await this.authorizeUser(request, user.id);
+            const eligibility = await this._service.getPatientEligibility(user, provider, careplanCode);
             ResponseHandler.success(request, response, 'Patient eligibility for careplan retrieved successfully!', 200, {
                 Eligibility : eligibility,
             });
@@ -134,6 +135,8 @@ export class CareplanController extends BaseController {
         try {
 
             const careplanId = request.params.id;
+            const enrollment = await this._service.getEnrollment(careplanId);
+            await this.authorizeUser(request, enrollment.PatientUserId);
 
             const fetched = await this._service.fetchTasks(careplanId);
             if (!fetched) {
@@ -153,6 +156,11 @@ export class CareplanController extends BaseController {
         try {
 
             const careplanId = request.params.id; // careplan id
+            const enrollment = await this._service.getEnrollment(careplanId);
+            if (!enrollment) {
+                throw new ApiError(404, 'Careplan enrollment not found!');
+            }
+            await this.authorizeUser(request, enrollment.PatientUserId);
             var careplanStatus = await this._service.getWeeklyStatus(careplanId);
             ResponseHandler.success(request, response, 'Careplan weekly status fetched successfully!', 200, {
                 CareplanStatus : careplanStatus
@@ -165,13 +173,11 @@ export class CareplanController extends BaseController {
 
     updateRisk = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            const model = await this._validator.updateRisk(request);
+            const model: EnrollmentDomainModel = await this._validator.updateRisk(request);
             var riskDetails = await this._service.updateRisk(model);
             ResponseHandler.success(request, response, 'Patient risk and complications updated successfully!', 200, {
                 RiskDetails : riskDetails
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

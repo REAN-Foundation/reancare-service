@@ -11,10 +11,13 @@ import { TimeHelper } from '../../../../common/time.helper';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
+import { PhysicalActivitySearchFilters } from '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { BaseController } from '../../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PhysicalActivityController {
+export class PhysicalActivityController extends BaseController {
 
     //#region member variables and constructors
 
@@ -48,7 +51,7 @@ export class PhysicalActivityController {
             }
             
             await this._ehrPhysicalActivityService.addEHRRecordPhysicalActivityForAppNames(physicalActivity);
-
+            await this.authorizeOne(request, physicalActivity.PatientUserId, null);
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
                 var timestamp = physicalActivity.EndTime ?? physicalActivity.StartTime;
@@ -87,7 +90,7 @@ export class PhysicalActivityController {
             if (physicalActivity == null) {
                 throw new ApiError(404, 'Physical activity record not found.');
             }
-
+            await this.authorizeOne(request, physicalActivity.PatientUserId, null);
             ResponseHandler.success(request, response, 'Physical activity record retrieved successfully!', 200, {
                 PhysicalActivity : physicalActivity,
             });
@@ -99,8 +102,8 @@ export class PhysicalActivityController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
-
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -126,7 +129,7 @@ export class PhysicalActivityController {
             if (physicalActivity == null) {
                 throw new ApiError(404, 'Physical activity record not found.');
             }
-
+            await this.authorizeOne(request, physicalActivity.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update physical activity record!');
@@ -168,7 +171,7 @@ export class PhysicalActivityController {
             if (physicalActivity == null) {
                 throw new ApiError(404, 'Physical activity record not found.');
             }
-
+            await this.authorizeOne(request, physicalActivity.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Physical activity record cannot be deleted.');
@@ -183,5 +186,30 @@ export class PhysicalActivityController {
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: PhysicalActivitySearchFilters): Promise<PhysicalActivitySearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
+
 
 }

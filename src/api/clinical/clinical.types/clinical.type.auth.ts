@@ -25,7 +25,7 @@ export class ClinicalTypeAuth {
         Context     : `${this._baseContext}.GetInterpretations`,
         Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetOne,
+        RequestType : RequestType.GetMany,
     };
 
     static getSeverities: AuthOptions = {
@@ -33,7 +33,7 @@ export class ClinicalTypeAuth {
         Context     : `${this._baseContext}.GetSeverities`,
         Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetOne,
+        RequestType : RequestType.GetMany,
     };
 
 }

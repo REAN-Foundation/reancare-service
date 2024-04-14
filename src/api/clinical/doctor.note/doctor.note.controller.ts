@@ -12,7 +12,7 @@ import { UserService } from '../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DoctorNoteController extends BaseController{
+export class DoctorNoteController extends BaseController {
 
     //#region member variables and constructors
 

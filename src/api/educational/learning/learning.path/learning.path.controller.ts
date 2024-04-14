@@ -5,10 +5,11 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { LearningPathService } from '../../../../services/educational/learning/learning.path.service';
 import { Injector } from '../../../../startup/injector';
 import { LearningPathValidator } from './learning.path.validator';
+import { BaseController } from '../../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class LearningPathController {
+export class LearningPathController extends BaseController {
 
     //#region member variables and constructors
 
@@ -24,7 +25,7 @@ export class LearningPathController {
         try {
 
             const model = await this._validator.create(request);
-
+            await this.authorizeOne(request, null, null);
             const learningPath = await this._service.create(model);
             if (learningPath == null) {
                 throw new ApiError(400, 'Cannot create learningPath.!');
@@ -42,7 +43,7 @@ export class LearningPathController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-
+            await this.authorizeOne(request, null, null);
             const learningPath = await this._service.getById(id);
             if (learningPath == null) {
                 throw new ApiError(404, 'Learning path not found.');
@@ -60,7 +61,7 @@ export class LearningPathController {
         try {
 
             const filters = await this._validator.search(request);
-
+            await this.authorizeOne(request, null, null);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -82,7 +83,7 @@ export class LearningPathController {
         try {
 
             const domainModel = await this._validator.update(request);
-
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -106,6 +107,7 @@ export class LearningPathController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Learning path not found.');

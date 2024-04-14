@@ -1,7 +1,7 @@
 import { uuid } from "../../miscellaneous/system.types";
 import { BaseSearchFilters, BaseSearchResults } from "../../miscellaneous/base.search.types";
 
-/////////////////////////////////////////////////////////////////////////// 
+///////////////////////////////////////////////////////////////////////////
 
 export enum NotificationType {
     Info    = 'Info',
@@ -90,9 +90,9 @@ export interface NotificationDto {
     ImageUrl       ?: string;
     SentOn?         : Date;
     CreatedByUserId?: uuid;
-    CreatedAt       : Date;
-    UpdatedAt       : Date;
-    DeletedAt      ?: Date;
+    CreatedAt?       : Date;
+    UpdatedAt?       : Date;
+    DeletedAt?: Date;
 }
 
 export interface NotificationSearchFilters extends BaseSearchFilters{
@@ -117,4 +117,17 @@ export interface UserNotification {
     UserId        : uuid;
     NotificationId: uuid;
     ReadOn?       : Date;
+}
+
+export interface NotificationDomainModel {
+    id?            : uuid;
+    UserId?        : uuid;
+    BroadcastToAll?: boolean;
+    Title?         : string;
+    Body?          : string;
+    Payload?       : string;
+    ImageUrl?      : string;
+    Type?          : string;
+    SentOn?        : Date;
+    ReadOn?        : Date;
 }

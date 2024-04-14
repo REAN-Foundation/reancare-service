@@ -25,14 +25,13 @@ export class SymptomTypeController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.create(request);
 
             const symptomType = await this._service.create(domainModel);
             if (symptomType == null) {
                 throw new ApiError(400, 'Cannot create symptom type!');
             }
-            await this.authorizeOne(request, symptomType.PatientUserId, null);
             ResponseHandler.success(request, response, 'Symptom type created successfully!', 201, {
                 SymptomType : symptomType,
             });
@@ -43,14 +42,13 @@ export class SymptomTypeController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const symptomType = await this._service.getById(id);
             if (symptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-            await this.authorizeOne(request, symptomType.PatientUserId, null);
             ResponseHandler.success(request, response, 'Symptom type retrieved successfully!', 200, {
                 SymptomType : symptomType,
             });
@@ -61,9 +59,8 @@ export class SymptomTypeController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            let filters: SymptomTypeSearchFilters = await this._validator.search(request);
-            filters = await this.authorizeSearch(request, filters);
+            await this.authorizeOne(request, null, null);
+            const filters: SymptomTypeSearchFilters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -81,7 +78,7 @@ export class SymptomTypeController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.update(request);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -89,7 +86,6 @@ export class SymptomTypeController extends BaseController {
             if (existingSymptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-            await this.authorizeOne(request, existingSymptomType.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update symptom type record!');
@@ -105,13 +101,12 @@ export class SymptomTypeController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptomType = await this._service.getById(id);
             if (existingSymptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-            await this.authorizeOne(request, existingSymptomType.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Symptom type cannot be deleted.');
@@ -127,27 +122,4 @@ export class SymptomTypeController extends BaseController {
 
     //#endregion
 
-    authorizeSearch = async (
-        request: express.Request,
-        searchFilters: SymptomTypeSearchFilters): Promise<SymptomTypeSearchFilters> => {
-
-        const currentUser = request.currentUser;
-
-        if (searchFilters.PatientUserId != null) {
-            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
-                    searchFilters.PatientUserId,
-                    currentUser.UserId,
-                    request.context
-                );
-                if (!hasConsent) {
-                    throw new ApiError(403, `Unauthorized`);
-                }
-            }
-        }
-        else {
-            searchFilters.PatientUserId = currentUser.UserId;
-        }
-        return searchFilters;
-    };
 }

@@ -8,10 +8,13 @@ import { RoleService } from '../../../services/role/role.service';
 import { UserGroupValidator } from './user.group.validator';
 import { PersonService } from '../../../services/person/person.service';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { UserGroupSearchFilters } from '../../../domain.types/community/user.groups/user.group.domain.model';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserGroupController {
+export class UserGroupController extends BaseController {
 
     //#region member variables and constructors
 
@@ -32,10 +35,12 @@ export class UserGroupController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await this._validator.create(request);
+            await this.authorizeOne(request, null, null);
             const record = await this._service.create(model);
             if (record == null) {
                 throw new ApiError(400, 'Cannot start conversation!');
             }
+            
             ResponseHandler.success(request, response, 'Conversation started successfully!', 201, {
                 UserGroup : record,
             });
@@ -47,10 +52,12 @@ export class UserGroupController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const record = await this._service.getById(id);
             if (record == null) {
                 throw new ApiError(404, ' User group record not found.');
             }
+           
             ResponseHandler.success(request, response, 'User group record retrieved successfully!', 200, {
                 UserGroup : record,
             });
@@ -62,6 +69,7 @@ export class UserGroupController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters = await this._validator.search(request);
+            await this.authorizeOne(request, null, null);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -78,6 +86,7 @@ export class UserGroupController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await this._validator.update(request);
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -98,10 +107,12 @@ export class UserGroupController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'User group record cannot be deleted.');
@@ -117,6 +128,7 @@ export class UserGroupController {
     getGroupUsers = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const group = await this._service.getById(id);
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
@@ -134,11 +146,13 @@ export class UserGroupController {
     addUserToGroup = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const group = await this._service.getById(groupId);
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -159,11 +173,13 @@ export class UserGroupController {
     removeUserFromGroup = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const group = await this._service.getById(groupId);
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -184,6 +200,7 @@ export class UserGroupController {
     makeUserAdmin = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const group = await this._service.getById(groupId);
             if (group == null) {
@@ -209,11 +226,13 @@ export class UserGroupController {
     removeUserAdmin = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const group = await this._service.getById(groupId);
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -234,10 +253,12 @@ export class UserGroupController {
     getGroupAdmins = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const group = await this._service.getById(groupId);
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+
             const admins = await this._service.getGroupAdmins(groupId);
             ResponseHandler.success(request, response, 'User group admins retrieved successfully!', 200, {
                 Admins : admins,
@@ -251,10 +272,12 @@ export class UserGroupController {
     setGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const group = await this._service.getById(groupId);
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+
             const types = await this._validator.validateGroupActivityTypes(request);
             const set = await this._service.setGroupActivityTypes(groupId, types);
             if (!set) {
@@ -272,10 +295,12 @@ export class UserGroupController {
     getGroupActivityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const groupId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const group = await this._service.getById(groupId);
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+  
             const types = await this._service.getGroupActivityTypes(groupId);
             ResponseHandler.success(request, response, 'Group activity types retrieved successfully!', 200, {
                 Types : types,

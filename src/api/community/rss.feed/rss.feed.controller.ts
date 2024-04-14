@@ -8,10 +8,13 @@ import { Logger } from '../../../common/logger';
 import { FileResourceService } from '../../../services/general/file.resource.service';
 import fs from 'fs';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { RssfeedSearchFilters } from '../../../domain.types/general/rss.feed/rssfeed.search.types';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class RssfeedController {
+export class RssfeedController extends BaseController {
 
     //#region member variables and constructors
 
@@ -29,11 +32,12 @@ export class RssfeedController {
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeOne(request, null, null);
             const feed = await this._service.create(model);
             if (feed == null) {
                 throw new ApiError(400, 'Could not create a feed!');
             }
-
+            
             const updated = await this._service.createOrUpdateFeed(feed.id);
 
             ResponseHandler.success(request, response, 'Rssfeed created successfully!', 201, {
@@ -48,11 +52,11 @@ export class RssfeedController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const feed = await this._service.getById(id);
             if (feed == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
             }
-
             ResponseHandler.success(request, response, 'Rssfeed retrieved successfully!', 200, {
                 Rssfeed : feed,
             });
@@ -65,6 +69,7 @@ export class RssfeedController {
         try {
 
             const filters = await this._validator.search(request);
+            await this.authorizeOne(request, null, null);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -86,12 +91,12 @@ export class RssfeedController {
         try {
 
             const domainModel = await this._validator.update(request);
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
             }
-
             let updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a feed!');
@@ -110,11 +115,11 @@ export class RssfeedController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed record not found.');
             }
-
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Rssfeed can not be deleted.');
@@ -132,6 +137,7 @@ export class RssfeedController {
         try {
 
             const model = await this._validator.addFeedItem(request);
+            await this.authorizeOne(request, null, null);
             const item = await this._service.addFeedItem(model);
             if (item == null) {
                 throw new ApiError(400, 'Could not add a feed item!');
@@ -151,11 +157,11 @@ export class RssfeedController {
         try {
 
             const itemId: uuid = await this._validator.getParamUuid(request, 'itemId');
+            await this.authorizeOne(request, null, null);
             const item = await this._service.getFeedItemById(itemId);
             if (item == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
             }
-
             ResponseHandler.success(request, response, 'Rssfeed retrieved successfully!', 200, {
                 RssfeedItem : item,
             });
@@ -168,12 +174,12 @@ export class RssfeedController {
         try {
 
             const domainModel = await this._validator.updateFeedItem(request);
+            await this.authorizeOne(request, null, null);
             const itemId: uuid = await this._validator.getParamUuid(request, 'itemId');
             const existingRecord = await this._service.getFeedItemById(itemId);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed item not found.');
             }
-
             const updated = await this._service.updateFeedItem(itemId, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a feed item!');
@@ -193,12 +199,12 @@ export class RssfeedController {
         try {
 
             const itemId: uuid = await this._validator.getParamUuid(request, 'itemId');
+            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getFeedItemById(itemId);
             const feedId = existingRecord.FeedId;
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed item record not found.');
             }
-
             const deleted = await this._service.deleteFeedItem(itemId);
             if (!deleted) {
                 throw new ApiError(400, 'Rssfeed item can not be deleted.');
@@ -218,6 +224,7 @@ export class RssfeedController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const feed = await this._service.getById(id);
             if (feed == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
@@ -234,6 +241,7 @@ export class RssfeedController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const feed = await this._service.getById(id);
             if (feed == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
@@ -250,6 +258,7 @@ export class RssfeedController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.authorizeOne(request, null, null);
             const feed = await this._service.getById(id);
             if (feed == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
@@ -277,5 +286,5 @@ export class RssfeedController {
         var filestream = fs.createReadStream(localDestination);
         filestream.pipe(response);
     };
-
+    
 }

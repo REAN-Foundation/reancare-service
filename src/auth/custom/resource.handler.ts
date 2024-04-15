@@ -52,7 +52,7 @@ export class ResourceHandler {
 
             request.resourceOwnerUserId = resourceOwnerUserId;
             request.resourceTenantId = resourceTenantId;
-            request.patientOwnedResource = patientOwnedResource;
+            // request.patientOwnedResource = patientOwnedResource;
 
             next();
         }

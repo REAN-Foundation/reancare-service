@@ -7,7 +7,6 @@ import {
     UserNotificationDto
 } from '../../../domain.types/general/notification/notification.types';
 
-
 export interface INotificationRepo {
 
     create(notificationDomainModel: NotificationCreateModel): Promise<NotificationDto>;
@@ -20,9 +19,9 @@ export interface INotificationRepo {
 
     delete(id: string): Promise<boolean>;
 
-    sendToUser(id: string, userId: string): Promise<void>;
+    sendToUser(id: string, userId: string): Promise<boolean>;
 
-    markAsRead(id: string, userId: string): Promise<NotificationDto>;
+    markAsRead(id: string, userId: string): Promise<boolean>;
 
     getUserNotification(id: string, userId: string): Promise<UserNotificationDto>;
 

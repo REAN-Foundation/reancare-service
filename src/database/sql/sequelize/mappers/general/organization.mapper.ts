@@ -1,5 +1,5 @@
+import { OrganizationDto } from '../../../../../domain.types/general/organization/organization.types';
 import Organization from '../../models/general/organization/organization.model';
-import { OrganizationDto } from '../../../../../domain.types/general/organization/organization.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -23,10 +23,9 @@ export class OrganizationMapper {
             ContactPhone                     : organization.ContactPhone,
             ContactEmail                     : organization.ContactEmail,
             ParentOrganizationId             : organization.ParentOrganizationId,
-            ParentOrganization               : parentOrganization,
             About                            : organization.About,
             OperationalSince                 : organization.OperationalSince,
-            Addresses                        : [],
+            AddressIds                       : [],
             ImageResourceId                  : organization.ImageResourceId,
             IsHealthFacility                 : organization.IsHealthFacility,
             NationalHealthFacilityRegistryId : organization.NationalHealthFacilityRegistryId,

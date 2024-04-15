@@ -22,18 +22,18 @@ export class ClinicalTypeAuth {
 
     static getInterpretations: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetInterpretations`,
-        Ownership  : ResourceOwnership.System,
-        ActionScope: ActionScope.Public,
-        RequestType: RequestType.GetMany,
+        Context     : `${this._baseContext}.GetInterpretations`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetMany,
     };
 
     static getSeverities: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetSeverities`,
-        Ownership  : ResourceOwnership.System,
-        ActionScope: ActionScope.Public,
-        RequestType: RequestType.GetMany,
+        Context     : `${this._baseContext}.GetSeverities`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetMany,
     };
 
 }

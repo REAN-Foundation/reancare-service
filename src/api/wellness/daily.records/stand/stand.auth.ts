@@ -10,7 +10,7 @@ import {
 
 export class StandAuth {
 
-static _baseContext = `Wellness.Stand`;
+static _baseContext = `Wellness.DailyRecords.Stand`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

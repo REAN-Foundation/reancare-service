@@ -10,7 +10,7 @@ import {
 
 export class CalorieBalanceAuth {
 
-static _baseContext = `Wellness.CalorieBalance`;
+static _baseContext = `Wellness.DailyRecords.CalorieBalance`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

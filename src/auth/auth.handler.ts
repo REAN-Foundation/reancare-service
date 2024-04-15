@@ -64,15 +64,20 @@ export class AuthHandler {
             return middlewares;
         }
         
+        if (publicAccess && systemOwnedResource) {
+            return middlewares;
+        }
+
         // Perform user authentication
         var userAuthenticator = Injector.Container.resolve(UserAuthenticator);
         middlewares.push(userAuthenticator.authenticate);
 
         // Open routes that do not require user authorization
         // For example, public resources, system resources, system types, etc.
-        if (publicAccess && systemOwnedResource) {
-            return middlewares;
-        }
+        
+        // if (publicAccess && systemOwnedResource) {
+        //     return middlewares;
+        // }
 
         var authorizer = Injector.Container.resolve(UserAuthorizer);
         middlewares.push(authorizer.authorize);
@@ -113,8 +118,8 @@ export class AuthHandler {
 
     private static getResourceId = (request: Request, resourceIdName?: string): string | number | null | undefined => {
         var resourceId = null;
-        if (resourceIdName && 
-            request.params[resourceIdName] != null && 
+        if (resourceIdName &&
+            request.params[resourceIdName] != null &&
             request.params[resourceIdName] !== 'undefined') {
             resourceId = request.params[resourceIdName];
             return resourceId;

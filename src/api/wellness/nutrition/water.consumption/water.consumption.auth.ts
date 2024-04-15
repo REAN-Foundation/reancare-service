@@ -10,7 +10,7 @@ import {
 
 export class WaterConsumptionAuth {
 
-static _baseContext = `Wellness.WaterConsumption`;
+static _baseContext = `Wellness.Nutrition.WaterConsumption`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

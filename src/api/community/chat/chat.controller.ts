@@ -8,10 +8,13 @@ import { RoleService } from '../../../services/role/role.service';
 import { ChatValidator } from './chat.validator';
 import { ConversationDomainModel } from '../../../domain.types/community/chat/conversation.domain.model';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { ConversationSearchFilters } from '../../../domain.types/community/chat/conversation.search.types';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ChatController {
+export class ChatController extends BaseController {
 
     //#region member variables and constructors
 
@@ -31,11 +34,12 @@ export class ChatController {
         try {
 
             const domainModel = await this._validator.startConversation(request);
+            await this.authorizeOne(request, domainModel.InitiatingUserId, null);
             const conversation = await this._service.startConversation(domainModel);
             if (conversation == null) {
                 throw new ApiError(400, 'Cannot start conversation!');
             }
-
+           
             ResponseHandler.success(request, response, 'Conversation started successfully!', 201, {
                 Conversation : conversation,
             });
@@ -49,11 +53,12 @@ export class ChatController {
         try {
 
             const domainModel = await this._validator.sendMessage(request);
+            await this.authorizeOne(request, domainModel.SenderId, null);
             const message = await this._service.sendMessage(domainModel);
             if (message == null) {
                 throw new ApiError(400, 'Cannot create chat!');
             }
-
+            
             ResponseHandler.success(request, response, 'Chat message sent successfully!', 201, {
                 ChatMessage : message,
             });
@@ -68,6 +73,10 @@ export class ChatController {
 
             const conversationId = await this._validator.getParamUuid(request, 'conversationId');
             const conversationMessages = await this._service.getConversationMessages(conversationId);
+            if (conversationMessages.length > 0) {
+                await this.authorizeOne(request, conversationMessages[0].SenderId, null);
+            }
+           
             ResponseHandler.success(request, response, 'Conversation messages retrieved successfully!', 200, {
                 ConversationMessages : conversationMessages,
             });
@@ -81,6 +90,7 @@ export class ChatController {
         try {
 
             const userId = request.params.userId;
+            await this.authorizeOne(request, userId, null);
             const filters = await this._validator.searchUserConversations(request);
             const userConversations = await this._service.searchUserConversations(userId, filters);
             ResponseHandler.success(request, response, 'Conversations retrieved successfully!', 200, {
@@ -100,7 +110,7 @@ export class ChatController {
             if (conversation == null) {
                 throw new ApiError(404, 'Conversation not found.');
             }
-
+            await this.authorizeOne(request, conversation.InitiatingUser, null);
             ResponseHandler.success(request, response, 'Conversation retrieved successfully!', 200, {
                 Conversation : conversation,
             });
@@ -119,7 +129,7 @@ export class ChatController {
             if (conversation == null) {
                 throw new ApiError(404, 'Conversation not found.');
             }
-
+            await this.authorizeOne(request, conversation.InitiatingUserId, null);
             ResponseHandler.success(request, response, 'Conversation updated successfully!', 200, {
                 Conversation : conversation,
             });
@@ -133,10 +143,16 @@ export class ChatController {
         try {
 
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
+            const conversation = await this._service.getConversationById(conversationId);
+            if (conversation == null) {
+                throw new ApiError(404, 'Conversation not found.');
+            }
+            await this.authorizeOne(request, conversation.InitiatingUserId, null);
             const deleted = await this._service.deleteConversation(conversationId);
             if (!deleted) {
                 throw new ApiError(400, 'Conversation cannot be deleted.');
             }
+            
             ResponseHandler.success(request, response, 'Conversation record deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -156,6 +172,7 @@ export class ChatController {
             if (!added) {
                 throw new ApiError(422, 'User cannot be added to conversation.');
             }
+            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'User added to conversation successfully!', 200, {
                 Added : true,
             });
@@ -175,6 +192,7 @@ export class ChatController {
             if (!added) {
                 throw new ApiError(422, 'User cannot be removed from conversation.');
             }
+            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'User removed from conversation successfully!', 200, {
                 Added : true,
             });
@@ -195,6 +213,7 @@ export class ChatController {
                 
                 throw new ApiError(404, 'Conversation cannot be found.');
             }
+            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'Conversation between users retrieved successfully!', 200, {
                 Conversation : conversation,
             });
@@ -212,7 +231,7 @@ export class ChatController {
             if (message == null) {
                 throw new ApiError(404, 'Chat message not found.');
             }
-
+            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'Chat message retrieved successfully', 200, { ChatMessage: message });
 
         } catch (error) {
@@ -229,6 +248,7 @@ export class ChatController {
             if (existingMessage == null) {
                 throw new ApiError(404, 'Chat message not found.');
             }
+            await this.authorizeOne(request, null, null);
             const updated = await this._service.updateMessage(messageId, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update chat message record!');
@@ -248,10 +268,11 @@ export class ChatController {
 
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
             const deleted = await this._service.deleteMessage(messageId);
+            await this.authorizeOne(request, null, null);
             if (!deleted) {
                 throw new ApiError(400, 'Chat cannot be deleted.');
             }
-
+            
             ResponseHandler.success(request, response, 'Chat record deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -265,6 +286,7 @@ export class ChatController {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const conversations = await this._service.getMarkedConversationsForUser(userId);
+            await this.authorizeOne(request, userId, null);
             ResponseHandler.success(request, response, 'Marked conversations for the user retrieved successfully!', 200, {
                 Conversations : conversations,
             });
@@ -277,6 +299,7 @@ export class ChatController {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const conversations = await this._service.getRecentConversationsForUser(userId);
+            await this.authorizeOne(request, userId, null);
             ResponseHandler.success(request, response, 'Recent conversations for the user retrieved successfully!', 200, {
                 Conversations : conversations,
             });

@@ -9,6 +9,7 @@ import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/eh
 import { StepCountSearchFilters } from '../../../../domain.types/wellness/daily.records/step.count/step.count.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { BaseController } from '../../../../api/base.controller';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +31,7 @@ export class StepCountController extends BaseController {
         try {
 
             const domainModel = await this._validator.create(request);
+            await this.authorizeUser(request, stepCount.PatientUserId);
             const recordDate = request.body.RecordDate;
             const provider = request.body.Provider ?? null;
         
@@ -46,7 +48,7 @@ export class StepCountController extends BaseController {
             }
             
             await this._ehrPhysicalActivityService.addEHRRecordStepCountForAppNames(stepCount);
-            await this.authorizeOne(request, stepCount.PatientUserId, null);
+
             ResponseHandler.success(request, response, 'Step count created successfully!', 201, {
                 StepCount : stepCount,
 
@@ -64,7 +66,7 @@ export class StepCountController extends BaseController {
             if (stepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
             }
-            await this.authorizeOne(request, stepCount.PatientUserId, null);
+            await this.authorizeUser(request, stepCount.PatientUserId);
             ResponseHandler.success(request, response, 'Step Count retrieved successfully!', 200, {
                 StepCount : stepCount,
             });
@@ -103,7 +105,7 @@ export class StepCountController extends BaseController {
             if (existingStepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
             }
-            await this.authorizeOne(request, existingStepCount.PatientUserId, null);
+            await this.authorizeUser(request, existingStepCount.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update Step ount record!');
@@ -127,7 +129,7 @@ export class StepCountController extends BaseController {
             if (existingStepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
             }
-            await this.authorizeOne(request, existingStepCount.PatientUserId, null);
+            await this.authorizeUser(request, existingStepCount.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Step Count cannot be deleted.');
@@ -141,7 +143,18 @@ export class StepCountController extends BaseController {
         }
     };
 
-    authorizeSearch = async (
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
+
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: StepCountSearchFilters): Promise<StepCountSearchFilters> => {
 

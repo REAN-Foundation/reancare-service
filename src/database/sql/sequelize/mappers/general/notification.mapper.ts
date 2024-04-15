@@ -12,19 +12,19 @@ export class NotificationMapper {
             return null;
         }
         const dto: NotificationDto = {
-            id             : notification.id,
-            TenantId       : notification.TenantId,
-            Target         : notification.Target as NotificationTarget,
-            Type           : notification.Type as NotificationType,
-            Channel        : notification.Channel as NotificationChannel,
-            Title          : notification.Title,
-            Body           : notification.Body,
-            Payload        : notification.Payload,
-            SentOn         : notification.SentOn,
-            ImageUrl       : notification.ImageUrl,
-            CreatedByUserId: notification.CreatedByUserId,
-            CreatedAt      : notification.createdAt,
-            UpdatedAt      : notification.updatedAt,
+            id              : notification.id,
+            TenantId        : notification.TenantId,
+            Target          : notification.Target as NotificationTarget,
+            Type            : notification.Type as NotificationType,
+            Channel         : notification.Channel as NotificationChannel,
+            Title           : notification.Title,
+            Body            : notification.Body,
+            Payload         : notification.Payload,
+            SentOn          : notification.SentOn,
+            ImageUrl        : notification.ImageUrl,
+            CreatedByUserId : notification.CreatedByUserId,
+            CreatedAt       : notification.createdAt,
+            UpdatedAt       : notification.updatedAt,
         };
         return dto;
     };

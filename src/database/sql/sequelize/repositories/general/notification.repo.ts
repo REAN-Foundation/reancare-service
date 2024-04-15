@@ -1,12 +1,12 @@
 
-import { 
-    NotificationCreateModel, 
-    NotificationSearchFilters, 
-    NotificationSearchResults, 
-    NotificationDto, 
+import {
+    NotificationCreateModel,
+    NotificationSearchFilters,
+    NotificationSearchResults,
+    NotificationDto,
     NotificationUpdateModel,
     UserNotificationDto
- } from '../../../../../domain.types/general/notification/notification.types';
+} from '../../../../../domain.types/general/notification/notification.types';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { INotificationRepo } from '../../../../../database/repository.interfaces/general/notification.repo.interface';
@@ -25,16 +25,16 @@ export class NotificationRepo implements INotificationRepo {
 
         try {
             const entity = {
-                TenantId       : createModel.TenantId ?? null,
-                Target         : createModel.Target,
-                Type           : createModel.Type,
-                Channel        : createModel.Channel,
-                Title          : createModel.Title,
-                Body           : createModel.Body,
-                Payload        : createModel.Payload ,
-                SentOn         : createModel.SentOn,
-                ImageUrl       : createModel.ImageUrl,
-                CreatedByUserId: createModel.CreatedByUserId,
+                TenantId        : createModel.TenantId ?? null,
+                Target          : createModel.Target,
+                Type            : createModel.Type,
+                Channel         : createModel.Channel,
+                Title           : createModel.Title,
+                Body            : createModel.Body,
+                Payload         : createModel.Payload ,
+                SentOn          : createModel.SentOn,
+                ImageUrl        : createModel.ImageUrl,
+                CreatedByUserId : createModel.CreatedByUserId,
             };
 
             const notification = await Notification.create(entity);
@@ -204,15 +204,14 @@ export class NotificationRepo implements INotificationRepo {
             throw new ApiError(500, error.message);
         }
     };
-
     
     markAsRead = async (id: string, userId: uuid):
     Promise<boolean> => {
         try {
             const userNotification = await UserNotification.findOne({
                 where : {
-                    NotificationId: id,
-                    UserId        : userId,
+                    NotificationId : id,
+                    UserId         : userId,
                 }
             
             });
@@ -232,8 +231,8 @@ export class NotificationRepo implements INotificationRepo {
     sendToUser = async (id: string, userId: string): Promise<boolean> => {
         try {
             const userNotification = await UserNotification.create({
-                UserId        : userId,
-                NotificationId: id,
+                UserId         : userId,
+                NotificationId : id,
             });
             return userNotification != null;
         } catch (error) {
@@ -246,8 +245,8 @@ export class NotificationRepo implements INotificationRepo {
         try {
             const userNotification = await UserNotification.findOne({
                 where : {
-                    NotificationId: id,
-                    UserId        : userId,
+                    NotificationId : id,
+                    UserId         : userId,
                 }
             });
             if (userNotification == null) {
@@ -256,11 +255,11 @@ export class NotificationRepo implements INotificationRepo {
             const notification = await Notification.findByPk(id);
             const notificationDto = await NotificationMapper.toDto(notification);
             const dto: UserNotificationDto = {
-                id           : userNotification.id,
-                UserId       : userNotification.UserId,
-                NotificationId: userNotification.NotificationId,
-                Notification  : notificationDto,
-                ReadOn        : userNotification.ReadOn,
+                id             : userNotification.id,
+                UserId         : userNotification.UserId,
+                NotificationId : userNotification.NotificationId,
+                Notification   : notificationDto,
+                ReadOn         : userNotification.ReadOn,
             };
             return dto;
         } catch (error) {

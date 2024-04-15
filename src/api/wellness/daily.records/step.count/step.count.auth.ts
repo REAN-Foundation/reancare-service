@@ -10,7 +10,7 @@ import {
 
 export class StepCountAuth {
 
-static _baseContext = `Wellness.StepCount`;
+static _baseContext = `Wellness.DailyRecords.StepCount`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

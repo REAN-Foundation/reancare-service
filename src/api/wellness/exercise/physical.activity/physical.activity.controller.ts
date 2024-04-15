@@ -37,7 +37,7 @@ export class PhysicalActivityController extends BaseController {
         try {
 
             const domainModel = await this._validator.create(request);
-
+            await this.authorizeUser(request, domainModel.PatientUserId);
             if (domainModel.PatientUserId != null) {
                 const person = await this._userService.getById(domainModel.PatientUserId);
                 if (person == null) {
@@ -51,7 +51,6 @@ export class PhysicalActivityController extends BaseController {
             }
             
             await this._ehrPhysicalActivityService.addEHRRecordPhysicalActivityForAppNames(physicalActivity);
-            await this.authorizeOne(request, physicalActivity.PatientUserId, null);
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
                 var timestamp = physicalActivity.EndTime ?? physicalActivity.StartTime;
@@ -90,7 +89,7 @@ export class PhysicalActivityController extends BaseController {
             if (physicalActivity == null) {
                 throw new ApiError(404, 'Physical activity record not found.');
             }
-            await this.authorizeOne(request, physicalActivity.PatientUserId, null);
+            await this.authorizeUser(request, physicalActivity.PatientUserId);
             ResponseHandler.success(request, response, 'Physical activity record retrieved successfully!', 200, {
                 PhysicalActivity : physicalActivity,
             });
@@ -123,13 +122,12 @@ export class PhysicalActivityController extends BaseController {
         try {
 
             const domainModel = await this._validator.update(request);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const physicalActivity = await this._service.getById(id);
             if (physicalActivity == null) {
                 throw new ApiError(404, 'Physical activity record not found.');
             }
-            await this.authorizeOne(request, physicalActivity.PatientUserId, null);
+            await this.authorizeUser(request, physicalActivity.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update physical activity record!');
@@ -171,7 +169,7 @@ export class PhysicalActivityController extends BaseController {
             if (physicalActivity == null) {
                 throw new ApiError(404, 'Physical activity record not found.');
             }
-            await this.authorizeOne(request, physicalActivity.PatientUserId, null);
+            await this.authorizeUser(request, physicalActivity.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Physical activity record cannot be deleted.');
@@ -186,8 +184,18 @@ export class PhysicalActivityController extends BaseController {
     };
 
     //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: PhysicalActivitySearchFilters): Promise<PhysicalActivitySearchFilters> => {
 
@@ -210,6 +218,5 @@ export class PhysicalActivityController extends BaseController {
         }
         return searchFilters;
     };
-
 
 }

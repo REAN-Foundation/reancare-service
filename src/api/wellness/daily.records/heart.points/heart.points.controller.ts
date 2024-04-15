@@ -8,6 +8,7 @@ import { HeartPointValidator } from './heart.points.validator';
 import { BaseController } from '../../../../api/base.controller';
 import { HeartPointsSearchFilters } from '../../../../domain.types/wellness/daily.records/heart.points/heart.points.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,11 +34,12 @@ export class HeartPointController extends BaseController{
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeUser(request, model.PatientUserId);
             const heartPoint = await this._service.create(model);
             if (heartPoint == null) {
                 throw new ApiError(400, 'Cannot create record for heart Points!');
             }
-            await this.authorizeOne(request, heartPoint.PatientUserId, null);
+            
             ResponseHandler.success(request, response, 'Heart points record created successfully!', 201, {
                 HeartPoints : heartPoint,
             });
@@ -54,7 +56,7 @@ export class HeartPointController extends BaseController{
             if (heartPoint == null) {
                 throw new ApiError(404, 'Heart points record not found.');
             }
-            await this.authorizeOne(request, heartPoint.PatientUserId, null);
+            await this.authorizeUser(request, heartPoint.PatientUserId);
             ResponseHandler.success(request, response, 'Heart points record retrieved successfully!', 200, {
                 HeartPoints : heartPoint,
             });
@@ -91,7 +93,7 @@ export class HeartPointController extends BaseController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Heart points record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update heart points record!');
@@ -113,7 +115,7 @@ export class HeartPointController extends BaseController{
             if (existingRecord == null) {
                 throw new ApiError(404, 'Heart points record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Heart points record cannot be deleted.');
@@ -127,9 +129,18 @@ export class HeartPointController extends BaseController{
         }
     };
 
-    //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: HeartPointsSearchFilters): Promise<HeartPointsSearchFilters> => {
 
@@ -152,5 +163,6 @@ export class HeartPointController extends BaseController{
         }
         return searchFilters;
     };
+    //#endregion
 
 }

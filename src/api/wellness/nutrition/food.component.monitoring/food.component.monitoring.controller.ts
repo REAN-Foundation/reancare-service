@@ -8,6 +8,7 @@ import { Injector } from '../../../../startup/injector';
 import { BaseController } from '../../../../api/base.controller';
 import { FoodComponentMonitoringSearchFilters } from '../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,12 +28,12 @@ export class FoodComponentMonitoringController extends BaseController {
         try {
 
             const model = await this._validator.create(request);
-
+            await this.authorizeUser(request, model.PatientUserId);
             const foodComponentMonitoring = await this._service.create(model);
             if (foodComponentMonitoring == null) {
                 throw new ApiError(400, 'Cannot create record for food component monitoring!');
             }
-            await this.authorizeOne(request, foodComponentMonitoring.PatientUserId, null);
+            
             ResponseHandler.success(request, response, 'Food component monitoring record created successfully!', 201, {
                 FoodComponentMonitoring : foodComponentMonitoring,
             });
@@ -50,7 +51,7 @@ export class FoodComponentMonitoringController extends BaseController {
             if (foodComponentMonitoring == null) {
                 throw new ApiError(404, 'Food component monitoring record not found.');
             }
-            await this.authorizeOne(request, foodComponentMonitoring.PatientUserId, null);
+            await this.authorizeUser(request, foodComponentMonitoring.PatientUserId);
             ResponseHandler.success(request, response, 'Food component monitoring record retrieved successfully!', 200, {
                 FoodComponentMonitoring : foodComponentMonitoring,
             });
@@ -88,7 +89,7 @@ export class FoodComponentMonitoringController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Food component monitoring record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update food component monitoring record!');
@@ -109,7 +110,7 @@ export class FoodComponentMonitoringController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Food component monitoring record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Food component monitoring record cannot be deleted.');
@@ -124,8 +125,18 @@ export class FoodComponentMonitoringController extends BaseController {
     };
 
     //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: FoodComponentMonitoringSearchFilters): Promise<FoodComponentMonitoringSearchFilters> => {
 

@@ -1,7 +1,7 @@
 import { uuid } from "../../miscellaneous/system.types";
 import { BaseSearchFilters, BaseSearchResults } from "../../miscellaneous/base.search.types";
 
-/////////////////////////////////////////////////////////////////////////// 
+///////////////////////////////////////////////////////////////////////////
 
 export enum NotificationType {
     Info    = 'Info',
@@ -53,14 +53,14 @@ export const NotificationChannelList: NotificationChannel [] = [
 
 export interface NotificationCreateModel {
     id?             : uuid;
-    TenantId       ?: uuid;
-    Target          : NotificationTarget;
-    Type            : NotificationType;
-    Channel         : NotificationChannel;
+    TenantId?       : uuid;
+    Target?         : NotificationTarget;
+    Type?           : NotificationType;
+    Channel?        : NotificationChannel;
     Title?          : string;
     Body?           : string;
     Payload?        : string;
-    ImageUrl       ?: string;
+    ImageUrl?       : string;
     SentOn?         : Date;
     CreatedByUserId?: uuid;
 }
@@ -90,9 +90,9 @@ export interface NotificationDto {
     ImageUrl       ?: string;
     SentOn?         : Date;
     CreatedByUserId?: uuid;
-    CreatedAt       : Date;
-    UpdatedAt       : Date;
-    DeletedAt      ?: Date;
+    CreatedAt?       : Date;
+    UpdatedAt?       : Date;
+    DeletedAt?: Date;
 }
 
 export interface NotificationSearchFilters extends BaseSearchFilters{
@@ -117,4 +117,17 @@ export interface UserNotificationDto {
     NotificationId: uuid;
     Notification  : NotificationDto;
     ReadOn?       : Date;
+}
+
+export interface NotificationDomainModel {
+    id?            : uuid;
+    UserId?        : uuid;
+    BroadcastToAll?: boolean;
+    Title?         : string;
+    Body?          : string;
+    Payload?       : string;
+    ImageUrl?      : string;
+    Type?          : string;
+    SentOn?        : Date;
+    ReadOn?        : Date;
 }

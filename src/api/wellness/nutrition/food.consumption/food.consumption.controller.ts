@@ -13,6 +13,7 @@ import { EHRNutritionService } from '../../../../modules/ehr.analytics/ehr.servi
 import { FoodConsumptionSearchFilters } from '../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { BaseController } from '../../../../api/base.controller';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,13 +21,11 @@ export class FoodConsumptionController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: FoodConsumptionService = null;
-
     _validator: FoodConsumptionValidator = new FoodConsumptionValidator();
 
     _ehrNutritionService: EHRNutritionService = Injector.Container.resolve(EHRNutritionService);
 
-    _foodConsumptionService: FoodConsumptionService = Injector.Container.resolve(FoodConsumptionService);
+    _service: FoodConsumptionService = Injector.Container.resolve(FoodConsumptionService);
 
     constructor() {
         super();
@@ -40,13 +39,14 @@ export class FoodConsumptionController extends BaseController {
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeUser(request, model.PatientUserId);
             const foodConsumption = await this._service.create(model);
             if (foodConsumption == null) {
                 throw new ApiError(400, 'Cannot create record for nutrition!');
             }
 
             await this._ehrNutritionService.addEHRRecordNutritionForAppNames(foodConsumption);
-            await this.authorizeOne(request, foodConsumption.PatientUserId, null);
+            
             if (foodConsumption.UserResponse) {
                 var timestamp = foodConsumption.EndTime ?? foodConsumption.StartTime;
                 if (!timestamp) {
@@ -85,7 +85,7 @@ export class FoodConsumptionController extends BaseController {
             if (foodConsumption == null) {
                 throw new ApiError(404, 'Nutrition record not found.');
             }
-            await this.authorizeOne(request, foodConsumption.PatientUserId, null);
+            await this.authorizeUser(request, foodConsumption.PatientUserId);
             ResponseHandler.success(request, response, 'Nutrition record retrieved successfully!', 200, {
                 FoodConsumption : foodConsumption,
             });
@@ -100,6 +100,7 @@ export class FoodConsumptionController extends BaseController {
 
             const consumedAs: string = await this._validator.getParamStr(request, 'consumedAs');
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            await this.authorizeUser(request, patientUserId);
             const foodConsumptionEvent = await this._service.getByEvent(consumedAs, patientUserId);
             if (foodConsumptionEvent == null) {
                 throw new ApiError(404, 'Nutrition record not found.');
@@ -119,6 +120,7 @@ export class FoodConsumptionController extends BaseController {
 
             const date: Date = await this._validator.getParamDate(request, 'date');
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            await this.authorizeUser(request, patientUserId);
             const foodConsumptionForDay = await this._service.getForDay(date, patientUserId);
             if (foodConsumptionForDay == null) {
                 throw new ApiError(404, 'Nutrition record not found.');
@@ -179,7 +181,7 @@ export class FoodConsumptionController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Nutrition record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const updated = await this._service.update(id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update nutrition record!');
@@ -220,7 +222,7 @@ export class FoodConsumptionController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Nutrition record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Nutrition record cannot be deleted.');
@@ -236,7 +238,17 @@ export class FoodConsumptionController extends BaseController {
     };
 
     //#endregion
-
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
+    
     authorizeSearch = async (
         request: express.Request,
         searchFilters: FoodConsumptionSearchFilters): Promise<FoodConsumptionSearchFilters> => {

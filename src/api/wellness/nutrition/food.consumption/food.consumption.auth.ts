@@ -10,7 +10,7 @@ import {
 
 export class FoodConsumptionAuth {
 
-static _baseContext = `Wellness.FoodConsumption`;
+static _baseContext = `Wellness.Nutrition.FoodConsumption`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

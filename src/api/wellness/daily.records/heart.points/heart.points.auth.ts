@@ -10,7 +10,7 @@ import {
 
 export class HeartPointAuth {
 
-static _baseContext = `Wellness.DailyRecords.HeartPoint`;
+static _baseContext = `Wellness.DailyRecords.HeartPoints`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

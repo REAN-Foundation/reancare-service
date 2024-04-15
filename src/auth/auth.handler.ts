@@ -64,9 +64,9 @@ export class AuthHandler {
             return middlewares;
         }
         
-        if (publicAccess && systemOwnedResource) {
-            return middlewares;
-        }
+        // if (publicAccess && systemOwnedResource) {
+        //     return middlewares;
+        // }
 
         // Perform user authentication
         var userAuthenticator = Injector.Container.resolve(UserAuthenticator);
@@ -75,9 +75,9 @@ export class AuthHandler {
         // Open routes that do not require user authorization
         // For example, public resources, system resources, system types, etc.
         
-        // if (publicAccess && systemOwnedResource) {
-        //     return middlewares;
-        // }
+        if (publicAccess && systemOwnedResource) {
+            return middlewares;
+        }
 
         var authorizer = Injector.Container.resolve(UserAuthorizer);
         middlewares.push(authorizer.authorize);

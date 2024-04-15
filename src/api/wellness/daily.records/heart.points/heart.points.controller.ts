@@ -16,11 +16,9 @@ export class HeartPointController extends BaseController{
 
     //#region member variables and constructors
 
-    _service: HeartPointsService = null;
-
     _validator: HeartPointValidator = new HeartPointValidator();
 
-    _heartPointservice: HeartPointsService = Injector.Container.resolve(HeartPointsService);
+    _service: HeartPointsService = Injector.Container.resolve(HeartPointsService);
 
     constructor() {
         super();

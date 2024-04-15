@@ -16,11 +16,9 @@ export class CalorieBalanceController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: CalorieBalanceService = null;
-
     _validator: CalorieBalanceValidator = new CalorieBalanceValidator();
 
-    _calorieBalanceService: CalorieBalanceService = Injector.Container.resolve(CalorieBalanceService);
+    _service: CalorieBalanceService = Injector.Container.resolve(CalorieBalanceService);
 
     constructor() {
         super();

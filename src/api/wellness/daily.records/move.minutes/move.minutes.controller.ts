@@ -16,11 +16,9 @@ export class MoveMinutesController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: MoveMinutesService = null;
-
     _validator: MoveMinutesValidator = new MoveMinutesValidator();
 
-    _moveMinuteService: MoveMinutesService = Injector.Container.resolve(MoveMinutesService);
+    _service: MoveMinutesService = Injector.Container.resolve(MoveMinutesService);
 
     constructor() {
         super();

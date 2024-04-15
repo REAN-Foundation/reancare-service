@@ -32,24 +32,29 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
                 Message       : 'Authenticated',
                 HttpErrorCode : 200,
             };
-            if (!request.clientAppAuth && request.alternateAuth) {
-                // Cuurently, this check is applicable only for the specific endpoints, where
-                // there is a need to allow alternate authentication mechanism. 
-                // For example, client-app specific endpoints like renew and get API keys. Here we
-                // using basic authentication (username and password) instead of JWT token.
-                // For all other endpoints, this check is not applicable.
-                return res;
-            }
+
+            //////////////////////////////////////////////////////////////////////////////////////////
+            // Already taken care of in the auth.handler
+            // if (!request.clientAppAuth && request.alternateAuth) {
+            //     // Cuurently, this check is applicable only for the specific endpoints, where
+            //     // there is a need to allow alternate authentication mechanism. 
+            //     // For example, client-app specific endpoints like renew and get API keys. 
+            //     // Here we are using basic authentication (username and password) instead of JWT token.
+            //     // For all other endpoints, this check is not applicable.
+            //     return res;
+            // }
+            //////////////////////////////////////////////////////////////////////////////////////////
+
             const publicAccess = request.actionScope === ActionScope.Public;
-            const customAuthorization = request.customAuthorization;
+            const optionalUserAuth = request.optionalUserAuth;
 
             const authHeader = request.headers['authorization'];
             const token = authHeader && authHeader.split(' ')[1];
 
             const missingToken = token == null || token === 'null' || token === undefined;
-            const allowWithoutToken = publicAccess && customAuthorization;
+            const allowWithoutToken = publicAccess || optionalUserAuth;
 
-            if ( missingToken && !allowWithoutToken) {
+            if (missingToken && !allowWithoutToken) {
                 res = {
                     Result        : false,
                     Message       : 'Unauthorized user access',

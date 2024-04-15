@@ -18,7 +18,7 @@ export class VolunteerAuth {
         Ownership        : ResourceOwnership.Tenant,
         ActionScope      : ActionScope.Tenant,
         RequestType      : RequestType.CreateOne,
-        UserRegistration : true,
+        SignupOrSignin   : true,
     };
 
     static updateByUserId: AuthOptions = {

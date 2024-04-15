@@ -46,17 +46,19 @@ export interface AuthOptions {
     ResourceIdName        ?: string | number;
     CustomAuthorization   ?: boolean;
     AlternateAuth         ?: boolean;
-    UserRegistration      ?: boolean;
+    SignupOrSignin        ?: boolean;
+    OptionalUserAuth      ?: boolean;
 }
 
 export const DefaultAuthOptions: AuthOptions = {
-    Context             : null,
-    ActionScope         : ActionScope.Owner,
-    Ownership           : ResourceOwnership.Owner,
-    RequestType         : RequestType.Custom,
-    ResourceIdName      : 'id',
-    ClientAppAuth       : true,
-    CustomAuthorization : false,
-    AlternateAuth       : false,
-    UserRegistration    : false,
+    Context            : null,
+    ActionScope        : ActionScope.Owner,
+    Ownership          : ResourceOwnership.Owner,
+    RequestType        : RequestType.Custom,
+    ResourceIdName     : 'id',
+    ClientAppAuth      : true,
+    CustomAuthorization: false,
+    AlternateAuth      : false,
+    SignupOrSignin     : false,
+    OptionalUserAuth   : false,
 };

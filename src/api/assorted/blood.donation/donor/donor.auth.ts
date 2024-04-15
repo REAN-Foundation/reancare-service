@@ -18,7 +18,7 @@ export class DonorAuth {
         Ownership        : ResourceOwnership.Tenant,
         ActionScope      : ActionScope.Public,
         RequestType      : RequestType.CreateOne,
-        UserRegistration : true,
+        SignupOrSignin   : true,
     };
 
     static updateByUserId: AuthOptions = {

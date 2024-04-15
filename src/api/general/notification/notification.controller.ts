@@ -6,7 +6,12 @@ import { NotificationService } from '../../../services/general/notification.serv
 import { NotificationValidator } from './notification.validator';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
-import { NotificationCreateModel, NotificationDto, NotificationSearchFilters, UserNotification } from '../../../domain.types/general/notification/notification.types';
+import { 
+    NotificationCreateModel, 
+    NotificationDto, 
+    NotificationSearchFilters, 
+    UserNotificationDto 
+} from '../../../domain.types/general/notification/notification.types';
 import { Roles } from '../../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -137,12 +142,7 @@ export class NotificationController extends BaseController {
             }
             await this.authorize(request, notification);
 
-            const userNotification: UserNotification = {
-                NotificationId : notification.id,
-                UserId         : userId,
-                ReadOn         : null,
-            };
-            const created = await this._service.createNotificationForUser(userNotification);
+            const created = await this._service.sendToUser(id, userId);
             if (created == null) {
                 throw new ApiError(400, 'Could not create a notification for the user!');
             }

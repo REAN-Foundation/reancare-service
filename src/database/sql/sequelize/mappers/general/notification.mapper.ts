@@ -1,5 +1,5 @@
 
-import { NotificationDto } from "../../../../../domain.types/general/notification/notification.dto";
+import { NotificationChannel, NotificationDto, NotificationTarget, NotificationType } from "../../../../../domain.types/general/notification/notification.types";
 import NotificationModel from '../../models/general/notification/notification.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -13,15 +13,18 @@ export class NotificationMapper {
         }
         const dto: NotificationDto = {
             id             : notification.id,
-            UserId         : notification.UserId,
-            BroadcastToAll : notification.BroadcastToAll,
+            TenantId       : notification.TenantId,
+            Target         : notification.Target as NotificationTarget,
+            Type           : notification.Type as NotificationType,
+            Channel        : notification.Channel as NotificationChannel,
             Title          : notification.Title,
             Body           : notification.Body,
             Payload        : notification.Payload,
             SentOn         : notification.SentOn,
-            ReadOn         : notification.ReadOn,
             ImageUrl       : notification.ImageUrl,
-            Type           : notification.Type,
+            CreatedByUserId: notification.CreatedByUserId,
+            CreatedAt      : notification.createdAt,
+            UpdatedAt      : notification.updatedAt,
         };
         return dto;
     };

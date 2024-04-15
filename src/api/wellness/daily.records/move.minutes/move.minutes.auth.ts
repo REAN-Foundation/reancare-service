@@ -10,7 +10,7 @@ import {
 
 export class MoveMinuteAuth {
 
-static _baseContext = `Wellness.MoveMinute`;
+static _baseContext = `Wellness.DailyRecords.MoveMinute`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

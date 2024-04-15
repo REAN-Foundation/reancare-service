@@ -14,6 +14,7 @@ import { SleepDto } from '../../../../domain.types/wellness/daily.records/sleep/
 import { BaseController } from '../../../../api/base.controller';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { SleepSearchFilters } from '../../../../domain.types/wellness/daily.records/sleep/sleep.search.types';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +38,7 @@ export class SleepController extends BaseController {
             const model = await this._validator.create(request);
             const recordDate = request.body.RecordDate;
             const patientUserId = request.body.PatientUserId;
-
+            await this.authorizeUser(request, patientUserId);
             var sleep: SleepDto = null;
             var existingRecord = await this._service.getByRecordDate(recordDate, patientUserId);
             if (existingRecord !== null) {
@@ -50,7 +51,7 @@ export class SleepController extends BaseController {
             }
 
             await this._ehrMentalWellbeingService.addEHRSleepForAppNames(sleep);
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+
             if (sleep.SleepDuration) {
                 var timestamp = sleep.RecordDate;
                 if (!timestamp) {
@@ -90,7 +91,7 @@ export class SleepController extends BaseController {
             if (sleepRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
             }
-            await this.authorizeOne(request, sleepRecord.PatientUserId, null);
+            await this.authorizeUser(request, sleepRecord.PatientUserId);
             ResponseHandler.success(request, response, 'Sleep record retrieved successfully!', 200, {
                 SleepRecord : sleepRecord,
             });
@@ -127,7 +128,7 @@ export class SleepController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update sleep record!');
@@ -150,7 +151,7 @@ export class SleepController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Sleep record cannot be deleted.');
@@ -164,9 +165,18 @@ export class SleepController extends BaseController {
         }
     };
 
-    //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: SleepSearchFilters): Promise<SleepSearchFilters> => {
 
@@ -189,5 +199,6 @@ export class SleepController extends BaseController {
         }
         return searchFilters;
     };
+    //#endregion
 
 }

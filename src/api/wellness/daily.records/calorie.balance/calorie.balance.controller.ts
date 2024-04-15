@@ -8,6 +8,7 @@ import { CalorieBalanceValidator } from './calorie.balance.validator';
 import { BaseController } from '../../../../api/base.controller';
 import { CalorieBalanceSearchFilters } from '../../../../domain.types/wellness/daily.records/calorie.balance/calorie.balance.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,12 +34,12 @@ export class CalorieBalanceController extends BaseController {
         try {
 
             const domainModel = await this._validator.create(request);
-
+            await this.authorizeUser(request, domainModel.PatientUserId);
             const calorieBalance = await this._service.create(domainModel);
             if (calorieBalance == null) {
                 throw new ApiError(400, 'Cannot create calorie balance record!');
             }
-            await this.authorizeOne(request, calorieBalance.PatientUserId, null);
+            
             ResponseHandler.success(request, response, 'Calorie balance record created successfully!', 201, {
                 CalorieBalance : calorieBalance,
             });
@@ -55,7 +56,7 @@ export class CalorieBalanceController extends BaseController {
             if (calorieBalance == null) {
                 throw new ApiError(404, 'Calorie balance record not found.');
             }
-            await this.authorizeOne(request, calorieBalance.PatientUserId, null);
+            await this.authorizeUser(request, calorieBalance.PatientUserId);
             ResponseHandler.success(request, response, 'Calorie balance record retrieved successfully!', 200, {
                 CalorieBalance : calorieBalance,
             });
@@ -92,7 +93,7 @@ export class CalorieBalanceController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Calorie balance record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update calorie balance record!');
@@ -114,7 +115,7 @@ export class CalorieBalanceController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Calorie balance record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Calorie balance record cannot be deleted.');
@@ -128,7 +129,16 @@ export class CalorieBalanceController extends BaseController {
         }
     };
 
-    //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
     authorizeSearch = async (
         request: express.Request,
@@ -153,5 +163,6 @@ export class CalorieBalanceController extends BaseController {
         }
         return searchFilters;
     };
+    //#endregion
 
 }

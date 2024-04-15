@@ -10,7 +10,7 @@ import {
 
 export class MeditationAuth {
 
-static _baseContext = `Wellness.Meditation`;
+static _baseContext = `Wellness.Exercise.Meditation`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

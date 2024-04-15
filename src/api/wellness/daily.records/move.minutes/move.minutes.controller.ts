@@ -8,6 +8,7 @@ import { MoveMinutesValidator } from './move.minutes.validator';
 import { MoveMinutesSearchFilters } from '../../../../domain.types/wellness/daily.records/move.minutes/move.minutes.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { BaseController } from '../../../../api/base.controller';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,11 +34,12 @@ export class MoveMinutesController extends BaseController {
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeUser(request, model.PatientUserId);
             const moveMinutes = await this._service.create(model);
             if (moveMinutes == null) {
                 throw new ApiError(400, 'Cannot create record for daily move minutes!');
             }
-            await this.authorizeOne(request, moveMinutes.PatientUserId, null);
+            
             ResponseHandler.success(request, response, 'Daily move minutes record created successfully!', 201, {
                 MoveMinutes : moveMinutes,
             });
@@ -54,7 +56,7 @@ export class MoveMinutesController extends BaseController {
             if (moveMinutes == null) {
                 throw new ApiError(404, 'Daily move minutes record not found.');
             }
-            await this.authorizeOne(request, moveMinutes.PatientUserId, null);
+            await this.authorizeUser(request, moveMinutes.PatientUserId);
             ResponseHandler.success(request, response, 'Daily move minutes record retrieved successfully!', 200, {
                 MoveMinutes : moveMinutes,
             });
@@ -93,7 +95,7 @@ export class MoveMinutesController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Daily move minutes record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update daily move minutes record!');
@@ -115,7 +117,7 @@ export class MoveMinutesController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Daily move minutes record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Daily move minutes record cannot be deleted.');
@@ -129,9 +131,18 @@ export class MoveMinutesController extends BaseController {
         }
     };
 
-    //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: MoveMinutesSearchFilters): Promise<MoveMinutesSearchFilters> => {
 
@@ -154,5 +165,6 @@ export class MoveMinutesController extends BaseController {
         }
         return searchFilters;
     };
+    //#endregion
 
 }

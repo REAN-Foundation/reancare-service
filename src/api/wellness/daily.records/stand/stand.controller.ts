@@ -9,6 +9,7 @@ import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/eh
 import { BaseController } from '../../../../api/base.controller';
 import { StandSearchFilters } from '../../../../domain.types/wellness/daily.records/stand/stand.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,14 +31,14 @@ export class StandController extends BaseController {
         try {
 
             const domainModel = await this._validator.create(request);
-
+            await this.authorizeUser(request, domainModel.PatientUserId);
             const stand = await this._service.create(domainModel);
             if (stand == null) {
                 throw new ApiError(400, 'Cannot create stand record!');
             }
 
             await this._ehrPhysicalActivityService.addEHRRecordStandForAppNames(stand);
-            await this.authorizeOne(request, stand.PatientUserId, null);
+
             ResponseHandler.success(request, response, 'Stand record created successfully!', 201, {
                 Stand : stand,
 
@@ -55,7 +56,7 @@ export class StandController extends BaseController {
             if (stand == null) {
                 throw new ApiError(404, 'Stand record not found.');
             }
-            await this.authorizeOne(request, stand.PatientUserId, null);
+            await this.authorizeUser(request, stand.PatientUserId);
             ResponseHandler.success(request, response, 'Stand record retrieved successfully!', 200, {
                 Stand : stand,
             });
@@ -94,7 +95,7 @@ export class StandController extends BaseController {
             if (existingStand == null) {
                 throw new ApiError(404, 'Stand record not found.');
             }
-            await this.authorizeOne(request, existingStand.PatientUserId, null);
+            await this.authorizeUser(request, existingStand.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update stand record!');
@@ -118,7 +119,7 @@ export class StandController extends BaseController {
             if (existingStand == null) {
                 throw new ApiError(404, 'Stand record not found.');
             }
-            await this.authorizeOne(request, existingStand.PatientUserId, null);
+            await this.authorizeUser(request, existingStand.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Stand record cannot be deleted.');
@@ -132,9 +133,18 @@ export class StandController extends BaseController {
         }
     };
 
-    //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: StandSearchFilters): Promise<StandSearchFilters> => {
 
@@ -157,5 +167,6 @@ export class StandController extends BaseController {
         }
         return searchFilters;
     };
+    //#endregion
 
 }

@@ -13,6 +13,7 @@ import { EHRMentalWellBeingService } from '../../../../modules/ehr.analytics/ehr
 import { BaseController } from '../../../../api/base.controller';
 import { MeditationSearchFilters } from '../../../../domain.types/wellness/exercise/meditation/meditation.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,13 +35,13 @@ export class MeditationController extends BaseController {
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeUser(request, model.PatientUserId);
             const meditation = await this._service.create(model);
             if (meditation == null) {
                 throw new ApiError(400, 'Cannot create record for meditation!');
             }
 
             await this._ehrMentalWellBeingService.addEHRMeditationForAppNames(meditation);
-            await this.authorizeOne(request, meditation.PatientUserId, null);
             if (meditation.DurationInMins) {
                 var timestamp = meditation.EndTime ?? meditation.StartTime;
                 if (!timestamp) {
@@ -80,7 +81,7 @@ export class MeditationController extends BaseController {
             if (meditation == null) {
                 throw new ApiError(404, ' Meditation record not found.');
             }
-            await this.authorizeOne(request, meditation.PatientUserId, null);
+            await this.authorizeUser(request, meditation.PatientUserId);
             ResponseHandler.success(request, response, 'Meditation record retrieved successfully!', 200, {
                 Meditation : meditation,
             });
@@ -119,7 +120,7 @@ export class MeditationController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Meditation record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update meditation record!');
@@ -143,7 +144,7 @@ export class MeditationController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Meditation record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Meditation record cannot be deleted.');
@@ -158,7 +159,17 @@ export class MeditationController extends BaseController {
     };
 
     //#endregion
-
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
+    
     authorizeSearch = async (
         request: express.Request,
         searchFilters: MeditationSearchFilters): Promise<MeditationSearchFilters> => {
@@ -182,6 +193,5 @@ export class MeditationController extends BaseController {
         }
         return searchFilters;
     };
-
 
 }

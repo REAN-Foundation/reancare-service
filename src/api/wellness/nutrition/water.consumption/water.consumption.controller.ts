@@ -8,6 +8,7 @@ import { WaterConsumptionValidator } from './water.consumption.validator';
 import { WaterConsumptionSearchFilters } from '../../../../domain.types/wellness/nutrition/water.consumption/water.consumption.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { BaseController } from '../../../../api/base.controller';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,11 +16,9 @@ export class WaterConsumptionController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: WaterConsumptionService = null;
+    _service: WaterConsumptionService = Injector.Container.resolve(WaterConsumptionService);
 
     _validator: WaterConsumptionValidator = new WaterConsumptionValidator();
-
-    _waterConsumptionService: WaterConsumptionService = Injector.Container.resolve(WaterConsumptionService);
 
     constructor() {
         super();
@@ -33,12 +32,11 @@ export class WaterConsumptionController extends BaseController {
         try {
 
             const model = await this._validator.create(request);
-
+            await this.authorizeUser(request, model.PatientUserId);
             const WaterConsumption = await this._service.create(model);
             if (WaterConsumption == null) {
                 throw new ApiError(400, 'Cannot create record for water consumption!');
             }
-            await this.authorizeOne(request, WaterConsumption.PatientUserId, null);
             ResponseHandler.success(request, response, 'Water consumption record created successfully!', 201, {
                 WaterConsumption : WaterConsumption,
             });
@@ -56,7 +54,7 @@ export class WaterConsumptionController extends BaseController {
             if (WaterConsumption == null) {
                 throw new ApiError(404, ' Water consumption record not found.');
             }
-            await this.authorizeOne(request, WaterConsumption.PatientUserId, null);
+            await this.authorizeUser(request, WaterConsumption.PatientUserId);
             ResponseHandler.success(request, response, 'Water consumption record retrieved successfully!', 200, {
                 WaterConsumption : WaterConsumption,
             });
@@ -94,7 +92,7 @@ export class WaterConsumptionController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Water consumption record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update waterConsumption record!');
@@ -115,7 +113,7 @@ export class WaterConsumptionController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Water consumption record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeUser(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Water consumption record cannot be deleted.');
@@ -130,8 +128,18 @@ export class WaterConsumptionController extends BaseController {
     };
 
     //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: WaterConsumptionSearchFilters): Promise<WaterConsumptionSearchFilters> => {
 

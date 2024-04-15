@@ -96,14 +96,13 @@ export interface NotificationDto {
 }
 
 export interface NotificationSearchFilters extends BaseSearchFilters{
-    UserId  ?: string;
-    TenantId?: string;
-    Title?   : string;
-    Target?  : NotificationTarget;
-    Type?    : NotificationType;
-    Channel? : NotificationChannel;
-    SentOn  ?: Date;
-    ReadOn  ?: Date;
+    TenantId  ?: string;
+    Title?     : string;
+    Target?    : NotificationTarget;
+    Type?      : NotificationType;
+    Channel?   : NotificationChannel;
+    SentOnFrom?: Date;
+    SentOnTo  ?: Date;
 }
 
 export interface NotificationSearchResults extends BaseSearchResults{
@@ -112,10 +111,11 @@ export interface NotificationSearchResults extends BaseSearchResults{
 
 //////////////////////////////////////////////////////////////////////
 
-export interface UserNotification {
+export interface UserNotificationDto {
     id           ?: uuid;
     UserId        : uuid;
     NotificationId: uuid;
+    Notification  : NotificationDto;
     ReadOn?       : Date;
 }
 

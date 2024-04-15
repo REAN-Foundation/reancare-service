@@ -5,7 +5,7 @@ import {
     NotificationUpdateModel,
     NotificationSearchResults,
     NotificationSearchFilters,
-    UserNotification
+    UserNotificationDto
 } from "../../domain.types/general/notification/notification.types";
 import { inject, injectable } from "tsyringe";
 
@@ -13,10 +13,6 @@ import { inject, injectable } from "tsyringe";
 
 @injectable()
 export class NotificationService {
-
-    createNotificationForUser(userNotification: UserNotification) {
-        throw new Error('Method not implemented.');
-    }
 
     constructor(
         @inject('INotificationRepo') private _notificationRepo: INotificationRepo,
@@ -28,11 +24,6 @@ export class NotificationService {
 
     getById = async (id: string): Promise<NotificationDto> => {
         return await this._notificationRepo.getById(id);
-    };
-
-    markAsRead = async (id: string, notificatioId: string): Promise<NotificationDto> => {
-        // return await this._notificationRepo.markAsRead(id, notificatioId);
-        return await this._notificationRepo.markAsRead(id, {});
     };
 
     search = async (filters: NotificationSearchFilters): Promise<NotificationSearchResults> => {
@@ -48,11 +39,15 @@ export class NotificationService {
     };
 
     sendToUser = async (id: string, userId: string) => {
-        throw new Error('Method not implemented.');
+        return await this._notificationRepo.sendToUser(id, userId);
     };
 
-    getUserNotification = async (id: string, userId: string) => {
-        throw new Error('Method not implemented.');
+    markAsRead = async (id: string, userId: string): Promise<boolean> => {
+        return await this._notificationRepo.markAsRead(id, userId);
+    };
+
+    getUserNotification = async (id: string, userId: string): Promise<UserNotificationDto> => {
+        return await this._notificationRepo.getUserNotification(id, userId);
     };
 
 }

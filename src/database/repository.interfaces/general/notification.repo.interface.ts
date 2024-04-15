@@ -1,17 +1,28 @@
-import { NotificationDomainModel, NotificationDto, NotificationSearchFilters, NotificationSearchResults } from "../../../domain.types/general/notification/notification.types";
+import {
+    NotificationCreateModel,
+    NotificationDto,
+    NotificationSearchFilters,
+    NotificationSearchResults,
+    NotificationUpdateModel,
+    UserNotificationDto
+} from '../../../domain.types/general/notification/notification.types';
 
 export interface INotificationRepo {
 
-    create(notificationDomainModel: NotificationDomainModel): Promise<NotificationDto>;
+    create(notificationDomainModel: NotificationCreateModel): Promise<NotificationDto>;
 
     getById(id: string): Promise<NotificationDto>;
 
-    markAsRead(id: string, notificationDomainModel: NotificationDomainModel): Promise<NotificationDto>;
-    
     search(filters: NotificationSearchFilters): Promise<NotificationSearchResults>;
 
-    update(id: string, notificationDomainModel: NotificationDomainModel): Promise<NotificationDto>;
+    update(id: string, notificationDomainModel: NotificationUpdateModel): Promise<NotificationDto>;
 
     delete(id: string): Promise<boolean>;
+
+    sendToUser(id: string, userId: string): Promise<boolean>;
+
+    markAsRead(id: string, userId: string): Promise<boolean>;
+
+    getUserNotification(id: string, userId: string): Promise<UserNotificationDto>;
 
 }

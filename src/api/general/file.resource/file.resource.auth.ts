@@ -38,34 +38,42 @@ export class FileResourceAuth {
 
     static searchAndDownload: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.SearchAndDownload`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
+        Context            : `${this._baseContext}.SearchAndDownload`,
+        Ownership          : ResourceOwnership.Owner,
+        ActionScope        : ActionScope.Tenant,
+        RequestType        : RequestType.Search,
+        OptionalUserAuth   : true,
+        CustomAuthorization: true,
     };
 
     static downloadByVersionName: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.DownloadByVersionName`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.Search,
+        Context            : `${this._baseContext}.DownloadByVersionName`,
+        Ownership          : ResourceOwnership.Owner,
+        ActionScope        : ActionScope.Tenant,
+        RequestType        : RequestType.GetOne,
+        CustomAuthorization: true,
+        OptionalUserAuth   : true,
     };
 
     static downloadByVersionId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.DownloadByVersionId`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.Search,
+        Context            : `${this._baseContext}.DownloadByVersionId`,
+        Ownership          : ResourceOwnership.Owner,
+        ActionScope        : ActionScope.Tenant,
+        RequestType        : RequestType.GetOne,
+        CustomAuthorization: true,
+        OptionalUserAuth   : true,
     };
 
     static downloadById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.DownloadById`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.Search,
+        Context            : `${this._baseContext}.DownloadById`,
+        Ownership          : ResourceOwnership.Owner,
+        ActionScope        : ActionScope.Tenant,
+        RequestType        : RequestType.GetOne,
+        CustomAuthorization: true,
+        OptionalUserAuth   : true,
     };
 
     static search: AuthOptions = {

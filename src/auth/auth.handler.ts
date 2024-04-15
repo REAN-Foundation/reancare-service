@@ -58,13 +58,9 @@ export class AuthHandler {
             }
         }
 
-        // If the request is about the user registration. For example, Sign-up, etc.
-        const userRegistration = options.UserRegistration != null ? options.UserRegistration : false;
-        if (userRegistration) {
-            return middlewares;
-        }
-        
-        if (publicAccess && systemOwnedResource) {
+        // If the request is about the user registration. For example, Sign-up, Sign-in, OTP, ... etc.
+        const signupOrSignin = options.SignupOrSignin != null ? options.SignupOrSignin : false;
+        if (signupOrSignin) {
             return middlewares;
         }
 
@@ -75,9 +71,9 @@ export class AuthHandler {
         // Open routes that do not require user authorization
         // For example, public resources, system resources, system types, etc.
         
-        // if (publicAccess && systemOwnedResource) {
-        //     return middlewares;
-        // }
+        if (publicAccess && systemOwnedResource) {
+            return middlewares;
+        }
 
         var authorizer = Injector.Container.resolve(UserAuthorizer);
         middlewares.push(authorizer.authorize);

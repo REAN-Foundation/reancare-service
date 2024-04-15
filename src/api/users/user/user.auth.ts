@@ -14,35 +14,38 @@ export class UserAuth {
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context          : `${this._baseContext}.Create`,
-        Ownership        : ResourceOwnership.System,
-        ActionScope      : ActionScope.Public,
-        RequestType      : RequestType.CreateOne,
-        UserRegistration : true
+        Context       : `${this._baseContext}.Create`,
+        Ownership     : ResourceOwnership.System,
+        ActionScope   : ActionScope.Public,
+        RequestType   : RequestType.CreateOne,
+        SignupOrSignin: true
     };
 
     static loginWithPassword: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.LoginWithPassword`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.UpdateOne,
+        Context       : `${this._baseContext}.LoginWithPassword`,
+        Ownership     : ResourceOwnership.System,
+        ActionScope   : ActionScope.Public,
+        RequestType   : RequestType.UpdateOne,
+        SignupOrSignin: true
     };
 
     static loginWithOtp: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.LoginWithOtp`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.UpdateOne,
+        Context       : `${this._baseContext}.LoginWithOtp`,
+        Ownership     : ResourceOwnership.System,
+        ActionScope   : ActionScope.Public,
+        RequestType   : RequestType.UpdateOne,
+        SignupOrSignin: true,
     };
 
     static generateOtp: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GenerateOtp`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.UpdateOne,
+        Context       : `${this._baseContext}.GenerateOtp`,
+        Ownership     : ResourceOwnership.System,
+        ActionScope   : ActionScope.Public,
+        RequestType   : RequestType.UpdateOne,
+        SignupOrSignin: true,
     };
 
     static rotateUserAccessToken: AuthOptions = {

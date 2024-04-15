@@ -63,7 +63,7 @@ export class PermissionHandler {
         return await this.checkByRequestType(request, currentUser);
     };
 
-    private static checkForXOne = (
+    private static checkScopeWithOwnership = (
         ownership: ResourceOwnership,
         actionScope: ActionScope,
         isOwner: boolean,
@@ -90,84 +90,43 @@ export class PermissionHandler {
         return false;
     };
 
-    private static checkXMany = (
-        ownership: ResourceOwnership,
-        actionScope: ActionScope,
-        isOwner: boolean,
-        areTenantsSame: boolean,
-        hasConsent: boolean
-    ): boolean => {
-        if (ownership === ResourceOwnership.Owner) {
-            if (actionScope === ActionScope.Owner) {
-                return isOwner;
-            }
-            if (actionScope === ActionScope.Tenant) {
-                return areTenantsSame;
-            }
-            if (actionScope === ActionScope.System) {
-                return hasConsent;
-            }
-        } else if (ownership === ResourceOwnership.Tenant) {
-            return areTenantsSame;
-        } else if (ownership === ResourceOwnership.System) {
-            return true;
-        }
-        return false;
-    };
+    private static checkByRequestType = async (
+        request: express.Request, 
+        currentUser: CurrentUser) => {
 
-    private static checkCreateOne = (
-        ownership: ResourceOwnership,
-        actionScope: ActionScope,
-        isOwner: boolean,
-        areTenantsSame: boolean,
-        hasConsent: boolean
-    ): boolean => {
-        if (ownership === ResourceOwnership.Owner) {
-            if (actionScope === ActionScope.Owner) {
-                return isOwner;
-            }
-            if (actionScope === ActionScope.Tenant) {
-                return areTenantsSame && hasConsent;
-            }
-            if (actionScope === ActionScope.System) {
-                return hasConsent;
-            }
-        } else if (ownership === ResourceOwnership.Tenant) {
-            return areTenantsSame;
-        } else if (ownership === ResourceOwnership.System) {
-            return true;
-        }
-        return false;
-    };
-
-    private static checkByRequestType = async (request: express.Request, currentUser: CurrentUser) => {
-        const requestType = request.requestType;
-        const ownership = request.ownership;
-        const actionScope = request.actionScope;
-        const isOwner = request.resourceOwnerUserId === currentUser.UserId;
-        const areTenantsSame = request.resourceTenantId === currentUser.TenantId;
-        const hasConsent = await this.hasConsent(request);
+        const requestType         = request.requestType;
+        const ownership           = request.ownership;
+        const actionScope         = request.actionScope;
+        const isOwner             = request.resourceOwnerUserId === currentUser.UserId;
+        const areTenantsSame      = request.resourceTenantId    === currentUser.TenantId;
+        const hasConsent          = await this.hasConsent(request);
         const customAuthorization = request.customAuthorization;
-        const systemOwnedResource = request.ownership === ResourceOwnership.System;
+
+        if (request.optionalUserAuth) {
+            // The resources may or may not require user authentication
+            // Will be checked specific to the resource visibility...
+            // Some resources of a given type may be publicly visible and some may not be
+            // For example, File resource - a user profile image file may be publicly visible, but the user document files may not be
+            return true;
+        }
 
         //Check if it is single resource request...
         if (
-            requestType === RequestType.GetOne ||
-            requestType === RequestType.UpdateOne ||
-            requestType === RequestType.DeleteOne
+            requestType === RequestType.CreateOne  ||
+            requestType === RequestType.GetOne     ||
+            requestType === RequestType.UpdateOne  ||
+            requestType === RequestType.DeleteOne  ||
+            requestType === RequestType.CreateMany ||
+            requestType === RequestType.GetMany    ||
+            requestType === RequestType.UpdateMany ||
+            requestType === RequestType.DeleteMany
         ) {
-            return this.checkForXOne(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
-        }
-        if (requestType === RequestType.CreateOne) {
-            return this.checkCreateOne(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
+            return this.checkScopeWithOwnership(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
         }
         if (requestType === RequestType.Search) {
+            // Search -> Resources to be filtered according to the ownership and action scope
+            // inside the filter settings in controllers
             return true;
-        }
-        if (requestType === RequestType.GetMany ||
-            requestType === RequestType.UpdateMany ||
-            requestType === RequestType.DeleteMany) {
-            return this.checkXMany(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
         }
 
         return customAuthorization;

@@ -14,11 +14,11 @@ export class PatientAuth {
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context          : `${this._baseContext}.Create`,
-        Ownership        : ResourceOwnership.Owner,
-        ActionScope      : ActionScope.Tenant,
-        RequestType      : RequestType.CreateOne,
-        UserRegistration : true
+        Context       : `${this._baseContext}.Create`,
+        Ownership     : ResourceOwnership.Owner,
+        ActionScope   : ActionScope.Tenant,
+        RequestType   : RequestType.CreateOne,
+        SignupOrSignin: true
     };
 
     static search: AuthOptions = {

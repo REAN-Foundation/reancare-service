@@ -29,13 +29,12 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
             }
 
             const publicAccess = request.actionScope === ActionScope.Public;
-            const customAuthorization = request.customAuthorization;
+            const optionalUserAuth = request.optionalUserAuth;
     
             const currentUser = request.currentUser ?? null;
             if (!currentUser) {
                 //If the user is not authenticated, then check if the resource access is public
-                if (publicAccess && customAuthorization) {
-                    // Custom authorization is required for public access. 
+                if (publicAccess || optionalUserAuth) {
                     // To check whether a particular resource is available for public access, e.g. a profile image download
                     return true;
                 }

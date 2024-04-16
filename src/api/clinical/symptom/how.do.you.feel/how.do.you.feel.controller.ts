@@ -29,14 +29,13 @@ export class HowDoYouFeelController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             const model: HowDoYouFeelDomainModel = await this._validator.create(request);
             const howDoYouFeel = await this._service.create(model);
             if (howDoYouFeel == null) {
                 throw new ApiError(400, 'Cannot create record for how do you feel!');
             }
             await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(howDoYouFeel);
-            await this.authorizeOne(request, howDoYouFeel.id, null);
             ResponseHandler.success(request, response, 'How do you feel record created successfully!', 201, {
                 HowDoYouFeel : howDoYouFeel,
             });
@@ -53,7 +52,7 @@ export class HowDoYouFeelController extends BaseController {
             if (howDoYouFeel == null) {
                 throw new ApiError(404, 'How do you feel record not found.');
             }
-            await this.authorizeOne(request, howDoYouFeel.PatientUserId, null);
+            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'How do you feel record retrieved successfully!', 200, {
                 HowDoYouFeel : howDoYouFeel,
             });
@@ -90,7 +89,7 @@ export class HowDoYouFeelController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'How do you feel record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeOne(request, null, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update how do you feel record!');
@@ -114,7 +113,7 @@ export class HowDoYouFeelController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'How do you feel record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeOne(request, null, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'How do you feel record cannot be deleted.');
@@ -130,7 +129,7 @@ export class HowDoYouFeelController extends BaseController {
 
     //#endregion
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: HowDoYouFeelSearchFilters): Promise<HowDoYouFeelSearchFilters> => {
 
@@ -153,4 +152,5 @@ export class HowDoYouFeelController extends BaseController {
         }
         return searchFilters;
     };
+
 }

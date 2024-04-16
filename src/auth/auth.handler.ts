@@ -36,6 +36,8 @@ export class AuthHandler {
             request.clientAppAuth = options.ClientAppAuth != null ? options.ClientAppAuth : false;
             request.customAuthorization = options.CustomAuthorization ? options.CustomAuthorization : false;
             request.alternateAuth = options.AlternateAuth ? options.AlternateAuth : false;
+            request.signupOrSignin = options.SignupOrSignin ? options.SignupOrSignin : false;
+            request.optionalUserAuth = options.OptionalUserAuth ? options.OptionalUserAuth : false;
             next();
         };
         middlewares.push(contextSetter);

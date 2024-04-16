@@ -54,7 +54,10 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             const missingToken = token == null || token === 'null' || token === undefined;
             const allowWithoutToken = publicAccess || optionalUserAuth;
 
-            if (missingToken && !allowWithoutToken) {
+            if (missingToken) {
+                if (allowWithoutToken) {
+                    return res;
+                }
                 res = {
                     Result        : false,
                     Message       : 'Unauthorized user access',

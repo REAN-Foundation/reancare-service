@@ -28,7 +28,7 @@ export class DoctorNoteController extends BaseController {
         try {
 
             const domainModel = await this._validator.create(request);
-            await this.authorizeUser(request, domainModel.PatientUserId);
+            await this.authorizeUser(request, domainModel.MedicalPractitionerUserId);
             const doctorNote = await this._service.create(domainModel);
             if (doctorNote == null) {
                 throw new ApiError(400, 'Cannot create Doctor Note!');
@@ -46,12 +46,12 @@ export class DoctorNoteController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-
+            await this.authorizeOne(request, null, null);
             const doctorNote = await this._service.getById(id);
             if (doctorNote == null) {
                 throw new ApiError(404, 'Doctor Note not found.');
             }
-            await this.authorizeUser(request, doctorNote.PatientUserId);
+            
             ResponseHandler.success(request, response, 'Doctor Note retrieved successfully!', 200, {
                 DoctorNote : doctorNote,
             });
@@ -91,7 +91,7 @@ export class DoctorNoteController extends BaseController {
             if (doctorNote == null) {
                 throw new ApiError(404, 'Doctor Note not found.');
             }
-            await this.authorizeUser(request, doctorNote.PatientUserId);
+            await this.authorizeUser(request, doctorNote.MedicalPractitionerUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update Doctor Note record!');
@@ -113,7 +113,7 @@ export class DoctorNoteController extends BaseController {
             if (doctorNote == null) {
                 throw new ApiError(404, 'Doctor Note not found.');
             }
-            await this.authorizeUser(request, doctorNote.PatientUserId);
+            await this.authorizeOne(request, null, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Doctor Note cannot be deleted.');

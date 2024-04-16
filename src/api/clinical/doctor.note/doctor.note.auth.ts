@@ -31,7 +31,7 @@ export class DoctorNoteAuth {
     static delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.DeleteOne,
     };
@@ -39,7 +39,7 @@ export class DoctorNoteAuth {
     static getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };

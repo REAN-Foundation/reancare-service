@@ -39,7 +39,7 @@ export class SymptomAuth {
   static getById: AuthOptions = {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.GetById`,
-      Ownership   : ResourceOwnership.Owner,
+      Ownership   : ResourceOwnership.Tenant,
       ActionScope : ActionScope.Tenant,
       RequestType : RequestType.GetOne,
   };
@@ -47,7 +47,7 @@ export class SymptomAuth {
   static search: AuthOptions = {
       ...DefaultAuthOptions,
       Context             : `${this._baseContext}.Search`,
-      Ownership           : ResourceOwnership.Owner,
+      Ownership           : ResourceOwnership.Tenant,
       ActionScope         : ActionScope.Tenant,
       RequestType         : RequestType.Search,
       CustomAuthorization : true,

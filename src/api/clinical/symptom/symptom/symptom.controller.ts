@@ -9,6 +9,7 @@ import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { SymptomSearchFilters } from '../../../../domain.types/clinical/symptom/symptom/symptom.search.types';
 import { BaseController } from '../../../../api/base.controller';
 import { SymptomDomainModel } from '../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,11 +28,14 @@ export class SymptomController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const domainModel: SymptomDomainModel = await this._validator.create(request);
+            const ownerUserId = request.currentUser.CurrentRoleId === 2 ? request.body.PatientUserId :
+                (request.currentUser.CurrentRoleId === 4 ? request.body.MedicalPractitionerUserId : null);
+            await this.authorizeUser(request, ownerUserId);
             const symptom = await this._service.create(domainModel);
             if (symptom == null) {
                 throw new ApiError(400, 'Cannot create symptom!');
             }
-            await this.authorizeOne(request, symptom.id, null);
+
             ResponseHandler.success(request, response, 'Symptom created successfully!', 201, {
                 Symptom : symptom,
             });
@@ -47,7 +51,7 @@ export class SymptomController extends BaseController {
             if (symptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
-            await this.authorizeOne(request, symptom.PatientUserId, null);
+            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'Symptom retrieved successfully!', 200, {
                 Symptom : symptom,
             });
@@ -80,7 +84,9 @@ export class SymptomController extends BaseController {
             if (existingSymptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
-            await this.authorizeOne(request, existingSymptom.PatientUserId, null);
+            const ownerUserId = request.currentUser.CurrentRoleId === 2 ? existingSymptom.PatientUserId :
+                (request.currentUser.CurrentRoleId === 4 ? existingSymptom.MedicalPractitionerUserId : null);
+            await this.authorizeUser(request, ownerUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update symptom record!');
@@ -100,7 +106,9 @@ export class SymptomController extends BaseController {
             if (existingSymptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
-            await this.authorizeOne(request, existingSymptom.PatientUserId, null);
+            const ownerUserId = request.currentUser.CurrentRoleId === 2 ? existingSymptom.PatientUserId :
+                (request.currentUser.CurrentRoleId === 4 ? existingSymptom.MedicalPractitionerUserId : null);
+            await this.authorizeUser(request, ownerUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Symptom cannot be deleted.');
@@ -114,8 +122,18 @@ export class SymptomController extends BaseController {
     };
 
     //#endregion
+   private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+       const _userService = Injector.Container.resolve(UserService);
+       const user = await _userService.getById(ownerUserId);
+       if (!user) {
+           throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+       }
+       request.resourceOwnerUserId = ownerUserId;
+       request.resourceTenantId = user.TenantId;
+       await this.authorizeOne(request, ownerUserId, user.TenantId);
+   };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: SymptomSearchFilters): Promise<SymptomSearchFilters> => {
 

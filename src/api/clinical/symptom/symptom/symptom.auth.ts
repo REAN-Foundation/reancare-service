@@ -10,7 +10,7 @@ import {
 
 export class SymptomAuth {
 
-  static _baseContext = `Clinical.Symptom`;
+  static _baseContext = `Clinical.Symptoms.Symptom`;
 
   static create: AuthOptions = {
       ...DefaultAuthOptions,

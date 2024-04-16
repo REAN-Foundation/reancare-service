@@ -10,7 +10,7 @@ import {
 
 export class CourseContentAuth {
 
-static _baseContext = `Educational.Learning.CourseContent`;
+static _baseContext = `Educational.CourseContent`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,

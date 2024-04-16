@@ -10,7 +10,7 @@ import {
 
 export class UserLearningAuth {
 
-static _baseContext = `Educational.Learning.UserLearning`;
+static _baseContext = `Educational.UserLearning`;
 
 static updateUserLearning: AuthOptions = {
     ...DefaultAuthOptions,

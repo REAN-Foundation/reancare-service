@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../auth/auth.types';
@@ -142,130 +142,146 @@ export class TypesAuth {
 
     static getPersonRoleTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetPersonRoleTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetPersonRoleTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getOrganizationTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetOrganizationTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetOrganizationTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getGenderTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetGenderTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetGenderTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getBloodGroups: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetBloodGroups`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetBloodGroups`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getRaceTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetRaceTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetRaceTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getEthnicityTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetEthnicityTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetEthnicityTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getMaritalStatuses: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetMaritalStatuses`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetMaritalStatuses`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getSeverities: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetSeverities`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetSeverities`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getPriorityTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.HealthPriority.GetPriorityTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.HealthPriority.GetPriorityTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getLabRecordTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.LabRecords`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.LabRecords`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getGroupActivityTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GroupActivityTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GroupActivityTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getReminderTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.ReminderTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.ReminderTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getReminderRepeatAfterEveryTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.ReminderRepeatAfterEveryNUnits`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.ReminderRepeatAfterEveryNUnits`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getGoalTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GoalType.GetGoalTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GoalType.GetGoalTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getQueryResponseTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetQueryResponseTypes`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetQueryResponseTypes`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
     static getUserEngagementCategories: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetUserEngagementCategories`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
-        RequestType : RequestType.GetMany,
+        Context          : `${this._baseContext}.GetUserEngagementCategories`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetMany,
+        OptionalUserAuth : true
     };
 
 }

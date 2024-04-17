@@ -133,7 +133,7 @@ export class ConsentController extends BaseController {
 
     //#region Authorization methods
 
-    authorizeSearch = async (request: express.Request, searchFilters: ConsentSearchFilters)
+    private authorizeSearch = async (request: express.Request, searchFilters: ConsentSearchFilters)
         : Promise<ConsentSearchFilters> => {
 
         const currentUser = request.currentUser;
@@ -141,7 +141,7 @@ export class ConsentController extends BaseController {
         if (searchFilters.OwnerUserId != null) {
             if (searchFilters.OwnerUserId !== request.currentUser.UserId) {
                 const hasConsent = PermissionHandler.checkConsent(
-                    searchFilters.OwnerUserId, 
+                    searchFilters.OwnerUserId,
                     currentUser.UserId,
                     request.context
                 );

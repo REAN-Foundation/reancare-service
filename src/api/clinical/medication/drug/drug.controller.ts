@@ -41,7 +41,6 @@ export class DrugController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const drug = await this._service.getById(id);
             if (drug == null) {
                 throw new ApiError(404, 'Drug record not found.');
@@ -57,7 +56,6 @@ export class DrugController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;

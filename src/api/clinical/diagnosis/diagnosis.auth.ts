@@ -39,7 +39,7 @@ export class DiagnosisAuth {
     static getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };

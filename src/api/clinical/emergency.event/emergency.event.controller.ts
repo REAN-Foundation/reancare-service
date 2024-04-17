@@ -41,7 +41,7 @@ export class EmergencyEventController extends BaseController {
                     throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
                 }
             }
-
+            await this.authorizeUser(request, domainModel.PatientUserId);
             const emergencyEvent = await this._service.create(domainModel);
             if (emergencyEvent == null) {
                 throw new ApiError(400, 'Cannot create emergency event!');
@@ -58,7 +58,6 @@ export class EmergencyEventController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: string = await EmergencyEventValidator.getById(request);
-
             const emergencyEvent = await this._service.getById(id);
             if (emergencyEvent == null) {
                 throw new ApiError(404, 'Emergency Event not found.');

@@ -6,11 +6,10 @@ import { NotificationService } from '../../../services/general/notification.serv
 import { NotificationValidator } from './notification.validator';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
-import { 
-    NotificationCreateModel, 
-    NotificationDto, 
-    NotificationSearchFilters, 
-    UserNotificationDto 
+import {
+    NotificationCreateModel,
+    NotificationDto,
+    NotificationSearchFilters
 } from '../../../domain.types/general/notification/notification.types';
 import { Roles } from '../../../domain.types/role/role.types';
 
@@ -155,7 +154,7 @@ export class NotificationController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     send = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -206,7 +205,7 @@ export class NotificationController extends BaseController {
     //#region Authorization
 
     authorize = async (
-        request: express.Request, 
+        request: express.Request,
         model: NotificationCreateModel | NotificationDto)
         : Promise<void> => {
         const userId = request.currentUser.UserId;
@@ -215,11 +214,11 @@ export class NotificationController extends BaseController {
         if (model.TenantId !== null && model.TenantId !== undefined) {
             if (model.TenantId !== tenantId) {
                 // Then only system users can create notifications for other tenants
-                if (userRole !== Roles.SystemAdmin && 
+                if (userRole !== Roles.SystemAdmin &&
                     userRole !== Roles.SystemUser) {
                     throw new ApiError(403, 'Forbidden');
                 }
-            } 
+            }
             else {
                 //If thenant is same, then only tenant users can create notifications
                 if (userRole !== Roles.TenantAdmin &&
@@ -240,7 +239,7 @@ export class NotificationController extends BaseController {
         if (searchFilters.TenantId != null) {
             if (searchFilters.TenantId !== tenantId) {
                 // Then only system users can search notifications for other tenants
-                if (userRole !== Roles.SystemAdmin && 
+                if (userRole !== Roles.SystemAdmin &&
                     userRole !== Roles.SystemUser) {
                     throw new ApiError(403, 'Forbidden');
                 }
@@ -262,6 +261,6 @@ export class NotificationController extends BaseController {
         //Target
         //Channel
         //Type
-    }
+    };
 
 }

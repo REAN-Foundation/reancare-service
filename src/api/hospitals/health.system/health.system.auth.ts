@@ -10,7 +10,7 @@ import {
 
 export class HealthSystemAuth {
 
-    static _baseContext = `HealthSystem`;
+    static _baseContext = `Hospitals.HealthSystem`;
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,

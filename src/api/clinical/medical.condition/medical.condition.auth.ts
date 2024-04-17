@@ -15,7 +15,7 @@ export class MedicalConditionAuth {
     static create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.CreateOne,
     };
@@ -23,7 +23,7 @@ export class MedicalConditionAuth {
     static update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.UpdateOne,
     };
@@ -31,7 +31,7 @@ export class MedicalConditionAuth {
     static delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.DeleteOne,
     };

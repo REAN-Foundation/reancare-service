@@ -14,11 +14,11 @@ export class PatientAuth {
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context       : `${this._baseContext}.Create`,
-        Ownership     : ResourceOwnership.Owner,
-        ActionScope   : ActionScope.Tenant,
-        RequestType   : RequestType.CreateOne,
-        SignupOrSignin: true
+        Context        : `${this._baseContext}.Create`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.CreateOne,
+        SignupOrSignin : true
     };
 
     static search: AuthOptions = {
@@ -31,48 +31,48 @@ export class PatientAuth {
 
     static getByUserId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetByUserId`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
-        ResourceIdName: 'userId'
+        Context        : `${this._baseContext}.GetByUserId`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.GetOne,
+        ResourceIdName : 'userId'
     };
 
     static updateByUserId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.UpdateByUserId`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.UpdateOne,
-        ResourceIdName: 'userId'
+        Context        : `${this._baseContext}.UpdateByUserId`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.UpdateOne,
+        ResourceIdName : 'userId'
     };
 
     static deleteByUserId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.DeleteByUserId`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Owner,
-        RequestType : RequestType.DeleteOne,
-        ResourceIdName: 'userId'
+        Context        : `${this._baseContext}.DeleteByUserId`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Owner,
+        RequestType    : RequestType.DeleteOne,
+        ResourceIdName : 'userId'
     };
 
     //To be deprecated
     static getPatientByPhone: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetPatientByPhone`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
-        ResourceIdName: 'phone'
+        Context        : `${this._baseContext}.GetPatientByPhone`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.GetOne,
+        ResourceIdName : 'phone'
     };
 
     static getByPhone: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetByPhone`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
-        ResourceIdName: 'phone'
+        Context        : `${this._baseContext}.GetByPhone`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.GetOne,
+        ResourceIdName : 'phone'
     };
 
 }

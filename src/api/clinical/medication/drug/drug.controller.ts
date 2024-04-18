@@ -23,7 +23,6 @@ export class DrugController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const model = await this._validator.create(request);
             const drug = await this._service.create(model);
             if (drug == null) {
@@ -77,7 +76,6 @@ export class DrugController extends BaseController{
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Drug record not found.');
@@ -100,7 +98,6 @@ export class DrugController extends BaseController{
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Drug record not found.');

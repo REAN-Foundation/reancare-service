@@ -33,7 +33,7 @@ export class CareplanController extends BaseController {
 
     getAvailableCareplans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             var plans = this._service.getAvailableCarePlans(request.query.provider as string);
 
             ResponseHandler.success(request, response, 'Available careplans retrieved successfully!', 200, {

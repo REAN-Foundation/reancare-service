@@ -105,7 +105,6 @@ export class FoodConsumptionController extends BaseController {
             if (foodConsumptionEvent == null) {
                 throw new ApiError(404, 'Nutrition record not found.');
             }
-            await this.authorizeOne(request, foodConsumptionEvent.PatientUserId, null);
             ResponseHandler.success(request, response, 'Nutrition records retrieved successfully!', 200, {
                 FoodConsumptionEvent : foodConsumptionEvent,
             });
@@ -125,7 +124,6 @@ export class FoodConsumptionController extends BaseController {
             if (foodConsumptionForDay == null) {
                 throw new ApiError(404, 'Nutrition record not found.');
             }
-            await this.authorizeOne(request, foodConsumptionForDay.PatientUserId, null);
             ResponseHandler.success(request, response, 'Nutrition record retrieved successfully!', 200, {
                 FoodConsumptionForDay : foodConsumptionForDay,
             });
@@ -142,7 +140,7 @@ export class FoodConsumptionController extends BaseController {
             if (questionnaire.length === 0) {
                 throw new ApiError(400, 'Cannot fetch nutrition questionnaire!');
             }
-
+            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'Fetched nutrition questionnaire successfully!', 201, {
                 NutritionQuestionnaire : questionnaire,
             });

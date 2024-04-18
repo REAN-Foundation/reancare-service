@@ -196,6 +196,11 @@ export class MedicationConsumptionController extends BaseController {
     deleteFutureMedicationSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
+            const medication = await this._medicationService.getById(medicationId);
+            if (medication == null) {
+                throw new ApiError(404, 'Medication not found.');
+            }
+            await this.authorizeUser(request, medication.PatientUserId);
             const deletedCount = await this._service.deleteFutureMedicationSchedules(medicationId);
 
             ResponseHandler.success(request, response, 'Deleted future medication schedules successfully!', 200, {
@@ -226,8 +231,8 @@ export class MedicationConsumptionController extends BaseController {
 
     searchForPatient = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await MedicationConsumptionValidator.searchForPatient(request);
-            await this.authorizeSearch(request, filters);
+            let filters = await MedicationConsumptionValidator.searchForPatient(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -288,7 +293,6 @@ export class MedicationConsumptionController extends BaseController {
     getSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await MedicationConsumptionValidator.getSummaryForDay(request);
-            await this.authorizeUser(request, model.PatientUserId);
             const summary = await this._service.getSchedulesForDayByDrugs(
                 model.PatientUserId,
                 model.Date);

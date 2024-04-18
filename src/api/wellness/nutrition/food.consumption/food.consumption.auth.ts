@@ -63,8 +63,8 @@ static getForDay: AuthOptions = {
 static getNutritionQuestionnaire: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetNutritionQuestionnaire`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Public,
+    Ownership   : ResourceOwnership.Tenant,
+    ActionScope : ActionScope.Tenant,
     RequestType : RequestType.GetOne,
 };
 

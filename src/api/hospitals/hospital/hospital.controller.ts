@@ -32,7 +32,6 @@ export class HospitalController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.create(request);
             const hospital = await this._service.create(domainModel);
             if (hospital == null) {
@@ -50,7 +49,6 @@ export class HospitalController extends BaseController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const hospital = await this._service.getById(id);
             if (hospital == null) {
@@ -69,7 +67,6 @@ export class HospitalController extends BaseController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters = await this._validator.search(request);
-            await this.authorizeOne(request, null, null);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -87,7 +84,6 @@ export class HospitalController extends BaseController{
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const domainModel = await this._validator.update(request);
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHospital = await this._service.getById(id);
             if (existingHospital == null) {
@@ -109,7 +105,6 @@ export class HospitalController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHospital = await this._service.getById(id);
             if (existingHospital == null) {
@@ -131,7 +126,6 @@ export class HospitalController extends BaseController{
 
     getHospitalsForHealthSystem = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const healthSystemId: uuid = await this._validator.getParamUuid(request, 'healthSystemId');
             const hospitals = await this._service.getHospitalsForHealthSystem(healthSystemId);
 

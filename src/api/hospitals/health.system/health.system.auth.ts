@@ -20,31 +20,6 @@ export class HealthSystemAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static getHealthSystemsWithTags: AuthOptions = {
-        ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetHealthSystemsWithTags`,
-        Ownership   : ResourceOwnership.Tenant,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetMany,
-    };
-
-    static search: AuthOptions = {
-        ...DefaultAuthOptions,
-        Context             : `${this._baseContext}.Search`,
-        Ownership           : ResourceOwnership.Tenant,
-        ActionScope         : ActionScope.Tenant,
-        RequestType         : RequestType.Search,
-        CustomAuthorization : true,
-    };
-
-    static getById: AuthOptions = {
-        ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetById`,
-        Ownership   : ResourceOwnership.Tenant,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
-    };
-
     static update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
@@ -59,6 +34,31 @@ export class HealthSystemAuth {
         Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.DeleteOne,
+    };
+
+    static getHealthSystemsWithTags: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetHealthSystemsWithTags`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetMany,
+    };
+
+    static search: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context             : `${this._baseContext}.Search`,
+        Ownership           : ResourceOwnership.System,
+        ActionScope         : ActionScope.Public,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
+    };
+
+    static getById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetById`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
     };
 
 }

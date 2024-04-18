@@ -25,7 +25,6 @@ export class CourseContentController extends BaseController {
         try {
 
             const model = await this._validator.create(request);
-            await this.authorizeOne(request, null, null);
             const courseContent = await this._service.create(model);
             if (courseContent == null) {
                 throw new ApiError(400, 'Can not create course content!');
@@ -43,7 +42,6 @@ export class CourseContentController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const courseContent = await this._service.getById(id);
             if (courseContent == null) {
                 throw new ApiError(404, 'Course content not found.');
@@ -61,7 +59,6 @@ export class CourseContentController extends BaseController {
         try {
 
             const filters = await this._validator.search(request);
-            await this.authorizeOne(request, null, null);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -83,7 +80,6 @@ export class CourseContentController extends BaseController {
         try {
 
             const domainModel = await this._validator.update(request);
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -107,7 +103,6 @@ export class CourseContentController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Course content not found.');
@@ -129,7 +124,6 @@ export class CourseContentController extends BaseController {
     getContentsForCourse = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const courseId: uuid = await this._validator.getParamUuid(request, 'courseId');
-            await this.authorizeOne(request, null, null);
             const courseContents = await this._service.getContentsForCourse(courseId);
             if (courseContents == null) {
                 throw new ApiError(404, 'Course contents not found.');
@@ -145,7 +139,6 @@ export class CourseContentController extends BaseController {
     getContentsForLearningPath = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const learningPathId: uuid = await this._validator.getParamUuid(request, 'learningPathId');
-            await this.authorizeOne(request, null, null);
             const courseContents = await this._service.getContentsForLearningPath(learningPathId);
             if (courseContents == null) {
                 throw new ApiError(404, 'Course contents not found.');

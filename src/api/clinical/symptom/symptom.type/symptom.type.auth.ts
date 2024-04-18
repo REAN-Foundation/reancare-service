@@ -39,16 +39,16 @@ export class SymptomTypeAuth {
   static getById: AuthOptions = {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.GetById`,
-      Ownership   : ResourceOwnership.Tenant,
-      ActionScope : ActionScope.Tenant,
+      Ownership   : ResourceOwnership.System,
+      ActionScope : ActionScope.Public,
       RequestType : RequestType.GetOne,
   };
 
   static search: AuthOptions = {
       ...DefaultAuthOptions,
       Context             : `${this._baseContext}.Search`,
-      Ownership           : ResourceOwnership.Tenant,
-      ActionScope         : ActionScope.Tenant,
+      Ownership           : ResourceOwnership.System,
+      ActionScope         : ActionScope.Public,
       RequestType         : RequestType.Search,
       CustomAuthorization : true,
   };

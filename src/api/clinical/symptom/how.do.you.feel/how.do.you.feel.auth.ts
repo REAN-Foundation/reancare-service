@@ -15,7 +15,7 @@ export class HowDoYouFeelAuth {
   static create: AuthOptions = {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.Create`,
-      Ownership   : ResourceOwnership.Tenant,
+      Ownership   : ResourceOwnership.Owner,
       ActionScope : ActionScope.Tenant,
       RequestType : RequestType.CreateOne,
   };
@@ -23,7 +23,7 @@ export class HowDoYouFeelAuth {
   static update: AuthOptions = {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.Update`,
-      Ownership   : ResourceOwnership.Tenant,
+      Ownership   : ResourceOwnership.Owner,
       ActionScope : ActionScope.Tenant,
       RequestType : RequestType.UpdateOne,
   };
@@ -31,7 +31,7 @@ export class HowDoYouFeelAuth {
   static delete: AuthOptions = {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.Delete`,
-      Ownership   : ResourceOwnership.Tenant,
+      Ownership   : ResourceOwnership.Owner,
       ActionScope : ActionScope.Tenant,
       RequestType : RequestType.DeleteOne,
   };
@@ -39,7 +39,7 @@ export class HowDoYouFeelAuth {
   static getById: AuthOptions = {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.GetById`,
-      Ownership   : ResourceOwnership.Tenant,
+      Ownership   : ResourceOwnership.Owner,
       ActionScope : ActionScope.Tenant,
       RequestType : RequestType.GetOne,
   };
@@ -47,7 +47,7 @@ export class HowDoYouFeelAuth {
   static search: AuthOptions = {
       ...DefaultAuthOptions,
       Context             : `${this._baseContext}.Search`,
-      Ownership           : ResourceOwnership.Tenant,
+      Ownership           : ResourceOwnership.Owner,
       ActionScope         : ActionScope.Tenant,
       RequestType         : RequestType.Search,
       CustomAuthorization : true,

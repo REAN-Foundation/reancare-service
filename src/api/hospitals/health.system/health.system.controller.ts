@@ -50,7 +50,6 @@ export class HealthSystemController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const hospitalSystem = await this._service.getById(id);
             if (hospitalSystem == null) {
@@ -68,7 +67,6 @@ export class HealthSystemController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -131,7 +129,6 @@ export class HealthSystemController extends BaseController {
 
     getHealthSystemsWithTags = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const tags = request.query.tags as string;
             const hospitalSystems = await this._service.getHealthSystemsWithTags(tags);
 

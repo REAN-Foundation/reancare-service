@@ -47,8 +47,8 @@ static getById: AuthOptions = {
 static search: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.Search`,
-    Ownership           : ResourceOwnership.Owner,
-    ActionScope         : ActionScope.Owner,
+    Ownership           : ResourceOwnership.System,
+    ActionScope         : ActionScope.Public,
     RequestType         : RequestType.Search,
     CustomAuthorization : true,
 };

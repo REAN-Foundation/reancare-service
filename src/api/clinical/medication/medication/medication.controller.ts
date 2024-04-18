@@ -157,11 +157,10 @@ export class MedicationController extends BaseController{
             const id: string = await MedicationValidator.getParamId(request);
             const medication = await this._service.getById(id);
             Logger.instance().log(`[MedicationTime] GetById - service call completed`);
-            await this.authorizeUser(request, medication.PatientUserId);
             if (medication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-
+            await this.authorizeUser(request, medication.PatientUserId);
             var stats = await this._medicationConsumptionService.getConsumptionStatusForMedication(id);
             var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
@@ -253,11 +252,10 @@ export class MedicationController extends BaseController{
         try {
             const id: string = await MedicationValidator.getParamId(request);
             const existingMedication = await this._service.getById(id);
-            await this.authorizeUser(request, existingMedication.PatientUserId);
             if (existingMedication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-
+            await this.authorizeUser(request, existingMedication.PatientUserId);
             const deleted = await this._service.delete(id);
             Logger.instance().log(`[MedicationTime] Delete - service call completed`);
 
@@ -296,7 +294,6 @@ export class MedicationController extends BaseController{
 
     getStockMedicationImages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const images = await this._service.getStockMedicationImages();
 
             ResponseHandler.success(request, response, 'Medication stock images retrieved successfully!', 200, {
@@ -310,7 +307,6 @@ export class MedicationController extends BaseController{
 
     getStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
@@ -326,7 +322,6 @@ export class MedicationController extends BaseController{
 
     downloadStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {

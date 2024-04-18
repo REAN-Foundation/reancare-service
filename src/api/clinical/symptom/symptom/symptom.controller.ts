@@ -49,7 +49,7 @@ export class SymptomController extends BaseController {
             if (symptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
-            await this.authorizeOne(request, symptom.PatientUserId, null);
+            await this.authorizeUser(request, symptom.PatientUserId);
             ResponseHandler.success(request, response, 'Symptom retrieved successfully!', 200, {
                 Symptom : symptom,
             });

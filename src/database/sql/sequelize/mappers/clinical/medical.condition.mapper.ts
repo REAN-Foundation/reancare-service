@@ -13,6 +13,7 @@ export class MedicalConditionMapper {
         const dto: MedicalConditionDto = {
             id          : medicalCondition.id,
             EhrId       : medicalCondition.EhrId,
+            TenantId    : medicalCondition.TenantId,
             Condition   : medicalCondition.Condition,
             Description : medicalCondition.Description,
             Language    : medicalCondition.Language,

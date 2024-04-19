@@ -15,7 +15,7 @@ import {
 
 import { v4 } from 'uuid';
 import CourseModule from './course.module.model';
-import LearningPathCourses from './learning.course.model';
+import LearningPathCourses from './learning.path.course.model';
 import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////

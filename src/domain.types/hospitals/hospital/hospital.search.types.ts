@@ -3,6 +3,7 @@ import { BaseSearchFilters, BaseSearchResults } from "../../miscellaneous/base.s
 import { HospitalDto } from "./hospital.dto";
 
 export interface HospitalSearchFilters extends BaseSearchFilters {
+    TenantId?      : uuid,
     Name?          : string;
     HealthSystemId?: uuid;
     Tags?          : string[];

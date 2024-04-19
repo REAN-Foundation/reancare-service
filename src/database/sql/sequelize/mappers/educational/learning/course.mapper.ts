@@ -13,6 +13,7 @@ export class CourseMapper {
 
         const dto: CourseDto = {
             id             : course.id,
+            TenantId       : course.TenantId,
             Name           : course.Name,
             Description    : course.Description,
             ImageUrl       : course.ImageUrl,

@@ -24,6 +24,7 @@ export class CourseRepo implements ICourseRepo {
     Promise<CourseDto> => {
         try {
             const entity = {
+                TenantId       : createModel.TenantId,
                 Name           : createModel.Name,
                 Description    : createModel.Description,
                 ImageUrl       : createModel.ImageUrl,
@@ -70,6 +71,9 @@ export class CourseRepo implements ICourseRepo {
             }
             if (filters.DurationInDays != null) {
                 search.where['DurationInDays'] = filters.DurationInDays;
+            }
+            if (filters.TenantId != null) {
+                search.where['TenantId'] = filters.TenantId;
             }
             if (filters.LearningPathId != null) {
                 search.where['LearningPathId'] = filters.LearningPathId;

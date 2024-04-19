@@ -26,7 +26,6 @@ export class UserEngagementController extends BaseController{
 
     public getUserEngagementStatsByYear = async (request: express.Request, response: express.Response) => {
         try {
-            await this.authorizeOne(request, null, null);
             const stats  = await this._service.getUserEngagementStatsByYear();
             const message = 'User engagement stats retrieved successfully!';
             ResponseHandler.success(request, response,message, 200, {
@@ -39,7 +38,6 @@ export class UserEngagementController extends BaseController{
 
     public getUserEngagementStatsByQuarter = async (request: express.Request, response: express.Response) => {
         try {
-            await this.authorizeOne(request, null, null);
             const stats  = await this._service.getUserEngagementStatsByQuarter();
             const message = 'User engagement stats retrieved successfully!';
             ResponseHandler.success(request, response,message, 200, {
@@ -52,7 +50,6 @@ export class UserEngagementController extends BaseController{
 
     public getUserEngagementStatsByMonth = async (request: express.Request, response: express.Response) => {
         try {
-            await this.authorizeOne(request, null, null);
             const stats  = await this._service.getUserEngagementStatsByMonth();
             const message = 'User engagement stats retrieved successfully!';
             ResponseHandler.success(request, response,message, 200, {
@@ -65,7 +62,6 @@ export class UserEngagementController extends BaseController{
 
     public getUserEngagementStatsByWeek = async (request: express.Request, response: express.Response) => {
         try {
-            await this.authorizeOne(request, null, null);
             const stats  = await this._service.getUserEngagementStatsByWeek();
             const message = 'User engagement stats retrieved successfully!';
             ResponseHandler.success(request, response,message, 200, {
@@ -78,7 +74,6 @@ export class UserEngagementController extends BaseController{
 
     public getUserEngagementStatsByDateRange = async (request: express.Request, response: express.Response) => {
         try {
-            await this.authorizeOne(request, null, null);
             const filters = await this._validator.getDateRanges(request);
             const stats  = await this._service.getUserEngagementStatsByDateRange(
                 filters.from as string, filters.to as string);
@@ -93,7 +88,6 @@ export class UserEngagementController extends BaseController{
 
     public getUserEngagementStatsForUser = async (request: express.Request, response: express.Response) => {
         try {
-            await this.authorizeOne(request, null, null);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const stats = await this._service.getUserEngagementStatsForUser(userId);
             const message = 'User engagement stats retrieved successfully!';

@@ -19,7 +19,6 @@ export class DailyStatisticsController extends BaseController{
     
     getDailySystemStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const stats = await this._service.getDailySystemStats();
             if (stats === null) {
                 throw new ApiError(404, 'Daily Statistics not found.');

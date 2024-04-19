@@ -23,7 +23,7 @@ export class DailyStatisticsAuth {
     static getDailySystemStats: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.getDailySystemStats`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };

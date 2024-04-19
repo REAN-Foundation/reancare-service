@@ -32,8 +32,8 @@ export class HealthSystemController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.create(request);
+            await this.authorizeOne(request, null, domainModel.TenantId);
             const hospitalSystem = await this._service.create(domainModel);
             if (hospitalSystem == null) {
                 throw new ApiError(400, 'Cannot create hospitalSystem!');
@@ -84,13 +84,13 @@ export class HealthSystemController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHealthSystem = await this._service.getById(id);
             if (existingHealthSystem == null) {
                 throw new ApiError(404, 'HealthSystem not found.');
             }
+            await this.authorizeOne(request, null, existingHealthSystem.TenantId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update hospitalSystem record!');
@@ -113,6 +113,7 @@ export class HealthSystemController extends BaseController {
             if (existingHealthSystem == null) {
                 throw new ApiError(404, 'HealthSystem not found.');
             }
+            await this.authorizeOne(request, null, existingHealthSystem.TenantId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'HealthSystem cannot be deleted.');

@@ -14,8 +14,9 @@ export class HealthSystemValidator extends BaseValidator {
     getCreateDomainModel = (requestBody: any): HealthSystemDomainModel => {
 
         const model: HealthSystemDomainModel = {
-            Name : requestBody.Name,
-            Tags : requestBody.Tags ?? [],
+            TenantId : requestBody.TenantId,
+            Name     : requestBody.Name,
+            Tags     : requestBody.Tags ?? [],
         };
 
         return model;
@@ -51,6 +52,7 @@ export class HealthSystemValidator extends BaseValidator {
     };
 
     private async validateCreateBody(request) {
+        await this.validateUuid(request, 'TenantId', Where.Body, true, true);
         await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateArray(request, 'Tags', Where.Body, false, true);
         await this.validateRequest(request);

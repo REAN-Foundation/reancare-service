@@ -293,6 +293,7 @@ export class MedicationConsumptionController extends BaseController {
     getSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await MedicationConsumptionValidator.getSummaryForDay(request);
+            await this.authorizeUser(request, model.PatientUserId);
             const summary = await this._service.getSchedulesForDayByDrugs(
                 model.PatientUserId,
                 model.Date);

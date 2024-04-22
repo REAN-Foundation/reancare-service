@@ -47,7 +47,7 @@ export class ComplaintAuth {
     static search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.Search,
     };

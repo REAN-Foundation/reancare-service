@@ -34,7 +34,7 @@ export class LabRecordController extends BaseController {
         try {
 
             const model: LabRecordDomainModel = await this._validator.create(request);
-            await this.authorizeUser(request, model.PatientUserId);
+            await this.authorizeOne(request, model.PatientUserId, null);
             const labRecord = await this._service.create(model);
             if (labRecord == null) {
                 throw new ApiError(400, 'Cannot create lab record!');
@@ -57,7 +57,7 @@ export class LabRecordController extends BaseController {
             if (labRecord == null) {
                 throw new ApiError(404, 'Lab record not found.');
             }
-            await this.authorizeUser(request, labRecord.PatientUserId);
+            await this.authorizeOne(request, labRecord.PatientUserId, null);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record retrieved successfully!`, 200, {
                 LabRecord : labRecord,
             });
@@ -95,7 +95,7 @@ export class LabRecordController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Lab record not found.');
             }
-            await this.authorizeUser(request, existingRecord.PatientUserId);
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update lab record!');
@@ -119,7 +119,7 @@ export class LabRecordController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, `${existingRecord.DisplayName} record not found.`);
             }
-            await this.authorizeUser(request, existingRecord.PatientUserId);
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, `${existingRecord.DisplayName} record cannot be deleted.`);
@@ -137,17 +137,6 @@ export class LabRecordController extends BaseController {
     };
 
     //#endregion
-    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
-        const _userService = Injector.Container.resolve(UserService);
-        const user = await _userService.getById(ownerUserId);
-        if (!user) {
-            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
-        }
-        request.resourceOwnerUserId = ownerUserId;
-        request.resourceTenantId = user.TenantId;
-        await this.authorizeOne(request, ownerUserId, user.TenantId);
-    };
-    
     private authorizeSearch = async (
         request: express.Request,
         searchFilters: LabRecordSearchFilters): Promise<LabRecordSearchFilters> => {

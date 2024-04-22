@@ -140,7 +140,6 @@ export class FoodConsumptionController extends BaseController {
             if (questionnaire.length === 0) {
                 throw new ApiError(400, 'Cannot fetch nutrition questionnaire!');
             }
-            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'Fetched nutrition questionnaire successfully!', 201, {
                 NutritionQuestionnaire : questionnaire,
             });

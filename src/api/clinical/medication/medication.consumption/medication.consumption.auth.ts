@@ -79,8 +79,8 @@ export class MedicationConsumptionAuth {
     static getSummaryForDay: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetSummaryForDay`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Public,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
 

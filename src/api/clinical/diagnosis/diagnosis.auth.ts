@@ -31,7 +31,7 @@ export class DiagnosisAuth {
     static delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.DeleteOne,
     };
@@ -47,7 +47,7 @@ export class DiagnosisAuth {
     static search: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.Search`,
-        Ownership           : ResourceOwnership.Tenant,
+        Ownership           : ResourceOwnership.Owner,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.Search,
         CustomAuthorization : true,

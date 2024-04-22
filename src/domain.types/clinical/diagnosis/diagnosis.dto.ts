@@ -1,14 +1,14 @@
+import { Uuid } from "aws-sdk/clients/ssmcontacts";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { ClinicalInterpretation, ClinicalValidationStatus } from "../../miscellaneous/clinical.types";
-import { PatientDto } from "../../users/patient/patient/patient.dto";
-import { MedicalConditionDto } from "../medical.condition/medical.condition.dto";
 
 export interface DiagnosisDto {
     id?                       : string;
     EhrId?                    : string;
-    Patient                   : PatientDto;
+    PatientUserId             : uuid;
     MedicalPractitionerUserId?: string;
     VisitId?                  : string;
-    MedicalCondition?         : MedicalConditionDto;
+    MedicalConditionId?       : Uuid;
     Comments?                 : string;
     IsClinicallyActive?       : boolean;
     ValidationStatus?         : ClinicalValidationStatus;

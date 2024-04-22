@@ -48,7 +48,7 @@ export class MedicationAuth {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetAdministrationRoutes`,
         Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Tenant,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetMany,
     };
 

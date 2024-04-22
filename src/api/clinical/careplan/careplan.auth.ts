@@ -64,7 +64,7 @@ export class CareplanAuth {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateRisk`,
         Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
+        ActionScope : ActionScope.Owner,
         RequestType : RequestType.UpdateOne,
     };
 

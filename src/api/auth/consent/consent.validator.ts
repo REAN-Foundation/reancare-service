@@ -90,7 +90,7 @@ export class ConsentValidator extends BaseValidator {
         await this.validateBoolean(request, 'TenantOwnedResource', Where.Body, false, false);
         await this.validateBoolean(request, 'Perpetual', Where.Body, false, false);
         await this.validateBoolean(request, 'Revoked', Where.Body, false, false);
-        await this.validateBoolean(request, 'RevokedTimestamp', Where.Body, true, false);
+        await this.validateDate(request, 'RevokedTimestamp', Where.Body, true, false);
         await this.validateDate(request, 'ConsentGivenOn', Where.Body, true, false);
         await this.validateDate(request, 'ConsentValidFrom', Where.Body, true, false);
         await this.validateDate(request, 'ConsentValidTill', Where.Body, true, false);

@@ -34,12 +34,12 @@ export class LabRecordController extends BaseController {
         try {
 
             const model: LabRecordDomainModel = await this._validator.create(request);
+            await this.authorizeOne(request, model.PatientUserId, null);
             const labRecord = await this._service.create(model);
             if (labRecord == null) {
                 throw new ApiError(400, 'Cannot create lab record!');
             }
             await this._ehrLabService.addEHRLabRecordForAppNames(labRecord);
-            await this.authorizeOne(request, labRecord.id, null);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record created successfully!`, 201, {
                 LabRecord : labRecord,
             });
@@ -137,8 +137,7 @@ export class LabRecordController extends BaseController {
     };
 
     //#endregion
-    
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: LabRecordSearchFilters): Promise<LabRecordSearchFilters> => {
 

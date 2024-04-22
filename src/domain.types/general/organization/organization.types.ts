@@ -49,19 +49,19 @@ export const OrganizationTypeList: OrganizationTypes [] = [
 
 export interface OrganizationDomainModel {
     id                              ?: uuid,
-    Type                             : string;
     Name                             : string;
+    Type                             : string;
     ContactUserId                   ?: uuid;
     TenantId                        ?: uuid;
     ContactPhone                    ?: string;
     ContactEmail                    ?: string;
-    ParentOrganizationId            ?: uuid;
     About                           ?: string;
+    ParentOrganizationId            ?: uuid;
     OperationalSince                ?: Date;
-    AddressIds                      ?: uuid[];
     ImageResourceId                 ?: uuid;
     IsHealthFacility                ?: boolean;
     NationalHealthFacilityRegistryId?: string;
+    AddressIds                      ?: uuid[];
 }
 
 export interface OrganizationDto {

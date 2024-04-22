@@ -15,7 +15,7 @@ static _baseContext = `Educational.LearningPath`;
 static create: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Create`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.CreateOne,
 };
@@ -23,7 +23,7 @@ static create: AuthOptions = {
 static update: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Update`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.UpdateOne,
 };
@@ -31,7 +31,7 @@ static update: AuthOptions = {
 static delete: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Delete`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.DeleteOne,
 };
@@ -39,16 +39,16 @@ static delete: AuthOptions = {
 static getById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetById`,
-    Ownership   : ResourceOwnership.Tenant,
-    ActionScope : ActionScope.Tenant,
+    Ownership   : ResourceOwnership.System,
+    ActionScope : ActionScope.Public,
     RequestType : RequestType.GetOne,
 };
 
 static search: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.Search`,
-    Ownership           : ResourceOwnership.Tenant,
-    ActionScope         : ActionScope.Tenant,
+    Ownership           : ResourceOwnership.System,
+    ActionScope         : ActionScope.Public,
     RequestType         : RequestType.Search,
     CustomAuthorization : true,
 };

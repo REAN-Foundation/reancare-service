@@ -10,13 +10,13 @@ import {
 
 export class HowDoYouFeelAuth {
 
-  static _baseContext = `Clinical.HowDoYouFeel`;
+  static _baseContext = `Clinical.Symptoms.HowDoYouFeel`;
 
   static create: AuthOptions = {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.Create`,
       Ownership   : ResourceOwnership.Owner,
-      ActionScope : ActionScope.Owner,
+      ActionScope : ActionScope.Tenant,
       RequestType : RequestType.CreateOne,
   };
 
@@ -24,7 +24,7 @@ export class HowDoYouFeelAuth {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.Update`,
       Ownership   : ResourceOwnership.Owner,
-      ActionScope : ActionScope.Owner,
+      ActionScope : ActionScope.Tenant,
       RequestType : RequestType.UpdateOne,
   };
 
@@ -32,7 +32,7 @@ export class HowDoYouFeelAuth {
       ...DefaultAuthOptions,
       Context     : `${this._baseContext}.Delete`,
       Ownership   : ResourceOwnership.Owner,
-      ActionScope : ActionScope.Owner,
+      ActionScope : ActionScope.Tenant,
       RequestType : RequestType.DeleteOne,
   };
 

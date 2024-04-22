@@ -22,11 +22,10 @@ export class CareplanAuth {
 
     static getAvailableCareplans: AuthOptions = {
         ...DefaultAuthOptions,
-        Context             : `${this._baseContext}.GetAvailableCareplans`,
-        Ownership           : ResourceOwnership.Owner,
-        ActionScope         : ActionScope.Tenant,
-        RequestType         : RequestType.GetMany,
-        CustomAuthorization : true,
+        Context     : `${this._baseContext}.GetAvailableCareplans`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetMany,
     };
 
     static enroll: AuthOptions = {
@@ -65,7 +64,7 @@ export class CareplanAuth {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateRisk`,
         Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
+        ActionScope : ActionScope.Owner,
         RequestType : RequestType.UpdateOne,
     };
 

@@ -17,6 +17,7 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
         try {
             const entity = {
                 Condition   : medicalConditionDomainModel.Condition,
+                TenantId    : medicalConditionDomainModel.TenantId,
                 Description : medicalConditionDomainModel.Description,
                 Language    : medicalConditionDomainModel.Language,
             };

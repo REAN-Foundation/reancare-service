@@ -3,6 +3,7 @@ import { CourseDomainModel } from "../course/course.domain.model";
 
 export interface LearningPathDomainModel {
     id?                 : uuid,
+    TenantId?           : uuid,
     CourseIds?          : uuid[];
     Course?             : CourseDomainModel;
     Name?               : string;

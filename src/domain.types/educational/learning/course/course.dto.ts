@@ -4,6 +4,7 @@ import { LearningPathDto } from "../learning.path/learning.path.dto";
 
 export interface CourseDto {
     id?             : uuid,
+    TenantId?       : uuid,
     LearningPaths?  : LearningCourseDto[];
     Name?           : string;
     Description?    : string;

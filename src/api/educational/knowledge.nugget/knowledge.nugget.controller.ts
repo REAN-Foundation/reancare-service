@@ -44,7 +44,6 @@ export class KnowledgeNuggetController extends BaseController {
         try {
 
             const domainModel = await this._validator.create(request);
-            await this.authorizeOne(request, null, null);
             const knowledgeNugget = await this._service.create(domainModel);
             if (knowledgeNugget == null) {
                 throw new ApiError(400, 'Cannot create record for knowledge nugget!');
@@ -62,7 +61,6 @@ export class KnowledgeNuggetController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const knowledgeNugget = await this._service.getById(id);
             if (knowledgeNugget == null) {
                 throw new ApiError(404, ' Knowledge nugget record not found.');
@@ -80,7 +78,6 @@ export class KnowledgeNuggetController extends BaseController {
         try {
 
             const filters = await this._validator.search(request);
-            await this.authorizeOne(request, null, null);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -102,7 +99,6 @@ export class KnowledgeNuggetController extends BaseController {
         try {
 
             const domainModel = await this._validator.update(request);
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -125,7 +121,6 @@ export class KnowledgeNuggetController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Knowledge nugget record not found.');

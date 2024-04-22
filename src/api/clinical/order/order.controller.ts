@@ -9,6 +9,7 @@ import { BaseController } from '../../../api/base.controller';
 import { PermissionHandler } from '../../../auth/custom/permission.handler';
 import { OrderSearchFilters } from '../../../domain.types/clinical/order/order.search.types';
 import { OrderDomainModel } from '../../../domain.types/clinical/order/order.domain.model';
+import { UserService } from '../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,11 +29,11 @@ export class OrderController extends BaseController {
         try {
 
             const model: OrderDomainModel = await this._validator.create(request);
+            await this.authorizeOne(request, model.PatientUserId);
             const order = await this._service.create(model);
             if (order == null) {
                 throw new ApiError(400, 'Cannot create record for order!');
             }
-            await this.authorizeOne(request, order.id, null);
             ResponseHandler.success(request, response, 'Order record created successfully!', 201, {
                 Order : order,
             });
@@ -49,7 +50,7 @@ export class OrderController extends BaseController {
             if (order == null) {
                 throw new ApiError(404, 'Order record not found.');
             }
-            await this.authorizeOne(request, order.PatientUserId, null);
+            await this.authorizeOne(request, order.PatientUserId);
             ResponseHandler.success(request, response, 'Order record retrieved successfully!', 200, {
                 Order : order,
             });
@@ -88,7 +89,7 @@ export class OrderController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Order record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeOne(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update order record!');
@@ -110,7 +111,7 @@ export class OrderController extends BaseController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Order record not found.');
             }
-            await this.authorizeOne(request, existingRecord.PatientUserId, null);
+            await this.authorizeOne(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Order record cannot be deleted.');
@@ -125,8 +126,7 @@ export class OrderController extends BaseController {
     };
 
     //#endregion
-
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: OrderSearchFilters): Promise<OrderSearchFilters> => {
 

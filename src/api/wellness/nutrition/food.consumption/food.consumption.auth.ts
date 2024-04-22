@@ -10,11 +10,11 @@ import {
 
 export class FoodConsumptionAuth {
 
-static _baseContext = `Wellness.Nutrition.FoodConsumption`;
+static _baseContext = `Wellness.Nutrition`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.Create`,
+    Context     : `${this._baseContext}.FoodConsumption.Create`,
     Ownership   : ResourceOwnership.Owner,
     ActionScope : ActionScope.Owner,
     RequestType : RequestType.CreateOne,
@@ -22,7 +22,7 @@ static create: AuthOptions = {
 
 static update: AuthOptions = {
     ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.Update`,
+    Context     : `${this._baseContext}.FoodConsumption.Update`,
     Ownership   : ResourceOwnership.Owner,
     ActionScope : ActionScope.Owner,
     RequestType : RequestType.UpdateOne,
@@ -30,7 +30,7 @@ static update: AuthOptions = {
 
 static delete: AuthOptions = {
     ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.Delete`,
+    Context     : `${this._baseContext}.FoodConsumption.Delete`,
     Ownership   : ResourceOwnership.Owner,
     ActionScope : ActionScope.Owner,
     RequestType : RequestType.DeleteOne,
@@ -38,7 +38,7 @@ static delete: AuthOptions = {
 
 static getById: AuthOptions = {
     ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetById`,
+    Context     : `${this._baseContext}.FoodConsumption.GetById`,
     Ownership   : ResourceOwnership.Owner,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.GetOne,
@@ -46,7 +46,7 @@ static getById: AuthOptions = {
 
 static getByEvent: AuthOptions = {
     ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetByEvent`,
+    Context     : `${this._baseContext}.FoodConsumption.GetByEvent`,
     Ownership   : ResourceOwnership.Owner,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.GetOne,
@@ -54,7 +54,7 @@ static getByEvent: AuthOptions = {
 
 static getForDay: AuthOptions = {
     ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetForDay`,
+    Context     : `${this._baseContext}.FoodConsumption.GetForDay`,
     Ownership   : ResourceOwnership.Owner,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.GetOne,
@@ -62,15 +62,15 @@ static getForDay: AuthOptions = {
 
 static getNutritionQuestionnaire: AuthOptions = {
     ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetNutritionQuestionnaire`,
+    Context     : `${this._baseContext}.Questionnaire.GetNutritionQuestionnaire`,
     Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Public,
+    ActionScope : ActionScope.Tenant,
     RequestType : RequestType.GetOne,
 };
 
 static search: AuthOptions = {
     ...DefaultAuthOptions,
-    Context             : `${this._baseContext}.Search`,
+    Context             : `${this._baseContext}.FoodConsumption.Search`,
     Ownership           : ResourceOwnership.System,
     ActionScope         : ActionScope.Public,
     RequestType         : RequestType.Search,

@@ -11,6 +11,8 @@ export interface ConsentCreateModel {
     AllResourcesInCategory?: boolean;
     TenantOwnedResource   ?: boolean;
     Perpetual              : boolean;
+    Revoked?               : boolean;
+    RevokedTimestamp       : Date;
     ConsentGivenOn         : Date;
     ConsentValidFrom       : Date;
     ConsentValidTill      ?: Date;

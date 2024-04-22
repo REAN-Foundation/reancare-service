@@ -55,15 +55,15 @@ export class MedicationAuth {
     static getStockMedicationImages: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetStockMedicationImages`,
-        Ownership   : ResourceOwnership.Tenant,
-        ActionScope : ActionScope.Tenant,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetMany,
     };
 
     static downloadStockMedicationImageById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.DownloadStockMedicationImageById`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -71,8 +71,8 @@ export class MedicationAuth {
     static getStockMedicationImageById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetStockMedicationImageById`,
-        Ownership   : ResourceOwnership.Tenant,
-        ActionScope : ActionScope.Tenant,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetOne,
     };
 

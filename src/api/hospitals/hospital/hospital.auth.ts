@@ -10,45 +10,20 @@ import {
 
 export class HospitalAuth {
 
-    static _baseContext = `Hospital`;
+    static _baseContext = `Hospitals.Hospital`;
 
     static create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.CreateOne,
-    };
-
-    static getHospitalsForHealthSystem: AuthOptions = {
-        ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetHospitalsForHealthSystem`,
-        Ownership   : ResourceOwnership.Tenant,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetMany,
-    };
-
-    static search: AuthOptions = {
-        ...DefaultAuthOptions,
-        Context             : `${this._baseContext}.Search`,
-        Ownership           : ResourceOwnership.Tenant,
-        ActionScope         : ActionScope.Tenant,
-        RequestType         : RequestType.Search,
-        CustomAuthorization : true,
-    };
-
-    static getById: AuthOptions = {
-        ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetById`,
-        Ownership   : ResourceOwnership.Tenant,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
     };
 
     static update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.UpdateOne,
     };
@@ -56,9 +31,34 @@ export class HospitalAuth {
     static delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.DeleteOne,
+    };
+
+    static getHospitalsForHealthSystem: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetHospitalsForHealthSystem`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetMany,
+    };
+
+    static search: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context             : `${this._baseContext}.Search`,
+        Ownership           : ResourceOwnership.System,
+        ActionScope         : ActionScope.Public,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
+    };
+
+    static getById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetById`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
     };
 
 }

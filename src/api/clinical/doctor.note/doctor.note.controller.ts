@@ -46,7 +46,6 @@ export class DoctorNoteController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-
             const doctorNote = await this._service.getById(id);
             if (doctorNote == null) {
                 throw new ApiError(404, 'Doctor Note not found.');

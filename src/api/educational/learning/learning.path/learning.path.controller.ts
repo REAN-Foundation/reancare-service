@@ -25,7 +25,6 @@ export class LearningPathController extends BaseController {
         try {
 
             const model = await this._validator.create(request);
-            await this.authorizeOne(request, null, null);
             const learningPath = await this._service.create(model);
             if (learningPath == null) {
                 throw new ApiError(400, 'Cannot create learningPath.!');
@@ -43,7 +42,6 @@ export class LearningPathController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const learningPath = await this._service.getById(id);
             if (learningPath == null) {
                 throw new ApiError(404, 'Learning path not found.');
@@ -61,7 +59,6 @@ export class LearningPathController extends BaseController {
         try {
 
             const filters = await this._validator.search(request);
-            await this.authorizeOne(request, null, null);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -83,7 +80,6 @@ export class LearningPathController extends BaseController {
         try {
 
             const domainModel = await this._validator.update(request);
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
@@ -107,7 +103,6 @@ export class LearningPathController extends BaseController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            await this.authorizeOne(request, null, null);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Learning path not found.');

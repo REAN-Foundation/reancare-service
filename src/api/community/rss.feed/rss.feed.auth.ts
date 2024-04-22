@@ -10,12 +10,12 @@ import {
 
 export class RssFeedAuth {
 
-static _baseContext = `Community.RssFeed`;
+static _baseContext = `Community.Rssfeed`;
 
 static create: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Create`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.CreateOne,
 };
@@ -23,7 +23,7 @@ static create: AuthOptions = {
 static update: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Update`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.UpdateOne,
 };
@@ -31,7 +31,7 @@ static update: AuthOptions = {
 static delete: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Delete`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.DeleteOne,
 };
@@ -39,7 +39,7 @@ static delete: AuthOptions = {
 static getById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetById`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Public,
     RequestType : RequestType.GetOne,
 };
@@ -47,7 +47,7 @@ static getById: AuthOptions = {
 static getRssFeed: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetRssFeed`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Public,
     RequestType : RequestType.GetOne,
 };
@@ -55,7 +55,7 @@ static getRssFeed: AuthOptions = {
 static getAtomFeed: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetAtomFeed`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Public,
     RequestType : RequestType.GetOne,
 };
@@ -63,7 +63,7 @@ static getAtomFeed: AuthOptions = {
 static getJsonFeed: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetJsonFeed`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Public,
     RequestType : RequestType.GetOne,
 };
@@ -71,7 +71,7 @@ static getJsonFeed: AuthOptions = {
 static search: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.Search`,
-    Ownership           : ResourceOwnership.Tenant,
+    Ownership           : ResourceOwnership.System,
     ActionScope         : ActionScope.Public,
     RequestType         : RequestType.Search,
     CustomAuthorization : true,
@@ -80,7 +80,7 @@ static search: AuthOptions = {
 static addFeedItem: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.AddFeedItem`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.CreateOne,
 };
@@ -88,7 +88,7 @@ static addFeedItem: AuthOptions = {
 static updateFeedItem: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.UpdateFeedItem`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.UpdateOne,
 };
@@ -96,7 +96,7 @@ static updateFeedItem: AuthOptions = {
 static deleteFeedItem: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.DeleteFeedItem`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.DeleteOne,
 };
@@ -104,7 +104,7 @@ static deleteFeedItem: AuthOptions = {
 static getFeedItemById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetFeedItemById`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Public,
     RequestType : RequestType.GetOne,
 };

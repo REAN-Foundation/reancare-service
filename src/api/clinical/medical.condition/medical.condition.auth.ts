@@ -47,7 +47,7 @@ export class MedicalConditionAuth {
     static search: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.Search`,
-        Ownership           : ResourceOwnership.Tenant,
+        Ownership           : ResourceOwnership.System,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.Search,
         CustomAuthorization : true,

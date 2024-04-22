@@ -4,6 +4,7 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import HealthSystem from './health.system.model';
+import Tenant from '../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -25,6 +26,17 @@ export default class Hospital extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    TenantId: string;
+
+    @BelongsTo(() =>  Tenant)
+    Tenant:  Tenant;
+    
     @IsUUID(4)
     @ForeignKey(() => HealthSystem)
     @Column({

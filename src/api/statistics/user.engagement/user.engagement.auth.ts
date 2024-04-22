@@ -15,7 +15,7 @@ export class UserEngagementAuth {
     static getUserEngagementStatsByYear: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByYear`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -23,7 +23,7 @@ export class UserEngagementAuth {
     static getUserEngagementStatsByQuarter: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByQuarter`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -31,7 +31,7 @@ export class UserEngagementAuth {
     static getUserEngagementStatsByMonth: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByMonth`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -39,7 +39,7 @@ export class UserEngagementAuth {
     static getUserEngagementStatsByWeek: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByWeek`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -47,7 +47,7 @@ export class UserEngagementAuth {
     static getUserEngagementStatsByDateRange: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByDateRange`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -55,7 +55,7 @@ export class UserEngagementAuth {
     static getUserEngagementStatsForUser: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsForUser`,
-        Ownership   : ResourceOwnership.Tenant,
+        Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };

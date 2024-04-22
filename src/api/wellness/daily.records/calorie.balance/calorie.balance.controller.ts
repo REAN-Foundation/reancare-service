@@ -138,7 +138,7 @@ export class CalorieBalanceController extends BaseController {
         await this.authorizeOne(request, ownerUserId, user.TenantId);
     };
 
-    authorizeSearch = async (
+    private authorizeSearch = async (
         request: express.Request,
         searchFilters: CalorieBalanceSearchFilters): Promise<CalorieBalanceSearchFilters> => {
 

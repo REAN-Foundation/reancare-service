@@ -12,6 +12,7 @@ import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { PatientService } from '../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +33,7 @@ export class CareplanController extends BaseController {
 
     getAvailableCareplans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             var plans = this._service.getAvailableCarePlans(request.query.provider as string);
 
             ResponseHandler.success(request, response, 'Available careplans retrieved successfully!', 200, {
@@ -105,7 +106,7 @@ export class CareplanController extends BaseController {
             const careplanCode = request.params.careplanCode;
 
             const user = await this._userService.getById(patientUserId);
-            await this.authorizeUser(request, user.id);
+            await this.authorizeOne(request, user.id, user.TenantId);
             const eligibility = await this._service.getPatientEligibility(user, provider, careplanCode);
             ResponseHandler.success(request, response, 'Patient eligibility for careplan retrieved successfully!', 200, {
                 Eligibility : eligibility,
@@ -174,6 +175,8 @@ export class CareplanController extends BaseController {
     updateRisk = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model: EnrollmentDomainModel = await this._validator.updateRisk(request);
+            const patientUserId = await this.authorizePerson(model);
+            await this.authorizeUser(request, patientUserId);
             var riskDetails = await this._service.updateRisk(model);
             ResponseHandler.success(request, response, 'Patient risk and complications updated successfully!', 200, {
                 RiskDetails : riskDetails
@@ -184,6 +187,18 @@ export class CareplanController extends BaseController {
     };
 
     //#endregion
+    private authorizePerson = async (model: any) => {
+        const filter = {
+            Phone : model.Phone
+        };
+        const _patientService = Injector.Container.resolve(PatientService);
+        const patient = await _patientService.search(filter);
+        if (patient.Items.length === 0) {
+            throw new Error('Patient does not exist!');
+        }
+        return patient.Items[0].UserId;
+    };
+
     private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
         const user = await this._userService.getById(ownerUserId);
         if (!user) {

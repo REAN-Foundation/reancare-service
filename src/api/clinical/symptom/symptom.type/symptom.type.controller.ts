@@ -42,7 +42,6 @@ export class SymptomTypeController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const symptomType = await this._service.getById(id);
@@ -59,7 +58,6 @@ export class SymptomTypeController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const filters: SymptomTypeSearchFilters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 

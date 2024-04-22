@@ -13,7 +13,7 @@ static _baseContext = `Community.Chat`;
 static addUserToConversation: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.AddUserToConversation`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.CreateOne,
 };
@@ -29,15 +29,15 @@ static deleteConversation: AuthOptions = {
 static deleteMessage: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.DeleteMessage`,
-    Ownership   : ResourceOwnership.Tenant,
-    ActionScope : ActionScope.Tenant,
+    Ownership   : ResourceOwnership.Owner,
+    ActionScope : ActionScope.Owner,
     RequestType : RequestType.DeleteOne,
 };
 
 static getConversationBetweenTwoUsers: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetConversationBetweenTwoUsers`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.GetOne,
 };
@@ -45,16 +45,16 @@ static getConversationBetweenTwoUsers: AuthOptions = {
 static getConversationById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetConversationById`,
-    Ownership   : ResourceOwnership.Owner,
-    ActionScope : ActionScope.Owner,
+    Ownership   : ResourceOwnership.System,
+    ActionScope : ActionScope.Tenant,
     RequestType : RequestType.GetOne,
 };
 
 static getConversationMessages: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetConversationMessages`,
-    Ownership   : ResourceOwnership.Owner,
-    ActionScope : ActionScope.Owner,
+    Ownership   : ResourceOwnership.System,
+    ActionScope : ActionScope.Tenant,
     RequestType : RequestType.GetOne,
 };
 
@@ -69,8 +69,8 @@ static getMarkedConversationsForUser: AuthOptions = {
 static getMessage: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetMessage`,
-    Ownership   : ResourceOwnership.Tenant,
-    ActionScope : ActionScope.Tenant,
+    Ownership   : ResourceOwnership.Owner,
+    ActionScope : ActionScope.Owner,
     RequestType : RequestType.GetOne,
 };
 
@@ -85,7 +85,7 @@ static getRecentConversationsForUser: AuthOptions = {
 static removeUserFromConversation: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.RemoveUserFromConversation`,
-    Ownership   : ResourceOwnership.Tenant,
+    Ownership   : ResourceOwnership.System,
     ActionScope : ActionScope.Tenant,
     RequestType : RequestType.CreateOne,
 };
@@ -93,8 +93,8 @@ static removeUserFromConversation: AuthOptions = {
 static searchUserConversations: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.SearchUserConversations`,
-    Ownership           : ResourceOwnership.Owner,
-    ActionScope         : ActionScope.Owner,
+    Ownership           : ResourceOwnership.System,
+    ActionScope         : ActionScope.Tenant,
     RequestType         : RequestType.Search,
     CustomAuthorization : true,
 };
@@ -126,8 +126,8 @@ static updateConversation: AuthOptions = {
 static updateMessage: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.UpdateMessage`,
-    Ownership   : ResourceOwnership.Tenant,
-    ActionScope : ActionScope.Tenant,
+    Ownership   : ResourceOwnership.Owner,
+    ActionScope : ActionScope.Owner,
     RequestType : RequestType.UpdateOne,
 };
 

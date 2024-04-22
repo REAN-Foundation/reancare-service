@@ -14,6 +14,7 @@ export class OrganizationValidator extends BaseValidator {
         const organizationModel: OrganizationDomainModel = {
             Type                             : request.body.Type ?? null,
             Name                             : request.body.Name ?? null,
+            TenantId                         : request.body.TenantId ?? null,
             ContactUserId                    : request.body.ContactUserId ?? null,
             ContactPhone                     : request.body.ContactPhone ?? null,
             ContactEmail                     : request.body.ContactEmail ?? null,

@@ -19,6 +19,7 @@ export class OrganizationMapper {
             Type                             : organization.Type,
             Name                             : organization.Name,
             ContactUserId                    : organization.ContactUserId,
+            TenantId                         : organization.TenantId,
             ContactUser                      : null,
             ContactPhone                     : organization.ContactPhone,
             ContactEmail                     : organization.ContactEmail,

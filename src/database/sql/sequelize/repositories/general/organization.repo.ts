@@ -2,10 +2,10 @@ import { Op } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { AddressDto } from '../../../../../domain.types/general/address/address.dto';
-import { 
-    OrganizationDomainModel, 
+import {
+    OrganizationDomainModel,
     OrganizationDto,
-    OrganizationSearchFilters, 
+    OrganizationSearchFilters,
     OrganizationSearchResults,
 } from '../../../../../domain.types/general/organization/organization.types';
 import { PersonDto } from '../../../../../domain.types/person/person.dto';
@@ -29,6 +29,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 Type                             : model.Type,
                 Name                             : model.Name ?? null,
                 ContactUserId                    : model.ContactUserId ?? null,
+                TenantId                         : model.TenantId ?? null,
                 ContactPhone                     : model.ContactPhone ?? null,
                 ContactEmail                     : model.ContactEmail ?? null,
                 ParentOrganizationId             : model.ParentOrganizationId ?? null,

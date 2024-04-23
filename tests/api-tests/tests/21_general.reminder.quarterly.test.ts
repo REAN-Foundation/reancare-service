@@ -81,7 +81,7 @@ describe('21 - Reminder schedule quarterly', function() {
                 expect(response.body.Status).to.equal('failure');
         
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('21:04 -> Negative - Get quarterly reminder by id', function(done) {

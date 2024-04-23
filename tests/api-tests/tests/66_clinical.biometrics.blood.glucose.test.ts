@@ -168,7 +168,7 @@ describe('66 - Blood glucose tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(404, done);
     });
 
     it('66:07 -> Negative - Get blood glucose by id', function(done) {

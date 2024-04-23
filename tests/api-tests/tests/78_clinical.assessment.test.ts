@@ -68,7 +68,7 @@ describe('78 - Run Kobo Form assessment', function() {
             .post(`/api/v1/clinical/assessments/${getTestData("NodeAssessmentId")}/questions/${getTestData("AssessmentNodeSCQId")}/answer`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -86,7 +86,7 @@ describe('78 - Run Kobo Form assessment', function() {
             .post(`/api/v1/clinical/assessments/${getTestData("NodeAssessmentId")}/questions/${getTestData("AssessmentNodeMCQId")}/answer`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -104,7 +104,7 @@ describe('78 - Run Kobo Form assessment', function() {
             .post(`/api/v1/clinical/assessments/${getTestData("NodeAssessmentId")}/questions/${getTestData("AssessmentNodeTextTypeId")}/answer`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -122,7 +122,7 @@ describe('78 - Run Kobo Form assessment', function() {
             .post(`/api/v1/clinical/assessments/${getTestData("NodeAssessmentId")}/questions/${getTestData("AssessmentNodeDateTypeId")}/answer`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -140,7 +140,7 @@ describe('78 - Run Kobo Form assessment', function() {
             .post(`/api/v1/clinical/assessments/${getTestData("NodeAssessmentId")}/questions/${getTestData("AssessmentNodeBooleanTypeId")}/answer`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -158,7 +158,7 @@ describe('78 - Run Kobo Form assessment', function() {
             .post(`/api/v1/clinical/assessments/${getTestData("NodeAssessmentId")}/questions/${getTestData("AssessmentNodeMessageTypeId")}/answer`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

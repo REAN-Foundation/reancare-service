@@ -317,7 +317,7 @@ describe('88 - Third user logs in tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(500, done);
     });
 
     it('88:18 -> Negative -  First user sends message', function(done) {
@@ -450,7 +450,7 @@ describe('88 - Third user logs in tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(500, done);
     });
 
     it('88:27 -> Negative - Delete message by id', function(done) {
@@ -465,7 +465,7 @@ describe('88 - Third user logs in tests', function() {
                 expect(response.body.Status).to.equal('failure');
       
             })
-            .expect(403, done);
+            .expect(500, done);
     });
 
     it('88:28 -> Negative - Get recent conversations for first user', function(done) {

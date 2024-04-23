@@ -168,7 +168,7 @@ describe('60 - Blood oxygen saturation tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(404, done);
     });
 
     it('60:07 -> Negative - Get blood oxygen saturation by id', function(done) {

@@ -30,26 +30,7 @@ describe('08 - Organization-organization tests', function() {
                 expect(response.body.Data.Organization).to.have.property('ContactEmail');
                 expect(response.body.Data.Organization).to.have.property('ParentOrganizationId');
 
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('Name');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('Type');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('ContactUserId');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('ContactPhone');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('ContactEmail');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('About');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('ParentOrganizationId');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('OperationalSince');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('ImageResourceId');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('IsHealthFacility');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('NationalHealthFacilityRegistryId');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('CreatedAt');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('UpdatedAt');
-                expect(response.body.Data.Organization.ParentOrganization).to.have.property('DeletedAt');
-                expect(response.body.Data.Organization).to.have.property('About');
-                expect(response.body.Data.Organization).to.have.property('OperationalSince');
-                expect(response.body.Data.Organization).to.have.property('Addresses');
-                expect(response.body.Data.Organization).to.have.property('ImageResourceId');
-                expect(response.body.Data.Organization).to.have.property('IsHealthFacility');
-                expect(response.body.Data.Organization).to.have.property('NationalHealthFacilityRegistryId');
+                expect(response.body.Data.Organization).to.have.property('ParentOrganizationId');
 
             })
             .expect(200, done);

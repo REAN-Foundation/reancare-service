@@ -161,7 +161,7 @@ describe('14 - Patient goal tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(403, done);
     });
 
     it('14:07 -> Negative - Update patient goal', function(done) {

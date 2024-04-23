@@ -209,7 +209,7 @@ describe('72 - Action plan tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
 });

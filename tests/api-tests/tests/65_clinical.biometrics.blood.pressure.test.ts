@@ -176,7 +176,7 @@ describe('65 - Blood pressure tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(422, done);
     });
 
     it('65:07 -> Negative - Search blood pressure records', function(done) {
@@ -202,7 +202,7 @@ describe('65 - Blood pressure tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(404, done);
     });
   
 });

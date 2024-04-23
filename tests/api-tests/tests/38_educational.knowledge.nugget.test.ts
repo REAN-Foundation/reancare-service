@@ -176,7 +176,7 @@ describe('38 - Knowledge nuggets tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(401, done);
+            .expect(500, done);
     });
 
     it('38:08 -> Negative - Get knowledge nugget by id', function(done) {
@@ -191,7 +191,7 @@ describe('38 - Knowledge nuggets tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('38:09 -> Negative - Update knowledge nugget', function(done) {

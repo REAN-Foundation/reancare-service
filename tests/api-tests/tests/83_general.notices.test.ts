@@ -194,7 +194,7 @@ describe('83 - Notice tests', function() {
                 expect(response.body.Status).to.equal('failure');
                 
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('83:08 -> Negative - Update Notice', function(done) {

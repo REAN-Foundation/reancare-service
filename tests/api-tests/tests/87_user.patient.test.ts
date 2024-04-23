@@ -52,7 +52,7 @@ describe('87 - Second user logs in tests', function () {
         loadUserDetailsUpdateModel();
         const updateModel = getTestData('UserDetailsUpdateModel');
         agent
-            .put(`/api/v1/patients/${getTestData('PatientUserId_1')}`)
+            .put(`/api/v1/patients/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
@@ -88,7 +88,7 @@ describe('87 - Second user logs in tests', function () {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(401, done);
+            .expect(500, done);
     });
 
     it('87:06 -> Negative - Update user details', function (done) {

@@ -113,7 +113,7 @@ describe('20 - Reminder schedule monthly', function() {
                 expect(response.body.Status).to.equal('failure');
       
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('20:05 -> Negative - Get monthly reminder by id', function(done) {

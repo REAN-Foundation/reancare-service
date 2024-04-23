@@ -238,7 +238,10 @@ export const loadOrganizationCreateModel = async () => {
     const model = {
         Type: getRandomEnumValue(OrganizationTypes),
         Name: faker.person.fullName(),
-        ContactPhone: faker.phone.number(),
+        ContactUserId: getTestData("PatientUserId"),
+        TenantId: getTestData("TenantId"),
+        // ContactPhone: faker.phone.number(),
+        ContactPhone: '+91-1000000011',
         ContactEmail: faker.internet.exampleEmail(),
         About: faker.word.words(5),
         OperationalSince: faker.date.past(),
@@ -252,7 +255,8 @@ export const loadOrganizationUpdateModel = async () => {
     const model = {
         Type: getRandomEnumValue(OrganizationTypes),
         Name: faker.person.fullName(),
-        ContactPhone: faker.phone.number(),
+        // ContactPhone: faker.phone.number(),
+        ContactPhone: '+91-1000000011',
         ContactEmail: faker.internet.exampleEmail(),
         About: faker.word.words(5),
         OperationalSince: faker.date.past(),

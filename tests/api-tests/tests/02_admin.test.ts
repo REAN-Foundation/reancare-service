@@ -25,7 +25,7 @@ describe('02 - Admin tests', function() {
                 assert.exists(response.body.Data.User, 'Login user details exist.');
                 expect(response.body.Data.User).to.have.property('id');
                 setTestData(response.body.Data.AccessToken, "AdminJwt");
-                setTestData(response.body.Data.User.UserId, "AdminUserId");
+                setTestData(response.body.Data.User.id, "AdminUserId");
             })
             .expect(200, done);
 

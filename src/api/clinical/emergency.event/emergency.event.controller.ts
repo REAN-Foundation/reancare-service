@@ -62,7 +62,7 @@ export class EmergencyEventController extends BaseController {
             if (emergencyEvent == null) {
                 throw new ApiError(404, 'Emergency Event not found.');
             }
-            await this.authorizeUser(request, emergencyEvent.PatientUserId.UserId);
+            await this.authorizeUser(request, emergencyEvent.PatientUserId);
             ResponseHandler.success(request, response, 'Emergency Event retrieved successfully!', 200, {
                 EmergencyEvent : emergencyEvent,
             });
@@ -99,7 +99,7 @@ export class EmergencyEventController extends BaseController {
             if (existingEmergencyEvent == null) {
                 throw new ApiError(404, 'Emergency Event not found.');
             }
-            await this.authorizeUser(request, existingEmergencyEvent.PatientUserId.UserId);
+            await this.authorizeUser(request, existingEmergencyEvent.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update emergency event record!');
@@ -120,7 +120,7 @@ export class EmergencyEventController extends BaseController {
             if (existingEmergencyEvent == null) {
                 throw new ApiError(404, 'Emergency Event not found.');
             }
-            await this.authorizeUser(request, existingEmergencyEvent.PatientUserId.UserId);
+            await this.authorizeUser(request, existingEmergencyEvent.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Emergency Event cannot be deleted.');

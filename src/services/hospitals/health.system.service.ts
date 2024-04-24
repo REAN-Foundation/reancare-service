@@ -74,8 +74,9 @@ export class HealthSystemService {
             var tags: string[] = tokens.map(x => x);
 
             const model: HealthSystemDomainModel = {
-                Name : t['HealthSystem'],
-                Tags : tags
+                Name     : t['HealthSystem'],
+                TenantId : tenantId,
+                Tags     : tags
             };
             var healthSystem = await this.create(model);
 

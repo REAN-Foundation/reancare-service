@@ -8,23 +8,24 @@ import { Op } from 'sequelize';
 ///////////////////////////////////////////////////////////////////////
 
 export class RolePrivilegeRepo implements IRolePrivilegeRepo {
+
     create = async (object: any): Promise<RolePrivilegeDto> => {
         try {
             const entity = {
-                RoleId: object.RoleId,
-                RoleName: object.RoleName,
-                Privilege: object.Privilege,
-                Scope: object.Scope,
-                Enabled: object.Enabled,
+                RoleId    : object.RoleId,
+                RoleName  : object.RoleName,
+                Privilege : object.Privilege,
+                Scope     : object.Scope,
+                Enabled   : object.Enabled,
             };
             const rp = await RolePermission.create(entity);
             const dto: RolePrivilegeDto = {
-                id: rp.id,
-                RoleId: rp.RoleId,
-                RoleName: rp.RoleName,
-                Privilege: rp.Privilege,
-                Scope: rp.Scope,
-                Enabled: rp.Enabled,
+                id        : rp.id,
+                RoleId    : rp.RoleId,
+                RoleName  : rp.RoleName,
+                Privilege : rp.Privilege,
+                Scope     : rp.Scope,
+                Enabled   : rp.Enabled,
             };
             return dto;
         } catch (error) {
@@ -37,12 +38,12 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
         try {
             const rp = await RolePermission.findByPk(id);
             const dto: RolePrivilegeDto = {
-                id: rp.id,
-                RoleId: rp.RoleId,
-                RoleName: rp.RoleName,
-                Privilege: rp.Privilege,
-                Scope: rp.Scope,
-                Enabled: rp.Enabled,
+                id        : rp.id,
+                RoleId    : rp.RoleId,
+                RoleName  : rp.RoleName,
+                Privilege : rp.Privilege,
+                Scope     : rp.Scope,
+                Enabled   : rp.Enabled,
             };
             return dto;
         } catch (error) {
@@ -57,12 +58,12 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
             rp.Enabled = enable;
             await rp.save();
             const dto: RolePrivilegeDto = {
-                id: rp.id,
-                RoleId: rp.RoleId,
-                RoleName: rp.RoleName,
-                Privilege: rp.Privilege,
-                Scope: rp.Scope,
-                Enabled: rp.Enabled,
+                id        : rp.id,
+                RoleId    : rp.RoleId,
+                RoleName  : rp.RoleName,
+                Privilege : rp.Privilege,
+                Scope     : rp.Scope,
+                Enabled   : rp.Enabled,
             };
             return dto;
         } catch (error) {
@@ -77,12 +78,12 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
             const dtos: RolePrivilegeDto[] = [];
             for (const rp of rolePrivileges) {
                 const dto: RolePrivilegeDto = {
-                    id: rp.id,
-                    RoleId: rp.RoleId,
-                    RoleName: rp.RoleName,
-                    Privilege: rp.Privilege,
-                    Scope: rp.Scope,
-                    Enabled: rp.Enabled,
+                    id        : rp.id,
+                    RoleId    : rp.RoleId,
+                    RoleName  : rp.RoleName,
+                    Privilege : rp.Privilege,
+                    Scope     : rp.Scope,
+                    Enabled   : rp.Enabled,
                 };
                 dtos.push(dto);
             }
@@ -96,19 +97,19 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
     getPrivilegesForRole = async (roleId: number): Promise<RolePrivilegeDto[]> => {
         try {
             const rolePrivileges = await RolePermission.findAll({
-                where: {
-                    RoleId: roleId,
+                where : {
+                    RoleId : roleId,
                 },
             });
             const dtos: RolePrivilegeDto[] = [];
             for (const rp of rolePrivileges) {
                 const dto: RolePrivilegeDto = {
-                    id: rp.id,
-                    RoleId: rp.RoleId,
-                    RoleName: rp.RoleName,
-                    Privilege: rp.Privilege,
-                    Scope: rp.Scope,
-                    Enabled: rp.Enabled,
+                    id        : rp.id,
+                    RoleId    : rp.RoleId,
+                    RoleName  : rp.RoleName,
+                    Privilege : rp.Privilege,
+                    Scope     : rp.Scope,
+                    Enabled   : rp.Enabled,
                 };
                 dtos.push(dto);
             }
@@ -122,9 +123,9 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
     hasPrivilegeForRole = async (roleId: number, privilege: string): Promise<boolean> => {
         try {
             const rolePrivileges = await RolePermission.findAll({
-                where: {
-                    RoleId: roleId,
-                    Privilege: { [Op.like]: '%' + privilege + '%' },
+                where : {
+                    RoleId    : roleId,
+                    Privilege : { [Op.like]: '%' + privilege + '%' },
                 },
             });
             if (rolePrivileges.length > 0) {
@@ -141,21 +142,21 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
     getRolePrivilege = async (roleId: number, privilege: string): Promise<RolePrivilegeDto> => {
         try {
             const rp = await RolePermission.findOne({
-                where: {
-                    RoleId: roleId,
-                    Privilege: { [Op.like]: '%' + privilege + '%' },
+                where : {
+                    RoleId    : roleId,
+                    Privilege : { [Op.like]: '%' + privilege + '%' },
                 },
             });
             if (rp == null) {
                 return null;
             }
             const dto: RolePrivilegeDto = {
-                id: rp.id,
-                RoleId: rp.RoleId,
-                RoleName: rp.RoleName,
-                Privilege: rp.Privilege,
-                Scope: rp.Scope,
-                Enabled: rp.Enabled,
+                id        : rp.id,
+                RoleId    : rp.RoleId,
+                RoleName  : rp.RoleName,
+                Privilege : rp.Privilege,
+                Scope     : rp.Scope,
+                Enabled   : rp.Enabled,
             };
             return dto;
         } catch (error) {
@@ -173,4 +174,5 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
             throw new ApiError(500, error.message);
         }
     };
+
 }

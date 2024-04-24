@@ -32,10 +32,10 @@ export class BiometricsController extends BaseController {
         searchFilters: BiometricSearchFilters): Promise<BiometricSearchFilters> => {
 
         const currentUser = request.currentUser;
-        
+
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

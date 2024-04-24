@@ -75,7 +75,7 @@ export class DailyAssessmentController extends BaseController {
 
     //#endregion
 
-    
+
     //#region Authorization
 
     authorizeSearch = async (
@@ -83,11 +83,11 @@ export class DailyAssessmentController extends BaseController {
         searchFilters: DailyAssessmentSearchFilters): Promise<DailyAssessmentSearchFilters> => {
 
         const currentUser = request.currentUser;
-        
+
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
-                    searchFilters.PatientUserId, 
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context
                 );

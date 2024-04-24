@@ -60,12 +60,15 @@ export default class ClientAppAuthMiddleware
     };
 
     private static authenticate = async (request: express.Request): Promise<AuthResult> => {
+
+        let res: AuthResult = {
+            Result        : true,
+            Message       : 'Authenticated',
+            HttpErrorCode : 200,
+        };
+
         try {
-            var res: AuthResult = {
-                Result        : true,
-                Message       : 'Authenticated',
-                HttpErrorCode : 200,
-            };
+
             let apiKey: string = request.headers['x-api-key'] as string;
 
             if (!apiKey) {
@@ -100,43 +103,5 @@ export default class ClientAppAuthMiddleware
         }
         return res;
     };
-
-    // import { FileResourceService } from "../services/general/file.resource.service";
-    // const isPublicResourceDownload = await this.isPublicResourceDownloadRequest(request);
-    // if (isPublicResourceDownload) {
-    //     request.publicUrl = true;
-    //     return res;
-    // }
-
-    // private static isPublicResourceDownloadRequest = async (request: express.Request): Promise<boolean> => {
-    //     const requestUrl = request.originalUrl;
-    //     const downloadUrl = requestUrl.includes('/api/v1/file-resources') &&
-    //                         requestUrl.includes('/download') && request.method === 'GET';
-    //     if (!downloadUrl) {
-    //         return false;
-    //     }
-        
-    //     //Check if the download request is for a public resource
-    //     const fileResourceService = Injector.Container.resolve(FileResourceService);
-    //     if (!fileResourceService) {
-    //         return false;
-    //     }
-    //     // Not sure why request.params.resourceId is not working !!!
-    //     // Finding it from Url
-    //     let tokens = requestUrl.split('/api/v1/file-resources/');
-    //     if (tokens.length < 2) {
-    //         return false;
-    //     }
-    //     tokens = tokens[1].split('/download');
-    //     if (tokens.length < 1) {
-    //         return false;
-    //     }
-    //     const resourceId = tokens[0];
-    //     if (!resourceId) {
-    //         return false;
-    //     }
-    //     const isPublicResource = await fileResourceService.isPublicResource(resourceId);
-    //     return isPublicResource;
-    // };
 
 }

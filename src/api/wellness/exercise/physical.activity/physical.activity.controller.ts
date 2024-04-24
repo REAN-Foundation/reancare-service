@@ -49,7 +49,7 @@ export class PhysicalActivityController extends BaseController {
             if (physicalActivity == null) {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
-            
+
             await this._ehrPhysicalActivityService.addEHRRecordPhysicalActivityForAppNames(physicalActivity);
             // Adding record to award service
             if (physicalActivity.PhysicalActivityQuestionAns) {
@@ -203,7 +203,7 @@ export class PhysicalActivityController extends BaseController {
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

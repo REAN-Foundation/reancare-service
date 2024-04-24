@@ -69,7 +69,7 @@ export class OrganizationController extends BaseController {
             }
 
             await this.authorizeOne(request, record.ContactUserId, record.TenantId);
-            
+
             ResponseHandler.success(request, response, 'Organization retrieved successfully!', 200, {
                 Organization : record,
             });
@@ -304,7 +304,7 @@ export class OrganizationController extends BaseController {
     };
 
     //#endregion
-   
+
     authorizeSearch = async (
         request: express.Request,
         searchFilters: OrganizationSearchFilters): Promise<OrganizationSearchFilters> => {
@@ -313,7 +313,7 @@ export class OrganizationController extends BaseController {
 
         if (searchFilters.ContactUserId != null) {
             if (searchFilters.ContactUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.ContactUserId,
                     currentUser.UserId,
                     request.context

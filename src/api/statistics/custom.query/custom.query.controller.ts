@@ -142,10 +142,10 @@ export class CustomQueryController extends BaseController{
         searchFilters: CustomQuerySearchFilters): Promise<CustomQuerySearchFilters> => {
 
         const currentUser = request.currentUser;
-        
+
         if (searchFilters.UserId != null) {
             if (searchFilters.UserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.UserId,
                     currentUser.UserId,
                     request.context

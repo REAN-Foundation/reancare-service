@@ -33,7 +33,7 @@ export class FoodComponentMonitoringController extends BaseController {
             if (foodComponentMonitoring == null) {
                 throw new ApiError(400, 'Cannot create record for food component monitoring!');
             }
-            
+
             ResponseHandler.success(request, response, 'Food component monitoring record created successfully!', 201, {
                 FoodComponentMonitoring : foodComponentMonitoring,
             });
@@ -144,7 +144,7 @@ export class FoodComponentMonitoringController extends BaseController {
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

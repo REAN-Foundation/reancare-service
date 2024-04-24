@@ -46,7 +46,7 @@ export class FoodConsumptionController extends BaseController {
             }
 
             await this._ehrNutritionService.addEHRRecordNutritionForAppNames(foodConsumption);
-            
+
             if (foodConsumption.UserResponse) {
                 var timestamp = foodConsumption.EndTime ?? foodConsumption.StartTime;
                 if (!timestamp) {
@@ -182,7 +182,7 @@ export class FoodConsumptionController extends BaseController {
             const updated = await this._service.update(id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update nutrition record!');
-                
+
             }
             if (updated.UserResponse !== null) {
                 var timestamp = updated.CreatedAt ?? updated.EndTime ?? updated.StartTime;
@@ -245,7 +245,7 @@ export class FoodConsumptionController extends BaseController {
         request.resourceTenantId = user.TenantId;
         await this.authorizeOne(request, ownerUserId, user.TenantId);
     };
-    
+
     authorizeSearch = async (
         request: express.Request,
         searchFilters: FoodConsumptionSearchFilters): Promise<FoodConsumptionSearchFilters> => {
@@ -254,7 +254,7 @@ export class FoodConsumptionController extends BaseController {
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

@@ -47,18 +47,18 @@ export class BloodCholesterolRepo implements IBloodCholesterolRepo {
         try {
             const bloodCholesterol = await BloodCholesterol.findByPk(id);
 
-            const record = await BloodCholesterol.findOne({
-                where: {
-                    id: id,
-                },
-                include: [
-                    {
-                        model: User,
-                        as: 'PatientUser',
-                        foreignKey: 'PatientUserId',
-                    },
-                ],
-            });
+            // const record = await BloodCholesterol.findOne({
+            //     where : {
+            //         id : id,
+            //     },
+            //     include : [
+            //         {
+            //             model      : User,
+            //             as         : 'PatientUser',
+            //             foreignKey : 'PatientUserId',
+            //         },
+            //     ],
+            // });
 
             return await BloodCholesterolMapper.toDto(bloodCholesterol);
         } catch (error) {

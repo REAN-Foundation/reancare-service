@@ -204,7 +204,7 @@ export class NotificationRepo implements INotificationRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     markAsRead = async (id: string, userId: uuid):
     Promise<boolean> => {
         try {
@@ -213,7 +213,7 @@ export class NotificationRepo implements INotificationRepo {
                     NotificationId : id,
                     UserId         : userId,
                 }
-            
+
             });
             if (userNotification == null) {
                 throw new ApiError(404, 'Notification not found');
@@ -253,7 +253,7 @@ export class NotificationRepo implements INotificationRepo {
                 throw new ApiError(404, 'Notification not found');
             }
             const notification = await Notification.findByPk(id);
-            const notificationDto = await NotificationMapper.toDto(notification);
+            const notificationDto = NotificationMapper.toDto(notification);
             const dto: UserNotificationDto = {
                 id             : userNotification.id,
                 UserId         : userNotification.UserId,

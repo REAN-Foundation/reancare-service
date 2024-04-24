@@ -37,7 +37,7 @@ export class CalorieBalanceController extends BaseController {
             if (calorieBalance == null) {
                 throw new ApiError(400, 'Cannot create calorie balance record!');
             }
-            
+
             ResponseHandler.success(request, response, 'Calorie balance record created successfully!', 201, {
                 CalorieBalance : calorieBalance,
             });
@@ -146,7 +146,7 @@ export class CalorieBalanceController extends BaseController {
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

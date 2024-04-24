@@ -45,7 +45,7 @@ export class BloodOxygenSaturationController extends BiometricsController {
 
             // Adding record to award service
             if (record.BloodOxygenSaturation) {
-                var timestamp = record.RecordDate;
+                let timestamp = record.RecordDate;
                 if (!timestamp) {
                     timestamp = new Date();
                 }

@@ -37,7 +37,7 @@ export class HeartPointController extends BaseController{
             if (heartPoint == null) {
                 throw new ApiError(400, 'Cannot create record for heart Points!');
             }
-            
+
             ResponseHandler.success(request, response, 'Heart points record created successfully!', 201, {
                 HeartPoints : heartPoint,
             });
@@ -146,7 +146,7 @@ export class HeartPointController extends BaseController{
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

@@ -40,7 +40,7 @@ export class CohortController extends BaseController {
             if (record == null) {
                 throw new ApiError(400, 'Cannot start conversation!');
             }
-            
+
             ResponseHandler.success(request, response, 'Cohort created successfully!', 201, {
                 Cohort : record,
             });
@@ -218,7 +218,7 @@ export class CohortController extends BaseController {
             if (cohorts.length > 0) {
                 await this.authorizeOne(request, cohorts[0].OwnerUserId, cohorts[0].TenantId);
             }
-            
+
             ResponseHandler.success(request, response, 'Cohorts retrieved successfully!', 200, {
                 Cohorts : cohorts,
             });
@@ -238,7 +238,7 @@ export class CohortController extends BaseController {
 
         if (searchFilters.TenantId != null) {
             if (searchFilters.TenantId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.TenantId,
                     currentUser.UserId,
                     request.context

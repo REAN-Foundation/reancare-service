@@ -37,7 +37,7 @@ export class MoveMinutesController extends BaseController {
             if (moveMinutes == null) {
                 throw new ApiError(400, 'Cannot create record for daily move minutes!');
             }
-            
+
             ResponseHandler.success(request, response, 'Daily move minutes record created successfully!', 201, {
                 MoveMinutes : moveMinutes,
             });
@@ -148,7 +148,7 @@ export class MoveMinutesController extends BaseController {
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

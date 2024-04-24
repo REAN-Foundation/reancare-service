@@ -169,7 +169,7 @@ export class MeditationController extends BaseController {
         request.resourceTenantId = user.TenantId;
         await this.authorizeOne(request, ownerUserId, user.TenantId);
     };
-    
+
     authorizeSearch = async (
         request: express.Request,
         searchFilters: MeditationSearchFilters): Promise<MeditationSearchFilters> => {
@@ -178,7 +178,7 @@ export class MeditationController extends BaseController {
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

@@ -17,7 +17,6 @@ import {
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
 import Person from '../../person/person.model';
-import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 

@@ -117,7 +117,7 @@ export class SymptomAssessmentController extends BaseController {
     };
 
     //#endregion
-    
+
     //#region Authorization
 
     authorizeSearch = async (
@@ -125,11 +125,11 @@ export class SymptomAssessmentController extends BaseController {
         searchFilters: SymptomAssessmentSearchFilters): Promise<SymptomAssessmentSearchFilters> => {
 
         const currentUser = request.currentUser;
-        
+
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
-                    searchFilters.PatientUserId, 
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context
                 );

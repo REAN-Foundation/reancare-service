@@ -290,7 +290,7 @@ export class ReminderController extends BaseController {
 
     //#endregion
 
-       
+
     authorizeSearch = async (
         request: express.Request,
         searchFilters: ReminderSearchFilters): Promise<ReminderSearchFilters> => {
@@ -299,7 +299,7 @@ export class ReminderController extends BaseController {
 
         if (searchFilters.UserId != null) {
             if (searchFilters.UserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.UserId,
                     currentUser.UserId,
                     request.context

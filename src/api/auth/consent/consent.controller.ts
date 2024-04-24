@@ -137,10 +137,10 @@ export class ConsentController extends BaseController {
         : Promise<ConsentSearchFilters> => {
 
         const currentUser = request.currentUser;
-    
+
         if (searchFilters.OwnerUserId != null) {
             if (searchFilters.OwnerUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.OwnerUserId,
                     currentUser.UserId,
                     request.context

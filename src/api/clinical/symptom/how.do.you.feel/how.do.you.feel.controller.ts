@@ -97,7 +97,7 @@ export class HowDoYouFeelController extends BaseController {
             }
 
             await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(updated);
-            
+
             ResponseHandler.success(request, response, 'How do you feel record updated successfully!', 200, {
                 HowDoYouFeel : updated,
             });
@@ -139,7 +139,7 @@ export class HowDoYouFeelController extends BaseController {
         request.resourceTenantId = user.TenantId;
         await this.authorizeOne(request, ownerUserId, user.TenantId);
     };
-    
+
     private authorizeSearch = async (
         request: express.Request,
         searchFilters: HowDoYouFeelSearchFilters): Promise<HowDoYouFeelSearchFilters> => {
@@ -148,7 +148,7 @@ export class HowDoYouFeelController extends BaseController {
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

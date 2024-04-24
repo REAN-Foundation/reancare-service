@@ -34,7 +34,7 @@ export class StepCountController extends BaseController {
             await this.authorizeUser(request, domainModel.PatientUserId);
             const recordDate = request.body.RecordDate;
             const provider = request.body.Provider ?? null;
-        
+
             var existingRecord =
                 await this._service.getByRecordDateAndPatientUserId(recordDate, request.body.PatientUserId, provider);
             if (existingRecord !== null) {
@@ -42,11 +42,11 @@ export class StepCountController extends BaseController {
             } else {
                 var stepCount = await this._service.create(domainModel);
             }
-        
+
             if (stepCount == null) {
                 throw new ApiError(400, 'Cannot create Step Count!');
             }
-            
+
             await this._ehrPhysicalActivityService.addEHRRecordStepCountForAppNames(stepCount);
 
             ResponseHandler.success(request, response, 'Step count created successfully!', 201, {
@@ -162,7 +162,7 @@ export class StepCountController extends BaseController {
 
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
-                const hasConsent = PermissionHandler.checkConsent(
+                const hasConsent = await PermissionHandler.checkConsent(
                     searchFilters.PatientUserId,
                     currentUser.UserId,
                     request.context

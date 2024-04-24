@@ -102,7 +102,7 @@ export class LabRecordController extends BaseController {
             }
 
             await this._ehrLabService.addEHRLabRecordForAppNames(updated);
-            
+
             ResponseHandler.success(request, response, `${updated.DisplayName} record updated successfully!`, 200, {
                 LabRecord : updated,
             });

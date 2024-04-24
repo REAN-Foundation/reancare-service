@@ -30,7 +30,7 @@ export class DiagnosisController extends BaseController{
         try {
 
             const domainModel = await this._validator.create(request);
-            await this.authorizeUser(request, domainModel.PatientUserId);
+            await this.authorizeOne(request, domainModel.PatientUserId);
             if (domainModel.PatientUserId != null) {
                 const person = await this._userService.getById(domainModel.PatientUserId);
                 if (person == null) {
@@ -59,7 +59,7 @@ export class DiagnosisController extends BaseController{
             if (diagnosis == null) {
                 throw new ApiError(404, 'Diagnosis record not found.');
             }
-            await this.authorizeUser(request, diagnosis.PatientUserId);
+            await this.authorizeOne(request, diagnosis.PatientUserId);
             ResponseHandler.success(request, response, 'Diagnosis retrieved successfully!', 200, {
                 Diagnosis : diagnosis,
             });
@@ -96,7 +96,7 @@ export class DiagnosisController extends BaseController{
             if (existingUser == null) {
                 throw new ApiError(404, 'Diagnosis record not found.');
             }
-            await this.authorizeUser(request, existingUser.PatientUserId);
+            await this.authorizeOne(request, existingUser.PatientUserId);
             const updatedDiagnosis = await this._service.update(id, domainModel);
             if (updatedDiagnosis == null) {
                 throw new ApiError(400, 'Unable to update diagnosis record!');
@@ -118,7 +118,7 @@ export class DiagnosisController extends BaseController{
             if (existingUser == null) {
                 throw new ApiError(404, 'Diagnosis record not found.');
             }
-            await this.authorizeUser(request, existingUser.PatientUserId);
+            await this.authorizeOne(request, existingUser.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Diagnosis record cannot be deleted.');
@@ -131,23 +131,13 @@ export class DiagnosisController extends BaseController{
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
-    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
-        const user = await this._userService.getById(ownerUserId);
-        if (!user) {
-            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
-        }
-        request.resourceOwnerUserId = ownerUserId;
-        request.resourceTenantId = user.TenantId;
-        await this.authorizeOne(request, ownerUserId, user.TenantId);
-    };
 
     private authorizeSearch = async (
         request: express.Request,
         searchFilters: DiagnosisSearchFilters): Promise<DiagnosisSearchFilters> => {
 
         const currentUser = request.currentUser;
-        
+
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
                 const hasConsent = PermissionHandler.checkConsent(

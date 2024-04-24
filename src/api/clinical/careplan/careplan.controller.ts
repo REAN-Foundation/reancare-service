@@ -10,9 +10,7 @@ import { Logger } from '../../../common/logger';
 import { CommunityNetworkService } from '../../../modules/community.bw/community.network.service';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
-import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
-import { PatientService } from '../../../services/users/patient/patient.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +47,7 @@ export class CareplanController extends BaseController {
         try {
 
             const model = await this._validator.enroll(request);
-            await this.authorizeUser(request, model.PatientUserId);
+            await this.authorizeOne(request, model.PatientUserId);
             var startDate = new Date(model.StartDateStr);
 
             Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
@@ -120,7 +118,7 @@ export class CareplanController extends BaseController {
         try {
 
             const patientUserId = request.params.patientUserId;
-            await this.authorizeUser(request, patientUserId);
+            await this.authorizeOne(request, patientUserId);
             var isActive = request.query.isActive === 'true' ? true : false;
             const enrollments = await this._service.getPatientEnrollments(patientUserId, isActive);
             ResponseHandler.success(request, response, 'Patient enrollments retrieved successfully!', 200, {
@@ -137,7 +135,7 @@ export class CareplanController extends BaseController {
 
             const careplanId = request.params.id;
             const enrollment = await this._service.getEnrollment(careplanId);
-            await this.authorizeUser(request, enrollment.PatientUserId);
+            await this.authorizeOne(request, enrollment.PatientUserId);
 
             const fetched = await this._service.fetchTasks(careplanId);
             if (!fetched) {
@@ -161,7 +159,7 @@ export class CareplanController extends BaseController {
             if (!enrollment) {
                 throw new ApiError(404, 'Careplan enrollment not found!');
             }
-            await this.authorizeUser(request, enrollment.PatientUserId);
+            await this.authorizeOne(request, enrollment.PatientUserId);
             var careplanStatus = await this._service.getWeeklyStatus(careplanId);
             ResponseHandler.success(request, response, 'Careplan weekly status fetched successfully!', 200, {
                 CareplanStatus : careplanStatus
@@ -175,8 +173,9 @@ export class CareplanController extends BaseController {
     updateRisk = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model: EnrollmentDomainModel = await this._validator.updateRisk(request);
-            const patientUserId = await this.authorizePerson(model);
-            await this.authorizeUser(request, patientUserId);
+            // For time being, ...
+            // const patientUserId = await this.authorizePerson(model);
+            // await this.authorizeOne(request, patientUserId);
             var riskDetails = await this._service.updateRisk(model);
             ResponseHandler.success(request, response, 'Patient risk and complications updated successfully!', 200, {
                 RiskDetails : riskDetails
@@ -187,26 +186,5 @@ export class CareplanController extends BaseController {
     };
 
     //#endregion
-    private authorizePerson = async (model: any) => {
-        const filter = {
-            Phone : model.Phone
-        };
-        const _patientService = Injector.Container.resolve(PatientService);
-        const patient = await _patientService.search(filter);
-        if (patient.Items.length === 0) {
-            throw new Error('Patient does not exist!');
-        }
-        return patient.Items[0].UserId;
-    };
-
-    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
-        const user = await this._userService.getById(ownerUserId);
-        if (!user) {
-            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
-        }
-        request.resourceOwnerUserId = ownerUserId;
-        request.resourceTenantId = user.TenantId;
-        await this.authorizeOne(request, ownerUserId, user.TenantId);
-    };
 
 }

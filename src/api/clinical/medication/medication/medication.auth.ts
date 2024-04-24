@@ -64,7 +64,7 @@ export class MedicationAuth {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.DownloadStockMedicationImageById`,
         Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.Tenant,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetOne,
     };
 

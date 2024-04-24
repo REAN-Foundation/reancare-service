@@ -108,7 +108,7 @@ export class MedicationController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const domainModel = await MedicationValidator.create(request);
-            await this.authorizeUser(request, domainModel.PatientUserId);
+            await this.authorizeOne(request, domainModel.PatientUserId);
             const user = await this._userService.getById(domainModel.PatientUserId);
 
             if (user == null) {
@@ -154,13 +154,12 @@ export class MedicationController extends BaseController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const id: string = await MedicationValidator.getParamId(request);
+            const id: uuid = await MedicationValidator.getParamId(request);
             const medication = await this._service.getById(id);
-            Logger.instance().log(`[MedicationTime] GetById - service call completed`);
             if (medication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-            await this.authorizeUser(request, medication.PatientUserId);
+            await this.authorizeOne(request, medication.PatientUserId);
             var stats = await this._medicationConsumptionService.getConsumptionStatusForMedication(id);
             var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
@@ -209,7 +208,7 @@ export class MedicationController extends BaseController{
             if (existingMedication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-            await this.authorizeUser(request, existingMedication.PatientUserId);
+            await this.authorizeOne(request, existingMedication.PatientUserId);
             const startDate =
                 await this._userService.getDateInUserTimeZone(existingMedication.PatientUserId, request.body.StartDate);
             domainModel.StartDate = startDate;
@@ -255,7 +254,7 @@ export class MedicationController extends BaseController{
             if (existingMedication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-            await this.authorizeUser(request, existingMedication.PatientUserId);
+            await this.authorizeOne(request, existingMedication.PatientUserId);
             const deleted = await this._service.delete(id);
             Logger.instance().log(`[MedicationTime] Delete - service call completed`);
 
@@ -281,7 +280,7 @@ export class MedicationController extends BaseController{
     getCurrentMedications = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const patientUserId: string = await MedicationValidator.getPatientUserId(request);
-            await this.authorizeUser(request, patientUserId);
+            await this.authorizeOne(request, patientUserId);
             const medications = await this._service.getCurrentMedications(patientUserId);
 
             ResponseHandler.success(request, response, 'Current medications retrieved successfully!', 200, {
@@ -406,22 +405,12 @@ export class MedicationController extends BaseController{
 
     }
 
-    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
-        const user = await this._userService.getById(ownerUserId);
-        if (!user) {
-            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
-        }
-        request.resourceOwnerUserId = ownerUserId;
-        request.resourceTenantId = user.TenantId;
-        await this.authorizeOne(request, ownerUserId, user.TenantId);
-    };
-
     private authorizeSearch = async (
         request: express.Request,
         searchFilters: MedicationSearchFilters): Promise<MedicationSearchFilters> => {
 
         const currentUser = request.currentUser;
-        
+
         if (searchFilters.PatientUserId != null) {
             if (searchFilters.PatientUserId !== request.currentUser.UserId) {
                 const hasConsent = PermissionHandler.checkConsent(

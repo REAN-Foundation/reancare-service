@@ -60,9 +60,8 @@ export default class ReminderSchedule extends Model {
 
     @IsDate
     @Column({
-        type         : DataType.DATE,
-        allowNull    : false,
-        defaultValue : new Date(),
+        type      : DataType.DATE,
+        allowNull : true,
     })
     Schedule: Date;
 

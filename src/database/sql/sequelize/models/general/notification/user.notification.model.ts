@@ -62,32 +62,19 @@ export default class UserNotification extends Model {
     Notification: Notification;
 
     @Column({
-        type         : DataType.DATE,
-        allowNull    : true,
-        defaultValue : new Date(),
-    })
-    ReadOn: Date;
-
-    @CreatedAt
-    @Column({
-        type         : DataType.DATE,
-        allowNull    : false,
-        defaultValue : new Date(),
-    })
-    CreatedAt: Date;
-
-    @UpdatedAt
-    @Column({
-        type         : DataType.DATE,
-        allowNull    : false,
-        defaultValue : new Date(),
-    })
-    UpdatedAt: Date;
-
-    @DeletedAt
-    @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
+    ReadOn: Date;
+
+    @Column
+    @CreatedAt
+    CreatedAt: Date;
+
+    @UpdatedAt
+    UpdatedAt: Date;
+
+    @DeletedAt
     DeletedAt: Date;
+
 }

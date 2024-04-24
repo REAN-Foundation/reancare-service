@@ -13,7 +13,7 @@ export class EmergencyEventMapper {
         const dto: EmergencyEventDto = {
             id            : emergencyEvent.id,
             EhrId         : emergencyEvent.EhrId,
-            PatientUserId : null,
+            PatientUserId : emergencyEvent.PatientUserId,
             Details       : emergencyEvent.Details,
             EmergencyDate : emergencyEvent.EmergencyDate
         };

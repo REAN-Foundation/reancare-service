@@ -31,7 +31,7 @@ export class StepCountController extends BaseController {
         try {
 
             const domainModel = await this._validator.create(request);
-            await this.authorizeUser(request, stepCount.PatientUserId);
+            await this.authorizeUser(request, domainModel.PatientUserId);
             const recordDate = request.body.RecordDate;
             const provider = request.body.Provider ?? null;
         

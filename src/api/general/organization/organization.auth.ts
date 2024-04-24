@@ -39,8 +39,8 @@ export class OrganizationAuth {
     static getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetOne,
     };
 
@@ -55,7 +55,7 @@ export class OrganizationAuth {
     static getByContactUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetByContactUserId`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -63,7 +63,7 @@ export class OrganizationAuth {
     static getAddresses: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetAddresses`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
@@ -71,7 +71,7 @@ export class OrganizationAuth {
     static getPersons: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPersons`,
-        Ownership   : ResourceOwnership.Owner,
+        Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };

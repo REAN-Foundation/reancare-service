@@ -477,7 +477,9 @@
             "GetById": false,
             "MarkAsRead": false,
             "Search": false,
-            "Update": false
+            "Update": false,
+            "Send":false,
+            "SendToUser": false
         },
         "Organization": {
             "AddAddress": false,

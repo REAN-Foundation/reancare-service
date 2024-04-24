@@ -208,7 +208,7 @@ export class EmergencyContactController extends PatientBaseController {
             if (record == null) {
                 throw new ApiError(404, 'Emergency contact not found.');
             }
-            await this.authorizeOne(request, model.PatientUserId);
+            await this.authorizeOne(request, record.PatientUserId);
             const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update patientEmergencyContact record!');

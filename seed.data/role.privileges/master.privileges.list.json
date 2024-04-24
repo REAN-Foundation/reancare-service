@@ -352,6 +352,8 @@
     "General.Notification.MarkAsRead",
     "General.Notification.Search",
     "General.Notification.Update",
+    "General.Notification.Send",
+    "General.Notification.SendToUser",
     "General.Organization.AddAddress",
     "General.Organization.AddPerson",
     "General.Organization.Create",

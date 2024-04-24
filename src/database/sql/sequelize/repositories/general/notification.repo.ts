@@ -102,7 +102,7 @@ export class NotificationRepo implements INotificationRepo {
                 search.where['Type'] = filters.Type;
             }
 
-            let { pageIndex, limit, order, orderByColum } = this.updateCommonSearchParams(filters, search);
+            const { pageIndex, limit, order, orderByColum } = this.updateCommonSearchParams(filters, search);
 
             const foundResults = await Notification.findAndCountAll(search);
 
@@ -247,8 +247,7 @@ export class NotificationRepo implements INotificationRepo {
         }
     };
 
-
-    private updateCommonSearchParams(filters: NotificationSearchFilters, search: { where: any; }) {
+    private updateCommonSearchParams = (filters: NotificationSearchFilters, search: { where: any; }) => {
         let orderByColum = 'CreatedAt';
         if (filters.OrderBy) {
             orderByColum = filters.OrderBy;
@@ -272,5 +271,6 @@ export class NotificationRepo implements INotificationRepo {
         search['limit'] = limit;
         search['offset'] = offset;
         return { pageIndex, limit, order, orderByColum };
-    }
+    };
+
 }

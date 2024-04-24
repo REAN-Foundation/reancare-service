@@ -21,7 +21,7 @@ export class VolunteerAuth {
         SignupOrSignin : true,
     };
 
-    static updateByUserId: AuthOptions = {
+    static readonly updateByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateByUserId`,
         Ownership   : ResourceOwnership.Tenant,
@@ -29,7 +29,7 @@ export class VolunteerAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static deleteByUserId: AuthOptions = {
+    static readonly deleteByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.DeleteByUserId`,
         Ownership   : ResourceOwnership.Tenant,
@@ -37,7 +37,7 @@ export class VolunteerAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static getByUserId: AuthOptions = {
+    static readonly getByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetByUserId`,
         Ownership   : ResourceOwnership.Tenant,

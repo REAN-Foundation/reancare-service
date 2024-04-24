@@ -21,13 +21,13 @@ export const register = (app: express.Application): void => {
     app.use('/api/v1/devices/wearables', router);
 
     // Obsolute routes. Will be discontinued in future
-    // const obsoluteRouter = express.Router();
-    // obsoluteRouter.post('/', auth('Devices.Wearables.Create'), controller.create);
-    // obsoluteRouter.get('/search', auth('Devices.Wearables.Search'), controller.search);
-    // obsoluteRouter.get('/patients/:patientUserId', auth('Devices.Wearables.GetUserWearables'), controller.getPatientWearableDeviceDetails);
-    // obsoluteRouter.get('/:id', auth('Devices.Wearables.GetById'), controller.getById);
-    // obsoluteRouter.put('/:id', auth('Devices.Wearables.Update'), controller.update);
-    // obsoluteRouter.delete('/:id', auth('Devices.Wearables.Delete'), controller.delete);
+    const obsoluteRouter = express.Router();
+    obsoluteRouter.post('/', auth(WearableAuth.create), controller.create);
+    obsoluteRouter.get('/search', auth(WearableAuth.search), controller.search);
+    obsoluteRouter.get('/patients/:patientUserId', auth(WearableAuth.getUserWearables), controller.getPatientWearableDeviceDetails);
+    obsoluteRouter.get('/:id', auth(WearableAuth.getById), controller.getById);
+    obsoluteRouter.put('/:id', auth(WearableAuth.update), controller.update);
+    obsoluteRouter.delete('/:id', auth(WearableAuth.delete), controller.delete);
 
-    // app.use('/api/v1/wearable-device-details', obsoluteRouter);
+    app.use('/api/v1/wearable-device-details', obsoluteRouter);
 };

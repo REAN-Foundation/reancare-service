@@ -19,11 +19,9 @@ export class BaseController {
         let ownerUserId = resourceOwnerUserId ?? null;
         let tenantId = resourceTenantId ?? null;
 
-        // ownerUserId = ownerUserId ?? request.currentUser?.UserId;
-
         if (ownerUserId) {
             const userService = Injector.Container.resolve(UserService);
-            var user = await userService.getById(ownerUserId);
+            const user = await userService.getById(ownerUserId);
             if (user) {
                 ownerUserId = user.id;
                 tenantId = tenantId ?? user.TenantId;
@@ -33,7 +31,7 @@ export class BaseController {
         if (tenantId == null) {
             // If tenant is not provided, get the default tenant
             const tenantService = Injector.Container.resolve(TenantService);
-            var tenant = await tenantService.getTenantWithCode('default');
+            const tenant = await tenantService.getTenantWithCode('default');
             if (tenant) {
                 tenantId = tenant.id;
             }

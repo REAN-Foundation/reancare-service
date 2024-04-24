@@ -208,7 +208,7 @@ export class NotificationController extends BaseController {
         request: express.Request,
         model: NotificationCreateModel | NotificationDto)
         : Promise<void> => {
-        // const userId = request.currentUser.UserId;
+
         const tenantId = request.currentUser.TenantId;
         const userRole = request.currentUser.CurrentRole;
         if (model.TenantId !== null && model.TenantId !== undefined) {

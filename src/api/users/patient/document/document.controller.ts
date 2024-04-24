@@ -277,7 +277,7 @@ export class DocumentController extends PatientBaseController {
 
             const key: string = await this._validator.getParamStr(request, 'key');
 
-            var record: SharedDocumentDetailsDto = await this._service.getSharedDocument(key);
+            const record: SharedDocumentDetailsDto = await this._service.getSharedDocument(key);
             if (record === null) {
                 throw new ApiError(404, 'The document cannot be found.');
             }

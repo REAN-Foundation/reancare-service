@@ -44,7 +44,7 @@ export class UserLearningAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getCourseProgress: AuthOptions = {
+    static readonly getCourseProgress: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetCourseProgress`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class UserLearningAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getModuleProgress: AuthOptions = {
+    static readonly getModuleProgress: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetModuleProgress`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class UserLearningAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getContentProgress: AuthOptions = {
+    static readonly getContentProgress: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetContentProgress`,
         Ownership   : ResourceOwnership.Owner,

@@ -26,12 +26,14 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
     public authenticate = async (
         request: express.Request
     ): Promise<AuthResult> => {
+
+        let res: AuthResult = {
+            Result        : true,
+            Message       : 'Authenticated',
+            HttpErrorCode : 200,
+        };
+
         try {
-            var res: AuthResult = {
-                Result        : true,
-                Message       : 'Authenticated',
-                HttpErrorCode : 200,
-            };
 
             //////////////////////////////////////////////////////////////////////////////////////////
             // Already taken care of in the auth.handler

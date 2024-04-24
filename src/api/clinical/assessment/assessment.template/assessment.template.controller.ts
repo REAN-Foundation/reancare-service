@@ -15,7 +15,6 @@ import { FileResourceValidator } from '../../../general/file.resource/file.resou
 import { BaseController } from '../../../../api/base.controller';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { AssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
-import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////

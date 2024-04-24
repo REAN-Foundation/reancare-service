@@ -93,7 +93,7 @@ export class MedicationAuth {
         CustomAuthorization : true,
     };
 
-    static getCurrentMedications: AuthOptions = {
+    static readonly getCurrentMedications: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetCurrentMedications`,
         Ownership   : ResourceOwnership.Owner,

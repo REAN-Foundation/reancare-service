@@ -125,7 +125,7 @@ export class DonorController extends BaseUserController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters = await DonorValidator.search(request);
-            await this.authorizeSearch(request, filters);
+            this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =

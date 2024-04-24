@@ -101,12 +101,12 @@ export class EmergencyContactController extends PatientBaseController {
                     Email     : model.ContactPerson.Email ?? null
                 };
 
-                var existingPerson = await this._personService.getPersonWithPhone(model.ContactPerson.Phone);
+                const existingPerson = await this._personService.getPersonWithPhone(model.ContactPerson.Phone);
                 if (existingPerson !== null) {
 
                     model.ContactPersonId = existingPerson.id;
 
-                    var alreadyExists = await this._service.checkIfContactPersonExists(
+                    const alreadyExists = await this._service.checkIfContactPersonExists(
                         model.PatientUserId,
                         model.ContactPersonId);
                     if (alreadyExists) {

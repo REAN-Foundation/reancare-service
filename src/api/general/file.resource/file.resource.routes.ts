@@ -2,6 +2,7 @@ import express from 'express';
 import { FileResourceController } from './file.resource.controller';
 import { auth } from '../../../auth/auth.handler';
 import { FileResourceAuth } from './file.resource.auth';
+import { fileUploadMiddleware } from '../../../middlewares/file.upload.middleware';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -9,6 +10,7 @@ export const register = (app: express.Application): void => {
 
     const router = express.Router();
     const controller = new FileResourceController();
+    fileUploadMiddleware(router);
 
     //#region Upload routes
 

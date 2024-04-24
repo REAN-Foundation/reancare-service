@@ -9,7 +9,6 @@ import { BaseController } from '../../../api/base.controller';
 import { PermissionHandler } from '../../../auth/custom/permission.handler';
 import { OrderSearchFilters } from '../../../domain.types/clinical/order/order.search.types';
 import { OrderDomainModel } from '../../../domain.types/clinical/order/order.domain.model';
-import { UserService } from '../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

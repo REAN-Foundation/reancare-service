@@ -167,7 +167,7 @@ export class AssessmentController extends BaseController {
             }
             await this.authorizeOne(request, record.PatientUserId);
             if (record.ScoringApplicable) {
-                var { score, reportUrl } = await this.generateScoreReport(record);
+                const { score, reportUrl } = await this.generateScoreReport(record);
                 ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
                     AssessmentId : record.id,
                     Score        : score,

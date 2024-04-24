@@ -34,7 +34,7 @@ export class CustomTaskController extends BaseController {
         try {
             const model = await this._validator.create(request);
             await this.authorizeOne(request, model.UserId);
-            var userTask = await this._customActions.createCustomTask(model);
+            const userTask = await this._customActions.createCustomTask(model);
             ResponseHandler.success(request, response, 'Custom task created successfully!', 201, {
                 UserTask : userTask,
             });

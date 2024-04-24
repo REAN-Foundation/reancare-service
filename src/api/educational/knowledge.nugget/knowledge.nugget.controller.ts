@@ -30,7 +30,6 @@ export class KnowledgeNuggetController extends BaseController {
             if (nugget == null) {
                 throw new ApiError(400, 'Cannot create record for knowledge nugget!');
             }
-            // await this.authorizeOne(request, nugget.PatientUserId, null);
             ResponseHandler.success(request, response, 'Knowledge nugget record created successfully!', 200, {
                 KnowledgeNugget : nugget,
             });

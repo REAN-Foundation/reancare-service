@@ -317,16 +317,6 @@ export const loadAddressUpdateModel = async () => {
     setTestData(model, 'AddressUpdateModel');
 };
 
-export const loadPatientGeModel = async () => {
-    const model = {
-        Phone: secondPatientPhoneNumber,
-        Password: patientPassword,
-        LoginRoleId: getTestData('patientRoleId'),
-        TenantId: getTestData('TenantId'),
-    };
-    setTestData(model, 'PatientLoginFirstModel');
-};
-
 function loadPatientQueryString() {
     //This is raw query. Please modify to suit the test
     const queryString = '';

@@ -170,10 +170,7 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(404, 'User not found.');
             }
             await this.authorizeOne(request, user.id, user.TenantId);
-            // const tenantUser = await this._userService.isTenantUser(user.id, tenantId);
-            // if (!tenantUser) {
-            //     throw new ApiError(404, 'User is not associated with the tenant.');
-            // }
+
             const patient = await this._service.getByUserId(user.id);
             if (patient == null) {
                 throw new ApiError(404, 'Patient not found.');

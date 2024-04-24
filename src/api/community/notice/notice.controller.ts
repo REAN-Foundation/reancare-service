@@ -7,9 +7,7 @@ import { NoticeValidator } from './notice.validator';
 import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
 import { Injector } from '../../../startup/injector';
 import { NoticeSearchFilters } from '../../../domain.types/general/notice/notice.search.types';
-import { PermissionHandler } from '../../../auth/custom/permission.handler';
 import { BaseController } from '../../../api/base.controller';
-import { UserService } from '../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -61,7 +59,7 @@ export class NoticeController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            const filters: NoticeSearchFilters = await this._validator.search(request);
             const currentUserId = request.currentUser.UserId;
             const searchResults = await this._service.search(filters, currentUserId);
 
@@ -127,7 +125,7 @@ export class NoticeController extends BaseController {
         try {
 
             const userId = request.currentUser.UserId;
-            await this.authorizeUser(request, userId);
+            await this.authorizeOne(request, userId);
             const model = await this._validator.takeAction(request);
             const entity: NoticeActionDomainModel = {
                 UserId   : userId,
@@ -152,7 +150,7 @@ export class NoticeController extends BaseController {
         try {
             const noticeId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            await this.authorizeUser(request, userId);
+            await this.authorizeOne(request, userId);
             const noticeAction = await this._service.getNoticeActionForUser(noticeId, userId);
             ResponseHandler.success(request, response, 'Notice action retrieved successfully for the user!', 200, {
                 NoticeAction : noticeAction,
@@ -165,7 +163,7 @@ export class NoticeController extends BaseController {
     getAllNoticeActionsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            await this.authorizeUser(request, userId);
+            await this.authorizeOne(request, userId);
             const noticeActions = await this._service.getAllNoticeActionsForUser(userId);
             ResponseHandler.success(request, response, 'Notice action retrieved successfully!', 200, {
                 NoticeActions : noticeActions,
@@ -175,16 +173,6 @@ export class NoticeController extends BaseController {
         }
     };
 
-    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
-        const _userService = Injector.Container.resolve(UserService);
-        const user = await _userService.getById(ownerUserId);
-        if (!user) {
-            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
-        }
-        request.resourceOwnerUserId = ownerUserId;
-        request.resourceTenantId = user.TenantId;
-        await this.authorizeOne(request, ownerUserId, user.TenantId);
-    };
     //#endregion
 
 }

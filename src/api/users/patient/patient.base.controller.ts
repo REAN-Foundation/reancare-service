@@ -1,11 +1,4 @@
 import { ActionPlanSearchFilters } from '../../../domain.types/users/patient/action.plan/action.plan.search.types';
-import {
-    AuthOptions,
-    RequestType,
-    ResourceOwnership,
-    ActionScope,
-    DefaultAuthOptions
-} from '../../../auth/auth.types';
 import { PermissionHandler } from '../../../auth/custom/permission.handler';
 import express from 'express';
 import { BaseController } from '../../../api/base.controller';

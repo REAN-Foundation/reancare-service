@@ -6,7 +6,6 @@ import { RoleValidator } from './role.validator';
 import { ApiError } from '../../common/api.error';
 import { RoleDomainModel } from '../../domain.types/role/role.domain.model';
 import { BaseController } from '../base.controller';
-import { Roles } from '../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

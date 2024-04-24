@@ -86,11 +86,11 @@ export class FileResourceController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            var model = await this._validator.update(request);
+            const model = await this._validator.update(request);
 
             await this.checkResourceAuthorization(request, model.ResourceId);
 
-            var dto = await this._service.update(model.ResourceId, model);
+            let dto = await this._service.update(model.ResourceId, model);
             dto = this.sanitizeDto(dto);
             ResponseHandler.success(request, response, 'File resource updated successfully!', 200, {
                 FileResource : dto,
@@ -386,7 +386,7 @@ export class FileResourceController extends BaseController {
     };
 
     private async checkResourceAuthorization(request, resourceId) {
-        var record = await this._service.getById(resourceId);
+        const record = await this._service.getById(resourceId);
         if (!record) {
             throw new ApiError(404, "Resource not found!");
         }

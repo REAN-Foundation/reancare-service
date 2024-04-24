@@ -75,8 +75,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
         try {
             const rolePrivileges = await RolePermission.findAll();
             const dtos: RolePrivilegeDto[] = [];
-            for (let i = 0; i < rolePrivileges.length; i++) {
-                const rp = rolePrivileges[i];
+            for (const rp of rolePrivileges) {
                 const dto: RolePrivilegeDto = {
                     id: rp.id,
                     RoleId: rp.RoleId,
@@ -102,8 +101,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
                 },
             });
             const dtos: RolePrivilegeDto[] = [];
-            for (let i = 0; i < rolePrivileges.length; i++) {
-                const rp = rolePrivileges[i];
+            for (const rp of rolePrivileges) {
                 const dto: RolePrivilegeDto = {
                     id: rp.id,
                     RoleId: rp.RoleId,

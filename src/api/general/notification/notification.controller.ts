@@ -219,12 +219,10 @@ export class NotificationController extends BaseController {
                     throw new ApiError(403, 'Forbidden');
                 }
             }
-            else {
+            else if (userRole !== Roles.TenantAdmin &&
+                     userRole !== Roles.TenantUser) {
                 //If thenant is same, then only tenant users can create notifications
-                if (userRole !== Roles.TenantAdmin &&
-                    userRole !== Roles.TenantUser) {
-                    throw new ApiError(403, 'Forbidden');
-                }
+                throw new ApiError(403, 'Forbidden');
             }
         }
     };

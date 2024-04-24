@@ -1,7 +1,6 @@
 import { UserDto } from "../../users/user/user.dto";
 import { uuid } from "../../miscellaneous/system.types";
 import { BaseSearchFilters } from "../../miscellaneous/base.search.types";
-import { BaseSearchResults } from "../../miscellaneous/base.search.types";
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 

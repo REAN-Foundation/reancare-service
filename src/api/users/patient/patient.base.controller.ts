@@ -49,19 +49,16 @@ export class PatientBaseController extends BaseController {
                         throw new ApiError(403, 'Permission denied.');
                     }
                 }
-            } else {
-                if (currentRole === Roles.Patient) {
-                    searchFilters.PatientUserId = currentUser.UserId;
-                } else {
-                    if (
-                        currentRole !== Roles.TenantAdmin &&
-                        currentRole !== Roles.SystemAdmin &&
-                        currentRole !== Roles.SystemUser
-                    ) {
-                        throw new ApiError(403, 'Permission denied.');
-                    }
-                }
+            } else  if (currentRole === Roles.Patient) {
+                searchFilters.PatientUserId = currentUser.UserId;
+            } else if (
+                    currentRole !== Roles.TenantAdmin &&
+                    currentRole !== Roles.SystemAdmin &&
+                    currentRole !== Roles.SystemUser
+                ) {
+                throw new ApiError(403, 'Permission denied.');
             }
+
             return searchFilters;
         };
     

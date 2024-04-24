@@ -314,11 +314,9 @@ export class ChatController extends BaseController {
             if (conversation.Users.includes(request.currentUser.UserId)) {
                 return request.currentUser.UserId;
             }
-        } else {
-            if (conversation.InitiatingUser === request.currentUser.UserId ||
+        } else if (conversation.InitiatingUser === request.currentUser.UserId ||
                 conversation.OtherUserId === request.currentUser.UserId) {
-                return request.currentUser.UserId;
-            }
+            return request.currentUser.UserId;
         }
 
         throw new ApiError(403, 'Permission denied.');

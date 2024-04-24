@@ -33,7 +33,7 @@ export class AuthHandler {
             request.resourceId = this.getResourceId(request, resourceIdIdentifier);
             request.ownership = options.Ownership;
             request.actionScope = options.ActionScope;
-            request.clientAppAuth = options.ClientAppAuth != null ? options.ClientAppAuth : false;
+            request.clientAppAuth = options.ClientAppAuth ?? false;
             request.customAuthorization = options.CustomAuthorization ? options.CustomAuthorization : false;
             request.alternateAuth = options.AlternateAuth ? options.AlternateAuth : false;
             request.signupOrSignin = options.SignupOrSignin ? options.SignupOrSignin : false;
@@ -43,7 +43,7 @@ export class AuthHandler {
         middlewares.push(contextSetter);
 
         //Line-up the auth middleware chain
-        const clientAppAuth = options.ClientAppAuth != null ? options.ClientAppAuth : false;
+        const clientAppAuth = options.ClientAppAuth ?? false;
         const systemOwnedResource = options.Ownership === ResourceOwnership.System;
         const publicAccess = options.ActionScope === ActionScope.Public;
 
@@ -54,14 +54,14 @@ export class AuthHandler {
         else {
             // If client app authentication is turned off and the alternate authentication is in place.
             // For example, get or renew API key, etc.
-            const alternateAuth = options.AlternateAuth != null ? options.AlternateAuth : false;
+            const alternateAuth = options.AlternateAuth ?? false;
             if (alternateAuth) {
                 return middlewares;
             }
         }
 
         // If the request is about the user registration. For example, Sign-up, Sign-in, OTP, ... etc.
-        const signupOrSignin = options.SignupOrSignin != null ? options.SignupOrSignin : false;
+        const signupOrSignin = options.SignupOrSignin ?? false;
         if (signupOrSignin) {
             return middlewares;
         }

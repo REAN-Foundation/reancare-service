@@ -10,7 +10,7 @@ import {
 
 export class ComplaintAuth {
 
-    static _baseContext = `Clinical.Complaint`;
+    static readonly _baseContext = `Clinical.Complaint`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

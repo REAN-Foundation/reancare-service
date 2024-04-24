@@ -10,7 +10,7 @@ import {
 
 export class PhysicalActivityAuth {
 
-static _baseContext = `Wellness.Exercise.PhysicalActivity`;
+static readonly _baseContext = `Wellness.Exercise.PhysicalActivity`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

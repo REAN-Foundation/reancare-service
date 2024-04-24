@@ -10,7 +10,7 @@ import {
 
 export class BloodCholesterolAuth {
 
-    static _baseContext = `Clinical.Biometrics.BloodCholesterol`;
+    static readonly _baseContext = `Clinical.Biometrics.BloodCholesterol`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

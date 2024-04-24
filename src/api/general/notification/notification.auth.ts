@@ -14,7 +14,7 @@ import {
 
 export class NotificationAuth {
 
-    static _baseContext = 'General.Notification';
+    static readonly _baseContext = 'General.Notification';
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

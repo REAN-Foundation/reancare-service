@@ -10,7 +10,7 @@ import {
 
 export class CalorieBalanceAuth {
 
-static _baseContext = `Wellness.DailyRecords.CalorieBalance`;
+static readonly _baseContext = `Wellness.DailyRecords.CalorieBalance`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

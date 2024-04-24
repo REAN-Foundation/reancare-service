@@ -10,7 +10,7 @@ import {
 
 export class BloodOxygenSaturationAuth {
 
-    static _baseContext = `Clinical.Biometrics.BloodOxygenSaturation`;
+    static readonly _baseContext = `Clinical.Biometrics.BloodOxygenSaturation`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

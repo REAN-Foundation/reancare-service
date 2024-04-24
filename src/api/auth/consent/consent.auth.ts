@@ -10,46 +10,46 @@ import {
 
 export class ConsentAuth {
 
-    static _baseContext = `Auth.Consent`;
+    static readonly _baseContext = `Auth.Consent`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Create`,
-        ActionScope: ActionScope.Owner,
-        Ownership  : ResourceOwnership.Owner,
-        RequestType: RequestType.CreateOne,
+        Context     : `${this._baseContext}.Create`,
+        ActionScope : ActionScope.Owner,
+        Ownership   : ResourceOwnership.Owner,
+        RequestType : RequestType.CreateOne,
     };
 
     static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Update`,
-        ActionScope: ActionScope.Owner,
-        Ownership  : ResourceOwnership.Owner,
-        RequestType: RequestType.UpdateOne,
+        Context     : `${this._baseContext}.Update`,
+        ActionScope : ActionScope.Owner,
+        Ownership   : ResourceOwnership.Owner,
+        RequestType : RequestType.UpdateOne,
     };
 
     static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Delete`,
-        ActionScope: ActionScope.Owner,
-        Ownership  : ResourceOwnership.Owner,
-        RequestType: RequestType.DeleteOne,
+        Context     : `${this._baseContext}.Delete`,
+        ActionScope : ActionScope.Owner,
+        Ownership   : ResourceOwnership.Owner,
+        RequestType : RequestType.DeleteOne,
     };
 
     static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Search`,
-        ActionScope: ActionScope.Tenant,
-        Ownership  : ResourceOwnership.Owner,
-        RequestType: RequestType.Search,
+        Context     : `${this._baseContext}.Search`,
+        ActionScope : ActionScope.Tenant,
+        Ownership   : ResourceOwnership.Owner,
+        RequestType : RequestType.Search,
     };
 
     static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetById`,
-        ActionScope: ActionScope.Tenant,
-        Ownership  : ResourceOwnership.Owner,
-        RequestType: RequestType.GetOne,
+        Context     : `${this._baseContext}.GetById`,
+        ActionScope : ActionScope.Tenant,
+        Ownership   : ResourceOwnership.Owner,
+        RequestType : RequestType.GetOne,
     };
 
 }

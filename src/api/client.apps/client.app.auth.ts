@@ -7,7 +7,7 @@ import {
 
 export class ClientAppAuth {
 
-    static _baseContext = `ClientApp`;
+    static readonly _baseContext = `ClientApp`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

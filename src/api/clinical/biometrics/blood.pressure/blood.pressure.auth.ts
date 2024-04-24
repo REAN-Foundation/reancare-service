@@ -10,46 +10,47 @@ import {
 
 export class BloodPressureAuth {
 
-    static _baseContext = `Clinical.Biometrics.BloodPressure`;
+    static readonly _baseContext = `Clinical.Biometrics.BloodPressure`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Create`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.CreateOne,
+        Context     : `${this._baseContext}.Create`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
     };
 
     static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Update`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.UpdateOne,
+        Context     : `${this._baseContext}.Update`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
     };
 
     static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Delete`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.DeleteOne,
+        Context     : `${this._baseContext}.Delete`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
     };
 
     static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetById`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.GetOne,
+        Context     : `${this._baseContext}.GetById`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
     };
 
     static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
-        Context            : `${this._baseContext}.Search`,
-        Ownership          : ResourceOwnership.Owner,
-        ActionScope        : ActionScope.Tenant,
-        RequestType        : RequestType.Search,
-        CustomAuthorization: true,
+        Context             : `${this._baseContext}.Search`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
     };
+
 }

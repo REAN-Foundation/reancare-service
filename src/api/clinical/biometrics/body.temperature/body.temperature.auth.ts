@@ -10,7 +10,7 @@ import {
 
 export class BodyTemperatureAuth {
 
-    static _baseContext = `Clinical.Biometrics.BodyTemperature`;
+    static readonly _baseContext = `Clinical.Biometrics.BodyTemperature`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

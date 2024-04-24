@@ -10,7 +10,7 @@ import {
 
 export class MedicalConditionAuth {
 
-    static _baseContext = `Clinical.MedicalCondition`;
+    static readonly _baseContext = `Clinical.MedicalCondition`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

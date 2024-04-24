@@ -10,7 +10,7 @@ import {
 
 export class HealthSystemAuth {
 
-    static _baseContext = `Hospitals.HealthSystem`;
+    static readonly _baseContext = `Hospitals.HealthSystem`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

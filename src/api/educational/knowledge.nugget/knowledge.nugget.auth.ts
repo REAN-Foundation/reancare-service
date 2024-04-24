@@ -10,7 +10,7 @@ import {
 
 export class KnowledgeNuggetAuth {
 
-static _baseContext = `Educational.KnowledgeNugget`;
+static readonly _baseContext = `Educational.KnowledgeNugget`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

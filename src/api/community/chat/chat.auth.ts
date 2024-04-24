@@ -8,7 +8,7 @@ import {
 ///////////////////////////////////////////////////////////////////////////////////////
 export class ChatAuth {
 
-    static _baseContext = `Community.Chat`;
+    static readonly _baseContext = `Community.Chat`;
 
     static readonly addUserToConversation: AuthOptions = {
         ...DefaultAuthOptions,

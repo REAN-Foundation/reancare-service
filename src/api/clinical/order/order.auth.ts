@@ -10,7 +10,7 @@ import {
 
 export class OrderAuth {
 
-  static _baseContext = `Clinical.Order`;
+  static readonly _baseContext = `Clinical.Order`;
 
   static readonly create: AuthOptions = {
       ...DefaultAuthOptions,

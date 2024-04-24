@@ -10,7 +10,7 @@ import {
 
 export class LearningPathAuth {
 
-static _baseContext = `Educational.LearningPath`;
+static readonly _baseContext = `Educational.LearningPath`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

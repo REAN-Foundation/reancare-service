@@ -10,7 +10,7 @@ import {
 
 export class UserEngagementAuth {
 
-    static _baseContext = `Statistics.UserEngagement.`;
+    static readonly _baseContext = `Statistics.UserEngagement.`;
 
     static readonly getUserEngagementStatsByYear: AuthOptions = {
         ...DefaultAuthOptions,

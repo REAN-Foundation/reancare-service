@@ -10,7 +10,7 @@ import {
 
 export class StepCountAuth {
 
-static _baseContext = `Wellness.DailyRecords.StepCount`;
+static readonly _baseContext = `Wellness.DailyRecords.StepCount`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

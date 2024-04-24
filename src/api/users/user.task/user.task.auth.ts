@@ -10,7 +10,7 @@ import {
 
 export class UserTaskAuth {
 
-    static _baseContext = 'User.UserTask';
+    static readonly _baseContext = 'User.UserTask';
 
     static readonly getCategories: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class CustomTaskAuth {
 
-    static _baseContext = 'User.CustomTask';
+    static readonly _baseContext = 'User.CustomTask';
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

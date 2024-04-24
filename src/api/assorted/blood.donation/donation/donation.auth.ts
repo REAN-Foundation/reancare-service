@@ -10,7 +10,7 @@ import {
 
 export class DonationAuth {
 
-    static _baseContext = `Assorted.BloodDonation.Donation`;
+    static readonly _baseContext = `Assorted.BloodDonation.Donation`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class UserGroupAuth {
 
-    static _baseContext = `Community.UserGroup`;
+    static readonly _baseContext = `Community.UserGroup`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class ClinicalTypeAuth {
 
-    static _baseContext = `Clinical.ClinicalTypes`;
+    static readonly _baseContext = `Clinical.ClinicalTypes`;
 
     static readonly getClinicalValidationStatuses: AuthOptions = {
         ...DefaultAuthOptions,

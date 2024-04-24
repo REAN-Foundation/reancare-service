@@ -10,7 +10,7 @@ import {
 
 export class OrganizationAuth {
 
-    static _baseContext = `General.Organization`;
+    static readonly _baseContext = `General.Organization`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class DailyAssessmentAuth {
 
-    static _baseContext = `Clinical.Assessments.DailyAssessment`;
+    static readonly _baseContext = `Clinical.Assessments.DailyAssessment`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

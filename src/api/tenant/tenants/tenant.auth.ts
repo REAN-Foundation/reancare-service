@@ -10,7 +10,7 @@ import {
 
 export class TenantAuth {
 
-    static _baseContext = 'Tenant.Tenants';
+    static readonly _baseContext = 'Tenant.Tenants';
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

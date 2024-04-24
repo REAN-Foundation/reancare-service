@@ -10,7 +10,7 @@ import {
 
 export class BodyHeightAuth {
 
-    static _baseContext = `Clinical.Biometrics.BodyHeight`;
+    static readonly _baseContext = `Clinical.Biometrics.BodyHeight`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

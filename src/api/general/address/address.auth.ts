@@ -10,7 +10,7 @@ import {
 
 export class AddressAuth {
 
-    static _baseContext = `General.Address`;
+    static readonly _baseContext = `General.Address`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

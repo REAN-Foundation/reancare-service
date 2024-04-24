@@ -10,7 +10,7 @@ import {
 
 export class WearableAuth {
 
-static _baseContext = `Device.Wearable`;
+static readonly _baseContext = `Device.Wearable`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

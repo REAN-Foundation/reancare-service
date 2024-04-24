@@ -10,7 +10,7 @@ import {
 
 export class NoticeAuth {
 
-static _baseContext = `Community.Notice`;
+static readonly _baseContext = `Community.Notice`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

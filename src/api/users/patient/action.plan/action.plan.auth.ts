@@ -10,7 +10,7 @@ import {
 
 export class ActionPlanAuth {
 
-    static _baseContext = 'User.Patient.ActionPlan';
+    static readonly _baseContext = 'User.Patient.ActionPlan';
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

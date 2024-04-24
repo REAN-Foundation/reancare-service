@@ -10,7 +10,7 @@ import {
 
 export class AllergyAuth {
 
-    static _baseContext = `Clinical.Allergy`;
+    static readonly _baseContext = `Clinical.Allergy`;
 
     static readonly getAllergenCategories: AuthOptions = {
         ...DefaultAuthOptions,

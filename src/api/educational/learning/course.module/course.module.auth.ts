@@ -10,7 +10,7 @@ import {
 
 export class CourseModuleAuth {
 
-static _baseContext = `Educational.CourseModule`;
+static readonly _baseContext = `Educational.CourseModule`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

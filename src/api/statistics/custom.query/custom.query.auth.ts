@@ -10,7 +10,7 @@ import {
 
 export class CustomQueryAuth {
 
-    static _baseContext = `Statistics.CustomQuery`;
+    static readonly _baseContext = `Statistics.CustomQuery`;
 
     static readonly executeQuery: AuthOptions = {
         ...DefaultAuthOptions,

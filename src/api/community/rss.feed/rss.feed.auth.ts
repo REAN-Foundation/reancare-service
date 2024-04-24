@@ -10,7 +10,7 @@ import {
 
 export class RssFeedAuth {
 
-    static _baseContext = `Community.Rssfeed`;
+    static readonly _baseContext = `Community.Rssfeed`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

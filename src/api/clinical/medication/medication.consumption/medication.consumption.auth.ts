@@ -10,7 +10,7 @@ import {
 
 export class MedicationConsumptionAuth {
 
-    static _baseContext = `Clinical.Medications.MedicationConsumption`;
+    static readonly _baseContext = `Clinical.Medications.MedicationConsumption`;
 
     static readonly markListAsTaken: AuthOptions = {
         ...DefaultAuthOptions,

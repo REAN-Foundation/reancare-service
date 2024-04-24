@@ -10,7 +10,7 @@ import {
 
 export class SleepAuth {
 
-static _baseContext = `Wellness.DailyRecords.Sleep`;
+static readonly _baseContext = `Wellness.DailyRecords.Sleep`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

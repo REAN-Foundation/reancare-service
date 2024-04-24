@@ -10,15 +10,15 @@ import {
 
 export class VolunteerAuth {
 
-    static _baseContext = `Assorted.BloodDonation.Volunteer`;
+    static readonly _baseContext = `Assorted.BloodDonation.Volunteer`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context          : `${this._baseContext}.Create`,
-        Ownership        : ResourceOwnership.Tenant,
-        ActionScope      : ActionScope.Tenant,
-        RequestType      : RequestType.CreateOne,
-        SignupOrSignin   : true,
+        Context        : `${this._baseContext}.Create`,
+        Ownership      : ResourceOwnership.Tenant,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.CreateOne,
+        SignupOrSignin : true,
     };
 
     static updateByUserId: AuthOptions = {

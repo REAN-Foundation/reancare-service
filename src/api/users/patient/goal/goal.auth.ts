@@ -10,7 +10,7 @@ import {
 
 export class GoalAuth {
 
-    static _baseContext = 'User.Patient.Goal';
+    static readonly _baseContext = 'User.Patient.Goal';
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class EmergencyEventAuth {
 
-    static _baseContext = `Clinical.EmergencyEvent`;
+    static readonly _baseContext = `Clinical.EmergencyEvent`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

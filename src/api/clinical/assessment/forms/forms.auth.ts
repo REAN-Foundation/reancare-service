@@ -10,7 +10,7 @@ import {
 
 export class FormsAuth {
 
-    static _baseContext = `Clinical.Assessments.Forms`;
+    static readonly _baseContext = `Clinical.Assessments.Forms`;
 
     static readonly connect: AuthOptions = {
         ...DefaultAuthOptions,

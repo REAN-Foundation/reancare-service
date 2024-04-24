@@ -10,7 +10,7 @@ import {
 
 export class CohortAuth {
 
-static _baseContext = `Community.Cohort`;
+static readonly _baseContext = `Community.Cohort`;
 
 static readonly create: AuthOptions = {
     ...DefaultAuthOptions,

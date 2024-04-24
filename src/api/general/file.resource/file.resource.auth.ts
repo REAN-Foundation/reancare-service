@@ -10,7 +10,7 @@ import {
 
 export class FileResourceAuth {
 
-    static _baseContext = `General.FileResource`;
+    static readonly _baseContext = `General.FileResource`;
 
     static readonly upload: AuthOptions = {
         ...DefaultAuthOptions,

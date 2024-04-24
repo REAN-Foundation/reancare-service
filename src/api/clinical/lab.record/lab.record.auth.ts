@@ -10,7 +10,7 @@ import {
 
 export class LabRecordAuth {
 
-  static _baseContext = `Clinical.LabRecord`;
+  static readonly _baseContext = `Clinical.LabRecord`;
 
   static readonly create: AuthOptions = {
       ...DefaultAuthOptions,

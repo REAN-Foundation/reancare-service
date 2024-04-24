@@ -6,6 +6,7 @@ import { HealthSystemSearchResults, HealthSystemSearchFilters } from '../../doma
 import { Logger } from "../../common/logger";
 import * as seededHealthSystemsAndHospitals from '../../../seed.data/health.systems.and.hospitals.seed.json';
 import { HospitalDomainModel } from "../../domain.types/hospitals/hospital/hospital.domain.model";
+import { ITenantRepo } from "../../database/repository.interfaces/tenant/tenant.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +15,7 @@ export class HealthSystemService {
 
     constructor(
         @inject('IHealthSystemRepo') private _hospitalSystemRepo: IHealthSystemRepo,
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
     ) {}
 
     create = async (hospitalSystemDomainModel: HealthSystemDomainModel): Promise<HealthSystemDto> => {
@@ -46,6 +48,13 @@ export class HealthSystemService {
 
         Logger.instance().log('Seeding health systems and associated hospitals...');
 
+        const tenant = await this._tenantRepo.getTenantWithCode('default');
+        if (tenant == null) {
+            Logger.instance().log('Default tenant not found!');
+            return;
+        }
+        const tenantId = tenant.id;
+
         for (let i = 0; i < arr.length; i++) {
 
             var t = arr[i];
@@ -74,6 +83,7 @@ export class HealthSystemService {
 
                 const entity: HospitalDomainModel = {
                     HealthSystemId : healthSystem.id,
+                    TenantId       : tenantId,
                     Tags           : healthSystem.Tags,
                     Name           : t['AssociatedHospitals'][j]
                 };

@@ -10,7 +10,7 @@ import {
 
 export class TypesAuth {
 
-    static _baseContext = 'General.Types';
+    static readonly _baseContext = 'General.Types';
 
     static readonly createPriorityType: AuthOptions = {
         ...DefaultAuthOptions,

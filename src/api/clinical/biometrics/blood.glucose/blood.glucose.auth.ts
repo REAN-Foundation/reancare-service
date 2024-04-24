@@ -10,7 +10,7 @@ import {
 
 export class BloodGlucoseAuth {
 
-    static _baseContext = `Clinical.Biometrics.BloodGlucose`;
+    static readonly _baseContext = `Clinical.Biometrics.BloodGlucose`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

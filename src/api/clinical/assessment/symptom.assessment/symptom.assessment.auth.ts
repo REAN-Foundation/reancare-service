@@ -10,46 +10,46 @@ import {
 
 export class SymptomAssessmentAuth {
 
-    static _baseContext = `Clinical.Assessments.SymptomAssessment`;
+    static readonly _baseContext = `Clinical.Assessments.SymptomAssessment`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Create`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.CreateOne,
+        Context     : `${this._baseContext}.Create`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
     };
 
     static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Search`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.Search,
+        Context     : `${this._baseContext}.Search`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.Search,
     };
 
     static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetById`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.GetOne,
+        Context     : `${this._baseContext}.GetById`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
     };
 
     static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Update`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.UpdateOne,
+        Context     : `${this._baseContext}.Update`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
     };
 
     static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Delete`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.DeleteOne,
+        Context     : `${this._baseContext}.Delete`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
     };
 
 }

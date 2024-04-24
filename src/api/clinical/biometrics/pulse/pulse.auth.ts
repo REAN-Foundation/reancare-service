@@ -10,7 +10,7 @@ import {
 
 export class PulseAuth {
 
-    static _baseContext = `Clinical.Biometrics.Pulse`;
+    static readonly _baseContext = `Clinical.Biometrics.Pulse`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

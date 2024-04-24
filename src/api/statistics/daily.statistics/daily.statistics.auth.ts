@@ -10,7 +10,7 @@ import {
 
 export class DailyStatisticsAuth {
 
-    static _baseContext = `Statistics.DailyStatistics`;
+    static readonly _baseContext = `Statistics.DailyStatistics`;
 
     static readonly getDailyTenantStats: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class UserDeviceDetailsAuth {
 
-    static _baseContext = 'User.DeviceDetails';
+    static readonly _baseContext = 'User.DeviceDetails';
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class DoctorNoteAuth {
 
-    static _baseContext = `Clinical.DoctorNote`;
+    static readonly _baseContext = `Clinical.DoctorNote`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

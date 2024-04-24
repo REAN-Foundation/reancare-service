@@ -10,7 +10,7 @@ import {
 
 export class ReminderAuth {
 
-    static _baseContext = 'General.Reminder';
+    static readonly _baseContext = 'General.Reminder';
 
     static readonly createOneTimeReminder: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class SymptomTypeAuth {
 
-  static _baseContext = `Clinical.Symptoms.SymptomType`;
+  static readonly _baseContext = `Clinical.Symptoms.SymptomType`;
 
   static readonly create: AuthOptions = {
       ...DefaultAuthOptions,

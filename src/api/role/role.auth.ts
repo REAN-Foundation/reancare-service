@@ -10,7 +10,7 @@ import {
 
 export class RoleAuth {
 
-    static _baseContext = 'Role';
+    static readonly _baseContext = 'Role';
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

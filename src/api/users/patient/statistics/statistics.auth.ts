@@ -10,7 +10,7 @@ import {
 
 export class StatisticsAuth {
 
-    static _baseContext = 'User.Patient.Statistics';
+    static readonly _baseContext = 'User.Patient.Statistics';
 
     static readonly getPatientStatsReport: AuthOptions = {
         ...DefaultAuthOptions,

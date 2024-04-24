@@ -10,7 +10,7 @@ import {
 
 export class HealthProfileAuth {
 
-    static _baseContext = 'User.Patient.HealthProfile';
+    static readonly _baseContext = 'User.Patient.HealthProfile';
 
     static readonly getByPatientUserId: AuthOptions = {
         ...DefaultAuthOptions,

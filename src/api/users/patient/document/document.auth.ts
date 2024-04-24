@@ -10,7 +10,7 @@ import {
 
 export class PatientDocumentAuth {
 
-    static _baseContext = 'User.Patient.Document';
+    static readonly _baseContext = 'User.Patient.Document';
 
     static readonly getTypes: AuthOptions = {
         ...DefaultAuthOptions,

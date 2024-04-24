@@ -10,7 +10,7 @@ import {
 
 export class EmergencyContactAuth {
 
-    static _baseContext = 'User.Patient.EmergencyContact';
+    static readonly _baseContext = 'User.Patient.EmergencyContact';
 
     static readonly getContactRoles: AuthOptions = {
         ...DefaultAuthOptions,

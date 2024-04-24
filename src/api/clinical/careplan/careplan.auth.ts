@@ -10,7 +10,7 @@ import {
 
 export class CareplanAuth {
 
-    static _baseContext = `Clinical.Careplan`;
+    static readonly _baseContext = `Clinical.Careplan`;
 
     static readonly getPatientEligibility: AuthOptions = {
         ...DefaultAuthOptions,

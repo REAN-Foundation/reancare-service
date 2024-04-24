@@ -10,7 +10,7 @@ import {
 
 export class AssessmentTemplateAuth {
 
-    static _baseContext = `Clinical.Assessments.AssessmentTemplate`;
+    static readonly _baseContext = `Clinical.Assessments.AssessmentTemplate`;
 
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,

@@ -10,7 +10,7 @@ import {
 
 export class PersonAuth {
 
-    static _baseContext = 'Person';
+    static readonly _baseContext = 'Person';
 
     static readonly getAllPersonsWithPhoneAndRole: AuthOptions = {
         ...DefaultAuthOptions,

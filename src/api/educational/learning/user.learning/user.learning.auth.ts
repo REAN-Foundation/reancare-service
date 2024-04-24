@@ -10,7 +10,7 @@ import {
 
 export class UserLearningAuth {
 
-    static _baseContext = `Educational.UserLearning`;
+    static readonly _baseContext = `Educational.UserLearning`;
 
     static readonly updateUserLearning: AuthOptions = {
         ...DefaultAuthOptions,

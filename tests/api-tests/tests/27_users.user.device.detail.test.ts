@@ -20,6 +20,7 @@ describe('27 - User device detail tests', function() {
             .post(`/api/v1/user-device-details/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.UserDeviceDetails.id, 'UserDeviceDetailId');

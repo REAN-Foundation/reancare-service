@@ -188,7 +188,7 @@ describe('86 - Rssfeed Item tests', function() {
                 expect(response.body.Status).to.equal('failure');
                 
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('86:07 -> Negative - Update rssfeed item', function(done) {

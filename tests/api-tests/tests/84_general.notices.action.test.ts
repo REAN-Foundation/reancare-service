@@ -79,7 +79,7 @@ describe('84 - Notice Action tests', function() {
                 expect(response.body.Status).to.equal('failure');
             
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('84:05 -> Negative - Get notice action for the user', function(done) {

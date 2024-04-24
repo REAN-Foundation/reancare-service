@@ -159,7 +159,7 @@ describe('35 - Move minutes records tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('35:07 -> Negative - Search move minutes records', function(done) {

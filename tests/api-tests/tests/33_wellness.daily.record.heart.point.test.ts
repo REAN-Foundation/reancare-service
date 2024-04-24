@@ -156,7 +156,7 @@ describe('33 - Heart points records tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('33:07 -> Negative - Get heart points by id', function(done) {

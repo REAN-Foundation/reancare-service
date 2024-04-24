@@ -186,7 +186,7 @@ describe('40 - Course module tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(400, done);
     });
 
     it('40:08 -> Negative - Update course module', function(done) {

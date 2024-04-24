@@ -6,7 +6,7 @@ import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
 import { endDate, getRandomEnumValue, pastDateString, startDate } from '../utils';
-import { BloodGroupList, MaritalStatusList, Severity } from '../../../src/domain.types/miscellaneous/system.types';
+import { Severity } from '../../../src/domain.types/miscellaneous/system.types';
 
 const infra = Application.instance();
 
@@ -15,159 +15,176 @@ const infra = Application.instance();
 describe('103 - tests', function() {
 
     var agent = request.agent(infra._app);
+
+    it('103:01 -> Create assessment template', function(done) {
+        loadTemplateCreateModel();
+        const createModel = getTestData("TemplateCreateModel");
+        agent
+            .post(`/api/v1/clinical/symptom-assessment-templates/`)
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .send(createModel)
+            .expect(response => {
+                setTestData(response.body.Data.SymptomAssessmentTemplate.id, 'AssessmentTemplateId_1');
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('success');
+
+            })
+            .expect(201, done);
+    });
    
-    it('103:01 -> Create knowledge nugget test', function(done) {
-      loadKnowledgeNuggetCreateModel();
-      const createModel = getTestData("KnowledgeNuggetCreateModel");
+    it('103:02 -> Create symptom assessment test', function(done) {
+      loadSymptomAssessmentCreateModel();
+      const createModel = getTestData("SymptomAssessmentCreateModel");
       agent
-          .post(`/api/v1/educational/knowledge-nuggets/`)
+          .post(`/api/v1/clinical/symptom-assessments/`)
           .set('Content-Type', 'application/json')
           .set('x-api-key', `${process.env.TEST_API_KEY}`)
-          .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+          .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
           .send(createModel)
           .expect(response => {
-              setTestData(response.body.Data.KnowledgeNugget.id, 'KnowledgeNuggetId_1');
+              setTestData(response.body.Data.SymptomAssessment.id, 'AssessmentId_1');
               expect(response.body).to.have.property('Status');
-              expect(response.body.Status).to.equal('success'); 
-
+              expect(response.body.Status).to.equal('success');         
           })
           .expect(201, done);
   });
 
-  it('103:02 -> Create heart points test', function(done) {
-    loadHeartPointCreateModel();
-    const createModel = getTestData("HeartPointCreateModel");
+  it('Create patient with phone & password', function(done) {
+    loadPatientCreateWithPhoneThirdModel();
+    const createModel = getTestData("PatientCreateWithPhoneThirdModel");
     agent
-        .post(`/api/v1/wellness/daily-records/heart-points/`)
+        .post(`/api/v1/patients/`)
         .set('Content-Type', 'application/json')
         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
         .send(createModel)
         .expect(response => {
-            setTestData(response.body.Data.HeartPoints.id, 'HeartPointId_1');
             expect(response.body).to.have.property('Status');
-            expect(response.body.Status).to.equal('success'); 
+            expect(response.body.Status).to.equal('success');
 
         })
         .expect(201, done);
   });
 
-  it('103:03 -> Get patient health profile test', function(done) {
+  it('Patient login with password', function(done) {
+    loadPatientLoginThirdModel();
+    const createModel = getTestData("PatientLoginThirdModel");
     agent
-        .get(`/api/v1/patient-health-profiles/${getTestData('PatientUserId')}`)
+        .post(`/api/v1/users/login-with-password/`)
         .set('Content-Type', 'application/json')
         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+        .send(createModel)
         .expect(response => {
-            expect(response.body).to.have.property('Status');
-            expect(response.body.Status).to.equal('success');
+            assert.exists(response.body.Data.AccessToken, 'Access token is returned.');
+            assert.exists(response.body.Data.User, 'Login user details exist.');
+            expect(response.body.Data.User).to.have.property('id');
+            setTestData(response.body.Data.AccessToken, "PatientJwt_1");
+            setTestData(response.body.Data.User.UserId, "PatientUserTestId_Test");
+
         })
         .expect(200, done);
-  });
-
-  it('103:04 -> Update health profile', function(done) {
-    loadHealthProfileUpdateModel();
-    const updateModel = getTestData("HealthProfileUpdateModel");
-    agent
-        .put(`/api/v1/patient-health-profiles/${getTestData('PatientUserId')}`)
-        .set('Content-Type', 'application/json')
-        .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-        .send(updateModel)
-        .expect(response => {
-          expect(response.body).to.have.property('Status');
-          expect(response.body.Status).to.equal('success');
-        })
-        .expect(200, done);
-  });
-
-  it('103:05 -> Create address', function(done) {
-  loadAddressCreateModel();
-  const createModel = getTestData("AddressCreateModel");
-  agent
-      .post(`/api/v1/addresses/`)
-      .set('Content-Type', 'application/json')
-      .set('x-api-key', `${process.env.TEST_API_KEY}`)
-      .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-      .send(createModel)
-      .expect(response => {
-          setTestData(response.body.Data.Address.id, 'AddressId_1');
-          expect(response.body).to.have.property('Status');
-          expect(response.body.Status).to.equal('success');
-
-      })
-      .expect(201, done);
   });
 
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadKnowledgeNuggetCreateModel = async (
-  ) => {
-      const model = {
-          TopicName           : faker.lorem.word(),
-          BriefInformation    : faker.word.words(),
-          DetailedInformation : faker.word.words(),
-          AdditionalResources : [
-              faker.word.words()
-          ],
-          Tags : [
-              faker.word.words()
-          ]
-    
-      };
-      setTestData(model, "KnowledgeNuggetCreateModel");
-};
-
-export const loadHeartPointCreateModel = async (
-  ) => {
-      const model = {
-          PersonId      : getTestData("PatientPersonId"),
-          PatientUserId : getTestData("PatientUserId"),
-          HeartPoints   : faker.number.int(10),
-          Unit          : faker.string.symbol()
-    
-      };
-      setTestData(model, "HeartPointCreateModel");
-};
-
-export const loadHealthProfileUpdateModel = async (
-  ) => {
-      const model = {
-          BloodGroup         : getRandomEnumValue(BloodGroupList),
-          MajorAilment       : faker.lorem.word(5),
-          OtherConditions    : faker.lorem.word(5),
-          IsDiabetic         : faker.datatype.boolean(),
-          HasHeartAilment    : faker.datatype.boolean(),
-          MaritalStatus      : getRandomEnumValue(MaritalStatusList),
-          Ethnicity          : faker.lorem.slug(2),
-          Nationality        : faker.location.country(),
-          Occupation         : faker.lorem.words(2),
-          SedentaryLifestyle : faker.datatype.boolean(),
-          IsSmoker           : faker.datatype.boolean(),
-          IsDrinker          : faker.datatype.boolean(),
-          DrinkingSeverity   : getRandomEnumValue(Severity),
-          DrinkingSince      : faker.date.past(),
-          SubstanceAbuse     : faker.datatype.boolean(),
-          ProcedureHistory   : faker.word.words()
-      };
-      setTestData(model, "HealthProfileUpdateModel");
-};
-
-export const loadAddressCreateModel = async (
-  ) => {
-      const model = {
-          Type        : faker.lorem.word(),
-          AddressLine : faker.location.streetAddress(),
-          City        : faker.location.city(),
-          District    : faker.lorem.word(),
-          State       : faker.lorem.word(),
-          Country     : faker.location.country(),
-          PostalCode  : faker.location.zipCode(),
-          Longitude   : faker.location.longitude(),
-          Lattitude   : faker.location.latitude()
+export const loadTemplateCreateModel = async (
+    ) => {
+        const model = {
+            Title       : faker.lorem.word(),
+            Description : faker.lorem.words(10),
+            Tags        : [
+                faker.lorem.words(),
+                faker.lorem.words()
+            ]
       
+        };
+        setTestData(model, "TemplateCreateModel");
+    };
+
+export const loadSymptomAssessmentCreateModel = async (
+  ) => {
+      const model = {
+          PatientUserId        : getTestData("PatientUserId"),
+          AssessmentTemplateId : getTestData("AssessmentTemplateId_1"),
+          Title                : faker.lorem.words(),
+          AssessmentDate       : faker.date.anytime()
+        
       };
-      setTestData(model, "AddressCreateModel");
+      setTestData(model, "SymptomAssessmentCreateModel");
 };
+
+// export const loadTemplateCreateModel = async (
+//   ) => {
+//       const model = {
+//           Title       : faker.lorem.word(),
+//           Description : faker.lorem.words(10),
+//           Tags        : [
+//               faker.lorem.words(),
+//               faker.lorem.words()
+//           ]
+    
+//       };
+//       setTestData(model, "TemplateCreateModel");
+// };
+
+export const loadEnrollmentCreateModel = async (
+  ) => {
+      const model = {
+          Provider  : "AHA",
+          PlanCode  : "HFMotivator",
+          StartDate : "2024-08-17"
+      };
+      setTestData(model, "EnrollmentCreateModel");
+};
+
+const patientPhoneNumber: string = faker.phone.number('+103-##########');
+
+const patientPassword : string = faker.internet.password()
+
+export const loadPatientCreateWithPhoneThirdModel = async (
+    ) => {
+        const model = {
+            Phone: patientPhoneNumber,
+            Password: patientPassword,
+            LoginRoleId: getTestData("patientRoleId"),
+            TenantId: getTestData("TenantId")
+        };
+        setTestData(model, 'PatientCreateWithPhoneThirdModel');
+};
+
+export const loadPatientLoginThirdModel = async (
+    ) => {
+        const model = {
+            Phone: patientPhoneNumber,
+            Password: patientPassword,
+            LoginRoleId: getTestData("patientRoleId"),
+        };
+        setTestData(model, 'PatientLoginThirdModel');
+};
+
+export const loadComplaintCreateModel = async (
+  ) => {
+      const model = {
+          PatientUserId             : getTestData("PatientUserId_Test"),
+          MedicalPractitionerUserId : getTestData("DoctorUserId_Test"),
+          VisitId                   : faker.string.uuid(),
+          EhrId                     : faker.string.uuid(),
+          Complaint                 : faker.lorem.words(),
+          Severity                  : getRandomEnumValue(Severity),
+          RecordDate                : faker.date.anytime()
+      };
+      setTestData(model, "ComplaintCreateModel");
+};
+
+export const loadStartConversationModel = async (
+  ) => {
+      const model = {
+          InitiatingUserId : getTestData("PatientUserId"),
+          OtherUserId      : getTestData("PatientUserTestId")
+      };
+      setTestData(model, "StartConversationModel");
+  };
+  

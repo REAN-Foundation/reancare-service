@@ -97,7 +97,7 @@ describe('80 - CURD Model tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('80:06 -> Negative - Update assessment template by id', function(done) {
@@ -130,7 +130,7 @@ describe('80 - CURD Model tests', function() {
                 expect(response.body.Status).to.equal('failure');
                                                           
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('80:08 -> Negative - Delete assessment template by id', function(done) {

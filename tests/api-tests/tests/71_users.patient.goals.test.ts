@@ -204,7 +204,7 @@ describe('71 - Patient goal tests', function() {
                 expect(response.body.Status).to.equal('failure');
                 
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('71:09 -> Negative - Delete goal', function(done) {
@@ -218,7 +218,7 @@ describe('71 - Patient goal tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
 });

@@ -10,11 +10,11 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('105 - User task tests', function() {
+describe('106 - User task tests', function() {
 
     var agent = request.agent(infra._app);
 
-    it('105:01 -> Get user task categories', function(done) {
+    it('106:01 -> Get user task categories', function(done) {
         agent
             .get(`/api/v1/user-tasks/categories/`)
             .set('Content-Type', 'application/json')
@@ -27,7 +27,7 @@ describe('105 - User task tests', function() {
             .expect(200, done);
     });
 
-    it('105:02 -> Get user action types', function(done) {
+    it('106:02 -> Get user action types', function(done) {
         agent
             .get(`/api/v1/user-tasks/action-types/`)
             .set('Content-Type', 'application/json')
@@ -40,7 +40,7 @@ describe('105 - User task tests', function() {
             .expect(200, done);
     });
 
-    it('105:03 -> Create task', function(done) {
+    it('106:03 -> Create task', function(done) {
         loadTaskCreateModel();
         const createModel = getTestData("TaskCreateModel");
         agent
@@ -72,7 +72,7 @@ describe('105 - User task tests', function() {
             .expect(201, done);
     });
 
-    it('105:04 -> Get task by id', function(done) {
+    it('106:04 -> Get task by id', function(done) {
 
         agent
             .get(`/api/v1/user-tasks/${getTestData('TaskId_1')}`)
@@ -99,7 +99,7 @@ describe('105 - User task tests', function() {
             .expect(200, done);
     });
 
-    it('105:05 -> Update task', function(done) {
+    it('106:05 -> Update task', function(done) {
         loadTaskUpdateModel();
         const updateModel = getTestData("TaskUpdateModel");
         agent
@@ -124,7 +124,7 @@ describe('105 - User task tests', function() {
             .expect(200, done);
     });
 
-    it('105:06 -> Start task', function(done) {
+    it('106:06 -> Start task', function(done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('TaskId_1')}/start`)
             .set('Content-Type', 'application/json')
@@ -138,7 +138,7 @@ describe('105 - User task tests', function() {
             .expect(200, done);
     });
 
-    it('105:07 -> Search careplan tasks', function(done) {
+    it('106:07 -> Search careplan tasks', function(done) {
       loadUserTaskSearchModel();
       const searchModel = getTestData('UserTaskSearchModel');
       agent
@@ -153,7 +153,7 @@ describe('105 - User task tests', function() {
           .expect(200, done);
   });
 
-    it('105:08 -> Finish task', function(done) {
+    it('106:08 -> Finish task', function(done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('TaskId_1')}/finish`)
             .set('Content-Type', 'application/json')
@@ -169,7 +169,7 @@ describe('105 - User task tests', function() {
             .expect(200, done);
     });
 
-    it('105:09 -> Create task again', function(done) {
+    it('106:09 -> Create task again', function(done) {
         loadTaskCreateModel();
         const createModel = getTestData("TaskCreateModel");
         agent
@@ -201,7 +201,7 @@ describe('105 - User task tests', function() {
             .expect(201, done);
     });
 
-    it('105:10 -> Cancel task', function(done) {
+    it('106:10 -> Cancel task', function(done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('TaskId_1')}/cancel`)
             .set('Content-Type', 'application/json')
@@ -247,7 +247,7 @@ describe('105 - User task tests', function() {
             .expect(201, done);
     });
 
-    it('105:11 -> Delete task', function(done) {
+    it('106:11 -> Delete task', function(done) {
         
         agent
             .delete(`/api/v1/user-tasks/${getTestData('TaskId_1')}`)
@@ -293,7 +293,7 @@ describe('105 - User task tests', function() {
             .expect(201, done);
     });
 
-    it('105:12 -> Negative - Get user task categories', function(done) {
+    it('106:12 -> Negative - Get user task categories', function(done) {
         agent
             .get(`/api/v1/user-tasks/categories/`)
             .set('Content-Type', 'application/json')
@@ -305,7 +305,7 @@ describe('105 - User task tests', function() {
             .expect(401, done);
     });
 
-    it('105:13 -> Negative - Create task', function(done) {
+    it('106:13 -> Negative - Create task', function(done) {
         loadTaskCreateModel();
         const createModel = getTestData("TaskCreateModel");
         agent
@@ -321,7 +321,7 @@ describe('105 - User task tests', function() {
             .expect(401, done);
     });
 
-    it('105:14 -> Negative - Update task', function(done) {
+    it('106:14 -> Negative - Update task', function(done) {
         loadTaskUpdateModel();
         const updateModel = getTestData("TaskUpdateModel");
         agent
@@ -337,7 +337,7 @@ describe('105 - User task tests', function() {
             .expect(404, done);
     });
 
-    it('105:15 -> Negative - Start task', function(done) {
+    it('106:15 -> Negative - Start task', function(done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('Task_Id')}/start`)
             .set('Content-Type', 'application/json')
@@ -350,7 +350,7 @@ describe('105 - User task tests', function() {
             .expect(401, done);
     });
 
-    it('105:16 -> Negative - Cancel task', function(done) {
+    it('106:16 -> Negative - Cancel task', function(done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('Task_Id')}/cancel`)
             .set('Content-Type', 'application/json')
@@ -362,7 +362,7 @@ describe('105 - User task tests', function() {
             .expect(401, done);
     });
 
-    it('105:17 -> Negative - Delete task', function(done) {
+    it('106:17 -> Negative - Delete task', function(done) {
         
         agent
             .delete(`/api/v1/user-tasks/${getTestData('Task_Id')}`)

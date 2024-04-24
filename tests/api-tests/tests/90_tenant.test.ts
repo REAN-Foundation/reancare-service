@@ -135,7 +135,7 @@ describe('90 - Tenant tests', function () {
             .get(`/api/v1/tenants/search${loadTenantQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
             .expect((response) => {
                 expect(response.body.Data.TenantRecords).to.have.property('TotalCount');
                 expect(response.body.Data.TenantRecords).to.have.property('RetrievedCount');
@@ -266,7 +266,8 @@ export const loadTenantCreateModel = async () => {
         Name: faker.person.fullName(),
         Description: faker.lorem.word(10),
         Code: faker.lorem.words(1),
-        Phone: faker.phone.number(),
+        // Phone: faker.phone.number(),
+        Phone: "+91-1100000001",
         Email: faker.internet.exampleEmail(),
     };
     setTestData(model, 'TenantCreateModel');
@@ -277,7 +278,8 @@ export const loadTenantUpdateModel = async () => {
         Name: faker.person.fullName(),
         Description: faker.lorem.word(10),
         Code: faker.lorem.words(1),
-        Phone: faker.phone.number(),
+        // Phone: faker.phone.number(),
+        Phone: "+91-1200000001",
         Email: faker.internet.exampleEmail(),
     };
     setTestData(model, 'TenantUpdateModel');

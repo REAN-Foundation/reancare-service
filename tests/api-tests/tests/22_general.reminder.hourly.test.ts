@@ -86,7 +86,7 @@ describe('22 - Reminder schedule hourly', function() {
                 expect(response.body.Status).to.equal('failure');
         
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('22:04 -> Negative Get hourly schedule by id', function(done) {

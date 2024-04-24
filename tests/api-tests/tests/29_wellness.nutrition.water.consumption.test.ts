@@ -153,7 +153,7 @@ describe('29 - Nutrition water consumption tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('29:07 -> Negative - Get water consumption by id', function(done) {

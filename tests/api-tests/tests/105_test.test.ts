@@ -13,11 +13,11 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('93 - tests', function() {
+describe('105 - tests', function() {
 
     var agent = request.agent(infra._app);
    
-    it('93:01 -> Get contact person role test', function(done) {
+    it('105:01 -> Get contact person role test', function(done) {
       agent
         .get(`/api/v1/patient-emergency-contacts/roles/`)
         .set('Content-Type', 'application/json')
@@ -30,14 +30,14 @@ describe('93 - tests', function() {
         .expect(200, done);
   });
 
-  it('93:02 -> Create patient goal test', function(done) {
+  it('105:02 -> Create patient goal test', function(done) {
     loadPatientGoalCreateModel();
     const createModel = getTestData("PatientGoalCreateModel");
     agent
         .post(`/api/v1/patient-goals/`)
         .set('Content-Type', 'application/json')
         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+        .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
         .send(createModel)
         .expect(response => {
             setTestData(response.body.Data.Goal.id, 'PatientGoalId_1');
@@ -48,14 +48,14 @@ describe('93 - tests', function() {
         .expect(201, done);
   });
   
-  it('93:03 -> Create One time reminder test', function(done) {
+  it('105:03 -> Create One time reminder test', function(done) {
     loadOneTimeReminderCreateModel();
     const createModel = getTestData("OneTimeReminderCreateModel");
     agent
         .post(`/api/v1/reminders/one-time/`)
         .set('Content-Type', 'application/json')
         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+        .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
         .send(createModel)
         .expect(response => {
             setTestData(response.body.Data.Reminder.id, 'OneTimeReminderId_1');
@@ -66,14 +66,14 @@ describe('93 - tests', function() {
         .expect(201, done);
   });
 
-  it('93:04 -> Add new medication by drug name test', function(done) {
+  it('105:04 -> Add new medication by drug name test', function(done) {
     loadMedicationCreateModel();
     const createModel = getTestData("MedicationCreateModel");
     agent
         .post(`/api/v1/clinical/medications/`)
         .set('Content-Type', 'application/json')
         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
+        .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
         .send(createModel)
         .expect(response => {
             setTestData(response.body.Data.Medication.id, 'MedicationId_1');
@@ -84,7 +84,7 @@ describe('93 - tests', function() {
         .expect(201, done);
   });
 
-  it('93:05 -> Get medication consumption list', function(done) {
+  it('105:05 -> Get medication consumption list', function(done) {
     loadMedicationConsumptionQueryString();
     agent
         .get(`/api/v1/clinical/medication-consumptions/search-for-patient/${getTestData("PatientUserId")}${loadMedicationConsumptionQueryString()}`)

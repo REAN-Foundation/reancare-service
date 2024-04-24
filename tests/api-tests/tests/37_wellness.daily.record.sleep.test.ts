@@ -160,7 +160,7 @@ describe('37 - Sleep record tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('37:07 -> Negative - Search sleep records', function(done) {

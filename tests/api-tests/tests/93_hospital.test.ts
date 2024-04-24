@@ -167,7 +167,7 @@ describe('93 - Hospital tests', function () {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('93:09 -> Negative - Update hospital', function (done) {
@@ -191,6 +191,7 @@ describe('93 - Hospital tests', function () {
 
 export const loadHospitalCreateModel = async () => {
     const model = {
+        TenantId: getTestData("TenantId"),
         Name: faker.person.fullName(),
         HealthSystemId: getTestData("HospitalSystemId"),
         Tags: [faker.lorem.words(), faker.lorem.words()],

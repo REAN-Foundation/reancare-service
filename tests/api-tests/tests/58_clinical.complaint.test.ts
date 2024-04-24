@@ -206,7 +206,7 @@ describe('58 - Complaint tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(404, done);
+            .expect(400, done);
     });
 
 });

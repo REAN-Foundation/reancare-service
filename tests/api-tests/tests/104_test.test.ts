@@ -5,9 +5,8 @@ import { AssessmentType } from '../../../src/domain.types/clinical/assessment/as
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
-import { endDate, futureDateString, getRandomEnumValue, pastDateString, startDate } from '../utils';
+import { endDate, getRandomEnumValue, pastDateString, startDate } from '../utils';
 import { BloodGroupList, MaritalStatusList, Severity } from '../../../src/domain.types/miscellaneous/system.types';
-import { MedicationDurationUnits, MedicationTimeSchedules } from '../../../src/domain.types/clinical/medication/medication/medication.types';
 
 const infra = Application.instance();
 
@@ -17,9 +16,45 @@ describe('104 - tests', function() {
 
     var agent = request.agent(infra._app);
    
-    it('104:01 -> Get contact person role test', function(done) {
+    it('104:01 -> Create knowledge nugget test', function(done) {
+      loadKnowledgeNuggetCreateModel();
+      const createModel = getTestData("KnowledgeNuggetCreateModel");
       agent
-        .get(`/api/v1/patient-emergency-contacts/roles/`)
+          .post(`/api/v1/educational/knowledge-nuggets/`)
+          .set('Content-Type', 'application/json')
+          .set('x-api-key', `${process.env.TEST_API_KEY}`)
+          .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+          .send(createModel)
+          .expect(response => {
+              setTestData(response.body.Data.KnowledgeNugget.id, 'KnowledgeNuggetId_1');
+              expect(response.body).to.have.property('Status');
+              expect(response.body.Status).to.equal('success'); 
+
+          })
+          .expect(201, done);
+  });
+
+  it('104:02 -> Create heart points test', function(done) {
+    loadHeartPointCreateModel();
+    const createModel = getTestData("HeartPointCreateModel");
+    agent
+        .post(`/api/v1/wellness/daily-records/heart-points/`)
+        .set('Content-Type', 'application/json')
+        .set('x-api-key', `${process.env.TEST_API_KEY}`)
+        .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+        .send(createModel)
+        .expect(response => {
+            setTestData(response.body.Data.HeartPoints.id, 'HeartPointId_1');
+            expect(response.body).to.have.property('Status');
+            expect(response.body.Status).to.equal('success'); 
+
+        })
+        .expect(201, done);
+  });
+
+  it('104:03 -> Get patient health profile test', function(done) {
+    agent
+        .get(`/api/v1/patient-health-profiles/${getTestData('PatientUserId')}`)
         .set('Content-Type', 'application/json')
         .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
@@ -30,133 +65,109 @@ describe('104 - tests', function() {
         .expect(200, done);
   });
 
-  it('104:02 -> Create patient goal test', function(done) {
-    loadPatientGoalCreateModel();
-    const createModel = getTestData("PatientGoalCreateModel");
+  it('104:04 -> Update health profile', function(done) {
+    loadHealthProfileUpdateModel();
+    const updateModel = getTestData("HealthProfileUpdateModel");
     agent
-        .post(`/api/v1/patient-goals/`)
-        .set('Content-Type', 'application/json')
-        .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-        .send(createModel)
-        .expect(response => {
-            setTestData(response.body.Data.Goal.id, 'PatientGoalId_1');
-            expect(response.body).to.have.property('Status');
-            expect(response.body.Status).to.equal('success');
-
-        })
-        .expect(201, done);
-  });
-  
-  it('104:03 -> Create One time reminder test', function(done) {
-    loadOneTimeReminderCreateModel();
-    const createModel = getTestData("OneTimeReminderCreateModel");
-    agent
-        .post(`/api/v1/reminders/one-time/`)
-        .set('Content-Type', 'application/json')
-        .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-        .send(createModel)
-        .expect(response => {
-            setTestData(response.body.Data.Reminder.id, 'OneTimeReminderId_1');
-            expect(response.body).to.have.property('Status');
-            expect(response.body.Status).to.equal('success');
-
-        })
-        .expect(201, done);
-  });
-
-  it('104:04 -> Add new medication by drug name test', function(done) {
-    loadMedicationCreateModel();
-    const createModel = getTestData("MedicationCreateModel");
-    agent
-        .post(`/api/v1/clinical/medications/`)
-        .set('Content-Type', 'application/json')
-        .set('x-api-key', `${process.env.TEST_API_KEY}`)
-        .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-        .send(createModel)
-        .expect(response => {
-            setTestData(response.body.Data.Medication.id, 'MedicationId_1');
-            expect(response.body).to.have.property('Status');
-            expect(response.body.Status).to.equal('success');
-
-        })
-        .expect(201, done);
-  });
-
-  it('104:05 -> Get medication consumption list', function(done) {
-    loadMedicationConsumptionQueryString();
-    agent
-        .get(`/api/v1/clinical/medication-consumptions/search-for-patient/${getTestData("PatientUserId")}${loadMedicationConsumptionQueryString()}`)
+        .put(`/api/v1/patient-health-profiles/${getTestData('PatientUserId')}`)
         .set('Content-Type', 'application/json')
         .set('x-api-key', `${process.env.TEST_API_KEY}`)
         .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+        .send(updateModel)
         .expect(response => {
-            expect(response.body).to.have.property('Status');
-            expect(response.body.Status).to.equal('success');
+          expect(response.body).to.have.property('Status');
+          expect(response.body.Status).to.equal('success');
         })
         .expect(200, done);
+  });
+
+  it('104:05 -> Create address', function(done) {
+  loadAddressCreateModel();
+  const createModel = getTestData("AddressCreateModel");
+  agent
+      .post(`/api/v1/addresses/`)
+      .set('Content-Type', 'application/json')
+      .set('x-api-key', `${process.env.TEST_API_KEY}`)
+      .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+      .send(createModel)
+      .expect(response => {
+          setTestData(response.body.Data.Address.id, 'AddressId_1');
+          expect(response.body).to.have.property('Status');
+          expect(response.body.Status).to.equal('success');
+
+      })
+      .expect(201, done);
   });
 
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadPatientGoalCreateModel = async (
+export const loadKnowledgeNuggetCreateModel = async (
   ) => {
       const model = {
-          PatientUserId : getTestData("PatientUserId"),
-          Title         : faker.lorem.word(),
-          CarePlanId    : faker.string.uuid(),
-          TypeCode      : faker.string.uuid(),
-          TypeName      : faker.company.name(),
-          GoalAchieved  : faker.datatype.boolean(),
-          GoalAbandoned : faker.datatype.boolean()
+          TopicName           : faker.lorem.word(),
+          BriefInformation    : faker.word.words(),
+          DetailedInformation : faker.word.words(),
+          AdditionalResources : [
+              faker.word.words()
+          ],
+          Tags : [
+              faker.word.words()
+          ]
     
       };
-      setTestData(model, "PatientGoalCreateModel");
+      setTestData(model, "KnowledgeNuggetCreateModel");
 };
 
-export const loadOneTimeReminderCreateModel = async (
+export const loadHeartPointCreateModel = async (
   ) => {
       const model = {
-          UserId           : getTestData("PatientUserId"),
-          Name             : faker.person.fullName(),
-          WhenDate         : futureDateString,
-          WhenTime         : "12:10:12",
-          HookUrl          : faker.internet.url(),
-          NotificationType : "SMS"
-  
-      };
-      setTestData(model, "OneTimeReminderCreateModel");
-};
-
-export const loadMedicationCreateModel = async (
-  ) => {
-      const model = {
+          PersonId      : getTestData("PatientPersonId"),
           PatientUserId : getTestData("PatientUserId"),
-          DrugName      : faker.lorem.word(),
-          Dose          : faker.number.int({ min: 1, max: 1.5 }),
-          DosageUnit    : "Tablet",
-          TimeSchedules : [
-              getRandomEnumValue(MedicationTimeSchedules)
-          ],
-          Frequency     : faker.number.int({ min: 2, max: 4 }),
-          FrequencyUnit : "Daily",
-          Route         : "Oral",
-          Duration      : faker.number.int({ min: 10, max: 20 }),
-          DurationUnit  : getRandomEnumValue(MedicationDurationUnits),
-          StartDate     : "2023-09-14",
-          RefillNeeded  : faker.datatype.boolean(),
-          Instructions  : faker.lorem.words(),
+          HeartPoints   : faker.number.int(10),
+          Unit          : faker.string.symbol()
+    
       };
-      setTestData(model, "MedicationCreateModel");
+      setTestData(model, "HeartPointCreateModel");
 };
 
-function loadMedicationConsumptionQueryString() {
-  //This is raw query. Please modify to suit the test
-  const queryString = '';
-  return queryString;
+export const loadHealthProfileUpdateModel = async (
+  ) => {
+      const model = {
+          BloodGroup         : getRandomEnumValue(BloodGroupList),
+          MajorAilment       : faker.lorem.word(5),
+          OtherConditions    : faker.lorem.word(5),
+          IsDiabetic         : faker.datatype.boolean(),
+          HasHeartAilment    : faker.datatype.boolean(),
+          MaritalStatus      : getRandomEnumValue(MaritalStatusList),
+          Ethnicity          : faker.lorem.slug(2),
+          Nationality        : faker.location.country(),
+          Occupation         : faker.lorem.words(2),
+          SedentaryLifestyle : faker.datatype.boolean(),
+          IsSmoker           : faker.datatype.boolean(),
+          IsDrinker          : faker.datatype.boolean(),
+          DrinkingSeverity   : getRandomEnumValue(Severity),
+          DrinkingSince      : faker.date.past(),
+          SubstanceAbuse     : faker.datatype.boolean(),
+          ProcedureHistory   : faker.word.words()
+      };
+      setTestData(model, "HealthProfileUpdateModel");
 };
 
-  
+export const loadAddressCreateModel = async (
+  ) => {
+      const model = {
+          Type        : faker.lorem.word(),
+          AddressLine : faker.location.streetAddress(),
+          City        : faker.location.city(),
+          District    : faker.lorem.word(),
+          State       : faker.lorem.word(),
+          Country     : faker.location.country(),
+          PostalCode  : faker.location.zipCode(),
+          Longitude   : faker.location.longitude(),
+          Lattitude   : faker.location.latitude()
+      
+      };
+      setTestData(model, "AddressCreateModel");
+};

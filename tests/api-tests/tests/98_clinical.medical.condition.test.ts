@@ -165,7 +165,7 @@ describe('98 - Medical condition tests', function () {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('98:08 -> Negative - Update medical condition', function (done) {
@@ -189,6 +189,7 @@ describe('98 - Medical condition tests', function () {
 export const loadMedicalConditionCreateModel = async () => {
     const model = {
         Condition: faker.lorem.word(),
+        TenantId: getTestData("TenantId"),
         Description: faker.lorem.words(),
         Language: faker.lorem.word(2),
     };

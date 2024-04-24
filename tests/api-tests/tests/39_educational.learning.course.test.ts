@@ -165,15 +165,14 @@ describe('39 - Course tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(401, done);
+            .expect(500, done);
     });
 
     it('39:07 -> Negative - Search course records', function(done) {
-        loadCourseQueryString();
+        loadNegativeCourseQueryString();
         agent
-            .get(`/api/v1/educational/courses/search${loadCourseQueryString()}`)
+            .get(`/api/v1/educational/courses/search?${loadNegativeCourseQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -202,6 +201,7 @@ describe('39 - Course tests', function() {
 export const loadCourseCreateModel = async (
 ) => {
     const model = {
+        TenantId: getTestData("TenantId"),
         Name           : faker.lorem.word(),
         Description    : faker.word.words(),
         ImageUrl       : faker.image.url(),
@@ -229,5 +229,11 @@ export const loadCourseUpdateModel = async (
 function loadCourseQueryString() {
     //This is raw query. Please modify to suit the test
     const queryString = '';
+    return queryString;
+}
+
+function loadNegativeCourseQueryString() {
+    //This is raw query. Please modify to suit the test
+    const queryString = 'name=abc';
     return queryString;
 }

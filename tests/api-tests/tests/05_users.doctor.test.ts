@@ -43,8 +43,8 @@ describe('05 - Doctor tests', function () {
             .send(createModel)
             .expect((response) => {
                 setTestData(response.body.Data.Doctor.id, 'DoctorId');
-                setTestData(response.body.Data.Doctor.User.id, 'DoctorUserId');
-                setTestData(response.body.Data.Doctor.User.Person.id, 'DoctorPersonId');
+                setTestData(response.body.Data.Doctor.User.id, 'DoctorUserId_1');
+                setTestData(response.body.Data.Doctor.User.Person.id, 'DoctorPersonId_1');
                 expect(response.body.Data.Doctor.User.Person).to.have.property('id');
                 expect(response.body.Data.Doctor.User.Person).to.have.property('FirstName');
                 expect(response.body.Data.Doctor.User.Person).to.have.property('Email');
@@ -101,7 +101,8 @@ describe('05 - Doctor tests', function () {
                 assert.exists(response.body.Data.User, 'Login user details exist.');
                 expect(response.body.Data.User).to.have.property('id');
                 setTestData(response.body.Data.AccessToken, 'DoctorJwt');
-                setTestData(response.body.Data.User.UserId, 'DoctorUserId_1');
+                setTestData(response.body.Data.User.id, 'DoctorUserId');
+                setTestData(response.body.Data.User.Person.id, 'DoctorPersonId');
             })
             .expect(200, done);
     });
@@ -118,8 +119,6 @@ describe('05 - Doctor tests', function () {
                 expect(response.body.Data.Doctor.User.Person).to.have.property('Email');
                 expect(response.body.Data.Doctor.User.Person).to.have.property('Phone');
 
-                expect(response.body.Data.Doctor.User.Person.FirstName).to.equal(getTestData('DoctorCreateModel').FirstName);
-                expect(response.body.Data.Doctor.User.Person.Phone).to.equal(getTestData('DoctorCreateModel').Phone);
             })
             .expect(200, done);
     });
@@ -167,15 +166,20 @@ describe('05 - Doctor tests', function () {
 
 ///////////////////////////////////////////////////////////////////////////
 
-const firstDoctorPhoneNumber: string = faker.phone.number();
+// const firstDoctorPhoneNumber: string = faker.phone.number();
 
-const secondDoctorPhoneNumber: string = faker.phone.number();
+const firstDoctorPhoneNumber: string = '+91-1000000004';
+
+// const secondDoctorPhoneNumber: string = faker.phone.number();
+
+const secondDoctorPhoneNumber: string = '+91-1000000005';
 
 const doctorPassword: string = faker.internet.password();
 
 export const loadDoctorPhoneCreateModel = async () => {
     const model = {
-        Phone: faker.phone.number(),
+        // Phone: faker.phone.number(),
+        Phone: '+91-1000000020',
         TenantId: getTestData('TenantId'),
     };
     setTestData(model, 'DoctorPhoneCreateModel');

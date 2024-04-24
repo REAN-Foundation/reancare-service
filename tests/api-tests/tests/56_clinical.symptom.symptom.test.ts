@@ -187,7 +187,7 @@ describe('56 - Symptom tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(404, done);
     });
 
     it('56:07 -> Negative - Search symptom records', function(done) {
@@ -225,7 +225,10 @@ export const loadSymptomCreateModel = async (
 ) => {
     const model = {
         PatientUserId  : getTestData("PatientUserId"),
+        MedicalPractitionerUserId: getTestData("DoctorUserId"),
+        AssessmentTemplateId: getTestData("AssessmentTemplateId"),
         AssessmentId   : getTestData("AssessmentId"),
+        VisitId          : getTestData("DoctorId"),
         SymptomTypeId  : getTestData("SymptomTypeId"),
         IsPresent      : faker.datatype.boolean(),
         Severity       : 'Low',
@@ -240,7 +243,9 @@ export const loadSymptomUpdateModel = async (
 ) => {
     const model = {
         PatientUserId  : getTestData("PatientUserId"),
+        MedicalPractitionerUserId: getTestData("DoctorUserId"),
         AssessmentId   : getTestData("AssessmentId"),
+        VisitId          : getTestData("DoctorId"),
         SymptomTypeId  : getTestData("SymptomTypeId"),
         IsPresent      : faker.datatype.boolean(),
         Severity       : 'Low',

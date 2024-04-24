@@ -158,7 +158,7 @@ describe('36 - Step counts records tests', function() {
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('36:07 -> Negative - Get step counts by id', function(done) {

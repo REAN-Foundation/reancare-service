@@ -214,7 +214,7 @@ describe('03 - Api client tests', function () {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('03:11 -> Negative - Renew api key', function (done) {
@@ -252,7 +252,8 @@ export const loadApiClientCreateModel = async () => {
     const model = {
         ClientName: faker.person.fullName(),
         Password: `${process.env.TEST_CLIENT_PASSWORD}`,
-        Phone: faker.phone.number(),
+        // Phone: faker.phone.number(),
+        Phone: "+91-1000000001",
         Email: faker.internet.exampleEmail(),
     };
     setTestData(model, 'ApiClientCreateModel');
@@ -262,7 +263,8 @@ export const loadApiClientValidityCreateModel = async () => {
     const model = {
         ClientName: faker.person.fullName(),
         Password: `${process.env.TEST_CLIENT_PASSWORD}`,
-        Phone: faker.phone.number(),
+        // Phone: faker.phone.number(),
+        Phone: "+91-1000000001",
         Email: faker.internet.exampleEmail(),
         ValidFrom: pastDateString,
         ValidTill: futureDateString,
@@ -281,7 +283,8 @@ export const loadApiKeyUpdateModel = async () => {
 export const loadApiClientUpdateModel = async () => {
     const model = {
         ClientName: faker.person.fullName(),
-        Phone: faker.phone.number(),
+        // Phone: faker.phone.number(),
+        Phone: "+91-1000000001",
         Email: faker.internet.exampleEmail(),
     };
     setTestData(model, 'ApiClientUpdateModel');

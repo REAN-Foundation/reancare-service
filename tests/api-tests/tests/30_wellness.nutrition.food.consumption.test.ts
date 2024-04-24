@@ -75,7 +75,7 @@ describe('30 - Nutrition food consumption tests', function() {
     it('30:03 -> Get food consumption by event name', function(done) {
 
         agent
-            .get(`/api/v1/wellness/nutrition/food-consumptions/${getTestData('FoodId_1')}/consumed-as/lunch`)
+            .get(`/api/v1/wellness/nutrition/food-consumptions/${getTestData('PatientUserId')}/consumed-as/lunch`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
@@ -103,7 +103,7 @@ describe('30 - Nutrition food consumption tests', function() {
     it('30:05 -> Get food consumption by record for day', function(done) {
 
         agent
-            .get(`/api/v1/wellness/nutrition/food-consumptions/${getTestData('FoodId_1')}/for-day/2021-09-16`)
+            .get(`/api/v1/wellness/nutrition/food-consumptions/${getTestData('PatientUserId')}/for-day/2021-09-16`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
@@ -246,7 +246,7 @@ describe('30 - Nutrition food consumption tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(401, done);
+            .expect(400, done);
     });
 
     it('30:12 -> Negative - Delete food consumption', function(done) {

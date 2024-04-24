@@ -57,8 +57,8 @@ describe('04 - Patient tests', function () {
             .send(createModel)
             .expect((response) => {
                 setTestData(response.body.Data.Patient.id, 'PatientId');
-                setTestData(response.body.Data.Patient.User.id, 'PatientUserId');
-                setTestData(response.body.Data.Patient.User.Person.id, 'PatientPersonId');
+                setTestData(response.body.Data.Patient.User.id, 'PatientUserId_2');
+                setTestData(response.body.Data.Patient.User.Person.id, 'PatientPersonId_1');
                 expect(response.body.Data.Patient.User.Person).to.have.property('id');
                 expect(response.body.Data.Patient.User.Person).to.have.property('FirstName');
                 expect(response.body.Data.Patient.User.Person).to.have.property('Email');
@@ -73,18 +73,18 @@ describe('04 - Patient tests', function () {
             .expect(201, done);
     });
 
-    it('04:03 -> Get user with phone and role', function (done) {
-        agent
-            .get(`/api/v1/users/by-phone/${firstPatientPhoneNumber}/role/${getTestData('patientRoleId')}`)
-            .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
-            .expect((response) => {
-                expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('success');
-            })
-            .expect(200, done);
-    });
+    // it('04:03 -> Get user with phone and role', function (done) {
+    //     agent
+    //         .get(`/api/v1/users/by-phone/${firstPatientPhoneNumber}/role/${getTestData('patientRoleId')}`)
+    //         .set('Content-Type', 'application/json')
+    //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
+    //         .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+    //         .expect((response) => {
+    //             expect(response.body).to.have.property('Status');
+    //             expect(response.body.Status).to.equal('success');
+    //         })
+    //         .expect(200, done);
+    // });
 
     it('04:04 -> Register patient- with same phone number - should fail', function (done) {
         loadPatientFailCreateModel();
@@ -110,7 +110,7 @@ describe('04 - Patient tests', function () {
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Patient.User.id, 'PatientUserId');
+                setTestData(response.body.Data.Patient.User.id, 'PatientUserId_1');
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
             })
@@ -130,11 +130,26 @@ describe('04 - Patient tests', function () {
                 assert.exists(response.body.Data.User, 'Login user details exist.');
                 expect(response.body.Data.User).to.have.property('id');
                 setTestData(response.body.Data.AccessToken, 'PatientJwt');
-                setTestData(response.body.Data.User.UserId, 'PatientUserId_1');
+                setTestData(response.body.Data.User.id, 'PatientUserId');
+                setTestData(response.body.Data.User.Person.id, 'PatientPersonId');
             })
             .expect(200, done);
     });
 
+
+    it('04:03 -> Get user with phone and role', function (done) {
+        agent
+            .get(`/api/v1/users/by-phone/${firstPatientPhoneNumber}/role/${getTestData('patientRoleId')}`)
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .expect((response) => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('success');
+            })
+            .expect(200, done);
+    });
+    
     it('04:07 -> Get patient by id', function (done) {
         agent
             .get(`/api/v1/patients/${getTestData('PatientUserId')}`)
@@ -209,15 +224,20 @@ describe('04 - Patient tests', function () {
 
 ///////////////////////////////////////////////////////////////////////////
 
-const firstPatientPhoneNumber: string = faker.phone.number();
+// const firstPatientPhoneNumber: string = faker.phone.number();
 
-const secondPatientPhoneNumber: string = faker.phone.number();
+const firstPatientPhoneNumber: string = '+91-1000000002';
+
+// const secondPatientPhoneNumber: string = faker.phone.number();
+
+const secondPatientPhoneNumber: string = '+91-1000000003';
 
 const patientPassword: string = faker.internet.password();
 
 export const loadPatientPhoneCreateFirstModel = async () => {
     const model = {
-        Phone: faker.phone.number(),
+        // Phone: faker.phone.number(),
+        Phone: '+91-1000000010',
         TenantId: getTestData('TenantId'),
     };
     setTestData(model, 'PatientPhoneCreateFirstModel');

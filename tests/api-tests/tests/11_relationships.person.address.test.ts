@@ -19,7 +19,7 @@ describe('11 - Person address tests', function() {
             .post(`/api/v1/persons/${getTestData('PatientPersonId')}/add-address/${getTestData('AddressId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -48,7 +48,7 @@ describe('11 - Person address tests', function() {
             .post(`/api/v1/persons/${getTestData('PatientPersonId')}/remove-address/${getTestData('AddressId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(removeModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

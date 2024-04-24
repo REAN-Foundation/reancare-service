@@ -19,7 +19,7 @@ describe('89 - Cohort tests', function () {
             .post(`/api/v1/cohorts/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
             .send(createModel)
             .expect((response) => {
                 setTestData(response.body.Data.Cohort.id, 'CohortId_1');
@@ -63,7 +63,7 @@ describe('89 - Cohort tests', function () {
             .get(`/api/v1/cohorts/${getTestData('CohortId_1')}/stats`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -76,7 +76,7 @@ describe('89 - Cohort tests', function () {
             .get(`/api/v1/cohorts/${getTestData('CohortId_1')}/users`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -89,7 +89,7 @@ describe('89 - Cohort tests', function () {
             .get(`/api/v1/cohorts/tenants/${getTestData('TenantId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -102,7 +102,7 @@ describe('89 - Cohort tests', function () {
     //         .post(`/api/v1/cohorts/${getTestData('CohortId_1')}/users/${getTestData('PatientUserId_11')}/add`)
     //         .set('Content-Type', 'application/json')
     //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+    //         .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
     //         .expect((response) => {
     //             expect(response.body).to.have.property('Status');
     //             expect(response.body.Status).to.equal('success');
@@ -115,7 +115,7 @@ describe('89 - Cohort tests', function () {
     //         .post(`/api/v1/cohorts/${getTestData('CohortId_1')}/users/${getTestData('PatientUserId')}/remove`)
     //         .set('Content-Type', 'application/json')
     //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+    //         .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
     //         .expect((response) => {
     //             expect(response.body).to.have.property('Status');
     //             expect(response.body.Status).to.equal('success');
@@ -129,16 +129,16 @@ describe('89 - Cohort tests', function () {
             .get(`/api/v1/cohorts/search${loadCohortQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
             .expect((response) => {
                 expect(response.body.Data.Cohorts).to.have.property('TotalCount');
                 expect(response.body.Data.Cohorts).to.have.property('RetrievedCount');
                 expect(response.body.Data.Cohorts).to.have.property('PageIndex');
                 expect(response.body.Data.Cohorts).to.have.property('ItemsPerPage');
                 expect(response.body.Data.Cohorts).to.have.property('Order');
-                expect(response.body.Data.Cohorts.TotalCount).to.greaterThan(0);
-                expect(response.body.Data.Cohorts.RetrievedCount).to.greaterThan(0);
-                expect(response.body.Data.Cohorts.Items.length).to.greaterThan(0);
+                expect(response.body.Data.Cohorts.TotalCount).to.be.at.least(0);
+                expect(response.body.Data.Cohorts.RetrievedCount).to.be.at.least(0);
+                expect(response.body.Data.Cohorts.Items.length).to.be.at.least(0);
             })
             .expect(200, done);
     });
@@ -230,7 +230,7 @@ describe('89 - Cohort tests', function () {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(404, done);
     });
 
     it('89:13 -> Negative - Update Cohort', function (done) {

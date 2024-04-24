@@ -12,7 +12,7 @@ export class UserTaskAuth {
 
     static _baseContext = 'User.UserTask';
 
-    static getCategories: AuthOptions = {
+    static readonly getCategories: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetCategories`,
         Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ export class UserTaskAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getUserActionTypes: AuthOptions = {
+    static readonly getUserActionTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserActionTypes`,
         Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ export class UserTaskAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class UserTaskAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class UserTaskAuth {
         RequestType : RequestType.Search,
     };
 
-    static startTask: AuthOptions = {
+    static readonly startTask: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.StartTask`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class UserTaskAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static finishTask: AuthOptions = {
+    static readonly finishTask: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.FinishTask`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class UserTaskAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static cancelTask: AuthOptions = {
+    static readonly cancelTask: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CancelTask`,
         Ownership   : ResourceOwnership.Owner,
@@ -68,7 +68,7 @@ export class UserTaskAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static getTaskSummaryForDay: AuthOptions = {
+    static readonly getTaskSummaryForDay: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.SummaryForDay`,
         Ownership   : ResourceOwnership.Owner,
@@ -76,7 +76,7 @@ export class UserTaskAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getByDisplayId: AuthOptions = {
+    static readonly getByDisplayId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetByDisplayId`,
         Ownership   : ResourceOwnership.Owner,
@@ -84,7 +84,7 @@ export class UserTaskAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,
@@ -92,7 +92,7 @@ export class UserTaskAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -100,7 +100,7 @@ export class UserTaskAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,
@@ -108,7 +108,7 @@ export class UserTaskAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static deletePatientFutureTask: AuthOptions = {
+    static readonly deletePatientFutureTask: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.DeleteFutureTask`,
         Ownership      : ResourceOwnership.Owner,

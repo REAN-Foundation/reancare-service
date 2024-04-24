@@ -16,7 +16,7 @@ export class NotificationAuth {
 
     static _baseContext = 'General.Notification';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Tenant,
@@ -24,7 +24,7 @@ export class NotificationAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Tenant,
@@ -32,7 +32,7 @@ export class NotificationAuth {
         RequestType : RequestType.Search,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Tenant,
@@ -40,7 +40,7 @@ export class NotificationAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Tenant,
@@ -48,7 +48,7 @@ export class NotificationAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Tenant,
@@ -56,7 +56,7 @@ export class NotificationAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static markAsRead: AuthOptions = {
+    static readonly markAsRead: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.MarkAsRead`,
         Ownership   : ResourceOwnership.Tenant,
@@ -64,7 +64,7 @@ export class NotificationAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static send: AuthOptions = {
+    static readonly send: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Send`,
         Ownership   : ResourceOwnership.Tenant,
@@ -72,7 +72,7 @@ export class NotificationAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static sendToUser: AuthOptions = {
+    static readonly sendToUser: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.SendToUser`,
         Ownership   : ResourceOwnership.Tenant,

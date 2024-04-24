@@ -12,7 +12,7 @@ export class CareplanAuth {
 
     static _baseContext = `Clinical.Careplan`;
 
-    static getPatientEligibility: AuthOptions = {
+    static readonly getPatientEligibility: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPatientEligibility`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class CareplanAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getAvailableCareplans: AuthOptions = {
+    static readonly getAvailableCareplans: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetAvailableCareplans`,
         Ownership   : ResourceOwnership.Tenant,
@@ -28,7 +28,7 @@ export class CareplanAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static enroll: AuthOptions = {
+    static readonly enroll: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Enroll`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class CareplanAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static getPatientEnrollments: AuthOptions = {
+    static readonly getPatientEnrollments: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPatientEnrollments`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class CareplanAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static fetchTasks: AuthOptions = {
+    static readonly fetchTasks: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.FetchTasks`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class CareplanAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getWeeklyStatus: AuthOptions = {
+    static readonly getWeeklyStatus: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetWeeklyStatus`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class CareplanAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static updateRisk: AuthOptions = {
+    static readonly updateRisk: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateRisk`,
         Ownership   : ResourceOwnership.Owner,

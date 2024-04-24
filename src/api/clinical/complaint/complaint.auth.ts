@@ -12,7 +12,7 @@ export class ComplaintAuth {
 
     static _baseContext = `Clinical.Complaint`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class ComplaintAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class ComplaintAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class ComplaintAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class ComplaintAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.System,

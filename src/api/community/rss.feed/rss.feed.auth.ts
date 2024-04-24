@@ -10,103 +10,103 @@ import {
 
 export class RssFeedAuth {
 
-static _baseContext = `Community.Rssfeed`;
+    static _baseContext = `Community.Rssfeed`;
 
-static create: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.Create`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Tenant,
-    RequestType : RequestType.CreateOne,
-};
+    static readonly create: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.Create`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
 
-static update: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.Update`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Tenant,
-    RequestType : RequestType.UpdateOne,
-};
+    static readonly update: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.Update`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
+    };
 
-static delete: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.Delete`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Tenant,
-    RequestType : RequestType.DeleteOne,
-};
+    static readonly delete: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.Delete`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
+    };
 
-static getById: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetById`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Public,
-    RequestType : RequestType.GetOne,
-};
+    static readonly getById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetById`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
+    };
 
-static getRssFeed: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetRssFeed`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Public,
-    RequestType : RequestType.GetOne,
-};
+    static readonly getRssFeed: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetRssFeed`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
+    };
 
-static getAtomFeed: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetAtomFeed`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Public,
-    RequestType : RequestType.GetOne,
-};
+    static readonly getAtomFeed: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetAtomFeed`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
+    };
 
-static getJsonFeed: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetJsonFeed`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Public,
-    RequestType : RequestType.GetOne,
-};
+    static readonly getJsonFeed: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetJsonFeed`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
+    };
 
-static search: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context             : `${this._baseContext}.Search`,
-    Ownership           : ResourceOwnership.System,
-    ActionScope         : ActionScope.Public,
-    RequestType         : RequestType.Search,
-    CustomAuthorization : true,
-};
+    static readonly search: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context             : `${this._baseContext}.Search`,
+        Ownership           : ResourceOwnership.System,
+        ActionScope         : ActionScope.Public,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
+    };
 
-static addFeedItem: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.AddFeedItem`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Tenant,
-    RequestType : RequestType.CreateOne,
-};
+    static readonly addFeedItem: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.AddFeedItem`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
 
-static updateFeedItem: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.UpdateFeedItem`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Tenant,
-    RequestType : RequestType.UpdateOne,
-};
+    static readonly updateFeedItem: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.UpdateFeedItem`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
+    };
 
-static deleteFeedItem: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.DeleteFeedItem`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Tenant,
-    RequestType : RequestType.DeleteOne,
-};
+    static readonly deleteFeedItem: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.DeleteFeedItem`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
+    };
 
-static getFeedItemById: AuthOptions = {
-    ...DefaultAuthOptions,
-    Context     : `${this._baseContext}.GetFeedItemById`,
-    Ownership   : ResourceOwnership.System,
-    ActionScope : ActionScope.Public,
-    RequestType : RequestType.GetOne,
-};
+    static readonly getFeedItemById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetFeedItemById`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
+    };
 
 }

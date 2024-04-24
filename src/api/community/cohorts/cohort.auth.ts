@@ -12,7 +12,7 @@ export class CohortAuth {
 
 static _baseContext = `Community.Cohort`;
 
-static create: AuthOptions = {
+static readonly create: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Create`,
     Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ static create: AuthOptions = {
     RequestType : RequestType.CreateOne,
 };
 
-static update: AuthOptions = {
+static readonly update: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Update`,
     Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ static update: AuthOptions = {
     RequestType : RequestType.UpdateOne,
 };
 
-static delete: AuthOptions = {
+static readonly delete: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Delete`,
     Ownership   : ResourceOwnership.System,
@@ -36,7 +36,7 @@ static delete: AuthOptions = {
     RequestType : RequestType.DeleteOne,
 };
 
-static getById: AuthOptions = {
+static readonly getById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetById`,
     Ownership   : ResourceOwnership.System,
@@ -44,7 +44,7 @@ static getById: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static getCohortStats: AuthOptions = {
+static readonly getCohortStats: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetCohortStats`,
     Ownership   : ResourceOwnership.System,
@@ -52,7 +52,7 @@ static getCohortStats: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static getCohortUsers: AuthOptions = {
+static readonly getCohortUsers: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetCohortUsers`,
     Ownership   : ResourceOwnership.System,
@@ -60,7 +60,7 @@ static getCohortUsers: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static addUserToCohort: AuthOptions = {
+static readonly addUserToCohort: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.AddUserToCohort`,
     Ownership   : ResourceOwnership.System,
@@ -68,7 +68,7 @@ static addUserToCohort: AuthOptions = {
     RequestType : RequestType.CreateOne,
 };
 
-static removeUserFromCohort: AuthOptions = {
+static readonly removeUserFromCohort: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.RemoveUserFromCohort`,
     Ownership   : ResourceOwnership.System,
@@ -76,7 +76,7 @@ static removeUserFromCohort: AuthOptions = {
     RequestType : RequestType.CreateOne,
 };
 
-static getCohortsForTenant: AuthOptions = {
+static readonly getCohortsForTenant: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetCohortsForTenant`,
     Ownership   : ResourceOwnership.System,
@@ -84,7 +84,7 @@ static getCohortsForTenant: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static search: AuthOptions = {
+static readonly search: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.Search`,
     Ownership           : ResourceOwnership.System,

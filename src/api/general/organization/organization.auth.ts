@@ -12,7 +12,7 @@ export class OrganizationAuth {
 
     static _baseContext = `General.Organization`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class OrganizationAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class OrganizationAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class OrganizationAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.System,
@@ -44,7 +44,7 @@ export class OrganizationAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class OrganizationAuth {
         RequestType : RequestType.Search,
     };
 
-    static getByContactUserId: AuthOptions = {
+    static readonly getByContactUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetByContactUserId`,
         Ownership   : ResourceOwnership.Tenant,
@@ -60,7 +60,7 @@ export class OrganizationAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getAddresses: AuthOptions = {
+    static readonly getAddresses: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetAddresses`,
         Ownership   : ResourceOwnership.Tenant,
@@ -68,7 +68,7 @@ export class OrganizationAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getPersons: AuthOptions = {
+    static readonly getPersons: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPersons`,
         Ownership   : ResourceOwnership.Tenant,
@@ -76,7 +76,7 @@ export class OrganizationAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static addAddress: AuthOptions = {
+    static readonly addAddress: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.AddAddress`,
         Ownership   : ResourceOwnership.Owner,
@@ -84,7 +84,7 @@ export class OrganizationAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static removeAddress: AuthOptions = {
+    static readonly removeAddress: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.RemoveAddress`,
         Ownership   : ResourceOwnership.Owner,
@@ -92,7 +92,7 @@ export class OrganizationAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static addPerson: AuthOptions = {
+    static readonly addPerson: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.AddPerson`,
         Ownership   : ResourceOwnership.Owner,
@@ -100,7 +100,7 @@ export class OrganizationAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static removePerson: AuthOptions = {
+    static readonly removePerson: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.RemovePerson`,
         Ownership   : ResourceOwnership.Owner,

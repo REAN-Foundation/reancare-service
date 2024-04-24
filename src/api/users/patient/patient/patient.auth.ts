@@ -12,7 +12,7 @@ export class PatientAuth {
 
     static _baseContext = 'User.Patient.Patient';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.Create`,
         Ownership      : ResourceOwnership.Owner,
@@ -21,7 +21,7 @@ export class PatientAuth {
         SignupOrSignin : true
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -29,7 +29,7 @@ export class PatientAuth {
         RequestType : RequestType.Search,
     };
 
-    static getByUserId: AuthOptions = {
+    static readonly getByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.GetByUserId`,
         Ownership      : ResourceOwnership.Owner,
@@ -38,7 +38,7 @@ export class PatientAuth {
         ResourceIdName : 'userId'
     };
 
-    static updateByUserId: AuthOptions = {
+    static readonly updateByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.UpdateByUserId`,
         Ownership      : ResourceOwnership.Owner,
@@ -47,7 +47,7 @@ export class PatientAuth {
         ResourceIdName : 'userId'
     };
 
-    static deleteByUserId: AuthOptions = {
+    static readonly deleteByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.DeleteByUserId`,
         Ownership      : ResourceOwnership.Owner,
@@ -57,7 +57,7 @@ export class PatientAuth {
     };
 
     //To be deprecated
-    static getPatientByPhone: AuthOptions = {
+    static readonly getPatientByPhone: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.GetPatientByPhone`,
         Ownership      : ResourceOwnership.Owner,
@@ -66,7 +66,7 @@ export class PatientAuth {
         ResourceIdName : 'phone'
     };
 
-    static getByPhone: AuthOptions = {
+    static readonly getByPhone: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.GetByPhone`,
         Ownership      : ResourceOwnership.Owner,

@@ -12,7 +12,7 @@ export class ClinicalTypeAuth {
 
     static _baseContext = `Clinical.ClinicalTypes`;
 
-    static getClinicalValidationStatuses: AuthOptions = {
+    static readonly getClinicalValidationStatuses: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetClinicalValidationStatuses`,
         Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ export class ClinicalTypeAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getInterpretations: AuthOptions = {
+    static readonly getInterpretations: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetInterpretations`,
         Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ export class ClinicalTypeAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getSeverities: AuthOptions = {
+    static readonly getSeverities: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetSeverities`,
         Ownership   : ResourceOwnership.System,

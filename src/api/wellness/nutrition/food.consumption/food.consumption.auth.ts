@@ -12,7 +12,7 @@ export class FoodConsumptionAuth {
 
 static _baseContext = `Wellness.Nutrition`;
 
-static create: AuthOptions = {
+static readonly create: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.FoodConsumption.Create`,
     Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ static create: AuthOptions = {
     RequestType : RequestType.CreateOne,
 };
 
-static update: AuthOptions = {
+static readonly update: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.FoodConsumption.Update`,
     Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ static update: AuthOptions = {
     RequestType : RequestType.UpdateOne,
 };
 
-static delete: AuthOptions = {
+static readonly delete: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.FoodConsumption.Delete`,
     Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ static delete: AuthOptions = {
     RequestType : RequestType.DeleteOne,
 };
 
-static getById: AuthOptions = {
+static readonly getById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.FoodConsumption.GetById`,
     Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ static getById: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static getByEvent: AuthOptions = {
+static readonly getByEvent: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.FoodConsumption.GetByEvent`,
     Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ static getByEvent: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static getForDay: AuthOptions = {
+static readonly getForDay: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.FoodConsumption.GetForDay`,
     Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ static getForDay: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static getNutritionQuestionnaire: AuthOptions = {
+static readonly getNutritionQuestionnaire: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Questionnaire.GetNutritionQuestionnaire`,
     Ownership   : ResourceOwnership.System,
@@ -68,7 +68,7 @@ static getNutritionQuestionnaire: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static search: AuthOptions = {
+static readonly search: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.FoodConsumption.Search`,
     Ownership           : ResourceOwnership.System,

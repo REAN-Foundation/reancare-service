@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../auth/auth.types';
@@ -12,69 +12,69 @@ export class AllergyAuth {
 
     static _baseContext = `Clinical.Allergy`;
 
-    static getAllergenCategories: AuthOptions = {
+    static readonly getAllergenCategories: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetAllergenCategories`,
-        Ownership  : ResourceOwnership.System,
-        ActionScope: ActionScope.Public,
-        RequestType: RequestType.GetMany,
+        Context     : `${this._baseContext}.GetAllergenCategories`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetMany,
     };
 
-    static getAllergenExposureRoutes: AuthOptions = {
+    static readonly getAllergenExposureRoutes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetAllergenExposureRoutes`,
-        Ownership  : ResourceOwnership.System,
-        ActionScope: ActionScope.Public,
-        RequestType: RequestType.GetMany,
+        Context     : `${this._baseContext}.GetAllergenExposureRoutes`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetMany,
     };
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Create`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.CreateOne,
+        Context     : `${this._baseContext}.Create`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Update`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.UpdateOne,
+        Context     : `${this._baseContext}.Update`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Delete`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.DeleteOne,
+        Context     : `${this._baseContext}.Delete`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetById`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.GetOne,
+        Context     : `${this._baseContext}.GetById`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
     };
 
-    static getForPatient: AuthOptions = {
+    static readonly getForPatient: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetForPatient`,
-        Ownership  : ResourceOwnership.Owner,
-        ActionScope: ActionScope.Tenant,
-        RequestType: RequestType.GetMany,
+        Context     : `${this._baseContext}.GetForPatient`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetMany,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
-        Context            : `${this._baseContext}.Search`,
-        Ownership          : ResourceOwnership.Owner,
-        ActionScope        : ActionScope.Tenant,
-        RequestType        : RequestType.Search,
-        CustomAuthorization: true,
+        Context             : `${this._baseContext}.Search`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
     };
 
 }

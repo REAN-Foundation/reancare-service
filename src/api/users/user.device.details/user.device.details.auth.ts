@@ -12,15 +12,15 @@ export class UserDeviceDetailsAuth {
 
     static _baseContext = 'User.DeviceDetails';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context          : `${this._baseContext}.Create`,
-        Ownership        : ResourceOwnership.Owner,
-        ActionScope      : ActionScope.Public,
-        RequestType      : RequestType.CreateOne,
+        Context     : `${this._baseContext}.Create`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.CreateOne,
     };
 
-    static sendTestNotification: AuthOptions = {
+    static readonly sendTestNotification: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.SendTestNotification`,
         Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ export class UserDeviceDetailsAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.System,
@@ -36,25 +36,25 @@ export class UserDeviceDetailsAuth {
         RequestType : RequestType.Search,
     };
 
-    static getByUserId: AuthOptions = {
+    static readonly getByUserId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetByUserId`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
-        ResourceIdName: 'userId'
+        Context        : `${this._baseContext}.GetByUserId`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.GetOne,
+        ResourceIdName : 'userId'
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetById`,
-        Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
-        ResourceIdName: 'id'
+        Context        : `${this._baseContext}.GetById`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.GetOne,
+        ResourceIdName : 'id'
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -62,11 +62,12 @@ export class UserDeviceDetailsAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Owner,
         RequestType : RequestType.DeleteOne,
     };
+
 }

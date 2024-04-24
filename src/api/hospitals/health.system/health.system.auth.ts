@@ -12,7 +12,7 @@ export class HealthSystemAuth {
 
     static _baseContext = `Hospitals.HealthSystem`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Tenant,
@@ -20,7 +20,7 @@ export class HealthSystemAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Tenant,
@@ -28,7 +28,7 @@ export class HealthSystemAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Tenant,
@@ -36,7 +36,7 @@ export class HealthSystemAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static getHealthSystemsWithTags: AuthOptions = {
+    static readonly getHealthSystemsWithTags: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetHealthSystemsWithTags`,
         Ownership   : ResourceOwnership.System,
@@ -44,7 +44,7 @@ export class HealthSystemAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.Search`,
         Ownership           : ResourceOwnership.System,
@@ -53,7 +53,7 @@ export class HealthSystemAuth {
         CustomAuthorization : true,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.System,

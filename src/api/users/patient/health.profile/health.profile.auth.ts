@@ -12,7 +12,7 @@ export class HealthProfileAuth {
 
     static _baseContext = 'User.Patient.HealthProfile';
 
-    static getByPatientUserId: AuthOptions = {
+    static readonly getByPatientUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetByPatientUserId`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class HealthProfileAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static updateByPatientUserId: AuthOptions = {
+    static readonly updateByPatientUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateByPatientUserId`,
         Ownership   : ResourceOwnership.Owner,

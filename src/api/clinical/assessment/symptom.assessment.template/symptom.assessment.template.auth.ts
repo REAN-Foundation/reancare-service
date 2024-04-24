@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../../auth/auth.types';
@@ -12,60 +12,60 @@ export class SymptomAssessmentTemplateAuth {
 
     static _baseContext = `Clinical.Assessments.SymptomAssessmentTemplate`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Create`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.System,
-        RequestType: RequestType.CreateOne,
+        Context     : `${this._baseContext}.Create`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Search`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.System,
-        RequestType: RequestType.Search,
+        Context     : `${this._baseContext}.Search`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.Search,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.GetById`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.System,
-        RequestType: RequestType.GetOne,
+        Context     : `${this._baseContext}.GetById`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.GetOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Update`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.System,
-        RequestType: RequestType.UpdateOne,
+        Context     : `${this._baseContext}.Update`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.Delete`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.System,
-        RequestType: RequestType.DeleteOne,
+        Context     : `${this._baseContext}.Delete`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.DeleteOne,
     };
 
-    static addSymptomTypes: AuthOptions = {
+    static readonly addSymptomTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.AddSymptomTypes`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.System,
-        RequestType: RequestType.UpdateOne,
+        Context     : `${this._baseContext}.AddSymptomTypes`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.UpdateOne,
     };
 
-    static removeSymptomTypes: AuthOptions = {
+    static readonly removeSymptomTypes: AuthOptions = {
         ...DefaultAuthOptions,
-        Context    : `${this._baseContext}.RemoveSymptomTypes`,
-        Ownership  : ResourceOwnership.Tenant,
-        ActionScope: ActionScope.System,
-        RequestType: RequestType.UpdateOne,
+        Context     : `${this._baseContext}.RemoveSymptomTypes`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.UpdateOne,
     };
 
 }

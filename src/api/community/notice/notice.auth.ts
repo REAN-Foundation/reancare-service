@@ -12,7 +12,7 @@ export class NoticeAuth {
 
 static _baseContext = `Community.Notice`;
 
-static create: AuthOptions = {
+static readonly create: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Create`,
     Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ static create: AuthOptions = {
     RequestType : RequestType.CreateOne,
 };
 
-static update: AuthOptions = {
+static readonly update: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Update`,
     Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ static update: AuthOptions = {
     RequestType : RequestType.UpdateOne,
 };
 
-static delete: AuthOptions = {
+static readonly delete: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Delete`,
     Ownership   : ResourceOwnership.System,
@@ -36,7 +36,7 @@ static delete: AuthOptions = {
     RequestType : RequestType.DeleteOne,
 };
 
-static getById: AuthOptions = {
+static readonly getById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetById`,
     Ownership   : ResourceOwnership.Tenant,
@@ -44,7 +44,7 @@ static getById: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static takeAction: AuthOptions = {
+static readonly takeAction: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.TakeAction`,
     Ownership   : ResourceOwnership.Tenant,
@@ -52,7 +52,7 @@ static takeAction: AuthOptions = {
     RequestType : RequestType.CreateOne,
 };
 
-static getAllNoticeActionsForUser: AuthOptions = {
+static readonly getAllNoticeActionsForUser: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetAllNoticeActionsForUser`,
     Ownership   : ResourceOwnership.Tenant,
@@ -60,7 +60,7 @@ static getAllNoticeActionsForUser: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static getNoticeActionForUser: AuthOptions = {
+static readonly getNoticeActionForUser: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetNoticeActionForUser`,
     Ownership   : ResourceOwnership.Tenant,
@@ -68,7 +68,7 @@ static getNoticeActionForUser: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static search: AuthOptions = {
+static readonly search: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.Search`,
     Ownership           : ResourceOwnership.Tenant,

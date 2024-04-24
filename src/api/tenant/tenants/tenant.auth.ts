@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../auth/auth.types';
@@ -12,7 +12,7 @@ export class TenantAuth {
 
     static _baseContext = 'Tenant.Tenants';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Tenant,
@@ -20,7 +20,7 @@ export class TenantAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ export class TenantAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Tenant,
@@ -36,7 +36,7 @@ export class TenantAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Tenant,
@@ -44,7 +44,7 @@ export class TenantAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static promoteTenantUserAsAdmin: AuthOptions = {
+    static readonly promoteTenantUserAsAdmin: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.PromoteTenantUserAsAdmin`,
         Ownership   : ResourceOwnership.Tenant,
@@ -52,7 +52,7 @@ export class TenantAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static demoteAdmin: AuthOptions = {
+    static readonly demoteAdmin: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.DemoteAdmin`,
         Ownership   : ResourceOwnership.Tenant,
@@ -60,7 +60,7 @@ export class TenantAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static getTenantStats: AuthOptions = {
+    static readonly getTenantStats: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantStats`,
         Ownership   : ResourceOwnership.Tenant,
@@ -68,7 +68,7 @@ export class TenantAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getTenantAdmins: AuthOptions = {
+    static readonly getTenantAdmins: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantAdmins`,
         Ownership   : ResourceOwnership.Tenant,
@@ -76,7 +76,7 @@ export class TenantAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getTenantRegularUsers: AuthOptions = {
+    static readonly getTenantRegularUsers: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantRegularUsers`,
         Ownership   : ResourceOwnership.Tenant,
@@ -84,7 +84,7 @@ export class TenantAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Tenant,

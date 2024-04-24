@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../auth/auth.types';
@@ -12,7 +12,7 @@ export class RoleAuth {
 
     static _baseContext = 'Role';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ export class RoleAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ export class RoleAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.System,
@@ -36,7 +36,7 @@ export class RoleAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.System,
@@ -44,12 +44,12 @@ export class RoleAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.System,
         RequestType : RequestType.DeleteOne,
     };
-    
+
 }

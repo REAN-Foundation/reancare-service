@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../auth/auth.types';
@@ -12,7 +12,7 @@ export class PersonAuth {
 
     static _baseContext = 'Person';
 
-    static getAllPersonsWithPhoneAndRole: AuthOptions = {
+    static readonly getAllPersonsWithPhoneAndRole: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetAllPersonsWithPhoneAndRole`,
         Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ export class PersonAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getAllPersonsWithPhone: AuthOptions = {
+    static readonly getAllPersonsWithPhone: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetAllPersonsWithPhone`,
         Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ export class PersonAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getOrganizations: AuthOptions = {
+    static readonly getOrganizations: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetOrganizations`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class PersonAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static addAddress: AuthOptions = {
+    static readonly addAddress: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.AddAddress`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class PersonAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static removeAddress: AuthOptions = {
+    static readonly removeAddress: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.RemoveAddress`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class PersonAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static getAddresses: AuthOptions = {
+    static readonly getAddresses: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetAddresses`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class PersonAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,

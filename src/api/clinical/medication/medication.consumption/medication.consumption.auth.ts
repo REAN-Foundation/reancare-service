@@ -12,7 +12,7 @@ export class MedicationConsumptionAuth {
 
     static _baseContext = `Clinical.Medications.MedicationConsumption`;
 
-    static markListAsTaken: AuthOptions = {
+    static readonly markListAsTaken: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.MarkListAsTaken`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.UpdateMany,
     };
 
-    static markListAsMissed: AuthOptions = {
+    static readonly markListAsMissed: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.MarkListAsMissed`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.UpdateMany,
     };
 
-    static markAsTaken: AuthOptions = {
+    static readonly markAsTaken: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.MarkAsTaken`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static markAsMissed: AuthOptions = {
+    static readonly markAsMissed: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.MarkAsMissed`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static deleteFutureMedicationSchedules: AuthOptions = {
+    static readonly deleteFutureMedicationSchedules: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.DeleteFutureMedicationSchedules`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static searchForPatient: AuthOptions = {
+    static readonly searchForPatient: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.SearchForPatient`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getScheduleForDuration: AuthOptions = {
+    static readonly getScheduleForDuration: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetScheduleForDuration`,
         Ownership   : ResourceOwnership.Owner,
@@ -68,7 +68,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getScheduleForDay: AuthOptions = {
+    static readonly getScheduleForDay: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetScheduleForDay`,
         Ownership   : ResourceOwnership.Owner,
@@ -76,7 +76,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getSummaryForDay: AuthOptions = {
+    static readonly getSummaryForDay: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetSummaryForDay`,
         Ownership   : ResourceOwnership.Owner,
@@ -84,7 +84,7 @@ export class MedicationConsumptionAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getSummaryByCalendarMonths: AuthOptions = {
+    static readonly getSummaryByCalendarMonths: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetSummaryByCalendarMonths`,
         Ownership   : ResourceOwnership.Owner,
@@ -93,7 +93,7 @@ export class MedicationConsumptionAuth {
 
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.getById`,
         Ownership   : ResourceOwnership.Owner,

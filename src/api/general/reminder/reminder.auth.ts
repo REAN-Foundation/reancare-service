@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../auth/auth.types';
@@ -12,7 +12,7 @@ export class ReminderAuth {
 
     static _baseContext = 'General.Reminder';
 
-    static createOneTimeReminder: AuthOptions = {
+    static readonly createOneTimeReminder: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateOneTimeReminder`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class ReminderAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static createReminderWithRepeatAfterEveryN: AuthOptions = {
+    static readonly createReminderWithRepeatAfterEveryN: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReminderWithRepeatAfterEveryN`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class ReminderAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static createReminderWithRepeatEveryWeekday: AuthOptions = {
+    static readonly createReminderWithRepeatEveryWeekday: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReminderWithRepeatEveryWeekday`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class ReminderAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static createReminderWithRepeatEveryWeekOnDays: AuthOptions = {
+    static readonly createReminderWithRepeatEveryWeekOnDays: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReminderWithRepeatEveryWeekOnDays`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class ReminderAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static createReminderWithEveryMonthOn: AuthOptions = {
+    static readonly createReminderWithEveryMonthOn: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReminderWithEveryMonthOn`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class ReminderAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static createReminderWithEveryQuarterOn: AuthOptions = {
+    static readonly createReminderWithEveryQuarterOn: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReminderWithEveryQuarterOn`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class ReminderAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static createReminderWithRepeatEveryHour: AuthOptions = {
+    static readonly createReminderWithRepeatEveryHour: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReminderWithRepeatEveryHour`,
         Ownership   : ResourceOwnership.Owner,
@@ -68,7 +68,7 @@ export class ReminderAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static createReminderWithRepeatEveryDay: AuthOptions = {
+    static readonly createReminderWithRepeatEveryDay: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReminderWithRepeatEveryDay`,
         Ownership   : ResourceOwnership.Owner,
@@ -76,7 +76,7 @@ export class ReminderAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -84,7 +84,7 @@ export class ReminderAuth {
         RequestType : RequestType.Search,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,
@@ -92,7 +92,7 @@ export class ReminderAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,

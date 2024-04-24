@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../auth/auth.types';
@@ -12,7 +12,7 @@ export class TenantSettingsAuth {
 
     static _baseContext = 'Tenant.Settings';
 
-    static getTenantSettingsTypes: AuthOptions = {
+    static readonly getTenantSettingsTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantSettingsTypes`,
         Ownership   : ResourceOwnership.System,
@@ -20,25 +20,25 @@ export class TenantSettingsAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getTenantSettingsByType: AuthOptions = {
+    static readonly getTenantSettingsByType: AuthOptions = {
         ...DefaultAuthOptions,
-        Context       : `${this._baseContext}.GetTenantSettingsByType`,
-        Ownership     : ResourceOwnership.Tenant,
-        ActionScope   : ActionScope.Tenant,
-        RequestType   : RequestType.GetOne,
-        ResourceIdName: 'tenantId',
+        Context        : `${this._baseContext}.GetTenantSettingsByType`,
+        Ownership      : ResourceOwnership.Tenant,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.GetOne,
+        ResourceIdName : 'tenantId',
     };
 
-    static getTenantSettings: AuthOptions = {
+    static readonly getTenantSettings: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetTenantSettings`,
-        Ownership   : ResourceOwnership.Tenant,
-        ActionScope : ActionScope.Tenant,
-        RequestType : RequestType.GetOne,
-        ResourceIdName: 'tenantId',
+        Context        : `${this._baseContext}.GetTenantSettings`,
+        Ownership      : ResourceOwnership.Tenant,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.GetOne,
+        ResourceIdName : 'tenantId',
     };
 
-    static updateTenantSettingsByType: AuthOptions = {
+    static readonly updateTenantSettingsByType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateTenantSettingsByType`,
         Ownership   : ResourceOwnership.Tenant,
@@ -46,7 +46,7 @@ export class TenantSettingsAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static updateTenantSettings: AuthOptions = {
+    static readonly updateTenantSettings: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateTenantSettings`,
         Ownership   : ResourceOwnership.Tenant,

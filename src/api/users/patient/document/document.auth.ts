@@ -12,7 +12,7 @@ export class PatientDocumentAuth {
 
     static _baseContext = 'User.Patient.Document';
 
-    static getTypes: AuthOptions = {
+    static readonly getTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTypes`,
         Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ export class PatientDocumentAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static upload: AuthOptions = {
+    static readonly upload: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Upload`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class PatientDocumentAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static rename: AuthOptions = {
+    static readonly rename: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Rename`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class PatientDocumentAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class PatientDocumentAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class PatientDocumentAuth {
         RequestType : RequestType.Search,
     };
 
-    static download: AuthOptions = {
+    static readonly download: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Download`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class PatientDocumentAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static share: AuthOptions = {
+    static readonly share: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Share`,
         Ownership   : ResourceOwnership.Owner,
@@ -68,7 +68,7 @@ export class PatientDocumentAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,
@@ -76,7 +76,7 @@ export class PatientDocumentAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,

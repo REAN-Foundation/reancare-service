@@ -12,7 +12,7 @@ export class UserEngagementAuth {
 
     static _baseContext = `Statistics.UserEngagement.`;
 
-    static getUserEngagementStatsByYear: AuthOptions = {
+    static readonly getUserEngagementStatsByYear: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByYear`,
         Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ export class UserEngagementAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getUserEngagementStatsByQuarter: AuthOptions = {
+    static readonly getUserEngagementStatsByQuarter: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByQuarter`,
         Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ export class UserEngagementAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getUserEngagementStatsByMonth: AuthOptions = {
+    static readonly getUserEngagementStatsByMonth: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByMonth`,
         Ownership   : ResourceOwnership.System,
@@ -36,7 +36,7 @@ export class UserEngagementAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getUserEngagementStatsByWeek: AuthOptions = {
+    static readonly getUserEngagementStatsByWeek: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByWeek`,
         Ownership   : ResourceOwnership.System,
@@ -44,7 +44,7 @@ export class UserEngagementAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getUserEngagementStatsByDateRange: AuthOptions = {
+    static readonly getUserEngagementStatsByDateRange: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsByDateRange`,
         Ownership   : ResourceOwnership.System,
@@ -52,7 +52,7 @@ export class UserEngagementAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getUserEngagementStatsForUser: AuthOptions = {
+    static readonly getUserEngagementStatsForUser: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserEngagementStatsForUser`,
         Ownership   : ResourceOwnership.System,

@@ -12,7 +12,7 @@ export class DailyStatisticsAuth {
 
     static _baseContext = `Statistics.DailyStatistics`;
 
-    static getDailyTenantStats: AuthOptions = {
+    static readonly getDailyTenantStats: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetDailyTenantStats`,
         Ownership   : ResourceOwnership.Tenant,
@@ -20,7 +20,7 @@ export class DailyStatisticsAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getDailySystemStats: AuthOptions = {
+    static readonly getDailySystemStats: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.getDailySystemStats`,
         Ownership   : ResourceOwnership.System,

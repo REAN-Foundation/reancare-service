@@ -12,7 +12,7 @@ export class GoalAuth {
 
     static _baseContext = 'User.Patient.Goal';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class GoalAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class GoalAuth {
         RequestType : RequestType.Search,
     };
 
-    static getGoalsByPriority: AuthOptions = {
+    static readonly getGoalsByPriority: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetGoalsByPriority`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class GoalAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getPatientGoals: AuthOptions = {
+    static readonly getPatientGoals: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPatientGoals`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class GoalAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class GoalAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class GoalAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,

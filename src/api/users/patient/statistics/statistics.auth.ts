@@ -12,7 +12,7 @@ export class StatisticsAuth {
 
     static _baseContext = 'User.Patient.Statistics';
 
-    static getPatientStatsReport: AuthOptions = {
+    static readonly getPatientStatsReport: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPatientStatsReport`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class StatisticsAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getPatientStats: AuthOptions = {
+    static readonly getPatientStats: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPatientStats`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class StatisticsAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getPatientHealthSummary: AuthOptions = {
+    static readonly getPatientHealthSummary: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPatientHealthSummary`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class StatisticsAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static createReportSettings: AuthOptions = {
+    static readonly createReportSettings: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReportSettings`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class StatisticsAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static getReportSettingsByUserId: AuthOptions = {
+    static readonly getReportSettingsByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetReportSettingsByUserId`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class StatisticsAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static updateReportSettingsByUserId: AuthOptions = {
+    static readonly updateReportSettingsByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateReportSettingsByUserId`,
         Ownership   : ResourceOwnership.Owner,

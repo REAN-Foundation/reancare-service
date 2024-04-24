@@ -12,7 +12,7 @@ export class CustomQueryAuth {
 
     static _baseContext = `Statistics.CustomQuery`;
 
-    static executeQuery: AuthOptions = {
+    static readonly executeQuery: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.ExecuteQuery`,
         Ownership   : ResourceOwnership.Tenant,
@@ -20,7 +20,7 @@ export class CustomQueryAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.Search`,
         Ownership           : ResourceOwnership.Tenant,
@@ -29,7 +29,7 @@ export class CustomQueryAuth {
         CustomAuthorization : true,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Tenant,
@@ -37,7 +37,7 @@ export class CustomQueryAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Tenant,
@@ -45,7 +45,7 @@ export class CustomQueryAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Tenant,

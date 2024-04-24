@@ -12,7 +12,7 @@ export class FileResourceAuth {
 
     static _baseContext = `General.FileResource`;
 
-    static upload: AuthOptions = {
+    static readonly upload: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Upload`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class FileResourceAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static rename: AuthOptions = {
+    static readonly rename: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Rename`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class FileResourceAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,47 +36,47 @@ export class FileResourceAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static searchAndDownload: AuthOptions = {
+    static readonly searchAndDownload: AuthOptions = {
         ...DefaultAuthOptions,
-        Context            : `${this._baseContext}.SearchAndDownload`,
-        Ownership          : ResourceOwnership.Owner,
-        ActionScope        : ActionScope.Tenant,
-        RequestType        : RequestType.Search,
-        OptionalUserAuth   : true,
-        CustomAuthorization: true,
+        Context             : `${this._baseContext}.SearchAndDownload`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.Search,
+        OptionalUserAuth    : true,
+        CustomAuthorization : true,
     };
 
-    static downloadByVersionName: AuthOptions = {
+    static readonly downloadByVersionName: AuthOptions = {
         ...DefaultAuthOptions,
-        Context            : `${this._baseContext}.DownloadByVersionName`,
-        Ownership          : ResourceOwnership.Owner,
-        ActionScope        : ActionScope.Tenant,
-        RequestType        : RequestType.GetOne,
-        CustomAuthorization: true,
-        OptionalUserAuth   : true,
+        Context             : `${this._baseContext}.DownloadByVersionName`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.GetOne,
+        CustomAuthorization : true,
+        OptionalUserAuth    : true,
     };
 
-    static downloadByVersionId: AuthOptions = {
+    static readonly downloadByVersionId: AuthOptions = {
         ...DefaultAuthOptions,
-        Context            : `${this._baseContext}.DownloadByVersionId`,
-        Ownership          : ResourceOwnership.Owner,
-        ActionScope        : ActionScope.Tenant,
-        RequestType        : RequestType.GetOne,
-        CustomAuthorization: true,
-        OptionalUserAuth   : true,
+        Context             : `${this._baseContext}.DownloadByVersionId`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.GetOne,
+        CustomAuthorization : true,
+        OptionalUserAuth    : true,
     };
 
-    static downloadById: AuthOptions = {
+    static readonly downloadById: AuthOptions = {
         ...DefaultAuthOptions,
-        Context            : `${this._baseContext}.DownloadById`,
-        Ownership          : ResourceOwnership.Owner,
-        ActionScope        : ActionScope.Tenant,
-        RequestType        : RequestType.GetOne,
-        CustomAuthorization: true,
-        OptionalUserAuth   : true,
+        Context             : `${this._baseContext}.DownloadById`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.GetOne,
+        CustomAuthorization : true,
+        OptionalUserAuth    : true,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -84,7 +84,7 @@ export class FileResourceAuth {
         RequestType : RequestType.Search,
     };
 
-    static getVersionById: AuthOptions = {
+    static readonly getVersionById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetVersionById`,
         Ownership   : ResourceOwnership.Owner,
@@ -92,7 +92,7 @@ export class FileResourceAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getVersions: AuthOptions = {
+    static readonly getVersions: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetVersions`,
         Ownership   : ResourceOwnership.Owner,
@@ -100,7 +100,7 @@ export class FileResourceAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getResourceInfo: AuthOptions = {
+    static readonly getResourceInfo: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetResourceInfo`,
         Ownership   : ResourceOwnership.Owner,
@@ -108,7 +108,7 @@ export class FileResourceAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static deleteVersionByVersionId: AuthOptions = {
+    static readonly deleteVersionByVersionId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.DeleteVersionByVersionId`,
         Ownership   : ResourceOwnership.Owner,
@@ -116,7 +116,7 @@ export class FileResourceAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,

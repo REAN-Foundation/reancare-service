@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../../auth/auth.types';
@@ -12,7 +12,7 @@ export class SymptomAssessmentAuth {
 
     static _baseContext = `Clinical.Assessments.SymptomAssessment`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Create`,
         Ownership  : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class SymptomAssessmentAuth {
         RequestType: RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Search`,
         Ownership  : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class SymptomAssessmentAuth {
         RequestType: RequestType.Search,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.GetById`,
         Ownership  : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class SymptomAssessmentAuth {
         RequestType: RequestType.GetOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Update`,
         Ownership  : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class SymptomAssessmentAuth {
         RequestType: RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Delete`,
         Ownership  : ResourceOwnership.Owner,

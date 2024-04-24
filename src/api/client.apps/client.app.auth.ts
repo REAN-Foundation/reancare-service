@@ -9,7 +9,7 @@ export class ClientAppAuth {
 
     static _baseContext = `ClientApp`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         RequestType : RequestType.CreateOne,
@@ -17,7 +17,7 @@ export class ClientAppAuth {
         Ownership   : ResourceOwnership.System,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         ActionScope : ActionScope.System,
@@ -25,7 +25,7 @@ export class ClientAppAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         ActionScope : ActionScope.System,
@@ -33,7 +33,7 @@ export class ClientAppAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         ActionScope : ActionScope.System,
@@ -41,7 +41,7 @@ export class ClientAppAuth {
         RequestType : RequestType.Search,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         ActionScope : ActionScope.System,
@@ -49,7 +49,7 @@ export class ClientAppAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getCurrentApiKey: AuthOptions = {
+    static readonly getCurrentApiKey: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.GetCurrentApiKey`,
         ActionScope         : ActionScope.System,
@@ -60,7 +60,7 @@ export class ClientAppAuth {
         AlternateAuth       : true,
     };
 
-    static renewApiKey: AuthOptions = {
+    static readonly renewApiKey: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.RenewApiKey`,
         ActionScope         : ActionScope.System,

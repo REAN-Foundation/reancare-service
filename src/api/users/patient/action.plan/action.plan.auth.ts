@@ -12,7 +12,7 @@ export class ActionPlanAuth {
 
     static _baseContext = 'User.Patient.ActionPlan';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class ActionPlanAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class ActionPlanAuth {
         RequestType : RequestType.Search,
     };
 
-    static getSelectedActionPlans: AuthOptions = {
+    static readonly getSelectedActionPlans: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetSelectedActionPlans`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class ActionPlanAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getActionPlans: AuthOptions = {
+    static readonly getActionPlans: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetActionPlans`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class ActionPlanAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,12 +52,12 @@ export class ActionPlanAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.DeleteOne,
     };
-    
+
 }

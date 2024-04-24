@@ -12,7 +12,7 @@ export class UserAuth {
 
     static _baseContext = 'User.User';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.Create`,
         Ownership      : ResourceOwnership.System,
@@ -21,7 +21,7 @@ export class UserAuth {
         SignupOrSignin : true
     };
 
-    static loginWithPassword: AuthOptions = {
+    static readonly loginWithPassword: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.LoginWithPassword`,
         Ownership      : ResourceOwnership.System,
@@ -30,7 +30,7 @@ export class UserAuth {
         SignupOrSignin : true
     };
 
-    static loginWithOtp: AuthOptions = {
+    static readonly loginWithOtp: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.LoginWithOtp`,
         Ownership      : ResourceOwnership.System,
@@ -39,7 +39,7 @@ export class UserAuth {
         SignupOrSignin : true,
     };
 
-    static generateOtp: AuthOptions = {
+    static readonly generateOtp: AuthOptions = {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.GenerateOtp`,
         Ownership      : ResourceOwnership.System,
@@ -48,7 +48,7 @@ export class UserAuth {
         SignupOrSignin : true,
     };
 
-    static rotateUserAccessToken: AuthOptions = {
+    static readonly rotateUserAccessToken: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.RotateUserAccessToken`,
         Ownership   : ResourceOwnership.System,
@@ -56,7 +56,7 @@ export class UserAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,
@@ -64,7 +64,7 @@ export class UserAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static logout: AuthOptions = {
+    static readonly logout: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Logout`,
         Ownership   : ResourceOwnership.Owner,
@@ -72,7 +72,7 @@ export class UserAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.System,
@@ -80,7 +80,7 @@ export class UserAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static resetPassword: AuthOptions = {
+    static readonly resetPassword: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.ResetPassword`,
         Ownership   : ResourceOwnership.Owner,
@@ -90,7 +90,7 @@ export class UserAuth {
 
     /////////////////////////////////////////////////////////
 
-    static getUserByRoleAndPhone: AuthOptions = {
+    static readonly getUserByRoleAndPhone: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserByRoleAndPhone`,
         Ownership   : ResourceOwnership.System,
@@ -98,7 +98,7 @@ export class UserAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getUserByRoleAndEmail: AuthOptions = {
+    static readonly getUserByRoleAndEmail: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserByRoleAndEmail`,
         Ownership   : ResourceOwnership.System,
@@ -106,7 +106,7 @@ export class UserAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getTenantUserByRoleAndPhone: AuthOptions = {
+    static readonly getTenantUserByRoleAndPhone: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantUserByRoleAndPhone`,
         Ownership   : ResourceOwnership.System,
@@ -114,7 +114,7 @@ export class UserAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getTenantUserByRoleAndEmail: AuthOptions = {
+    static readonly getTenantUserByRoleAndEmail: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantUserByRoleAndEmail`,
         Ownership   : ResourceOwnership.System,
@@ -122,7 +122,7 @@ export class UserAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static getTenantsForUserWithPhone: AuthOptions = {
+    static readonly getTenantsForUserWithPhone: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantsForUserWithPhone`,
         Ownership   : ResourceOwnership.System,
@@ -130,7 +130,7 @@ export class UserAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getTenantsForUserWithEmail: AuthOptions = {
+    static readonly getTenantsForUserWithEmail: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantsForUserWithEmail`,
         Ownership   : ResourceOwnership.System,
@@ -142,7 +142,7 @@ export class UserAuth {
 
     // The following are implicitly handled through concrete roles
     // or by other means
-    // static update: AuthOptions = {
+    // static readonly update: AuthOptions = {
     //     ...DefaultAuthOptions,
     //     Context     : `${this._baseContext}.Update`,
     //     Ownership   : ResourceOwnership.System,
@@ -150,12 +150,12 @@ export class UserAuth {
     //     RequestType : RequestType.UpdateOne,
     // };
 
-    // static delete: AuthOptions = {
+    // static readonly delete: AuthOptions = {
     //     ...DefaultAuthOptions,
     //     Context     : `${this._baseContext}.Delete`,
     //     Ownership   : ResourceOwnership.System,
     //     ActionScope : ActionScope.System,
     //     RequestType : RequestType.DeleteOne,
     // };
-    
+
 }

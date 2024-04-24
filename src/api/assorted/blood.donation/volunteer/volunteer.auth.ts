@@ -12,7 +12,7 @@ export class VolunteerAuth {
 
     static _baseContext = `Assorted.BloodDonation.Volunteer`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.Create`,
         Ownership        : ResourceOwnership.Tenant,
@@ -45,7 +45,7 @@ export class VolunteerAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.Search`,
         Ownership           : ResourceOwnership.Tenant,

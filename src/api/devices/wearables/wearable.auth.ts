@@ -12,7 +12,7 @@ export class WearableAuth {
 
 static _baseContext = `Device.Wearable`;
 
-static create: AuthOptions = {
+static readonly create: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Create`,
     Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ static create: AuthOptions = {
     RequestType : RequestType.CreateOne,
 };
 
-static update: AuthOptions = {
+static readonly update: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Update`,
     Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ static update: AuthOptions = {
     RequestType : RequestType.UpdateOne,
 };
 
-static delete: AuthOptions = {
+static readonly delete: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Delete`,
     Ownership   : ResourceOwnership.System,
@@ -36,7 +36,7 @@ static delete: AuthOptions = {
     RequestType : RequestType.DeleteOne,
 };
 
-static getById: AuthOptions = {
+static readonly getById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetById`,
     Ownership   : ResourceOwnership.System,
@@ -44,7 +44,7 @@ static getById: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static getUserWearables: AuthOptions = {
+static readonly getUserWearables: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetUserWearables`,
     Ownership   : ResourceOwnership.System,
@@ -52,7 +52,7 @@ static getUserWearables: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static search: AuthOptions = {
+static readonly search: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.Search`,
     Ownership           : ResourceOwnership.System,

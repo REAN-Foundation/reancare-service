@@ -1,7 +1,7 @@
-import { 
-    AuthOptions, 
-    RequestType, 
-    ResourceOwnership, 
+import {
+    AuthOptions,
+    RequestType,
+    ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
 } from '../../../../auth/auth.types';
@@ -12,7 +12,7 @@ export class BridgeAuth {
 
     static _baseContext = `Assorted.BloodDonation.Bridge`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Create`,
         Ownership  : ResourceOwnership.Tenant,
@@ -20,7 +20,7 @@ export class BridgeAuth {
         RequestType: RequestType.CreateOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Update`,
         Ownership  : ResourceOwnership.Tenant,
@@ -28,7 +28,7 @@ export class BridgeAuth {
         RequestType: RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.Delete`,
         Ownership  : ResourceOwnership.Tenant,
@@ -36,7 +36,7 @@ export class BridgeAuth {
         RequestType: RequestType.DeleteOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context    : `${this._baseContext}.GetById`,
         Ownership  : ResourceOwnership.Tenant,
@@ -44,7 +44,7 @@ export class BridgeAuth {
         RequestType: RequestType.GetOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context            : `${this._baseContext}.Search`,
         Ownership          : ResourceOwnership.Tenant,

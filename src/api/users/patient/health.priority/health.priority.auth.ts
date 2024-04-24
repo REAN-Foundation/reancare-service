@@ -12,7 +12,7 @@ export class HealthPriorityAuth {
 
     static _baseContext = 'User.Patient.HealthPriority';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class HealthPriorityAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class HealthPriorityAuth {
         RequestType : RequestType.Search,
     };
 
-    static getPatientHealthPriorities: AuthOptions = {
+    static readonly getPatientHealthPriorities: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetPatientHealthPriorities`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class HealthPriorityAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class HealthPriorityAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,

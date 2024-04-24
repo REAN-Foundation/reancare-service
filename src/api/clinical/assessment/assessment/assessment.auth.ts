@@ -12,7 +12,7 @@ export class AssessmentAuth {
 
     static _baseContext = `Clinical.Assessments.Assessment`;
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ export class AssessmentAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ export class AssessmentAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ export class AssessmentAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class AssessmentAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.Search`,
         Ownership           : ResourceOwnership.Owner,
@@ -53,7 +53,7 @@ export class AssessmentAuth {
         CustomAuthorization : true,
     };
 
-    static startAssessment: AuthOptions = {
+    static readonly startAssessment: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.StartAssessment`,
         Ownership           : ResourceOwnership.Owner,
@@ -62,7 +62,7 @@ export class AssessmentAuth {
         CustomAuthorization : true,
     };
 
-    static scoreAssessment: AuthOptions = {
+    static readonly scoreAssessment: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.ScoreAssessment`,
         Ownership           : ResourceOwnership.Owner,
@@ -71,7 +71,7 @@ export class AssessmentAuth {
         CustomAuthorization : true,
     };
 
-    static getNextQuestion: AuthOptions = {
+    static readonly getNextQuestion: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.GetNextQuestion`,
         Ownership           : ResourceOwnership.Owner,
@@ -80,7 +80,7 @@ export class AssessmentAuth {
         CustomAuthorization : true,
     };
 
-    static getQuestionById: AuthOptions = {
+    static readonly getQuestionById: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.GetQuestionById`,
         Ownership           : ResourceOwnership.Owner,
@@ -89,7 +89,7 @@ export class AssessmentAuth {
         CustomAuthorization : true,
     };
 
-    static answerQuestion: AuthOptions = {
+    static readonly answerQuestion: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.AnswerQuestion`,
         Ownership           : ResourceOwnership.Owner,
@@ -98,7 +98,7 @@ export class AssessmentAuth {
         CustomAuthorization : true,
     };
 
-    static answerQuestionList: AuthOptions = {
+    static readonly answerQuestionList: AuthOptions = {
         ...DefaultAuthOptions,
         Context             : `${this._baseContext}.AnswerQuestionList`,
         Ownership           : ResourceOwnership.Owner,
@@ -106,5 +106,5 @@ export class AssessmentAuth {
         RequestType         : RequestType.UpdateOne,
         CustomAuthorization : true,
     };
-    
+
 }

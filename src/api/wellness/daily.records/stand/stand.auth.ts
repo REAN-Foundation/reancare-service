@@ -12,7 +12,7 @@ export class StandAuth {
 
 static _baseContext = `Wellness.DailyRecords.Stand`;
 
-static create: AuthOptions = {
+static readonly create: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Create`,
     Ownership   : ResourceOwnership.Owner,
@@ -20,7 +20,7 @@ static create: AuthOptions = {
     RequestType : RequestType.CreateOne,
 };
 
-static update: AuthOptions = {
+static readonly update: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Update`,
     Ownership   : ResourceOwnership.Owner,
@@ -28,7 +28,7 @@ static update: AuthOptions = {
     RequestType : RequestType.UpdateOne,
 };
 
-static delete: AuthOptions = {
+static readonly delete: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.Delete`,
     Ownership   : ResourceOwnership.Owner,
@@ -36,7 +36,7 @@ static delete: AuthOptions = {
     RequestType : RequestType.DeleteOne,
 };
 
-static getById: AuthOptions = {
+static readonly getById: AuthOptions = {
     ...DefaultAuthOptions,
     Context     : `${this._baseContext}.GetById`,
     Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ static getById: AuthOptions = {
     RequestType : RequestType.GetOne,
 };
 
-static search: AuthOptions = {
+static readonly search: AuthOptions = {
     ...DefaultAuthOptions,
     Context             : `${this._baseContext}.Search`,
     Ownership           : ResourceOwnership.System,

@@ -12,7 +12,7 @@ export class TypesAuth {
 
     static _baseContext = 'General.Types';
 
-    static createPriorityType: AuthOptions = {
+    static readonly createPriorityType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.HealthPriorityType.Create`,
         Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ export class TypesAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static getPriorityTypeById: AuthOptions = {
+    static readonly getPriorityTypeById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.HealthPriorityType.GetById`,
         Ownership   : ResourceOwnership.System,
@@ -28,7 +28,7 @@ export class TypesAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static updatePriorityType: AuthOptions = {
+    static readonly updatePriorityType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.HealthPriorityType.Update`,
         Ownership   : ResourceOwnership.System,
@@ -36,7 +36,7 @@ export class TypesAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static deletePriorityType: AuthOptions = {
+    static readonly deletePriorityType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.HealthPriorityType.Delete`,
         Ownership   : ResourceOwnership.System,
@@ -44,7 +44,7 @@ export class TypesAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static createRoleType: AuthOptions = {
+    static readonly createRoleType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.RoleType.Create`,
         Ownership   : ResourceOwnership.System,
@@ -52,7 +52,7 @@ export class TypesAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static getRoleTypeById: AuthOptions = {
+    static readonly getRoleTypeById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.RoleType.GetById`,
         Ownership   : ResourceOwnership.System,
@@ -60,7 +60,7 @@ export class TypesAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static updateRoleType: AuthOptions = {
+    static readonly updateRoleType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.RoleType.Update`,
         Ownership   : ResourceOwnership.System,
@@ -68,7 +68,7 @@ export class TypesAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static deleteRoleType: AuthOptions = {
+    static readonly deleteRoleType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.RoleType.Delete`,
         Ownership   : ResourceOwnership.System,
@@ -76,7 +76,7 @@ export class TypesAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static createLabRecordType: AuthOptions = {
+    static readonly createLabRecordType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.LabRecordType.Create`,
         Ownership   : ResourceOwnership.System,
@@ -84,7 +84,7 @@ export class TypesAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static getLabRecordTypeById: AuthOptions = {
+    static readonly getLabRecordTypeById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.LabRecordType.GetById`,
         Ownership   : ResourceOwnership.System,
@@ -92,7 +92,7 @@ export class TypesAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static updateLabRecordType: AuthOptions = {
+    static readonly updateLabRecordType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.LabRecordType.Update`,
         Ownership   : ResourceOwnership.System,
@@ -100,7 +100,7 @@ export class TypesAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static deleteLabRecordType: AuthOptions = {
+    static readonly deleteLabRecordType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.LabRecordType.Delete`,
         Ownership   : ResourceOwnership.System,
@@ -108,7 +108,7 @@ export class TypesAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static createGoalType: AuthOptions = {
+    static readonly createGoalType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GoalType.Create`,
         Ownership   : ResourceOwnership.System,
@@ -116,7 +116,7 @@ export class TypesAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static getGoalTypeById: AuthOptions = {
+    static readonly getGoalTypeById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GoalType.GetById`,
         Ownership   : ResourceOwnership.System,
@@ -124,7 +124,7 @@ export class TypesAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static updateGoalType: AuthOptions = {
+    static readonly updateGoalType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GoalType.Update`,
         Ownership   : ResourceOwnership.System,
@@ -132,7 +132,7 @@ export class TypesAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static deleteGoalType: AuthOptions = {
+    static readonly deleteGoalType: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GoalType.Delete`,
         Ownership   : ResourceOwnership.System,
@@ -140,7 +140,7 @@ export class TypesAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static getPersonRoleTypes: AuthOptions = {
+    static readonly getPersonRoleTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetPersonRoleTypes`,
         Ownership        : ResourceOwnership.System,
@@ -149,7 +149,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getOrganizationTypes: AuthOptions = {
+    static readonly getOrganizationTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetOrganizationTypes`,
         Ownership        : ResourceOwnership.System,
@@ -158,7 +158,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getGenderTypes: AuthOptions = {
+    static readonly getGenderTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetGenderTypes`,
         Ownership        : ResourceOwnership.System,
@@ -167,7 +167,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getBloodGroups: AuthOptions = {
+    static readonly getBloodGroups: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetBloodGroups`,
         Ownership        : ResourceOwnership.System,
@@ -176,7 +176,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getRaceTypes: AuthOptions = {
+    static readonly getRaceTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetRaceTypes`,
         Ownership        : ResourceOwnership.System,
@@ -185,7 +185,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getEthnicityTypes: AuthOptions = {
+    static readonly getEthnicityTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetEthnicityTypes`,
         Ownership        : ResourceOwnership.System,
@@ -194,7 +194,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getMaritalStatuses: AuthOptions = {
+    static readonly getMaritalStatuses: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetMaritalStatuses`,
         Ownership        : ResourceOwnership.System,
@@ -203,7 +203,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getSeverities: AuthOptions = {
+    static readonly getSeverities: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetSeverities`,
         Ownership        : ResourceOwnership.System,
@@ -212,7 +212,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getPriorityTypes: AuthOptions = {
+    static readonly getPriorityTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.HealthPriority.GetPriorityTypes`,
         Ownership        : ResourceOwnership.System,
@@ -221,7 +221,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getLabRecordTypes: AuthOptions = {
+    static readonly getLabRecordTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.LabRecords`,
         Ownership        : ResourceOwnership.System,
@@ -230,7 +230,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getGroupActivityTypes: AuthOptions = {
+    static readonly getGroupActivityTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GroupActivityTypes`,
         Ownership        : ResourceOwnership.System,
@@ -239,7 +239,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getReminderTypes: AuthOptions = {
+    static readonly getReminderTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.ReminderTypes`,
         Ownership        : ResourceOwnership.System,
@@ -248,7 +248,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getReminderRepeatAfterEveryTypes: AuthOptions = {
+    static readonly getReminderRepeatAfterEveryTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.ReminderRepeatAfterEveryNUnits`,
         Ownership        : ResourceOwnership.System,
@@ -257,7 +257,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getGoalTypes: AuthOptions = {
+    static readonly getGoalTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GoalType.GetGoalTypes`,
         Ownership        : ResourceOwnership.System,
@@ -266,7 +266,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getQueryResponseTypes: AuthOptions = {
+    static readonly getQueryResponseTypes: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetQueryResponseTypes`,
         Ownership        : ResourceOwnership.System,
@@ -275,7 +275,7 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
-    static getUserEngagementCategories: AuthOptions = {
+    static readonly getUserEngagementCategories: AuthOptions = {
         ...DefaultAuthOptions,
         Context          : `${this._baseContext}.GetUserEngagementCategories`,
         Ownership        : ResourceOwnership.System,

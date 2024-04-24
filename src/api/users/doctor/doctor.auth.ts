@@ -12,16 +12,16 @@ export class DoctorAuth {
 
     static _baseContext = 'User.Doctor';
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
-        Context       : `${this._baseContext}.Create`,
-        Ownership     : ResourceOwnership.Owner,
-        ActionScope   : ActionScope.Tenant,
-        RequestType   : RequestType.CreateOne,
-        SignupOrSignin: true
+        Context        : `${this._baseContext}.Create`,
+        Ownership      : ResourceOwnership.Owner,
+        ActionScope    : ActionScope.Tenant,
+        RequestType    : RequestType.CreateOne,
+        SignupOrSignin : true
     };
 
-    static getByUserId: AuthOptions = {
+    static readonly getByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetByUserId`,
         Ownership   : ResourceOwnership.Owner,
@@ -29,7 +29,7 @@ export class DoctorAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -37,7 +37,7 @@ export class DoctorAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static updateByUserId: AuthOptions = {
+    static readonly updateByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateByUserId`,
         Ownership   : ResourceOwnership.Owner,
@@ -45,7 +45,7 @@ export class DoctorAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static deleteByUserId: AuthOptions = {
+    static readonly deleteByUserId: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.DeleteByUserId`,
         Ownership   : ResourceOwnership.Owner,

@@ -12,7 +12,7 @@ export class EmergencyContactAuth {
 
     static _baseContext = 'User.Patient.EmergencyContact';
 
-    static getContactRoles: AuthOptions = {
+    static readonly getContactRoles: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetContactRoles`,
         Ownership   : ResourceOwnership.System,
@@ -20,7 +20,7 @@ export class EmergencyContactAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getHealthSystems: AuthOptions = {
+    static readonly getHealthSystems: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetHealthSystems`,
         Ownership   : ResourceOwnership.Tenant,
@@ -28,7 +28,7 @@ export class EmergencyContactAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static getHealthSystemHospitals: AuthOptions = {
+    static readonly getHealthSystemHospitals: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetHealthSystemHospitals`,
         Ownership   : ResourceOwnership.Tenant,
@@ -36,7 +36,7 @@ export class EmergencyContactAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static create: AuthOptions = {
+    static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
         Ownership   : ResourceOwnership.Owner,
@@ -44,7 +44,7 @@ export class EmergencyContactAuth {
         RequestType : RequestType.CreateOne,
     };
 
-    static search: AuthOptions = {
+    static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
         Ownership   : ResourceOwnership.Owner,
@@ -52,7 +52,7 @@ export class EmergencyContactAuth {
         RequestType : RequestType.Search,
     };
 
-    static update: AuthOptions = {
+    static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,
         Ownership   : ResourceOwnership.Owner,
@@ -60,7 +60,7 @@ export class EmergencyContactAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static delete: AuthOptions = {
+    static readonly delete: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Delete`,
         Ownership   : ResourceOwnership.Owner,
@@ -68,7 +68,7 @@ export class EmergencyContactAuth {
         RequestType : RequestType.DeleteOne,
     };
 
-    static getById: AuthOptions = {
+    static readonly getById: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetById`,
         Ownership   : ResourceOwnership.Owner,

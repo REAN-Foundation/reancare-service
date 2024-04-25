@@ -95,7 +95,7 @@ export class UserAuth {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserByRoleAndPhone`,
         Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.System,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetOne,
     };
 

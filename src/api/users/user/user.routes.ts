@@ -11,26 +11,26 @@ export const register = (app: express.Application): void => {
 
     ///////////////////////////////////////////////////////////////
 
-    // Obsolute routes. Will be discontinued in future
-    const obsoluteRouter = express.Router();
+    // Obsolete routes. Will be discontinued in future
+    const obsoleteRouter = express.Router();
 
-    obsoluteRouter.get('/by-phone/:phone/role/:roleId',
-        auth(UserAuth.getUserByRoleAndPhone), 
+    obsoleteRouter.get('/by-phone/:phone/role/:roleId',
+        auth(UserAuth.getUserByRoleAndPhone),
         controller.getTenantUserByRoleAndPhone);
 
-    obsoluteRouter.get('/by-email/:email/role/:roleId',
-        auth(UserAuth.getUserByRoleAndEmail), 
+    obsoleteRouter.get('/by-email/:email/role/:roleId',
+        auth(UserAuth.getUserByRoleAndEmail),
         controller.getTenantUserByRoleAndEmail);
 
-    obsoluteRouter.get('/tenants/:tenantId/roles/:roleId/phones/:phone',
-        auth(UserAuth.getTenantUserByRoleAndPhone), 
+    obsoleteRouter.get('/tenants/:tenantId/roles/:roleId/phones/:phone',
+        auth(UserAuth.getTenantUserByRoleAndPhone),
         controller.getTenantUserByRoleAndPhone);
         
-    obsoluteRouter.get('/tenants/:tenantId/roles/:roleId/emails/:email',
-        auth(UserAuth.getTenantUserByRoleAndEmail), 
+    obsoleteRouter.get('/tenants/:tenantId/roles/:roleId/emails/:email',
+        auth(UserAuth.getTenantUserByRoleAndEmail),
         controller.getTenantUserByRoleAndEmail);
 
-    app.use('/api/v1/users', obsoluteRouter);
+    app.use('/api/v1/users', obsoleteRouter);
 
     /////////////////////////////////////////////////////////////////
 

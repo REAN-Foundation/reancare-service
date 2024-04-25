@@ -7,20 +7,34 @@ import { UserAuth } from './user.auth';
 
 export const register = (app: express.Application): void => {
 
-    const router = express.Router();
     const controller = new UserController();
 
-    router.get('/by-phone/:phone/role/:roleId',
-        auth(UserAuth.getUserByRoleAndPhone), controller.getTenantUserByRoleAndPhone);
+    ///////////////////////////////////////////////////////////////
 
-    router.get('/by-email/:email/role/:roleId',
-        auth(UserAuth.getUserByRoleAndEmail), controller.getTenantUserByRoleAndEmail);
+    // Obsolete routes. Will be discontinued in future
+    const obsoleteRouter = express.Router();
 
-    router.get('/tenants/:tenantId/roles/:roleId/phones/:phone',
-        auth(UserAuth.getTenantUserByRoleAndPhone), controller.getTenantUserByRoleAndPhone);
+    obsoleteRouter.get('/by-phone/:phone/role/:roleId',
+        auth(UserAuth.getUserByRoleAndPhone),
+        controller.getTenantUserByRoleAndPhone);
+
+    obsoleteRouter.get('/by-email/:email/role/:roleId',
+        auth(UserAuth.getUserByRoleAndEmail),
+        controller.getTenantUserByRoleAndEmail);
+
+    obsoleteRouter.get('/tenants/:tenantId/roles/:roleId/phones/:phone',
+        auth(UserAuth.getTenantUserByRoleAndPhone),
+        controller.getTenantUserByRoleAndPhone);
         
-    router.get('/tenants/:tenantId/roles/:roleId/emails/:email',
-        auth(UserAuth.getTenantUserByRoleAndEmail), controller.getTenantUserByRoleAndEmail);
+    obsoleteRouter.get('/tenants/:tenantId/roles/:roleId/emails/:email',
+        auth(UserAuth.getTenantUserByRoleAndEmail),
+        controller.getTenantUserByRoleAndEmail);
+
+    app.use('/api/v1/users', obsoleteRouter);
+
+    /////////////////////////////////////////////////////////////////
+
+    const router = express.Router();
 
     router.get('/:phone/tenants', auth(UserAuth.getTenantsForUserWithPhone), controller.getTenantsForUserWithPhone);
     router.get('/:email/tenants', auth(UserAuth.getTenantsForUserWithEmail), controller.getTenantsForUserWithEmail);
@@ -38,4 +52,5 @@ export const register = (app: express.Application): void => {
     router.post('/', auth(UserAuth.create), controller.create);
 
     app.use('/api/v1/users', router);
+
 };

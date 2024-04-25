@@ -90,14 +90,16 @@ export class UserAuth {
 
     /////////////////////////////////////////////////////////
 
+    // Marked for the deprecation
     static readonly getUserByRoleAndPhone: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserByRoleAndPhone`,
         Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.System,
+        ActionScope : ActionScope.Public,
         RequestType : RequestType.GetOne,
     };
 
+    // Marked for the deprecation
     static readonly getUserByRoleAndEmail: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetUserByRoleAndEmail`,
@@ -106,6 +108,7 @@ export class UserAuth {
         RequestType : RequestType.GetOne,
     };
 
+    // Marked for the deprecation
     static readonly getTenantUserByRoleAndPhone: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantUserByRoleAndPhone`,
@@ -114,6 +117,7 @@ export class UserAuth {
         RequestType : RequestType.GetOne,
     };
 
+    // Marked for the deprecation
     static readonly getTenantUserByRoleAndEmail: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetTenantUserByRoleAndEmail`,

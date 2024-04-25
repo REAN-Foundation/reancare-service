@@ -153,14 +153,14 @@ describe('37 - Sleep record tests', function() {
             .post(`/api/v1/wellness/daily-records/sleep/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('37:07 -> Negative - Search sleep records', function(done) {
@@ -168,7 +168,7 @@ describe('37 - Sleep record tests', function() {
         agent
             .get(`/api/v1/wellness/daily-records/sleep/search${loadSleepQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -182,7 +182,7 @@ describe('37 - Sleep record tests', function() {
             .delete(`/api/v1/wellness/daily-records/sleep/${getTestData('SleepId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

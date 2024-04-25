@@ -5,6 +5,7 @@ import { CourseDto } from "./course.dto";
 //////////////////////////////////////////////////////////////////////
 
 export interface CourseSearchFilters extends BaseSearchFilters{
+    TenantId?        : uuid;
     Name?            : string;
     DurationInDays?  : number;
     LearningPathId?  : uuid;

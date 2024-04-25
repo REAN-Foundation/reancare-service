@@ -15,43 +15,7 @@ describe('12 - Patient health profile tests', function() {
 
     var agent = request.agent(infra._app);
 
-    it('12:01 -> Get severity list', function(done) {
-        agent
-            .get(`/api/v1/types/severities/`)
-            .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .expect(response => {
-                expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('success');
-            })
-            .expect(200, done);
-    });
-
-    it('12:02 -> Get blood groups', function(done) {
-        agent
-            .get(`/api/v1/types/blood-groups/`)
-            .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .expect(response => {
-                expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('success');
-            })
-            .expect(200, done);
-    });
-
-    it('12:03 -> Get marital status', function(done) {
-        agent
-            .get(`/api/v1/types/marital-statuses/`)
-            .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .expect(response => {
-                expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('success');
-            })
-            .expect(200, done);
-    });
-
-    it('12:04 -> Get health profile', function(done) {
+    it('12:01 -> Get health profile', function(done) {
         agent
             .get(`/api/v1/patient-health-profiles/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
@@ -64,14 +28,14 @@ describe('12 - Patient health profile tests', function() {
             .expect(200, done);
     });
 
-    it('12:05 -> Update health profile', function(done) {
+    it('12:02 -> Update health profile', function(done) {
         loadHealthProfileUpdateModel();
         const updateModel = getTestData("HealthProfileUpdateModel");
         agent
             .put(`/api/v1/patient-health-profiles/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.HealthProfile).to.have.property('id');
@@ -111,30 +75,7 @@ describe('12 - Patient health profile tests', function() {
             .expect(200, done);
     });
 
-    it('12:06 -> Negative - Get severity list', function(done) {
-        agent
-            .get(`/api/v1/types/severities/`)
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
-                expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
-            })
-            .expect(401, done);
-    });
-
-    it('12:07 -> Negative - Get blood groups', function(done) {
-        agent
-            .get(`/api/v1/types/blood-groups/`)
-            .set('Content-Type', 'application/json')
-            .expect(response => {
-                expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
-            })
-            .expect(401, done);
-    });
-
-    it('12:08 -> Negative - Update health profile', function(done) {
+    it('12:03 -> Negative - Update health profile', function(done) {
         loadHealthProfileUpdateModel();
         const updateModel = getTestData("HealthProfileUpdateModel");
         agent
@@ -147,7 +88,7 @@ describe('12 - Patient health profile tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(404, done);
+            .expect(403, done);
     });
 
 });

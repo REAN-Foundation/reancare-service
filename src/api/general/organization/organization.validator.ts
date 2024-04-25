@@ -1,6 +1,5 @@
 import express from 'express';
-import { OrganizationDomainModel } from '../../../domain.types/general/organization/organization.domain.model';
-import { OrganizationSearchFilters } from '../../../domain.types/general/organization/organization.search.types';
+import { OrganizationDomainModel, OrganizationSearchFilters } from '../../../domain.types/general/organization/organization.types';
 import { BaseValidator, Where } from '../../../api/base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -13,14 +12,15 @@ export class OrganizationValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): OrganizationDomainModel => {
         const organizationModel: OrganizationDomainModel = {
-            Type                             : request.body.Type ?? null,
             Name                             : request.body.Name ?? null,
-            ContactUserId                    : request.body.ContactUserId ?? null,
-            ContactPhone                     : request.body.ContactPhone ?? null,
-            ContactEmail                     : request.body.ContactEmail ?? null,
+            Type                             : request.body.Type ?? null,
+            ContactUserId                    : request.body.ContactUserId ?? request.currentUser.UserId,
+            TenantId                         : request.body.TenantId ?? request.currentUser.TenantId,
+            ContactPhone                     : request.body.ContactPhone,
+            ContactEmail                     : request.body.ContactEmail,
             About                            : request.body.About ?? null,
-            OperationalSince                 : request.body.OperationalSince ?? null,
             ParentOrganizationId             : request.body.ParentOrganizationId ?? null,
+            OperationalSince                 : request.body.OperationalSince ?? null,
             AddressIds                       : request.body.AddressIds ?? [],
             ImageResourceId                  : request.body.ImageResourceId ?? null,
             IsHealthFacility                 : request.body.IsHealthFacility ?? null,
@@ -64,18 +64,19 @@ export class OrganizationValidator extends BaseValidator {
 
     private  async validateCreateBody(request) {
 
+        await this.validateString(request, 'Name', Where.Body, false, true);
         await this.validateUuid(request, 'Type', Where.Body, false, false);
         await this.validateUuid(request, 'ContactUserId', Where.Body, false, false);
-        await this.validateString(request, 'Name', Where.Body, false, true);
+        await this.validateUuid(request, 'TenantId', Where.Body, false, false);
         await this.validatePhone(request, 'ContactPhone', Where.Body, true, false);
         await this.validateEmail(request, 'ContactEmail', Where.Body, true, false);
         await this.validateString(request, 'About', Where.Body, false, true);
-        await this.validateDate(request, 'OperationalSince', Where.Body, false, true);
         await this.validateUuid(request, 'ParentOrganizationId', Where.Body, false, true);
-        await this.validateArray(request, 'AddressIds', Where.Body, false, true);
+        await this.validateDate(request, 'OperationalSince', Where.Body, false, true);
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
         await this.validateBoolean(request, 'IsHealthFacility', Where.Body, false, true);
         await this.validateUuid(request, 'NationalHealthFacilityRegistryId', Where.Body, false, true);
+        await this.validateArray(request, 'AddressIds', Where.Body, false, true);
         this.validateRequest(request);
     }
 

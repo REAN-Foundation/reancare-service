@@ -15,6 +15,7 @@ export class MedicalConditionValidator extends BaseValidator {
 
         const MedicalConditionModel: MedicalConditionDomainModel = {
             Condition   : request.body.Condition,
+            TenantId    : request.body.TenantId,
             Description : request.body.Description,
             Language    : request.body.Language,
         };
@@ -49,6 +50,7 @@ export class MedicalConditionValidator extends BaseValidator {
     private async validateCreateBody(request) {
 
         await this.validateString(request, 'Condition', Where.Body, true, false);
+        await this.validateUuid(request, 'TenantId', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, true, false);
         await this.validateString(request, 'Language', Where.Body, true, true);
 

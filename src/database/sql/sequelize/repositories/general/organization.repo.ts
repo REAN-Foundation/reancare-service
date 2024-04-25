@@ -2,9 +2,12 @@ import { Op } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { AddressDto } from '../../../../../domain.types/general/address/address.dto';
-import { OrganizationDomainModel } from '../../../../../domain.types/general/organization/organization.domain.model';
-import { OrganizationDto } from '../../../../../domain.types/general/organization/organization.dto';
-import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../../../domain.types/general/organization/organization.search.types';
+import {
+    OrganizationDomainModel,
+    OrganizationDto,
+    OrganizationSearchFilters,
+    OrganizationSearchResults,
+} from '../../../../../domain.types/general/organization/organization.types';
 import { PersonDto } from '../../../../../domain.types/person/person.dto';
 import { IOrganizationRepo } from '../../../../repository.interfaces/general/organization.repo.interface';
 import { AddressMapper } from '../../mappers/general/address.mapper';
@@ -26,6 +29,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 Type                             : model.Type,
                 Name                             : model.Name ?? null,
                 ContactUserId                    : model.ContactUserId ?? null,
+                TenantId                         : model.TenantId ?? null,
                 ContactPhone                     : model.ContactPhone ?? null,
                 ContactEmail                     : model.ContactEmail ?? null,
                 ParentOrganizationId             : model.ParentOrganizationId ?? null,

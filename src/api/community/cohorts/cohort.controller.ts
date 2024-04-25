@@ -8,10 +8,13 @@ import { RoleService } from '../../../services/role/role.service';
 import { CohortValidator } from './cohort.validator';
 import { PersonService } from '../../../services/person/person.service';
 import { Injector } from '../../../startup/injector';
+import { CohortSearchFilters } from '../../../domain.types/community/cohorts/cohort.domain.model';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CohortController {
+export class CohortController extends BaseController {
 
     //#region member variables and constructors
 
@@ -32,10 +35,12 @@ export class CohortController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await this._validator.create(request);
+            await this.authorizeOne(request, model.OwnerUserId, model.TenantId);
             const record = await this._service.create(model);
             if (record == null) {
                 throw new ApiError(400, 'Cannot start conversation!');
             }
+
             ResponseHandler.success(request, response, 'Cohort created successfully!', 201, {
                 Cohort : record,
             });
@@ -51,6 +56,7 @@ export class CohortController {
             if (record == null) {
                 throw new ApiError(404, ' Cohort record not found.');
             }
+            await this.authorizeOne(request, record.OwnerUserId, record.TenantId);
             ResponseHandler.success(request, response, 'Cohort record retrieved successfully!', 200, {
                 Cohort : record,
             });
@@ -61,7 +67,8 @@ export class CohortController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -83,6 +90,7 @@ export class CohortController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Cohort record not found.');
             }
+            await this.authorizeOne(request, existingRecord.OwnerUserId, existingRecord.TenantId);
             const updated = await this._service.update(id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update cohort record!');
@@ -102,6 +110,7 @@ export class CohortController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Cohort record not found.');
             }
+            await this.authorizeOne(request, existingRecord.OwnerUserId, existingRecord.TenantId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Cohort record cannot be deleted.');
@@ -121,6 +130,7 @@ export class CohortController {
             if (cohort == null) {
                 throw new ApiError(404, 'Cohort record not found.');
             }
+            await this.authorizeOne(request, cohort.OwnerUserId, cohort.TenantId);
             const users = await this._service.getCohortUsers(id);
             ResponseHandler.success(request, response, 'Cohort users retrieved successfully!', 200, {
                 Users : users,
@@ -139,6 +149,7 @@ export class CohortController {
             if (cohort == null) {
                 throw new ApiError(404, 'Cohort record not found.');
             }
+            await this.authorizeOne(request, cohort.OwnerUserId, cohort.TenantId);
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -164,6 +175,7 @@ export class CohortController {
             if (cohort == null) {
                 throw new ApiError(404, 'Cohort record not found.');
             }
+            await this.authorizeOne(request, cohort.OwnerUserId, cohort.TenantId);
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -188,6 +200,7 @@ export class CohortController {
             if (cohort == null) {
                 throw new ApiError(404, 'Cohort record not found.');
             }
+            await this.authorizeOne(request, cohort.OwnerUserId, cohort.TenantId);
             const stats = await this._service.getCohortStats(id);
             ResponseHandler.success(request, response, 'Cohort stats retrieved successfully!', 200, {
                 Stats : stats,
@@ -202,6 +215,10 @@ export class CohortController {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             const cohorts = await this._service.getCohortsForTenant(tenantId);
+            if (cohorts.length > 0) {
+                await this.authorizeOne(request, cohorts[0].OwnerUserId, cohorts[0].TenantId);
+            }
+
             ResponseHandler.success(request, response, 'Cohorts retrieved successfully!', 200, {
                 Cohorts : cohorts,
             });
@@ -212,5 +229,29 @@ export class CohortController {
     };
 
     //#endregion
+
+    private authorizeSearch = async (
+        request: express.Request,
+        searchFilters: CohortSearchFilters): Promise<CohortSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.TenantId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.TenantId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

@@ -22,7 +22,7 @@ describe('19 - Reminder schedule weekly', function() {
             .post(`/api/v1/reminders/repeat-every-weekday/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Reminder.id, 'ReminderEveryWeekId');
@@ -54,7 +54,7 @@ describe('19 - Reminder schedule weekly', function() {
             .post(`/api/v1/reminders/repeat-every-week-on-days/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Reminder.id, 'ReminderCertainWeekId');
@@ -85,7 +85,7 @@ describe('19 - Reminder schedule weekly', function() {
             .get(`/api/v1/reminders/${getTestData('ReminderEveryWeekId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Reminder).to.have.property('id');
                 expect(response.body.Data.Reminder).to.have.property('UserId');
@@ -126,7 +126,7 @@ describe('19 - Reminder schedule weekly', function() {
         agent
             .get(`/api/v1/reminders/${getTestData('ReminderEveryWeekId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

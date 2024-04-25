@@ -12,6 +12,7 @@ import { BloodCholesterolMapper } from '../../../mappers/clinical/biometrics/blo
 import BloodCholesterol from '../../../models/clinical/biometrics/blood.cholesterol.model';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import User from '../../../models/users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -45,6 +46,20 @@ export class BloodCholesterolRepo implements IBloodCholesterolRepo {
     getById = async (id: string): Promise<BloodCholesterolDto> => {
         try {
             const bloodCholesterol = await BloodCholesterol.findByPk(id);
+
+            // const record = await BloodCholesterol.findOne({
+            //     where : {
+            //         id : id,
+            //     },
+            //     include : [
+            //         {
+            //             model      : User,
+            //             as         : 'PatientUser',
+            //             foreignKey : 'PatientUserId',
+            //         },
+            //     ],
+            // });
+
             return await BloodCholesterolMapper.toDto(bloodCholesterol);
         } catch (error) {
             Logger.instance().log(error.message);

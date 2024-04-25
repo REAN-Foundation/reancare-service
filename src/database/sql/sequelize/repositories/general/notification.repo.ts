@@ -1,35 +1,43 @@
 
-import { NotificationSearchFilters, NotificationSearchResults } from '../../../../../domain.types/general/notification/notification.search.types';
+import {
+    NotificationCreateModel,
+    NotificationSearchFilters,
+    NotificationSearchResults,
+    NotificationDto,
+    NotificationUpdateModel,
+    UserNotificationDto
+} from '../../../../../domain.types/general/notification/notification.types';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { INotificationRepo } from '../../../../../database/repository.interfaces/general/notification.repo.interface';
-import { NotificationDomainModel } from '../../../../../domain.types/general/notification/notification.domain.model';
-import { NotificationDto } from '../../../../../domain.types/general/notification/notification.dto';
 import { NotificationMapper } from '../../mappers/general/notification.mapper';
-import NotificationModel from '../../models/general/notification.model';
+import Notification from '../../models/general/notification/notification.model';
+import UserNotification from '../../models/general/notification/user.notification.model';
 import { Op } from 'sequelize';
+import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class NotificationRepo implements INotificationRepo {
 
-    create = async (createModel: NotificationDomainModel):
+    create = async (createModel: NotificationCreateModel):
     Promise<NotificationDto> => {
 
         try {
             const entity = {
-                UserId         : createModel.UserId,
-                BroadcastToAll : createModel.BroadcastToAll,
-                Title          : createModel.Title,
-                Body           : createModel.Body,
-                Payload        : createModel.Payload ,
-                SentOn         : createModel.SentOn,
-                ReadOn         : createModel.ReadOn ,
-                ImageUrl       : createModel.ImageUrl,
-                Type           : createModel.Type,
+                TenantId        : createModel.TenantId ?? null,
+                Target          : createModel.Target,
+                Type            : createModel.Type,
+                Channel         : createModel.Channel,
+                Title           : createModel.Title,
+                Body            : createModel.Body,
+                Payload         : createModel.Payload ,
+                SentOn          : createModel.SentOn,
+                ImageUrl        : createModel.ImageUrl,
+                CreatedByUserId : createModel.CreatedByUserId,
             };
 
-            const notification = await NotificationModel.create(entity);
+            const notification = await Notification.create(entity);
             return await NotificationMapper.toDto(notification);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -39,27 +47,8 @@ export class NotificationRepo implements INotificationRepo {
 
     getById = async (id: string): Promise<NotificationDto> => {
         try {
-            const notification = await NotificationModel.findByPk(id);
+            const notification = await Notification.findByPk(id);
             return await NotificationMapper.toDto(notification);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    markAsRead = async (id: string, updateModel: NotificationDomainModel):
-    Promise<NotificationDto> => {
-        try {
-            const notification = await NotificationModel.findByPk(id);
-
-            if (updateModel.ReadOn != null && notification.BroadcastToAll !== true) {
-                notification.ReadOn = updateModel.ReadOn;
-            }
-
-            await notification.save();
-
-            return await NotificationMapper.toDto(notification);
-
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -70,65 +59,52 @@ export class NotificationRepo implements INotificationRepo {
         try {
 
             let x = undefined;
-            if (filters.UserId != null) {
+            if (filters.TenantId != null) {
                 x = {
                     [Op.or] : [
                         {
-                            UserId : filters.UserId,
-                        },
-                        {
-                            BroadcastToAll : true
+                            TenantId : filters.TenantId
                         }
                     ]
-                };
-            }
-            else {
-                x = {
-                    BroadcastToAll : true
                 };
             }
 
             const search = { where: { ...x } };
 
             if (filters.Title != null) {
-                search.where['Title'] = filters.Title;
+                search.where['Title'] = { [Op.like]: '%' + filters.Title + '%' };
             }
 
-            if (filters.SentOn !== null) {
-                search.where['SentOn'] = filters.SentOn;
+            if (filters.SentOnFrom != null && filters.SentOnTo != null) {
+                search.where['SentOn'] = {
+                    [Op.gte] : filters.SentOnFrom,
+                    [Op.lte] : filters.SentOnTo,
+                };
+            } else if (filters.SentOnFrom === null && filters.SentOnTo !== null) {
+                search.where['SentOn'] = {
+                    [Op.lte] : filters.SentOnTo,
+                };
+            } else if (filters.SentOnFrom !== null && filters.SentOnTo === null) {
+                search.where['SentOn'] = {
+                    [Op.gte] : filters.SentOnFrom,
+                };
             }
-            if (filters.ReadOn !== null) {
-                search.where['ReadOn'] = filters.ReadOn;
+
+            if (filters.Target !== null) {
+                search.where['Target'] = filters.Target;
+            }
+
+            if (filters.Channel !== null) {
+                search.where['Channel'] = filters.Channel;
             }
 
             if (filters.Type !== null) {
                 search.where['Type'] = filters.Type;
             }
 
-            let orderByColum = 'CreatedAt';
-            if (filters.OrderBy) {
-                orderByColum = filters.OrderBy;
-            }
-            let order = 'ASC';
-            if (filters.Order === 'descending') {
-                order = 'DESC';
-            }
-            search['order'] = [[orderByColum, order]];
+            const { pageIndex, limit, order, orderByColum } = this.updateCommonSearchParams(filters, search);
 
-            let limit = 25;
-            if (filters.ItemsPerPage) {
-                limit = filters.ItemsPerPage;
-            }
-            let offset = 0;
-            let pageIndex = 0;
-            if (filters.PageIndex) {
-                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
-                offset = pageIndex * limit;
-            }
-            search['limit'] = limit;
-            search['offset'] = offset;
-
-            const foundResults = await NotificationModel.findAndCountAll(search);
+            const foundResults = await Notification.findAndCountAll(search);
 
             const dtos: NotificationDto[] = [];
             for (const notification of foundResults.rows) {
@@ -154,10 +130,10 @@ export class NotificationRepo implements INotificationRepo {
 
     };
 
-    update = async (id: string, updateModel: NotificationDomainModel):
+    update = async (id: string, updateModel: NotificationUpdateModel):
     Promise<NotificationDto> => {
         try {
-            const notification = await NotificationModel.findByPk(id);
+            const notification = await Notification.findByPk(id);
 
             if (updateModel.Title != null) {
                 notification.Title = updateModel.Title;
@@ -171,8 +147,14 @@ export class NotificationRepo implements INotificationRepo {
             if (updateModel.SentOn != null) {
                 notification.SentOn = updateModel.SentOn;
             }
-            if (updateModel.ReadOn != null) {
-                notification.ReadOn = updateModel.ReadOn;
+            if (updateModel.Target != null) {
+                notification.Target = updateModel.Target;
+            }
+            if (updateModel.Channel != null) {
+                notification.Channel = updateModel.Channel;
+            }
+            if (updateModel.Type != null) {
+                notification.Type = updateModel.Type;
             }
 
             if (updateModel.ImageUrl != null) {
@@ -180,9 +162,6 @@ export class NotificationRepo implements INotificationRepo {
             }
             if (updateModel.Type != null) {
                 notification.Type = updateModel.Type;
-            }
-            if (updateModel.BroadcastToAll != null) {
-                notification.BroadcastToAll = updateModel.BroadcastToAll;
             }
 
             await notification.save();
@@ -197,13 +176,101 @@ export class NotificationRepo implements INotificationRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-
-            const result = await NotificationModel.destroy({ where: { id: id } });
+            const result = await Notification.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    markAsRead = async (id: string, userId: uuid):
+    Promise<boolean> => {
+        try {
+            const userNotification = await UserNotification.findOne({
+                where : {
+                    NotificationId : id,
+                    UserId         : userId,
+                }
+
+            });
+            if (userNotification == null) {
+                throw new ApiError(404, 'Notification not found');
+            }
+
+            userNotification.ReadOn = new Date();
+            await userNotification.save();
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    sendToUser = async (id: string, userId: string): Promise<boolean> => {
+        try {
+            const userNotification = await UserNotification.create({
+                UserId         : userId,
+                NotificationId : id,
+            });
+            return userNotification != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getUserNotification = async (id: string, userId: string): Promise<UserNotificationDto> => {
+        try {
+            const userNotification = await UserNotification.findOne({
+                where : {
+                    NotificationId : id,
+                    UserId         : userId,
+                }
+            });
+            if (userNotification == null) {
+                throw new ApiError(404, 'Notification not found');
+            }
+            const notification = await Notification.findByPk(id);
+            const notificationDto = NotificationMapper.toDto(notification);
+            const dto: UserNotificationDto = {
+                id             : userNotification.id,
+                UserId         : userNotification.UserId,
+                NotificationId : userNotification.NotificationId,
+                Notification   : notificationDto,
+                ReadOn         : userNotification.ReadOn,
+            };
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private updateCommonSearchParams = (filters: NotificationSearchFilters, search: { where: any; }) => {
+        let orderByColum = 'CreatedAt';
+        if (filters.OrderBy) {
+            orderByColum = filters.OrderBy;
+        }
+        let order = 'ASC';
+        if (filters.Order === 'descending') {
+            order = 'DESC';
+        }
+        search['order'] = [[orderByColum, order]];
+
+        let limit = 25;
+        if (filters.ItemsPerPage) {
+            limit = filters.ItemsPerPage;
+        }
+        let offset = 0;
+        let pageIndex = 0;
+        if (filters.PageIndex) {
+            pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+            offset = pageIndex * limit;
+        }
+        search['limit'] = limit;
+        search['offset'] = offset;
+        return { pageIndex, limit, order, orderByColum };
     };
 
 }

@@ -8,6 +8,8 @@ import { DoctorValidator } from './doctor.validator';
 import { BaseUserController } from '../base.user.controller';
 import { Injector } from '../../../startup/injector';
 import { UserHelper } from '../user.helper';
+import { DoctorSearchFilters } from '../../../domain.types/users/doctor/doctor.search.types';
+import { Roles } from '../../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,13 +17,12 @@ export class DoctorController extends BaseUserController {
 
     //#region member variables and constructors
 
-    _service: DoctorService = null;
+    _service: DoctorService = Injector.Container.resolve(DoctorService);
 
     _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
-        this._service = Injector.Container.resolve(DoctorService);
     }
 
     //#endregion
@@ -50,10 +51,11 @@ export class DoctorController extends BaseUserController {
         try {
             const userId: string = await DoctorValidator.getByUserId(request);
 
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, userId, user.TenantId);
 
             const doctor = await this._service.getByUserId(userId);
             if (doctor == null) {
@@ -70,7 +72,8 @@ export class DoctorController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await DoctorValidator.search(request);
+            let filters: DoctorSearchFilters = await DoctorValidator.search(request);
+            filters = await this.authorizeSearch(request, filters);
 
             // const extractFull: boolean =
             //     request.query.fullDetails !== 'undefined' && typeof request.query.fullDetails === 'boolean'
@@ -96,10 +99,11 @@ export class DoctorController extends BaseUserController {
             const doctorDomainModel = await DoctorValidator.updateByUserId(request);
 
             const userId: string = await DoctorValidator.getByUserId(request);
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, userId, user.TenantId);
 
             const userDomainModel: UserDomainModel = doctorDomainModel.User;
             const updatedUser = await this._userService.update(doctorDomainModel.User.id, userDomainModel);
@@ -120,7 +124,7 @@ export class DoctorController extends BaseUserController {
                 throw new ApiError(400, 'Unable to update doctor record!');
             }
 
-            await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
+            await this.createOrUpdateDefaultAddress(request, user.Person.id);
 
             ResponseHandler.success(request, response, 'Doctor records updated successfully!', 200, {
                 Doctor : updatedDoctor,
@@ -134,11 +138,12 @@ export class DoctorController extends BaseUserController {
     deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: string = await DoctorValidator.delete(request);
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
-
+            await this.authorizeOne(request, userId, user.TenantId);
+            
             const deleted = await this._personService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
@@ -150,6 +155,31 @@ export class DoctorController extends BaseUserController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    //#endregion
+
+    //#region  Authorization methods
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: DoctorSearchFilters): Promise<DoctorSearchFilters> => {
+
+        const currentUser = request.currentUser;
+        const currentRole = request.currentUser.CurrentRole;
+        
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                if (currentRole !== Roles.SystemAdmin && 
+                    currentRole !== Roles.SystemUser) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.TenantId = currentUser.TenantId;
+        }
+        return searchFilters;
     };
 
     //#endregion

@@ -5,6 +5,7 @@ import { DonorType, DonorTypeList } from '../../../../../../domain.types/miscell
 import { v4 } from 'uuid';
 import Person from '../../person/person.model';
 import User from '../../users/user/user.model';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,6 +37,14 @@ export default class Donor extends Model {
     })
     UserId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TenantId: string;
+    
     @IsUUID(4)
     @ForeignKey(() => Person)
     @Column({

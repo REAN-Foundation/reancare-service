@@ -113,10 +113,6 @@ export class PatientRepo implements IPatientRepo {
                 },
             };
 
-            if (filters.TenantId != null) {
-                includesObj.where['TenantId'] = filters.TenantId;
-            }
-
             const userIncludesObj =
             {
                 model    : User,
@@ -124,6 +120,10 @@ export class PatientRepo implements IPatientRepo {
                 where    : {
                 },
             };
+
+            if (filters.TenantId != null) {
+                userIncludesObj.where['TenantId'] = filters.TenantId;
+            }
 
             if (filters.UserName != null) {
                 userIncludesObj.where['UserName'] = filters.UserName;

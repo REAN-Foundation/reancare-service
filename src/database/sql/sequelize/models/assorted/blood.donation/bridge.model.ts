@@ -4,6 +4,7 @@ import {
 import { BridgeStatus, BridgeStatusList, DonorType, DonorTypeList } from '../../../../../../domain.types/miscellaneous/clinical.types';
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -40,6 +41,14 @@ export default class Bridge extends Model {
         allowNull : false,
     })
     PatientUserId: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TenantId: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)

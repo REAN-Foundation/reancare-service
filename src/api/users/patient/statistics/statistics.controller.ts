@@ -21,10 +21,11 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { HealthReportSettingService } from '../../../../services/users/patient/health.report.setting.service';
 import { HealthReportSettingsDomainModel, ReportFrequency, Settings } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { PatientBaseController } from '../patient.base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StatisticsController {
+export class StatisticsController extends PatientBaseController {
 
     //#region member variables and constructors
 
@@ -51,6 +52,7 @@ export class StatisticsController {
     getPatientStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
+            await this.authorizeOne(request, patientUserId);
             const stats = await this._service.getPatientStats(patientUserId);
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
                 Statistics : stats,
@@ -62,9 +64,10 @@ export class StatisticsController {
 
     getPatientHealthSummary = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientStatistics.getPatientHealthSummary';
+            // request.context = 'PatientStatistics.getPatientHealthSummary'; ???
 
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
+            await this.authorizeOne(request, patientUserId);
             const existingUser = await this._userService.getById(patientUserId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
@@ -86,6 +89,7 @@ export class StatisticsController {
     getPatientStatsReport = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
+            await this.authorizeOne(request, patientUserId);
             const clientCode = request.currentClient.ClientCode;
             
             let reportSettings = await this._healthReportSettingService.getReportSettingsByUserId(patientUserId);
@@ -117,7 +121,7 @@ export class StatisticsController {
     createReportSettings = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-            
+            await this.authorizeOne(request, userId);
             const isUserExits = await this._userService.getById(userId);
             if (!isUserExits) {
                 throw new ApiError(404, 'User not found.');
@@ -143,7 +147,7 @@ export class StatisticsController {
         try {
 
             const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-            
+            await this.authorizeOne(request, userId);
             const isUserExits = await this._userService.getById(userId);
             if (!isUserExits) {
                 throw new ApiError(404, 'User not found.');
@@ -169,7 +173,7 @@ export class StatisticsController {
     updateReportSettingsByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-            
+            await this.authorizeOne(request, userId);
             const isUserExits = await this._userService.getById(userId);
             if (!isUserExits) {
                 throw new ApiError(404, 'User not found.');

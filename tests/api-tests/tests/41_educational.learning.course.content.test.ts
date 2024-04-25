@@ -56,7 +56,7 @@ describe('41 - Course content tests', function() {
             .get(`/api/v1/educational/course-contents/${getTestData('CourseContentId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.CourseContent).to.have.property('id');
                 expect(response.body.Data.CourseContent).to.have.property('ModuleId');
@@ -86,7 +86,7 @@ describe('41 - Course content tests', function() {
             .get(`/api/v1/educational/course-contents/search${loadCourseContentQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.CourseContents).to.have.property('TotalCount');
                 expect(response.body.Data.CourseContents).to.have.property('RetrievedCount');
@@ -196,11 +196,10 @@ describe('41 - Course content tests', function() {
     });
 
     it('41:07 -> Negative - Search course content records', function(done) {
-        loadCourseContentQueryString();
+        loadNegativeCourseContentQueryString();
         agent
-            .get(`/api/v1/educational/course-contents/search${loadCourseContentQueryString()}`)
+            .get(`/api/v1/educational/course-contents/search${loadNegativeCourseContentQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -260,4 +259,11 @@ function loadCourseContentQueryString() {
     const queryString = '';
     return queryString;
 }
+
+function loadNegativeCourseContentQueryString() {
+    //This is raw query. Please modify to suit the test
+    const queryString = '?title=abcd';
+    return queryString;
+}
+
 

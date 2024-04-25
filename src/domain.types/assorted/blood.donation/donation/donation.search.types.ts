@@ -7,6 +7,7 @@ import { BaseSearchResults } from "../../../../domain.types/miscellaneous/base.s
 export interface DonationSearchFilters extends BaseSearchFilters {
     Name?                     : string;
     PatientUserId?            : string;
+    TenantId?                 : string;
     DonorUserId?              : string;
     VolunteerUserId?          : string;
     EmergencyDonor?           : string;

@@ -9,7 +9,7 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('42 - Laerning path tests', function() {
+describe('42 - Learning path tests', function() {
 
     var agent = request.agent(infra._app);
 
@@ -51,7 +51,7 @@ describe('42 - Laerning path tests', function() {
             .get(`/api/v1/educational/learning-paths/${getTestData('LearningPathId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.LearningPath).to.have.property('id');
                 expect(response.body.Data.LearningPath).to.have.property('Name');
@@ -77,7 +77,7 @@ describe('42 - Laerning path tests', function() {
             .get(`/api/v1/educational/learning-paths/search${loadLearningPathQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -176,11 +176,10 @@ describe('42 - Laerning path tests', function() {
     });
 
     it('42:07 -> Negative - Search learning path records', function(done) {
-        loadLearningPathQueryString();
+        loadNegativeLearningPathQueryString();
         agent
-            .get(`/api/v1/educational/learning-paths/search${loadLearningPathQueryString()}`)
+            .get(`/api/v1/educational/learning-paths/search${loadNegativeLearningPathQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -209,6 +208,7 @@ describe('42 - Laerning path tests', function() {
 export const loadLearningPathCreateModel = async (
 ) => {
     const model = {
+        TenantId: getTestData("TenantId"),
         Name             : faker.lorem.word(),
         Description      : faker.word.words(),
         ImageUrl         : faker.image.url(),
@@ -238,3 +238,10 @@ function loadLearningPathQueryString() {
     const queryString = '';
     return queryString;
 }
+
+function loadNegativeLearningPathQueryString() {
+    //This is raw query. Please modify to suit the test
+    const queryString = '?name=xyz';
+    return queryString;
+}
+

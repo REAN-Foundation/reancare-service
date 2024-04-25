@@ -49,7 +49,7 @@ describe('40 - Course module tests', function() {
             .get(`/api/v1/educational/course-modules/${getTestData('CourseModuleId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.CourseModule).to.have.property('id');
                 expect(response.body.Data.CourseModule).to.have.property('CourseId');
@@ -74,7 +74,7 @@ describe('40 - Course module tests', function() {
             .get(`/api/v1/educational/course-modules/search${loadCourseModuleQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.CourseModules).to.have.property('TotalCount');
                 expect(response.body.Data.CourseModules).to.have.property('RetrievedCount');
@@ -180,7 +180,7 @@ describe('40 - Course module tests', function() {
             .get(`/api/v1/educational/course-modules/${getTestData('CourseModuleId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

@@ -9,7 +9,7 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('54 - Assessment template tests', function() {
+describe('54 - Symtom assessment template tests', function() {
 
     var agent = request.agent(infra._app);
 
@@ -61,7 +61,7 @@ describe('54 - Assessment template tests', function() {
             .get(`/api/v1/clinical/symptom-assessment-templates/${getTestData('AssessmentTemplateId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.SymptomAssessmentTemplate).to.have.property('id');
                 expect(response.body.Data.SymptomAssessmentTemplate).to.have.property('Title');

@@ -5,6 +5,7 @@ import { Injector } from '../../startup/injector';
 import { UserService } from '../../services/users/user/user.service';
 import { RolePrivilegeService } from '../../services/role/role.privilege.service';
 import { PermissionHandler } from './permission.handler';
+import { ActionScope } from '../auth.types';
 
 //////////////////////////////////////////////////////////////
 
@@ -21,26 +22,27 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
 
     public authorize = async (request: express.Request): Promise<boolean> => {
         try {
-            if (request.clientAppRoutes) {
-                //This check is applicable only for the client app
-                //specific endpoints.
-                //Authorization for this is handled separately.
-                //For all other endpoints, this check is not applicable.
-                return true;
-            }
+
             const context = request.context;
             if (context == null || context === 'undefined') {
                 return false;
             }
-            if (request.publicUrl) {
-                return true;
-            }
-            const currentUser = request.currentUser;
-            if (currentUser == null) {
+
+            const publicAccess = request.actionScope === ActionScope.Public;
+            const optionalUserAuth = request.optionalUserAuth;
+    
+            const currentUser = request.currentUser ?? null;
+            if (!currentUser) {
+                //If the user is not authenticated, then check if the resource access is public
+                if (publicAccess || optionalUserAuth) {
+                    // To check whether a particular resource is available for public access, e.g. a profile image download
+                    return true;
+                }
+                // If the resource is not public, then the user must be authenticated
                 return false;
             }
 
-            const hasPermission = await PermissionHandler.checkPermissions(request);
+            const hasPermission = await PermissionHandler.checkRoleBasedPermissions(request);
             return hasPermission;
 
         } catch (error) {

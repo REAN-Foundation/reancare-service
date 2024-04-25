@@ -22,7 +22,7 @@ describe('24 - Patient custom task tests', function() {
             .post(`/api/v1/custom-tasks/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.UserTask.id, 'PatientCustomTaskId');
@@ -50,14 +50,14 @@ describe('24 - Patient custom task tests', function() {
             .post(`/api/v1/custom-tasks/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
 });

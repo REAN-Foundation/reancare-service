@@ -20,7 +20,7 @@ describe('61 - Body height tests', function() {
             .post(`/api/v1/clinical/biometrics/body-heights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BodyHeight.id, 'BodyHeightId_1');
@@ -45,7 +45,7 @@ describe('61 - Body height tests', function() {
             .get(`/api/v1/clinical/biometrics/body-heights/${getTestData('BodyHeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BodyHeight).to.have.property('id');
                 expect(response.body.Data.BodyHeight).to.have.property('EhrId');
@@ -66,7 +66,7 @@ describe('61 - Body height tests', function() {
             .get(`/api/v1/clinical/biometrics/body-heights/search${loadBodyHeightQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.BodyHeightRecords).to.have.property('TotalCount');
                 expect(response.body.Data.BodyHeightRecords).to.have.property('RetrievedCount');
@@ -87,7 +87,7 @@ describe('61 - Body height tests', function() {
             .put(`/api/v1/clinical/biometrics/body-heights/${getTestData('BodyHeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.BodyHeight).to.have.property('id');
@@ -111,7 +111,7 @@ describe('61 - Body height tests', function() {
             .delete(`/api/v1/clinical/biometrics/body-heights/${getTestData('BodyHeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -126,7 +126,7 @@ describe('61 - Body height tests', function() {
             .post(`/api/v1/clinical/biometrics/body-heights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.BodyHeight.id, 'BodyHeightId');
@@ -152,7 +152,7 @@ describe('61 - Body height tests', function() {
             .post(`/api/v1/clinical/biometrics/body-heights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -167,7 +167,7 @@ describe('61 - Body height tests', function() {
         agent
             .get(`/api/v1/clinical/biometrics/body-heights/search${loadBodyHeightQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -181,7 +181,7 @@ describe('61 - Body height tests', function() {
             .delete(`/api/v1/clinical/biometrics/body-heights/${getTestData('BodyHeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

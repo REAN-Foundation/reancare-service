@@ -20,7 +20,7 @@ describe('57 - How do you feel tests', function() {
             .post(`/api/v1/clinical/symptoms/how-do-you-feel/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.HowDoYouFeel.id, 'HowDoYouFeelId_1');
@@ -46,7 +46,7 @@ describe('57 - How do you feel tests', function() {
             .get(`/api/v1/clinical/symptoms/how-do-you-feel/${getTestData('HowDoYouFeelId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.HowDoYouFeel).to.have.property('id');
                 expect(response.body.Data.HowDoYouFeel).to.have.property('PatientUserId');
@@ -66,7 +66,7 @@ describe('57 - How do you feel tests', function() {
             .get(`/api/v1/clinical/symptoms/how-do-you-feel/search${loadHowDoYouFeelQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.HowDoYouFeelRecords).to.have.property('TotalCount');
                 expect(response.body.Data.HowDoYouFeelRecords).to.have.property('RetrievedCount');
@@ -87,7 +87,7 @@ describe('57 - How do you feel tests', function() {
             .put(`/api/v1/clinical/symptoms/how-do-you-feel/${getTestData('HowDoYouFeelId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.HowDoYouFeel).to.have.property('id');
@@ -109,7 +109,7 @@ describe('57 - How do you feel tests', function() {
             .delete(`/api/v1/clinical/symptoms/how-do-you-feel/${getTestData('HowDoYouFeelId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -124,7 +124,7 @@ describe('57 - How do you feel tests', function() {
             .post(`/api/v1/clinical/symptoms/how-do-you-feel/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.HowDoYouFeel.id, 'HowDoYouFeelId');
@@ -151,7 +151,7 @@ describe('57 - How do you feel tests', function() {
             .post(`/api/v1/clinical/symptoms/how-do-you-feel/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -167,7 +167,7 @@ describe('57 - How do you feel tests', function() {
             .get(`/api/v1/clinical/symptoms/how-do-you-feel/${getTestData('HowDoYouFeelId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -189,7 +189,7 @@ describe('57 - How do you feel tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
 });

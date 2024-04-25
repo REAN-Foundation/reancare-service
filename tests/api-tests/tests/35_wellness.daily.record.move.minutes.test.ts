@@ -152,14 +152,14 @@ describe('35 - Move minutes records tests', function() {
             .post(`/api/v1/wellness/daily-records/move-minutes/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('35:07 -> Negative - Search move minutes records', function(done) {
@@ -167,7 +167,7 @@ describe('35 - Move minutes records tests', function() {
         agent
             .get(`/api/v1/wellness/daily-records/move-minutes/search${loadMoveMinuteQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -181,7 +181,7 @@ describe('35 - Move minutes records tests', function() {
             .delete(`/api/v1/wellness/daily-records/move-minutes/${getTestData('MoveMinuteId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

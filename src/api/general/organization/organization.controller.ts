@@ -7,25 +7,26 @@ import { RoleService } from '../../../services/role/role.service';
 import { OrganizationValidator } from './organization.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { OrganizationDomainModel, OrganizationSearchFilters } from '../../../domain.types/general/organization/organization.types';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class OrganizationController {
+export class OrganizationController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: OrganizationService = null;
+    _service: OrganizationService = Injector.Container.resolve(OrganizationService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
     _validator: OrganizationValidator = new OrganizationValidator();
 
     constructor() {
-        this._service = Injector.Container.resolve(OrganizationService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
+        super();
     }
 
     //#endregion
@@ -34,16 +35,18 @@ export class OrganizationController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const domainModel = await this._validator.create(request);
+            const model: OrganizationDomainModel = await this._validator.create(request);
 
-            if (domainModel.ParentOrganizationId != null) {
-                const person = await this._service.getById(domainModel.ParentOrganizationId);
+            if (model.ParentOrganizationId != null) {
+                const person = await this._service.getById(model.ParentOrganizationId);
                 if (person == null) {
-                    throw new ApiError(404, `Parent organization with an id ${domainModel.ParentOrganizationId} cannot be found.`);
+                    throw new ApiError(404, `Parent organization with an id ${model.ParentOrganizationId} cannot be found.`);
                 }
             }
 
-            const organization = await this._service.create(domainModel);
+            await this.authorizeOne(request, model.ContactUserId, model.TenantId);
+
+            const organization = await this._service.create(model);
             if (organization == null) {
                 throw new ApiError(400, 'Cannot create organization!');
             }
@@ -60,13 +63,15 @@ export class OrganizationController {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const organization = await this._service.getById(id);
-            if (organization == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Organization not found.');
             }
 
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
+
             ResponseHandler.success(request, response, 'Organization retrieved successfully!', 200, {
-                Organization : organization,
+                Organization : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -77,13 +82,17 @@ export class OrganizationController {
         try {
             const contactUserId: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const organization = await this._service.getByContactUserId(contactUserId);
-            if (organization == null) {
+            const records = await this._service.getByContactUserId(contactUserId);
+            if (records == null) {
                 throw new ApiError(404, 'Organization not found.');
+            }
+            const count = records.length;
+            if (count > 0) {
+                await this.authorizeOne(request, records[0].ContactUserId, records[0].TenantId);
             }
 
             ResponseHandler.success(request, response, 'Organization retrieved successfully!', 200, {
-                Organization : organization,
+                Organization : records,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -113,10 +122,12 @@ export class OrganizationController {
             const domainModel = await this._validator.update(request);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingOrganization = await this._service.getById(id);
-            if (existingOrganization == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Organization not found.');
             }
+
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
@@ -135,10 +146,12 @@ export class OrganizationController {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const existingOrganization = await this._service.getById(id);
-            if (existingOrganization == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Organization not found.');
             }
+
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
@@ -158,10 +171,11 @@ export class OrganizationController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const addressId: uuid = await this._validator.getParamUuid(request, 'addressId');
-            const existingOrganization = await this._service.getById(id);
-            if (existingOrganization == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Organization not found.');
             }
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
 
             const added = await this._service.addAddress(id, addressId);
             if (!added) {
@@ -181,10 +195,11 @@ export class OrganizationController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const addressId: uuid = await this._validator.getParamUuid(request, 'addressId');
-            const existingOrganization = await this._service.getById(id);
-            if (existingOrganization == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Organization not found.');
             }
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
 
             const removed = await this._service.removeAddress(id, addressId);
             if (!removed) {
@@ -202,7 +217,11 @@ export class OrganizationController {
     getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-
+            const record = await this._service.getById(id);
+            if (record == null) {
+                throw new ApiError(404, 'Organization not found.');
+            }
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
             const addresses = await this._service.getAddresses(id);
 
             const message = addresses.length === 0 ?
@@ -221,10 +240,11 @@ export class OrganizationController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const personId: uuid = await this._validator.getParamUuid(request, 'personId');
 
-            const existingOrganization = await this._service.getById(id);
-            if (existingOrganization == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Organization not found.');
             }
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
 
             const added = await this._service.addPerson(id, personId);
             if (!added) {
@@ -244,10 +264,11 @@ export class OrganizationController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const personId: uuid = await this._validator.getParamUuid(request, 'personId');
 
-            const existingOrganization = await this._service.getById(id);
-            if (existingOrganization == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Organization not found.');
             }
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
 
             const removed = await this._service.removePerson(id, personId);
             if (!removed) {
@@ -265,6 +286,11 @@ export class OrganizationController {
     getPersons = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const record = await this._service.getById(id);
+            if (record == null) {
+                throw new ApiError(404, 'Organization not found.');
+            }
+            await this.authorizeOne(request, record.ContactUserId, record.TenantId);
             const persons = await this._service.getPersons(id);
             const message = persons.length === 0 ?
                 'No records found!' : `Total ${persons.length} person records retrieved successfully!`;
@@ -278,5 +304,29 @@ export class OrganizationController {
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: OrganizationSearchFilters): Promise<OrganizationSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.ContactUserId != null) {
+            if (searchFilters.ContactUserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.ContactUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.ContactUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

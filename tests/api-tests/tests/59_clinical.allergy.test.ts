@@ -51,7 +51,7 @@ describe('59 - Allergy tests', function() {
             .post(`/api/v1/clinical/allergies/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Allergy.id, 'AllergyId_1');
@@ -85,7 +85,7 @@ describe('59 - Allergy tests', function() {
             .get(`/api/v1/clinical/allergies/${getTestData('AllergyId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Allergy).to.have.property('id');
                 expect(response.body.Data.Allergy).to.have.property('PatientUserId');
@@ -115,7 +115,7 @@ describe('59 - Allergy tests', function() {
             .get(`/api/v1/clinical/allergies/for-patient/${getTestData('PatientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -130,7 +130,7 @@ describe('59 - Allergy tests', function() {
             .get(`/api/v1/clinical/allergies/search${loadAllergyQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Allergies).to.have.property('TotalCount');
                 expect(response.body.Data.Allergies).to.have.property('RetrievedCount');
@@ -151,7 +151,7 @@ describe('59 - Allergy tests', function() {
             .put(`/api/v1/clinical/allergies/${getTestData('AllergyId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body.Data.Allergy).to.have.property('id');
@@ -181,7 +181,7 @@ describe('59 - Allergy tests', function() {
             .delete(`/api/v1/clinical/allergies/${getTestData('AllergyId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -196,7 +196,7 @@ describe('59 - Allergy tests', function() {
             .post(`/api/v1/clinical/allergies/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Allergy.id, 'AllergyId');
@@ -244,7 +244,7 @@ describe('59 - Allergy tests', function() {
             .post(`/api/v1/clinical/allergies/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -260,7 +260,7 @@ describe('59 - Allergy tests', function() {
             .get(`/api/v1/clinical/allergies/${getTestData('AllergyId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -275,7 +275,7 @@ describe('59 - Allergy tests', function() {
         agent
             .put(`/api/v1/clinical/allergies/${getTestData('AllergyId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

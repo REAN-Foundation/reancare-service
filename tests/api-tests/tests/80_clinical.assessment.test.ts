@@ -21,7 +21,7 @@ describe('80 - CURD Model tests', function() {
             .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -91,7 +91,7 @@ describe('80 - CURD Model tests', function() {
             .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplate')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -130,7 +130,7 @@ describe('80 - CURD Model tests', function() {
                 expect(response.body.Status).to.equal('failure');
                                                           
             })
-            .expect(403, done);
+            .expect(401, done);
     });
 
     it('80:08 -> Negative - Delete assessment template by id', function(done) {

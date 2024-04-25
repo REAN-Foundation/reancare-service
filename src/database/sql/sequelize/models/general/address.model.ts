@@ -24,6 +24,13 @@ export default class Address extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true
+    })
+    TenantId: string;
+
     @Length({ min: 2, max: 16 })
     @Column({
         type         : DataType.STRING(16),

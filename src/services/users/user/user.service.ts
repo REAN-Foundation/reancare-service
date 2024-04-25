@@ -89,6 +89,12 @@ export class UserService {
         return dto;
     };
 
+    public getByPersonId = async (personId: string): Promise<UserDetailsDto> => {
+        var dto = await this._userRepo.getByPersonId(personId);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
+    };
+
     public getByPhoneAndRole = async (phone: string, roleId: number): Promise<UserDetailsDto> => {
         var dto = await this._userRepo.getByPhoneAndRole(phone, roleId);
         dto = await this.updateDetailsDto(dto);

@@ -6,10 +6,12 @@ import { NoticeService } from '../../../services/general/notice.service';
 import { NoticeValidator } from './notice.validator';
 import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
 import { Injector } from '../../../startup/injector';
+import { NoticeSearchFilters } from '../../../domain.types/general/notice/notice.search.types';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class NoticeController {
+export class NoticeController extends BaseController {
 
     //#region member variables and constructors
 
@@ -29,7 +31,7 @@ export class NoticeController {
             if (notice == null) {
                 throw new ApiError(400, 'Could not create a notice!');
             }
-
+            
             ResponseHandler.success(request, response, 'Notice created successfully!', 201, {
                 Notice : notice,
             });
@@ -46,7 +48,6 @@ export class NoticeController {
             if (notice == null) {
                 throw new ApiError(404, 'Notice not found.');
             }
-
             ResponseHandler.success(request, response, 'Notice retrieved successfully!', 200, {
                 Notice : notice,
             });
@@ -58,7 +59,7 @@ export class NoticeController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            const filters: NoticeSearchFilters = await this._validator.search(request);
             const currentUserId = request.currentUser.UserId;
             const searchResults = await this._service.search(filters, currentUserId);
 
@@ -86,7 +87,6 @@ export class NoticeController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Notice not found.');
             }
-
             const updated = await this._service.updateNotice(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a notice!');
@@ -108,7 +108,6 @@ export class NoticeController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Notice record not found.');
             }
-
             const deleted = await this._service.deleteNotice(id);
             if (!deleted) {
                 throw new ApiError(400, 'Notice can not be deleted.');
@@ -126,6 +125,7 @@ export class NoticeController {
         try {
 
             const userId = request.currentUser.UserId;
+            await this.authorizeOne(request, userId);
             const model = await this._validator.takeAction(request);
             const entity: NoticeActionDomainModel = {
                 UserId   : userId,
@@ -138,7 +138,6 @@ export class NoticeController {
             if (noticeAction == null) {
                 throw new ApiError(400, 'Could not perform notice action!');
             }
-
             ResponseHandler.success(request, response, 'Notice action performed successfully!', 201, {
                 NoticeAction : noticeAction,
             });
@@ -151,6 +150,7 @@ export class NoticeController {
         try {
             const noticeId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            await this.authorizeOne(request, userId);
             const noticeAction = await this._service.getNoticeActionForUser(noticeId, userId);
             ResponseHandler.success(request, response, 'Notice action retrieved successfully for the user!', 200, {
                 NoticeAction : noticeAction,
@@ -163,6 +163,7 @@ export class NoticeController {
     getAllNoticeActionsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            await this.authorizeOne(request, userId);
             const noticeActions = await this._service.getAllNoticeActionsForUser(userId);
             ResponseHandler.success(request, response, 'Notice action retrieved successfully!', 200, {
                 NoticeActions : noticeActions,

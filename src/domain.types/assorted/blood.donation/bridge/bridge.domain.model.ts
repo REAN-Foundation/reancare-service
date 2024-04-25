@@ -8,6 +8,7 @@ export interface BridgeDomainModel {
     id?               : uuid;
     Name?             : string,
     PatientUserId?    : uuid;
+    TenantId?         : uuid;
     DonorUserId?      : uuid;
     DonorType?        : DonorType;
     BloodGroup?       : string;

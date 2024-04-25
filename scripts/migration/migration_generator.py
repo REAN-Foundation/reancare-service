@@ -7,8 +7,8 @@ import sys
 
 cwd = "./"
 PRISMA_DEFAULT_DB_URL = "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public" #Please do not modify this
-fromUrl = "mysql://root:root@localhost:3306/reancare_local"
-toUrl = "mysql://root:root@localhost:3306/reancare_devx"
+fromUrl = "mysql://root:root@localhost:3306/reancare_auth0"
+toUrl = "mysql://root:root@localhost:3306/reancare_develop"
 localUrl = "mysql://root:root@localhost:3306/temp"
 cwd = "D:/current_projects/rean/db-migration"
 ########################################################################################

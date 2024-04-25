@@ -20,7 +20,7 @@ describe('84 - Notice Action tests', function() {
             .post(`/api/v1/general/notices/${getTestData("NoticeId")}/users/${getTestData("PatientUserId")}/take-action`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.NoticeAction.id, 'NoticeActionId');
@@ -41,7 +41,7 @@ describe('84 - Notice Action tests', function() {
             .get(`/api/v1/general/notices/${getTestData("NoticeId")}/users/${getTestData("PatientUserId")}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -56,7 +56,7 @@ describe('84 - Notice Action tests', function() {
             .get(`/api/v1/general/notices/users/${getTestData("PatientUserId")}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -72,7 +72,7 @@ describe('84 - Notice Action tests', function() {
             .post(`/api/v1/general/notices/${getTestData("NoticeId")}/users/${getTestData("PatientUserId")}/take-action`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');

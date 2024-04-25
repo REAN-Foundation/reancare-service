@@ -77,11 +77,11 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public getCareplanEnrollment = async (careplanId: uuid): Promise<EnrollmentDto> => {
+    public getCareplanEnrollment = async (enrollmentId: uuid): Promise<EnrollmentDto> => {
         try {
             const enrollment = await CareplanEnrollment.findOne({
                 where : {
-                    id : careplanId
+                    id : enrollmentId
                 }
             });
             return EnrollmentMapper.toDto(enrollment);

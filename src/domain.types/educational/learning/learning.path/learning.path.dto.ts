@@ -3,6 +3,7 @@ import { CourseDto } from "../course/course.dto";
 
 export interface LearningPathDto {
     id?                 : uuid,
+    TenantId?           : uuid,
     Name?               : string;
     Description?        : string;
     ImageUrl?           : string;

@@ -5,16 +5,21 @@ import { BodyHeightService } from '../../../../services/clinical/biometrics/body
 import { Injector } from '../../../../startup/injector';
 import { BodyHeightValidator } from './body.height.validator';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { BiometricsController } from '../biometrics.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyHeightController {
+export class BodyHeightController extends BiometricsController {
 
     //#region member variables and constructors
 
     _service: BodyHeightService = Injector.Container.resolve(BodyHeightService);
 
     _ehrVitalService: EHRVitalService = new EHRVitalService();
+
+    constructor() {
+        super();
+    }
 
     //#endregion
 
@@ -23,6 +28,7 @@ export class BodyHeightController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await BodyHeightValidator.create(request);
+            await this.authorizeUser(request, model.PatientUserId);
 
             const bodyHeight = await this._service.create(model);
             if (bodyHeight == null) {
@@ -42,13 +48,13 @@ export class BodyHeightController {
         try {
             const id: string = await BodyHeightValidator.getById(request);
 
-            const bodyHeight = await this._service.getById(id);
-            if (bodyHeight == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Height record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             ResponseHandler.success(request, response, 'Height record retrieved successfully!', 200, {
-                BodyHeight : bodyHeight
+                BodyHeight : record
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -57,8 +63,8 @@ export class BodyHeightController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await BodyHeightValidator.search(request);
-
+            let filters = await BodyHeightValidator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -81,11 +87,11 @@ export class BodyHeightController {
             const model = await BodyHeightValidator.update(request);
 
             const id: string = await BodyHeightValidator.getById(request);
-            const existing = await this._service.getById(id);
-            if (existing == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Height record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update height record!');
@@ -103,18 +109,16 @@ export class BodyHeightController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: string = await BodyHeightValidator.getById(request);
-            const existing = await this._service.getById(id);
-            if (existing == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Height record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Height record cannot be deleted.');
             }
-
-            // delete ehr record
-            this._ehrVitalService.deleteRecord(existing.id);
+            this._ehrVitalService.deleteRecord(record.id);
 
             ResponseHandler.success(request, response, 'Height record deleted successfully!', 200, {
                 Deleted : true,

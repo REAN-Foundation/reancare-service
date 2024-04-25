@@ -13,11 +13,13 @@ import {
     IsDate,
     Index,
     ForeignKey,
+    BelongsTo
 } from 'sequelize-typescript';
 
 import { OrganizationTypeList } from '../../../../../../domain.types/general/organization/organization.types';
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -64,6 +66,20 @@ export default class Organization extends Model {
         allowNull : true,
     })
     ContactUserId: string;
+
+    @BelongsTo(() => User)
+    User: User;
+
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TenantId: string;
+
+    @BelongsTo(() => Tenant)
+    Tenant: Tenant;
 
     @Index
     @Length({ min: 10, max: 16 })

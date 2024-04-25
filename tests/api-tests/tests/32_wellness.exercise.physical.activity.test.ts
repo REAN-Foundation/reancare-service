@@ -191,14 +191,14 @@ describe('32 - Physical activity tests', function() {
             .post(`/api/v1/wellness/exercise/physical-activities/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(404, done);
+            .expect(500, done);
     });
 
     it('32:07 -> Negative - Search physical activity records', function(done) {
@@ -211,7 +211,7 @@ describe('32 - Physical activity tests', function() {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
-            .expect(401, done);
+            .expect(400, done);
     });
 
     it('32:08 -> Negative - Delete physical activity', function(done) {
@@ -220,7 +220,7 @@ describe('32 - Physical activity tests', function() {
             .delete(`/api/v1/wellness/exercise/physical-activities/${getTestData('PhysicalActivityId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

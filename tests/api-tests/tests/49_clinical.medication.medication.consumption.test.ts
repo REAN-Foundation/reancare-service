@@ -69,7 +69,7 @@ describe('49 - Medication consumption tests', function() {
             .post(`/api/v1/clinical/medications/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Medication.id, 'MedicationDrugId');
@@ -110,7 +110,7 @@ describe('49 - Medication consumption tests', function() {
             .post(`/api/v1/clinical/medication-consumptions/delete-future-schedules/${getTestData("MedicationDrugId")}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -203,7 +203,7 @@ describe('49 - Medication consumption tests', function() {
             .delete(`/api/v1/clinical/medications/${getTestData('MedicationDrugId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

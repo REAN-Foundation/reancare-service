@@ -237,7 +237,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         return request.body;
     };
 
-    searchNode = async (request: express.Request): Promise<AssessmentNodeSearchFilters> => {
+    searchNodes = async (request: express.Request): Promise<AssessmentNodeSearchFilters> => {
         await this.validateString(request, 'title', Where.Query, false, false);
         await this.validateString(request, 'nodeType', Where.Query, false, false, true);
         await this.validateString(request, 'templateId', Where.Query, false, false, true);

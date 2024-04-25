@@ -5,10 +5,11 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { CourseContentService } from '../../../../services/educational/learning/course.content.service';
 import { Injector } from '../../../../startup/injector';
 import { CourseContentValidator } from './course.content.validator';
+import { BaseController } from '../../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CourseContentController {
+export class CourseContentController extends BaseController {
 
     //#region member variables and constructors
 
@@ -84,7 +85,7 @@ export class CourseContentController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Course content not found.');
             }
-
+ 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update course content!');

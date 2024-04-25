@@ -6,21 +6,21 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { HealthPriorityValidator } from './health.priority.validator';
 import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { PatientBaseController } from '../patient.base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthPriorityController {
+export class HealthPriorityController extends PatientBaseController {
 
     //#region member variables and constructors
-    _service: HealthPriorityService = null;
+    _service: HealthPriorityService = Injector.Container.resolve(HealthPriorityService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
     _validator: HealthPriorityValidator = new HealthPriorityValidator();
 
     constructor() {
-        this._service = Injector.Container.resolve(HealthPriorityService);
-        this._userService = Injector.Container.resolve(UserService);
+        super();
     }
 
     //#endregion
@@ -31,6 +31,7 @@ export class HealthPriorityController {
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeOne(request, model.PatientUserId);
             const healthPriority = await this._service.create(model);
             if (healthPriority == null) {
                 throw new ApiError(400, 'Cannot create record for health priority!');
@@ -48,7 +49,7 @@ export class HealthPriorityController {
         try {
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-
+            await this.authorizeOne(request, patientUserId);
             const priorities = await this._service.getPatientHealthPriorities(patientUserId);
             if (priorities == null) {
                 throw new ApiError(400, 'Cannot fetch priorities for given patient!');
@@ -66,7 +67,8 @@ export class HealthPriorityController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -85,14 +87,14 @@ export class HealthPriorityController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Health priority record not found.');
             }
-
-            const updated = await this._service.update(domainModel.id, domainModel);
+            await this.authorizeOne(request, record.PatientUserId);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update health priority record!');
             }
@@ -109,10 +111,11 @@ export class HealthPriorityController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Patient health priority record not found.');
             }
+            await this.authorizeOne(request, record.PatientUserId);
 
             const deleted = await this._service.delete(id);
             if (!deleted) {

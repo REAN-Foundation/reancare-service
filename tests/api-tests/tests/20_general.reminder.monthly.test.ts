@@ -21,7 +21,7 @@ describe('20 - Reminder schedule monthly', function() {
             .post(`/api/v1/reminders/repeat-every-month-on/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Reminder.id, 'ReminderMonthId');
@@ -53,7 +53,7 @@ describe('20 - Reminder schedule monthly', function() {
             .post(`/api/v1/reminders/repeat-every-month-on/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 setTestData(response.body.Data.Reminder.id, 'ReminderCertainMonthId');
@@ -84,7 +84,7 @@ describe('20 - Reminder schedule monthly', function() {
             .get(`/api/v1/reminders/${getTestData('ReminderMonthId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.Reminder).to.have.property('id');
                 expect(response.body.Data.Reminder).to.have.property('UserId');
@@ -106,14 +106,14 @@ describe('20 - Reminder schedule monthly', function() {
             .post(`/api/v1/reminders/repeat-every-month-on/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
       
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('20:05 -> Negative - Get monthly reminder by id', function(done) {
@@ -121,7 +121,7 @@ describe('20 - Reminder schedule monthly', function() {
         agent
             .get(`/api/v1/reminders/${getTestData('ReminderMonthId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

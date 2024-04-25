@@ -166,14 +166,14 @@ describe('70 - Health priority tests', function() {
             .post(`/api/v1/patient-health-priorities/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(500, done);
+            .expect(403, done);
     });
 
     it('70:07 -> Negative - Search health priority records', function(done) {
@@ -181,7 +181,7 @@ describe('70 - Health priority tests', function() {
         agent
             .get(`/api/v1/patient-health-priorities/search${loadPriorityQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -195,7 +195,7 @@ describe('70 - Health priority tests', function() {
             .delete(`/api/v1/patient-health-priorities/${getTestData('HealthPriorityId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

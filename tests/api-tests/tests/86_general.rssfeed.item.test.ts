@@ -54,7 +54,7 @@ describe('86 - Rssfeed Item tests', function() {
             .get(`/api/v1/rss-feeds/feed-items/${getTestData('RssfeedItemId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body.Data.RssfeedItem).to.have.property('FeedId');
                 expect(response.body.Data.RssfeedItem).to.have.property('Title');
@@ -182,7 +182,7 @@ describe('86 - Rssfeed Item tests', function() {
             .get(`/api/v1/rss-feeds/feed-items/${getTestData('RssfeedItemId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("DoctorJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

@@ -17,6 +17,7 @@ describe('26 - Patient stats & report tests', function() {
             .get(`/api/v1/patient-statistics/${getTestData("PatientUserId")}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -29,7 +30,7 @@ describe('26 - Patient stats & report tests', function() {
             .get(`/api/v1/patient-statistics/${getTestData("PatientUserId")}/report`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -41,7 +42,7 @@ describe('26 - Patient stats & report tests', function() {
         agent
             .get(`/api/v1/patient-statistics/${getTestData("PatientUserId")}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');

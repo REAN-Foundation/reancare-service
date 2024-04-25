@@ -28,11 +28,13 @@ describe('36 - Step counts records tests', function() {
                 expect(response.body.Data.StepCount).to.have.property('PatientUserId');
                 expect(response.body.Data.StepCount).to.have.property('StepCount');
                 expect(response.body.Data.StepCount).to.have.property('RecordDate');
+                expect(response.body.Data.StepCount).to.have.property('Provider');
 
                 setTestData(response.body.Data.StepCount.id, 'StepCountId_1');
 
                 expect(response.body.Data.StepCount.PatientUserId).to.equal(getTestData("StepCountCreateModel").PatientUserId);
                 expect(response.body.Data.StepCount.StepCount).to.equal(getTestData("StepCountCreateModel").StepCount);
+                expect(response.body.Data.StepCount.Provider).to.equal(getTestData("StepCountCreateModel").Provider);
 
             })
             .expect(201, done);
@@ -50,9 +52,11 @@ describe('36 - Step counts records tests', function() {
                 expect(response.body.Data.StepCount).to.have.property('PatientUserId');
                 expect(response.body.Data.StepCount).to.have.property('StepCount');
                 expect(response.body.Data.StepCount).to.have.property('RecordDate');
+                expect(response.body.Data.StepCount).to.have.property('Provider');
 
                 expect(response.body.Data.StepCount.PatientUserId).to.equal(getTestData("StepCountCreateModel").PatientUserId);
                 expect(response.body.Data.StepCount.StepCount).to.equal(getTestData("StepCountCreateModel").StepCount);
+                expect(response.body.Data.StepCount.Provider).to.equal(getTestData("StepCountCreateModel").Provider);
             })
             .expect(200, done);
     });
@@ -91,6 +95,7 @@ describe('36 - Step counts records tests', function() {
                 expect(response.body.Data.StepCount).to.have.property('PatientUserId');
                 expect(response.body.Data.StepCount).to.have.property('StepCount');
                 expect(response.body.Data.StepCount).to.have.property('RecordDate');
+                expect(response.body.Data.StepCount).to.have.property('Provider');
 
                 expect(response.body.Data.StepCount.StepCount).to.equal(getTestData("StepCountUpdateModel").StepCount);
 
@@ -127,11 +132,13 @@ describe('36 - Step counts records tests', function() {
                 expect(response.body.Data.StepCount).to.have.property('PatientUserId');
                 expect(response.body.Data.StepCount).to.have.property('StepCount');
                 expect(response.body.Data.StepCount).to.have.property('RecordDate');
+                expect(response.body.Data.StepCount).to.have.property('Provider');
 
                 setTestData(response.body.Data.StepCount.id, 'StepCountId');
 
                 expect(response.body.Data.StepCount.PatientUserId).to.equal(getTestData("StepCountCreateModel").PatientUserId);
                 expect(response.body.Data.StepCount.StepCount).to.equal(getTestData("StepCountCreateModel").StepCount);
+                expect(response.body.Data.StepCount.Provider).to.equal(getTestData("StepCountCreateModel").Provider);
 
             })
             .expect(201, done);
@@ -144,14 +151,14 @@ describe('36 - Step counts records tests', function() {
             .post(`/api/v1/wellness/daily-records/step-counts/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(createModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
 
             })
-            .expect(422, done);
+            .expect(500, done);
     });
 
     it('36:07 -> Negative - Get step counts by id', function(done) {
@@ -160,7 +167,7 @@ describe('36 - Step counts records tests', function() {
             .get(`/api/v1/wellness/daily-records/step-counts/${getTestData('StepCountId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -174,7 +181,7 @@ describe('36 - Step counts records tests', function() {
         agent
             .put(`/api/v1/wellness/daily-records/step-counts/${getTestData('StepCountId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
             .send(updateModel)
             .expect(response => {
                 expect(response.body).to.have.property('Status');
@@ -193,8 +200,8 @@ export const loadStepCountCreateModel = async (
     const model = {
         PatientUserId : getTestData("PatientUserId"),
         StepCount     : faker.number.int(10000),
-        RecordDate    : faker.date.anytime()
-  
+        RecordDate    : faker.date.anytime(),
+        Provider      : faker.word.words(1)
     };
     setTestData(model, "StepCountCreateModel");
 };

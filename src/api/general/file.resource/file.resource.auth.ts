@@ -52,7 +52,6 @@ export class FileResourceAuth {
         Ownership           : ResourceOwnership.Owner,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.GetOne,
-        ClientAppAuth       : false,
         CustomAuthorization : true,
         OptionalUserAuth    : true,
     };
@@ -63,7 +62,6 @@ export class FileResourceAuth {
         Ownership           : ResourceOwnership.Owner,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.GetOne,
-        ClientAppAuth       : false,
         CustomAuthorization : true,
         OptionalUserAuth    : true,
     };
@@ -74,7 +72,6 @@ export class FileResourceAuth {
         Ownership           : ResourceOwnership.Owner,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.GetOne,
-        ClientAppAuth       : false,
         CustomAuthorization : true,
         OptionalUserAuth    : true,
     };

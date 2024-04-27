@@ -98,7 +98,11 @@ export class ResponseHandler {
             if (!logDataObject) {
                 responseObject.Data = null;
             }
-            Logger.instance().log(JSON.stringify(responseObject, null, 2));
+            //Blocking logging of frequently called get routes.
+            if (logDataObject && responseObject.Context !== 'General.Types.GetPersonRoleTypes'){
+                Logger.instance().log(JSON.stringify(responseObject, null, 2));
+            }
+
         }
 
         ActivityRecorder.record(responseObject);

@@ -133,7 +133,7 @@
                 "GetById": true,
                 "RemoveSymptomTypes": false,
                 "Update": false,
-                "search": false
+                "search": true
             }
         },
         "Biometrics": {

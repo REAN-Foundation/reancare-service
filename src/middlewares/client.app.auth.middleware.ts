@@ -42,7 +42,7 @@ export default class ClientAppAuthMiddleware
                     return;
                 }
             }
-            else if (isHealthCheck) {
+            else if (isHealthCheck || request.optionalUserAuth) {
                 next();
             }
             else {

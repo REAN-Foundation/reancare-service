@@ -17,7 +17,7 @@ describe('91 - Tenant tests', function () {
             .get(`/api/v1/tenant-settings/types`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -27,10 +27,10 @@ describe('91 - Tenant tests', function () {
 
     it('91:02 -> Get Tenant settings by type', function (done) {
         agent
-            .get(`/api/v1/tenant-settings/${getTestData('TenantId')}/types/Common`)
+            .get(`/api/v1/tenant-settings/${getTestData('tenantId')}/types/Common`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -40,10 +40,10 @@ describe('91 - Tenant tests', function () {
 
     it('91:03 -> Get Tenant settings', function (done) {
         agent
-            .get(`/api/v1/tenant-settings/${getTestData('TenantId')}`)
+            .get(`/api/v1/tenant-settings/${getTestData('tenantId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -53,10 +53,10 @@ describe('91 - Tenant tests', function () {
 
     // it('91:04 -> Update Tenant settings by type', function (done) {
     //     agent
-    //         .put(`/api/v1/tenant-settings/${getTestData('TenantId')}/types/Common`)
+    //         .put(`/api/v1/tenant-settings/${getTestData('tenantId')}/types/Common`)
     //         .set('Content-Type', 'application/json')
     //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+    //         .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
     //         .expect((response) => {
     //             expect(response.body).to.have.property('Status');
     //             expect(response.body.Status).to.equal('success');
@@ -66,10 +66,10 @@ describe('91 - Tenant tests', function () {
 
     // it('91:05 -> Update Tenant settings', function (done) {
     //     agent
-    //         .put(`/api/v1/tenant-settings/${getTestData('TenantId')}`)
+    //         .put(`/api/v1/tenant-settings/${getTestData('tenantId')}`)
     //         .set('Content-Type', 'application/json')
     //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+    //         .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
     //         .expect((response) => {
     //             expect(response.body).to.have.property('Status');
     //             expect(response.body.Status).to.equal('success');

@@ -16,14 +16,14 @@ describe('87 - Second user logs in tests', function () {
 
     it('87:01 -> Create patient with phone & password', function (done) {
         loadPatientCreateWithPhoneFourthModel();
-        const createModel = getTestData('PatientCreateWithPhoneFourthModel');
+        const createModel = getTestData('patientCreateWithPhoneFourthModel');
         agent
             .post(`/api/v1/patients/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Patient.User.id, 'PatientUserId_1');
+                setTestData(response.body.Data.Patient.User.id, 'patientUserId_1');
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
             })
@@ -32,7 +32,7 @@ describe('87 - Second user logs in tests', function () {
 
     it('87:02 -> Second user logs in', function (done) {
         loadPatientLoginFourthModel();
-        const PatientLoginModel = getTestData('PatientLoginFourthModel');
+        const PatientLoginModel = getTestData('patientLoginFourthModel');
         agent
             .post(`/api/v1/users/login-with-password/`)
             .set('Content-Type', 'application/json')
@@ -42,20 +42,20 @@ describe('87 - Second user logs in tests', function () {
                 assert.exists(response.body.Data.AccessToken, 'Access token is returned.');
                 assert.exists(response.body.Data.User, 'Login user details exist.');
                 expect(response.body.Data.User).to.have.property('id');
-                setTestData(response.body.Data.AccessToken, 'PatientJwt_2');
-                setTestData(response.body.Data.User.id, 'PatientUserId_11');
+                setTestData(response.body.Data.AccessToken, 'patientJwt_2');
+                setTestData(response.body.Data.User.id, 'patientUserId_11');
             })
             .expect(200, done);
     });
 
     it('87:03 -> Update user details', function (done) {
         loadUserDetailsUpdateModel();
-        const updateModel = getTestData('UserDetailsUpdateModel');
+        const updateModel = getTestData('userDetailsUpdateModel');
         agent
-            .put(`/api/v1/patients/${getTestData('PatientUserId')}`)
+            .put(`/api/v1/patients/${getTestData('patientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -66,7 +66,7 @@ describe('87 - Second user logs in tests', function () {
 
     it('87:04 -> Negative - Create patient with phone & password', function (done) {
         loadNPatientPasswordPhoneCreateModel();
-        const createModel = getTestData('NPatientPasswordPhoneCreateModel');
+        const createModel = getTestData('negativePatientPasswordPhoneCreateModel');
         agent
             .post(`/api/v1/patients/`)
             .set('Content-Type', 'application/json')
@@ -79,7 +79,7 @@ describe('87 - Second user logs in tests', function () {
     });
 
     it('87:05 -> Negative - Second user logs in', function (done) {
-        const PatientLoginModel = getTestData('PatientLoginModel4');
+        const PatientLoginModel = getTestData('patientLoginModel4');
         agent
             .post(`/api/v1/users/login-with-password/`)
             .set('Content-Type', 'application/json')
@@ -93,11 +93,11 @@ describe('87 - Second user logs in tests', function () {
 
     it('87:06 -> Negative - Update user details', function (done) {
         loadNUserDetailsUpdateModel();
-        const updateModel = getTestData('NUserDetailsUpdateModel');
+        const updateModel = getTestData('negativeUserDetailsUpdateModel');
         agent
-            .put(`/api/v1/patients/${getTestData('PatientUserId_1')}`)
+            .put(`/api/v1/patients/${getTestData('patientUserId_1')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -118,9 +118,9 @@ export const loadPatientCreateWithPhoneFourthModel = async () => {
         Phone: patientPhoneNumber,
         Password: patientPassword,
         LoginRoleId: getTestData('patientRoleId'),
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
     };
-    setTestData(model, 'PatientCreateWithPhoneFourthModel');
+    setTestData(model, 'patientCreateWithPhoneFourthModel');
 };
 
 export const loadPatientLoginFourthModel = async () => {
@@ -128,9 +128,9 @@ export const loadPatientLoginFourthModel = async () => {
         Phone: patientPhoneNumber,
         Password: patientPassword,
         LoginRoleId: getTestData('patientRoleId'),
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
     };
-    setTestData(model, 'PatientLoginFourthModel');
+    setTestData(model, 'patientLoginFourthModel');
 };
 
 export const loadUserDetailsUpdateModel = async () => {
@@ -152,15 +152,15 @@ export const loadUserDetailsUpdateModel = async () => {
         DefaultTimeZone: '+05:30',
         CurrentTimeZone: '+05:30',
     };
-    setTestData(model, 'UserDetailsUpdateModel');
+    setTestData(model, 'userDetailsUpdateModel');
 };
 
 export const loadNPatientPasswordPhoneCreateModel = async () => {
     const model = {};
-    setTestData(model, 'NPatientPasswordPhoneCreateModel');
+    setTestData(model, 'negativePatientPasswordPhoneCreateModel');
 };
 
 export const loadNUserDetailsUpdateModel = async () => {
     const model = {};
-    setTestData(model, 'NUserDetailsUpdateModel');
+    setTestData(model, 'negativeUserDetailsUpdateModel');
 };

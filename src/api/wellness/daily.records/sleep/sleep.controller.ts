@@ -54,11 +54,9 @@ export class SleepController extends BaseController{
             }
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(sleep.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, sleep.id, null, model, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(sleep.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(model.PatientUserId, sleep.id, null, model, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${sleep.PatientUserId}`);
             }
@@ -150,11 +148,9 @@ export class SleepController extends BaseController{
             }
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(updated.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(domainModel.PatientUserId, id, null, domainModel, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }

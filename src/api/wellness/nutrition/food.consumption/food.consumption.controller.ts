@@ -46,11 +46,9 @@ export class FoodConsumptionController extends BaseController {
             }
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(foodConsumption.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, foodConsumption.id, foodConsumption.Provider, foodConsumption, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(foodConsumption.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(model.PatientUserId, foodConsumption.id, foodConsumption.Provider, foodConsumption, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${foodConsumption.PatientUserId}`);
             }

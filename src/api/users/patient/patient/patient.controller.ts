@@ -84,11 +84,9 @@ export class PatientController extends BaseUserController {
             await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patient.UserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this.addPatientToEHRRecords(patient.UserId, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(patient.UserId);
+            if (eligibleToAddEhrRecord) {
+                this.addPatientToEHRRecords(patient.UserId, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patient.UserId}`);
             }
@@ -241,11 +239,9 @@ export class PatientController extends BaseUserController {
                 location = addresses[0].Location;
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(userId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    await this._service.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, appName);       
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(userId);
+            if (eligibleToAddEhrRecord) {
+                await this._service.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, null);       
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
             }

@@ -166,17 +166,15 @@ export class EmergencyContactController extends BaseController {
                 throw new ApiError(400, 'Cannot create patientEmergencyContact!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(domainModel.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
-                        await EHRAnalyticsHandler.addOrUpdatePatient(
-                            domainModel.PatientUserId,
-                            {
-                                DoctorPersonId_1 : patientEmergencyContact.ContactPersonId
-                            }, appName
-                        );
-                    }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(domainModel.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
+                    await EHRAnalyticsHandler.addOrUpdatePatient(
+                        domainModel.PatientUserId,
+                        {
+                            DoctorPersonId_1 : patientEmergencyContact.ContactPersonId
+                        }, null
+                    );
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${domainModel.PatientUserId}`);

@@ -296,12 +296,10 @@ export class AssessmentController extends BaseController{
                 await this._service.answerQuestion(answerModel);
 
             Logger.instance().log(`before update assessment Q in EHR`);
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(answerResponse.Parent.PatientUserId);
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(answerResponse.Parent.PatientUserId);
             var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(answerResponse, assessment, options, appName);
-                }
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(answerResponse, assessment, options, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
             }
@@ -322,11 +320,9 @@ export class AssessmentController extends BaseController{
                     }
                 }
                 Logger.instance().log(`afer scoring`);
-                if (eligibleAppNames.length > 0) {
+                if (eligibleToAddEhrRecord) {
                     var updatedAssessment = await this._service.getById(assessment.id);
-                    for await (var appName of eligibleAppNames) { 
-                        this._service.addEHRRecord(null, updatedAssessment, null, appName);
-                    }
+                    this._service.addEHRRecord(null, updatedAssessment, null, null);
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
                 }
@@ -386,16 +382,14 @@ export class AssessmentController extends BaseController{
             var answerResponse = await this._service.answerQuestionList(assessment.id, listNode, answerModels);
             Logger.instance().log(`AnswerResponse: ${JSON.stringify(answerResponse)}`);
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(answerResponse.Parent.PatientUserId);
-            if (eligibleAppNames.length > 0) {
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(answerResponse.Parent.PatientUserId);
+            if (eligibleToAddEhrRecord) {
                 var updatedAssessment = await this._service.getById(assessment.id);
-                for await (var appName of eligibleAppNames) {
-                    for await (var ar of answerResponse.Answer) {
-                        ar = JSON.parse(JSON.stringify(ar));
-                        ar.Answer['SubQuestion']  = ar.Answer.Title;
-                        ar.Answer.Title = listNode.Title;
-                        this._service.addEHRRecord(ar, assessment, ar.Parent, appName);
-                    }
+                for await (var ar of answerResponse.Answer) {
+                    ar = JSON.parse(JSON.stringify(ar));
+                    ar.Answer['SubQuestion']  = ar.Answer.Title;
+                    ar.Answer.Title = listNode.Title;
+                    this._service.addEHRRecord(ar, assessment, ar.Parent, null);
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
@@ -415,12 +409,10 @@ export class AssessmentController extends BaseController{
                         answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
-                if (eligibleAppNames.length > 0) {
+                if (eligibleToAddEhrRecord) {
                     var updatedAssessment = await this._service.getById(assessment.id);
                     updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore']);
-                    for await (var appName of eligibleAppNames) {
-                        this._service.addEHRRecord(null, updatedAssessment, null, appName);
-                    }
+                    this._service.addEHRRecord(null, updatedAssessment, null, null);
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${answerResponse.Parent.PatientUserId}`);
                 }

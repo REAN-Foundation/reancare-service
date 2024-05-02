@@ -47,11 +47,9 @@ export class BodyWeightController extends BaseController {
             if (bodyWeight == null) {
                 throw new ApiError(400, 'Cannot create weight record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bodyWeight.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bodyWeight.id, null , model, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(bodyWeight.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(model.PatientUserId, bodyWeight.id, null , model, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bodyWeight.PatientUserId}`);
             }
@@ -142,11 +140,9 @@ export class BodyWeightController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update weight record!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, null, model, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(updated.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(model.PatientUserId, id, null, model, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }

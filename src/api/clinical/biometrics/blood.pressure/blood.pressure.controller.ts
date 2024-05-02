@@ -17,6 +17,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { isNullOrUndefined } from 'util';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,11 +61,9 @@ export class BloodPressureController extends BaseController {
             }
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodPressure.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bloodPressure.id, bloodPressure.Provider, model, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(bloodPressure.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                    this._service.addEHRRecord(model.PatientUserId, bloodPressure.id, bloodPressure.Provider, model, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodPressure.PatientUserId}`);
             }
@@ -168,11 +167,9 @@ export class BloodPressureController extends BaseController {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(updated.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }

@@ -47,11 +47,9 @@ export class DailyAssessmentController extends BaseController{
                 throw new ApiError(400, 'Cannot create record for daily assessment!');
             }
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dailyAssessment.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, dailyAssessment.id, null, model, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(dailyAssessment.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(model.PatientUserId, dailyAssessment.id, null, model, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dailyAssessment.PatientUserId}`);
             }

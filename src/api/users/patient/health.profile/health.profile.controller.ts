@@ -80,11 +80,9 @@ export class HealthProfileController extends BaseController{
             }
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patientUserId);
-            if (eligibleAppNames.length > 0) {
-                for (var appName of eligibleAppNames) { 
-                    this.addEHRRecord(patientUserId, updated, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(patientUserId);
+            if (eligibleToAddEhrRecord) {
+                this.addEHRRecord(patientUserId, updated, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patientUserId}`);
             }

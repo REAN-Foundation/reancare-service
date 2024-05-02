@@ -45,11 +45,9 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Cannot create record for meditation!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(meditation.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, meditation.id, null, meditation, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(meditation.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(model.PatientUserId, meditation.id, null, meditation, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${meditation.PatientUserId}`);
             }
@@ -143,11 +141,9 @@ export class MeditationController extends BaseController{
                 throw new ApiError(400, 'Unable to update meditation record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, id, null, updated, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(updated.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(domainModel.PatientUserId, id, null, updated, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }

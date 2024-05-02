@@ -417,6 +417,32 @@ export class EHRAnalyticsHandler {
         return uniqueAppNames;
     };
 
+    public getEligibility = async (patientUserId: uuid) => {
+        const userDetails = await this._userService.getById(patientUserId);
+        //var appNames = [];
+        //if (userDetails == null) {
+        //    return appNames;
+        //}
+
+        if (userDetails && userDetails.IsTestUser == false) {
+            /* var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
+            if (userDevices.length > 0) {
+                userDevices.forEach(userDevice => {
+                    var deviceEligibility = this.eligibleToAddInEhrRecords(userDevice.AppName);
+                    if (deviceEligibility) {
+                        appNames.push(userDevice.AppName);
+                    }
+                });
+            }*/
+            return true;
+        }
+        // app is not invalidating old devices, hence considering only unique devices
+        //var uniqueAppNames = appNames.filter((item, i, ar) => ar.indexOf(item) === i);
+        return false;
+    };
+
+    
+
     public scheduleExistingStaticDataToEHR = async () => {
         try {
             var patientUserIds = await this._patientService.getAllPatientUserIds();

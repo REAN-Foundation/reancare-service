@@ -257,11 +257,9 @@ export class UserTaskController {
                 }
 
                 var healthSystemHospitalDetails = await this._service.getHealthSystem(updated.UserId);
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(action.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for (var appName of eligibleAppNames) {
-                        this.addEHRRecord(action, appName, healthSystemHospitalDetails, updated);
-                    }
+                var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(action.PatientUserId);
+                if (eligibleToAddEhrRecord) {
+                    this.addEHRRecord(action, null, healthSystemHospitalDetails, updated);
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${action.PatientUserId}`);
                 }

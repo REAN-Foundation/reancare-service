@@ -609,26 +609,10 @@ export class CareplanService implements IUserActionService {
         Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
 
         var healthSystemHospitalDetails = await this._patientRepo.getByUserId(dto.PatientUserId);
-        var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-        if (eligibleAppNames.length > 0) {
-            for await (var appName of eligibleAppNames) {
-                if (appName == 'HF Helper' && enrollmentDetails.PlanCode == 'HFMotivator') {
-                    for await (var careplanActivity of careplanActivities) {
-                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
-                    }
-                } else if (appName == 'Heart &amp; Stroke Helper™' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke')) {
-                    for await (var careplanActivity of careplanActivities) {
-                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
-                    }
-                } else if (appName == 'REAN HealthGuru' && (enrollmentDetails.PlanCode == 'Cholesterol' || enrollmentDetails.PlanCode == 'Stroke' || enrollmentDetails.PlanCode == 'HFMotivator')) {
-                    for await (var careplanActivity of careplanActivities) {
-                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
-                    }
-                } else {
-                    for await (var careplanActivity of careplanActivities) {
-                        this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, appName, healthSystemHospitalDetails);
-                    }
-                }
+        var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(dto.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            for await (var careplanActivity of careplanActivities) {
+                this.addEHRRecord(enrollmentDetails.PlanName, enrollmentDetails.PlanCode, careplanActivity, null, healthSystemHospitalDetails);
             }
         } else {
             Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);

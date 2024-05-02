@@ -61,11 +61,9 @@ export class MedicationConsumptionController {
 
             // get user details to add records in ehr database
             for (var dto of dtos) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) { 
-                        this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                    }
+                var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(dto.PatientUserId);
+                if (eligibleToAddEhrRecord) {
+                    this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, null);
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
                 }
@@ -112,11 +110,9 @@ export class MedicationConsumptionController {
             }
 
             for (var dto of dtos) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) { 
-                        this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                    }
+                var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(dto.PatientUserId);
+                if (eligibleToAddEhrRecord) {
+                    this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, null);  
                 } else {
                     Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
                 }
@@ -161,11 +157,9 @@ export class MedicationConsumptionController {
             }
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(dto.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
             }
@@ -207,11 +201,9 @@ export class MedicationConsumptionController {
             }
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(dto.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
             }

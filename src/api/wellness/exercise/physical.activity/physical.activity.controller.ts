@@ -57,11 +57,9 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Cannot create physical activity record!');
             }
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(physicalActivity.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, physicalActivity, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(physicalActivity.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(domainModel.PatientUserId, physicalActivity.id, physicalActivity.Provider, physicalActivity, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${physicalActivity.PatientUserId}`);
             }
@@ -152,11 +150,9 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Unable to update physical activity record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(updated.PatientUserId, id, updated.Provider, updated, appName);
-                }
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(updated.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this._service.addEHRRecord(updated.PatientUserId, id, updated.Provider, updated, null);
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
             }

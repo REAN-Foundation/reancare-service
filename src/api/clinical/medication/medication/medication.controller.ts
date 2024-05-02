@@ -152,14 +152,11 @@ export class MedicationController {
             }
 
             // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(medication.PatientUserId);
-            if (eligibleAppNames.length > 0) {
+            var eligibleToAddEhrRecord = await this._ehrAnalyticsHandler.getEligibility(medication.PatientUserId);
+            if (eligibleToAddEhrRecord) {
                 var medicationConsumptions = await this._medicationConsumptionService.getByMedicationId(medication.id);
                 for await (var mc of medicationConsumptions) {
-                    for await (var appName of eligibleAppNames) {
-                        this._medicationConsumptionService.addEHRRecord(mc.PatientUserId, mc.id, mc, appName);
-                    
-                    }
+                    this._medicationConsumptionService.addEHRRecord(mc.PatientUserId, mc.id, mc, null);   
                 }
             } else {
                 Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${medication.PatientUserId}`);

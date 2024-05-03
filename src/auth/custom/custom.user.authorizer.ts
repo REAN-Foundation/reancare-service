@@ -29,7 +29,7 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
             }
 
             // Temp solution - Needs to be refined
-            if (request.currentClient && request.currentClient.IsPrivileged) {
+            if (request.currentClient?.IsPrivileged) {
                 return true;
             }
 

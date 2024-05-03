@@ -45,7 +45,7 @@ export class PatientAppNameCache {
 
     public static add(patientId: string, appNames: string[]): void {
         PatientAppNameCache.cache.set(patientId, appNames);
-    };
+    }
 
     public static getEligibility = async (patientUserId: uuid) => {
         const userService = Injector.Container.resolve(UserService);

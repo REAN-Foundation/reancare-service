@@ -1050,7 +1050,7 @@ export class AhaCareplanService implements ICareplanService {
 
     scheduleDailyHighRiskCareplan(): Promise<void> {
         throw new Error("Method not implemented.");
-    };
+    }
 
     private checkIfMedicalProfileTaskExist = async (
         patientUserId: uuid,

@@ -14,60 +14,42 @@ describe('90 - Tenant tests', function () {
 
     it('90:01 -> Create Tenant', function (done) {
         loadTenantCreateModel();
-        const createModel = getTestData('TenantCreateModel');
+        const createModel = getTestData('tenantCreateModel');
         agent
             .post(`/api/v1/tenants/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Tenant.id, 'TenantId_1');
-                expect(response.body.Data.Tenant).to.have.property('Name');
-                expect(response.body.Data.Tenant).to.have.property('Description');
-                expect(response.body.Data.Tenant).to.have.property('Code');
-                expect(response.body.Data.Tenant).to.have.property('Phone');
-                expect(response.body.Data.Tenant).to.have.property('Email');
+                setTenantId(response, 'tenantId_1');
+                expectTenantProperties(response);
 
-                setTestData(response.body.Data.Tenant.id, 'TenantId_1');
-
-                expect(response.body.Data.Tenant.Name).to.equal(getTestData('TenantCreateModel').Name);
-                expect(response.body.Data.Tenant.Description).to.equal(getTestData('TenantCreateModel').Description);
-                expect(response.body.Data.Tenant.Code).to.equal(getTestData('TenantCreateModel').Code);
-                expect(response.body.Data.Tenant.Phone).to.equal(getTestData('TenantCreateModel').Phone);
-                expect(response.body.Data.Tenant.Email).to.equal(getTestData('TenantCreateModel').Email);
+                expectTenantPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('90:02 -> Get Tenant by id', function (done) {
         agent
-            .get(`/api/v1/tenants/${getTestData('TenantId_1')}`)
+            .get(`/api/v1/tenants/${getTestData('tenantId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
-                expect(response.body.Data.Tenant).to.have.property('Name');
-                expect(response.body.Data.Tenant).to.have.property('Description');
-                expect(response.body.Data.Tenant).to.have.property('Code');
-                expect(response.body.Data.Tenant).to.have.property('Phone');
-                expect(response.body.Data.Tenant).to.have.property('Email');
+                expectTenantProperties(response);
 
-                expect(response.body.Data.Tenant.Name).to.equal(getTestData('TenantCreateModel').Name);
-                expect(response.body.Data.Tenant.Description).to.equal(getTestData('TenantCreateModel').Description);
-                expect(response.body.Data.Tenant.Code).to.equal(getTestData('TenantCreateModel').Code);
-                expect(response.body.Data.Tenant.Phone).to.equal(getTestData('TenantCreateModel').Phone);
-                expect(response.body.Data.Tenant.Email).to.equal(getTestData('TenantCreateModel').Email);
+                expectTenantPropertyValues(response);
             })
             .expect(200, done);
     });
 
     //     it('90:03 -> Promote tenant user as admin', function (done) {
     //       agent
-    //           .post(`/api/v1/tenants/${getTestData('TenantId_1')}/promote-as-admin`)
+    //           .post(`/api/v1/tenants/${getTestData('tenantId_1')}/promote-as-admin`)
     //           .set('Content-Type', 'application/json')
     //           .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //           .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+    //           .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
     //           .expect((response) => {
     //             expect(response.body).to.have.property('Status');
     //             expect(response.body.Status).to.equal('success');
@@ -78,10 +60,10 @@ describe('90 - Tenant tests', function () {
 
     //   it('90:04 -> Demote admin', function (done) {
     //     agent
-    //         .post(`/api/v1/tenants/${getTestData('TenantId_1')}/demote-as-admin`)
+    //         .post(`/api/v1/tenants/${getTestData('tenantId_1')}/demote-as-admin`)
     //         .set('Content-Type', 'application/json')
     //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+    //         .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
     //         .expect((response) => {
     //           expect(response.body).to.have.property('Status');
     //           expect(response.body.Status).to.equal('success');
@@ -92,10 +74,10 @@ describe('90 - Tenant tests', function () {
 
     it('90:05 -> Get Tenant stats', function (done) {
         agent
-            .get(`/api/v1/tenants/${getTestData('TenantId_1')}/stats`)
+            .get(`/api/v1/tenants/${getTestData('tenantId_1')}/stats`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -105,10 +87,10 @@ describe('90 - Tenant tests', function () {
 
     it('90:06 -> Get Tenant admins', function (done) {
         agent
-            .get(`/api/v1/tenants/${getTestData('TenantId_1')}/admins`)
+            .get(`/api/v1/tenants/${getTestData('tenantId_1')}/admins`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -118,10 +100,10 @@ describe('90 - Tenant tests', function () {
 
     it('90:07 -> Get Tenant regular users', function (done) {
         agent
-            .get(`/api/v1/tenants/${getTestData('TenantId_1')}/regular-users`)
+            .get(`/api/v1/tenants/${getTestData('tenantId_1')}/regular-users`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -135,7 +117,7 @@ describe('90 - Tenant tests', function () {
             .get(`/api/v1/tenants/search${loadTenantQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body.Data.TenantRecords).to.have.property('TotalCount');
                 expect(response.body.Data.TenantRecords).to.have.property('RetrievedCount');
@@ -151,35 +133,31 @@ describe('90 - Tenant tests', function () {
 
     it('90:09 -> Update Tenant', function (done) {
         loadTenantUpdateModel();
-        const updateModel = getTestData('TenantUpdateModel');
+        const updateModel = getTestData('tenantUpdateModel');
         agent
-            .put(`/api/v1/tenants/${getTestData('TenantId_1')}`)
+            .put(`/api/v1/tenants/${getTestData('tenantId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(updateModel)
             .expect((response) => {
-                expect(response.body.Data.Tenant).to.have.property('Name');
-                expect(response.body.Data.Tenant).to.have.property('Description');
-                expect(response.body.Data.Tenant).to.have.property('Code');
-                expect(response.body.Data.Tenant).to.have.property('Phone');
-                expect(response.body.Data.Tenant).to.have.property('Email');
+                expectTenantProperties(response);
 
-                expect(response.body.Data.Tenant.Name).to.equal(getTestData('TenantUpdateModel').Name);
-                expect(response.body.Data.Tenant.Description).to.equal(getTestData('TenantUpdateModel').Description);
-                expect(response.body.Data.Tenant.Code).to.equal(getTestData('TenantUpdateModel').Code);
-                expect(response.body.Data.Tenant.Phone).to.equal(getTestData('TenantUpdateModel').Phone);
-                expect(response.body.Data.Tenant.Email).to.equal(getTestData('TenantUpdateModel').Email);
+                expect(response.body.Data.Tenant.Name).to.equal(getTestData('tenantUpdateModel').Name);
+                expect(response.body.Data.Tenant.Description).to.equal(getTestData('tenantUpdateModel').Description);
+                expect(response.body.Data.Tenant.Code).to.equal(getTestData('tenantUpdateModel').Code);
+                expect(response.body.Data.Tenant.Phone).to.equal(getTestData('tenantUpdateModel').Phone);
+                expect(response.body.Data.Tenant.Email).to.equal(getTestData('tenantUpdateModel').Email);
             })
             .expect(200, done);
     });
 
     it('90:10 -> Delete Tenant', function (done) {
         agent
-            .delete(`/api/v1/tenants/${getTestData('TenantId_1')}`)
+            .delete(`/api/v1/tenants/${getTestData('tenantId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -189,39 +167,29 @@ describe('90 - Tenant tests', function () {
 
     it('Create Tenant again', function (done) {
         loadTenantCreateModel();
-        const createModel = getTestData('TenantCreateModel');
+        const createModel = getTestData('tenantCreateModel');
         agent
             .post(`/api/v1/tenants/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Tenant.id, 'TenantId');
-                expect(response.body.Data.Tenant).to.have.property('Name');
-                expect(response.body.Data.Tenant).to.have.property('Description');
-                expect(response.body.Data.Tenant).to.have.property('Code');
-                expect(response.body.Data.Tenant).to.have.property('Phone');
-                expect(response.body.Data.Tenant).to.have.property('Email');
+                setTenantId(response, 'tenantId');
+                expectTenantProperties(response);
 
-                setTestData(response.body.Data.Tenant.id, 'TenantId');
-
-                expect(response.body.Data.Tenant.Name).to.equal(getTestData('TenantCreateModel').Name);
-                expect(response.body.Data.Tenant.Description).to.equal(getTestData('TenantCreateModel').Description);
-                expect(response.body.Data.Tenant.Code).to.equal(getTestData('TenantCreateModel').Code);
-                expect(response.body.Data.Tenant.Phone).to.equal(getTestData('TenantCreateModel').Phone);
-                expect(response.body.Data.Tenant.Email).to.equal(getTestData('TenantCreateModel').Email);
+                expectTenantPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('90:11 -> Negative - Create Tenant', function (done) {
         loadNegativeTenantCreateModel();
-        const createModel = getTestData('NegativeNoticeCreateModel');
+        const createModel = getTestData('negativeTenantCreateModel');
         agent
             .post(`/api/v1/tenants/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -232,10 +200,10 @@ describe('90 - Tenant tests', function () {
 
     it('90:12 -> Negative - Get Tenant by id', function (done) {
         agent
-            .get(`/api/v1/tenants/${getTestData('TenantId_1')}`)
+            .get(`/api/v1/tenants/${getTestData('tenantId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -245,11 +213,11 @@ describe('90 - Tenant tests', function () {
 
     it('90:13 -> Negative - Update Tenant', function (done) {
         loadTenantUpdateModel();
-        const updateModel = getTestData('TenantUpdateModel');
+        const updateModel = getTestData('tenantUpdateModel');
         agent
-            .put(`/api/v1/tenants/${getTestData('TenantId')}`)
+            .put(`/api/v1/tenants/${getTestData('tenantId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -261,16 +229,36 @@ describe('90 - Tenant tests', function () {
 
 ///////////////////////////////////////////////////////////////////////////
 
+function setTenantId(response, key) {
+    setTestData(response.body.Data.Tenant.id, key);
+}
+
+function expectTenantProperties(response) {
+    expect(response.body.Data.Tenant).to.have.property('Name');
+    expect(response.body.Data.Tenant).to.have.property('Description');
+    expect(response.body.Data.Tenant).to.have.property('Code');
+    expect(response.body.Data.Tenant).to.have.property('Phone');
+    expect(response.body.Data.Tenant).to.have.property('Email');
+}
+
+function expectTenantPropertyValues(response) {
+    expect(response.body.Data.Tenant.Name).to.equal(getTestData('tenantCreateModel').Name);
+    expect(response.body.Data.Tenant.Description).to.equal(getTestData('tenantCreateModel').Description);
+    expect(response.body.Data.Tenant.Code).to.equal(getTestData('tenantCreateModel').Code);
+    expect(response.body.Data.Tenant.Phone).to.equal(getTestData('tenantCreateModel').Phone);
+    expect(response.body.Data.Tenant.Email).to.equal(getTestData('tenantCreateModel').Email);
+}
+
 export const loadTenantCreateModel = async () => {
     const model = {
         Name: faker.person.fullName(),
         Description: faker.lorem.word(10),
         Code: faker.lorem.words(1),
         // Phone: faker.phone.number(),
-        Phone: "+91-1100000001",
+        Phone: '+91-1100000001',
         Email: faker.internet.exampleEmail(),
     };
-    setTestData(model, 'TenantCreateModel');
+    setTestData(model, 'tenantCreateModel');
 };
 
 export const loadTenantUpdateModel = async () => {
@@ -279,10 +267,10 @@ export const loadTenantUpdateModel = async () => {
         Description: faker.lorem.word(10),
         Code: faker.lorem.words(1),
         // Phone: faker.phone.number(),
-        Phone: "+91-1200000001",
+        Phone: '+91-1200000001',
         Email: faker.internet.exampleEmail(),
     };
-    setTestData(model, 'TenantUpdateModel');
+    setTestData(model, 'tenantUpdateModel');
 };
 
 function loadTenantQueryString() {
@@ -298,5 +286,5 @@ export const loadNegativeTenantCreateModel = async () => {
         IsActive: faker.datatype.boolean(),
         ImageUrl: faker.image.url(),
     };
-    setTestData(model, 'NegativeNoticeCreateModel');
+    setTestData(model, 'negativeTenantCreateModel');
 };

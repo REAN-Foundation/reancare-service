@@ -14,56 +14,42 @@ describe('89 - Cohort tests', function () {
 
     it('89:01 -> Create Cohort', function (done) {
         loadCohortCreateModel();
-        const createModel = getTestData('CohortCreateModel');
+        const createModel = getTestData('cohortCreateModel');
         agent
             .post(`/api/v1/cohorts/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Cohort.id, 'CohortId_1');
-                expect(response.body.Data.Cohort).to.have.property('Name');
-                expect(response.body.Data.Cohort).to.have.property('TenantId');
-                expect(response.body.Data.Cohort).to.have.property('Description');
-                expect(response.body.Data.Cohort).to.have.property('ImageUrl');
+                setCohortId(response, 'cohortId_1');
+                expectCohortProperties(response);
 
-                setTestData(response.body.Data.Cohort.id, 'CohortId_1');
-
-                expect(response.body.Data.Cohort.Name).to.equal(getTestData('CohortCreateModel').Name);
-                expect(response.body.Data.Cohort.TenantId).to.equal(getTestData('CohortCreateModel').TenantId);
-                expect(response.body.Data.Cohort.Description).to.equal(getTestData('CohortCreateModel').Description);
-                expect(response.body.Data.Cohort.ImageUrl).to.equal(getTestData('CohortCreateModel').ImageUrl);
+                expectCohortPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('89:02 -> Get Cohort by id', function (done) {
         agent
-            .get(`/api/v1/cohorts/${getTestData('CohortId_1')}`)
+            .get(`/api/v1/cohorts/${getTestData('cohortId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
-                expect(response.body.Data.Cohort).to.have.property('Name');
-                expect(response.body.Data.Cohort).to.have.property('TenantId');
-                expect(response.body.Data.Cohort).to.have.property('Description');
-                expect(response.body.Data.Cohort).to.have.property('ImageUrl');
+                expectCohortProperties(response);
 
-                expect(response.body.Data.Cohort.Name).to.equal(getTestData('CohortCreateModel').Name);
-                expect(response.body.Data.Cohort.TenantId).to.equal(getTestData('CohortCreateModel').TenantId);
-                expect(response.body.Data.Cohort.Description).to.equal(getTestData('CohortCreateModel').Description);
-                expect(response.body.Data.Cohort.ImageUrl).to.equal(getTestData('CohortCreateModel').ImageUrl);
+                expectCohortPropertyValues(response);
             })
             .expect(200, done);
     });
 
     it('89:03 -> Get cohort stats', function (done) {
         agent
-            .get(`/api/v1/cohorts/${getTestData('CohortId_1')}/stats`)
+            .get(`/api/v1/cohorts/${getTestData('cohortId_1')}/stats`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -73,10 +59,10 @@ describe('89 - Cohort tests', function () {
 
     it('89:04 -> Get cohort users', function (done) {
         agent
-            .get(`/api/v1/cohorts/${getTestData('CohortId_1')}/users`)
+            .get(`/api/v1/cohorts/${getTestData('cohortId_1')}/users`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -86,10 +72,10 @@ describe('89 - Cohort tests', function () {
 
     it('89:05 -> Get cohort for tenant', function (done) {
         agent
-            .get(`/api/v1/cohorts/tenants/${getTestData('TenantId')}`)
+            .get(`/api/v1/cohorts/tenants/${getTestData('tenantId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -99,10 +85,10 @@ describe('89 - Cohort tests', function () {
 
     // it('89:06 -> Add user to cohort', function (done) {
     //     agent
-    //         .post(`/api/v1/cohorts/${getTestData('CohortId_1')}/users/${getTestData('PatientUserId_11')}/add`)
+    //         .post(`/api/v1/cohorts/${getTestData('cohortId_1')}/users/${getTestData('PatientUserId_11')}/add`)
     //         .set('Content-Type', 'application/json')
     //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+    //         .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
     //         .expect((response) => {
     //             expect(response.body).to.have.property('Status');
     //             expect(response.body.Status).to.equal('success');
@@ -112,10 +98,10 @@ describe('89 - Cohort tests', function () {
 
     // it('89:07 -> Remove user from cohort', function (done) {
     //     agent
-    //         .post(`/api/v1/cohorts/${getTestData('CohortId_1')}/users/${getTestData('PatientUserId')}/remove`)
+    //         .post(`/api/v1/cohorts/${getTestData('cohortId_1')}/users/${getTestData('PatientUserId')}/remove`)
     //         .set('Content-Type', 'application/json')
     //         .set('x-api-key', `${process.env.TEST_API_KEY}`)
-    //         .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+    //         .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
     //         .expect((response) => {
     //             expect(response.body).to.have.property('Status');
     //             expect(response.body.Status).to.equal('success');
@@ -129,7 +115,7 @@ describe('89 - Cohort tests', function () {
             .get(`/api/v1/cohorts/search${loadCohortQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .expect((response) => {
                 expect(response.body.Data.Cohorts).to.have.property('TotalCount');
                 expect(response.body.Data.Cohorts).to.have.property('RetrievedCount');
@@ -145,33 +131,30 @@ describe('89 - Cohort tests', function () {
 
     it('89:09 -> Update Cohort', function (done) {
         loadCohortUpdateModel();
-        const updateModel = getTestData('CohortUpdateModel');
+        const updateModel = getTestData('cohortUpdateModel');
         agent
-            .put(`/api/v1/cohorts/${getTestData('CohortId_1')}`)
+            .put(`/api/v1/cohorts/${getTestData('cohortId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(updateModel)
             .expect((response) => {
-                expect(response.body.Data.Cohort).to.have.property('Name');
-                expect(response.body.Data.Cohort).to.have.property('TenantId');
-                expect(response.body.Data.Cohort).to.have.property('Description');
-                expect(response.body.Data.Cohort).to.have.property('ImageUrl');
+                expectCohortProperties(response);
 
-                expect(response.body.Data.Cohort.Name).to.equal(getTestData('CohortUpdateModel').Name);
-                expect(response.body.Data.Cohort.TenantId).to.equal(getTestData('CohortUpdateModel').TenantId);
-                expect(response.body.Data.Cohort.Description).to.equal(getTestData('CohortUpdateModel').Description);
-                expect(response.body.Data.Cohort.ImageUrl).to.equal(getTestData('CohortUpdateModel').ImageUrl);
+                expect(response.body.Data.Cohort.Name).to.equal(getTestData('cohortUpdateModel').Name);
+                expect(response.body.Data.Cohort.TenantId).to.equal(getTestData('cohortUpdateModel').TenantId);
+                expect(response.body.Data.Cohort.Description).to.equal(getTestData('cohortUpdateModel').Description);
+                expect(response.body.Data.Cohort.ImageUrl).to.equal(getTestData('cohortUpdateModel').ImageUrl);
             })
             .expect(200, done);
     });
 
     it('89:10 -> Delete Cohort', function (done) {
         agent
-            .delete(`/api/v1/cohorts/${getTestData('CohortId_1')}`)
+            .delete(`/api/v1/cohorts/${getTestData('cohortId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -181,37 +164,29 @@ describe('89 - Cohort tests', function () {
 
     it('Create Cohort again', function (done) {
         loadCohortCreateModel();
-        const createModel = getTestData('CohortCreateModel');
+        const createModel = getTestData('cohortCreateModel');
         agent
             .post(`/api/v1/cohorts/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Cohort.id, 'CohortId');
-                expect(response.body.Data.Cohort).to.have.property('Name');
-                expect(response.body.Data.Cohort).to.have.property('TenantId');
-                expect(response.body.Data.Cohort).to.have.property('Description');
-                expect(response.body.Data.Cohort).to.have.property('ImageUrl');
+                setCohortId(response, 'cohortId');
+                expectCohortProperties(response);
 
-                setTestData(response.body.Data.Cohort.id, 'CohortId');
-
-                expect(response.body.Data.Cohort.Name).to.equal(getTestData('CohortCreateModel').Name);
-                expect(response.body.Data.Cohort.TenantId).to.equal(getTestData('CohortCreateModel').TenantId);
-                expect(response.body.Data.Cohort.Description).to.equal(getTestData('CohortCreateModel').Description);
-                expect(response.body.Data.Cohort.ImageUrl).to.equal(getTestData('CohortCreateModel').ImageUrl);
+                expectCohortPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('89:11 -> Negative - Create Cohort', function (done) {
         loadNegativeCohortCreateModel();
-        const createModel = getTestData('NegativeNoticeCreateModel');
+        const createModel = getTestData('negativeNoticeCreateModel');
         agent
             .post(`/api/v1/cohorts/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -222,10 +197,10 @@ describe('89 - Cohort tests', function () {
 
     it('89:12 -> Negative - Get Cohort by id', function (done) {
         agent
-            .get(`/api/v1/cohorts/${getTestData('CohortId_1')}`)
+            .get(`/api/v1/cohorts/${getTestData('cohortId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -235,11 +210,11 @@ describe('89 - Cohort tests', function () {
 
     it('89:13 -> Negative - Update Cohort', function (done) {
         loadCohortUpdateModel();
-        const updateModel = getTestData('CohortUpdateModel');
+        const updateModel = getTestData('cohortUpdateModel');
         agent
             .put(`/api/v1/cohorts/${getTestData('NoticeId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -251,24 +226,42 @@ describe('89 - Cohort tests', function () {
 
 ///////////////////////////////////////////////////////////////////////////
 
+function setCohortId(response, key) {
+    setTestData(response.body.Data.Cohort.id, key);
+}
+
+function expectCohortProperties(response) {
+    expect(response.body.Data.Cohort).to.have.property('Name');
+    expect(response.body.Data.Cohort).to.have.property('TenantId');
+    expect(response.body.Data.Cohort).to.have.property('Description');
+    expect(response.body.Data.Cohort).to.have.property('ImageUrl');
+}
+
+function expectCohortPropertyValues(response) {
+    expect(response.body.Data.Cohort.Name).to.equal(getTestData('cohortCreateModel').Name);
+    expect(response.body.Data.Cohort.TenantId).to.equal(getTestData('cohortCreateModel').TenantId);
+    expect(response.body.Data.Cohort.Description).to.equal(getTestData('cohortCreateModel').Description);
+    expect(response.body.Data.Cohort.ImageUrl).to.equal(getTestData('cohortCreateModel').ImageUrl);
+}
+
 export const loadCohortCreateModel = async () => {
     const model = {
         Name: faker.person.fullName(),
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
         Description: faker.lorem.word(10),
         ImageUrl: faker.internet.url(),
     };
-    setTestData(model, 'CohortCreateModel');
+    setTestData(model, 'cohortCreateModel');
 };
 
 export const loadCohortUpdateModel = async () => {
     const model = {
         Name: faker.person.fullName(),
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
         Description: faker.lorem.word(10),
         ImageUrl: faker.internet.url(),
     };
-    setTestData(model, 'CohortUpdateModel');
+    setTestData(model, 'cohortUpdateModel');
 };
 
 function loadCohortQueryString() {
@@ -284,5 +277,5 @@ export const loadNegativeCohortCreateModel = async () => {
         IsActive: faker.datatype.boolean(),
         ImageUrl: faker.image.url(),
     };
-    setTestData(model, 'NegativeCohortCreateModel');
+    setTestData(model, 'negativeCohortCreateModel');
 };

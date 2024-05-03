@@ -14,7 +14,7 @@ describe.skip('68 - Patient tests', function () {
 
     it('68:01 -> Create patient with phone & password', function (done) {
         loadPatientCreateWithPhoneThirdModel();
-        const createModel = getTestData('PatientCreateWithPhoneThirdModel');
+        const createModel = getTestData('patientCreateWithPhoneThirdModel');
         agent
             .post(`/api/v1/patients/`)
             .set('Content-Type', 'application/json')
@@ -29,7 +29,7 @@ describe.skip('68 - Patient tests', function () {
 
     it('68:02 -> Patient login with password', function (done) {
         loadPatientLoginThirdModel();
-        const createModel = getTestData('PatientLoginThirdModel');
+        const createModel = getTestData('patientLoginThirdModel');
         agent
             .post(`/api/v1/users/login-with-password/`)
             .set('Content-Type', 'application/json')
@@ -39,20 +39,20 @@ describe.skip('68 - Patient tests', function () {
                 assert.exists(response.body.Data.AccessToken, 'Access token is returned.');
                 assert.exists(response.body.Data.User, 'Login user details exist.');
                 expect(response.body.Data.User).to.have.property('id');
-                setTestData(response.body.Data.AccessToken, 'PatientJwt_1');
-                setTestData(response.body.Data.User.UserId, 'PatientUserId_5');
+                setTestData(response.body.Data.AccessToken, 'patientJwt_1');
+                setTestData(response.body.Data.User.UserId, 'patientUserId_5');
             })
             .expect(200, done);
     });
 
     it('68:03 -> Update patient', function (done) {
         loadPatientUpdateModel();
-        const updateModel = getTestData('PatientUpdateModel');
+        const updateModel = getTestData('patientUpdateModel');
         agent
-            .put(`/api/v1/patients/${getTestData('PatientUserId')}`)
+            .put(`/api/v1/patients/${getTestData('patientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -67,7 +67,7 @@ describe.skip('68 - Patient tests', function () {
             .get(`/api/v1/care-plans${loadCareplanQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -78,13 +78,13 @@ describe.skip('68 - Patient tests', function () {
     it('68:05 -> Get Careplan Eligibilty', function (done) {
         agent
             .get(
-                `/api/v1/care-plans/eligibility/${getTestData('PatientUserId')}/providers/AHA/careplans/${getTestData(
+                `/api/v1/care-plans/eligibility/${getTestData('patientUserId')}/providers/AHA/careplans/${getTestData(
                     'CAREPALNCODE'
                 )}`
             )
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body.Data.Eligibility).to.have.property('Eligible');
                 expect(response.body.Data.Eligibility.Eligible).to.equal(true);
@@ -94,33 +94,31 @@ describe.skip('68 - Patient tests', function () {
 
     it('68:06 -> Enroll to careplan', function (done) {
         loadEnrollmentCreateModel();
-        const createModel = getTestData('EnrollmentCreateModel');
+        const createModel = getTestData('enrollmentCreateModel');
         agent
-            .post(`/api/v1/care-plans/patients/${getTestData('PatientUserId_5')}/enroll`)
+            .post(`/api/v1/care-plans/patients/${getTestData('patientUserId_5')}/enroll`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Enrollment.id, 'EnrollmentId');
+                setTestData(response.body.Data.Enrollment.id, 'enrollmentId');
                 expect(response.body.Data.Enrollment).to.have.property('Provider');
                 expect(response.body.Data.Enrollment).to.have.property('PlanCode');
                 expect(response.body.Data.Enrollment).to.have.property('StartAt');
 
-                setTestData(response.body.Data.Enrollment.id, 'EnrollmentId');
-
-                expect(response.body.Data.Enrollment.Provider).to.equal(getTestData('EnrollmentCreateModel').Provider);
-                expect(response.body.Data.Enrollment.PlanCode).to.equal(getTestData('EnrollmentCreateModel').PlanCode);
+                expect(response.body.Data.Enrollment.Provider).to.equal(getTestData('enrollmentCreateModel').Provider);
+                expect(response.body.Data.Enrollment.PlanCode).to.equal(getTestData('enrollmentCreateModel').PlanCode);
             })
             .expect(201, done);
     });
 
     it('68:07 -> Get all careplan enrollments for patient', function (done) {
         agent
-            .get(`/api/v1/care-plans/patients/${getTestData('PatientUserId')}/enrollments`)
+            .get(`/api/v1/care-plans/patients/${getTestData('patientUserId')}/enrollments`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -130,9 +128,9 @@ describe.skip('68 - Patient tests', function () {
 
     it('68:08 -> Negative - Update patient', function (done) {
         loadPatientUpdateModel();
-        const updateModel = getTestData('PatientUpdateModel');
+        const updateModel = getTestData('patientUpdateModel');
         agent
-            .put(`/api/v1/patients/${getTestData('PatientUserId')}`)
+            .put(`/api/v1/patients/${getTestData('patientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(updateModel)
@@ -146,12 +144,12 @@ describe.skip('68 - Patient tests', function () {
     it('68:09 -> Negative - Get Careplan Eligibilty', function (done) {
         agent
             .get(
-                `/api/v1/care-plans/eligibility/${getTestData('PatientUserId')}/providers/AHA/careplans/${getTestData(
+                `/api/v1/care-plans/eligibility/${getTestData('patientUserId')}/providers/AHA/careplans/${getTestData(
                     'CARE'
                 )}`
             )
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -161,11 +159,11 @@ describe.skip('68 - Patient tests', function () {
 
     it('68:10 -> Negative - Enroll to careplan', function (done) {
         loadEnrollmentCreateModel();
-        const createModel = getTestData('EnrollmentCreateModel');
+        const createModel = getTestData('enrollmentCreateModel');
         agent
-            .post(`/api/v1/care-plans/patients/${getTestData('PatientUserId')}/enroll`)
+            .post(`/api/v1/care-plans/patients/${getTestData('patientUserId')}/enroll`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -187,7 +185,7 @@ export const loadPatientCreateWithPhoneThirdModel = async () => {
         Password: patientPassword,
         LoginRoleId: getTestData('patientRoleId'),
     };
-    setTestData(model, 'PatientCreateWithPhoneThirdModel');
+    setTestData(model, 'patientCreateWithPhoneThirdModel');
 };
 
 export const loadPatientLoginThirdModel = async () => {
@@ -196,7 +194,7 @@ export const loadPatientLoginThirdModel = async () => {
         Password: patientPassword,
         LoginRoleId: getTestData('patientRoleId'),
     };
-    setTestData(model, 'PatientLoginThirdModel');
+    setTestData(model, 'patientLoginThirdModel');
 };
 
 export const loadPatientUpdateModel = async () => {
@@ -218,7 +216,7 @@ export const loadPatientUpdateModel = async () => {
         DefaultTimeZone: '+05:30',
         CurrentTimeZone: '+05:30',
     };
-    setTestData(model, 'PatientUpdateModel');
+    setTestData(model, 'patientUpdateModel');
 };
 
 function loadCareplanQueryString() {
@@ -233,5 +231,5 @@ export const loadEnrollmentCreateModel = async () => {
         PlanCode: 'HFMotivator',
         StartDate: '2024-08-17',
     };
-    setTestData(model, 'EnrollmentCreateModel');
+    setTestData(model, 'enrollmentCreateModel');
 };

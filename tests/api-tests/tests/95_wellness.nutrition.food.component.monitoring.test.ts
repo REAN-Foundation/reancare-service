@@ -16,62 +16,32 @@ describe('95 - Food component monitoring tests', function () {
 
     it('95:01 -> Create food component monitoring', function (done) {
         loadFoodComponentMonitoringCreateModel();
-        const createModel = getTestData('FoodComponentMonitoringCreateModel');
+        const createModel = getTestData('foodComponentMonitoringCreateModel');
         agent
             .post(`/api/v1/wellness/food-components-monitoring/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.FoodComponentMonitoring.id, 'FoodComponentMonitoringId_1');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('PatientUserId');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('MonitoredFoodComponent');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('Amount');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('Unit');
+                setFoodComponentMonitoringId(response, 'foodComponentMonitoringId_1');
+                expectFoodComponentMonitoringProperties(response);
 
-                setTestData(response.body.Data.FoodComponentMonitoring.id, 'FoodComponentMonitoringId_1');
-
-                expect(response.body.Data.FoodComponentMonitoring.PatientUserId).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').PatientUserId
-                );
-                expect(response.body.Data.FoodComponentMonitoring.MonitoredFoodComponent).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').MonitoredFoodComponent
-                );
-                expect(response.body.Data.FoodComponentMonitoring.Amount).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').Amount
-                );
-                expect(response.body.Data.FoodComponentMonitoring.Unit).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').Unit
-                );
+                expectFoodComponentMonitoringPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('95:02 -> Get food component monitoring by id', function (done) {
         agent
-            .get(`/api/v1/wellness/food-components-monitoring/${getTestData('FoodComponentMonitoringId_1')}`)
+            .get(`/api/v1/wellness/food-components-monitoring/${getTestData('foodComponentMonitoringId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('PatientUserId');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('MonitoredFoodComponent');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('Amount');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('Unit');
+                expectFoodComponentMonitoringProperties(response);
 
-                expect(response.body.Data.FoodComponentMonitoring.PatientUserId).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').PatientUserId
-                );
-                expect(response.body.Data.FoodComponentMonitoring.MonitoredFoodComponent).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').MonitoredFoodComponent
-                );
-                expect(response.body.Data.FoodComponentMonitoring.Amount).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').Amount
-                );
-                expect(response.body.Data.FoodComponentMonitoring.Unit).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').Unit
-                );
+                expectFoodComponentMonitoringPropertyValues(response);
             })
             .expect(200, done);
     });
@@ -82,7 +52,7 @@ describe('95 - Food component monitoring tests', function () {
             .get(`/api/v1/wellness/food-components-monitoring/search${loadFoodComponentMonitoringQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -92,30 +62,27 @@ describe('95 - Food component monitoring tests', function () {
 
     it('95:05 -> Update food component monitoring', function (done) {
         loadFoodComponentMonitoringUpdateModel();
-        const updateModel = getTestData('FoodComponentMonitoringUpdateModel');
+        const updateModel = getTestData('foodComponentMonitoringUpdateModel');
         agent
-            .put(`/api/v1/wellness/food-components-monitoring/${getTestData('FoodComponentMonitoringId_1')}`)
+            .put(`/api/v1/wellness/food-components-monitoring/${getTestData('foodComponentMonitoringId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
             .expect((response) => {
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('PatientUserId');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('MonitoredFoodComponent');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('Amount');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('Unit');
+                expectFoodComponentMonitoringProperties(response);
 
                 expect(response.body.Data.FoodComponentMonitoring.PatientUserId).to.equal(
-                    getTestData('FoodComponentMonitoringUpdateModel').PatientUserId
+                    getTestData('foodComponentMonitoringUpdateModel').PatientUserId
                 );
                 expect(response.body.Data.FoodComponentMonitoring.MonitoredFoodComponent).to.equal(
-                    getTestData('FoodComponentMonitoringUpdateModel').MonitoredFoodComponent
+                    getTestData('foodComponentMonitoringUpdateModel').MonitoredFoodComponent
                 );
                 expect(response.body.Data.FoodComponentMonitoring.Amount).to.equal(
-                    getTestData('FoodComponentMonitoringUpdateModel').Amount
+                    getTestData('foodComponentMonitoringUpdateModel').Amount
                 );
                 expect(response.body.Data.FoodComponentMonitoring.Unit).to.equal(
-                    getTestData('FoodComponentMonitoringUpdateModel').Unit
+                    getTestData('foodComponentMonitoringUpdateModel').Unit
                 );
             })
             .expect(200, done);
@@ -123,10 +90,10 @@ describe('95 - Food component monitoring tests', function () {
 
     it('95:06 -> Delete food component monitoring', function (done) {
         agent
-            .delete(`/api/v1/wellness/food-components-monitoring/${getTestData('FoodComponentMonitoringId_1')}`)
+            .delete(`/api/v1/wellness/food-components-monitoring/${getTestData('foodComponentMonitoringId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -136,45 +103,29 @@ describe('95 - Food component monitoring tests', function () {
 
     it('Create food component monitoring again', function (done) {
         loadFoodComponentMonitoringCreateModel();
-        const createModel = getTestData('FoodComponentMonitoringCreateModel');
+        const createModel = getTestData('foodComponentMonitoringCreateModel');
         agent
             .post(`/api/v1/wellness/food-components-monitoring/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.FoodComponentMonitoring.id, 'FoodComponentMonitoringId');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('PatientUserId');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('MonitoredFoodComponent');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('Amount');
-                expect(response.body.Data.FoodComponentMonitoring).to.have.property('Unit');
+                setFoodComponentMonitoringId(response, 'foodComponentMonitoringId');
+                expectFoodComponentMonitoringProperties(response);
 
-                setTestData(response.body.Data.FoodComponentMonitoring.id, 'FoodComponentMonitoringId');
-
-                expect(response.body.Data.FoodComponentMonitoring.PatientUserId).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').PatientUserId
-                );
-                expect(response.body.Data.FoodComponentMonitoring.MonitoredFoodComponent).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').MonitoredFoodComponent
-                );
-                expect(response.body.Data.FoodComponentMonitoring.Amount).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').Amount
-                );
-                expect(response.body.Data.FoodComponentMonitoring.Unit).to.equal(
-                    getTestData('FoodComponentMonitoringCreateModel').Unit
-                );
+                expectFoodComponentMonitoringPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('95:07 -> Negative - Create food component monitoring', function (done) {
         loadFoodComponentMonitoringCreateModel();
-        const createModel = getTestData('FoodComponentMonitoringCreateModel');
+        const createModel = getTestData('foodComponentMonitoringCreateModel');
         agent
             .post(`/api/v1/wellness/food-components-monitoring/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -185,10 +136,10 @@ describe('95 - Food component monitoring tests', function () {
 
     it('95:08 -> Negative - Get food component monitoring by id', function (done) {
         agent
-            .get(`/api/v1/wellness/food-components-monitoring/${getTestData('FoodComponentMonitoringId_1')}`)
+            .get(`/api/v1/wellness/food-components-monitoring/${getTestData('foodComponentMonitoringId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -198,9 +149,9 @@ describe('95 - Food component monitoring tests', function () {
 
     it('95:10 -> Negative - Update food component monitoring', function (done) {
         loadFoodComponentMonitoringUpdateModel();
-        const updateModel = getTestData('FoodComponentMonitoringUpdateModel');
+        const updateModel = getTestData('foodComponentMonitoringUpdateModel');
         agent
-            .put(`/api/v1/wellness/food-components-monitoring/${getTestData('FoodComponentMonitoringId')}`)
+            .put(`/api/v1/wellness/food-components-monitoring/${getTestData('foodComponentMonitoringId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(updateModel)
@@ -215,24 +166,48 @@ describe('95 - Food component monitoring tests', function () {
 
 ///////////////////////////////////////////////////////////////////////////
 
+function setFoodComponentMonitoringId(response, key) {
+    setTestData(response.body.Data.FoodComponentMonitoring.id, key);
+}
+
+function expectFoodComponentMonitoringProperties(response) {
+    expect(response.body.Data.FoodComponentMonitoring).to.have.property('PatientUserId');
+    expect(response.body.Data.FoodComponentMonitoring).to.have.property('MonitoredFoodComponent');
+    expect(response.body.Data.FoodComponentMonitoring).to.have.property('Amount');
+    expect(response.body.Data.FoodComponentMonitoring).to.have.property('Unit');
+}
+
+function expectFoodComponentMonitoringPropertyValues(response) {
+    expect(response.body.Data.FoodComponentMonitoring.PatientUserId).to.equal(
+        getTestData('foodComponentMonitoringCreateModel').PatientUserId
+    );
+    expect(response.body.Data.FoodComponentMonitoring.MonitoredFoodComponent).to.equal(
+        getTestData('foodComponentMonitoringCreateModel').MonitoredFoodComponent
+    );
+    expect(response.body.Data.FoodComponentMonitoring.Amount).to.equal(
+        getTestData('foodComponentMonitoringCreateModel').Amount
+    );
+    expect(response.body.Data.FoodComponentMonitoring.Unit).to.equal(getTestData('foodComponentMonitoringCreateModel').Unit);
+}
+
 export const loadFoodComponentMonitoringCreateModel = async () => {
     const model = {
-        PatientUserId: getTestData('PatientUserId_01'),
+        PatientUserId: getTestData('patientUserId_01'),
         MonitoredFoodComponent: getRandomEnumValue(FoodComponentMonitoringTypes),
-        Amount: faker.number.float({ multipleOf: 0.25, min: 0, max:10 }),
+        Amount: faker.number.float({ multipleOf: 0.25, min: 0, max: 10 }),
         Unit: faker.lorem.word(),
     };
-    setTestData(model, 'FoodComponentMonitoringCreateModel');
+    setTestData(model, 'foodComponentMonitoringCreateModel');
 };
 
 export const loadFoodComponentMonitoringUpdateModel = async () => {
     const model = {
-        PatientUserId: getTestData('PatientUserId_01'),
+        PatientUserId: getTestData('patientUserId_01'),
         MonitoredFoodComponent: getRandomEnumValue(FoodComponentMonitoringTypes),
-        Amount: faker.number.float({ multipleOf: 0.25, min: 0, max:10 }),
+        Amount: faker.number.float({ multipleOf: 0.25, min: 0, max: 10 }),
         Unit: faker.lorem.word(),
     };
-    setTestData(model, 'FoodComponentMonitoringUpdateModel');
+    setTestData(model, 'foodComponentMonitoringUpdateModel');
 };
 
 function loadFoodComponentMonitoringQueryString() {

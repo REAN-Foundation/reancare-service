@@ -44,7 +44,7 @@ export class Scheduler {
                 this.scheduleFileCleanup();
                 this.scheduleMedicationReminders();
                 this.scheduleCreateMedicationTasks();
-                this.scheduleMonthlyCustomTasks();
+                //this.scheduleMonthlyCustomTasks();
                 this.scheduleDailyCareplanPushTasks();
                 this.scheduleDailyHighRiskCareplan();
                 this.scheduleHsSurvey();
@@ -129,7 +129,7 @@ export class Scheduler {
         });
     };
 
-    private scheduleMonthlyCustomTasks = () => {
+    /*private scheduleMonthlyCustomTasks = () => {
         cron.schedule(Scheduler._schedules['ScheduleCustomTasks'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule Custom Tasks...');
@@ -137,7 +137,7 @@ export class Scheduler {
                 await customActionHandler.scheduledMonthlyRecurrentTasks();
             })();
         });
-    };
+    };*/
 
     private scheduleCareplanRegistrationReminders = () => {
         cron.schedule(Scheduler._schedules['CareplanRegistrationReminder'], () => {

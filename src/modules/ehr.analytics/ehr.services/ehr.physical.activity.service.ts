@@ -79,23 +79,23 @@ export class EHRPhysicalActivityService {
     };
 
     public async addEHRRecordStandForAppNames(r: StandDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for await (var appName of eligibleAppNames) {
-            this.addEHRRecordStand(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordStand(r, null);
         }
     }
 
     public async addEHRRecordStepCountForAppNames(r: StepCountDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for await (var appName of eligibleAppNames) {
-            this.addEHRRecordStepCount(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordStepCount(r, null);
         }
     }
 
     public async addEHRRecordPhysicalActivityForAppNames(r: PhysicalActivityDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for await (var appName of eligibleAppNames) {
-            this.addEHRRecordPhysicalActivity(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordPhysicalActivity(r, null);
         }
     }
 

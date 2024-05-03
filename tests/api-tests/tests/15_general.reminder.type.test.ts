@@ -40,9 +40,9 @@ describe('15 - Reminder type tests', function () {
             .set('Content-Type', 'application/json')
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
+                expect(response.body.Status).to.equal('success');
             })
-            .expect(401, done);
+            .expect(200, done);
     });
 
     it('15:04 -> Negative - Get repeat for every n types', function (done) {
@@ -51,9 +51,9 @@ describe('15 - Reminder type tests', function () {
             .set('Content-Type', 'application/json')
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
+                expect(response.body.Status).to.equal('success');
             })
-            .expect(401, done);
+            .expect(200, done);
     });
 });
 

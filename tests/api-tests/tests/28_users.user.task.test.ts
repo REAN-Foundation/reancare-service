@@ -69,7 +69,21 @@ describe('28 - User task tests', function () {
             .expect(200, done);
     });
 
-    it('28:05 -> Update task', function (done) {
+    it('28:05 -> Search careplan tasks', function (done) {
+        loadUserTaskSearchModel();
+        agent
+            .get(`/api/v1/user-tasks/search?${loadUserTaskSearchModel()}`)
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('success');
+            })
+            .expect(200, done);
+    });
+
+    it('28:06 -> Update task', function (done) {
         loadTaskUpdateModel();
         const updateModel = getTestData('taskUpdateModel');
         agent
@@ -86,7 +100,7 @@ describe('28 - User task tests', function () {
             .expect(200, done);
     });
 
-    it('28:06 -> Start task', function (done) {
+    it('28:07 -> Start task', function (done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('taskId_1')}/start`)
             .set('Content-Type', 'application/json')
@@ -99,7 +113,7 @@ describe('28 - User task tests', function () {
             .expect(200, done);
     });
 
-    it('28:07 -> Finish task', function (done) {
+    it('28:08 -> Finish task', function (done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('taskId_1')}/finish`)
             .set('Content-Type', 'application/json')
@@ -114,7 +128,7 @@ describe('28 - User task tests', function () {
             .expect(200, done);
     });
 
-    it('28:08 -> Create task again', function (done) {
+    it('28:09 -> Create task again', function (done) {
         loadTaskCreateModel();
         const createModel = getTestData('taskCreateModel');
         agent
@@ -132,7 +146,7 @@ describe('28 - User task tests', function () {
             .expect(201, done);
     });
 
-    it('28:09 -> Cancel task', function (done) {
+    it('28:10 -> Cancel task', function (done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('taskId_1')}/cancel`)
             .set('Content-Type', 'application/json')
@@ -163,7 +177,7 @@ describe('28 - User task tests', function () {
             .expect(201, done);
     });
 
-    it('28:10 -> Delete task', function (done) {
+    it('28:11 -> Delete task', function (done) {
         agent
             .delete(`/api/v1/user-tasks/${getTestData('taskId_1')}`)
             .set('Content-Type', 'application/json')
@@ -194,7 +208,7 @@ describe('28 - User task tests', function () {
             .expect(201, done);
     });
 
-    it('28:11 -> Negative - Get user task categories', function (done) {
+    it('28:12 -> Negative - Get user task categories', function (done) {
         agent
             .get(`/api/v1/user-tasks/categories/`)
             .set('Content-Type', 'application/json')
@@ -206,7 +220,7 @@ describe('28 - User task tests', function () {
             .expect(401, done);
     });
 
-    it('28:12 -> Negative - Create task', function (done) {
+    it('28:13 -> Negative - Create task', function (done) {
         loadTaskCreateModel();
         const createModel = getTestData('taskCreateModel');
         agent
@@ -221,7 +235,7 @@ describe('28 - User task tests', function () {
             .expect(401, done);
     });
 
-    it('28:13 -> Negative - Update task', function (done) {
+    it('28:14 -> Negative - Update task', function (done) {
         loadTaskUpdateModel();
         const updateModel = getTestData('taskUpdateModel');
         agent
@@ -237,7 +251,7 @@ describe('28 - User task tests', function () {
             .expect(404, done);
     });
 
-    it('28:14 -> Negative - Start task', function (done) {
+    it('28:15 -> Negative - Start task', function (done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('task_Id')}/start`)
             .set('Content-Type', 'application/json')
@@ -249,7 +263,7 @@ describe('28 - User task tests', function () {
             .expect(401, done);
     });
 
-    it('28:15 -> Negative - Cancel task', function (done) {
+    it('28:16 -> Negative - Cancel task', function (done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('task_Id')}/cancel`)
             .set('Content-Type', 'application/json')
@@ -260,7 +274,7 @@ describe('28 - User task tests', function () {
             .expect(401, done);
     });
 
-    it('28:16 -> Negative - Delete task', function (done) {
+    it('28:17 -> Negative - Delete task', function (done) {
         agent
             .delete(`/api/v1/user-tasks/${getTestData('task_Id')}`)
             .set('Content-Type', 'application/json')
@@ -321,4 +335,8 @@ export const loadTaskUpdateModel = async () => {
         ScheduledEndTime: endDate,
     };
     setTestData(model, 'taskUpdateModel');
+};
+
+export const loadUserTaskSearchModel = async () => {
+    const queryString = ``;
 };

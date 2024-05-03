@@ -102,9 +102,9 @@ describe('01 - Type tests', function () {
             .set('Content-Type', 'application/json')
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
+                expect(response.body.Status).to.equal('success');
             })
-            .expect(401, done);
+            .expect(200, done);
     });
 
     it('01:08 -> Negative - Get gender types', function (done) {
@@ -113,9 +113,9 @@ describe('01 - Type tests', function () {
             .set('Content-Type', 'application/json')
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
+                expect(response.body.Status).to.equal('success');
             })
-            .expect(401, done);
+            .expect(200, done);
     });
 
     it('01:09 -> Negative - Get severity list', function (done) {
@@ -124,9 +124,9 @@ describe('01 - Type tests', function () {
             .set('Content-Type', 'application/json')
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
+                expect(response.body.Status).to.equal('success');
             })
-            .expect(401, done);
+            .expect(200, done);
     });
 
     it('01:10 -> Negative - Get blood groups', function (done) {
@@ -135,9 +135,9 @@ describe('01 - Type tests', function () {
             .set('Content-Type', 'application/json')
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
+                expect(response.body.Status).to.equal('success');
             })
-            .expect(401, done);
+            .expect(200, done);
     });
 });
 

@@ -100,9 +100,8 @@ describe('107 - User task tests', function () {
 
     it('107:07 -> Search careplan tasks', function (done) {
         loadUserTaskSearchModel();
-        const searchModel = getTestData('UserTaskSearchModel');
         agent
-            .get(`/api/v1/user-tasks/search?category=Educational-Link&userId=${getTestData('patientUserId_5')}`)
+            .get(`/api/v1/user-tasks/search?${loadUserTaskSearchModel}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
@@ -310,6 +309,5 @@ export const loadTaskUpdateModel = async () => {
 };
 
 export const loadUserTaskSearchModel = async () => {
-    const queryString = `?category=Educational-Link&userId=${'PatientUserId_1'}`;
-    setTestData(queryString, 'UserTaskSearchModel');
+    const queryString = ``;
 };

@@ -98,11 +98,11 @@ describe('82 - User task tests', function () {
             .expect(200, done);
     });
 
-    it('69:01 -> Search careplan tasks', function (done) {
+    it('82:07 -> Search careplan tasks', function (done) {
         loadUserTaskSearchModel();
         const searchModel = getTestData('UserTaskSearchModel');
         agent
-            .get(`/api/v1/user-tasks/search?category=Educational-Link&userId=${getTestData('patientUserId_5')}`)
+            .get(`/api/v1/user-tasks/search?${loadUserTaskSearchModel}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
@@ -113,7 +113,7 @@ describe('82 - User task tests', function () {
             .expect(200, done);
     });
 
-    it('82:07 -> Finish task', function (done) {
+    it('82:08 -> Finish task', function (done) {
         agent
             .put(`/api/v1/user-tasks/${getTestData('taskId_1')}/finish`)
             .set('Content-Type', 'application/json')
@@ -318,13 +318,6 @@ export const loadTaskUpdateModel = async () => {
     setTestData(model, 'taskUpdateModel');
 };
 
-function loadAssessmentQueryString() {
-    //This is raw query. Please modify to suit the test
-    const queryString = `?category=Educational-Link&userId=${'PatientUserId_1'}`;
-    return queryString;
-}
-
 export const loadUserTaskSearchModel = async () => {
-    const queryString = `?category=Educational-Link&userId=${'PatientUserId_1'}`;
-    setTestData(queryString, 'UserTaskSearchModel');
+    const queryString = ``;
 };

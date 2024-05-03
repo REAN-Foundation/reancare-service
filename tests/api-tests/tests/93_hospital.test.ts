@@ -14,34 +14,28 @@ describe('93 - Hospital tests', function () {
 
     it('93:01 -> Create hospital', function (done) {
         loadHospitalCreateModel();
-        const createModel = getTestData('HospitalCreateModel');
+        const createModel = getTestData('hospitalCreateModel');
         agent
             .post(`/api/v1/hospitals/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Hospital.id, 'HospitalId_1');
-                expect(response.body.Data.Hospital).to.have.property('Name');
-                expect(response.body.Data.Hospital).to.have.property('HealthSystemId');
-                expect(response.body.Data.Hospital).to.have.property('Tags');
+                setHospitalId(response, 'hospitalId_1');
+                expectHospitalProperties(response);
 
-                setTestData(response.body.Data.Hospital.id, 'HospitalId_1');
-
-                expect(response.body.Data.Hospital.Name).to.equal(getTestData('HospitalCreateModel').Name);
-                expect(response.body.Data.Hospital.HealthSystemId).to.equal(getTestData('HospitalCreateModel').HealthSystemId);
-                
+                expectHospitalPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('93:02 -> Get hospitals for health system', function (done) {
         agent
-            .get(`/api/v1/hospitals/health-systems/${getTestData("HospitalSystemId")}`)
+            .get(`/api/v1/hospitals/health-systems/${getTestData('hospitalSystemId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -51,28 +45,25 @@ describe('93 - Hospital tests', function () {
 
     it('93:03 -> Get hospital by id', function (done) {
         agent
-            .get(`/api/v1/hospitals/${getTestData('HospitalId_1')}`)
+            .get(`/api/v1/hospitals/${getTestData('hospitalId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
-                expect(response.body.Data.Hospital).to.have.property('Name');
-                expect(response.body.Data.Hospital).to.have.property('HealthSystemId');
-                expect(response.body.Data.Hospital).to.have.property('Tags');
+                expectHospitalProperties(response);
 
-                expect(response.body.Data.Hospital.Name).to.equal(getTestData('HospitalCreateModel').Name);
-                expect(response.body.Data.Hospital.HealthSystemId).to.equal(getTestData('HospitalCreateModel').HealthSystemId);
+                expectHospitalPropertyValues(response);
             })
             .expect(200, done);
     });
 
     it('93:04 -> Search records', function (done) {
-      loadHospitalQueryString();
+        loadHospitalQueryString();
         agent
             .get(`/api/v1/hospitals/search${loadHospitalQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body.Data.Hospitals).to.have.property('TotalCount');
                 expect(response.body.Data.Hospitals).to.have.property('RetrievedCount');
@@ -88,30 +79,30 @@ describe('93 - Hospital tests', function () {
 
     it('93:05 -> Update hospital', function (done) {
         loadHospitalUpdateModel();
-        const updateModel = getTestData('HospitalUpdateModel');
+        const updateModel = getTestData('hospitalUpdateModel');
         agent
-            .put(`/api/v1/hospitals/${getTestData('HospitalId_1')}`)
+            .put(`/api/v1/hospitals/${getTestData('hospitalId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(updateModel)
             .expect((response) => {
-                expect(response.body.Data.Hospital).to.have.property('Name');
-                expect(response.body.Data.Hospital).to.have.property('HealthSystemId');
-                expect(response.body.Data.Hospital).to.have.property('Tags');
+                expectHospitalProperties(response);
 
-                expect(response.body.Data.Hospital.Name).to.equal(getTestData('HospitalUpdateModel').Name);
-                expect(response.body.Data.Hospital.HealthSystemId).to.equal(getTestData('HospitalUpdateModel').HealthSystemId);
-              })
+                expect(response.body.Data.Hospital.Name).to.equal(getTestData('hospitalUpdateModel').Name);
+                expect(response.body.Data.Hospital.HealthSystemId).to.equal(
+                    getTestData('hospitalUpdateModel').HealthSystemId
+                );
+            })
             .expect(200, done);
     });
 
     it('93:06 -> Delete hospital', function (done) {
         agent
-            .delete(`/api/v1/hospitals/${getTestData('HospitalId_1')}`)
+            .delete(`/api/v1/hospitals/${getTestData('hospitalId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -121,34 +112,29 @@ describe('93 - Hospital tests', function () {
 
     it('Create hospital again', function (done) {
         loadHospitalCreateModel();
-        const createModel = getTestData('HospitalCreateModel');
+        const createModel = getTestData('hospitalCreateModel');
         agent
             .post(`/api/v1/hospitals/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Hospital.id, 'HospitalId');
-                expect(response.body.Data.Hospital).to.have.property('Name');
-                expect(response.body.Data.Hospital).to.have.property('HealthSystemId');
-                expect(response.body.Data.Hospital).to.have.property('Tags');
+                setHospitalId(response, 'hospitalId');
+                expectHospitalProperties(response);
 
-                setTestData(response.body.Data.Hospital.id, 'HospitalId');
-
-                expect(response.body.Data.Hospital.Name).to.equal(getTestData('HospitalCreateModel').Name);
-                expect(response.body.Data.Hospital.HealthSystemId).to.equal(getTestData('HospitalCreateModel').HealthSystemId);
+                expectHospitalPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('93:07 -> Negative - Create hospital', function (done) {
         loadNegativeHospitalCreateModel();
-        const createModel = getTestData('NegativeHospitalCreateModel');
+        const createModel = getTestData('negativeHospitalCreateModel');
         agent
             .post(`/api/v1/hospitals/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -159,10 +145,10 @@ describe('93 - Hospital tests', function () {
 
     it('93:08 -> Negative - Get hospital by id', function (done) {
         agent
-            .get(`/api/v1/hospitals/${getTestData('HospitalId_1')}`)
+            .get(`/api/v1/hospitals/${getTestData('hospitalId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('DoctorJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -172,11 +158,11 @@ describe('93 - Hospital tests', function () {
 
     it('93:09 -> Negative - Update hospital', function (done) {
         loadHospitalUpdateModel();
-        const updateModel = getTestData('HospitalUpdateModel');
+        const updateModel = getTestData('hospitalUpdateModel');
         agent
-            .put(`/api/v1/hospitals/${getTestData('HospitalId')}`)
+            .put(`/api/v1/hospitals/${getTestData('hospitalId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(updateModel)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
@@ -184,28 +170,42 @@ describe('93 - Hospital tests', function () {
             })
             .expect(401, done);
     });
-    
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
+function setHospitalId(response, key) {
+    setTestData(response.body.Data.Hospital.id, key);
+}
+
+function expectHospitalProperties(response) {
+    expect(response.body.Data.Hospital).to.have.property('Name');
+    expect(response.body.Data.Hospital).to.have.property('HealthSystemId');
+    expect(response.body.Data.Hospital).to.have.property('Tags');
+}
+
+function expectHospitalPropertyValues(response) {
+    expect(response.body.Data.Hospital.Name).to.equal(getTestData('hospitalCreateModel').Name);
+    expect(response.body.Data.Hospital.HealthSystemId).to.equal(getTestData('hospitalCreateModel').HealthSystemId);
+}
+
 export const loadHospitalCreateModel = async () => {
     const model = {
-        TenantId: getTestData("TenantId"),
+        TenantId: getTestData('tenantId'),
         Name: faker.person.fullName(),
-        HealthSystemId: getTestData("HospitalSystemId"),
+        HealthSystemId: getTestData('hospitalSystemId'),
         Tags: [faker.lorem.words(), faker.lorem.words()],
     };
-    setTestData(model, 'HospitalCreateModel');
+    setTestData(model, 'hospitalCreateModel');
 };
 
 export const loadHospitalUpdateModel = async () => {
     const model = {
         Name: faker.person.fullName(),
-        HealthSystemId: getTestData("HospitalSystemId"),
+        HealthSystemId: getTestData('hospitalSystemId'),
         Tags: [faker.lorem.words(), faker.lorem.words()],
     };
-    setTestData(model, 'HospitalUpdateModel');
+    setTestData(model, 'hospitalUpdateModel');
 };
 
 function loadHospitalQueryString() {
@@ -217,8 +217,8 @@ function loadHospitalQueryString() {
 export const loadNegativeHospitalCreateModel = async () => {
     const model = {
         Name: faker.person.fullName(),
-        HealthSystemId: getTestData("HospitalSystemId"),
+        HealthSystemId: getTestData('hospitalSystemId'),
         Tags: [faker.lorem.words(), faker.lorem.words()],
     };
-    setTestData(model, 'NegativeHospitalCreateModel');
+    setTestData(model, 'negativeHospitalCreateModel');
 };

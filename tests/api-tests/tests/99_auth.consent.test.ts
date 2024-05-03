@@ -1,6 +1,6 @@
-import  request  from 'supertest';
+import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
@@ -10,91 +10,49 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('64 - Consent tests', function() {
-
+describe('99 - Consent tests', function () {
     var agent = request.agent(infra._app);
 
-    it('64:01 -> Create consent', function(done) {
+    it('99:01 -> Create consent', function (done) {
         loadConsentCreateModel();
-        const createModel = getTestData("ConsentCreateModel");
+        const createModel = getTestData('consentCreateModel');
         agent
             .post(`/api/v1/consents`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.Consent.id, 'ConsentId_1');
-                expect(response.body.Data.Consent).to.have.property('ResourceId');
-                expect(response.body.Data.Consent).to.have.property('TenantId');
-                expect(response.body.Data.Consent).to.have.property('ResourceCategory');
-                expect(response.body.Data.Consent).to.have.property('ResourceName');
-                expect(response.body.Data.Consent).to.have.property('ConsentHolderUserId');
-                expect(response.body.Data.Consent).to.have.property('AllResourcesInCategory');
-                expect(response.body.Data.Consent).to.have.property('TenantOwnedResource');
-                expect(response.body.Data.Consent).to.have.property('Perpetual');
-                expect(response.body.Data.Consent).to.have.property('RevokedTimestamp');
-                expect(response.body.Data.Consent).to.have.property('ConsentGivenOn');
-                expect(response.body.Data.Consent).to.have.property('ConsentValidFrom');
-                expect(response.body.Data.Consent).to.have.property('ConsentValidTill');
-               
-                setTestData(response.body.Data.Consent.id, 'ConsentId_1');
+            .expect((response) => {
+                setConsentId(response, 'consentId_1');
+                expectConsentProperties(response);
 
-                expect(response.body.Data.Consent.ResourceId).to.equal(getTestData("ConsentCreateModel").ResourceId);
-                expect(response.body.Data.Consent.TenantId).to.equal(getTestData("ConsentCreateModel").TenantId);
-                expect(response.body.Data.Consent.ResourceCategory).to.equal(getTestData("ConsentCreateModel").ResourceCategory);
-                expect(response.body.Data.Consent.ResourceName).to.equal(getTestData("ConsentCreateModel").ResourceName);
-                expect(response.body.Data.Consent.ConsentHolderUserId).to.equal(getTestData("ConsentCreateModel").ConsentHolderUserId);
-                expect(response.body.Data.Consent.AllResourcesInCategory).to.equal(getTestData("ConsentCreateModel").AllResourcesInCategory);
-                expect(response.body.Data.Consent.TenantOwnedResource).to.equal(getTestData("ConsentCreateModel").TenantOwnedResource);
-                expect(response.body.Data.Consent.Perpetual).to.equal(getTestData("ConsentCreateModel").Perpetual);
-
+                expectConsentPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('64:02 -> Get consent by id', function(done) {
-     
+    it('99:02 -> Get consent by id', function (done) {
         agent
-            .get(`/api/v1/consents/${getTestData('ConsentId_1')}`)
+            .get(`/api/v1/consents/${getTestData('consentId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
-              expect(response.body.Data.Consent).to.have.property('ResourceId');
-              expect(response.body.Data.Consent).to.have.property('TenantId');
-              expect(response.body.Data.Consent).to.have.property('ResourceCategory');
-              expect(response.body.Data.Consent).to.have.property('ResourceName');
-              expect(response.body.Data.Consent).to.have.property('ConsentHolderUserId');
-              expect(response.body.Data.Consent).to.have.property('AllResourcesInCategory');
-              expect(response.body.Data.Consent).to.have.property('TenantOwnedResource');
-              expect(response.body.Data.Consent).to.have.property('Perpetual');
-              expect(response.body.Data.Consent).to.have.property('RevokedTimestamp');
-              expect(response.body.Data.Consent).to.have.property('ConsentGivenOn');
-              expect(response.body.Data.Consent).to.have.property('ConsentValidFrom');
-              expect(response.body.Data.Consent).to.have.property('ConsentValidTill');
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
+                expectConsentProperties(response);
 
-              expect(response.body.Data.Consent.ResourceId).to.equal(getTestData("ConsentCreateModel").ResourceId);
-              expect(response.body.Data.Consent.TenantId).to.equal(getTestData("ConsentCreateModel").TenantId);
-              expect(response.body.Data.Consent.ResourceCategory).to.equal(getTestData("ConsentCreateModel").ResourceCategory);
-              expect(response.body.Data.Consent.ResourceName).to.equal(getTestData("ConsentCreateModel").ResourceName);
-              expect(response.body.Data.Consent.ConsentHolderUserId).to.equal(getTestData("ConsentCreateModel").ConsentHolderUserId);
-              expect(response.body.Data.Consent.AllResourcesInCategory).to.equal(getTestData("ConsentCreateModel").AllResourcesInCategory);
-              expect(response.body.Data.Consent.TenantOwnedResource).to.equal(getTestData("ConsentCreateModel").TenantOwnedResource);
-              expect(response.body.Data.Consent.Perpetual).to.equal(getTestData("ConsentCreateModel").Perpetual);
-                
+                expectConsentPropertyValues(response);
             })
             .expect(200, done);
     });
 
-    it('64:03 -> Search consent records', function(done) {
+    it('99:03 -> Search consent records', function (done) {
         loadConsentQueryString();
         agent
             .get(`/api/v1/consents/search${loadConsentQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body.Data.Consents).to.have.property('TotalCount');
                 expect(response.body.Data.Consents).to.have.property('RetrievedCount');
                 expect(response.body.Data.Consents).to.have.property('PageIndex');
@@ -107,174 +65,164 @@ describe('64 - Consent tests', function() {
             .expect(200, done);
     });
 
-    it('64:04 -> Update consent', function(done) {
+    it('99:04 -> Update consent', function (done) {
         loadConsentUpdateModel();
-        const updateModel = getTestData("PulseUpdateModel");
+        const updateModel = getTestData('consentUpdateModel');
         agent
-            .put(`/api/v1/consents/${getTestData('ConsentId_1')}`)
+            .put(`/api/v1/consents/${getTestData('consentId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
-            .expect(response => {
-              expect(response.body.Data.Consent).to.have.property('ResourceId');
-              expect(response.body.Data.Consent).to.have.property('TenantId');
-              expect(response.body.Data.Consent).to.have.property('ResourceCategory');
-              expect(response.body.Data.Consent).to.have.property('ResourceName');
-              expect(response.body.Data.Consent).to.have.property('ConsentHolderUserId');
-              expect(response.body.Data.Consent).to.have.property('AllResourcesInCategory');
-              expect(response.body.Data.Consent).to.have.property('TenantOwnedResource');
-              expect(response.body.Data.Consent).to.have.property('Perpetual');
-              expect(response.body.Data.Consent).to.have.property('RevokedTimestamp');
-              expect(response.body.Data.Consent).to.have.property('ConsentGivenOn');
-              expect(response.body.Data.Consent).to.have.property('ConsentValidFrom');
-              expect(response.body.Data.Consent).to.have.property('ConsentValidTill');
+            .expect((response) => {
+                expectConsentProperties(response);
 
-              expect(response.body.Data.Consent.ResourceId).to.equal(getTestData("ConsentCreateModel").ResourceId);
-              expect(response.body.Data.Consent.TenantId).to.equal(getTestData("ConsentCreateModel").TenantId);
-              expect(response.body.Data.Consent.ResourceCategory).to.equal(getTestData("ConsentCreateModel").ResourceCategory);
-              expect(response.body.Data.Consent.ResourceName).to.equal(getTestData("ConsentCreateModel").ResourceName);
-              expect(response.body.Data.Consent.ConsentHolderUserId).to.equal(getTestData("ConsentCreateModel").ConsentHolderUserId);
-              expect(response.body.Data.Consent.AllResourcesInCategory).to.equal(getTestData("ConsentCreateModel").AllResourcesInCategory);
-              expect(response.body.Data.Consent.TenantOwnedResource).to.equal(getTestData("ConsentCreateModel").TenantOwnedResource);
-              expect(response.body.Data.Consent.Perpetual).to.equal(getTestData("ConsentCreateModel").Perpetual);
-
+                expect(response.body.Data.Consent.AllResourcesInCategory).to.equal(
+                    getTestData('consentUpdateModel').AllResourcesInCategory
+                );
+                expect(response.body.Data.Consent.TenantOwnedResource).to.equal(
+                    getTestData('consentUpdateModel').TenantOwnedResource
+                );
+                expect(response.body.Data.Consent.Perpetual).to.equal(getTestData('consentUpdateModel').Perpetual);
             })
             .expect(200, done);
     });
 
-    it('64:05 -> Delete consent', function(done) {
-        
+    it('99:05 -> Delete consent', function (done) {
         agent
-            .delete(`/api/v1/consents/${getTestData('ConsentId_1')}`)
+            .delete(`/api/v1/consents/${getTestData('consentId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
             })
             .expect(200, done);
     });
 
-    it('Create consent again', function(done) {
+    it('Create consent again', function (done) {
         loadConsentCreateModel();
-        const createModel = getTestData("ConsentCreateModel");
+        const createModel = getTestData('consentCreateModel');
         agent
             .post(`/api/v1/consents`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-              setTestData(response.body.Data.Consent.id, 'ConsentId');
-              expect(response.body.Data.Consent).to.have.property('ResourceId');
-              expect(response.body.Data.Consent).to.have.property('TenantId');
-              expect(response.body.Data.Consent).to.have.property('ResourceCategory');
-              expect(response.body.Data.Consent).to.have.property('ResourceName');
-              expect(response.body.Data.Consent).to.have.property('ConsentHolderUserId');
-              expect(response.body.Data.Consent).to.have.property('AllResourcesInCategory');
-              expect(response.body.Data.Consent).to.have.property('TenantOwnedResource');
-              expect(response.body.Data.Consent).to.have.property('Perpetual');
-              expect(response.body.Data.Consent).to.have.property('RevokedTimestamp');
-              expect(response.body.Data.Consent).to.have.property('ConsentGivenOn');
-              expect(response.body.Data.Consent).to.have.property('ConsentValidFrom');
-              expect(response.body.Data.Consent).to.have.property('ConsentValidTill');
-             
-              setTestData(response.body.Data.Consent.id, 'ConsentId');
+            .expect((response) => {
+                setConsentId(response, 'consentId');
+                expectConsentProperties(response);
 
-              expect(response.body.Data.Consent.ResourceId).to.equal(getTestData("ConsentCreateModel").ResourceId);
-              expect(response.body.Data.Consent.TenantId).to.equal(getTestData("ConsentCreateModel").TenantId);
-              expect(response.body.Data.Consent.ResourceCategory).to.equal(getTestData("ConsentCreateModel").ResourceCategory);
-              expect(response.body.Data.Consent.ResourceName).to.equal(getTestData("ConsentCreateModel").ResourceName);
-              expect(response.body.Data.Consent.ConsentHolderUserId).to.equal(getTestData("ConsentCreateModel").ConsentHolderUserId);
-              expect(response.body.Data.Consent.AllResourcesInCategory).to.equal(getTestData("ConsentCreateModel").AllResourcesInCategory);
-              expect(response.body.Data.Consent.TenantOwnedResource).to.equal(getTestData("ConsentCreateModel").TenantOwnedResource);
-              expect(response.body.Data.Consent.Perpetual).to.equal(getTestData("ConsentCreateModel").Perpetual);
-
+                expectConsentPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('64:06 -> Negative - Create consent', function(done) {
+    it('99:06 -> Negative - Create consent', function (done) {
         loadNegativeConsentCreateModel();
-        const createModel = getTestData("NegativeConsentCreateModel");
+        const createModel = getTestData('negativeConsentCreateModel');
         agent
             .post(`/api/v1/consents`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
             .expect(422, done);
     });
 
-    it('64:07 -> Negative - Get consent by id', function(done) {
-     
+    it('99:07 -> Negative - Get consent by id', function (done) {
         agent
-            .get(`/api/v1/consents/${getTestData('ConsentId_1')}`)
+            .get(`/api/v1/consents/${getTestData('consentId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                
             })
             .expect(404, done);
     });
 
-    it('64:08 -> Negative - Update consent', function(done) {
+    it('99:08 -> Negative - Update consent', function (done) {
         loadConsentUpdateModel();
-        const updateModel = getTestData("ConsentUpdateModel");
+        const updateModel = getTestData('consentUpdateModel');
         agent
-            .put(`/api/v1/consents/${getTestData('ConsentId')}`)
+            .put(`/api/v1/consents/${getTestData('consentId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(updateModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
             .expect(401, done);
     });
-
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadConsentCreateModel = async (
-) => {
-    const model = {
-      ResourceId : getTestData("PatientUserId"),
-      TenantId: getTestData("TenantId"),
-      ResourceCategory: faker.lorem.word(),
-      ResourceName: faker.lorem.word(),
-      ConsentHolderUserId    : faker.string.uuid(),
-      AllResourcesInCategory: faker.datatype.boolean(),
-      TenantOwnedResource: faker.datatype.boolean(),
-      Perpetual: faker.datatype.boolean(),
-      RevokedTimestamp: startDate,
-      ConsentGivenOn: faker.date.anytime(),
-      ConsentValidFrom: startDate,
-      ConsentValidTill: endDate,
+function setConsentId(response, key) {
+    setTestData(response.body.Data.Consent.id, key);
+}
 
+function expectConsentProperties(response) {
+    expect(response.body.Data.Consent).to.have.property('ResourceId');
+    expect(response.body.Data.Consent).to.have.property('TenantId');
+    expect(response.body.Data.Consent).to.have.property('ResourceCategory');
+    expect(response.body.Data.Consent).to.have.property('ResourceName');
+    expect(response.body.Data.Consent).to.have.property('ConsentHolderUserId');
+    expect(response.body.Data.Consent).to.have.property('AllResourcesInCategory');
+    expect(response.body.Data.Consent).to.have.property('TenantOwnedResource');
+    expect(response.body.Data.Consent).to.have.property('Perpetual');
+    expect(response.body.Data.Consent).to.have.property('RevokedTimestamp');
+    expect(response.body.Data.Consent).to.have.property('ConsentGivenOn');
+    expect(response.body.Data.Consent).to.have.property('ConsentValidFrom');
+    expect(response.body.Data.Consent).to.have.property('ConsentValidTill');
+}
+
+function expectConsentPropertyValues(response) {
+    expect(response.body.Data.Consent.ResourceId).to.equal(getTestData('consentCreateModel').ResourceId);
+    expect(response.body.Data.Consent.TenantId).to.equal(getTestData('consentCreateModel').TenantId);
+    expect(response.body.Data.Consent.ResourceCategory).to.equal(getTestData('consentCreateModel').ResourceCategory);
+    expect(response.body.Data.Consent.ResourceName).to.equal(getTestData('consentCreateModel').ResourceName);
+    expect(response.body.Data.Consent.ConsentHolderUserId).to.equal(getTestData('consentCreateModel').ConsentHolderUserId);
+    expect(response.body.Data.Consent.AllResourcesInCategory).to.equal(
+        getTestData('consentCreateModel').AllResourcesInCategory
+    );
+    expect(response.body.Data.Consent.TenantOwnedResource).to.equal(getTestData('consentCreateModel').TenantOwnedResource);
+    expect(response.body.Data.Consent.Perpetual).to.equal(getTestData('consentCreateModel').Perpetual);
+}
+
+export const loadConsentCreateModel = async () => {
+    const model = {
+        ResourceId: getTestData('patientUserId'),
+        TenantId: getTestData('tenantId'),
+        ResourceCategory: faker.lorem.word(),
+        ResourceName: faker.lorem.word(),
+        ConsentHolderUserId: faker.string.uuid(),
+        AllResourcesInCategory: faker.datatype.boolean(),
+        TenantOwnedResource: faker.datatype.boolean(),
+        Perpetual: faker.datatype.boolean(),
+        RevokedTimestamp: startDate,
+        ConsentGivenOn: faker.date.anytime(),
+        ConsentValidFrom: startDate,
+        ConsentValidTill: endDate,
     };
-    setTestData(model, "ConsentCreateModel");
+    setTestData(model, 'consentCreateModel');
 };
 
-export const loadConsentUpdateModel = async (
-) => {
+export const loadConsentUpdateModel = async () => {
     const model = {
-        Pulse      : faker.number.int({ min: 70, max:75 }),
-        RecordDate : pastDateString
+        AllResourcesInCategory: faker.datatype.boolean(),
+        TenantOwnedResource: faker.datatype.boolean(),
+        Perpetual: faker.datatype.boolean(),
     };
-    setTestData(model, "ConsentUpdateModel");
+    setTestData(model, 'consentUpdateModel');
 };
 
 function loadConsentQueryString() {
@@ -283,11 +231,10 @@ function loadConsentQueryString() {
     return queryString;
 }
 
-export const loadNegativeConsentCreateModel = async (
-) => {
+export const loadNegativeConsentCreateModel = async () => {
     const model = {
-        Unit       : faker.string.symbol(),
-        RecordDate : faker.date.anytime() 
+        Unit: faker.string.symbol(),
+        RecordDate: faker.date.anytime(),
     };
-    setTestData(model, "NegativeConsentCreateModel");
+    setTestData(model, 'negativeConsentCreateModel');
 };

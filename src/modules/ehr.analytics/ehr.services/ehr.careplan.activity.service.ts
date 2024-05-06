@@ -48,24 +48,13 @@ export class EHRCareplanActivityService {
             if (careplanActivities.length === 0) {
                 return;
             }
-            var eligibleAppNames = await PatientAppNameCache.get(patientDetails.UserId);
-            if (eligibleAppNames.length === 0) {
-                return;
-            }
-            for await (var activity of careplanActivities) {
-                for await (var appName of eligibleAppNames) {
-                    const shouldAdd = (appName === 'HF Helper' && activity.PlanCode === 'HFMotivator') ||
-                        (appName === 'Heart &amp; Stroke Helper™' && (activity.PlanCode === 'Cholesterol' || activity.PlanCode === 'Stroke')) ||
-                        (appName === 'REAN HealthGuru' && (activity.PlanCode === 'Cholesterol' || activity.PlanCode === 'Stroke' || activity.PlanCode === 'HFMotivator'));
-                    if (shouldAdd) {
-                        this.addEHRRecord(
-                            activity,
-                            appName,
-                            patientDetails
-                        );
-                    }
+            const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(patientDetails.UserId);
+            if (eligibleToAddEhrRecord) {
+                for await (var activity of careplanActivities) {
+                    this.addEHRRecord(activity, null, patientDetails);
                 }
             }
+            
         } catch (error) {
             Logger.instance().log(`[AddCareplanActivitiesToEHR]: ${JSON.stringify(error)}`);
         }

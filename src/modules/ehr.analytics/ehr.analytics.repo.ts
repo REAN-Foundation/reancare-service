@@ -84,6 +84,8 @@ export class EHRAnalyticsRepo {
             if (existing) {
                 existing.AppName       = model.AppName;
                 existing.Provider      = model.Provider;
+                existing.Type          = model.Type,
+                existing.Name          = model.Name,
                 existing.ValueInt      = model.ValueInt;
                 existing.ValueFloat    = model.ValueFloat;
                 existing.ValueString   = model.ValueString;

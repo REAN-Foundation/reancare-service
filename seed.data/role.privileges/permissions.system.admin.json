@@ -252,11 +252,11 @@
         },
         "Medications": {
             "Drug": {
-                "Create": false,
-                "Delete": false,
+                "Create": true,
+                "Delete": true,
                 "GetById": true,
                 "Search": true,
-                "Update": false
+                "Update": true
             },
             "Medication": {
                 "Create": false,

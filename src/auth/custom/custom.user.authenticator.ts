@@ -39,8 +39,8 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             // Already taken care of in the auth.handler
             // if (!request.clientAppAuth && request.alternateAuth) {
             //     // Cuurently, this check is applicable only for the specific endpoints, where
-            //     // there is a need to allow alternate authentication mechanism. 
-            //     // For example, client-app specific endpoints like renew and get API keys. 
+            //     // there is a need to allow alternate authentication mechanism.
+            //     // For example, client-app specific endpoints like renew and get API keys.
             //     // Here we are using basic authentication (username and password) instead of JWT token.
             //     // For all other endpoints, this check is not applicable.
             //     return res;
@@ -49,12 +49,15 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
 
             const publicAccess = request.actionScope === ActionScope.Public;
             const optionalUserAuth = request.optionalUserAuth;
+            const privilegedClient = request.currentClient.IsPrivileged as boolean;
 
             const authHeader = request.headers['authorization'];
             const token = authHeader && authHeader.split(' ')[1];
 
             const missingToken = token == null || token === 'null' || token === undefined;
-            const allowWithoutToken = publicAccess || optionalUserAuth;
+
+            const allowWithoutToken = publicAccess || optionalUserAuth || privilegedClient;
+
 
             if (missingToken) {
                 if (allowWithoutToken) {

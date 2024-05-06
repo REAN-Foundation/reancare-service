@@ -8,8 +8,7 @@ export interface CourseContentSearchFilters extends BaseSearchFilters{
     LearningPathId? : uuid;
     CourseId?       : uuid;
     ModuleId?       : uuid;
-    DurationFrom?   : number;
-    DurationTo?     : number;
+    DurationInMins: number;
     ContentType?    : CourseContentType;
     Sequence?       : number;
 }

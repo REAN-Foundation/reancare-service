@@ -47,6 +47,16 @@ export class PatientAppNameCache {
         PatientAppNameCache.cache.set(patientId, appNames);
     }
 
+    public static getEligibility = async (patientUserId: uuid) => {
+        const userService = Injector.Container.resolve(UserService);
+        const userDetails = await userService.getById(patientUserId);
+        
+        if (userDetails && userDetails.IsTestUser == false) {
+            return true;
+        }
+        return false;
+    };
+
     static update(patientId: string, appNames: string[]): void {
         PatientAppNameCache.cache.set(patientId, appNames);
     }

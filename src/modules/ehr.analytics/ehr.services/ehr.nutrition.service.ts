@@ -127,10 +127,10 @@ export class EHRNutritionService {
         }
     };
 
-    public addEHRRecordNutritionForAppNames = async (model: FoodConsumptionDto, appName?: string) => {
-        const eligibleAppNames = await PatientAppNameCache.get(model.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecord(model, appName);
+    public addEHRRecordNutritionForAppNames = async (model: FoodConsumptionDto) => {
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(model.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecord(model, null);
         }
     };
 

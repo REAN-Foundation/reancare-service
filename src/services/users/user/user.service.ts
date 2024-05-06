@@ -145,6 +145,13 @@ export class UserService {
     };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
+
+        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
+
+        if (isTestUser && loginModel.Phone.startsWith('+')) {
+            loginModel.Phone = loginModel.Phone.split('-')[1];
+        }
+        
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
         var tenant = await this.checkTenant(user);
 
@@ -207,10 +214,15 @@ export class UserService {
 
     public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
 
+        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
+
+        if (isTestUser && loginModel.Phone.startsWith('+')) {
+            loginModel.Phone = loginModel.Phone.split('-')[1];
+        }
+
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
         var tenant = await this.checkTenant(user);
 
-        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
         if (!isTestUser) {
             const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
             if (!storedOtp) {
@@ -271,7 +283,7 @@ export class UserService {
     };
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
-        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(otpDetails.Phone);
+        var isTestUser = await this.isInternalTestUser(otpDetails.Phone);
         if (isTestUser) {
             return true;
         }
@@ -446,7 +458,11 @@ export class UserService {
     public isInternalTestUser = async (phone: string): Promise<boolean> => {
         var startingRange = 1000000001;
         var endingRange = startingRange + parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS) - 1;
-        var phoneNumber = parseInt(phone);
+        if (phone.startsWith('+')) {
+            var phoneNumber = parseInt(phone.split('-')[1]);
+        } else {
+            phoneNumber = parseInt(phone);
+        }        
         var isTestUser = false;
         if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
             isTestUser = true;

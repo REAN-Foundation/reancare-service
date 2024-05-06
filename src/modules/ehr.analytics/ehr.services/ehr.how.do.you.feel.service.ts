@@ -61,9 +61,9 @@ export class EHRHowDoYouFeelService {
     };
 
     public async addEHRHowDoYouFeelForAppNames(r: HowDoYouFeelDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordHowDoYouFeel(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordHowDoYouFeel(r, null);
         }
     }
 
@@ -118,9 +118,9 @@ export class EHRHowDoYouFeelService {
     };
 
     public async addEHRDailyAssessmentForAppNames(r: DailyAssessmentDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordDailyAssessment(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordDailyAssessment(r, null);
         }
     }
 

@@ -86,9 +86,9 @@ export class EHRMedicationService {
     };
 
     public async addEHRMedicationConsumptionForAppNames(r: MedicationConsumptionDetailsDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecord(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecord(r, null);
         }
     }
 

@@ -603,6 +603,10 @@
             "GetUserEngagementStatsByWeek": false,
             "GetUserEngagementStatsByYear": false,
             "GetUserEngagementStatsForUser": false
+        },
+        "DailyStatistics": {
+            "GetDailyTenantStats": false,
+            "getDailySystemStats": false
         }
     },
     "Tenant": {

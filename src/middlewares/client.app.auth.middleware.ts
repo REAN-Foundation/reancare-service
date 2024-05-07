@@ -22,10 +22,13 @@ export default class ClientAppAuthMiddleware
 
             // Handle certain endpoints separately
             const isHealthCheck = requestUrl === '/api/v1' && request.method === 'GET';
-            const currApiKey = requestUrl.includes('/api/v1/api-clients/') && requestUrl.includes('/current-api-key');
-            const renewApiKey = requestUrl.includes('/api/v1/api-clients/') && requestUrl.includes('/renew-api-key');
+            const currApiKeyRoute = requestUrl.includes('/api/v1/api-clients/') && requestUrl.includes('/current-api-key');
+            const renewApiKeyRoute = requestUrl.includes('/api/v1/api-clients/') && requestUrl.includes('/renew-api-key');
 
-            if (currApiKey || renewApiKey) {
+            const apiKey: string = request.headers['x-api-key'] as string;
+            const apiKeyMissing = !apiKey || apiKey.trim() === '';
+
+            if (currApiKeyRoute || renewApiKeyRoute) {
                 const clientAppController = new ClientAppController();
                 const clientApp = await clientAppController.authenticateClientPassword(request);
                 if (clientApp != null) {
@@ -42,7 +45,10 @@ export default class ClientAppAuthMiddleware
                     return;
                 }
             }
-            else if (isHealthCheck || request.optionalUserAuth) {
+            else if (isHealthCheck) {
+                next();
+            }
+            else if (apiKeyMissing && request.optionalUserAuth) {
                 next();
             }
             else {

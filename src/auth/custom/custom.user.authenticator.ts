@@ -49,7 +49,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
 
             const publicAccess = request.actionScope === ActionScope.Public;
             const optionalUserAuth = request.optionalUserAuth;
-            const privilegedClient = request.currentClient.IsPrivileged as boolean;
+            const privilegedClient = request.currentClient?.IsPrivileged as boolean;
 
             const authHeader = request.headers['authorization'];
             const token = authHeader && authHeader.split(' ')[1];
@@ -57,7 +57,6 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             const missingToken = token == null || token === 'null' || token === undefined;
 
             const allowWithoutToken = publicAccess || optionalUserAuth || privilegedClient;
-
 
             if (missingToken) {
                 if (allowWithoutToken) {

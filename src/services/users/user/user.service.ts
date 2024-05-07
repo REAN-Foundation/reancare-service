@@ -63,7 +63,7 @@ export class UserService {
             model.DefaultTimeZone = this.sanitizeTimezone(model.DefaultTimeZone);
         }
         if (model.CurrentTimeZone != null) {
-            model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);    
+            model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);
         } else if (model.DefaultTimeZone != null) {
             model.CurrentTimeZone = model.DefaultTimeZone;
         }
@@ -134,7 +134,7 @@ export class UserService {
             model.CurrentTimeZone = this.sanitizeTimezone(model.CurrentTimeZone);
         } else if (model.DefaultTimeZone != null) {
             model.CurrentTimeZone = model.DefaultTimeZone;
-        } 
+        }
         var dto = await this._userRepo.update(id, model);
         dto = await this.updateDetailsDto(dto);
         return dto;
@@ -145,13 +145,6 @@ export class UserService {
     };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
-
-        var isTestUser = await this.isInternalTestUser(loginModel.Phone);
-
-        if (isTestUser && loginModel.Phone.startsWith('+')) {
-            loginModel.Phone = loginModel.Phone.split('-')[1];
-        }
-        
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
         var tenant = await this.checkTenant(user);
 
@@ -462,7 +455,7 @@ export class UserService {
             var phoneNumber = parseInt(phone.split('-')[1]);
         } else {
             phoneNumber = parseInt(phone);
-        }        
+        }
         var isTestUser = false;
         if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
             isTestUser = true;

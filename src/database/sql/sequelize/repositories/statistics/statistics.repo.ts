@@ -96,9 +96,12 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     constructor() {
         this.dbConnector = new DatabaseClient();
-        this.dbConnector._client.connect(DatabaseSchemaType.Primary);
     }
 
+    createConnection = async (schemaType: DatabaseSchemaType) => {
+        await this.dbConnector._client.connect(schemaType);
+    };
+   
     getUsersCount = async (filters: StatisticSearchFilters): Promise<any> => {
         try {
             const totalUsers = await this.getOnboardedUsers(filters);

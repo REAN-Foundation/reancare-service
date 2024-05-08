@@ -14,6 +14,7 @@ import { FileResourceService } from "../general/file.resource.service";
 import { Injector } from "../../startup/injector";
 import { exportStatsChartReportToPDF } from "./tenant.stats.report/chart.report.generator";
 import { createUsersAgeTrendCharts, createUsersGenderTrendCharts, createYearWiseUserTrendCharts } from "./chart/user.chart";
+import { DatabaseSchemaType } from "../../common/database.utils/database.config";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -92,6 +93,7 @@ export class StatisticsService {
     createSystemDashboardStats = async (): Promise<any> => {
         try {
             const filter = {};
+            await this._statisticsRepo.createConnection(DatabaseSchemaType.Primary);
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);
             const allYears = await this._statisticsRepo.getAllYears();
@@ -143,7 +145,7 @@ export class StatisticsService {
     createTenantDashboardStats = async (tenantId: string): Promise<any> => {
         try {
             const filter = { TenantId: tenantId };
- 
+            await this._statisticsRepo.createConnection(DatabaseSchemaType.Primary);
             const usersCountStats = await this._statisticsRepo.getUsersCount(filter);
 
             const deviceDetailWiseUsers = await this._statisticsRepo.getUsersByDeviceDetail(filter);

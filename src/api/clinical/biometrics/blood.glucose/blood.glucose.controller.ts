@@ -41,7 +41,7 @@ export class BloodGlucoseController extends BiometricsController {
                 throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
 
-            await  this._ehrVitalService.addEHRBloodGlucoseForAppNames(bloodGlucose);
+            await this._ehrVitalService.addEHRBloodGlucoseForAppNames(bloodGlucose);
 
             // Adding record to award service
             if (bloodGlucose.BloodGlucose) {

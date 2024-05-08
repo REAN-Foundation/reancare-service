@@ -48,12 +48,12 @@ export class EHRAnalyticsRepo {
             }
         });
 
-        if (staticData_arr.length == 0) {
+        if (staticData_arr.length === 0) {
             var entity = this.createEntity(details, appName);
             entity.PatientUserId = patientUserId;
             var staticData = await StaticEHRData.create(entity);
         } else {
-            for await(var staticData of staticData_arr) {
+            for await (var staticData of staticData_arr) {
                 if (staticData.DoctorPersonId_1) {
                     details.DoctorPersonId_2 = details.DoctorPersonId_1;
                     details.DoctorPersonId_1 = null;
@@ -77,7 +77,7 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
-                    Type          : model.Type                
+                    Type          : model.Type             
                 }
             });
 

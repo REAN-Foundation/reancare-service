@@ -37,8 +37,7 @@ export class CourseContentValidator extends BaseValidator {
     search = async (request: express.Request): Promise<CourseContentSearchFilters> => {
         await this.validateString(request, 'title ', Where.Query, false, false);
         await this.validateUuid(request, 'moduleId ', Where.Query, false, false);
-        await this.validateDecimal(request, 'durationForm', Where.Query, false, false);
-        await this.validateDecimal(request, 'durationTo', Where.Query, false, false);
+        await this.validateDecimal(request, 'durationInMins', Where.Query, false, false);
         await this.validateUuid(request, 'courseId', Where.Query, false, false);
         await this.validateUuid(request, 'moduleId', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
@@ -87,11 +86,10 @@ export class CourseContentValidator extends BaseValidator {
 
     private getFilter(request): CourseContentSearchFilters {
         var filters: CourseContentSearchFilters = {
-            Title        : request.query.title ?? null,
-            ModuleId     : request.query.moduleId ?? null,
-            DurationFrom : request.query.DurationFrom ?? null,
-            DurationTo   : request.query.DurationTo ?? null,
-            CourseId     : request.query.courseId ?? null,
+            Title          : request.query.title ?? null,
+            ModuleId       : request.query.moduleId ?? null,
+            DurationInMins : request.query.durationInMins ?? null,
+            CourseId       : request.query.courseId ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

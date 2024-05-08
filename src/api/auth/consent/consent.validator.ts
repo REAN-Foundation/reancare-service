@@ -44,6 +44,8 @@ export class ConsentValidator extends BaseValidator {
             AllResourcesInCategory : requestBody.AllResourcesInCategory ?? null,
             TenantOwnedResource    : requestBody.TenantOwnedResource ?? null,
             Perpetual              : requestBody.Perpetual ?? null,
+            Revoked                : requestBody.Revoked ?? null,
+            RevokedTimestamp       : requestBody.RevokedTimestamp ?? null,
             ConsentGivenOn         : requestBody.ConsentGivenOn ?? null,
             ConsentValidFrom       : requestBody.ConsentValidFrom ?? null,
             ConsentValidTill       : requestBody.ConsentValidTill ?? null,
@@ -87,9 +89,11 @@ export class ConsentValidator extends BaseValidator {
         await this.validateBoolean(request, 'AllResourcesInCategory', Where.Body, false, false);
         await this.validateBoolean(request, 'TenantOwnedResource', Where.Body, false, false);
         await this.validateBoolean(request, 'Perpetual', Where.Body, false, false);
-        await this.validateDate(request, 'ConsentGivenOn', Where.Body, false, false);
-        await this.validateDate(request, 'ConsentValidFrom', Where.Body, false, false);
-
+        await this.validateBoolean(request, 'Revoked', Where.Body, false, false);
+        await this.validateDate(request, 'RevokedTimestamp', Where.Body, true, false);
+        await this.validateDate(request, 'ConsentGivenOn', Where.Body, true, false);
+        await this.validateDate(request, 'ConsentValidFrom', Where.Body, true, false);
+        await this.validateDate(request, 'ConsentValidTill', Where.Body, true, false);
         await this.validateRequest(request);
     }
 

@@ -1,6 +1,5 @@
 import cors from 'cors';
 import express from 'express';
-import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
 import "reflect-metadata";
 import { Router } from './api/router';
@@ -15,7 +14,6 @@ import { AwardsFactsService } from './modules/awards.facts/awards.facts.service'
 import { DatabaseClient } from './common/database.utils/dialect.clients/database.client';
 import { DatabaseSchemaType } from './common/database.utils/database.config';
 import { Injector } from './startup/injector';
-import ClientAppAuthMiddleware from './middlewares/client.app.auth.middleware';
 import { errorHandlerMiddleware } from './middlewares/error.handling.middleware';
 
 /////////////////////////////////////////////////////////////////////////
@@ -106,18 +104,9 @@ export default class Application {
                 this._app.use(helmet());
                 this._app.use(cors());
 
-                this._app.use(ClientAppAuthMiddleware.authenticateClient);
-
-                const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
-
-                this._app.use(fileUpload({
-                    limits            : { fileSize: MAX_UPLOAD_FILE_SIZE },
-                    preserveExtension : true,
-                    createParentPath  : true,
-                    parseNested       : true,
-                    useTempFiles      : true,
-                    tempFileDir       : '/tmp/uploads/'
-                }));
+                //TODO: Move this to upload specific routes. Use router.use() method
+                // this.useFileUploadMiddleware();
+                
                 resolve(true);
             }
             catch (error) {

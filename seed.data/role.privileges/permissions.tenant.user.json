@@ -277,15 +277,15 @@
             "MedicationConsumption": {
                 "DeleteFutureMedicationSchedules": false,
                 "GetById": false,
-                "GetMedicationConsumptionSummaryForDay": true,
-                "GetMedicationSchedule": false,
-                "GetMedicationScheduleForDay": false,
+                "GetSummaryForDay": true,
+                "GetScheduleForDuration": false,
+                "GetScheduleForDay": false,
                 "GetSummaryByCalendarMonths": false,
                 "MarkAsMissed": false,
                 "MarkAsTaken": false,
                 "MarkListAsMissed": false,
                 "MarkListAsTaken": false,
-                "Search": false
+                "SearchForPatient": false
             }
         },
         "Order": {
@@ -477,7 +477,9 @@
             "GetById": false,
             "MarkAsRead": false,
             "Search": false,
-            "Update": false
+            "Update": false,
+            "Send":false,
+            "SendToUser": false
         },
         "Organization": {
             "AddAddress": false,
@@ -601,6 +603,10 @@
             "GetUserEngagementStatsByWeek": false,
             "GetUserEngagementStatsByYear": false,
             "GetUserEngagementStatsForUser": false
+        },
+        "DailyStatistics": {
+            "GetDailyTenantStats": false,
+            "getDailySystemStats": false
         }
     },
     "Tenant": {
@@ -835,5 +841,24 @@
                 "Update": false
             }
         }
+    },
+    "Hospitals": {
+        "HealthSystem": {
+            "Create": false,
+            "GetHealthSystemsWithTags": true,
+            "Search": true,
+            "GetById": true,
+            "Update": false,
+            "Delete": false
+        },
+        "Hospital": {
+            "Create": false,
+            "GetHospitalsForHealthSystem": true,
+            "Search": true,
+            "GetById": true,
+            "Update": false,
+            "Delete": false
+        }
     }
+   
 }

@@ -47,6 +47,8 @@ export class FormsController {
 
     //#region Action methods
 
+    // Currently only system auth is used. 
+
     connect = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 

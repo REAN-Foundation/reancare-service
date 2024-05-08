@@ -14,6 +14,7 @@ export class CourseValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): CourseDomainModel => {
         const model: CourseDomainModel = {
+            TenantId        : request.body.TenantId ?? request.currentUser.TenantId,
             LearningPathIds : request.body.LearningPathIds ?? [],
             Name            : request.body.Name,
             Description     : request.body.Description ?? null,
@@ -39,7 +40,8 @@ export class CourseValidator extends BaseValidator {
 
     search = async (request: express.Request): Promise<CourseSearchFilters> => {
         await this.validateString(request, 'name', Where.Query, false, false);
-        await this.validateInt(request, 'DurationInDays', Where.Body, false, false);
+        await this.validateInt(request, 'durationInDays', Where.Query, false, false);
+        await this.validateUuid(request, 'tenantId', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getFilter(request);
@@ -55,6 +57,7 @@ export class CourseValidator extends BaseValidator {
     private  async validateCreateBody(request) {
         await this.validateArray(request, 'LearningPathIds', Where.Body, false, false);
         await this.validateString(request, 'Name', Where.Body, true, false);
+        await this.validateUuid(request, 'TenantId', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, true);
         await this.validateString(request, 'ImageUrl', Where.Body, false, true);
         await this.validateDecimal(request, 'DurationInDays', Where.Body, false, true);
@@ -72,6 +75,7 @@ export class CourseValidator extends BaseValidator {
 
     private getFilter(request): CourseSearchFilters {
         var filters: CourseSearchFilters = {
+            TenantId       : request.query.tenantId ?? null,
             Name           : request.query.name ?? null,
             DurationInDays : request.query.durationInDays ?? null,
             LearningPathId : request.query.learningPathId ?? null,

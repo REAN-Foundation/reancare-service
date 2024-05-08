@@ -5,6 +5,7 @@ import { VolunteerDetailsDto, VolunteerDto } from "./volunteer.dto";
 
 export interface VolunteerSearchFilters {
     Phone              ?: string;
+    TenantId           ?: string;
     Email              ?: string;
     Name               ?: string;
     Gender             ?: Gender;

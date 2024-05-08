@@ -1,277 +1,142 @@
 import express from 'express';
-import { Logger } from '../../common/logger';
-import { Roles } from '../../domain.types/role/role.types';
-import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { RolePrivilegeService } from '../../services/role/role.privilege.service';
-import { ConsentService } from '../../services/auth/consent.service';
 import { Injector } from '../../startup/injector';
+import { ActionScope, RequestType, ResourceOwnership } from "../auth.types";
+import { ConsentService } from "../../services/auth/consent.service";
+import { CurrentUser } from "../../domain.types/miscellaneous/current.user";
+import { Roles } from "../../domain.types/role/role.types";
+import { Logger } from "../../common/logger";
+import { uuid } from '../../domain.types/miscellaneous/system.types';
 
-//////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 
 export class PermissionHandler {
 
-    public static hasRoleBasedPermission = async (roleId, context) => {
+    public static checkRoleBasedPermissions = async (request: express.Request): Promise<boolean> => {
+        const currentUser = request.currentUser;
+        const roleId = currentUser.CurrentRoleId;
+        const context = request.context;
         const rolePrivilegeService = Injector.Container.resolve(RolePrivilegeService);
         const hasPrivilege = await rolePrivilegeService.hasPrivilegeForRole(roleId, context);
-        if (!hasPrivilege) {
+        return hasPrivilege;
+    };
+
+    public static checkConsent = async (
+        resourceOwnerUserId: uuid,
+        requesterUserId: uuid,
+        context: string
+    ) => {
+        const consentService = Injector.Container.resolve(ConsentService);
+        if (resourceOwnerUserId === requesterUserId) {
+            return true;
+        }
+        const consents = await consentService.getActiveConsents(
+            resourceOwnerUserId,
+            requesterUserId,
+            context
+        );
+        if (consents == null || consents.length === 0) {
             return false;
         }
         return true;
     };
+    
+    // Check permissions by ownership, action scope and consent
+    public static checkFineGrained = async (request: express.Request): Promise<boolean> => {
 
-    public static checkPermissions = async (request: express.Request): Promise<boolean> => {
-
-        const currentUser = request.currentUser;
-        const context = request.context;
-
-        if (currentUser == null) {
-            return false;
-        }
-
-        if (context == null || context === 'undefined') {
-            return false;
-        }
-
+        const currentUser = request.currentUser ?? null;
         const currentUserRole = currentUser.CurrentRole;
 
-        // 1. SuperAdmin (System Admin) has access to all resources
+        // 2. SuperAdmin (System Admin) has access to all resources
         if (currentUserRole === Roles.SystemAdmin) {
             return true;
-        }
-
-        // 2. Check if the current role has permission for this context
-        const hasRoleBasedPermission = await PermissionHandler.hasRoleBasedPermission(
-            currentUser.CurrentRoleId, context);
-        if (!hasRoleBasedPermission) {
-            return false;
         }
 
         // 3. SystemUser
         // System user access has already been checked for role based permissions
         if (currentUserRole === Roles.SystemUser) {
-            Logger.instance().log('System user access has already been checked for role based permissions');
+            const msg = `System User access has already been checked for role based permissions`;
+            Logger.instance().log(msg);
             return true;
         }
 
-        // 4. Tenant Admin and Tenant User
-        if (currentUserRole === Roles.TenantAdmin ||
-            currentUserRole === Roles.TenantUser) {
-            const permitted = await this.checkTenantRolePermissions(request, currentUser);
-            return permitted;
-        }
+        return await this.checkByRequestType(request, currentUser);
+    };
 
-        // 5. Patient
-        if (currentUserRole === Roles.Patient) {
-            const permitted = await this.checkPermissionsForPatient(request, currentUser);
-            return permitted;
+    private static checkScopeWithOwnership = (
+        ownership: ResourceOwnership,
+        actionScope: ActionScope,
+        isOwner: boolean,
+        areTenantsSame: boolean,
+        hasConsent: boolean
+    ): boolean => {
+        //visible to the individual owner only
+        if (ownership === ResourceOwnership.Owner) {
+            if (actionScope === ActionScope.Owner) {
+                return isOwner;
+            }
+            if (actionScope === ActionScope.Tenant) {
+                return areTenantsSame && hasConsent;
+            }
+            if (actionScope === ActionScope.System) {
+                return hasConsent;
+            }
+            return false;
+        } else if (ownership === ResourceOwnership.Tenant) {
+            return areTenantsSame;
+        } else if (ownership === ResourceOwnership.System) {
+            return true;
         }
-
-        // 6. Doctor
-        if (currentUserRole === Roles.Doctor) {
-            const permitted = await this.checkPermissionsForDoctor(request, currentUser);
-            return permitted;
-        }
-
         return false;
     };
 
-    private static getResourceOwner_CreateRequest = (request: any): string => {
-        var resourceOwnerUserId = null;
-        if (request.requestType === 'Create') {
-            //By default, any resource associated with patient is owned by the patient
-            //This includes clinical entities, wellness entities, etc.
-            if (request.body.PatientUserId != null && request.body.PatientUserId !== undefined) {
-                resourceOwnerUserId = request.body.PatientUserId;
-                request.patientOwnedResource = true;
-                return resourceOwnerUserId;
-            }
-            //By default, any resource associated with user is owned by the user
-            if (request.body.UserId != null && request.body.UserId !== undefined) {
-                resourceOwnerUserId = request.body.UserId;
-                return resourceOwnerUserId;
-            }
-        }
-        return resourceOwnerUserId;
-    };
+    private static checkByRequestType = async (
+        request: express.Request, 
+        currentUser: CurrentUser) => {
 
-    private static checkPermissionsForPatient = async (request: express.Request, currentUser: CurrentUser)
-        : Promise<boolean> => {
+        const requestType         = request.requestType;
+        const ownership           = request.ownership;
+        const actionScope         = request.actionScope;
+        const isOwner             = request.resourceOwnerUserId === currentUser.UserId;
+        const areTenantsSame      = request.resourceTenantId    === currentUser.TenantId;
+        const hasConsent          = await this.hasConsent(request);
+        const customAuthorization = request.customAuthorization;
 
-        // Handle create requests for Patient Roles
-        const isCreateRequest = request.requestType === 'Create';
-        const resourceOwnerId_CreateReq = this.getResourceOwner_CreateRequest(request);
-
-        if (isCreateRequest && request.patientOwnedResource) {
-            // Patient can create only his own resources
-            return resourceOwnerId_CreateReq === currentUser.UserId;
-        }
-        else if (request.singleResourceRequest) {
-            if (request.resourceOwnerUserId) {
-                // Patient can get, update or delete only his own resources
-                return request.resourceOwnerUserId === currentUser.UserId;
-            }
-            //Ownership cannot be determined for the resource
-            //Return true and let the request specific handler handle it
-            request.customAuthorization = true;
+        if (request.optionalUserAuth) {
+            // The resources may or may not require user authentication
+            // Will be checked specific to the resource visibility...
+            // Some resources of a given type may be publicly visible and some may not be
+            // For example, File resource - a user profile image file may be publicly visible, but the user document files may not be
             return true;
         }
-        else if (request.requestType === 'Search') {
-            // Patient can search only his own resources
-
-            //Check request.query to limit it only to the patient's own resources
-            const queryParams = request.query;
-            if (queryParams == null || queryParams === undefined) {
-                request.query = {};
-                request.query["patientUserId"] = currentUser.UserId;
-                request.query["userId"] = currentUser.UserId; //Add this to search for resources created by the patient
-                request.query["tenantId"] = currentUser.TenantId;
-            }
-            else {
-                if (queryParams.patientUserId == null || queryParams.patientUserId === undefined) {
-                    request.query["patientUserId"] = currentUser.UserId;
-                }
-                if (queryParams.userId == null || queryParams.userId === undefined) {
-                    request.query["userId"] = currentUser.UserId;
-                }
-                if (queryParams.tenantId == null || queryParams.tenantId === undefined) {
-                    request.query["tenantId"] = currentUser.TenantId;
-                }
-            }
-        }
-        return true;
-    };
-
-    private static checkPermissionsForDoctor = async (request: express.Request, currentUser: CurrentUser)
-        : Promise<boolean> => {
-
-        const isCreateRequest = request.requestType === 'Create';
-        const resourceOwnerId_CreateReq = this.getResourceOwner_CreateRequest(request);
-        const isPatientOwnedResource = request.patientOwnedResource;
-
-        const isTenantSame = request.resourceTenantId === currentUser.TenantId;
-        if (!isTenantSame) {
-            return false;
-        }
-
-        if (!isPatientOwnedResource) {
-
-            if (isCreateRequest) {
-                // Doctor can create only his own resources
-                return resourceOwnerId_CreateReq === currentUser.UserId;
-            }
-            else if (request.singleResourceRequest) {
-                if (request.resourceOwnerUserId) {
-                    // Doctor can get, update or delete only his own resources
-                    return request.resourceOwnerUserId === currentUser.UserId;
-                }
-                //Ownership cannot be determined for the resource
-                //Return true and let the request specific handler handle it
-                request.customAuthorization = true;
-                return true;
-            }
-            else if (request.requestType === 'Search') {
-                const queryParams = request.query;
-                if (queryParams == null || queryParams === undefined) {
-                    request.query = {};
-                    request.query["userId"] = currentUser.UserId; //Add this to search for resources created by the patient
-                    request.query["doctorUserId"] = currentUser.UserId;
-                    request.query["tenantId"] = currentUser.TenantId;
-                }
-                else {
-                    if (queryParams.userId == null || queryParams.userId === undefined) {
-                        request.query["userId"] = currentUser.UserId;
-                    }
-                    if (queryParams.doctorUserId == null || queryParams.doctorUserId === undefined) {
-                        request.query["doctorUserId"] = currentUser.UserId;
-                    }
-                    if (queryParams.tenantId == null || queryParams.tenantId === undefined) {
-                        request.query["tenantId"] = currentUser.TenantId;
-                    }
-                }
-            }
-            return true;
-        }
-        else {
-            //Patient owned resources are allowed to be created by patients
-            //Provided they have consent from the patient
-            const hasConsent = await this.hasConsent(request);
-            if (!hasConsent) {
-                return false;
-            }
-
-            if (request.requestType === 'Search') {
-                const queryParams = request.query;
-                if (queryParams == null || queryParams === undefined) {
-                    request.query = {};
-                    request.query["userId"] = request.resourceOwnerUserId;
-                    request.query["patientUserId"] = request.resourceOwnerUserId;
-                    request.query["tenantId"] = currentUser.TenantId;
-                }
-                else {
-                    if (queryParams.userId == null || queryParams.userId === undefined) {
-                        request.query["userId"] = request.resourceOwnerUserId;
-                    }
-                    if (queryParams.doctorUserId == null || queryParams.doctorUserId === undefined) {
-                        request.query["patientUserId"] = request.resourceOwnerUserId;
-                    }
-                    if (queryParams.tenantId == null || queryParams.tenantId === undefined) {
-                        request.query["tenantId"] = currentUser.TenantId;
-                    }
-                }
-            }
-        }
-        return true;
-    };
-
-    private static checkTenantRolePermissions = async (request: express.Request, currentUser: CurrentUser) => {
 
         //Check if it is single resource request...
-        if (request.singleResourceRequest) {
-            //Check if the resource belongs to the same tenant
-            if (currentUser.TenantId === request.resourceTenantId) {
-                return true;
-            }
-            else {
-                return false;
-            }
+        if (
+            requestType === RequestType.CreateOne  ||
+            requestType === RequestType.GetOne     ||
+            requestType === RequestType.UpdateOne  ||
+            requestType === RequestType.DeleteOne  ||
+            requestType === RequestType.CreateMany ||
+            requestType === RequestType.GetMany    ||
+            requestType === RequestType.UpdateMany ||
+            requestType === RequestType.DeleteMany
+        ) {
+            return this.checkScopeWithOwnership(ownership, actionScope, isOwner, areTenantsSame, hasConsent);
         }
-        else if (request.requestType === 'Search') {
-            //Check if the search request is limited to the tenant
-            const queryParams = request.query;
-            if (queryParams == null || queryParams === undefined) {
-                request.query = {};
-                request.query["tenantId"] = currentUser.TenantId;
-            }
-            else {
-                if (queryParams.tenantId == null || queryParams.tenantId === undefined) {
-                    request.query["tenantId"] = currentUser.TenantId;
-                }
-            }
+        if (requestType === RequestType.Search) {
+            // Search -> Resources to be filtered according to the ownership and action scope
+            // inside the filter settings in controllers
             return true;
         }
-        else {
-            //Check if the context is DailyStatistics
-            let context = request.context;
-            context = context.toLowerCase();
-            if (context.includes('DailyStatistics'.toLowerCase())) {
-                return true;
-            }
-        }
-        //Rest of the permissions are checked for role based permissions
-        return false;
+
+        return customAuthorization;
     };
 
     private static hasConsent = async (request: express.Request): Promise<boolean> => {
-
-        const consentService = Injector.Container.resolve(ConsentService);
-        const consents = await consentService.getActiveConsents(
-            request.resourceOwnerUserId, request.currentUser.UserId, request.context);
-
-        if (consents == null || consents.length === 0) {
-            return false;
-        }
-
-        return true;
+        return await this.checkConsent(
+            request.resourceOwnerUserId,
+            request.currentUser.UserId,
+            request.context);
     };
 
 }

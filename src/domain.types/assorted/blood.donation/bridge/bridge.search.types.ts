@@ -6,6 +6,7 @@ import { BridgeDto } from "./bridge.dto";
 export interface BridgeSearchFilters extends BaseSearchFilters {
     Name?: string;
     PatientUserId?: string;
+    TenantId?: string;
     DonorUserId?: string;
     VolunteerUserId?: string;
     BloodGroup? : string,

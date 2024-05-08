@@ -11,11 +11,12 @@ export class HealthSystemValidator extends BaseValidator {
         super();
     }
 
-    getCreateDomainModel = (requestBody: any): HealthSystemDomainModel => {
+    getCreateDomainModel = (request: express.Request): HealthSystemDomainModel => {
 
         const model: HealthSystemDomainModel = {
-            Name : requestBody.Name,
-            Tags : requestBody.Tags ?? [],
+            TenantId : request.body.TenantId ?? request.currentUser.TenantId,
+            Name     : request.body.Name,
+            Tags     : request.body.Tags ?? [],
         };
 
         return model;
@@ -32,7 +33,7 @@ export class HealthSystemValidator extends BaseValidator {
 
     create = async (request: express.Request): Promise<HealthSystemDomainModel> => {
         await this.validateCreateBody(request);
-        return this.getCreateDomainModel(request.body);
+        return this.getCreateDomainModel(request);
     };
 
     search = async (request: express.Request): Promise<HealthSystemSearchFilters> => {
@@ -51,6 +52,7 @@ export class HealthSystemValidator extends BaseValidator {
     };
 
     private async validateCreateBody(request) {
+        await this.validateUuid(request, 'TenantId', Where.Body, false, true);
         await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateArray(request, 'Tags', Where.Body, false, true);
         await this.validateRequest(request);

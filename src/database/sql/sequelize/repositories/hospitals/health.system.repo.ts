@@ -16,8 +16,9 @@ export class HealthSystemRepo implements IHealthSystemRepo {
     create  = async (model: HealthSystemDomainModel): Promise<HealthSystemDto> => {
         try {
             const entity = {
-                Name : model.Name,
-                Tags : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
+                TenantId : model.TenantId,
+                Name     : model.Name,
+                Tags     : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
             };
             const record = await HealthSystem.create(entity);
             return HealthSystemMapper.toDto(record);

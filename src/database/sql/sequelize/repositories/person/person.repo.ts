@@ -3,7 +3,6 @@ import { ApiError } from "../../../../../common/api.error";
 import { Helper } from "../../../../../common/helper";
 import { Logger } from "../../../../../common/logger";
 import { AddressDto } from "../../../../../domain.types/general/address/address.dto";
-import { OrganizationDto } from "../../../../../domain.types/general/organization/organization.dto";
 import { PersonDomainModel } from "../../../../../domain.types/person/person.domain.model";
 import { PersonDetailsDto, PersonDto } from "../../../../../domain.types/person/person.dto";
 import { IPersonRepo } from "../../../../repository.interfaces/person/person.repo.interface";
@@ -17,6 +16,7 @@ import OrganizationPersons from "../../models/general/organization/organization.
 import PersonAddresses from "../../models/person/person.addresses.model";
 import Person from '../../models/person/person.model';
 import PersonRole from "../../models/person/person.role.model";
+import { OrganizationDto } from '../../../../../domain.types/general/organization/organization.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

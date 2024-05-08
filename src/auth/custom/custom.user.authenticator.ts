@@ -2,7 +2,7 @@ import express from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Logger } from '../../common/logger';
 import { IUserAuthenticator } from '../interfaces/user.authenticator.interface';
-import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
+import { ActionScope, AuthResult } from '../auth.types';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { UserService } from '../../services/users/user/user.service';
@@ -25,35 +25,43 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
 
     public authenticate = async (
         request: express.Request
-    ): Promise<AuthenticationResult> => {
+    ): Promise<AuthResult> => {
+
+        let res: AuthResult = {
+            Result        : true,
+            Message       : 'Authenticated',
+            HttpErrorCode : 200,
+        };
+
         try {
-            if (request.clientAppRoutes) {
-                //This check is applicable only for the client app
-                //specific endpoints. For all other endpoints, this
-                //check is not applicable.
-                return {
-                    Result        : true,
-                    Message       : 'Authenticated',
-                    HttpErrorCode : 200,
-                };
-            }
-            var res: AuthenticationResult = {
-                Result        : true,
-                Message       : 'Authenticated',
-                HttpErrorCode : 200,
-            };
+
+            //////////////////////////////////////////////////////////////////////////////////////////
+            // Already taken care of in the auth.handler
+            // if (!request.clientAppAuth && request.alternateAuth) {
+            //     // Cuurently, this check is applicable only for the specific endpoints, where
+            //     // there is a need to allow alternate authentication mechanism.
+            //     // For example, client-app specific endpoints like renew and get API keys.
+            //     // Here we are using basic authentication (username and password) instead of JWT token.
+            //     // For all other endpoints, this check is not applicable.
+            //     return res;
+            // }
+            //////////////////////////////////////////////////////////////////////////////////////////
+
+            const publicAccess = request.actionScope === ActionScope.Public;
+            const optionalUserAuth = request.optionalUserAuth;
+            const privilegedClient = request.currentClient?.IsPrivileged as boolean;
 
             const authHeader = request.headers['authorization'];
             const token = authHeader && authHeader.split(' ')[1];
 
             const missingToken = token == null || token === 'null' || token === undefined;
-            const allowAnonymous = request.allowAnonymous;
 
-            if (request.publicUrl) {
-                return res;
-            }
+            const allowWithoutToken = publicAccess || optionalUserAuth || privilegedClient;
 
-            if ( missingToken && !allowAnonymous) {
+            if (missingToken) {
+                if (allowWithoutToken) {
+                    return res;
+                }
                 res = {
                     Result        : false,
                     Message       : 'Unauthorized user access',

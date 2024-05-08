@@ -1,9 +1,7 @@
 import { AddressDto } from "../../domain.types/general/address/address.dto";
 import { inject, injectable } from "tsyringe";
 import { IOrganizationRepo } from "../../database/repository.interfaces/general/organization.repo.interface";
-import { OrganizationDomainModel } from '../../domain.types/general/organization/organization.domain.model';
-import { OrganizationDto } from '../../domain.types/general/organization/organization.dto';
-import { OrganizationSearchFilters, OrganizationSearchResults } from '../../domain.types/general/organization/organization.search.types';
+import { OrganizationDomainModel, OrganizationDto, OrganizationSearchFilters, OrganizationSearchResults } from '../../domain.types/general/organization/organization.types';
 import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
 import { IAddressRepo } from '../../database/repository.interfaces/general/address.repo.interface';
 import { PersonDto } from "../../domain.types/person/person.dto";
@@ -104,13 +102,13 @@ export class OrganizationService {
             dto.ContactUser = contactUser;
         }
 
-        if (dto.ParentOrganizationId !== null && dto.ParentOrganization == null) {
-            var parentOrganization = await this._organizationRepo.getById(dto.ParentOrganizationId);
-            dto.ParentOrganization = parentOrganization;
-        }
+        // if (dto.ParentOrganizationId !== null && dto.ParentOrganization == null) {
+        //     var parentOrganization = await this._organizationRepo.getById(dto.ParentOrganizationId);
+        //     dto.ParentOrganization = parentOrganization;
+        // }
 
         var addresses: AddressDto[] = await this._organizationRepo.getAddresses(dto.id);
-        dto.Addresses = addresses;
+        // dto.Addresses = addresses;
 
         return dto;
     };

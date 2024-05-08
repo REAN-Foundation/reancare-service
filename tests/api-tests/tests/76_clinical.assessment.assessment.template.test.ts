@@ -1,6 +1,6 @@
-import  request  from 'supertest';
+import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { AssessmentType } from '../../../src/domain.types/clinical/assessment/assessment.types';
@@ -11,532 +11,569 @@ const infra = Application.instance();
 
 //////////////////////////////////////////////////////////////////////////////////
 
-describe('76 - Custom Assessment - Add nodes', function() {
-
+describe('76 - Custom Assessment - Add nodes', function () {
     var agent = request.agent(infra._app);
 
-    it('76:01 -> Create an assessment template', function(done) {
+    it('76:01 -> Create an assessment template', function (done) {
         loadCustomAssessmentCreateModel();
 
-        const createModel = getTestData("CustomAssessmentCreateModel");
+        const createModel = getTestData('customAssessmentCreateModel');
         agent
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.AssessmentTemplate.id, 'NodeAssessmentTemplateId');
-                setTestData(response.body.Data.AssessmentTemplate.RootNodeId, 'AssessmentTemplateRootNodeId');
+            .expect((response) => {
+                setTestData(response.body.Data.AssessmentTemplate.id, 'nodeAssessmentTemplateId');
+                setTestData(response.body.Data.AssessmentTemplate.RootNodeId, 'assessmentTemplateRootNodeId');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('id');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Title');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Description');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Type');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Provider');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('ProviderAssessmentCode');
-                
-                setTestData(response.body.Data.AssessmentTemplate.id, 'NodeAssessmentTemplateId');
-     
-                expect(response.body.Data.AssessmentTemplate.Title).to.equal(getTestData("CustomAssessmentCreateModel").Title);
-                expect(response.body.Data.AssessmentTemplate.Description).to.equal(getTestData("CustomAssessmentCreateModel").Description);
-                expect(response.body.Data.AssessmentTemplate.Type).to.equal(getTestData("CustomAssessmentCreateModel").Type);
-                expect(response.body.Data.AssessmentTemplate. Provider).to.equal(getTestData("CustomAssessmentCreateModel").Provider);
-                expect(response.body.Data.AssessmentTemplate.ProviderAssessmentCode).to.equal(getTestData("CustomAssessmentCreateModel").ProviderAssessmentCode);
-                           
+
+                expect(response.body.Data.AssessmentTemplate.Title).to.equal(
+                    getTestData('customAssessmentCreateModel').Title
+                );
+                expect(response.body.Data.AssessmentTemplate.Description).to.equal(
+                    getTestData('customAssessmentCreateModel').Description
+                );
+                expect(response.body.Data.AssessmentTemplate.Type).to.equal(getTestData('customAssessmentCreateModel').Type);
+                expect(response.body.Data.AssessmentTemplate.Provider).to.equal(
+                    getTestData('customAssessmentCreateModel').Provider
+                );
+                expect(response.body.Data.AssessmentTemplate.ProviderAssessmentCode).to.equal(
+                    getTestData('customAssessmentCreateModel').ProviderAssessmentCode
+                );
             })
             .expect(201, done);
     });
 
-    it('76:02 -> Add question node - single choice', function(done) {
+    it('76:02 -> Add question node - single choice', function (done) {
         loadCustomAssessmentSCQModel();
 
-        const createModel = getTestData("CustomAssessmentSCQModel");
+        const createModel = getTestData('customAssessmentSCQModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.AssessmentNode.id, "AssessmentNodeSCQId");
+            .expect((response) => {
+                setTestData(response.body.Data.AssessmentNode.id, 'assessmentNodeSCQId');
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
                 expect(response.body.Data.AssessmentNode).to.have.property('Title');
                 expect(response.body.Data.AssessmentNode).to.have.property('Description');
                 expect(response.body.Data.AssessmentNode).to.have.property('QueryResponseType');
 
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeSCQId');
-
-                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(getTestData("CustomAssessmentSCQModel").ParentNodeId);
-                expect(response.body.Data.AssessmentNode.NodeType).to.equal(getTestData("CustomAssessmentSCQModel").NodeType);
-                expect(response.body.Data.AssessmentNode.Title).to.equal(getTestData("CustomAssessmentSCQModel").Title);
-                expect(response.body.Data.AssessmentNode.Description).to.equal(getTestData("CustomAssessmentSCQModel").Description);
-                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(getTestData("CustomAssessmentSCQModel").QueryResponseType);
-                           
+                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(
+                    getTestData('customAssessmentSCQModel').ParentNodeId
+                );
+                expect(response.body.Data.AssessmentNode.NodeType).to.equal(
+                    getTestData('customAssessmentSCQModel').NodeType
+                );
+                expect(response.body.Data.AssessmentNode.Title).to.equal(getTestData('customAssessmentSCQModel').Title);
+                expect(response.body.Data.AssessmentNode.Description).to.equal(
+                    getTestData('customAssessmentSCQModel').Description
+                );
+                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(
+                    getTestData('customAssessmentSCQModel').QueryResponseType
+                );
             })
             .expect(201, done);
     });
 
-    it('76:03 -> Add question node - multi-choice', function(done) {
+    it('76:03 -> Add question node - multi-choice', function (done) {
         loadCustomAssessmentMCQModel();
 
-        const createModel = getTestData("CustomAssessmentMCQModel");
+        const createModel = getTestData('customAssessmentMCQModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeMCQId');
+            .expect((response) => {
+                setTestData(response.body.Data.AssessmentNode.id, 'assessmentNodeMCQId');
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
                 expect(response.body.Data.AssessmentNode).to.have.property('Title');
                 expect(response.body.Data.AssessmentNode).to.have.property('QueryResponseType');
 
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeMCQId');
-
-                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(getTestData("CustomAssessmentMCQModel").ParentNodeId);
-                expect(response.body.Data.AssessmentNode.NodeType).to.equal(getTestData("CustomAssessmentMCQModel").NodeType);
-                expect(response.body.Data.AssessmentNode. Title).to.equal(getTestData("CustomAssessmentMCQModel").Title);
-                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(getTestData("CustomAssessmentMCQModel").QueryResponseType);
-                           
+                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(
+                    getTestData('customAssessmentMCQModel').ParentNodeId
+                );
+                expect(response.body.Data.AssessmentNode.NodeType).to.equal(
+                    getTestData('customAssessmentMCQModel').NodeType
+                );
+                expect(response.body.Data.AssessmentNode.Title).to.equal(getTestData('customAssessmentMCQModel').Title);
+                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(
+                    getTestData('customAssessmentMCQModel').QueryResponseType
+                );
             })
             .expect(201, done);
     });
 
-    it('76:04 -> Add list node', function(done) {
+    it('76:04 -> Add list node', function (done) {
         loadCustomAssessmentNodeListModel();
 
-        const createModel = getTestData("CustomAssessmentNodeListModel");
+        const createModel = getTestData('customAssessmentNodeListModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeListId');
+            .expect((response) => {
+                setTestData(response.body.Data.AssessmentNode.id, 'assessmentNodeListId');
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
                 expect(response.body.Data.AssessmentNode).to.have.property('Title');
 
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeListId');
-                           
-                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(getTestData("CustomAssessmentNodeListModel").ParentNodeId);
-                expect(response.body.Data.AssessmentNode.NodeType).to.equal(getTestData("CustomAssessmentNodeListModel").NodeType);
-                expect(response.body.Data.AssessmentNode. Title).to.equal(getTestData("CustomAssessmentNodeListModel").Title);
-                           
+                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(
+                    getTestData('customAssessmentNodeListModel').ParentNodeId
+                );
+                expect(response.body.Data.AssessmentNode.NodeType).to.equal(
+                    getTestData('customAssessmentNodeListModel').NodeType
+                );
+                expect(response.body.Data.AssessmentNode.Title).to.equal(getTestData('customAssessmentNodeListModel').Title);
             })
             .expect(201, done);
     });
 
-    it('76:05 -> Add question node - text', function(done) {
+    it('76:05 -> Add question node - text', function (done) {
         loadCustomAssessmentNodeTextTypeModel();
 
-        const createModel = getTestData("CustomAssessmentNodeTextTypeModel");
+        const createModel = getTestData('customAssessmentNodeTextTypeModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeTextTypeId');
+            .expect((response) => {
+                setTestData(response.body.Data.AssessmentNode.id, 'assessmentNodeTextTypeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
                 expect(response.body.Data.AssessmentNode).to.have.property('Title');
                 expect(response.body.Data.AssessmentNode).to.have.property('Description');
                 expect(response.body.Data.AssessmentNode).to.have.property('QueryResponseType');
-                
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeTextTypeId');
 
-                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(getTestData("CustomAssessmentNodeTextTypeModel").ParentNodeId);
-                expect(response.body.Data.AssessmentNode.NodeType).to.equal(getTestData("CustomAssessmentNodeTextTypeModel").NodeType);
-                expect(response.body.Data.AssessmentNode. Title).to.equal(getTestData("CustomAssessmentNodeTextTypeModel").Title);
-                expect(response.body.Data.AssessmentNode.Description).to.equal(getTestData("CustomAssessmentNodeTextTypeModel").Description);
-                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(getTestData("CustomAssessmentNodeTextTypeModel").QueryResponseType);
-                           
+                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(
+                    getTestData('customAssessmentNodeTextTypeModel').ParentNodeId
+                );
+                expect(response.body.Data.AssessmentNode.NodeType).to.equal(
+                    getTestData('customAssessmentNodeTextTypeModel').NodeType
+                );
+                expect(response.body.Data.AssessmentNode.Title).to.equal(
+                    getTestData('customAssessmentNodeTextTypeModel').Title
+                );
+                expect(response.body.Data.AssessmentNode.Description).to.equal(
+                    getTestData('customAssessmentNodeTextTypeModel').Description
+                );
+                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(
+                    getTestData('customAssessmentNodeTextTypeModel').QueryResponseType
+                );
             })
             .expect(201, done);
     });
 
-    it('76:06 -> Add question node - date', function(done) {
+    it('76:06 -> Add question node - date', function (done) {
         loadCustomAssessmentNodeDateTypeModel();
 
-        const createModel = getTestData("CustomAssessmentNodeDateTypeModel");
+        const createModel = getTestData('customAssessmentNodeDateTypeModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeDateTypeId');
+            .expect((response) => {
+                setTestData(response.body.Data.AssessmentNode.id, 'assessmentNodeDateTypeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
                 expect(response.body.Data.AssessmentNode).to.have.property('Title');
                 expect(response.body.Data.AssessmentNode).to.have.property('QueryResponseType');
-             
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeDateTypeId');
 
-                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(getTestData("CustomAssessmentNodeDateTypeModel").ParentNodeId);
-                expect(response.body.Data.AssessmentNode.NodeType).to.equal(getTestData("CustomAssessmentNodeDateTypeModel").NodeType);
-                expect(response.body.Data.AssessmentNode. Title).to.equal(getTestData("CustomAssessmentNodeDateTypeModel").Title);
-                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(getTestData("CustomAssessmentNodeDateTypeModel").QueryResponseType);
-                           
+                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(
+                    getTestData('customAssessmentNodeDateTypeModel').ParentNodeId
+                );
+                expect(response.body.Data.AssessmentNode.NodeType).to.equal(
+                    getTestData('customAssessmentNodeDateTypeModel').NodeType
+                );
+                expect(response.body.Data.AssessmentNode.Title).to.equal(
+                    getTestData('customAssessmentNodeDateTypeModel').Title
+                );
+                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(
+                    getTestData('customAssessmentNodeDateTypeModel').QueryResponseType
+                );
             })
             .expect(201, done);
     });
 
-    it('76:07 -> Add question node - boolean', function(done) {
+    it('76:07 -> Add question node - boolean', function (done) {
         loadCustomAssessmentNodeBooleanTypeModel();
 
-        const createModel = getTestData("CustomAssessmentNodeBooleanTypeModel");
+        const createModel = getTestData('customAssessmentNodeBooleanTypeModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeBooleanTypeId');
+            .expect((response) => {
+                setTestData(response.body.Data.AssessmentNode.id, 'assessmentNodeBooleanTypeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
                 expect(response.body.Data.AssessmentNode).to.have.property('Title');
                 expect(response.body.Data.AssessmentNode).to.have.property('QueryResponseType');
-               
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeBooleanTypeId');
 
-                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(getTestData("CustomAssessmentNodeBooleanTypeModel").ParentNodeId);
-                expect(response.body.Data.AssessmentNode.NodeType).to.equal(getTestData("CustomAssessmentNodeBooleanTypeModel").NodeType);
-                expect(response.body.Data.AssessmentNode. Title).to.equal(getTestData("CustomAssessmentNodeBooleanTypeModel").Title);
-                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(getTestData("CustomAssessmentNodeBooleanTypeModel").QueryResponseType);
-                           
+                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(
+                    getTestData('customAssessmentNodeBooleanTypeModel').ParentNodeId
+                );
+                expect(response.body.Data.AssessmentNode.NodeType).to.equal(
+                    getTestData('customAssessmentNodeBooleanTypeModel').NodeType
+                );
+                expect(response.body.Data.AssessmentNode.Title).to.equal(
+                    getTestData('customAssessmentNodeBooleanTypeModel').Title
+                );
+                expect(response.body.Data.AssessmentNode.QueryResponseType).to.equal(
+                    getTestData('customAssessmentNodeBooleanTypeModel').QueryResponseType
+                );
             })
             .expect(201, done);
     });
 
-    it('76:08 -> Add message node', function(done) {
+    it('76:08 -> Add message node', function (done) {
         loadCustomAssessmentNodeMessageTypeModel();
 
-        const createModel = getTestData("CustomAssessmentNodeMessageTypeModel");
+        const createModel = getTestData('customAssessmentNodeMessageTypeModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeMessageTypeId');
+            .expect((response) => {
+                setTestData(response.body.Data.AssessmentNode.id, 'assessmentNodeMessageTypeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
                 expect(response.body.Data.AssessmentNode).to.have.property('Title');
                 expect(response.body.Data.AssessmentNode).to.have.property('Message');
-              
-                setTestData(response.body.Data.AssessmentNode.id, 'AssessmentNodeMessageTypeId');
 
-                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(getTestData("CustomAssessmentNodeMessageTypeModel").ParentNodeId);
-                expect(response.body.Data.AssessmentNode.NodeType).to.equal(getTestData("CustomAssessmentNodeMessageTypeModel").NodeType);
-                expect(response.body.Data.AssessmentNode. Title).to.equal(getTestData("CustomAssessmentNodeMessageTypeModel").Title);
-                expect(response.body.Data.AssessmentNode.Message).to.equal(getTestData("CustomAssessmentNodeMessageTypeModel").Message);
-                           
+                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(
+                    getTestData('customAssessmentNodeMessageTypeModel').ParentNodeId
+                );
+                expect(response.body.Data.AssessmentNode.NodeType).to.equal(
+                    getTestData('customAssessmentNodeMessageTypeModel').NodeType
+                );
+                expect(response.body.Data.AssessmentNode.Title).to.equal(
+                    getTestData('customAssessmentNodeMessageTypeModel').Title
+                );
+                expect(response.body.Data.AssessmentNode.Message).to.equal(
+                    getTestData('customAssessmentNodeMessageTypeModel').Message
+                );
             })
             .expect(201, done);
     });
 
-    it('76:09 -> Get updated assessment template by id', function(done) {
-    
+    it('76:09 -> Get updated assessment template by id', function (done) {
         agent
-            .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}`)
+            .get(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
+            .expect((response) => {
                 expect(response.body.Data.AssessmentTemplate).to.have.property('id');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Title');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Description');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Type');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('Provider');
                 expect(response.body.Data.AssessmentTemplate).to.have.property('ProviderAssessmentCode');
-   
-                expect(response.body.Data.AssessmentTemplate.Title).to.equal(getTestData("CustomAssessmentCreateModel").Title);
-                expect(response.body.Data.AssessmentTemplate.Description).to.equal(getTestData("CustomAssessmentCreateModel").Description);
-                expect(response.body.Data.AssessmentTemplate.Type).to.equal(getTestData("CustomAssessmentCreateModel").Type);
-                expect(response.body.Data.AssessmentTemplate. Provider).to.equal(getTestData("CustomAssessmentCreateModel").Provider);
-                expect(response.body.Data.AssessmentTemplate.ProviderAssessmentCode).to.equal(getTestData("CustomAssessmentCreateModel").ProviderAssessmentCode);
+
+                expect(response.body.Data.AssessmentTemplate.Title).to.equal(
+                    getTestData('customAssessmentCreateModel').Title
+                );
+                expect(response.body.Data.AssessmentTemplate.Description).to.equal(
+                    getTestData('customAssessmentCreateModel').Description
+                );
+                expect(response.body.Data.AssessmentTemplate.Type).to.equal(getTestData('customAssessmentCreateModel').Type);
+                expect(response.body.Data.AssessmentTemplate.Provider).to.equal(
+                    getTestData('customAssessmentCreateModel').Provider
+                );
+                expect(response.body.Data.AssessmentTemplate.ProviderAssessmentCode).to.equal(
+                    getTestData('customAssessmentCreateModel').ProviderAssessmentCode
+                );
             })
             .expect(200, done);
     });
 
-    it('76:10 -> Get node by id', function(done) {
- 
+    it('76:10 -> Get node by id', function (done) {
         agent
-            .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}/nodes/${getTestData('AssessmentNodeMessageTypeId')}`)
+            .get(
+                `/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes/${getTestData(
+                    'assessmentNodeMessageTypeId'
+                )}`
+            )
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
+            .expect((response) => {
                 expect(response.body.Data.AssessmentNode).to.have.property('ParentNodeId');
                 expect(response.body.Data.AssessmentNode).to.have.property('NodeType');
                 expect(response.body.Data.AssessmentNode).to.have.property('Title');
                 expect(response.body.Data.AssessmentNode).to.have.property('Message');
 
-                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(getTestData("CustomAssessmentNodeMessageTypeModel").ParentNodeId);
-                expect(response.body.Data.AssessmentNode.NodeType).to.equal(getTestData("CustomAssessmentNodeMessageTypeModel").NodeType);
-                expect(response.body.Data.AssessmentNode. Title).to.equal(getTestData("CustomAssessmentNodeMessageTypeModel").Title);
-                expect(response.body.Data.AssessmentNode.Message).to.equal(getTestData("CustomAssessmentNodeMessageTypeModel").Message);
+                expect(response.body.Data.AssessmentNode.ParentNodeId).to.equal(
+                    getTestData('customAssessmentNodeMessageTypeModel').ParentNodeId
+                );
+                expect(response.body.Data.AssessmentNode.NodeType).to.equal(
+                    getTestData('customAssessmentNodeMessageTypeModel').NodeType
+                );
+                expect(response.body.Data.AssessmentNode.Title).to.equal(
+                    getTestData('customAssessmentNodeMessageTypeModel').Title
+                );
+                expect(response.body.Data.AssessmentNode.Message).to.equal(
+                    getTestData('customAssessmentNodeMessageTypeModel').Message
+                );
             })
             .expect(200, done);
     });
 
-    it('76:11 -> Negative - Create an assessment template', function(done) {
+    it('76:11 -> Negative - Create an assessment template', function (done) {
         loadNegativeCustomAssessmentCreateModel();
 
-        const createModel = getTestData("NegativeCustomAssessmentCreateModel");
+        const createModel = getTestData('negativeCustomAssessmentCreateModel');
         agent
             .post(`/api/v1/clinical/assessment-templates`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                           
             })
             .expect(401, done);
     });
 
-    it('76:12 -> Negative - Add question node - single choice', function(done) {
+    it('76:12 -> Negative - Add question node - single choice', function (done) {
         loadCustomAssessmentSCQModel();
 
-        const createModel = getTestData("CustomAssessmentSCQModel");
+        const createModel = getTestData('customAssessmentSCQModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                           
             })
             .expect(401, done);
     });
 
-    it('76:13 -> Negative - Add list node', function(done) {
+    it('76:13 -> Negative - Add list node', function (done) {
         loadCustomAssessmentNodeListModel();
 
-        const createModel = getTestData("CustomAssessmentNodeListModel");
+        const createModel = getTestData('customAssessmentNodeListModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                           
             })
             .expect(401, done);
     });
 
-    it('76:14 -> Negative - Add question node - date', function(done) {
+    it('76:14 -> Negative - Add question node - date', function (done) {
         loadCustomAssessmentNodeDateTypeModel();
 
-        const createModel = getTestData("CustomAssessmentNodeDateTypeModel");
+        const createModel = getTestData('customAssessmentNodeDateTypeModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                           
             })
             .expect(401, done);
     });
 
-    it('76:15 -> Negative - Add message node', function(done) {
+    it('76:15 -> Negative - Add message node', function (done) {
         loadCustomAssessmentNodeMessageTypeModel();
 
-        const createModel = getTestData("CustomAssessmentNodeMessageTypeModel");
+        const createModel = getTestData('customAssessmentNodeMessageTypeModel');
         agent
-            .post(`/api/v1/clinical/assessment-templates/${getTestData("NodeAssessmentTemplateId")}/nodes`)
+            .post(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                           
             })
             .expect(401, done);
     });
 
-    it('76:16 -> Negative - Get updated assessment template by id', function(done) {
-    
+    it('76:16 -> Negative - Get updated assessment template by id', function (done) {
         agent
-            .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}`)
+            .get(`/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("DoctorJwwt")}`)
-            .expect(response => {
-                expect(response.body).to.have.property('Status');
-                expect(response.body.Status).to.equal('failure');
-            })
-            .expect(403, done);
-    });
-
-    it('76:17 -> Negative - Get node by id', function(done) {
- 
-        agent
-            .get(`/api/v1/clinical/assessment-templates/${getTestData('NodeAssessmentTemplateId')}/nodes/${getTestData('AssessmentNodeMessageTypeId')}`)
-            .set('Content-Type', 'application/json')
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
             .expect(401, done);
     });
 
+    it('76:17 -> Negative - Get node by id', function (done) {
+        agent
+            .get(
+                `/api/v1/clinical/assessment-templates/${getTestData('nodeAssessmentTemplateId')}/nodes/${getTestData(
+                    'assessmentNodeMessageTypeId'
+                )}`
+            )
+            .set('Content-Type', 'application/json')
+            .expect((response) => {
+                expect(response.body).to.have.property('Status');
+                expect(response.body.Status).to.equal('failure');
+            })
+            .expect(401, done);
+    });
 });
 
 ///////////////////////////////////////////////////////////////////////
 
-export const loadCustomAssessmentCreateModel = async (
-) => {
+export const loadCustomAssessmentCreateModel = async () => {
     const model = {
-        TenantId               : getTestData("TenantId"),
-        Title                  : faker.lorem.word(5),
-        Description            : faker.lorem.word(15),
-        Type                   : getRandomEnumValue(AssessmentType),
-        Provider               : faker.lorem.word(),
-        ProviderAssessmentCode : faker.lorem.word()
+        TenantId: getTestData('tenantId'),
+        Title: faker.lorem.word(5),
+        Description: faker.lorem.word(15),
+        Type: getRandomEnumValue(AssessmentType),
+        Provider: faker.lorem.word(),
+        ProviderAssessmentCode: faker.lorem.word(),
     };
-    setTestData(model, "CustomAssessmentCreateModel");
+    setTestData(model, 'customAssessmentCreateModel');
 };
 
-export const loadCustomAssessmentSCQModel = async (
-) => {
+export const loadCustomAssessmentSCQModel = async () => {
     const model = {
-        ParentNodeId      : getTestData('AssessmentTemplateRootNodeId'),
-        NodeType          : "Question",
-        Title             : faker.lorem.word(15),
-        Description       : faker.lorem.word(15),
-        QueryResponseType : "Single Choice Selection",
-        Options           : [
+        ParentNodeId: getTestData('assessmentTemplateRootNodeId'),
+        NodeType: 'Question',
+        Title: faker.lorem.word(15),
+        Description: faker.lorem.word(15),
+        QueryResponseType: 'Single Choice Selection',
+        Options: [
             {
-                ProviderGivenCode : "yes",
-                Text              : "Yes",
-                Sequence          : 1
+                ProviderGivenCode: 'yes',
+                Text: 'Yes',
+                Sequence: 1,
             },
             {
-                ProviderGivenCode : "no",
-                Text              : "No",
-                Sequence          : 2
-            }
-        ]
+                ProviderGivenCode: 'no',
+                Text: 'No',
+                Sequence: 2,
+            },
+        ],
     };
-    setTestData(model, "CustomAssessmentSCQModel");
+    setTestData(model, 'customAssessmentSCQModel');
 };
 
-export const loadCustomAssessmentMCQModel = async (
-) => {
+export const loadCustomAssessmentMCQModel = async () => {
     const model = {
-        ParentNodeId      : getTestData('AssessmentTemplateRootNodeId'),
-        NodeType          : "Question",
-        Title             : faker.lorem.word(15),
-        QueryResponseType : "Multi Choice Selection",
-        Options           : [
+        ParentNodeId: getTestData('assessmentTemplateRootNodeId'),
+        NodeType: 'Question',
+        Title: faker.lorem.word(15),
+        QueryResponseType: 'Multi Choice Selection',
+        Options: [
             {
-                Text     : "Walking",
-                Sequence : 1
+                Text: 'Walking',
+                Sequence: 1,
             },
             {
-                Text     : "Sports",
-                Sequence : 2
+                Text: 'Sports',
+                Sequence: 2,
             },
             {
-                Text     : "Hiking",
-                Sequence : 3
+                Text: 'Hiking',
+                Sequence: 3,
             },
             {
-                Text     : "Cycling",
-                Sequence : 4
+                Text: 'Cycling',
+                Sequence: 4,
             },
             {
-                Text     : "Yoga",
-                Sequence : 5
-            }
-        ]
+                Text: 'Yoga',
+                Sequence: 5,
+            },
+        ],
     };
-    setTestData(model, "CustomAssessmentMCQModel");
+    setTestData(model, 'customAssessmentMCQModel');
 };
 
-export const loadCustomAssessmentNodeListModel = async (
-) => {
+export const loadCustomAssessmentNodeListModel = async () => {
     const model = {
-        ParentNodeId : getTestData('AssessmentTemplateRootNodeId'),
-        NodeType     : "Node list",
-        Title        : faker.lorem.word(15)
+        ParentNodeId: getTestData('assessmentTemplateRootNodeId'),
+        NodeType: 'Node list',
+        Title: faker.lorem.word(15),
     };
-    setTestData(model, "CustomAssessmentNodeListModel");
+    setTestData(model, 'customAssessmentNodeListModel');
 };
 
-export const loadCustomAssessmentNodeTextTypeModel = async (
-) => {
+export const loadCustomAssessmentNodeTextTypeModel = async () => {
     const model = {
-        ParentNodeId      : getTestData('AssessmentTemplateRootNodeId'),
-        NodeType          : "Question",
-        Title             : faker.lorem.word(15),
-        Description       : faker.lorem.word(15),
-        QueryResponseType : "Text"
+        ParentNodeId: getTestData('assessmentTemplateRootNodeId'),
+        NodeType: 'Question',
+        Title: faker.lorem.word(15),
+        Description: faker.lorem.word(15),
+        QueryResponseType: 'Text',
     };
-    setTestData(model, "CustomAssessmentNodeTextTypeModel");
+    setTestData(model, 'customAssessmentNodeTextTypeModel');
 };
 
-export const loadCustomAssessmentNodeDateTypeModel = async (
-) => {
+export const loadCustomAssessmentNodeDateTypeModel = async () => {
     const model = {
-        ParentNodeId      : getTestData('AssessmentTemplateRootNodeId'),
-        NodeType          : "Question",
-        Title             : faker.lorem.word(15),
-        QueryResponseType : "Date"
+        ParentNodeId: getTestData('assessmentTemplateRootNodeId'),
+        NodeType: 'Question',
+        Title: faker.lorem.word(15),
+        QueryResponseType: 'Date',
     };
-    setTestData(model, "CustomAssessmentNodeDateTypeModel");
+    setTestData(model, 'customAssessmentNodeDateTypeModel');
 };
 
-export const loadCustomAssessmentNodeBooleanTypeModel = async (
-) => {
+export const loadCustomAssessmentNodeBooleanTypeModel = async () => {
     const model = {
-        ParentNodeId      : getTestData('AssessmentTemplateRootNodeId'),
-        NodeType          : "Question",
-        Title             : faker.lorem.word(15),
-        QueryResponseType : "Boolean"
+        ParentNodeId: getTestData('assessmentTemplateRootNodeId'),
+        NodeType: 'Question',
+        Title: faker.lorem.word(15),
+        QueryResponseType: 'Boolean',
     };
-    setTestData(model, "CustomAssessmentNodeBooleanTypeModel");
+    setTestData(model, 'customAssessmentNodeBooleanTypeModel');
 };
 
-export const loadCustomAssessmentNodeMessageTypeModel = async (
-) => {
+export const loadCustomAssessmentNodeMessageTypeModel = async () => {
     const model = {
-        ParentNodeId : getTestData('AssessmentTemplateRootNodeId'),
-        NodeType     : "Message",
-        Title        : faker.lorem.word(15),
-        Message      : "Please see your doctor this weekend."
+        ParentNodeId: getTestData('assessmentTemplateRootNodeId'),
+        NodeType: 'Message',
+        Title: faker.lorem.word(15),
+        Message: 'Please see your doctor this weekend.',
     };
-    setTestData(model, "CustomAssessmentNodeMessageTypeModel");
+    setTestData(model, 'customAssessmentNodeMessageTypeModel');
 };
 
-export const loadNegativeCustomAssessmentCreateModel = async (  
-) => {
+export const loadNegativeCustomAssessmentCreateModel = async () => {
     const model = {
-        Provider               : faker.lorem.word(),
-        ProviderAssessmentCode : faker.lorem.word(5)
+        Provider: faker.lorem.word(),
+        ProviderAssessmentCode: faker.lorem.word(5),
     };
-    setTestData(model, "NegativeCustomAssessmentCreateModel");
+    setTestData(model, 'negativeCustomAssessmentCreateModel');
 };
-
-

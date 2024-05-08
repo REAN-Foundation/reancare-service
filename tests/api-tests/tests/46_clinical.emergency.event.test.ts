@@ -1,6 +1,6 @@
-import  request  from 'supertest';
+import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
@@ -9,63 +9,49 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('46 - Emergency event tests', function() {
-
+describe('46 - Emergency event tests', function () {
     var agent = request.agent(infra._app);
 
-    it('46:01 -> Create emergency event', function(done) {
+    it('46:01 -> Create emergency event', function (done) {
         loadEmergencyEventCreateModel();
-        const createModel = getTestData("EmergencyEventCreateModel");
+        const createModel = getTestData('emergencyEventCreateModel');
         agent
             .post(`/api/v1/clinical/emergency-events/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.EmergencyEvent.id, 'EmergencyEventId_1');
-                expect(response.body.Data.EmergencyEvent).to.have.property('id');
-                expect(response.body.Data.EmergencyEvent).to.have.property('EhrId');
-                expect(response.body.Data.EmergencyEvent).to.have.property('Details');
-                expect(response.body.Data.EmergencyEvent).to.have.property('EmergencyDate');
+            .expect((response) => {
+                setEmergencyEventId(response, 'emergencyEventId_1');
+                expectEmergencyEventProperties(response);
 
-                setTestData(response.body.Data.EmergencyEvent.id, 'EmergencyEventId_1');
-
-                expect(response.body.Data.EmergencyEvent.EhrId).to.equal(getTestData("EmergencyEventCreateModel").EhrId);
-                expect(response.body.Data.EmergencyEvent.Details).to.equal(getTestData("EmergencyEventCreateModel").Details);
-
+                expectEmergencyEventPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('46:02 -> Get emergency event by id', function(done) {
-
+    it('46:02 -> Get emergency event by id', function (done) {
         agent
-            .get(`/api/v1/clinical/emergency-events/${getTestData('EmergencyEventId_1')}`)
+            .get(`/api/v1/clinical/emergency-events/${getTestData('emergencyEventId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
-                expect(response.body.Data.EmergencyEvent).to.have.property('id');
-                expect(response.body.Data.EmergencyEvent).to.have.property('EhrId');
-                expect(response.body.Data.EmergencyEvent).to.have.property('Details');
-                expect(response.body.Data.EmergencyEvent).to.have.property('EmergencyDate');
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
+                expectEmergencyEventProperties(response);
 
-                expect(response.body.Data.EmergencyEvent.EhrId).to.equal(getTestData("EmergencyEventCreateModel").EhrId);
-                expect(response.body.Data.EmergencyEvent.Details).to.equal(getTestData("EmergencyEventCreateModel").Details);
-
+                expectEmergencyEventPropertyValues(response);
             })
             .expect(200, done);
     });
 
-    it('46:03 -> Search emergency event records', function(done) {
+    it('46:03 -> Search emergency event records', function (done) {
         loadEmergencyEventQueryString();
         agent
             .get(`/api/v1/clinical/emergency-events/search${loadEmergencyEventQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body.Data.EmergencyEvents).to.have.property('TotalCount');
                 expect(response.body.Data.EmergencyEvents).to.have.property('RetrievedCount');
                 expect(response.body.Data.EmergencyEvents).to.have.property('PageIndex');
@@ -78,136 +64,133 @@ describe('46 - Emergency event tests', function() {
             .expect(200, done);
     });
 
-    it('46:04 -> Update emergency event', function(done) {
+    it('46:04 -> Update emergency event', function (done) {
         loadEmergencyEventUpdateModel();
-        const updateModel = getTestData("EmergencyEventUpdateModel");
+        const updateModel = getTestData('emergencyEventUpdateModel');
         agent
-            .put(`/api/v1/clinical/emergency-events/${getTestData('EmergencyEventId_1')}`)
+            .put(`/api/v1/clinical/emergency-events/${getTestData('emergencyEventId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
-            .expect(response => {
-                expect(response.body.Data.EmergencyEvent).to.have.property('id');
-                expect(response.body.Data.EmergencyEvent).to.have.property('EhrId');
-                expect(response.body.Data.EmergencyEvent).to.have.property('Details');
-                expect(response.body.Data.EmergencyEvent).to.have.property('EmergencyDate');
+            .expect((response) => {
+                expectEmergencyEventProperties(response);
 
-                expect(response.body.Data.EmergencyEvent.EhrId).to.equal(getTestData("EmergencyEventUpdateModel").EhrId);
-                expect(response.body.Data.EmergencyEvent.Details).to.equal(getTestData("EmergencyEventUpdateModel").Details);
-
+                expect(response.body.Data.EmergencyEvent.EhrId).to.equal(getTestData('emergencyEventUpdateModel').EhrId);
+                expect(response.body.Data.EmergencyEvent.Details).to.equal(getTestData('emergencyEventUpdateModel').Details);
             })
             .expect(200, done);
     });
 
-    it('46:05 -> Delete emergency event', function(done) {
-        
+    it('46:05 -> Delete emergency event', function (done) {
         agent
-            .delete(`/api/v1/clinical/emergency-events/${getTestData('EmergencyEventId_1')}`)
+            .delete(`/api/v1/clinical/emergency-events/${getTestData('emergencyEventId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
             })
             .expect(200, done);
     });
-  
-    it('Create emergency event again', function(done) {
+
+    it('Create emergency event again', function (done) {
         loadEmergencyEventCreateModel();
-        const createModel = getTestData("EmergencyEventCreateModel");
+        const createModel = getTestData('emergencyEventCreateModel');
         agent
             .post(`/api/v1/clinical/emergency-events/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.EmergencyEvent.id, 'EmergencyEventId');
-                expect(response.body.Data.EmergencyEvent).to.have.property('id');
-                expect(response.body.Data.EmergencyEvent).to.have.property('EhrId');
-                expect(response.body.Data.EmergencyEvent).to.have.property('Details');
-                expect(response.body.Data.EmergencyEvent).to.have.property('EmergencyDate');
+            .expect((response) => {
+                setEmergencyEventId(response, 'emergencyEventId');
+                expectEmergencyEventProperties(response);
 
-                setTestData(response.body.Data.EmergencyEvent.id, 'EmergencyEventId');
-
-                expect(response.body.Data.EmergencyEvent.EhrId).to.equal(getTestData("EmergencyEventCreateModel").EhrId);
-                expect(response.body.Data.EmergencyEvent.Details).to.equal(getTestData("EmergencyEventCreateModel").Details);
-
+                expectEmergencyEventPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('46:06 -> Negative - Create emergency event', function(done) {
+    it('46:06 -> Negative - Create emergency event', function (done) {
         loadEmergencyEventCreateModel();
-        const createModel = getTestData("EmergencyEventCreateModel");
+        const createModel = getTestData('emergencyEventCreateModel');
         agent
             .post(`/api/v1/clinical/emergency-events/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
             .expect(401, done);
     });
 
-    it('46:07 -> Negative - Search emergency event records', function(done) {
+    it('46:07 -> Negative - Search emergency event records', function (done) {
         loadEmergencyEventQueryString();
         agent
             .get(`/api/v1/clinical/emergency-events/search${loadEmergencyEventQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
             .expect(401, done);
     });
 
-    it('46:08 -> Negative - Delete emergency event', function(done) {
-        
+    it('46:08 -> Negative - Delete emergency event', function (done) {
         agent
-            .delete(`/api/v1/clinical/emergency-events/${getTestData('EmergencyEventId_1')}`)
+            .delete(`/api/v1/clinical/emergency-events/${getTestData('emergencyEventId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
             .expect(404, done);
     });
-
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadEmergencyEventCreateModel = async (
-) => {
+function setEmergencyEventId(response, key) {
+    setTestData(response.body.Data.EmergencyEvent.id, key);
+}
+
+function expectEmergencyEventProperties(response) {
+    expect(response.body.Data.EmergencyEvent).to.have.property('id');
+    expect(response.body.Data.EmergencyEvent).to.have.property('EhrId');
+    expect(response.body.Data.EmergencyEvent).to.have.property('Details');
+    expect(response.body.Data.EmergencyEvent).to.have.property('EmergencyDate');
+}
+
+function expectEmergencyEventPropertyValues(response) {
+    expect(response.body.Data.EmergencyEvent.EhrId).to.equal(getTestData('emergencyEventCreateModel').EhrId);
+    expect(response.body.Data.EmergencyEvent.Details).to.equal(getTestData('emergencyEventCreateModel').Details);
+}
+
+export const loadEmergencyEventCreateModel = async () => {
     const model = {
-        EhrId         : faker.string.uuid(),
-        PatientUserId : getTestData("PatientUserId"),
-        Details       : faker.lorem.words(10),
-        EmergencyDate : faker.date.anytime()
-  
+        EhrId: faker.string.uuid(),
+        PatientUserId: getTestData('patientUserId'),
+        Details: faker.lorem.words(10),
+        EmergencyDate: faker.date.anytime(),
     };
-    setTestData(model, "EmergencyEventCreateModel");
+    setTestData(model, 'emergencyEventCreateModel');
 };
 
-export const loadEmergencyEventUpdateModel = async (
-) => {
+export const loadEmergencyEventUpdateModel = async () => {
     const model = {
-        EhrId         : faker.string.uuid(),
-        PatientUserId : getTestData("PatientUserId"),
-        Details       : faker.lorem.words(10),
-        EmergencyDate : faker.date.anytime()
-
+        EhrId: faker.string.uuid(),
+        PatientUserId: getTestData('patientUserId'),
+        Details: faker.lorem.words(10),
+        EmergencyDate: faker.date.anytime(),
     };
-    setTestData(model, "EmergencyEventUpdateModel");
+    setTestData(model, 'emergencyEventUpdateModel');
 };
 
 function loadEmergencyEventQueryString() {

@@ -22,6 +22,7 @@ import { Roles } from '../../../../domain.types/role/role.types';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
+import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,11 +60,11 @@ export class PatientController extends BaseUserController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const createModel = await this._validator.create(request);
-            const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
+            const model = await this._validator.create(request);
+            const [ patient, createdNew ] = await this._userHelper.createPatient(model);
 
-            if (createModel.CohortId != null) {
-                await this.addPatientToCohort(patient.UserId, createModel.CohortId);
+            if (model.CohortId != null) {
+                await this.addPatientToCohort(patient.UserId, model.CohortId);
             }
 
             const clientCode = request.currentClient.ClientCode;
@@ -89,10 +90,11 @@ export class PatientController extends BaseUserController {
         try {
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, user.id, user.TenantId);
 
             const patient = await this._service.getByUserId(userId);
 
@@ -116,7 +118,8 @@ export class PatientController extends BaseUserController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters: PatientSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -131,6 +134,7 @@ export class PatientController extends BaseUserController {
         }
     };
 
+    //To be deprecated
     getPatientByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
@@ -161,15 +165,13 @@ export class PatientController extends BaseUserController {
             const phone: string = await request.params.phone as string;
             const patientRole = await this._roleService.getByName(Roles.Patient);
 
-            const existingUser = await this._userService.getByPhoneAndRole(phone, patientRole.id);
-            if (existingUser == null) {
+            const user = await this._userService.getByPhoneAndRole(phone, patientRole.id);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
-            const tenantUser = await this._userService.isTenantUser(existingUser.id, tenantId);
-            if (!tenantUser) {
-                throw new ApiError(404, 'User is not associated with the tenant.');
-            }
-            const patient = await this._service.getByUserId(existingUser.id);
+            await this.authorizeOne(request, user.id, user.TenantId);
+
+            const patient = await this._service.getByUserId(user.id);
             if (patient == null) {
                 throw new ApiError(404, 'Patient not found.');
             }
@@ -187,10 +189,11 @@ export class PatientController extends BaseUserController {
         try {
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, user.id, user.TenantId);
 
             const updateModel = await this._validator.updateByUserId(request);
             const userDomainModel: UserDomainModel = updateModel.User;
@@ -202,7 +205,7 @@ export class PatientController extends BaseUserController {
             }
 
             // if timezone change detected then delete future medication schedules and create new one
-            if (existingUser.CurrentTimeZone != request.body.CurrentTimeZone) {
+            if (user.CurrentTimeZone != request.body.CurrentTimeZone) {
                 await this._userService.update(userId, { CurrentTimeZone : request.body.CurrentTimeZone }); 
                 this.deleteAndCreateFutureMedicationSchedules(userId);
             }
@@ -224,7 +227,7 @@ export class PatientController extends BaseUserController {
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
             await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
-            const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
+            const updatedPerson = await this._personService.update(user.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
@@ -237,7 +240,7 @@ export class PatientController extends BaseUserController {
             if (updatedPatient == null) {
                 throw new ApiError(400, 'Unable to update patient record!');
             }
-            await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
+            await this.createOrUpdateDefaultAddress(request, user.Person.id);
             const addresses = await this._personService.getAddresses(personDomainModel.id);
             let location = null;
             if (addresses.length >= 1) {
@@ -271,10 +274,12 @@ export class PatientController extends BaseUserController {
             if (currentUserId !== patientUserId) {
                 throw new ApiError(403, 'You do not have permissions to delete this patient account.');
             }
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, user.id, user.TenantId);
+
             var deleted = await this._userDeviceDetailsService.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
@@ -370,4 +375,28 @@ export class PatientController extends BaseUserController {
 
     //#endregion
 
+    //#region  Authorization methods
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: PatientSearchFilters): Promise<PatientSearchFilters> => {
+
+        const currentUser = request.currentUser;
+        const currentRole = request.currentUser.CurrentRole;
+        
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                if (currentRole !== Roles.SystemAdmin && 
+                    currentRole !== Roles.SystemUser) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.TenantId = currentUser.TenantId;
+        }
+        return searchFilters;
+    };
+
+    //#endregion
 }

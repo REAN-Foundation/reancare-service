@@ -76,7 +76,6 @@ import { register as registerPatientDonorsRoutes } from './assorted/blood.donati
 import { register as registerDonationRoutes } from './assorted/blood.donation/donation/donation.routes';
 import { register as registerWearableWebhookTerraRoutes } from './webhooks/providers/terra/terra.webhook.routes';
 import { register as registerWearableDeviceDetailsRoutes } from './devices/wearables/wearable.device.details.routes';
-import { register as registerStatisticsRoutes } from './statistics/app.statistics/statistics.routes';
 import { register as registerDonationCommunicationRoutes } from './assorted/blood.donation/communication/communication.routes';
 import { register as registerUserGroupRoutes } from './community/user.groups/user.group.routes';
 import { register as registerReminderRoutes } from './general/reminder/reminder.routes';
@@ -87,7 +86,6 @@ import { register as registerConsentRoutes } from './auth/consent/consent.routes
 import { register as registerHealthSystemRoutes } from './hospitals/health.system/health.system.routes';
 import { register as registerHospitalRoutes } from './hospitals/hospital/hospital.routes';
 import { register as registerDailyStatisticsRoutes } from './statistics/daily.statistics/daily.statistics.routes';
-import { register as registerAhaStatisticsRoutes } from './statistics/aha.statistics/aha.statistics.routes';
 import { register as registerTenantFeatureSettingRoutes } from './tenant/settings/tenant.settings.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +186,6 @@ export class Router {
                 registerPatientDonorsRoutes(this._app);
                 registerDonationRoutes(this._app);
                 registerWearableWebhookTerraRoutes(this._app);
-                registerStatisticsRoutes(this._app);
                 registerWearableDeviceDetailsRoutes(this._app);
                 registerDonationCommunicationRoutes(this._app);
                 registerUserGroupRoutes(this._app);
@@ -200,7 +197,6 @@ export class Router {
                 registerHealthSystemRoutes(this._app);
                 registerHospitalRoutes(this._app);
                 registerDailyStatisticsRoutes(this._app);
-                registerAhaStatisticsRoutes(this._app);
                 registerTenantFeatureSettingRoutes(this._app);
 
                 resolve(true);

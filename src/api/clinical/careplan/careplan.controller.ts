@@ -9,10 +9,12 @@ import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { Logger } from '../../../common/logger';
 import { CommunityNetworkService } from '../../../modules/community.bw/community.network.service';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CareplanController {
+export class CareplanController extends BaseController {
 
     //#region member variables and constructors
     _service: CareplanService = Injector.Container.resolve(CareplanService);
@@ -29,7 +31,7 @@ export class CareplanController {
 
     getAvailableCareplans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
+            await this.authorizeOne(request, null, null);
             var plans = this._service.getAvailableCarePlans(request.query.provider as string);
 
             ResponseHandler.success(request, response, 'Available careplans retrieved successfully!', 200, {
@@ -45,7 +47,7 @@ export class CareplanController {
         try {
 
             const model = await this._validator.enroll(request);
-
+            await this.authorizeOne(request, model.PatientUserId);
             var startDate = new Date(model.StartDateStr);
 
             Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
@@ -101,8 +103,9 @@ export class CareplanController {
             const provider = request.params.provider;
             const careplanCode = request.params.careplanCode;
 
-            const patient = await this._userService.getById(patientUserId);
-            const eligibility = await this._service.getPatientEligibility(patient, provider, careplanCode);
+            const user = await this._userService.getById(patientUserId);
+            await this.authorizeOne(request, user.id, user.TenantId);
+            const eligibility = await this._service.getPatientEligibility(user, provider, careplanCode);
             ResponseHandler.success(request, response, 'Patient eligibility for careplan retrieved successfully!', 200, {
                 Eligibility : eligibility,
             });
@@ -115,6 +118,7 @@ export class CareplanController {
         try {
 
             const patientUserId = request.params.patientUserId;
+            await this.authorizeOne(request, patientUserId);
             var isActive = request.query.isActive === 'true' ? true : false;
             const enrollments = await this._service.getPatientEnrollments(patientUserId, isActive);
             ResponseHandler.success(request, response, 'Patient enrollments retrieved successfully!', 200, {
@@ -130,6 +134,9 @@ export class CareplanController {
         try {
 
             const careplanId = request.params.id;
+            const enrollment = await this._service.getEnrollment(careplanId);
+            await this.authorizeOne(request, enrollment.PatientUserId);
+
             const fetched = await this._service.fetchTasks(careplanId);
             if (!fetched) {
                 ResponseHandler.failure(request, response, 'Problem encountered fetching careplan tasks!', 500);
@@ -148,6 +155,11 @@ export class CareplanController {
         try {
 
             const careplanId = request.params.id; // careplan id
+            const enrollment = await this._service.getEnrollment(careplanId);
+            if (!enrollment) {
+                throw new ApiError(404, 'Careplan enrollment not found!');
+            }
+            await this.authorizeOne(request, enrollment.PatientUserId);
             var careplanStatus = await this._service.getWeeklyStatus(careplanId);
             ResponseHandler.success(request, response, 'Careplan weekly status fetched successfully!', 200, {
                 CareplanStatus : careplanStatus
@@ -160,13 +172,14 @@ export class CareplanController {
 
     updateRisk = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            const model = await this._validator.updateRisk(request);
+            const model: EnrollmentDomainModel = await this._validator.updateRisk(request);
+            // For time being, ...
+            // const patientUserId = await this.authorizePerson(model);
+            // await this.authorizeOne(request, patientUserId);
             var riskDetails = await this._service.updateRisk(model);
             ResponseHandler.success(request, response, 'Patient risk and complications updated successfully!', 200, {
                 RiskDetails : riskDetails
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

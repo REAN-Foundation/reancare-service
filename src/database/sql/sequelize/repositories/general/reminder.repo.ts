@@ -8,7 +8,7 @@ import {
     ReminderSearchFilters,
     ReminderSearchResults,
     RepeatAfterEveryNUnit,
-    NotificationType }
+    ReminderNotificationType }
     from '../../../../../domain.types/general/reminder/reminder.domain.model';
 import { IReminderRepo } from '../../../../repository.interfaces/general/reminder.repo.interface';
 import { ReminderMapper } from '../../mappers/general/reminder.mapper';
@@ -33,7 +33,7 @@ export class ReminderRepo implements IReminderRepo {
                 RepeatAfterEvery      : model.RepeatAfterEvery ?? 1,
                 RepeatAfterEveryNUnit : model.RepeatAfterEveryNUnit ?? RepeatAfterEveryNUnit.Day,
                 HookUrl               : model.HookUrl ?? null,
-                NotificationType      : model.NotificationType ?? NotificationType.SMS,
+                NotificationType      : model.NotificationType ?? ReminderNotificationType.SMS,
                 RawContent            : model.RawContent ?? null,
             };
             const reminder = await Reminder.create(entity);

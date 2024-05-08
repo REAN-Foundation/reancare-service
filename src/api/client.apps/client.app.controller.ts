@@ -6,31 +6,34 @@ import { ClientAppValidator } from './client.app.validator';
 import { ApiError } from '../../common/api.error';
 import { Injector } from '../../startup/injector';
 import { ClientAppDto } from '../../domain.types/client.apps/client.app.dto';
+import { ClientAppDomainModel } from '../../domain.types/client.apps/client.app.domain.model';
+import { BaseController } from '../base.controller';
+import { Roles } from '../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ClientAppController {
+export class ClientAppController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: ClientAppService = null;
+    _service: ClientAppService = Injector.Container.resolve(ClientAppService);
 
     constructor() {
-        this._service = Injector.Container.resolve(ClientAppService);
+        super();
     }
 
     //#endregion
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const clientDomainModel = await ClientAppValidator.create(request);
-
-            const clientApp = await this._service.create(clientDomainModel);
-            if (clientApp == null) {
+            const model: ClientAppDomainModel = await ClientAppValidator.create(request);
+            await this.authorizeOne(request);
+            const record = await this._service.create(model);
+            if (record == null) {
                 throw new ApiError(400, 'Unable to create client app.');
             }
             ResponseHandler.success(request, response, 'Client app added successfully!', 201, {
-                Client : clientApp,
+                Client : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -40,13 +43,13 @@ export class ClientAppController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: string = await ClientAppValidator.getById(request);
-
-            const clientApp = await this._service.getById(id);
-            if (clientApp == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Client not found.');
             }
+            await this.authorizeOne(request);
             ResponseHandler.success(request, response, 'Client app retrieved successfully!', 200, {
-                Client : clientApp,
+                Client : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -56,12 +59,11 @@ export class ClientAppController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters = await ClientAppValidator.search(request);
-
+            this.authorizeSearch(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
                 count === 0 ? 'No records found!' : `Total ${count} client app records retrieved successfully!`;
-
             ResponseHandler.success(request, response, message, 200, {
                 ClientAppRecords : searchResults,
             });
@@ -75,12 +77,13 @@ export class ClientAppController {
         try {
             const id: string = await ClientAppValidator.getById(request);
             const domainModel = await ClientAppValidator.update(request);
-            const clientApp = await this._service.update(id, domainModel);
-            if (clientApp == null) {
+            await this.authorizeOne(request);
+            const record = await this._service.update(id, domainModel);
+            if (record == null) {
                 throw new ApiError(404, 'Client app not found.');
             }
             ResponseHandler.success(request, response, 'Client app updated successfully!', 200, {
-                Client : clientApp,
+                Client : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -90,6 +93,7 @@ export class ClientAppController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: string = await ClientAppValidator.getById(request);
+            await this.authorizeOne(request);
             await this._service.delete(id);
             ResponseHandler.success(request, response, 'Client app deleted successfully!', 200, null);
         } catch (error) {
@@ -138,6 +142,17 @@ export class ClientAppController {
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    authorizeSearch = (request: express.Request) => {
+        const currentUser = request.currentUser;
+        if (currentUser != null) {
+            const role = currentUser.CurrentRole;
+            if (role != Roles.SystemAdmin &&
+                role != Roles.SystemUser) {
+                throw new ApiError(403, `Unauthorized`);
+            }
         }
     };
 

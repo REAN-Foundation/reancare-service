@@ -197,6 +197,10 @@ export class CareplanService implements IUserActionService {
         return await this._careplanRepo.getPatientEnrollments(patientUserId, isActive);
     };
 
+    public getEnrollment = async (enrollmentId: uuid): Promise<EnrollmentDto> => {
+        return await this._careplanRepo.getCareplanEnrollment(enrollmentId);
+    };
+
     public getCompletedEnrollments = async (daysPassed: number, planNames : string[]) => {
         return await this._careplanRepo.getCompletedEnrollments(daysPassed, planNames);
     };

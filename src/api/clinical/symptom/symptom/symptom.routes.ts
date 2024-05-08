@@ -1,6 +1,7 @@
 import express from 'express';
 import { SymptomController } from './symptom.controller';
 import { auth } from '../../../../auth/auth.handler';
+import { SymptomAuth } from './symptom.auth';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -9,11 +10,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new SymptomController();
 
-    router.post('/', auth('Clinical.Symptoms.Symptom.Create'), controller.create);
-    router.get('/search', auth('Clinical.Symptoms.Symptom.Search'), controller.search);
-    router.get('/:id', auth('Clinical.Symptoms.Symptom.GetById'), controller.getById);
-    router.put('/:id', auth('Clinical.Symptoms.Symptom.Update'), controller.update);
-    router.delete('/:id', auth('Clinical.Symptoms.Symptom.Delete'), controller.delete);
+    router.post('/', auth(SymptomAuth.create), controller.create);
+    router.get('/search', auth(SymptomAuth.search), controller.search);
+    router.get('/:id', auth(SymptomAuth.getById), controller.getById);
+    router.put('/:id', auth(SymptomAuth.update), controller.update);
+    router.delete('/:id', auth(SymptomAuth.delete), controller.delete);
 
     app.use('/api/v1/clinical/symptoms', router);
 };

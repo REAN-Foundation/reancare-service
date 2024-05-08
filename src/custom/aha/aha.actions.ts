@@ -62,11 +62,11 @@ export class AHAActions {
 
     public performActions_PostRegistration = async (patient: PatientDetailsDto, clientCode: string) => {
         try {
-            var skipClientList = ["HCHLSTRL"];
+            /*var skipClientList = ["HCHLSTRL"];
             if (skipClientList.indexOf(clientCode) === -1) {
                 // await this.createAHAHealthSurveyTask(patient);
                 await this._commonActions.createAssessmentTask(patient.UserId, 'Quality of Life Questionnaire');
-            }
+            }*/
 
             if (this.eligibleForMedicalProfileTask(clientCode)) {
                 await this._commonActions.createAssessmentTask(patient.UserId, 'Medical Profile Details');

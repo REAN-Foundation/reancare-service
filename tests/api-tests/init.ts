@@ -34,11 +34,24 @@ async function wait(ms) {
 global.TestCache = {};
 
 export const setTestData = (value:any, key:string) => {
+if (value){
     global.TestCache[key] = value;
+}
+else{
+    console.log("error unable to set patientuserjwt");
+}
+  
+
 };
 
 export const getTestData = (key:string): any => {
+const token = global.TestCache[key];
+if(token){
     return global.TestCache[key];
+}else {
+    console.log("Error cannot find access token");
+    return null;
+}
 };
 
 function loadTestData() {

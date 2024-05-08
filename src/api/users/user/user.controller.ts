@@ -7,16 +7,21 @@ import { UserService } from '../../../services/users/user/user.service';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserController {
+export class UserController extends BaseController {
 
     //#region member variables and constructors
 
     _service: UserService = Injector.Container.resolve(UserService);
 
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+
+    constructor() {
+        super();
+    }
 
     //#endregion
 
@@ -43,6 +48,7 @@ export class UserController {
                 ResponseHandler.failure(request, response, 'User not found.', 404);
                 return;
             }
+            await this.authorizeOne(request, user.id, user.TenantId);
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
                 user : user,
             });

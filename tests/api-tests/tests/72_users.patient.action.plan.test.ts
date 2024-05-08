@@ -1,6 +1,6 @@
-import  request  from 'supertest';
+import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
@@ -9,68 +9,48 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('72 - Action plan tests', function() {
-
+describe('72 - Action plan tests', function () {
     var agent = request.agent(infra._app);
 
-    it('72:01 -> Create action plan', function(done) {
+    it('72:01 -> Create action plan', function (done) {
         loadActionPlanCreateModel();
-        const createModel = getTestData("ActionPlanCreateModel");
+        const createModel = getTestData('actionPlanCreateModel');
         agent
             .post(`/api/v1/action-plans/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.ActionPlan.id, 'ActionPlanId_1');
-                expect(response.body.Data.ActionPlan).to.have.property('PatientUserId');
-                expect(response.body.Data.ActionPlan).to.have.property('Provider');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderEnrollmentId');
-                expect(response.body.Data.ActionPlan).to.have.property('Provider');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderCareplanName');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderCareplanCode');
-                expect(response.body.Data.ActionPlan).to.have.property('GoalId');
-                expect(response.body.Data.ActionPlan).to.have.property('Title');
-                expect(response.body.Data.ActionPlan).to.have.property('ScheduledEndDate');
-               
-                setTestData(response.body.Data.ActionPlan.id, 'ActionPlanId_1');
+            .expect((response) => {
+                setActionPlanId(response, 'actionPlanId_1');
+                expectActionPlanProperties(response);
 
-                expect(response.body.Data.ActionPlan.PatientUserId).to.equal(getTestData("ActionPlanCreateModel").PatientUserId);
-                expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData("ActionPlanCreateModel").Provider);
-                expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData("ActionPlanCreateModel").Provider);
-                expect(response.body.Data.ActionPlan.ProviderCareplanName).to.equal(getTestData("ActionPlanCreateModel").ProviderCareplanName);
-                expect(response.body.Data.ActionPlan.ProviderCareplanCode).to.equal(getTestData("ActionPlanCreateModel").ProviderCareplanCode);
-                expect(response.body.Data.ActionPlan.GoalId).to.equal(getTestData("ActionPlanCreateModel").GoalId);
-                expect(response.body.Data.ActionPlan.Title).to.equal(getTestData("ActionPlanCreateModel").Title);
-
+                expectActionPlanPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('72:02 -> Get selected action plans', function(done) {
-     
+    it('72:02 -> Get selected action plans', function (done) {
         agent
-            .get(`/api/v1/action-plans/for-patient/${getTestData('PatientUserId')}`)
+            .get(`/api/v1/action-plans/for-patient/${getTestData('patientUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
-                
             })
             .expect(200, done);
     });
 
-    it('72:03 -> Search action plan records', function(done) {
+    it('72:03 -> Search action plan records', function (done) {
         loadActionPlanQueryString();
         agent
             .get(`/api/v1/action-plans/search${loadActionPlanQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body.Data.ActionPlanRecords).to.have.property('TotalCount');
                 expect(response.body.Data.ActionPlanRecords).to.have.property('RetrievedCount');
                 expect(response.body.Data.ActionPlanRecords).to.have.property('PageIndex');
@@ -83,169 +63,171 @@ describe('72 - Action plan tests', function() {
             .expect(200, done);
     });
 
-    it('72:04 -> Update action plan', function(done) {
+    it('72:04 -> Update action plan', function (done) {
         loadActionPlanUpdateModel();
-        const updateModel = getTestData("ActionPlanUpdateModel");
+        const updateModel = getTestData('actionPlanUpdateModel');
         agent
-            .put(`/api/v1/action-plans/${getTestData('ActionPlanId_1')}`)
+            .put(`/api/v1/action-plans/${getTestData('actionPlanId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
-            .expect(response => {
-                expect(response.body.Data.ActionPlan).to.have.property('PatientUserId');
-                expect(response.body.Data.ActionPlan).to.have.property('Provider');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderEnrollmentId');
-                expect(response.body.Data.ActionPlan).to.have.property('Provider');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderCareplanName');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderCareplanCode');
-                expect(response.body.Data.ActionPlan).to.have.property('GoalId');
-                expect(response.body.Data.ActionPlan).to.have.property('Title');
-                expect(response.body.Data.ActionPlan).to.have.property('ScheduledEndDate');
+            .expect((response) => {
+                expectActionPlanProperties(response);
 
-                expect(response.body.Data.ActionPlan.PatientUserId).to.equal(getTestData("ActionPlanUpdateModel").PatientUserId);
-                expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData("ActionPlanUpdateModel").Provider);
-                expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData("ActionPlanUpdateModel").Provider);
-                expect(response.body.Data.ActionPlan.ProviderCareplanName).to.equal(getTestData("ActionPlanUpdateModel").ProviderCareplanName);
-                expect(response.body.Data.ActionPlan.ProviderCareplanCode).to.equal(getTestData("ActionPlanUpdateModel").ProviderCareplanCode);
-                expect(response.body.Data.ActionPlan.GoalId).to.equal(getTestData("ActionPlanUpdateModel").GoalId);
-                expect(response.body.Data.ActionPlan.Title).to.equal(getTestData("ActionPlanUpdateModel").Title);
-
+                expect(response.body.Data.ActionPlan.PatientUserId).to.equal(
+                    getTestData('actionPlanUpdateModel').PatientUserId
+                );
+                expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData('actionPlanUpdateModel').Provider);
+                expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData('actionPlanUpdateModel').Provider);
+                expect(response.body.Data.ActionPlan.ProviderCareplanName).to.equal(
+                    getTestData('actionPlanUpdateModel').ProviderCareplanName
+                );
+                expect(response.body.Data.ActionPlan.ProviderCareplanCode).to.equal(
+                    getTestData('actionPlanUpdateModel').ProviderCareplanCode
+                );
+                expect(response.body.Data.ActionPlan.GoalId).to.equal(getTestData('actionPlanUpdateModel').GoalId);
+                expect(response.body.Data.ActionPlan.Title).to.equal(getTestData('actionPlanUpdateModel').Title);
             })
             .expect(200, done);
     });
 
-    it('72:05 -> Delete action plan', function(done) {
-        
+    it('72:05 -> Delete action plan', function (done) {
         agent
-            .delete(`/api/v1/action-plans/${getTestData('ActionPlanId_1')}`)
+            .delete(`/api/v1/action-plans/${getTestData('actionPlanId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
             })
             .expect(200, done);
     });
 
-    it('Create action plan again', function(done) {
+    it('Create action plan again', function (done) {
         loadActionPlanCreateModel();
-        const createModel = getTestData("ActionPlanCreateModel");
+        const createModel = getTestData('actionPlanCreateModel');
         agent
             .post(`/api/v1/action-plans/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.ActionPlan.id, 'ActionPlanId');
-                expect(response.body.Data.ActionPlan).to.have.property('PatientUserId');
-                expect(response.body.Data.ActionPlan).to.have.property('Provider');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderEnrollmentId');
-                expect(response.body.Data.ActionPlan).to.have.property('Provider');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderCareplanName');
-                expect(response.body.Data.ActionPlan).to.have.property('ProviderCareplanCode');
-                expect(response.body.Data.ActionPlan).to.have.property('GoalId');
-                expect(response.body.Data.ActionPlan).to.have.property('Title');
-                expect(response.body.Data.ActionPlan).to.have.property('ScheduledEndDate');
-             
-                setTestData(response.body.Data.ActionPlan.id, 'ActionPlanId');
+            .expect((response) => {
+                setActionPlanId(response, 'actionPlanId');
+                expectActionPlanProperties(response);
 
-                expect(response.body.Data.ActionPlan.PatientUserId).to.equal(getTestData("ActionPlanCreateModel").PatientUserId);
-                expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData("ActionPlanCreateModel").Provider);
-                expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData("ActionPlanCreateModel").Provider);
-                expect(response.body.Data.ActionPlan.ProviderCareplanName).to.equal(getTestData("ActionPlanCreateModel").ProviderCareplanName);
-                expect(response.body.Data.ActionPlan.ProviderCareplanCode).to.equal(getTestData("ActionPlanCreateModel").ProviderCareplanCode);
-                expect(response.body.Data.ActionPlan.GoalId).to.equal(getTestData("ActionPlanCreateModel").GoalId);
-                expect(response.body.Data.ActionPlan.Title).to.equal(getTestData("ActionPlanCreateModel").Title);
-
+                expectActionPlanPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('72:06 -> Negative - Create action plan', function(done) {
+    it('72:06 -> Negative - Create action plan', function (done) {
         loadNegativeActionPlanCreateModel();
-        const createModel = getTestData("NegativeActionPlanCreateModel");
+        const createModel = getTestData('negativeActionPlanCreateModel');
         agent
             .post(`/api/v1/action-plans/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
-            .expect(500, done);
+            .expect(403, done);
     });
 
-    it('72:07 -> Negative - Get selected action plans', function(done) {
-     
+    it('72:07 -> Negative - Get selected action plans', function (done) {
         agent
-            .get(`/api/v1/action-plans/for-patient/${getTestData('PatientUserId')}`)
+            .get(`/api/v1/action-plans/for-patient/${getTestData('patientUserId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                
             })
             .expect(401, done);
     });
 
-    it('72:08 -> Negative - Update action plan', function(done) {
+    it('72:08 -> Negative - Update action plan', function (done) {
         loadActionPlanUpdateModel();
-        const updateModel = getTestData("ActionPlanUpdateModel");
+        const updateModel = getTestData('actionPlanUpdateModel');
         agent
-            .put(`/api/v1/action-plans/${getTestData('ActionPlanId_1')}`)
+            .put(`/api/v1/action-plans/${getTestData('actionPlanId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .send(updateModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
             .expect(404, done);
     });
-
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadActionPlanCreateModel = async (
-) => {
+function setActionPlanId(response, key) {
+    setTestData(response.body.Data.ActionPlan.id, key);
+}
+
+function expectActionPlanProperties(response) {
+    expect(response.body.Data.ActionPlan).to.have.property('PatientUserId');
+    expect(response.body.Data.ActionPlan).to.have.property('Provider');
+    expect(response.body.Data.ActionPlan).to.have.property('ProviderEnrollmentId');
+    expect(response.body.Data.ActionPlan).to.have.property('Provider');
+    expect(response.body.Data.ActionPlan).to.have.property('ProviderCareplanName');
+    expect(response.body.Data.ActionPlan).to.have.property('ProviderCareplanCode');
+    expect(response.body.Data.ActionPlan).to.have.property('GoalId');
+    expect(response.body.Data.ActionPlan).to.have.property('Title');
+    expect(response.body.Data.ActionPlan).to.have.property('ScheduledEndDate');
+}
+
+function expectActionPlanPropertyValues(response) {
+    expect(response.body.Data.ActionPlan.PatientUserId).to.equal(getTestData('actionPlanCreateModel').PatientUserId);
+    expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData('actionPlanCreateModel').Provider);
+    expect(response.body.Data.ActionPlan.Provider).to.equal(getTestData('actionPlanCreateModel').Provider);
+    expect(response.body.Data.ActionPlan.ProviderCareplanName).to.equal(
+        getTestData('actionPlanCreateModel').ProviderCareplanName
+    );
+    expect(response.body.Data.ActionPlan.ProviderCareplanCode).to.equal(
+        getTestData('actionPlanCreateModel').ProviderCareplanCode
+    );
+    expect(response.body.Data.ActionPlan.GoalId).to.equal(getTestData('actionPlanCreateModel').GoalId);
+    expect(response.body.Data.ActionPlan.Title).to.equal(getTestData('actionPlanCreateModel').Title);
+}
+
+export const loadActionPlanCreateModel = async () => {
     const model = {
-        PatientUserId        : getTestData("PatientUserId"),
-        Source               : faker.lorem.word(),
-        ProviderEnrollmentId : faker.number.int(500),
-        Provider             : faker.lorem.word(),
-        ProviderCareplanName : faker.lorem.word(),
-        ProviderCareplanCode : faker.lorem.word(),
-        GoalId               : getTestData("GoalId"),
-        Title                : faker.lorem.words(5),
-        ScheduledEndDate     : faker.date.anytime()
+        PatientUserId: getTestData('patientUserId'),
+        Source: faker.lorem.word(),
+        ProviderEnrollmentId: faker.number.int(500),
+        Provider: faker.lorem.word(),
+        ProviderCareplanName: faker.lorem.word(),
+        ProviderCareplanCode: faker.lorem.word(),
+        GoalId: getTestData('goalId'),
+        Title: faker.lorem.words(5),
+        ScheduledEndDate: faker.date.anytime(),
     };
-    setTestData(model, "ActionPlanCreateModel");
+    setTestData(model, 'actionPlanCreateModel');
 };
 
-export const loadActionPlanUpdateModel = async (
-) => {
+export const loadActionPlanUpdateModel = async () => {
     const model = {
-        PatientUserId        : getTestData("PatientUserId"),
-        Source               : faker.lorem.word(),
-        ProviderEnrollmentId : faker.number.int(500),
-        Provider             : faker.lorem.word(),
-        ProviderCareplanName : faker.lorem.word(),
-        ProviderCareplanCode : faker.lorem.word(),
-        GoalId               : getTestData("GoalId"),
-        Title                : faker.lorem.words(5),
-        ScheduledEndDate     : faker.date.anytime()
+        PatientUserId: getTestData('patientUserId'),
+        Source: faker.lorem.word(),
+        ProviderEnrollmentId: faker.number.int(500),
+        Provider: faker.lorem.word(),
+        ProviderCareplanName: faker.lorem.word(),
+        ProviderCareplanCode: faker.lorem.word(),
+        GoalId: getTestData('goalId'),
+        Title: faker.lorem.words(5),
+        ScheduledEndDate: faker.date.anytime(),
     };
-    setTestData(model, "ActionPlanUpdateModel");
+    setTestData(model, 'actionPlanUpdateModel');
 };
 
 function loadActionPlanQueryString() {
@@ -254,15 +236,14 @@ function loadActionPlanQueryString() {
     return queryString;
 }
 
-export const loadNegativeActionPlanCreateModel = async (
-) => {
+export const loadNegativeActionPlanCreateModel = async () => {
     const model = {
-        Provider             : faker.lorem.word(),
-        ProviderCareplanName : faker.lorem.word(),
-        ProviderCareplanCode : faker.lorem.word(),
-        GoalId               : getTestData("GoalId"),
-        Title                : faker.lorem.words(5),
-        ScheduledEndDate     : faker.date.anytime()
+        Provider: faker.lorem.word(),
+        ProviderCareplanName: faker.lorem.word(),
+        ProviderCareplanCode: faker.lorem.word(),
+        GoalId: getTestData('goalId'),
+        Title: faker.lorem.words(5),
+        ScheduledEndDate: faker.date.anytime(),
     };
-    setTestData(model, "NegativeActionPlanCreateModel");
+    setTestData(model, 'negativeActionPlanCreateModel');
 };

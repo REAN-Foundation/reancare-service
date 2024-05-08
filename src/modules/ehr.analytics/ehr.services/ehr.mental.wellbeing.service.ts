@@ -45,16 +45,16 @@ export class EHRMentalWellBeingService {
     };
 
     public async addEHRSleepForAppNames(r: SleepDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordSleep(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordSleep(r, null);
         }
     }
 
     public async addEHRMeditationForAppNames(r: MeditationDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordMeditation(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordMeditation(r, null);
         }
     }
 

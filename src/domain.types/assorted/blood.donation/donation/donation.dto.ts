@@ -6,6 +6,7 @@ import { BridgeDto } from "../bridge/bridge.dto";
 export interface DonationDto {
     id?                       : uuid;
     PatientUserId?            : uuid;
+    TenantId?                 : uuid;
     NetworkId?                : uuid;
     EmergencyDonor?           : uuid;
     VolunteerOfEmergencyDonor?: uuid;

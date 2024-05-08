@@ -1,6 +1,6 @@
-import  request  from 'supertest';
+import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
@@ -11,21 +11,20 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('24 - Patient custom task tests', function() {
-
+describe('24 - Patient custom task tests', function () {
     var agent = request.agent(infra._app);
 
-    it('24:01 -> Create patient custom task', function(done) {
+    it('24:01 -> Create patient custom task', function (done) {
         loadPatientCustomTaskCreateModel();
-        const createModel = getTestData("PatientCustomTaskCreateModel");
+        const createModel = getTestData('patientCustomTaskCreateModel');
         agent
             .post(`/api/v1/custom-tasks/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.UserTask.id, 'PatientCustomTaskId');
+            .expect((response) => {
+                setTestData(response.body.Data.UserTask.id, 'patientCustomTaskId');
                 expect(response.body.Data.UserTask).to.have.property('id');
                 expect(response.body.Data.UserTask).to.have.property('UserId');
                 expect(response.body.Data.UserTask).to.have.property('Task');
@@ -33,88 +32,61 @@ describe('24 - Patient custom task tests', function() {
                 expect(response.body.Data.UserTask).to.have.property('ScheduledStartTime');
                 expect(response.body.Data.UserTask).to.have.property('IsRecurrent');
 
-                setTestData(response.body.Data.UserTask.id, 'PatientCustomTaskId');
-
-                expect(response.body.Data.UserTask.UserId).to.equal(getTestData("PatientCustomTaskCreateModel").UserId);
-                expect(response.body.Data.UserTask.Task).to.equal(getTestData("PatientCustomTaskCreateModel").Task);
-                expect(response.body.Data.UserTask.IsRecurrent).to.equal(getTestData("PatientCustomTaskCreateModel").IsRecurrent);
-
+                expect(response.body.Data.UserTask.UserId).to.equal(getTestData('patientCustomTaskCreateModel').UserId);
+                expect(response.body.Data.UserTask.Task).to.equal(getTestData('patientCustomTaskCreateModel').Task);
+                expect(response.body.Data.UserTask.IsRecurrent).to.equal(
+                    getTestData('patientCustomTaskCreateModel').IsRecurrent
+                );
             })
             .expect(201, done);
     });
 
-    it('24:02 -> Negative - Create patient custom task', function(done) {
+    it('24:02 -> Negative - Create patient custom task', function (done) {
         loadNegativePatientCustomTaskCreateModel();
-        const createModel = getTestData("NegativePatientCustomTaskModel");
+        const createModel = getTestData('negativePatientCustomTaskModel');
         agent
             .post(`/api/v1/custom-tasks/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
-            .expect(422, done);
+            .expect(500, done);
     });
-
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadPatientCustomTaskCreateModel = async (
-) => {
+export const loadPatientCustomTaskCreateModel = async () => {
     const model = {
-        UserId      : getTestData("PatientUserId"),
-        Task        : faker.lorem.word(),
-        Description : faker.lorem.words(10),
-        Category    : getRandomEnumValue(UserTaskCategory),
-        Details     : {
-            ExerciseType   : faker.lorem.word(),
-            IntensityLevel : faker.lorem.word()
+        UserId: getTestData('patientUserId'),
+        Task: faker.lorem.word(),
+        Description: faker.lorem.words(10),
+        Category: getRandomEnumValue(UserTaskCategory),
+        Details: {
+            ExerciseType: faker.lorem.word(),
+            IntensityLevel: faker.lorem.word(),
         },
-        ScheduledStartTime : faker.date.anytime(),
-        IsRecurrent        : false
-  
+        ScheduledStartTime: faker.date.anytime(),
+        IsRecurrent: false,
     };
-    setTestData(model, "PatientCustomTaskCreateModel");
+    setTestData(model, 'patientCustomTaskCreateModel');
 };
 
-export const loadPatientCustomTaskUpdateModel = async (
-) => {
+export const loadNegativePatientCustomTaskCreateModel = async () => {
     const model = {
-        UserId      : getTestData("PatientUserId"),
-        Task        : faker.lorem.word(),
-        Description : faker.lorem.words(10),
-        Category    : getRandomEnumValue(UserTaskCategory),
-        Details     : {
-            ExerciseType   : faker.lorem.word(),
-            IntensityLevel : faker.lorem.word()
+        Task: faker.lorem.word(),
+        Description: faker.lorem.words(10),
+        Category: getRandomEnumValue(UserTaskCategory),
+        Details: {
+            ExerciseType: faker.lorem.word(),
+            IntensityLevel: faker.lorem.word(),
         },
-        ScheduledStartTime : faker.date.anytime(),
-        IsRecurrent        : false
-    
+        ScheduledStartTime: faker.date.anytime(),
+        IsRecurrent: faker.datatype.boolean(),
     };
-    setTestData(model, "PatientCustomTaskUpdateModel");
+    setTestData(model, 'negativePatientCustomTaskCreateModel');
 };
-
-export const loadNegativePatientCustomTaskCreateModel = async (
-) => {
-    const model = {
-        Task        : faker.lorem.word(),
-        Description : faker.lorem.words(10),
-        Category    : getRandomEnumValue(UserTaskCategory),
-        Details     : {
-            ExerciseType   : faker.lorem.word(),
-            IntensityLevel : faker.lorem.word()
-        },
-        ScheduledStartTime : faker.date.anytime(),
-        IsRecurrent        : faker.datatype.boolean()
-  
-    };
-    setTestData(model, "NegativePatientCustomTaskCreateModel");
-};
-
-

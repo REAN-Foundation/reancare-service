@@ -4,6 +4,7 @@ import { AssessmentType } from "./assessment.types";
 export interface AssessmentTemplateDto {
     id?                           : uuid;
     DisplayCode?                  : string;
+    TenantId                     ?: uuid;
     Type                          : AssessmentType;
     Title                         : string;
     Description?                  : string;

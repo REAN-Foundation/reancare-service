@@ -19,8 +19,8 @@ export class CustomQueryValidator extends BaseValidator {
             Tags        : request.body.Tags ?? null,
             Format      : request.body.Format ?? null,
             Description : request.body.Description ?? null,
-            UserId      : request.body.UserId ?? null,
-            TenantId    : request.body.TenantId ?? null
+            UserId      : request.body.UserId ?? request.currentUser.UserId,
+            TenantId    : request.body.TenantId ?? request.currentUser.TenantId
         };
 
         return executeQueryDomainModel;

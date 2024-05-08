@@ -6,6 +6,7 @@ import { uuid } from './../../../../domain.types/miscellaneous/system.types';
 export interface DonationDomainModel {
     id?                       : uuid;
     PatientUserId?            : uuid;
+    TenantId?                 : uuid;
     NetworkId?                : uuid;
     EmergencyDonor?           : uuid;
     VolunteerOfEmergencyDonor?: uuid;

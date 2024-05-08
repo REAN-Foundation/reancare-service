@@ -8,7 +8,7 @@ import { EnrollmentDomainModel } from "../../../../domain.types/clinical/carepla
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../../../domain.types/clinical/careplan/participant/participant.domain.model";
-import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
+import { ProgressStatus, uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { UserActionType, UserTaskCategory } from "../../../../domain.types/users/user.task/user.task.types";
 import {
     QueryResponseType,
@@ -30,6 +30,7 @@ import { UserTaskDomainModel } from "../../../../domain.types/users/user.task/us
 import { TimeHelper } from "../../../../common/time.helper";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 import { Injector } from "../../../../startup/injector";
+import { UserTaskSearchFilters } from "../../../../domain.types/users/user.task/user.task.search.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -233,6 +234,15 @@ export class AhaCareplanService implements ICareplanService {
                 const actionId = await this.createInitialAssessmentTask(model, index, displayCode);
                 Logger.instance().log(`Action id for assessment is ${actionId}`);
                 index++;
+            }
+        }
+
+        if (model.PlanCode === 'HFMotivator') {
+            var assessmentTemplateName = 'Medical Profile Details';
+            var taskExist = await this.checkIfMedicalProfileTaskExist(model.PatientUserId, assessmentTemplateName);
+            if (taskExist) {
+                const actionId = await this.createAssessmentTask(model.PatientUserId, assessmentTemplateName);
+                Logger.instance().log(`Action id for assessment is ${actionId}`);
             }
         }
 
@@ -1041,6 +1051,70 @@ export class AhaCareplanService implements ICareplanService {
     scheduleDailyHighRiskCareplan(): Promise<void> {
         throw new Error("Method not implemented.");
     }
+
+    private checkIfMedicalProfileTaskExist = async (
+        patientUserId: uuid,
+        templateName : string
+        ) => {
+
+            const filters: UserTaskSearchFilters = {
+                UserId       : patientUserId,
+                Task         : templateName,
+                OrderBy      : 'CreatedAt',
+                Order        : 'descending',
+                ItemsPerPage : 1
+            };
+        
+            const userTask = await this._userTaskService.search(filters);
+            if (userTask.TotalCount === 0) {
+                return true;
+            } else {
+                return false;
+            }
+            
+    };
+
+    private createAssessmentTask = async (
+        patientUserId: uuid,
+        templateName: string): Promise<any> => {
+
+        const templates = await this._assessmentTemplateRepo.search({ Title: templateName });
+        if (templates.Items.length === 0) {
+            return null;
+        }
+        const template = templates.Items[0];
+
+        const templateId: string = template?.id;
+        const assessmentBody : AssessmentDomainModel = {
+            PatientUserId        : patientUserId,
+            Title                : template?.Title,
+            Type                 : template?.Type,
+            AssessmentTemplateId : templateId,
+            ScoringApplicable    : template.ScoringApplicable ?? false,
+            ScheduledDateString  : new Date().toISOString()
+                .split('T')[0]
+        };
+
+        const assessment = await this._assessmentService.create(assessmentBody);
+        const assessmentId = assessment.id;
+
+        var scheduledEndTime = TimeHelper.addDuration(new Date(), 6, DurationType.Month);
+
+        const userTaskBody : UserTaskDomainModel = {
+            UserId             : patientUserId,
+            Task               : templateName,
+            Category           : UserTaskCategory.Assessment,
+            ActionType         : UserActionType.Careplan,
+            ActionId           : assessmentId,
+            ScheduledStartTime : new Date(),
+            ScheduledEndTime   : scheduledEndTime,
+            IsRecurrent        : false
+        };
+
+        const userTask = await this._userTaskService.create(userTaskBody);
+
+        return userTask.ActionId;
+    };
 
     //#endregion
 

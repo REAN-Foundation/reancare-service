@@ -5,10 +5,11 @@ import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { CourseModuleService } from '../../../../services/educational/learning/course.module.service';
 import { Injector } from '../../../../startup/injector';
 import { CourseModuleValidator } from './course.module.validator';
+import { BaseController } from '../../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CourseModuleController {
+export class CourseModuleController extends BaseController {
 
     //#region member variables and constructors
 

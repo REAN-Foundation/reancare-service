@@ -54,6 +54,7 @@ export class DonorMapper {
             AcceptorUserId   : donor.AcceptorUserId,
             LastDonationDate : donor.LastDonationDate,
             DonorType        : donor.DonorType,
+            TenantId         : donor.TenantId,
             MedIssues        : medIssues,
             DisplayName      : null,
             UserName         : null,

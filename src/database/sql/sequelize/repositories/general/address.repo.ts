@@ -17,6 +17,7 @@ export class AddressRepo implements IAddressRepo {
         try {
             const entity = {
                 Type        : addressDomainModel.Type,
+                TenantId    : addressDomainModel.TenantId ?? null,
                 AddressLine : addressDomainModel.AddressLine ?? null,
                 City        : addressDomainModel.City ?? null,
                 District    : addressDomainModel.District ?? null,

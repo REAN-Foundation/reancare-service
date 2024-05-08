@@ -6,7 +6,8 @@ import { SymptomAssessmentTemplateDto } from "./symptom.assessment.template.dto"
 
 export interface SymptomAssessmentTemplateSearchFilters extends BaseSearchFilters{
     Title?        : string;
-    Tag ?        : string;
+    TenantId?     : uuid;
+    Tag ?         : string;
     SymptomName?  : string;
     SymptomTypeId?: uuid;
 }

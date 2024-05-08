@@ -1,6 +1,7 @@
 
 export interface AddressDomainModel {
     id?          : string;
+    TenantId?    : string;
     Type         : string;
     AddressLine? : string;
     City?        : string;

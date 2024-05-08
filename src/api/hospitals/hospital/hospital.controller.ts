@@ -8,10 +8,11 @@ import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { HospitalValidator } from './hospital.validator';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HospitalController {
+export class HospitalController extends BaseController{
 
     //#region member variables and constructors
 
@@ -31,7 +32,6 @@ export class HospitalController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const domainModel = await this._validator.create(request);
             const hospital = await this._service.create(domainModel);
             if (hospital == null) {
@@ -49,7 +49,6 @@ export class HospitalController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const hospital = await this._service.getById(id);
             if (hospital == null) {
@@ -67,7 +66,6 @@ export class HospitalController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -85,7 +83,6 @@ export class HospitalController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHospital = await this._service.getById(id);
@@ -108,7 +105,6 @@ export class HospitalController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHospital = await this._service.getById(id);
             if (existingHospital == null) {
@@ -130,7 +126,6 @@ export class HospitalController {
 
     getHospitalsForHealthSystem = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const healthSystemId: uuid = await this._validator.getParamUuid(request, 'healthSystemId');
             const hospitals = await this._service.getHospitalsForHealthSystem(healthSystemId);
 

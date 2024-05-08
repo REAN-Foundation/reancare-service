@@ -25,7 +25,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
-            TenantId                    : request.body.TenantId ?? null,
+            TenantId                    : request.body.TenantId ?? request.currentUser.TenantId,
         };
 
         return model;

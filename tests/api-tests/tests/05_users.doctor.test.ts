@@ -14,53 +14,47 @@ describe('05 - Doctor tests', function () {
 
     it('05:01 -> Register doctor - with only a phone number', function (done) {
         loadDoctorPhoneCreateModel();
-        const createModel = getTestData('DoctorPhoneCreateModel');
+        const createModel = getTestData('doctorPhoneCreateModel');
         agent
             .post(`/api/v1/doctors/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Doctor.id, 'DoctorPhoneId');
-                setTestData(response.body.Data.Doctor.User.id, 'DoctorUserPhoneId');
-                setTestData(response.body.Data.Doctor.User.Person.id, 'DoctorPersonPhoneId');
+                setTestData(response.body.Data.Doctor.id, 'doctorPhoneId');
+                setTestData(response.body.Data.Doctor.User.id, 'doctorUserPhoneId');
+                setTestData(response.body.Data.Doctor.User.Person.id, 'doctorPersonPhoneId');
                 expect(response.body.Data.Doctor.User.Person).to.have.property('Phone');
 
-                setTestData(response.body.Data.Doctor.id, 'DoctorPhoneId');
+                setTestData(response.body.Data.Doctor.id, 'doctorPhoneId');
 
-                expect(response.body.Data.Doctor.User.Person.Phone).to.equal(getTestData('DoctorPhoneCreateModel').Phone);
+                expect(response.body.Data.Doctor.User.Person.Phone).to.equal(getTestData('doctorPhoneCreateModel').Phone);
             })
             .expect(201, done);
     });
 
     it('Create Doctor', function (done) {
         loadDoctorCreateModel();
-        const createModel = getTestData('DoctorCreateModel');
+        const createModel = getTestData('doctorCreateModel');
         agent
             .post(`/api/v1/doctors/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.Doctor.id, 'DoctorId');
-                setTestData(response.body.Data.Doctor.User.id, 'DoctorUserId_1');
-                setTestData(response.body.Data.Doctor.User.Person.id, 'DoctorPersonId_1');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('id');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('FirstName');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('Email');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('Phone');
+                setDoctorId(response, 'doctorId');
+                setDoctorUserId(response, 'doctorUserId_1');
+                setDoctorPersonId(response, 'doctorPersonId_1');
+                expectDoctorProperties(response);
 
-                setTestData(response.body.Data.Doctor.User.Person.id, 'DoctorId');
-
-                expect(response.body.Data.Doctor.User.Person.FirstName).to.equal(getTestData('DoctorCreateModel').FirstName);
-                expect(response.body.Data.Doctor.User.Person.Phone).to.equal(getTestData('DoctorCreateModel').Phone);
+                expectDoctorPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('05:02 -> Create doctor with phone & password', function (done) {
         loadDoctorCreateWithPhoneModel();
-        const createModel = getTestData('DoctorCreateWithPhoneModel');
+        const createModel = getTestData('doctorCreateWithPhoneModel');
         agent
             .post(`/api/v1/doctors/`)
             .set('Content-Type', 'application/json')
@@ -75,7 +69,7 @@ describe('05 - Doctor tests', function () {
 
     it('05:03 -> Register doctor- with same phone number - should fail', function (done) {
         loadDoctorFailCreateModel();
-        const createModel = getTestData('DoctorFailCreateModel');
+        const createModel = getTestData('doctorFailCreateModel');
         agent
             .post(`/api/v1/doctors/`)
             .set('Content-Type', 'application/json')
@@ -90,7 +84,7 @@ describe('05 - Doctor tests', function () {
 
     it('05:04 -> Doctor login with password', function (done) {
         loadDoctorLoginModel();
-        const createModel = getTestData('DoctorLoginModel');
+        const createModel = getTestData('doctorLoginModel');
         agent
             .post(`/api/v1/users/login-with-password/`)
             .set('Content-Type', 'application/json')
@@ -100,25 +94,21 @@ describe('05 - Doctor tests', function () {
                 assert.exists(response.body.Data.AccessToken, 'Access token is returned.');
                 assert.exists(response.body.Data.User, 'Login user details exist.');
                 expect(response.body.Data.User).to.have.property('id');
-                setTestData(response.body.Data.AccessToken, 'DoctorJwt');
-                setTestData(response.body.Data.User.id, 'DoctorUserId');
-                setTestData(response.body.Data.User.Person.id, 'DoctorPersonId');
+                setTestData(response.body.Data.AccessToken, 'doctorJwt');
+                setTestData(response.body.Data.User.id, 'doctorUserId');
+                setTestData(response.body.Data.User.Person.id, 'doctorPersonId');
             })
             .expect(200, done);
     });
 
     it('05:05 -> Get doctor by id', function (done) {
         agent
-            .get(`/api/v1/doctors/${getTestData('DoctorUserId')}`)
+            .get(`/api/v1/doctors/${getTestData('doctorUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
-                expect(response.body.Data.Doctor.User.Person).to.have.property('id');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('FirstName');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('Email');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('Phone');
-
+                expectDoctorProperties(response);
             })
             .expect(200, done);
     });
@@ -129,7 +119,7 @@ describe('05 - Doctor tests', function () {
             .get(`/api/v1/doctors/search${loadDoctorQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body.Data.Doctors).to.have.property('TotalCount');
                 expect(response.body.Data.Doctors).to.have.property('RetrievedCount');
@@ -145,26 +135,47 @@ describe('05 - Doctor tests', function () {
 
     it('05:07 -> Update doctor', function (done) {
         loadDoctorUpdateModel();
-        const updateModel = getTestData('DoctorUpdateModel');
+        const updateModel = getTestData('doctorUpdateModel');
         agent
-            .put(`/api/v1/doctors/${getTestData('DoctorUserId')}`)
+            .put(`/api/v1/doctors/${getTestData('doctorUserId')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .send(updateModel)
             .expect((response) => {
-                expect(response.body.Data.Doctor.User.Person).to.have.property('id');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('FirstName');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('Email');
-                expect(response.body.Data.Doctor.User.Person).to.have.property('Phone');
+                expectDoctorProperties(response);
 
-                expect(response.body.Data.Doctor.User.Person.FirstName).to.equal(getTestData('DoctorUpdateModel').FirstName);
+                expect(response.body.Data.Doctor.User.Person.FirstName).to.equal(getTestData('doctorUpdateModel').FirstName);
             })
             .expect(200, done);
     });
 });
 
 ///////////////////////////////////////////////////////////////////////////
+
+function setDoctorId(response, key) {
+    setTestData(response.body.Data.Doctor.id, key);
+}
+
+function setDoctorUserId(response, key) {
+    setTestData(response.body.Data.Doctor.User.id, key);
+}
+
+function setDoctorPersonId(response, key) {
+    setTestData(response.body.Data.Doctor.User.Person.id, key);
+}
+
+function expectDoctorProperties(response) {
+    expect(response.body.Data.Doctor.User.Person).to.have.property('id');
+    expect(response.body.Data.Doctor.User.Person).to.have.property('FirstName');
+    expect(response.body.Data.Doctor.User.Person).to.have.property('Email');
+    expect(response.body.Data.Doctor.User.Person).to.have.property('Phone');
+}
+
+function expectDoctorPropertyValues(response) {
+    expect(response.body.Data.Doctor.User.Person.FirstName).to.equal(getTestData('doctorCreateModel').FirstName);
+    expect(response.body.Data.Doctor.User.Person.Phone).to.equal(getTestData('doctorCreateModel').Phone);
+}
 
 // const firstDoctorPhoneNumber: string = faker.phone.number();
 
@@ -180,9 +191,9 @@ export const loadDoctorPhoneCreateModel = async () => {
     const model = {
         // Phone: faker.phone.number(),
         Phone: '+91-1000000020',
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
     };
-    setTestData(model, 'DoctorPhoneCreateModel');
+    setTestData(model, 'doctorPhoneCreateModel');
 };
 
 export const loadDoctorCreateModel = async () => {
@@ -190,18 +201,18 @@ export const loadDoctorCreateModel = async () => {
         FirstName: faker.person.firstName(),
         Email: faker.internet.exampleEmail(),
         Phone: firstDoctorPhoneNumber,
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
     };
-    setTestData(model, 'DoctorCreateModel');
+    setTestData(model, 'doctorCreateModel');
 };
 
 export const loadDoctorCreateWithPhoneModel = async () => {
     const model = {
         Phone: secondDoctorPhoneNumber,
         Password: doctorPassword,
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
     };
-    setTestData(model, 'DoctorCreateWithPhoneModel');
+    setTestData(model, 'doctorCreateWithPhoneModel');
 };
 
 export const loadDoctorLoginModel = async () => {
@@ -209,9 +220,9 @@ export const loadDoctorLoginModel = async () => {
         Phone: secondDoctorPhoneNumber,
         Password: doctorPassword,
         LoginRoleId: getTestData('doctorRoleId'),
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
     };
-    setTestData(model, 'DoctorLoginModel');
+    setTestData(model, 'doctorLoginModel');
 };
 
 export const loadDoctorFailCreateModel = async () => {
@@ -220,16 +231,16 @@ export const loadDoctorFailCreateModel = async () => {
         Email: faker.internet.exampleEmail(),
         Phone: firstDoctorPhoneNumber,
     };
-    setTestData(model, 'DoctorFailCreateModel');
+    setTestData(model, 'doctorFailCreateModel');
 };
 
 export const loadDoctorUpdateModel = async () => {
     const model = {
         FirstName: faker.person.firstName(),
         Email: faker.internet.exampleEmail(),
-        TenantId: getTestData('TenantId'),
+        TenantId: getTestData('tenantId'),
     };
-    setTestData(model, 'DoctorUpdateModel');
+    setTestData(model, 'doctorUpdateModel');
 };
 
 function loadDoctorQueryString() {

@@ -17,7 +17,7 @@ describe('13 - Patient emergency contact tests', function () {
             .get(`/api/v1/patient-emergency-contacts/roles/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -27,96 +27,32 @@ describe('13 - Patient emergency contact tests', function () {
 
     it('13:02 -> Create emergency contact', function (done) {
         loadEmergencyContactCreateModel();
-        const createModel = getTestData('EmergencyContactCreateModel');
+        const createModel = getTestData('emergencyContactCreateModel');
         agent
             .post(`/api/v1/patient-emergency-contacts/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.EmergencyContact.id, 'EmergencyContactId_1');
-                expect(response.body.Data.EmergencyContact).to.have.property('id');
-                expect(response.body.Data.EmergencyContact).to.have.property('PatientUserId');
-                expect(response.body.Data.EmergencyContact).to.have.property('ContactPersonId');
-                expect(response.body.Data.EmergencyContact).to.have.property('ContactRelation');
-                expect(response.body.Data.EmergencyContact).to.have.property('AddressId');
-                expect(response.body.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');
-                expect(response.body.Data.EmergencyContact).to.have.property('TimeOfAvailability');
-                expect(response.body.Data.EmergencyContact).to.have.property('Description');
-                expect(response.body.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');
+                setEmergencyContactId(response, 'emergencyContactId_1');
+                expectEmergencyContactProperties(response);
 
-                setTestData(response.body.Data.EmergencyContact.id, 'EmergencyContactId_1');
-
-                expect(response.body.Data.EmergencyContact.PatientUserId).to.equal(
-                    getTestData('EmergencyContactCreateModel').PatientUserId
-                );
-                expect(response.body.Data.EmergencyContact.ContactPersonId).to.equal(
-                    getTestData('EmergencyContactCreateModel').ContactPersonId
-                );
-                expect(response.body.Data.EmergencyContact.ContactRelation).to.equal(
-                    getTestData('EmergencyContactCreateModel').ContactRelation
-                );
-                expect(response.body.Data.EmergencyContact.AddressId).to.equal(
-                    getTestData('EmergencyContactCreateModel').AddressId
-                );
-                expect(response.body.Data.EmergencyContact.IsAvailableForEmergency).to.equal(
-                    getTestData('EmergencyContactCreateModel').IsAvailableForEmergency
-                );
-                expect(response.body.Data.EmergencyContact.TimeOfAvailability).to.equal(
-                    getTestData('EmergencyContactCreateModel').TimeOfAvailability
-                );
-                expect(response.body.Data.EmergencyContact.Description).to.equal(
-                    getTestData('EmergencyContactCreateModel').Description
-                );
-                expect(response.body.Data.EmergencyContact.AdditionalPhoneNumbers).to.equal(
-                    getTestData('EmergencyContactCreateModel').AdditionalPhoneNumbers
-                );
+                expectEmergencyContactPropertyValues(response);
             })
             .expect(201, done);
     });
 
     it('13:03 -> Get emergency contact by id', function (done) {
         agent
-            .get(`/api/v1/patient-emergency-contacts/${getTestData('EmergencyContactId_1')}`)
+            .get(`/api/v1/patient-emergency-contacts/${getTestData('emergencyContactId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
-                expect(response.body.Data.EmergencyContact).to.have.property('id');
-                expect(response.body.Data.EmergencyContact).to.have.property('PatientUserId');
-                expect(response.body.Data.EmergencyContact).to.have.property('ContactPersonId');
-                expect(response.body.Data.EmergencyContact).to.have.property('ContactRelation');
-                expect(response.body.Data.EmergencyContact).to.have.property('AddressId');
-                expect(response.body.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');
-                expect(response.body.Data.EmergencyContact).to.have.property('TimeOfAvailability');
-                expect(response.body.Data.EmergencyContact).to.have.property('Description');
-                expect(response.body.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');
+                expectEmergencyContactProperties(response);
 
-                expect(response.body.Data.EmergencyContact.PatientUserId).to.equal(
-                    getTestData('EmergencyContactCreateModel').PatientUserId
-                );
-                expect(response.body.Data.EmergencyContact.ContactPersonId).to.equal(
-                    getTestData('EmergencyContactCreateModel').ContactPersonId
-                );
-                expect(response.body.Data.EmergencyContact.ContactRelation).to.equal(
-                    getTestData('EmergencyContactCreateModel').ContactRelation
-                );
-                expect(response.body.Data.EmergencyContact.AddressId).to.equal(
-                    getTestData('EmergencyContactCreateModel').AddressId
-                );
-                expect(response.body.Data.EmergencyContact.IsAvailableForEmergency).to.equal(
-                    getTestData('EmergencyContactCreateModel').IsAvailableForEmergency
-                );
-                expect(response.body.Data.EmergencyContact.TimeOfAvailability).to.equal(
-                    getTestData('EmergencyContactCreateModel').TimeOfAvailability
-                );
-                expect(response.body.Data.EmergencyContact.Description).to.equal(
-                    getTestData('EmergencyContactCreateModel').Description
-                );
-                expect(response.body.Data.EmergencyContact.AdditionalPhoneNumbers).to.equal(
-                    getTestData('EmergencyContactCreateModel').AdditionalPhoneNumbers
-                );
+                expectEmergencyContactPropertyValues(response);
             })
             .expect(200, done);
     });
@@ -127,7 +63,7 @@ describe('13 - Patient emergency contact tests', function () {
             .get(`/api/v1/patient-emergency-contacts/search${loadEmergencyContactQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body.Data.EmergencyContacts).to.have.property('TotalCount');
                 expect(response.body.Data.EmergencyContacts).to.have.property('RetrievedCount');
@@ -143,31 +79,27 @@ describe('13 - Patient emergency contact tests', function () {
 
     it('13:05 -> Update emergency contact', function (done) {
         loadEmergencyContactUpdateModel();
-        const updateModel = getTestData('EmergencyContactUpdateModel');
+        const updateModel = getTestData('emergencyContactUpdateModel');
         agent
-            .put(`/api/v1/patient-emergency-contacts/${getTestData('EmergencyContactId_1')}`)
+            .put(`/api/v1/patient-emergency-contacts/${getTestData('emergencyContactId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
             .expect((response) => {
-                expect(response.body.Data.EmergencyContact).to.have.property('id');
-                expect(response.body.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');
-                expect(response.body.Data.EmergencyContact).to.have.property('TimeOfAvailability');
-                expect(response.body.Data.EmergencyContact).to.have.property('Description');
-                expect(response.body.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');
+                expectEmergencyContactProperties(response);
 
                 expect(response.body.Data.EmergencyContact.IsAvailableForEmergency).to.equal(
-                    getTestData('EmergencyContactUpdateModel').IsAvailableForEmergency
+                    getTestData('emergencyContactUpdateModel').IsAvailableForEmergency
                 );
                 expect(response.body.Data.EmergencyContact.TimeOfAvailability).to.equal(
-                    getTestData('EmergencyContactUpdateModel').TimeOfAvailability
+                    getTestData('emergencyContactUpdateModel').TimeOfAvailability
                 );
                 expect(response.body.Data.EmergencyContact.Description).to.equal(
-                    getTestData('EmergencyContactUpdateModel').Description
+                    getTestData('emergencyContactUpdateModel').Description
                 );
                 expect(response.body.Data.EmergencyContact.AdditionalPhoneNumbers).to.equal(
-                    getTestData('EmergencyContactUpdateModel').AdditionalPhoneNumbers
+                    getTestData('emergencyContactUpdateModel').AdditionalPhoneNumbers
                 );
             })
             .expect(200, done);
@@ -175,10 +107,10 @@ describe('13 - Patient emergency contact tests', function () {
 
     it('13:06 -> Delete emergency contact', function (done) {
         agent
-            .delete(`/api/v1/patient-emergency-contacts/${getTestData('EmergencyContactId_1')}`)
+            .delete(`/api/v1/patient-emergency-contacts/${getTestData('emergencyContactId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
@@ -188,51 +120,18 @@ describe('13 - Patient emergency contact tests', function () {
 
     it('Create emergency contact again', function (done) {
         loadEmergencyContactCreateModel();
-        const createModel = getTestData('EmergencyContactCreateModel');
+        const createModel = getTestData('emergencyContactCreateModel');
         agent
             .post(`/api/v1/patient-emergency-contacts/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
             .expect((response) => {
-                setTestData(response.body.Data.EmergencyContact.id, 'EmergencyContactId');
-                expect(response.body.Data.EmergencyContact).to.have.property('id');
-                expect(response.body.Data.EmergencyContact).to.have.property('PatientUserId');
-                expect(response.body.Data.EmergencyContact).to.have.property('ContactPersonId');
-                expect(response.body.Data.EmergencyContact).to.have.property('ContactRelation');
-                expect(response.body.Data.EmergencyContact).to.have.property('AddressId');
-                expect(response.body.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');
-                expect(response.body.Data.EmergencyContact).to.have.property('TimeOfAvailability');
-                expect(response.body.Data.EmergencyContact).to.have.property('Description');
-                expect(response.body.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');
+                setEmergencyContactId(response, 'emergencyContactId');
+                expectEmergencyContactProperties(response);
 
-                setTestData(response.body.Data.EmergencyContact.id, 'EmergencyContactId');
-
-                expect(response.body.Data.EmergencyContact.PatientUserId).to.equal(
-                    getTestData('EmergencyContactCreateModel').PatientUserId
-                );
-                expect(response.body.Data.EmergencyContact.ContactPersonId).to.equal(
-                    getTestData('EmergencyContactCreateModel').ContactPersonId
-                );
-                expect(response.body.Data.EmergencyContact.ContactRelation).to.equal(
-                    getTestData('EmergencyContactCreateModel').ContactRelation
-                );
-                expect(response.body.Data.EmergencyContact.AddressId).to.equal(
-                    getTestData('EmergencyContactCreateModel').AddressId
-                );
-                expect(response.body.Data.EmergencyContact.IsAvailableForEmergency).to.equal(
-                    getTestData('EmergencyContactCreateModel').IsAvailableForEmergency
-                );
-                expect(response.body.Data.EmergencyContact.TimeOfAvailability).to.equal(
-                    getTestData('EmergencyContactCreateModel').TimeOfAvailability
-                );
-                expect(response.body.Data.EmergencyContact.Description).to.equal(
-                    getTestData('EmergencyContactCreateModel').Description
-                );
-                expect(response.body.Data.EmergencyContact.AdditionalPhoneNumbers).to.equal(
-                    getTestData('EmergencyContactCreateModel').AdditionalPhoneNumbers
-                );
+                expectEmergencyContactPropertyValues(response);
             })
             .expect(201, done);
     });
@@ -241,7 +140,7 @@ describe('13 - Patient emergency contact tests', function () {
         agent
             .get(`/api/v1/patient-emergency-contacts/roles/`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData('PatientJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -251,7 +150,7 @@ describe('13 - Patient emergency contact tests', function () {
 
     it('13:08 -> Negative - Create emergency contact', function (done) {
         loadEmergencyContactCreateModel();
-        const createModel = getTestData('EmergencyContactCreateModel');
+        const createModel = getTestData('emergencyContactCreateModel');
         agent
             .post(`/api/v1/patient-emergency-contacts/`)
             .set('Content-Type', 'application/json')
@@ -266,10 +165,10 @@ describe('13 - Patient emergency contact tests', function () {
 
     it('13:09 -> Negative - Get emergency contact by id', function (done) {
         agent
-            .get(`/api/v1/patient-emergency-contacts/${getTestData('EmergencyContactId_1')}`)
+            .get(`/api/v1/patient-emergency-contacts/${getTestData('emergencyContactId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData('AdminJwt')}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
             .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
@@ -293,18 +192,57 @@ describe('13 - Patient emergency contact tests', function () {
 
 ///////////////////////////////////////////////////////////////////////////
 
+function setEmergencyContactId(response, key) {
+    setTestData(response.body.Data.EmergencyContact.id, key);
+}
+
+function expectEmergencyContactProperties(response) {
+    expect(response.body.Data.EmergencyContact).to.have.property('id');
+    expect(response.body.Data.EmergencyContact).to.have.property('PatientUserId');
+    expect(response.body.Data.EmergencyContact).to.have.property('ContactPersonId');
+    expect(response.body.Data.EmergencyContact).to.have.property('ContactRelation');
+    expect(response.body.Data.EmergencyContact).to.have.property('AddressId');
+    expect(response.body.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');
+    expect(response.body.Data.EmergencyContact).to.have.property('TimeOfAvailability');
+    expect(response.body.Data.EmergencyContact).to.have.property('Description');
+    expect(response.body.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');
+}
+
+function expectEmergencyContactPropertyValues(response) {
+    expect(response.body.Data.EmergencyContact.PatientUserId).to.equal(
+        getTestData('emergencyContactCreateModel').PatientUserId
+    );
+    expect(response.body.Data.EmergencyContact.ContactPersonId).to.equal(
+        getTestData('emergencyContactCreateModel').ContactPersonId
+    );
+    expect(response.body.Data.EmergencyContact.ContactRelation).to.equal(
+        getTestData('emergencyContactCreateModel').ContactRelation
+    );
+    expect(response.body.Data.EmergencyContact.AddressId).to.equal(getTestData('emergencyContactCreateModel').AddressId);
+    expect(response.body.Data.EmergencyContact.IsAvailableForEmergency).to.equal(
+        getTestData('emergencyContactCreateModel').IsAvailableForEmergency
+    );
+    expect(response.body.Data.EmergencyContact.TimeOfAvailability).to.equal(
+        getTestData('emergencyContactCreateModel').TimeOfAvailability
+    );
+    expect(response.body.Data.EmergencyContact.Description).to.equal(getTestData('emergencyContactCreateModel').Description);
+    expect(response.body.Data.EmergencyContact.AdditionalPhoneNumbers).to.equal(
+        getTestData('emergencyContactCreateModel').AdditionalPhoneNumbers
+    );
+}
+
 export const loadEmergencyContactCreateModel = async () => {
     const model = {
-        PatientUserId: getTestData('PatientUserId'),
-        ContactPersonId: getTestData('PatientPersonId'),
+        PatientUserId: getTestData('patientUserId'),
+        ContactPersonId: getTestData('patientPersonId'),
         ContactRelation: faker.lorem.word(),
-        AddressId: getTestData('AddressId'),
+        AddressId: getTestData('addressId'),
         IsAvailableForEmergency: faker.datatype.boolean(),
         TimeOfAvailability: '10:00 AM - 5:00 PM',
         Description: faker.word.words(5),
         AdditionalPhoneNumbers: faker.phone.number(),
     };
-    setTestData(model, 'EmergencyContactCreateModel');
+    setTestData(model, 'emergencyContactCreateModel');
 };
 
 export const loadEmergencyContactUpdateModel = async () => {
@@ -314,7 +252,7 @@ export const loadEmergencyContactUpdateModel = async () => {
         Description: faker.word.words(5),
         AdditionalPhoneNumbers: faker.phone.number(),
     };
-    setTestData(model, 'EmergencyContactUpdateModel');
+    setTestData(model, 'emergencyContactUpdateModel');
 };
 
 function loadEmergencyContactQueryString() {

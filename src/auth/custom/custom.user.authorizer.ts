@@ -28,9 +28,14 @@ export class CustomUserAuthorizer implements IUserAuthorizer {
                 return false;
             }
 
+            // Temp solution - Needs to be refined
+            if (request.currentClient?.IsPrivileged) {
+                return true;
+            }
+
             const publicAccess = request.actionScope === ActionScope.Public;
             const optionalUserAuth = request.optionalUserAuth;
-    
+
             const currentUser = request.currentUser ?? null;
             if (!currentUser) {
                 //If the user is not authenticated, then check if the resource access is public

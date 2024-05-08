@@ -16,6 +16,10 @@ export class BaseController {
         resourceOwnerUserId?: uuid,
         resourceTenantId?: uuid): Promise<void> => {
 
+        if (request.currentClient?.IsPrivileged) {
+            return;
+        }
+
         let ownerUserId = resourceOwnerUserId ?? null;
         let tenantId = resourceTenantId ?? null;
 

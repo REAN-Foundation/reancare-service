@@ -25,6 +25,7 @@ import { PatientService } from "../../services/users/patient/patient.service";
 import { IDonationCommunicationRepo } from "../../database/repository.interfaces/assorted/blood.donation/communication.repo.interface";
 import { Injector } from "../../startup/injector";
 import { IDonorRepo } from "../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface";
+import { VolunteerNetworkService } from "./volunteer.management/volunteer.network.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +35,8 @@ export class CommunityNetworkService {
     _patientNetworkService: PatientNetworkService = new PatientNetworkService();
 
     _donorNetworkService: DonorNetworkService = new DonorNetworkService();
+
+    _volunteerNetworkService: VolunteerNetworkService = new VolunteerNetworkService();
 
     _patientService: PatientService = null;
 
@@ -59,13 +62,16 @@ export class CommunityNetworkService {
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
-        let patient = null;
-        if (enrollmentDetails.PlanCode === 'Donor-Reminders') {
-            patient = await this.getDonor(enrollmentDetails.PatientUserId);
-        } else {
-            patient = await this.getPatient(enrollmentDetails.PatientUserId);
-        }
-        if (!patient) {
+        // let patient = null;
+        // if (enrollmentDetails.PlanCode === 'Donor-Reminders') {
+        //     patient = await this.getDonor(enrollmentDetails.PatientUserId);
+        // } else {
+        //     patient = await this.getPatient(enrollmentDetails.PatientUserId);
+        // }
+
+        const user = await this._userRepo.getById(enrollmentDetails.PatientUserId);
+        const person = await this._personRepo.getById(user.PersonId);
+        if (!user) {
             throw new Error('Patient does not exist!');
         }
 
@@ -78,15 +84,15 @@ export class CommunityNetworkService {
         }
         const planName = planDetails.DisplayName;
         enrollmentDetails.PlanName = planName;
-        var participantId = `${provider}${patient.User.Person.Phone}`;
+        var participantId = `${provider}${person.Phone}`;
 
         //Check if the participant is already registered with the care plan provider
         var participant = await this._careplanRepo.getPatientRegistrationDetails(
-            patient.UserId, provider);
+            user.id, provider);
 
         if (!participant) {
 
-            if (!patient.User.Person.Gender || !patient.User.Person.BirthDate) {
+            if (!person.Gender || !person.BirthDate) {
                 throw new Error('Gender and date of birth need to be specified before enrollment to care plan.');
             }
 
@@ -106,7 +112,7 @@ export class CommunityNetworkService {
         }
 
         enrollmentDetails.ParticipantId = participant.ParticipantId;
-        enrollmentDetails.Gender = patient.User.Person.Gender;
+        enrollmentDetails.Gender = person.Gender;
         enrollmentDetails.EnrollmentId = participant.ParticipantId;
 
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
@@ -115,8 +121,16 @@ export class CommunityNetworkService {
             var activities = await this._patientNetworkService.fetchActivities(
                 enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
                 enrollmentDetails.StartDate, patientHealthProfile.BloodTransfusionDate, enrollmentDetails.EndDate);
-        } else {
+        } else if (enrollmentDetails.PlanCode === 'Donor-Reminders') {
             var activities = await this._donorNetworkService.fetchActivities(
+                enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
+                enrollmentDetails.StartDate, enrollmentDetails.EndDate);
+        } else if (enrollmentDetails.PlanCode === 'Patient-Donation-Confirmation') {
+            var activities = await this._patientNetworkService.fetchActivities(
+                enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
+                enrollmentDetails.StartDate, null, enrollmentDetails.EndDate);
+        } else if (enrollmentDetails.PlanCode === 'Volunteer-Donation-Confirmation') {
+            var activities = await this._volunteerNetworkService.fetchActivities(
                 enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
                 enrollmentDetails.StartDate, enrollmentDetails.EndDate);
         }

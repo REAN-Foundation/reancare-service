@@ -23,9 +23,6 @@ export class DonationCommunicationService {
         Promise<DonationCommunicationDto> => {
 
         var dto = await this._communicationRepo.create(model);
-        // if (dto.PatientUserId !== null) {
-        //     await this._patientRepo.updateByUserId( dto.PatientUserId ,{ "DonorAcceptance": DonorAcceptance.Send });
-        // }
         return dto;
     };
 

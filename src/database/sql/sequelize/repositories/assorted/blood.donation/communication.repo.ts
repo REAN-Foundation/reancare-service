@@ -20,6 +20,7 @@ export class DonationCommunicationRepo implements IDonationCommunicationRepo {
                 PatientUserId             : model.PatientUserId,
                 DonorUserId               : model.DonorUserId,
                 VolunteerUserId           : model.VolunteerUserId,
+                DonationRecordId          : model.DonationRecordId,
                 FifthDayReminderFlag      : model.FifthDayReminderFlag,
                 DonorNoResponseFirstFlag  : model.DonorNoResponseFirstFlag,
                 DonorNoResponseSecondFlag : model.DonorNoResponseSecondFlag,
@@ -68,6 +69,9 @@ export class DonationCommunicationRepo implements IDonationCommunicationRepo {
             }
             if (model.VolunteerUserId != null) {
                 donationCommunication.VolunteerUserId = model.VolunteerUserId;
+            }
+            if (model.DonationRecordId != null) {
+                donationCommunication.DonationRecordId = model.DonationRecordId;
             }
             if (model.FifthDayReminderFlag != null) {
                 donationCommunication.FifthDayReminderFlag = model.FifthDayReminderFlag;

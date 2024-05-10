@@ -6,6 +6,7 @@ export interface DonationCommunicationDto {
     TenantId?                  : uuid;
     DonorUserId?               : uuid;
     VolunteerUserId?           : uuid,
+    DonationRecordId?           : uuid,
     FifthDayReminderFlag?      : boolean;
     DonorNoResponseFirstFlag?  : boolean;
     DonorNoResponseSecondFlag? : boolean;

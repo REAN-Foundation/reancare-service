@@ -127,8 +127,8 @@ export class VolunteerController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await VolunteerValidator.search(request);
-            this.authorizeSearch(request, filters);
+            let filters = await VolunteerValidator.search(request);
+            filters = this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =

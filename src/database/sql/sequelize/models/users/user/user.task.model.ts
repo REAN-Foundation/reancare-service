@@ -6,7 +6,7 @@ import {
 import { v4 } from 'uuid';
 import { UserTaskCategory, UserTaskCategoryList } from '../../../../../../domain.types/users/user.task/user.task.types';
 import User from './user.model';
-import { NotificationTypeList } from '../../../../../../domain.types/general/reminder/reminder.domain.model';
+import { NotificationTypeList } from '../../../../../../domain.types/general/notification/notification.types';
 
 ///////////////////////////////////////////////////////////////////////
 

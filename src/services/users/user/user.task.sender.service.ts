@@ -6,7 +6,7 @@ import { IUserTaskRepo } from "../../../database/repository.interfaces/users/use
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 import { AssessmentService } from "../../../services/clinical/assessment/assessment.service";
-import { NotificationType } from "../../../domain.types/general/reminder/reminder.domain.model";
+import { NotificationChannel, NotificationChannelList, NotificationType } from "../../../domain.types/general/notification/notification.types";
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { Injector } from "../../../startup/injector";
@@ -24,7 +24,7 @@ export class UserTaskSenderService {
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
-        this._assessmentService = Loader.container.resolve(AssessmentService);
+        this._assessmentService = Injector.Container.resolve(AssessmentService);
     }
 
     public sendUserTasks = async (timePeriod: number) => {
@@ -78,10 +78,10 @@ export class UserTaskSenderService {
 
             let booleanResponse = false;
             const payload = JSON.stringify(userTask);
-            if (userTask.Channel === NotificationType.Telegram) {
+            if (userTask.Channel === NotificationChannel.Telegram) {
                 booleanResponse = await Loader.messagingService.sendMessage(userTask.TenantName, "telegram", personPhone,
                     messageType, null,  message, payload);
-            } else if (userTask.Channel === NotificationType.WhatsApp ) {
+            } else if (userTask.Channel === NotificationChannel.WhatsApp ) {
                 booleanResponse = await Loader.messagingService.sendWhatsappWithReanBot(personPhone, message,
                     userTask.TenantName, messageType, null, payload);
             }
@@ -105,9 +105,9 @@ export class UserTaskSenderService {
         let personPhone = '';
         const user = await this._userRepo.getById(userId);
         const person = await this._personRepo.getById(user.PersonId);
-        if (channel === NotificationType.Telegram) {
+        if (channel === NotificationChannel.Telegram) {
             personPhone = person.TelegramChatId;
-        } else if (channel === NotificationType.WhatsApp ) {
+        } else if (channel === NotificationChannel.WhatsApp ) {
             personPhone = person.Phone;
         }
         return personPhone;
@@ -115,7 +115,7 @@ export class UserTaskSenderService {
 
     private async finishTask(sent: boolean, userTaskId: uuid) {
         if (sent) {
-            const userTaskRepo = Loader.container.resolve<IUserTaskRepo>('IUserTaskRepo');
+            const userTaskRepo = Injector.Container.resolve<IUserTaskRepo>('IUserTaskRepo');
             const delivered = await userTaskRepo.finishTask(userTaskId);
             Logger.instance().log(delivered ? `Schedule marked as delivered` : `Schedule could not be marked as delivered`);
         }

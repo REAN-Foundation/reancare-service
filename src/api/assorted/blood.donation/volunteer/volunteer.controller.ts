@@ -212,8 +212,13 @@ export class VolunteerController extends BaseUserController {
     authorizeSearch = (
         request: express.Request,
         filters: VolunteerSearchFilters) => {
+
+        if (request.currentClient?.IsPrivileged) {
+            return filters;
+        }
+            
         const currentUserRole = request.currentUser.CurrentRole;
-            if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
+        if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
                 currentUserRole === Roles.Volunteer || currentUserRole === Roles.TenantAdmin ||
                 currentUserRole === Roles.TenantUser || currentUserRole === Roles.Donor) {
             return filters;
@@ -222,4 +227,5 @@ export class VolunteerController extends BaseUserController {
     };
 
     //#endregion
+
 }

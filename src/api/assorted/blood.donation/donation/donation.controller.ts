@@ -125,6 +125,11 @@ export class DonationController extends BaseController {
     authorizeSearch = async (
         request: express.Request,
         filters: DonationSearchFilters): Promise<DonationSearchFilters> => {
+            
+        if (request.currentClient?.IsPrivileged) {
+            return filters;
+        }
+
         const currentUserId = request.currentUser.UserId;
         const currentUserRole = request.currentUser.CurrentRole;
     

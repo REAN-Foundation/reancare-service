@@ -130,6 +130,10 @@ export class BridgeController extends BaseController {
         request: express.Request,
         searchFilters: BridgeSearchFilters): Promise<BridgeSearchFilters> => {
 
+        if (request.currentClient?.IsPrivileged) {
+            return searchFilters;
+        }
+
         const currentUserId = request.currentUser.UserId;
         const currentUserRole = request.currentUser.CurrentRole;
 

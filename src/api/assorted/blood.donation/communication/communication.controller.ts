@@ -125,6 +125,10 @@ export class CommunicationController extends BaseController {
         request: express.Request,
         searchFilters: DonationCommunicationSearchFilters): Promise<any> => {
 
+        if (request.currentClient?.IsPrivileged) {
+            return searchFilters;
+        }
+            
         const currentUserId = request.currentUser.UserId;
         const currentUserRole = request.currentUser.CurrentRole;
 
@@ -145,4 +149,5 @@ export class CommunicationController extends BaseController {
         }
 
     };
+
 }

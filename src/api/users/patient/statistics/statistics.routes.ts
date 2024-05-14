@@ -18,5 +18,9 @@ export const register = (app: express.Application): void => {
     router.get('/:patientUserId/settings', auth(StatisticsAuth.getReportSettingsByUserId), controller.getReportSettingsByUserId);
     router.put('/:patientUserId/settings', auth(StatisticsAuth.updateReportSettingsByUserId), controller.updateReportSettingsByUserId);
 
+    router.post('/:patientUserId/settings', authenticator.authenticateClient, controller.createReportSettings);
+    router.get('/:patientUserId/settings', authenticator.authenticateClient, controller.getReportSettingsByUserId);
+    router.put('/:patientUserId/settings', authenticator.authenticateClient, controller.updateReportSettingsByUserId);
+    
     app.use('/api/v1/patient-statistics', router);
 };

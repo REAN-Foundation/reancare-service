@@ -12,6 +12,7 @@ import { TerraSupportService } from '../api/devices/device.integrations/terra/te
 import { UserService } from '../services/users/user/user.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
 import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
+import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -165,6 +166,9 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const careplanService = Injector.Container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
+                const nextMinutes = 15;
+                const userTaskService = Injector.Container.resolve(UserTaskSenderService);
+                await userTaskService.sendUserTasks(nextMinutes);
             })();
         });
     };

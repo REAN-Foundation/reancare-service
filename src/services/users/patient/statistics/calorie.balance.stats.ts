@@ -15,7 +15,7 @@ import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.comm
 export const addCalorieBalanceStats = (document, model, y) => {
 
     const chartImage = 'CalorieBalance_LastMonth';
-    const detailedTitle = 'Calorie Balance for Last Month';
+    const detailedTitle = `Calorie Balance for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Calorie Balance - Consumption and Burn';
 

@@ -50,14 +50,14 @@ export class TestLoader {
     private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
 
     private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
-    
+
     private static _medicationconsumptionStore: MedicationConsumptionStore =
         container.resolve(MedicationConsumptionStore);
-        
+
     private static _labVisitStore: LabVisitStore = container.resolve(LabVisitStore);
-    
+
     private static _diagnosticConditionStore: DiagnosticConditionStore = container.resolve(DiagnosticConditionStore);
-    
+
     private static _carePlanStore: CarePlanStore = container.resolve(CarePlanStore);
 
     private static _hospitalOrganizationStore: HospitalOrganizationStore = container.resolve(HospitalOrganizationStore);
@@ -65,13 +65,13 @@ export class TestLoader {
     private static _doctorVisitStore: DoctorVisitStore = container.resolve(DoctorVisitStore);
 
     private static _imagingStudyStore: ImagingStudyStore = container.resolve(ImagingStudyStore);
-    
+
     private static _familyHistoryStore: FamilyHistoryStore = container.resolve(FamilyHistoryStore);
 
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
-  
+
     private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
-  
+
     private static _laborganizationStore: LabOrganizationStore = container.resolve(LabOrganizationStore);
 
     private static _bloodoxygensaturationStore: BloodOxygenSaturationStore = container.resolve(BloodOxygenSaturationStore);
@@ -91,7 +91,7 @@ export class TestLoader {
     private static _pulseStore: PulseStore = container.resolve(PulseStore);
 
     private static _temperatureStore: TemperatureStore = container.resolve(TemperatureStore);
-  
+
     //#endregion
 
     //#region static properties
@@ -99,7 +99,7 @@ export class TestLoader {
     public static get StorageService() {
         return TestLoader._storageService;
     }
-    
+
     public static get PatientStore() {
         return TestLoader._patientStore;
     }
@@ -115,7 +115,7 @@ export class TestLoader {
     public static get LabOrganizationStore() {
         return TestLoader._laborganizationStore;
     }
-  
+
     public static get DiagnosticConditionStore() {
         return TestLoader._diagnosticConditionStore;
     }
@@ -128,7 +128,7 @@ export class TestLoader {
         return TestLoader._hospitalOrganizationStore;
 
     }
-        
+
     public static get DoctorVisitStore() {
         return TestLoader._doctorVisitStore;
     }
@@ -137,11 +137,11 @@ export class TestLoader {
         return TestLoader._imagingStudyStore;
 
     }
-    
+
     public static get FamilyHistoryStore() {
         return TestLoader._familyHistoryStore;
     }
-  
+
     public static get PharmacistStore() {
         return TestLoader._pharmacistStore;
     }
@@ -228,7 +228,7 @@ export class TestLoader {
             TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
             TestLoader._laborganizationStore = container.resolve(LabOrganizationStore);
             TestLoader._bloodoxygensaturationStore = container.resolve(BloodOxygenSaturationStore);
-          
+
             //Finally intitialize Fhir storage provider
             const initialized = await TestLoader._storageService.init();
             if (initialized) {

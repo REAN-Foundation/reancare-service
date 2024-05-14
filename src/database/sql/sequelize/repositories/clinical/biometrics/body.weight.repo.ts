@@ -10,8 +10,8 @@ import { BodyWeightMapper } from '../../../mappers/clinical/biometrics/body.weig
 import BodyWeight from '../../../models/clinical/biometrics/body.weight.model';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { HelperRepo } from '../../common/helper.repo';
-import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { Helper } from '../../../../../../common/helper';
+import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -233,7 +233,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                     VitalName         : "BodyWeight",
                     VitalPrimaryValue : x.BodyWeight,
                     Unit              : x.Unit,
-                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };
@@ -271,7 +271,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                     VitalName         : "BodyWeight",
                     VitalPrimaryValue : x.BodyWeight,
                     Unit              : x.Unit,
-                    RecordDateStr     : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr     : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate        : tempDate,
                     RecordTimeZone    : currentTimeZone,
                 };

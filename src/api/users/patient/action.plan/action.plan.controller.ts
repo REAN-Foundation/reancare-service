@@ -1,36 +1,32 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { BaseController } from '../../../base.controller';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { Injector } from '../../../../startup/injector';
 import { UserService } from '../../../../services/users/user/user.service';
 import { ActionPlanValidator } from './action.plan.validator';
 import { ActionPlanService } from '../../../../services/users/patient/action.plan.service';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { GoalService } from '../../../../services/users/patient/goal.service';
 import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
+import { ActionPlanSearchFilters } from '../../../../domain.types/users/patient/action.plan/action.plan.search.types';
+import { PatientBaseController } from '../patient.base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ActionPlanController extends BaseController {
-
+export class ActionPlanController extends PatientBaseController {
     //#region member variables and constructors
-    _service: ActionPlanService = null;
+    _service: ActionPlanService = Injector.Container.resolve(ActionPlanService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _goalService: GoalService = null;
+    _goalService: GoalService = Injector.Container.resolve(GoalService);
 
-    _healthPriorityService: HealthPriorityService = null;
+    _healthPriorityService: HealthPriorityService = Injector.Container.resolve(HealthPriorityService);
 
     _validator: ActionPlanValidator = new ActionPlanValidator();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(ActionPlanService);
-        this._userService = Loader.container.resolve(UserService);
-        this._goalService = Loader.container.resolve(GoalService);
-        this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
     }
 
     //#endregion
@@ -39,17 +35,15 @@ export class ActionPlanController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('ActionPlan.Create', request, response);
-
             const model = await this._validator.create(request);
+            await this.authorizeOne(request, model.PatientUserId);
             const actionPlan = await this._service.create(model);
             if (actionPlan == null) {
                 throw new ApiError(400, 'Cannot create record for action plan!');
             }
 
             ResponseHandler.success(request, response, 'Action plan record created successfully!', 201, {
-                ActionPlan : actionPlan,
+                ActionPlan: actionPlan,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -58,9 +52,13 @@ export class ActionPlanController extends BaseController {
 
     getActionPlans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('ActionPlan.GetActionPlans', request, response);
-
             const goalId: uuid = await this._validator.getParamUuid(request, 'goalId');
+            const goal = await this._goalService.getById(goalId);
+            if (goal == null) {
+                throw new ApiError(404, 'Goal not found.');
+            }
+            const patientUserId = goal.PatientUserId;
+            await this.authorizeOne(request, patientUserId);
 
             const actionPlans = await this._service.getActionPlans(goalId);
             if (actionPlans == null) {
@@ -68,9 +66,8 @@ export class ActionPlanController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Fetching action plans for given patient done successfully!', 201, {
-                ActionPlans : actionPlans,
+                ActionPlans: actionPlans,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -78,19 +75,16 @@ export class ActionPlanController extends BaseController {
 
     getSelectedActionPlans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('ActionPlan.GetSelectedActionPlans', request, response);
-
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-
+            await this.authorizeOne(request, patientUserId);
             const actionPlans = await this._service.getSelectedActionPlans(patientUserId);
             if (actionPlans == null) {
                 throw new ApiError(400, 'Cannot fetch action plans for given patient!');
             }
 
             ResponseHandler.success(request, response, 'Fetching action plans for given patient done successfully!', 200, {
-                ActionPlans : actionPlans,
+                ActionPlans: actionPlans,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -98,22 +92,18 @@ export class ActionPlanController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            let filters: ActionPlanSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
 
-            await this.setContext('ActionPlan.Search', request, response);
-
-            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
 
-            const message =
-                count === 0
-                    ? 'No records found!'
-                    : `Total ${count} action plan records retrieved successfully!`;
+            const message = count === 0 ? 'No records found!' : `Total ${count} action plan records retrieved successfully!`;
 
             ResponseHandler.success(request, response, message, 200, {
-                ActionPlanRecords : searchResults });
-
+                ActionPlanRecords: searchResults,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -121,15 +111,13 @@ export class ActionPlanController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('ActionPlan.Update', request, response);
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Action plan record not found.');
             }
+            await this.authorizeOne(request, record.PatientUserId);
 
             const updated = await this._service.update(domainModel.id, domainModel);
 
@@ -138,7 +126,7 @@ export class ActionPlanController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Action plan record updated successfully!', 200, {
-                ActionPlan : updated,
+                ActionPlan: updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -147,22 +135,19 @@ export class ActionPlanController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('ActionPlan.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Action plan record not found.');
             }
-
+            await this.authorizeOne(request, record.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Action plan record cannot be deleted.');
             }
 
             ResponseHandler.success(request, response, 'Action plan record deleted successfully!', 200, {
-                Deleted : true,
+                Deleted: true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

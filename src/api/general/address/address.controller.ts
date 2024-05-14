@@ -1,14 +1,15 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AddressService } from '../../../services/general/address.service';
 import { OrganizationService } from '../../../services/general/organization.service';
 import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
-import { Loader } from '../../../startup/loader';
 import { AddressValidator } from './address.validator';
-import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { AddressSearchFilters } from '../../../domain.types/general/address/address.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,23 +17,15 @@ export class AddressController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: AddressService = null;
+    _service: AddressService = Injector.Container.resolve(AddressService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _organizationService: OrganizationService = null;
+    _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
     _validator = new AddressValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(AddressService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
-    }
 
     //#endregion
 
@@ -41,14 +34,12 @@ export class AddressController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Address.Create', request, response);
-
-            const domainModel = await this._validator.create(request);
-            const address = await this._service.create(domainModel);
+            const model = await this._validator.create(request);
+            await this.authorizeOne(request);
+            const address = await this._service.create(model);
             if (address == null) {
                 throw new ApiError(400, 'Cannot create address!');
             }
-
             ResponseHandler.success(request, response, 'Address created successfully!', 201, {
                 Address : address,
             });
@@ -60,15 +51,12 @@ export class AddressController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Address.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const address = await this._service.getById(id);
             if (address == null) {
                 throw new ApiError(404, 'Address not found.');
             }
-
+            await this.authorizeOne(request);
             ResponseHandler.success(request, response, 'Address retrieved successfully!', 200, {
                 Address : address,
             });
@@ -81,9 +69,8 @@ export class AddressController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Address.Search', request, response);
-
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -101,14 +88,13 @@ export class AddressController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Address.Update', request, response);
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Address not found.');
             }
+            await this.authorizeOne(request);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update address record!');
@@ -126,13 +112,12 @@ export class AddressController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Address.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Address not found.');
             }
+            await this.authorizeOne(request);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Address cannot be deleted.');
@@ -148,5 +133,20 @@ export class AddressController extends BaseController {
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: AddressSearchFilters): Promise<AddressSearchFilters> => {
+
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                throw new ApiError(403, 'Forbidden');
+            }
+        }
+        else {
+            searchFilters.TenantId = request.currentUser.TenantId;
+        }
+        return searchFilters;
+    };
 
 }

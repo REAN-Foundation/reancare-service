@@ -5,10 +5,8 @@ import { BodyWeightDomainModel } from '../../../domain.types/clinical/biometrics
 import { BodyWeightDto } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.dto';
 import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types';
 import { BodyWeightStore } from "../../../modules/ehr/services/body.weight.store";
-import { Loader } from "../../../startup/loader";
 import { ConfigurationManager } from "../../../config/configuration.manager";
-import { EHRRecordTypes } from "../../../modules/ehr.analytics/ehr.record.types";
-import { EHRAnalyticsHandler } from "../../../modules/ehr.analytics/ehr.analytics.handler";
+import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +19,7 @@ export class BodyWeightService {
         @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
+            this._ehrBodyWeightStore = Injector.Container.resolve(BodyWeightStore);
         }
     }
 
@@ -64,15 +62,6 @@ export class BodyWeightService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bodyWeightRepo.getAllUserResponsesBefore(patientUserId, date);
-    };
-
-    public addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BodyWeightDomainModel, appName?: string) => {
-        if (model.BodyWeight) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId, recordId, provider, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit, null, null, appName, 
-                model.RecordDate ? model.RecordDate : null
-            );
-        }
     };
 
 }

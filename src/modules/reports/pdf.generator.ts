@@ -29,8 +29,8 @@ export class PDFGenerator {
     static createDocument = (title, author, writeStream) => {
 
         const document = new pdfkit({
-            size        : 'A4',
             bufferPages : true,
+            size        : 'A4',
             info        : {
                 Title  : title,
                 Author : author,

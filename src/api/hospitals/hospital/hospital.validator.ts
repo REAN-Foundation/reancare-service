@@ -11,12 +11,13 @@ export class HospitalValidator extends BaseValidator {
         super();
     }
 
-    getCreateDomainModel = (requestBody: any): HospitalDomainModel => {
+    getCreateDomainModel = (request: express.Request): HospitalDomainModel => {
 
         const model: HospitalDomainModel = {
-            HealthSystemId : requestBody.HealthSystemId ?? null,
-            Name           : requestBody.Name,
-            Tags           : requestBody.Tags ?? [],
+            TenantId       : request.body.TenantId ?? request.currentUser.TenantId,
+            HealthSystemId : request.body.HealthSystemId ?? null,
+            Name           : request.body.Name,
+            Tags           : request.body.Tags ?? [],
         };
 
         return model;
@@ -35,11 +36,11 @@ export class HospitalValidator extends BaseValidator {
 
     create = async (request: express.Request): Promise<HospitalDomainModel> => {
         await this.validateCreateBody(request);
-        return this.getCreateDomainModel(request.body);
+        return this.getCreateDomainModel(request);
     };
 
     search = async (request: express.Request): Promise<HospitalSearchFilters> => {
-
+        await this.validateUuid(request, 'TenantId', Where.Query, false, false);
         await this.validateUuid(request, 'healthSystemId', Where.Query, false, false);
         await this.validateString(request, 'name', Where.Query, false, false);
         await this.validateString(request, 'tag', Where.Query, false, false);
@@ -58,6 +59,7 @@ export class HospitalValidator extends BaseValidator {
     };
 
     private async validateCreateBody(request) {
+        await this.validateUuid(request, 'TenantId', Where.Body, false, false);
         await this.validateUuid(request, 'HealthSystemId', Where.Body, false, false);
         await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateArray(request, 'Tags', Where.Body, false, true);
@@ -74,6 +76,7 @@ export class HospitalValidator extends BaseValidator {
     private getFilter(request): HospitalSearchFilters {
 
         const filters: HospitalSearchFilters = {
+            TenantId       : request.query.TenantId ?? null,
             HealthSystemId : request.query.healthSystemId ?? null,
             Name           : request.query.name ?? null,
             Tags           : request.query.tag ? request.query.tag.split(',') : null,

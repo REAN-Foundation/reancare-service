@@ -9,11 +9,14 @@ import {
     IsUUID,
     PrimaryKey,
     HasMany,
+    ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import CourseModule from './course.module.model';
-import LearningPathCourses from './learning.course.model';
+import LearningPathCourses from './learning.path.course.model';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,6 +40,17 @@ export default class Course extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    TenantId: string;
+
+    @BelongsTo(() =>  Tenant)
+    Tenant:  Tenant;
+    
     @Column({
         type      : DataType.STRING(256),
         allowNull : false,

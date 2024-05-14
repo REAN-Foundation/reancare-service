@@ -11,7 +11,7 @@ import { CourseMapper } from '../../../mappers/educational/learning/course.mappe
 import CourseContent from '../../../models/educational/learning/course.content.model';
 import Course from '../../../models/educational/learning/course.model';
 import CourseModule from '../../../models/educational/learning/course.module.model';
-import  LearningPathCourses from '../../../models/educational/learning/learning.course.model';
+import  LearningPathCourses from '../../../models/educational/learning/learning.path.course.model';
 import LearningPath from '../../../models/educational/learning/learning.path.model';
 import { LearningPathMapper } from '../../../mappers/educational/learning/learning.path.mapper';
 import { LearningPathDto } from '../../../../../../domain.types/educational/learning/learning.path/learning.path.dto';
@@ -24,6 +24,7 @@ export class CourseRepo implements ICourseRepo {
     Promise<CourseDto> => {
         try {
             const entity = {
+                TenantId       : createModel.TenantId,
                 Name           : createModel.Name,
                 Description    : createModel.Description,
                 ImageUrl       : createModel.ImageUrl,
@@ -70,6 +71,9 @@ export class CourseRepo implements ICourseRepo {
             }
             if (filters.DurationInDays != null) {
                 search.where['DurationInDays'] = filters.DurationInDays;
+            }
+            if (filters.TenantId != null) {
+                search.where['TenantId'] = filters.TenantId;
             }
             if (filters.LearningPathId != null) {
                 search.where['LearningPathId'] = filters.LearningPathId;
@@ -138,7 +142,7 @@ export class CourseRepo implements ICourseRepo {
             if (updateModel.DurationInDays != null) {
                 course.DurationInDays = updateModel.DurationInDays;
             }
-         
+
             await course.save();
             return await CourseMapper.toDto(course);
 
@@ -198,7 +202,7 @@ export class CourseRepo implements ICourseRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     private addLearningPaths = async (courseId: string, learningPathIds: string[]) => {
         if (learningPathIds !== null && learningPathIds.length > 0) {
             for await (var learningPathId of learningPathIds) {
@@ -228,5 +232,5 @@ export class CourseRepo implements ICourseRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
 }

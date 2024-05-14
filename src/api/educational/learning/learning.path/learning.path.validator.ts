@@ -14,6 +14,7 @@ export class LearningPathValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): LearningPathDomainModel => {
         const model: LearningPathDomainModel = {
+            TenantId         : request.body.TenantId ?? request.currentUser.TenantId,
             Name             : request.body.Name,
             Description      : request.body.Description,
             ImageUrl         : request.body.ImageUrl,
@@ -56,6 +57,7 @@ export class LearningPathValidator extends BaseValidator {
 
     private async validateCreateBody(request) {
         await this.validateString(request, 'Name', Where.Body, true, false);
+        await this.validateUuid(request, 'TenantId', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, true);
         await this.validateString(request, 'ImageUrl', Where.Body, false, true);
         await this.validateDecimal(request, 'DurationInDays', Where.Body, false, true);

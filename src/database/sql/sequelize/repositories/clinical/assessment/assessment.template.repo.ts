@@ -30,6 +30,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                 ServeListNodeChildrenAtOnce : model.ServeListNodeChildrenAtOnce ?? false,
                 ScoringApplicable           : model.ScoringApplicable ?? false,
                 TotalNumberOfQuestions      : model.TotalNumberOfQuestions ?? null,
+                TenantId                    : model.TenantId ?? null,
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);

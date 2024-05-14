@@ -34,6 +34,7 @@ export const addLabeledText = (
 export interface TableColumnProperties {
     XOffset: number;
     Text   : string;
+    Width?: number;
 }
 
 export interface TableRowProperties {
@@ -45,10 +46,6 @@ export interface TableRowProperties {
 
 export const addTableRow = (
     document: PDFKit.PDFDocument, y: any, tableProperties: TableRowProperties) => {
-
-    // const labelX = 135;
-    // const valueX = 360;
-
     document
         .fontSize(tableProperties.FontSize)
         .fillColor("#444444");
@@ -63,13 +60,18 @@ export const addTableRow = (
         document.font('Helvetica');
     }
 
+    let positionY = 0;
     for (var c of tableProperties.Columns) {
-        document.text(c.Text, c.XOffset, y, { align: "left" });
+        if (c.Width) {
+            document.text(c.Text, c.XOffset, y, { align: "left", width: c.Width });
+            positionY = document.y > positionY ? document.y : positionY;
+        } else {
+            document.text(c.Text, c.XOffset, y, { align: "left" });
+            positionY = document.y > positionY ? document.y : positionY;
+        }
     }
-    document
-        .moveDown();
-
-    return y;
+    
+    return positionY;
 };
 
 export const addRectangularChartImage = (
@@ -81,7 +83,7 @@ export const addRectangularChartImage = (
     document.image(chart.location, 125, y, { width: imageWidth, align: 'center' });
     document.moveDown();
     y = y + 135;
-    addText(document, title, 80, y, 10, titleColor, 'center');
+    addText(document, title, 80, y, 12, titleColor, 'center');
     return y;
 };
 

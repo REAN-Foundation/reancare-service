@@ -1,31 +1,56 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
 import { UserController } from './user.controller';
+import { auth } from '../../../auth/auth.handler';
+import { UserAuth } from './user.auth';
+
+////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
-    const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new UserController();
 
-    //Note:
-    //For user controller, there will not be end-points for create, update and delete.
-    //User will not be directly created/updated/deleted, but through user type specific
-    //entity controllers such patient, doctor, etc.
+    ///////////////////////////////////////////////////////////////
 
-    router.get('/by-phone/:phone/role/:roleId', authenticator.authenticateClient, controller.getByPhoneAndRole);
-    router.get('/by-email/:email/role/:roleId', authenticator.authenticateClient, controller.getByEmailAndRole);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
+    // Obsolete routes. Will be discontinued in future
+    const obsoleteRouter = express.Router();
 
-    //router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.post('/login-with-password', authenticator.authenticateClient, controller.loginWithPassword);
+    obsoleteRouter.get('/by-phone/:phone/role/:roleId',
+        auth(UserAuth.getUserByRoleAndPhone),
+        controller.getTenantUserByRoleAndPhone);
 
-    //router.post('/reset-password', authenticator.authenticateClient, controller.resetPassword);
-    router.post('/generate-otp', authenticator.authenticateClient, controller.generateOtp);
-    router.post('/login-with-otp', authenticator.authenticateClient, controller.loginWithOtp);
-    router.post('/logout', authenticator.authenticateClient, authenticator.authenticateUser, controller.logout);
+    obsoleteRouter.get('/by-email/:email/role/:roleId',
+        auth(UserAuth.getUserByRoleAndEmail),
+        controller.getTenantUserByRoleAndEmail);
 
-    router.post('/access-token/:refreshToken', authenticator.authenticateClient, controller.rotateUserAccessToken);
+    obsoleteRouter.get('/tenants/:tenantId/roles/:roleId/phones/:phone',
+        auth(UserAuth.getTenantUserByRoleAndPhone),
+        controller.getTenantUserByRoleAndPhone);
+        
+    obsoleteRouter.get('/tenants/:tenantId/roles/:roleId/emails/:email',
+        auth(UserAuth.getTenantUserByRoleAndEmail),
+        controller.getTenantUserByRoleAndEmail);
+
+    app.use('/api/v1/users', obsoleteRouter);
+
+    /////////////////////////////////////////////////////////////////
+
+    const router = express.Router();
+
+    router.get('/:phone/tenants', auth(UserAuth.getTenantsForUserWithPhone), controller.getTenantsForUserWithPhone);
+    router.get('/:email/tenants', auth(UserAuth.getTenantsForUserWithEmail), controller.getTenantsForUserWithEmail);
+    router.get('/:id', auth(UserAuth.getById), controller.getById);
+
+    //router.get('/search', auth(UserAuth.search), controller.search);
+    router.post('/login-with-password', auth(UserAuth.loginWithPassword), controller.loginWithPassword);
+
+    //router.post('/reset-password', auth(UserAuth.resetPassword), controller.resetPassword);
+    router.post('/generate-otp', auth(UserAuth.generateOtp), controller.generateOtp);
+    router.post('/login-with-otp', auth(UserAuth.loginWithOtp), controller.loginWithOtp);
+    router.post('/logout', auth(UserAuth.logout), controller.logout);
+
+    router.post('/access-token/:refreshToken', auth(UserAuth.rotateUserAccessToken), controller.rotateUserAccessToken);
+    router.post('/', auth(UserAuth.create), controller.create);
 
     app.use('/api/v1/users', router);
+
 };

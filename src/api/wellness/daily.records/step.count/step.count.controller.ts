@@ -1,13 +1,15 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { StepCountValidator } from './step.count.validator';
-import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../../common/logger';
+import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/ehr.services/ehr.physical.activity.service';
+import { StepCountSearchFilters } from '../../../../domain.types/wellness/daily.records/step.count/step.count.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { BaseController } from '../../../../api/base.controller';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,16 +17,11 @@ export class StepCountController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: StepCountService = null;
+    _service: StepCountService = Injector.Container.resolve(StepCountService);
 
     _validator: StepCountValidator = new StepCountValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(StepCountService);
-    }
+    _ehrPhysicalActivityService: EHRPhysicalActivityService = Injector.Container.resolve(EHRPhysicalActivityService);
 
     //#endregion
 
@@ -32,36 +29,25 @@ export class StepCountController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.Create', request, response);
 
             const domainModel = await this._validator.create(request);
+            await this.authorizeUser(request, domainModel.PatientUserId);
             const recordDate = request.body.RecordDate;
-            const provider = request.body.Provider;
-        
-            if (provider) {
-                var existingRecord =
-                    await this._service.getByRecordDateAndPatientUserId(recordDate, request.body.PatientUserId, provider);
-                if (existingRecord !== null) {
-                    var stepCount = await this._service.update(existingRecord.id, domainModel);
-                } else {
-                    var stepCount = await this._service.create(domainModel);
-                }
+            const provider = request.body.Provider ?? null;
+
+            var existingRecord =
+                await this._service.getByRecordDateAndPatientUserId(recordDate, request.body.PatientUserId, provider);
+            if (existingRecord !== null) {
+                var stepCount = await this._service.update(existingRecord.id, domainModel);
             } else {
-                stepCount = await this._service.create(domainModel);
+                var stepCount = await this._service.create(domainModel);
             }
 
             if (stepCount == null) {
                 throw new ApiError(400, 'Cannot create Step Count!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(stepCount.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, stepCount.id, stepCount.Provider, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${stepCount.PatientUserId}`);
-            }
+
+            await this._ehrPhysicalActivityService.addEHRRecordStepCountForAppNames(stepCount);
 
             ResponseHandler.success(request, response, 'Step count created successfully!', 201, {
                 StepCount : stepCount,
@@ -74,14 +60,13 @@ export class StepCountController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const stepCount = await this._service.getById(id);
             if (stepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
             }
-
+            await this.authorizeUser(request, stepCount.PatientUserId);
             ResponseHandler.success(request, response, 'Step Count retrieved successfully!', 200, {
                 StepCount : stepCount,
             });
@@ -92,10 +77,9 @@ export class StepCountController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.Search', request, response);
 
-            const filters = await this._validator.search(request);
-
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -113,7 +97,6 @@ export class StepCountController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -122,21 +105,13 @@ export class StepCountController extends BaseController {
             if (existingStepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
             }
-
+            await this.authorizeUser(request, existingStepCount.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update Step ount record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(domainModel.PatientUserId, id, updated.Provider, domainModel, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrPhysicalActivityService.addEHRRecordStepCountForAppNames(updated);
 
             ResponseHandler.success(request, response, 'Step Count record updated successfully!', 200, {
                 StepCount : updated,
@@ -148,14 +123,13 @@ export class StepCountController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyRecords.StepCount.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingStepCount = await this._service.getById(id);
             if (existingStepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
             }
-
+            await this.authorizeUser(request, existingStepCount.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Step Count cannot be deleted.');
@@ -169,6 +143,39 @@ export class StepCountController extends BaseController {
         }
     };
 
-    //#endregion
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
+
+    private authorizeSearch = async (
+        request: express.Request,
+        searchFilters: StepCountSearchFilters): Promise<StepCountSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

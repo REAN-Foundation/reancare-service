@@ -1,8 +1,8 @@
+import { OrganizationDto } from "../../../domain.types/general/organization/organization.types";
 import { AddressDto } from "../../general/address/address.dto";
 import { HealthcareServiceSchedule } from "../../healthcare.service/healthcare.service.domain.types";
 import { Gender } from "../../miscellaneous/system.types";
-import { OrganizationDto } from "../../general/organization/organization.dto";
-import { UserDto } from "../user/user.dto";
+import { UserDetailsDto } from "../user/user.dto";
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +12,7 @@ export interface DoctorDetailsDto {
     EhrId?                 : string;
     UserId?                : string;
     NationalDigiDoctorId?  : string;
-    User                   : UserDto;
+    User                   : UserDetailsDto;
     Locality?              : string;
     Qualifications?        : string;
     Specialities?          : string[];

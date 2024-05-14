@@ -10,7 +10,7 @@ import {
     chartExists,
     RECTANGULAR_CHART_HEIGHT,
     RECTANGULAR_CHART_WIDTH } from "./report.helper";
-import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.commons";
+import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: any) => {

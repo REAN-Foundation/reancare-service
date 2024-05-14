@@ -6,10 +6,10 @@ import { DefaultChartOptions } from "../../../../modules/charts/default.chart.op
 
 export const createCareplanCharts = async (data) => {
     var locations = [];
-    if (data == null) {
+    if (data.Enrollment == null) {
         return locations;
     }
-    const location = await createCareplan_LinearProgressChart(data.CurrentProgress * 100, 'Careplan_Progress');
+    const location = await createCareplan_LinearProgressChart((data.CurrentProgress ? data.CurrentProgress : 0) * 100, 'Careplan_Progress');
     locations.push({
         key : 'Careplan_Progress',
         location

@@ -19,6 +19,7 @@ import {
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import FileResource from '../../general/file.resource/file.resource.model';
 import AssessmentNode from './assessment.node.model';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -41,6 +42,17 @@ export default class AssessmentTemplate extends Model {
         allowNull : false,
     })
     id: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TenantId: string;
+
+    @BelongsTo(() =>  Tenant)
+    Tenant:  Tenant;
 
     @Length({ max: 128 })
     @Column({

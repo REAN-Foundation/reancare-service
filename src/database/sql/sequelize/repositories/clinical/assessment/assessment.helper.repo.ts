@@ -544,7 +544,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
-    public searchNode = async ( filters:AssessmentNodeSearchFilters):
+    public searchNodes = async ( filters:AssessmentNodeSearchFilters):
      Promise<AssessmentNodeSearchResults> => {
         try {
             const search = { where: {} };

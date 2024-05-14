@@ -1,14 +1,15 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ChatService } from '../../../services/community/chat.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
-import { Loader } from '../../../startup/loader';
 import { ChatValidator } from './chat.validator';
-import { BaseController } from '../../base.controller';
 import { ConversationDomainModel } from '../../../domain.types/community/chat/conversation.domain.model';
+import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { ConversationDto } from '../../../domain.types/community/chat/conversation.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,20 +17,13 @@ export class ChatController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: ChatService = null;
+    _service: ChatService = Injector.Container.resolve(ChatService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
     _validator = new ChatValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(ChatService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._userService = Loader.container.resolve(UserService);
-    }
 
     //#endregion
 
@@ -38,14 +32,13 @@ export class ChatController extends BaseController {
     startConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.StartConversation', request, response);
-
             const domainModel = await this._validator.startConversation(request);
+            await this.authorizeUser(request, domainModel.InitiatingUserId);
             const conversation = await this._service.startConversation(domainModel);
             if (conversation == null) {
                 throw new ApiError(400, 'Cannot start conversation!');
             }
-
+           
             ResponseHandler.success(request, response, 'Conversation started successfully!', 201, {
                 Conversation : conversation,
             });
@@ -58,14 +51,13 @@ export class ChatController extends BaseController {
     sendMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.SendMessage', request, response);
-
             const domainModel = await this._validator.sendMessage(request);
+            await this.authorizeUser(request, domainModel.SenderId);
             const message = await this._service.sendMessage(domainModel);
             if (message == null) {
                 throw new ApiError(400, 'Cannot create chat!');
             }
-
+            
             ResponseHandler.success(request, response, 'Chat message sent successfully!', 201, {
                 ChatMessage : message,
             });
@@ -77,8 +69,6 @@ export class ChatController extends BaseController {
 
     getConversationMessages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Chat.GetConversationMessages', request, response);
 
             const conversationId = await this._validator.getParamUuid(request, 'conversationId');
             const conversationMessages = await this._service.getConversationMessages(conversationId);
@@ -94,7 +84,6 @@ export class ChatController extends BaseController {
     searchUserConversations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.SearchUserConversations', request, response);
             const userId = request.params.userId;
             const filters = await this._validator.searchUserConversations(request);
             const userConversations = await this._service.searchUserConversations(userId, filters);
@@ -110,14 +99,11 @@ export class ChatController extends BaseController {
     getConversationById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.GetConversationById', request, response);
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const conversation = await this._service.getConversationById(conversationId);
             if (conversation == null) {
                 throw new ApiError(404, 'Conversation not found.');
             }
-
             ResponseHandler.success(request, response, 'Conversation retrieved successfully!', 200, {
                 Conversation : conversation,
             });
@@ -130,17 +116,20 @@ export class ChatController extends BaseController {
     updateConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.UpdateConversation', request, response);
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
-            const updates: ConversationDomainModel = await this._validator.updateConversation(request);
-            const conversation = await this._service.updateConversation(conversationId, updates);
+            const conversation = await this._service.getConversationById(conversationId);
             if (conversation == null) {
                 throw new ApiError(404, 'Conversation not found.');
             }
-
+            const ownerUserId = this.getOwnerResourceId(request, conversation);
+            await this.authorizeUser(request, ownerUserId);
+            const updates: ConversationDomainModel = await this._validator.updateConversation(request);
+            const updatedConversation = await this._service.updateConversation(conversationId, updates);
+            if (updatedConversation == null) {
+                throw new ApiError(404, 'Conversation not found.');
+            }
             ResponseHandler.success(request, response, 'Conversation updated successfully!', 200, {
-                Conversation : conversation,
+                Conversation : updatedConversation,
             });
 
         } catch (error) {
@@ -151,13 +140,18 @@ export class ChatController extends BaseController {
     deleteConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.DeleteConversation', request, response);
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
+            const conversation = await this._service.getConversationById(conversationId);
+            if (conversation == null) {
+                throw new ApiError(404, 'Conversation not found.');
+            }
+            const ownerUserId = this.getOwnerResourceId(request, conversation);
+            await this.authorizeUser(request, ownerUserId);
             const deleted = await this._service.deleteConversation(conversationId);
             if (!deleted) {
                 throw new ApiError(400, 'Conversation cannot be deleted.');
             }
+            
             ResponseHandler.success(request, response, 'Conversation record deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -169,8 +163,6 @@ export class ChatController extends BaseController {
 
     addUserToConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            await this.setContext('Chat.AddUserToConversation', request, response);
 
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
@@ -191,8 +183,6 @@ export class ChatController extends BaseController {
     removeUserFromConversation = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.RemoveUserFromConversation', request, response);
-
             const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
 
@@ -212,15 +202,15 @@ export class ChatController extends BaseController {
     getConversationBetweenTwoUsers = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.GetConversationBetweenTwoUsers', request, response);
-
             const firstUserId: uuid = await this._validator.getParamUuid(request, 'firstUserId');
             const secondUserId: uuid = await this._validator.getParamUuid(request, 'secondUserId');
 
             const conversation = await this._service.getConversationBetweenTwoUsers(firstUserId, secondUserId);
             if (!conversation) {
+                
                 throw new ApiError(404, 'Conversation cannot be found.');
             }
+            await this.authorizeOne(request, null, null);
             ResponseHandler.success(request, response, 'Conversation between users retrieved successfully!', 200, {
                 Conversation : conversation,
             });
@@ -233,14 +223,12 @@ export class ChatController extends BaseController {
     getMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.GetMessage', request, response);
-
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
             const message = await this._service.getMessage(messageId);
             if (message == null) {
                 throw new ApiError(404, 'Chat message not found.');
             }
-
+            await this.authorizeUser(request, message.SenderId);
             ResponseHandler.success(request, response, 'Chat message retrieved successfully', 200, { ChatMessage: message });
 
         } catch (error) {
@@ -251,14 +239,13 @@ export class ChatController extends BaseController {
     updateMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.UpdateMessage', request, response);
-
             const domainModel = await this._validator.updateMessage(request);
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
             const existingMessage = await this._service.getMessage(messageId);
             if (existingMessage == null) {
                 throw new ApiError(404, 'Chat message not found.');
             }
+            await this.authorizeUser(request, existingMessage.SenderId);
             const updated = await this._service.updateMessage(messageId, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update chat message record!');
@@ -276,14 +263,16 @@ export class ChatController extends BaseController {
     deleteMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Chat.DeleteMessage', request, response);
-
             const messageId: uuid = await this._validator.getParamUuid(request, 'messageId');
+            const existingMessage = await this._service.getMessage(messageId);
+            if (existingMessage == null) {
+                throw new ApiError(404, 'Chat message not found.');
+            }
+            await this.authorizeUser(request, existingMessage.SenderId);
             const deleted = await this._service.deleteMessage(messageId);
             if (!deleted) {
                 throw new ApiError(400, 'Chat cannot be deleted.');
             }
-
             ResponseHandler.success(request, response, 'Chat record deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -295,9 +284,10 @@ export class ChatController extends BaseController {
 
     getMarkedConversationsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Chat.GetMarkedConversationsForUser', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            await this.authorizeUser(request, userId);
             const conversations = await this._service.getMarkedConversationsForUser(userId);
+            
             ResponseHandler.success(request, response, 'Marked conversations for the user retrieved successfully!', 200, {
                 Conversations : conversations,
             });
@@ -308,8 +298,8 @@ export class ChatController extends BaseController {
 
     getRecentConversationsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Chat.GetRecentConversationsForUser', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            await this.authorizeUser(request, userId);
             const conversations = await this._service.getRecentConversationsForUser(userId);
             ResponseHandler.success(request, response, 'Recent conversations for the user retrieved successfully!', 200, {
                 Conversations : conversations,
@@ -319,6 +309,31 @@ export class ChatController extends BaseController {
         }
     };
 
+    private getOwnerResourceId = (request: express.Request, conversation:ConversationDto) => {
+        if (conversation.IsGroupConversation) {
+            if (conversation.Users.includes(request.currentUser.UserId)) {
+                return request.currentUser.UserId;
+            }
+        } else if (conversation.InitiatingUser === request.currentUser.UserId ||
+                conversation.OtherUserId === request.currentUser.UserId) {
+            return request.currentUser.UserId;
+        }
+
+        throw new ApiError(403, 'Permission denied.');
+    
+    };
+
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
     //#endregion
 
 }
+

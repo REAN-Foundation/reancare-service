@@ -1,37 +1,31 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodOxygenSaturationService } from '../../../../services/clinical/biometrics/blood.oxygen.saturation.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
-import { BaseController } from '../../../base.controller';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Logger } from '../../../../common/logger';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { BiometricsController } from '../biometrics.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodOxygenSaturationController extends BaseController {
+export class BloodOxygenSaturationController extends BiometricsController {
 
     //#region member variables and constructors
 
-    _service: BloodOxygenSaturationService = null;
+    _service: BloodOxygenSaturationService = Injector.Container.resolve(BloodOxygenSaturationService);
 
     _validator: BloodOxygenSaturationValidator = new BloodOxygenSaturationValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _ehrVitalService: EHRVitalService = new EHRVitalService();
+    _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(BloodOxygenSaturationService);
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -41,47 +35,39 @@ export class BloodOxygenSaturationController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodOxygenSaturation.Create', request, response);
-
             const model = await this._validator.create(request);
-            const bloodOxygenSaturation = await this._service.create(model);
-            if (bloodOxygenSaturation == null) {
+            await this.authorizeUser(request, model.PatientUserId);
+            const record = await this._service.create(model);
+            if (record == null) {
                 throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
             }
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodOxygenSaturation.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, bloodOxygenSaturation.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodOxygenSaturation.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBloodOxygenSaturationForAppNames(record);
 
             // Adding record to award service
-            if (bloodOxygenSaturation.BloodOxygenSaturation) {
-                var timestamp = bloodOxygenSaturation.RecordDate;
+            if (record.BloodOxygenSaturation) {
+                let timestamp = record.RecordDate;
                 if (!timestamp) {
                     timestamp = new Date();
                 }
-                const currentTimeZone = await HelperRepo.getPatientTimezone(bloodOxygenSaturation.PatientUserId);
-                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(bloodOxygenSaturation.PatientUserId);
+                const currentTimeZone = await HelperRepo.getPatientTimezone(record.PatientUserId);
+                const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(record.PatientUserId);
                 const tempDate = TimeHelper.addDuration(timestamp, offsetMinutes, DurationType.Minute);
 
                 AwardsFactsService.addOrUpdateVitalFact({
-                    PatientUserId : bloodOxygenSaturation.PatientUserId,
+                    PatientUserId : record.PatientUserId,
                     Facts         : {
                         VitalName         : "BloodOxygenSaturation",
-                        VitalPrimaryValue : bloodOxygenSaturation.BloodOxygenSaturation,
-                        Unit              : bloodOxygenSaturation.Unit,
+                        VitalPrimaryValue : record.BloodOxygenSaturation,
+                        Unit              : record.Unit,
                     },
-                    RecordId       : bloodOxygenSaturation.id,
+                    RecordId       : record.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
             ResponseHandler.success(request, response, 'Blood oxygen saturation record created successfully!', 201, {
-                BloodOxygenSaturation : bloodOxygenSaturation,
+                BloodOxygenSaturation : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -91,16 +77,14 @@ export class BloodOxygenSaturationController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodOxygenSaturation.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const bloodOxygenSaturation = await this._service.getById(id);
-            if (bloodOxygenSaturation == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, ' Blood oxygen saturation record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             ResponseHandler.success(request, response, 'Blood oxygen saturation record retrieved successfully!', 200, {
-                BloodOxygenSaturation : bloodOxygenSaturation,
+                BloodOxygenSaturation : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -110,13 +94,10 @@ export class BloodOxygenSaturationController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodOxygenSaturation.Search', request, response);
-
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
-
             const message =
                 count === 0
                     ? 'No records found!'
@@ -133,29 +114,20 @@ export class BloodOxygenSaturationController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodOxygenSaturation.Update', request, response);
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Blood oxygen saturation record not found.');
             }
+            await this.authorizeUser(request, record.PatientUserId);
 
             const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBloodOxygenSaturationForAppNames(updated);
 
             // Adding record to award service
             if (updated.BloodOxygenSaturation) {
@@ -176,7 +148,7 @@ export class BloodOxygenSaturationController extends BaseController {
                     },
                     RecordId       : updated.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -191,21 +163,18 @@ export class BloodOxygenSaturationController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodOxygenSaturation.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Blood oxygen saturation record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Blood oxygen saturation record cannot be deleted.');
             }
 
-            // delete ehr record
-            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(record.id);
 
             ResponseHandler.success(request, response, 'Blood oxygen saturation record deleted successfully!', 200, {
                 Deleted : true,

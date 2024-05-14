@@ -1,14 +1,14 @@
 import express from 'express';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { CohortService } from '../../../../services/community/cohort.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { PatientValidator } from './patient.validator';
 import { BaseUserController } from '../../base.user.controller';
 import { UserHelper } from '../../user.helper';
@@ -16,54 +16,42 @@ import { UserDeviceDetailsService } from '../../../../services/users/user/user.d
 import { PersonService } from '../../../../services/person/person.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { RoleDto } from '../../../../domain.types/role/role.dto';
 import { Roles } from '../../../../domain.types/role/role.types';
+import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
+import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientController extends BaseUserController {
 
     //#region member variables and constructors
+    _service: PatientService = Injector.Container.resolve(PatientService);
 
-    _service: PatientService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _userService: UserService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _patientHealthProfileService: HealthProfileService = null;
+    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
-    _personService: PersonService = null;
+    _patientHealthProfileService: HealthProfileService = Injector.Container.resolve(HealthProfileService);
 
-    _userDeviceDetailsService: UserDeviceDetailsService = null;
+    _cohortService: CohortService = Injector.Container.resolve(CohortService);
+
+    _medicationService: MedicationService = Injector.Container.resolve(MedicationService);
+
+    _medicationConsumptionService: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
+
+    _ehrPatientService: EHRPatientService = Injector.Container.resolve(EHRPatientService);
 
     _userHelper: UserHelper = new UserHelper();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
-    _cohortService: CohortService = null;
-
-    _medicationService: MedicationService = null;
-
-    _medicationConsumptionService: MedicationConsumptionService = null;
-
     _validator = new PatientValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(PatientService);
-        this._userService = Loader.container.resolve(UserService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
-        this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
-        this._cohortService = Loader.container.resolve(CohortService);
-        this._medicationService = Loader.container.resolve(MedicationService);
-        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
-    }
 
     //#endregion
 
@@ -71,27 +59,18 @@ export class PatientController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.Create', request, response, false);
 
-            const createModel = await this._validator.create(request);
-            const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
+            const model = await this._validator.create(request);
+            const [ patient, createdNew ] = await this._userHelper.createPatient(model);
 
-            if (createModel.CohortId != null) {
-                await this.addPatientToCohort(patient.UserId, createModel.CohortId);
+            if (model.CohortId != null) {
+                await this.addPatientToCohort(patient.UserId, model.CohortId);
             }
 
             const clientCode = request.currentClient.ClientCode;
             await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(patient.UserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this.addPatientToEHRRecords(patient.UserId, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${patient.UserId}`);
-            }
+            await this._ehrPatientService.addEHRRecordPatientForAppNames(patient);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -109,13 +88,13 @@ export class PatientController extends BaseUserController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.GetByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, user.id, user.TenantId);
 
             const patient = await this._service.getByUserId(userId);
 
@@ -138,9 +117,9 @@ export class PatientController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.Search', request, response, false);
 
-            const filters = await this._validator.search(request);
+            let filters: PatientSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -155,9 +134,9 @@ export class PatientController extends BaseUserController {
         }
     };
 
+    //To be deprecated
     getPatientByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.GetPatientByPhone', request, response, false);
 
             if (request.currentClient.IsPrivileged) {
 
@@ -179,15 +158,42 @@ export class PatientController extends BaseUserController {
         }
     };
 
-    updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
+    getByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.UpdateByUserId', request, response);
 
-            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
+            const phone: string = await request.params.phone as string;
+            const patientRole = await this._roleService.getByName(Roles.Patient);
+
+            const user = await this._userService.getByPhoneAndRole(phone, patientRole.id);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, user.id, user.TenantId);
+
+            const patient = await this._service.getByUserId(user.id);
+            if (patient == null) {
+                throw new ApiError(404, 'Patient not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Patient retrieved successfully!', 200, {
+                Patient : patient,
+            });
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const user = await this._userService.getById(userId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            await this.authorizeOne(request, user.id, user.TenantId);
 
             const updateModel = await this._validator.updateByUserId(request);
             const userDomainModel: UserDomainModel = updateModel.User;
@@ -199,7 +205,7 @@ export class PatientController extends BaseUserController {
             }
 
             // if timezone change detected then delete future medication schedules and create new one
-            if (existingUser.CurrentTimeZone != request.body.CurrentTimeZone) {
+            if (user.CurrentTimeZone != request.body.CurrentTimeZone) {
                 await this._userService.update(userId, { CurrentTimeZone : request.body.CurrentTimeZone }); 
                 this.deleteAndCreateFutureMedicationSchedules(userId);
             }
@@ -220,8 +226,8 @@ export class PatientController extends BaseUserController {
                 WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke,
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
-            const updatedHealthProfile = await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
-            const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
+            await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
+            const updatedPerson = await this._personService.update(user.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
@@ -234,21 +240,14 @@ export class PatientController extends BaseUserController {
             if (updatedPatient == null) {
                 throw new ApiError(400, 'Unable to update patient record!');
             }
-            await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
+            await this.createOrUpdateDefaultAddress(request, user.Person.id);
             const addresses = await this._personService.getAddresses(personDomainModel.id);
             let location = null;
             if (addresses.length >= 1) {
                 location = addresses[0].Location;
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(userId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) {
-                    await this._service.addEHRRecord(userId, personDomainModel, updatedPatient, location, updatedHealthProfile, appName);       
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${userId}`);
-            }
+            await this._ehrPatientService.addEHRRecordPatientForAppNames(updatedPatient, location);
 
             const patient = await this._service.getByUserId(userId);
 
@@ -263,7 +262,6 @@ export class PatientController extends BaseUserController {
 
     deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.DeleteByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const currentUserId = request.currentUser.UserId;
@@ -276,10 +274,12 @@ export class PatientController extends BaseUserController {
             if (currentUserId !== patientUserId) {
                 throw new ApiError(403, 'You do not have permissions to delete this patient account.');
             }
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, user.id, user.TenantId);
+
             var deleted = await this._userDeviceDetailsService.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
@@ -310,7 +310,7 @@ export class PatientController extends BaseUserController {
             }
 
             // delete static ehr record
-            this._ehrAnalyticsHandler.deleteStaticEHRRecord(userId);
+            await this._ehrPatientService.deleteStaticEHRRecord(userId);
 
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,
@@ -323,10 +323,6 @@ export class PatientController extends BaseUserController {
     //#endregion
 
     //#region Privates
-
-    private addPatientToEHRRecords = (patientUserId: uuid, appName?: string) => {
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {}, appName,);
-    };
 
     private addPatientToCohort = async (patientUserId: uuid, cohortId: uuid) => {
         try {
@@ -379,4 +375,28 @@ export class PatientController extends BaseUserController {
 
     //#endregion
 
+    //#region  Authorization methods
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: PatientSearchFilters): Promise<PatientSearchFilters> => {
+
+        const currentUser = request.currentUser;
+        const currentRole = request.currentUser.CurrentRole;
+        
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                if (currentRole !== Roles.SystemAdmin && 
+                    currentRole !== Roles.SystemUser) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.TenantId = currentUser.TenantId;
+        }
+        return searchFilters;
+    };
+
+    //#endregion
 }

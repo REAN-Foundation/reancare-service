@@ -1,39 +1,46 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { DailyStatisticsService } from '../../../services/statistics/daily.statistics.service';
-import { DailyStatisticsValidator } from './daily.statistics.validator';
+import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DailyStatisticsController extends BaseController {
+export class DailyStatisticsController extends BaseController{
 
     //#region member variables and constructors
 
-    _service: DailyStatisticsService = null;
-
-    _validator = new DailyStatisticsValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(DailyStatisticsService);
-    }
+    _service: DailyStatisticsService = Injector.Container.resolve(DailyStatisticsService);
 
     //#endregion
 
     //#region Action methods
     
-    getLatestStatistics = async (request: express.Request, response: express.Response): Promise<void> => {
+    getDailySystemStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('DailyStatistics.GetLatestStatistics', request, response);
-            const latestStatistics = await this._service.getLatestStatistics();
-            if (latestStatistics === null) {
+            const stats = await this._service.getDailySystemStats();
+            if (stats === null) {
                 throw new ApiError(404, 'Daily Statistics not found.');
             }
-            ResponseHandler.success(request, response, 'Latest statistics retrieved successfully!', 200, {
-                DailyStatistics : latestStatistics,
+            ResponseHandler.success(request, response, 'Daily stats retrieved successfully!', 200, {
+                DailyStatistics : stats,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getDailyTenantStats = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const tenantId = request.params.tenantId;
+            await this.authorizeOne(request, null, tenantId);
+            const stats = await this._service.getDailyTenantStats(tenantId);
+            if (stats === null) {
+                throw new ApiError(404, 'Daily Statistics not found.');
+            }
+            ResponseHandler.success(request, response, 'Daily stats retrieved successfully!', 200, {
+                DailyStatistics : stats,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

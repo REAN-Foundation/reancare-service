@@ -1,45 +1,54 @@
 import express from 'express';
 import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserDetailsDto } from '../../../domain.types/users/user/user.dto';
 import { UserService } from '../../../services/users/user/user.service';
-import { Loader } from '../../../startup/loader';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
+import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserController {
+export class UserController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: UserService = null;
+    _service: UserService = Injector.Container.resolve(UserService);
 
-    _authorizer: Authorizer = null;
-
-    _userDeviceDetailsService: UserDeviceDetailsService = null;
+    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
     constructor() {
-        this._service = Loader.container.resolve(UserService);
-        this._authorizer = Loader.authorizer;
-        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        super();
     }
 
     //#endregion
 
+    create = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const domainModel = await UserValidator.create(request);
+            const user = await this._service.create(domainModel);
+            if (user == null) {
+                throw new ApiError(400, 'Cannot create user!');
+            }
+            ResponseHandler.success(request, response, 'User created successfully!', 201, {
+                User : user,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'User.GetById';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await UserValidator.getById(request);
             const user = await this._service.getById(id);
             if (user == null) {
                 ResponseHandler.failure(request, response, 'User not found.', 404);
                 return;
             }
+            await this.authorizeOne(request, user.id, user.TenantId);
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
                 user : user,
             });
@@ -48,10 +57,8 @@ export class UserController {
         }
     };
 
-    getByPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
+    getTenantUserByRoleAndPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'User.GetByPhoneAndRole';
-
             const model = await UserValidator.userExistsCheck(request);
             const user = await this._service.getByPhoneAndRole(model.Phone, model.RoleId);
             if (user == null) {
@@ -65,10 +72,8 @@ export class UserController {
         }
     };
 
-    getByEmailAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
+    getTenantUserByRoleAndEmail = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'User.GetByEmailAndRole';
-
             const model = await UserValidator.userExistsCheck(request);
             const user = await this._service.getByEmailAndRole(model.Email, model.RoleId);
             if (user == null) {
@@ -84,15 +89,12 @@ export class UserController {
 
     loginWithPassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'User.LoginWithPassword';
-
             const loginObject = await UserValidator.loginWithPassword(request, response);
             const userDetails = await this._service.loginWithPassword(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);
                 return;
             }
-
             const user: UserDetailsDto = userDetails.user;
             const accessToken = userDetails.accessToken;
             const refreshToken = userDetails.refreshToken;
@@ -122,8 +124,6 @@ export class UserController {
 
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'User.GenerateOtp';
-
             const obj = await UserValidator.generateOtp(request, response);
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
@@ -136,8 +136,6 @@ export class UserController {
 
     loginWithOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'User.LoginWithOtp';
-
             const loginObject = await UserValidator.loginWithOtp(request, response);
             const userDetails = await this._service.loginWithOtp(loginObject);
             if (userDetails == null) {
@@ -174,8 +172,6 @@ export class UserController {
 
     logout = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
-            request.context = 'User.Logout';
-
             const sesssionId = request.currentUser.SessionId;
             const userId = request.currentUser.UserId;
 
@@ -212,13 +208,35 @@ export class UserController {
 
     rotateUserAccessToken = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'User.RotateUserAccessToken';
-
             const refreshToken = request.params.refreshToken;
             const accessToken = await this._service.rotateUserAccessToken(refreshToken);
 
             ResponseHandler.success(request, response, 'User access token rotated successfully!', 200, {
                 AccessToken : accessToken,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getTenantsForUserWithPhone = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: string = request.params.id;
+            const tenants = await this._service.getTenantsForUser(id);
+            ResponseHandler.success(request, response, 'User tenants retrieved successfully!', 200, {
+                Tenants : tenants,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getTenantsForUserWithEmail = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: string = request.params.id;
+            const tenants = await this._service.getTenantsForUser(id);
+            ResponseHandler.success(request, response, 'User tenants retrieved successfully!', 200, {
+                Tenants : tenants,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

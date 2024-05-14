@@ -1,20 +1,20 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { SleepController } from './sleep.controller';
+import { SleepAuth } from './sleep.auth';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new SleepController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth(SleepAuth.create), controller.create);
+    router.get('/search', auth(SleepAuth.search), controller.search);
+    router.get('/:id', auth(SleepAuth.getById), controller.getById);
+    router.put('/:id', auth(SleepAuth.update), controller.update);
+    router.delete('/:id', auth(SleepAuth.delete), controller.delete);
 
     app.use('/api/v1/wellness/daily-records/sleep', router);
 };

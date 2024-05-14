@@ -1,45 +1,37 @@
 import express from 'express';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { SchedulesForDayDto } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { MedicationConsumptionValidator } from './medication.consumption.validator';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { TimeHelper } from '../../../../common/time.helper';
-import { Logger } from '../../../../common/logger';
+import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
+import { BaseController } from '../../../../api/base.controller';
+import { MedicationConsumptionSearchFilters } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicationConsumptionController {
+export class MedicationConsumptionController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: MedicationConsumptionService = null;
+    _service: MedicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
-    _medicationService: MedicationService = null;
+    _medicationService: MedicationService = Injector.Container.resolve(MedicationService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _drugService: DrugService = null;
+    _drugService: DrugService = Injector.Container.resolve(DrugService);
 
-    _authorizer: Authorizer = null;
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    constructor() {
-        this._service = Loader.container.resolve(MedicationConsumptionService);
-        this._medicationService = Loader.container.resolve(MedicationService);
-        this._drugService = Loader.container.resolve(DrugService);
-        this._authorizer = Loader.authorizer;
-    }
+    _ehrMedicationService: EHRMedicationService = Injector.Container.resolve(EHRMedicationService);
 
     //#endregion
 
@@ -47,9 +39,6 @@ export class MedicationConsumptionController {
 
     markListAsTaken = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkListAsTaken';
-            await this._authorizer.authorize(request, response);
-
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
                 throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
@@ -58,17 +47,10 @@ export class MedicationConsumptionController {
             if (dtos.length === 0) {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
             }
-
+            await this.authorizeOne(request, dtos[0].PatientUserId);
             // get user details to add records in ehr database
             for (var dto of dtos) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) { 
-                        this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                    }
-                } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-                }
+                await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
             }
             const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
@@ -84,7 +66,7 @@ export class MedicationConsumptionController {
                     },
                     RecordId       : dto.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -99,9 +81,6 @@ export class MedicationConsumptionController {
 
     markListAsMissed = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkListAsMissed';
-            await this._authorizer.authorize(request, response);
-
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
                 throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
@@ -110,16 +89,9 @@ export class MedicationConsumptionController {
             if (dtos.length === 0) {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
             }
-
+            await this.authorizeOne(request, dtos[0].PatientUserId);
             for (var dto of dtos) {
-                var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-                if (eligibleAppNames.length > 0) {
-                    for await (var appName of eligibleAppNames) { 
-                        this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                    }
-                } else {
-                    Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-                }
+                await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
             }
 
             const patientUserId = dtos.length > 0 ? dtos[0].PatientUserId : null;
@@ -136,7 +108,7 @@ export class MedicationConsumptionController {
                     },
                     RecordId       : dto.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -151,28 +123,18 @@ export class MedicationConsumptionController {
 
     markAsTaken = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkAsTaken';
-            await this._authorizer.authorize(request, response);
-
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsTaken(consumptionId);
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
+            await this.authorizeOne(request, dto.PatientUserId);
+            await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-            }
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
-            const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd);
+            const tempDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd);
             const tempDate = TimeHelper.addDuration(dto.TimeScheduleEnd, offsetMinutes, DurationType.Minute);
             AwardsFactsService.addOrUpdateMedicationFact({
                 PatientUserId : dto.PatientUserId,
@@ -197,24 +159,13 @@ export class MedicationConsumptionController {
 
     markAsMissed = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.MarkAsMissed';
-            await this._authorizer.authorize(request, response);
-
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsMissed(consumptionId);
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
             }
-
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(dto.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(dto.PatientUserId, dto.id, dto, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${dto.PatientUserId}`);
-            }
+            await this.authorizeOne(request, dto.PatientUserId);
+            await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(dto);
 
             const patientUserId = dto.PatientUserId;
             const currentTimeZone = await HelperRepo.getPatientTimezone(patientUserId);
@@ -229,7 +180,7 @@ export class MedicationConsumptionController {
                 },
                 RecordId       : dto.id,
                 RecordDate     : tempDate,
-                RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
+                RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                 RecordTimeZone : currentTimeZone,
             });
 
@@ -243,10 +194,12 @@ export class MedicationConsumptionController {
 
     deleteFutureMedicationSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.DeleteFutureMedicationSchedules';
-            await this._authorizer.authorize(request, response);
-
             const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
+            const medication = await this._medicationService.getById(medicationId);
+            if (medication == null) {
+                throw new ApiError(404, 'Medication not found.');
+            }
+            await this.authorizeOne(request, medication.PatientUserId);
             const deletedCount = await this._service.deleteFutureMedicationSchedules(medicationId);
 
             ResponseHandler.success(request, response, 'Deleted future medication schedules successfully!', 200, {
@@ -258,43 +211,15 @@ export class MedicationConsumptionController {
         }
     };
 
-    // updateTimeZoneForFutureMedicationSchedules = async (request: express.Request, response: express.Response)
-    //     : Promise<void> => {
-    //     try {
-    //         request.context = 'MedicationConsumption.UpdateFutureMedicationSchedulesForTimeZone';
-    //         await this._authorizer.authorize(request, response);
-    //
-
-    //         const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
-    //         const newTimeZone = await MedicationConsumptionValidator.getParam(request, 'newTimeZone');
-
-    //         const dtos = await this._service.updateTimeZoneForFutureMedicationSchedules(medicationId, newTimeZone);
-    //         if (dtos === null) {
-    //             throw new ApiError(422, `Unable to delete medication consumptions.`);
-    //         }
-
-    //         ResponseHandler.success(request, response,
-    //              'Updated time-zone for future medication schedules successfully!', 200, {
-    //             MedicationConsumptions : dtos,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetById';
-
-            await this._authorizer.authorize(request, response);
-
             const id: string = await MedicationConsumptionValidator.getParam(request, 'id');
 
             const medicationConsumption = await this._service.getById(id);
             if (medicationConsumption == null) {
                 throw new ApiError(404, 'Medication consumption not found.');
             }
-
+            await this.authorizeOne(request, medicationConsumption.PatientUserId);
             ResponseHandler.success(request, response, 'Medication consumption retrieved successfully!', 200, {
                 MedicationConsumption : medicationConsumption,
             });
@@ -305,11 +230,8 @@ export class MedicationConsumptionController {
 
     searchForPatient = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.Search';
-            await this._authorizer.authorize(request, response);
-
-            const filters = await MedicationConsumptionValidator.searchForPatient(request);
-
+            let filters = await MedicationConsumptionValidator.searchForPatient(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -327,12 +249,8 @@ export class MedicationConsumptionController {
 
     getScheduleForDuration = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetMedicationSchedule';
-
-            await this._authorizer.authorize(request, response);
-
             const model = await MedicationConsumptionValidator.getScheduleForDuration(request);
-
+            await this.authorizeOne(request, model.PatientUserId);
             const dtos = await this._service.getScheduleForDuration(
                 model.PatientUserId,
                 model.Duration,
@@ -352,13 +270,8 @@ export class MedicationConsumptionController {
 
     getScheduleForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            request.context = 'MedicationConsumption.GetMedicationScheduleForDay';
-
-            await this._authorizer.authorize(request, response);
-
             const model = await MedicationConsumptionValidator.getScheduleForDay(request);
-
+            await this.authorizeOne(request, model.PatientUserId);
             const schedules: SchedulesForDayDto = await this._service.getSchedulesForDay(
                 model.PatientUserId,
                 model.Date);
@@ -378,12 +291,8 @@ export class MedicationConsumptionController {
 
     getSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetMedicationConsumptionSummaryForDay';
-
-            await this._authorizer.authorize(request, response);
-
             const model = await MedicationConsumptionValidator.getSummaryForDay(request);
-
+            await this.authorizeOne(request, model.PatientUserId);
             const summary = await this._service.getSchedulesForDayByDrugs(
                 model.PatientUserId,
                 model.Date);
@@ -403,12 +312,8 @@ export class MedicationConsumptionController {
 
     getSummaryByCalendarMonths = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'MedicationConsumption.GetSummaryByCalendarMonths';
-
-            await this._authorizer.authorize(request, response);
-
             const model = await MedicationConsumptionValidator.getSummaryByCalendarMonths(request);
-
+            await this.authorizeOne(request, model.PatientUserId);
             const summary = await this._service.getSummaryByCalendarMonths(
                 model.PatientUserId,
                 model.PastMonthsCount,
@@ -427,6 +332,29 @@ export class MedicationConsumptionController {
         }
     };
 
+    private authorizeSearch = async (
+        request: express.Request,
+        searchFilters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
     //#endregion
 
 }

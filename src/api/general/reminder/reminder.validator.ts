@@ -4,7 +4,7 @@ import {
     MAX_END_AFTER_N_REPETITIONS,
     MAX_END_AFTER_YEARS,
     MAX_REPEAT_AFTER_EVERY_N,
-    NotificationType,
+    ReminderNotificationType,
     ReminderDomainModel,
     ReminderSearchFilters,
     ReminderType,
@@ -48,7 +48,7 @@ export class ReminderValidator extends BaseValidator {
             WhenDate         : requestBody.WhenDate ?? null,
             WhenTime         : requestBody.WhenTime ?? null,
             HookUrl          : requestBody.HookUrl ?? null,
-            NotificationType : requestBody.NotificationType ?? NotificationType.SMS,
+            NotificationType : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent       : requestBody.RawContent ?? null,
         };
 
@@ -104,7 +104,7 @@ export class ReminderValidator extends BaseValidator {
             StartDate             : requestBody.StartDate ?? null,
             EndDate               : requestBody.EndDate ?? null,
             EndAfterNRepetitions  : requestBody.EndAfterNRepetitions ?? null,
-            NotificationType      : requestBody.NotificationType ?? NotificationType.SMS,
+            NotificationType      : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent            : requestBody.RawContent ?? null,
         };
 
@@ -148,7 +148,7 @@ export class ReminderValidator extends BaseValidator {
             StartDate            : requestBody.StartDate ?? null,
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
-            NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
         };
 
@@ -194,7 +194,7 @@ export class ReminderValidator extends BaseValidator {
             StartDate            : requestBody.StartDate ?? null,
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
-            NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
         };
 
@@ -240,7 +240,7 @@ export class ReminderValidator extends BaseValidator {
             StartDate            : requestBody.StartDate ?? null,
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
-            NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
         };
 
@@ -284,7 +284,7 @@ export class ReminderValidator extends BaseValidator {
             StartDate            : requestBody.StartDate ?? null,
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
-            NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
         };
 
@@ -324,7 +324,7 @@ export class ReminderValidator extends BaseValidator {
             ReminderType         : ReminderType.RepeatEveryHour,
             WhenTime             : requestBody.WhenTime ?? null,
             HookUrl              : requestBody.HookUrl ?? null,
-            NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RepeatList           : requestBody.RepeatList ?? ['Start'],
             StartDate            : requestBody.StartDate ?? null,
             EndDate              : requestBody.EndDate ?? null,
@@ -372,7 +372,7 @@ export class ReminderValidator extends BaseValidator {
             StartDate            : requestBody.StartDate ?? null,
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
-            NotificationType     : requestBody.NotificationType ?? NotificationType.SMS,
+            NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
         };
 
@@ -436,10 +436,13 @@ export class ReminderValidator extends BaseValidator {
         if (date == null || date.toString() === 'Invalid Date') {
             throw new InputValidationError(["Invalid When-Date value!"]);
         }
-        const dt = TimeHelper.subtractDuration(new Date(), 1, DurationType.Day);
-        if (dt > date) {
-            throw new InputValidationError(["When-Date cannot be in the past!"]);
-        }
+        //GMU Document processor issue: Incomming date is in EST time zone
+        //TODO: Need to consider EST time zone
+
+        // const dt = TimeHelper.subtractDuration(new Date(), 1, DurationType.Day);
+        // if (dt > date) {
+        //     throw new InputValidationError(["When-Date cannot be in the past!"]);
+        // }
     };
 
     private validateRepeatAfterEveryNUnit = (request: express.Request): void => {

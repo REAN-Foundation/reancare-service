@@ -6,6 +6,7 @@ import { IPersonRepo } from '../../../database/repository.interfaces/person/pers
 import { IPersonRoleRepo } from '../../../database/repository.interfaces/person/person.role.repo.interface';
 import { IRoleRepo } from '../../../database/repository.interfaces/role/role.repo.interface';
 import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
+import { ITenantRepo } from '../../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { IHealthProfileRepo } from '../../../database/repository.interfaces/users/patient/health.profile.repo.interface';
 import { CurrentUser } from '../../../domain.types/miscellaneous/current.user';
 import { PatientDomainModel } from '../../../domain.types/users/patient/patient/patient.domain.model';
@@ -14,10 +15,8 @@ import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
-import { Loader } from '../../../startup/loader';
-import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
+import { Injector } from '../../../startup/injector';
+import { AuthHandler } from '../../../auth/auth.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,10 +32,12 @@ export class PatientService {
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
+        @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
+        
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrPatientStore = Loader.container.resolve(PatientStore);
+            this._ehrPatientStore = Injector.Container.resolve(PatientStore);
         }
     }
 
@@ -82,19 +83,6 @@ export class PatientService {
             dto = await this.updateDto(dto);
             items.push(dto);
         }
-
-        if (items.length > 0) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const currentUser: CurrentUser = {
-                UserId        : items[0].id,
-                DisplayName   : items[0].DisplayName,
-                Phone         : items[0].Phone,
-                Email         : items[0].Email,
-                UserName      : items[0].UserName,
-                CurrentRoleId : 2,
-            };
-
-        }
         results.Items = items;
         return results;
     };
@@ -102,6 +90,7 @@ export class PatientService {
     public getPatientByPhone = async (
         filters: PatientSearchFilters
     ): Promise<PatientDetailsSearchResults | PatientSearchResults> => {
+
         var items = [];
         var results = await this._patientRepo.search(filters);
         for await (var dto of results.Items) {
@@ -109,16 +98,22 @@ export class PatientService {
             items.push(dto);
         }
 
+        var tenant = await this._tenantRepo.getTenantWithCode('default');
+
         if (items.length > 0) {
             const currentUser: CurrentUser = {
                 UserId        : items[0].id,
+                TenantId      : tenant.id,
+                TenantCode    : tenant.Code,
+                TenantName    : tenant.Name,
                 DisplayName   : items[0].DisplayName,
                 Phone         : items[0].Phone,
                 Email         : items[0].Email,
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
+                CurrentRole   : 'Patient',
             };
-            const accessToken = await Loader.authenticator.generateUserSessionToken(currentUser);
+            const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
             items[0].accessToken = accessToken;
         }
         results.Items = items;
@@ -157,7 +152,7 @@ export class PatientService {
             }
             return null;
         };
-
+   
     //#endregion
 
     //#region Privates
@@ -201,89 +196,7 @@ export class PatientService {
         dto.ImageResourceId = user.Person.ImageResourceId;
         return dto;
     };
-
-    public addEHRRecord = (patientUserId: uuid,
-        model: PersonDomainModel, updatedModel: any, location: string, updatedHealthProfile: any, appName?: string) => {
-        var details = {};
-        if (model.BirthDate) {
-            details['BirthDate'] = model.BirthDate;
-        }
-        if (updatedModel.User.Person.Age) {
-            details['Age'] = updatedModel.User.Person.Age;
-        }
-        /*if (model.id) {
-            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
-                PersonId : model.id
-            });
-        }*/
-        if (model.Gender) {
-            details['Gender'] = model.Gender;
-        }
-        if (model.SelfIdentifiedGender) {
-            details['SelfIdentifiedGender'] = model.SelfIdentifiedGender;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.MaritalStatus) {
-            details['MaritalStatus'] = updatedHealthProfile.MaritalStatus;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.Ethnicity) {
-            details['Ethnicity'] = updatedHealthProfile.Ethnicity;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.Race) {
-            details['Race'] = updatedHealthProfile.Race;
-        }
-        if (updatedModel.HealthSystem) {
-            details['HealthSystem'] = updatedModel.HealthSystem;
-        }
-        if (updatedModel.AssociatedHospital) {
-            details['AssociatedHospital'] = updatedModel.AssociatedHospital;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.HasHeartAilment != null ) {
-            details['HasHeartAilment'] = updatedHealthProfile.HasHeartAilment;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.HasHighBloodPressure != null ) {
-            details['HasHighBloodPressure'] = updatedHealthProfile.HasHighBloodPressure;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.HasHighCholesterol != null ) {
-            details['HasHighCholesterol'] = updatedHealthProfile.HasHighCholesterol;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.IsDiabetic != null ) {
-            details['IsDiabetic'] = updatedHealthProfile.IsDiabetic;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.Occupation) {
-            details['Occupation'] = updatedHealthProfile.Occupation;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.MajorAilment) {
-            details['MajorAilment'] = updatedHealthProfile.MajorAilment;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.IsSmoker) {
-            details['IsSmoker'] = updatedHealthProfile.IsSmoker;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.BloodGroup) {
-            details['BloodGroup'] = updatedHealthProfile.BloodGroup;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.Nationality) {
-            details['Nationality'] = updatedHealthProfile.Nationality;
-        }
-        if (location) {
-            details['Location'] = location;
-        }
-        if (updatedHealthProfile && updatedHealthProfile.OtherConditions) {
-            details['OtherConditions'] = updatedHealthProfile.OtherConditions;
-        }
-        if (updatedModel.DoctorPersonId_1) {
-            details['DoctorPersonId_1'] = updatedModel.DoctorPersonId_1;
-        }
-        if (updatedModel.DoctorPersonId_2) {
-            details['DoctorPersonId_2'] = updatedModel.DoctorPersonId_2;
-        }
-        details['RecordDate'] = new Date(updatedModel.CreatedAt);
-        if (updatedHealthProfile && updatedHealthProfile.CreatedAt) {
-            details['RecordDate'] = new Date(updatedHealthProfile.CreatedAt);
-        }
-        
-        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, details, appName);
-    };
-
+    
     //#endregion
 
 }

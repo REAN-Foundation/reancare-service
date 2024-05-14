@@ -13,6 +13,7 @@ export class HospitalMapper {
         }
         const dto: HospitalDto = {
             id               : model.id,
+            TenantId         : model.TenantId,
             HealthSystemId   : model.HealthSystemId,
             HealthSystemName : model.HealthSystem?.Name ?? null,
             Name             : model.Name,

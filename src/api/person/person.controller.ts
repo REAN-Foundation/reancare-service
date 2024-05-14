@@ -1,51 +1,46 @@
 import express from 'express';
-import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
-import { ResponseHandler } from '../../common/response.handler';
+import { ResponseHandler } from '../../common/handlers/response.handler';
 import { AddressService } from '../../services/general/address.service';
 import { OrganizationService } from '../../services/general/organization.service';
 import { PersonService } from '../../services/person/person.service';
 import { UserService } from '../../services/users/user/user.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { PersonValidator } from './person.validator';
+import { BaseController } from '../base.controller';
+import { uuid } from '../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PersonController {
+export class PersonController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: PersonService = null;
+    _service: PersonService = Injector.Container.resolve(PersonService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _addressService: AddressService = null;
+    _addressService: AddressService = Injector.Container.resolve(AddressService);
 
-    _organizationService: OrganizationService = null;
-
-    _authorizer: Authorizer = null;
+    _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
     constructor() {
-        this._service = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
-        this._authorizer = Loader.authorizer;
+        super();
     }
 
     //#endregion
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetById';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await PersonValidator.validateId(request);
             const person = await this._service.getById(id);
             if (person == null) {
                 ResponseHandler.failure(request, response, 'Person not found.', 404);
                 return;
             }
+            const personId = person.id;
+            await this.authorizePerson(request, personId);
+
             ResponseHandler.success(request, response, 'Person retrieved successfully!', 200, {
                 Person : person,
             });
@@ -56,9 +51,6 @@ export class PersonController {
 
     getAllPersonsWithPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetAllPersonsWithPhoneAndRole';
-            await this._authorizer.authorize(request, response);
-
             const { phone, roleId } = await PersonValidator.getAllPersonsWithPhoneAndRole(request);
             const persons = await this._service.getAllPersonsWithPhoneAndRole(phone, roleId);
             const message =
@@ -76,10 +68,8 @@ export class PersonController {
 
     getOrganizations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetOrganizations';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await PersonValidator.validateId(request);
+            await this.authorizePerson(request, id);
             const organizations = await this._service.getOrganizations(id);
 
             const message = organizations.length === 0 ?
@@ -95,15 +85,12 @@ export class PersonController {
 
     addAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.AddAddress';
-            await this._authorizer.authorize(request, response);
-
             const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
                 throw new ApiError(404, 'Person not found.');
             }
-
+            await this.authorizePerson(request, person.id);
             const added = await this._service.addAddress(id, addressId);
             if (!added) {
                 throw new ApiError(400, 'Organization address cannot be added.');
@@ -119,15 +106,12 @@ export class PersonController {
 
     removeAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.RemoveAddress';
-            await this._authorizer.authorize(request, response);
-
             const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
                 throw new ApiError(404, 'Person not found.');
             }
-
+            await this.authorizePerson(request, person.id);
             const removed = await this._service.removeAddress(id, addressId);
             if (!removed) {
                 throw new ApiError(400, 'Person address cannot be removed.');
@@ -143,10 +127,8 @@ export class PersonController {
 
     getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetAddresses';
-            await this._authorizer.authorize(request, response);
-
             const id: string = await PersonValidator.validateId(request);
+            await this.authorizePerson(request, id);
             const addresses = await this._service.getAddresses(id);
 
             const message = addresses.length === 0 ?
@@ -162,13 +144,11 @@ export class PersonController {
 
     getAllPersonsWithPhone = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetAllPersonsWithPhone';
-
             const { phone } = await PersonValidator.getAllPersonsWithPhone(request);
             const persons = await this._service.getPersonWithPhone(phone);
             const message =
                 persons ? `Person record retrieved successfully!` : 'No records found!';
-                
+
             ResponseHandler.success(request, response, message, 200, {
                 Persons : persons,
             });
@@ -178,4 +158,10 @@ export class PersonController {
         }
     };
 
+    private async authorizePerson(request: express.Request, personId: uuid) {
+        const user = await this._userService.getByPersonId(personId);
+        if (user != null) {
+            await this.authorizeOne(request, user.id, user.TenantId);
+        }
+    }
 }

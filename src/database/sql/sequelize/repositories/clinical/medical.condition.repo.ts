@@ -17,9 +17,9 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
         try {
             const entity = {
                 Condition   : medicalConditionDomainModel.Condition,
+                TenantId    : medicalConditionDomainModel.TenantId,
                 Description : medicalConditionDomainModel.Description,
                 Language    : medicalConditionDomainModel.Language,
-            
             };
 
             const medicalCondition = await MedicalConditionModel.create(entity);
@@ -35,7 +35,6 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
         try {
             const medicalCondition = await MedicalConditionModel.findByPk(id);
             return MedicalConditionMapper.toDto(medicalCondition);
-            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

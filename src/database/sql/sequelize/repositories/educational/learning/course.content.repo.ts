@@ -56,16 +56,14 @@ export class CourseContentRepo implements ICourseContentRepo {
             const search = { where: {} };
 
             if (filters.Title  != null) {
-                search.where['Title '] = { [Op.like]: '%' + filters.Title  + '%' };
+                search.where['Title'] = { [Op.like]: '%' + filters.Title  + '%' };
             }
             if (filters.ModuleId != null) {
                 search.where['ModuleId'] = filters.ModuleId;
             }
-            if (filters.DurationFrom != null) {
-                search.where['DurationFrom'] = filters.DurationFrom;
-            }
-            if (filters.DurationTo != null) {
-                search.where['DurationTo'] = filters.DurationTo;
+
+            if (filters.DurationInMins != null) {
+                search.where['DurationInMins'] = filters.DurationInMins;
             }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {

@@ -2341,7 +2341,7 @@
 			]
 		},
 		{
-			"name": "Patients",
+			"name": "Patient",
 			"item": [
 				{
 					"name": "Mobile patient registration and login",

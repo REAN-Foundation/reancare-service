@@ -1,7 +1,7 @@
 import { LessThanOrEqual, Repository } from 'typeorm';
 import { AwardsFactsSource } from './awards.facts.db.connector';
 import { AwardsFact } from './awards.facts.service';
-import { Loader } from '../../startup/loader';
+import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
 import { VitalFact } from './models/vital.fact.model';
 import { BloodGlucoseService } from '../../services/clinical/biometrics/blood.glucose.service';
@@ -33,7 +33,7 @@ export const updateVitalFact = async (model: AwardsFact) => {
     });
     const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(model.PatientUserId);
     const tempDate = TimeHelper.subtractDuration(model.RecordDate, offsetMinutes, DurationType.Minute);
-    const tempDateStr = await TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
+    const tempDateStr = TimeHelper.formatDateToLocal_YYYY_MM_DD(tempDate);
     model.RecordDateStr = tempDateStr;
 
     await addOrUpdateVitalRecord(model);
@@ -101,12 +101,12 @@ async function addOrUpdateVitalRecord(model: AwardsFact) {
 
 async function getVitalService(vitalName) {
     const service = {
-        "BloodGlucose"          : Loader.container.resolve(BloodGlucoseService),
-        "BodyWeight"            : Loader.container.resolve(BodyWeightService),
-        "BodyTemperature"       : Loader.container.resolve(BodyTemperatureService),
-        "BloodPressure"         : Loader.container.resolve(BloodPressureService),
-        "BloodOxygenSaturation" : Loader.container.resolve(BloodOxygenSaturationService),
-        "Pulse"                 : Loader.container.resolve(PulseService)
+        "BloodGlucose"          : Injector.Container.resolve(BloodGlucoseService),
+        "BodyWeight"            : Injector.Container.resolve(BodyWeightService),
+        "BodyTemperature"       : Injector.Container.resolve(BodyTemperatureService),
+        "BloodPressure"         : Injector.Container.resolve(BloodPressureService),
+        "BloodOxygenSaturation" : Injector.Container.resolve(BloodOxygenSaturationService),
+        "Pulse"                 : Injector.Container.resolve(PulseService)
     };
     return service[vitalName];
 }

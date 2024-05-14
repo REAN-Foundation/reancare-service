@@ -1,7 +1,7 @@
 import { Logger } from '../../../../common/logger';
 import { TeraWebhookValidator } from '../../../webhooks/providers/terra/terra.webhook.validator';
 import { TeraWebhookService } from '../../../../services/webhook/wearable.webhook.service';
-import { Loader } from '../../../../startup/loader';
+import { Injector } from '../../../../startup/injector';
 import { TeraWebhookActivityService } from '../../../../services/webhook/wearable.webhook.activity.service';
 import Terra from 'terra-api';
 import { TimeHelper } from '../../../../common/time.helper';
@@ -19,9 +19,9 @@ export class TerraSupportService {
     _wearableDeviceDetailsService: WearableDeviceDetailsService = null;
 
     constructor() {
-        this._service = Loader.container.resolve(TeraWebhookService);
-        this._activityService = Loader.container.resolve(TeraWebhookActivityService);
-        this._wearableDeviceDetailsService = Loader.container.resolve(WearableDeviceDetailsService);
+        this._service = Injector.Container.resolve(TeraWebhookService);
+        this._activityService = Injector.Container.resolve(TeraWebhookActivityService);
+        this._wearableDeviceDetailsService = Injector.Container.resolve(WearableDeviceDetailsService);
     }
 
     //#endregion

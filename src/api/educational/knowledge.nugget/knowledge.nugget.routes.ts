@@ -1,21 +1,21 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { KnowledgeNuggetController } from './knowledge.nugget.controller';
+import { KnowledgeNuggetAuth } from './knowledge.nugget.auth';
 
-///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new KnowledgeNuggetController();
 
-    router.get("/today/:patientUserId", authenticator.authenticateClient, authenticator.authenticateUser, controller.getTodaysTopic);
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.get("/today/:patientUserId", auth(KnowledgeNuggetAuth.getTodaysTopic), controller.getTodaysTopic);
+    router.post('/', auth(KnowledgeNuggetAuth.create), controller.create);
+    router.get('/search', auth(KnowledgeNuggetAuth.search), controller.search);
+    router.get('/:id', auth(KnowledgeNuggetAuth.getById), controller.getById);
+    router.put('/:id', auth(KnowledgeNuggetAuth.update), controller.update);
+    router.delete('/:id', auth(KnowledgeNuggetAuth.delete), controller.delete);
 
     app.use('/api/v1/educational/knowledge-nuggets', router);
 };

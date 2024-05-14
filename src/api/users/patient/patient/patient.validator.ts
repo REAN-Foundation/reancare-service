@@ -50,6 +50,7 @@ export class PatientValidator extends BaseValidator {
                 DefaultTimeZone : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone : request.body.CurrentTimeZone ?? null,
                 TenantId        : request.body.TenantId ?? null,
+                TenantCode      : request.body.TenantCode ?? null,
             },
             HealthProfile : {
                 BloodGroup           : request.body.BloodGroup ?? null,
@@ -95,6 +96,7 @@ export class PatientValidator extends BaseValidator {
                     ImageResourceId           : body.ImageResourceId !== undefined ? body.ImageResourceId                    : undefined,
                 },
                 Password        : body.Password ?? null,
+                UserName        : body.UserName ?? null,
                 DefaultTimeZone : body.DefaultTimeZone ?? null,
                 CurrentTimeZone : body.CurrentTimeZone ?? null,
                 TenantId        : body.TenantId ?? null,
@@ -160,6 +162,7 @@ export class PatientValidator extends BaseValidator {
 
         await this.validateString(request, 'Phone', Where.Body, create, false);
         await this.validateEmail(request, 'Email', Where.Body, false, true);
+        await this.validateString(request, 'UserName', Where.Body, false, true, false, 6, 12);
         await this.validateString(request, 'TelegramChatId', Where.Body, false, true);
         await this.validateString(request, 'Prefix', Where.Body, false, true);
         await this.validateString(request, 'FirstName', Where.Body, false, true);
@@ -178,6 +181,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
         await this.validateBoolean(request, 'IsRemindersLoaded', Where.Body, false, true);
         await this.validateUuid(request, 'TenantId', Where.Body, false, true);
+        await this.validateString(request, 'TenantCode', Where.Body, false, true);
         await this.validateUuid(request, 'CohortId', Where.Body, false, true);
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);
         await this.validateString(request, 'UserName', Where.Body, false, true);

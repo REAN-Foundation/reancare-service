@@ -9,13 +9,13 @@ import { DateStringFormat, DurationType } from '../../../domain.types/miscellane
 import { kccqChartHtmlText } from './kccq.chart.html';
 import { KccqScore } from './kccq.types';
 import { FileResourceService } from '../../../services/general/file.resource.service';
-import { Loader } from '../../../startup/loader';
 import { DocumentDomainModel } from '../../../domain.types/users/patient/document/document.domain.model';
 import { DocumentTypes } from '../../../domain.types/users/patient/document/document.types';
 import { DocumentService } from '../../../services/users/patient/document.service';
 import { Logger } from '../../../common/logger';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Injector } from '../../../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -99,7 +99,7 @@ const exportReportToPDF = async (reportModel: any, absoluteChartImagePath: strin
                 MimeType         : mimeType,
             }
         };
-        const patientDocumentService = Loader.container.resolve(DocumentService);
+        const patientDocumentService = Injector.Container.resolve(DocumentService);
         const documentDto = await patientDocumentService.upload(documentModel);
         Logger.instance().log(`Document Id: ${documentDto.id}`);
 
@@ -114,7 +114,7 @@ const uploadFile = async (sourceLocation: string) => {
     const filename = path.basename(sourceLocation);
     const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
     const storageKey = `resources/${dateFolder}/${filename}`;
-    const fileResourceService = Loader.container.resolve(FileResourceService);
+    const fileResourceService = Injector.Container.resolve(FileResourceService);
     const dto = await fileResourceService.uploadLocal(sourceLocation, storageKey, false);
     const url = dto.DefaultVersion.Url;
     const resourceId = dto.id;

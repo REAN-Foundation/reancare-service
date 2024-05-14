@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { DependencyContainer } from 'tsyringe';
 import { DatabaseConnector_Sequelize } from './database.connector.sequelize';
 import { AddressRepo } from './repositories/general/address.repo';
-import { ApiClientRepo } from './repositories/api.client/api.client.repo';
+import { ClientAppRepo } from './repositories/client.apps/client.app.repo';
 import { AllergyRepo } from './repositories/clinical/allergy.repo';
 import { BloodGlucoseRepo } from './repositories/clinical/biometrics/blood.glucose.repo';
 import { BloodOxygenSaturationRepo } from './repositories/clinical/biometrics/blood.oxygen.saturation.repo';
@@ -73,19 +73,19 @@ import { CourseModuleRepo } from './repositories/educational/learning/course.mod
 import { CourseContentRepo } from './repositories/educational/learning/course.content.repo';
 import { UserLearningRepo } from './repositories/educational/learning/user.learning.repo';
 import { LabRecordRepo } from './repositories/clinical/lab.record/lab.record.repo';
-import { DonorRepo } from './repositories/users/donor.repo';
+import { DonorRepo } from './repositories/assorted/blood.donation/donor.repo';
 import { HealthSystemRepo } from './repositories/hospitals/health.system.repo';
 import { HospitalRepo } from './repositories/hospitals/hospital.repo';
 import { NotificationRepo } from './repositories/general/notification.repo';
-import { VolunteerRepo } from './repositories/users/volunteer.repo';
+import { VolunteerRepo } from './repositories/assorted/blood.donation/volunteer.repo';
 import { ChatRepo } from './repositories/community/chat.repo';
 import { RssfeedRepo } from './repositories/general/rss.feed/rss.feed.repo';
 import { RssfeedItemRepo } from './repositories/general/rss.feed/rss.feed.item.repo';
-import { PatientDonorsRepo } from './repositories/clinical/donation/patient.donors.repo';
-import { DonationRecordRepo } from './repositories/clinical/donation/donation.record.repo';
+import { BridgeRepo } from './repositories/assorted/blood.donation/bridge.repo';
+import { DonationRepo } from './repositories/assorted/blood.donation/donation.repo';
 import { StatisticsRepo } from './repositories/statistics/statistics.repo';
 import { WearableDeviceDetailsRepo } from './repositories/webhook/webhook.wearable.device.details.repo';
-import { DonationCommunicationRepo } from './repositories/clinical/donation/donation.communication.repo';
+import { DonationCommunicationRepo } from './repositories/assorted/blood.donation/communication.repo';
 import { UserGroupRepo } from './repositories/community/user.group.repo';
 import { ReminderRepo } from './repositories/general/reminder.repo';
 import { ReminderScheduleRepo } from './repositories/general/reminder.schedule.repo';
@@ -93,7 +93,10 @@ import { TenantRepo } from './repositories/tenant/tenant.repo';
 import { CohortRepo } from './repositories/community/cohort.repo';
 import { UserEngagementRepo } from './repositories/statistics/user.engagement.repo';
 import { CustomQueryRepo } from './repositories/statistics/custom.query.repo';
+import { ConsentRepo } from './repositories/auth/consent.repo';
 import { DailyStatisticsRepo } from './repositories/statistics/daily.statistics.repo';
+import { AhaStatisticsRepo } from './repositories/statistics/aha.statistics.repo';
+import { TenantSettingsRepo } from './repositories/tenant/tenant.settings.repo';
 import { HealthReportSettingsRepo } from './repositories/users/patient/health.report.setting.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +112,7 @@ export class SequelizeInjector {
         container.register('IPersonRoleRepo', PersonRoleRepo);
         container.register('IRoleRepo', RoleRepo);
         container.register('IOtpRepo', OtpRepo);
-        container.register('IApiClientRepo', ApiClientRepo);
+        container.register('IClientAppRepo', ClientAppRepo);
         container.register('IPatientRepo', PatientRepo);
         container.register('IAddressRepo', AddressRepo);
         container.register('IRolePrivilegeRepo', RolePrivilegeRepo);
@@ -185,8 +188,8 @@ export class SequelizeInjector {
         container.register('IChatRepo', ChatRepo);
         container.register('IRssfeedRepo', RssfeedRepo);
         container.register('IRssfeedItemRepo', RssfeedItemRepo);
-        container.register('IPatientDonorsRepo', PatientDonorsRepo);
-        container.register('IDonationRecordRepo', DonationRecordRepo);
+        container.register('IBridgeRepo', BridgeRepo);
+        container.register('IDonationRepo', DonationRepo);
         container.register('IStatisticsRepo', StatisticsRepo);
         container.register('IWearableDeviceDetailsRepo', WearableDeviceDetailsRepo);
         container.register('IDonationCommunicationRepo', DonationCommunicationRepo);
@@ -197,8 +200,11 @@ export class SequelizeInjector {
         container.register('ICohortRepo', CohortRepo);
         container.register('IUserEngagementRepo', UserEngagementRepo);
         container.register('ICustomQueryRepo', CustomQueryRepo);
+        container.register('IConsentRepo', ConsentRepo);
         container.register('IDailyStatisticsRepo', DailyStatisticsRepo);
-        container.register('IHealthReportSettingsRepo', HealthReportSettingsRepo);
+        container.register('IAhaStatisticsRepo', AhaStatisticsRepo);
+        container.register('ITenantSettingsRepo',TenantSettingsRepo);
+        container.register('IHealthReportSettingsRepo',HealthReportSettingsRepo);
     }
 
 }

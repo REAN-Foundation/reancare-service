@@ -15,6 +15,7 @@ export class AddressValidator extends BaseValidator {
 
         const createModel: AddressDomainModel = {
             Type        : requestBody.Type ?? 'Home',
+            TenantId    : requestBody.TenantId ?? null,
             AddressLine : requestBody.AddressLine,
             City        : requestBody.City ?? null,
             District    : requestBody.District ?? null,
@@ -85,6 +86,7 @@ export class AddressValidator extends BaseValidator {
     private async validateCreateBody(request) {
         await this.validateString(request, 'Type', Where.Body, true, false);
         await this.validateString(request, 'AddressLine', Where.Body, true, false);
+        await this.validateUuid(request, 'TenantId', Where.Body, false, false);
         await this.validateString(request, 'City', Where.Body, false, true);
         await this.validateString(request, 'District', Where.Body, false, true);
         await this.validateString(request, 'State', Where.Body, false, true);

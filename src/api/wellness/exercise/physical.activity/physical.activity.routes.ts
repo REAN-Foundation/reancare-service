@@ -1,20 +1,20 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { PhysicalActivityController } from './physical.activity.controller';
+import { PhysicalActivityAuth } from './physical.activity.auth';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new PhysicalActivityController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth(PhysicalActivityAuth.create), controller.create);
+    router.get('/search', auth(PhysicalActivityAuth.search), controller.search);
+    router.get('/:id', auth(PhysicalActivityAuth.getById), controller.getById);
+    router.put('/:id', auth(PhysicalActivityAuth.update), controller.update);
+    router.delete('/:id', auth(PhysicalActivityAuth.delete), controller.delete);
 
     app.use('/api/v1/wellness/exercise/physical-activities', router);
 };

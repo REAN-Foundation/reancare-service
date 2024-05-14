@@ -1,33 +1,30 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
+import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import { LabRecordValidator } from './lab.record.validator';
-import { EHRAnalyticsHandler } from '../../../modules/ehr.analytics/ehr.analytics.handler';
-import { Logger } from '../../../common/logger';
-import { EHRLabService } from '../../../modules/ehr.analytics/ehr.lab.service';
+import { Injector } from '../../../startup/injector';
+import { EHRLabService } from '../../../modules/ehr.analytics/ehr.services/ehr.lab.service';
+import { BaseController } from '../../../api/base.controller';
+import { LabRecordSearchFilters } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
+import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class LabRecordController extends BaseController {
 
     //#region member variables and constructors
-    _service: LabRecordService = null;
+
+    _service: LabRecordService = Injector.Container.resolve(LabRecordService);
+
+    _userService: UserService = Injector.Container.resolve(UserService);
+
+    _ehrLabService: EHRLabService = Injector.Container.resolve(EHRLabService);
 
     _validator: LabRecordValidator = new LabRecordValidator();
-
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
-
-    _ehrLabService: EHRLabService = new EHRLabService();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(LabRecordService);
-        this._ehrLabService = Loader.container.resolve(EHRLabService);
-    }
 
     //#endregion
 
@@ -36,23 +33,13 @@ export class LabRecordController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecord.Create', request, response);
-
-            const model = await this._validator.create(request);
+            const model: LabRecordDomainModel = await this._validator.create(request);
+            await this.authorizeOne(request, model.PatientUserId, null);
             const labRecord = await this._service.create(model);
             if (labRecord == null) {
                 throw new ApiError(400, 'Cannot create lab record!');
             }
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(labRecord.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, labRecord.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${labRecord.PatientUserId}`);
-            }
-
+            await this._ehrLabService.addEHRLabRecordForAppNames(labRecord);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record created successfully!`, 201, {
                 LabRecord : labRecord,
             });
@@ -63,7 +50,6 @@ export class LabRecordController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('LabRecord.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -71,6 +57,7 @@ export class LabRecordController extends BaseController {
             if (labRecord == null) {
                 throw new ApiError(404, 'Lab record not found.');
             }
+            await this.authorizeOne(request, labRecord.PatientUserId, null);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record retrieved successfully!`, 200, {
                 LabRecord : labRecord,
             });
@@ -82,9 +69,8 @@ export class LabRecordController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecord.Search', request, response);
-
-            const filters = await this._validator.search(request);
+            let filters: LabRecordSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -103,29 +89,20 @@ export class LabRecordController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecord.Update', request, response);
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Lab record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update lab record!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, model.id, null, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrLabService.addEHRLabRecordForAppNames(updated);
+
             ResponseHandler.success(request, response, `${updated.DisplayName} record updated successfully!`, 200, {
                 LabRecord : updated,
             });
@@ -137,14 +114,12 @@ export class LabRecordController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('LabRecord.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, `${existingRecord.DisplayName} record not found.`);
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, `${existingRecord.DisplayName} record cannot be deleted.`);
@@ -162,4 +137,28 @@ export class LabRecordController extends BaseController {
     };
 
     //#endregion
+    private authorizeSearch = async (
+        request: express.Request,
+        searchFilters: LabRecordSearchFilters): Promise<LabRecordSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
+
 }

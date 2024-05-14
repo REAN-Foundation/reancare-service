@@ -1,31 +1,31 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { MedicationController } from './medication.controller';
+import { MedicationAuth } from './medication.auth';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new MedicationController();
 
-    router.get('/time-schedules', authenticator.authenticateClient, controller.getTimeSchedules);
-    router.get('/frequency-units', authenticator.authenticateClient, controller.getFrequencyUnits);
-    router.get('/dosage-units', authenticator.authenticateClient, controller.getDosageUnits);
-    router.get('/duration-units', authenticator.authenticateClient, controller.getDurationUnits);
-    router.get('/administration-routes', authenticator.authenticateClient, controller.getAdministrationRoutes);
+    router.get('/time-schedules', auth(MedicationAuth.getTimeSchedules), controller.getTimeSchedules);
+    router.get('/frequency-units', auth(MedicationAuth.getFrequencyUnits), controller.getFrequencyUnits);
+    router.get('/dosage-units', auth(MedicationAuth.getDosageUnits), controller.getDosageUnits);
+    router.get('/duration-units', auth(MedicationAuth.getDurationUnits), controller.getDurationUnits);
+    router.get('/administration-routes', auth(MedicationAuth.getAdministrationRoutes), controller.getAdministrationRoutes);
 
-    router.get('/stock-images', authenticator.authenticateClient, authenticator.authenticateUser, controller.getStockMedicationImages);
-    router.get('/stock-images/:imageId/download', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadStockMedicationImageById);
-    router.get('/stock-images/:imageId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getStockMedicationImageById);
+    router.get('/stock-images', auth(MedicationAuth.getStockMedicationImages), controller.getStockMedicationImages);
+    router.get('/stock-images/:imageId/download', auth(MedicationAuth.downloadStockMedicationImageById), controller.downloadStockMedicationImageById);
+    router.get('/stock-images/:imageId', auth(MedicationAuth.getStockMedicationImageById), controller.getStockMedicationImageById);
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/current/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getCurrentMedications);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth(MedicationAuth.create), controller.create);
+    router.get('/search', auth(MedicationAuth.search), controller.search);
+    router.get('/current/:patientUserId', auth(MedicationAuth.getCurrentMedications), controller.getCurrentMedications);
+    router.get('/:id', auth(MedicationAuth.getById), controller.getById);
+    router.put('/:id', auth(MedicationAuth.update), controller.update);
+    router.delete('/:id', auth(MedicationAuth.delete), controller.delete);
 
     app.use('/api/v1/clinical/medications', router);
 };

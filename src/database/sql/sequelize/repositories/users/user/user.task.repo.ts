@@ -14,7 +14,7 @@ import { UserTaskMapper } from '../../../mappers/users/user/user.task.mapper';
 import User from '../../../models/users/user/user.model';
 import UserTask from '../../../models/users/user/user.task.model';
 import { HelperRepo } from '../../common/helper.repo';
-import { NotificationType } from '../../../../../../domain.types/general/reminder/reminder.domain.model';
+import { NotificationChannel, NotificationType } from '../../../../../../domain.types/general/notification/notification.types';
 import CareplanActivity from '../../../models/clinical/careplan/careplan.activity.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                 ActionId           : model.ActionId ?? null,
                 ScheduledStartTime : model.ScheduledStartTime ?? null,
                 ScheduledEndTime   : model.ScheduledEndTime ?? null,
-                Channel            : model.Channel ?? NotificationType.MobilePush,
+                Channel            : model.Channel ?? NotificationChannel.MobilePush,
                 TenantName         : model.TenantName ?? 'AHA',
             };
             const userTask = await UserTask.create(entity);
@@ -495,6 +495,7 @@ export class UserTaskRepo implements IUserTaskRepo {
 
     getStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
         try {
+            // const numDays = 30 * numMonths;
             const { stats, totalFinished, totalUnfinished } = await this.getDayByDayStats(patientUserId, numDays);
             return {
                 TaskStats       : stats,
@@ -507,9 +508,9 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
-    getUserEngagementStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getUserEngagementStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
         try {
-            const numDays = 30 * numMonths;
+            // const numDays = 30 * numMonths;
             var start = TimeHelper.subtractDuration(new Date(), numDays, DurationType.Day);
             var end = new Date();
 
@@ -599,7 +600,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                     Finished  : true
                 }
             });
-                
+
             stats.push({
                 DayStr     : dayStr,
                 Finished   : finished,
@@ -621,7 +622,7 @@ export class UserTaskRepo implements IUserTaskRepo {
             const foundResults = await UserTask.findAndCountAll({
                 where : {
                     Channel : {
-                        [Op.or] : [NotificationType.Telegram, NotificationType.WhatsApp]
+                        [Op.or] : [NotificationChannel.Telegram, NotificationChannel.WhatsApp]
                     },
                     ScheduledStartTime : {
                         [Op.gte] : from,

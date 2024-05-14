@@ -14,6 +14,7 @@ export class BloodCholesterolMapper {
             id                : bloodCholesterol.id,
             EhrId             : bloodCholesterol.EhrId,
             PatientUserId     : bloodCholesterol.PatientUserId,
+            TenantId          : bloodCholesterol['PatientUser']?.TenantId,
             TotalCholesterol  : bloodCholesterol.TotalCholesterol,
             HDL               : bloodCholesterol.HDL,
             LDL               : bloodCholesterol.LDL,

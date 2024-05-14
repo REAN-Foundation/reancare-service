@@ -1,13 +1,13 @@
 import express from 'express';
-
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { Authorizer } from '../../../../auth/authorizer';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
+import { Injector } from '../../../../startup/injector';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { SymptomTypeValidator } from './symptom.type.validator';
 import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
-import { BaseController } from '../../../base.controller';
+import { BaseController } from '../../../../api/base.controller';
+import { SymptomTypeSearchFilters } from '../../../../domain.types/clinical/symptom/symptom.type/symptom.type.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,17 +15,9 @@ export class SymptomTypeController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: SymptomTypeService = null;
+    _service: SymptomTypeService = Injector.Container.resolve(SymptomTypeService);
 
     _validator: SymptomTypeValidator = new SymptomTypeValidator();
-
-    _authorizer: Authorizer = null;
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(SymptomTypeService);
-        this._authorizer = Loader.authorizer;
-    }
 
     //#endregion
 
@@ -33,15 +25,13 @@ export class SymptomTypeController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.Create', request, response);
-
+            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.create(request);
 
             const symptomType = await this._service.create(domainModel);
             if (symptomType == null) {
                 throw new ApiError(400, 'Cannot create symptom type!');
             }
-
             ResponseHandler.success(request, response, 'Symptom type created successfully!', 201, {
                 SymptomType : symptomType,
             });
@@ -52,15 +42,12 @@ export class SymptomTypeController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const symptomType = await this._service.getById(id);
             if (symptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-
             ResponseHandler.success(request, response, 'Symptom type retrieved successfully!', 200, {
                 SymptomType : symptomType,
             });
@@ -71,10 +58,7 @@ export class SymptomTypeController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.Search', request, response);
-
-            const filters = await this._validator.search(request);
-
+            const filters: SymptomTypeSearchFilters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -92,8 +76,7 @@ export class SymptomTypeController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.Update', request, response);
-
+            await this.authorizeOne(request, null, null);
             const domainModel = await this._validator.update(request);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -101,7 +84,6 @@ export class SymptomTypeController extends BaseController {
             if (existingSymptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update symptom type record!');
@@ -117,14 +99,12 @@ export class SymptomTypeController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('SymptomType.Delete', request, response);
-
+            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptomType = await this._service.getById(id);
             if (existingSymptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
             }
-
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Symptom type cannot be deleted.');

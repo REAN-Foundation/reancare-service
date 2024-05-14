@@ -180,7 +180,7 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (userDeviceDetailsDomainModel.ChangeCount != null) {
                 userDeviceDetails.ChangeCount = userDeviceDetailsDomainModel.ChangeCount;
             }
-            
+
             await userDeviceDetails.save();
 
             const dto = UserDeviceDetailsMapper.toDto(userDeviceDetails);

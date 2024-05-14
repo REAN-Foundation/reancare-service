@@ -10,6 +10,8 @@ import { DailyAssessmentSearchFilters, DailyAssessmentSearchResults } from '../.
 import { IDailyAssessmentRepo } from '../../../../../repository.interfaces/clinical/daily.assessment/daily.assessment.repo.interface';
 import { DailyAssessmentMapper } from '../../../mappers/clinical/daily.assessment/daily.assessment.mapper';
 import DailyAssessment from '../../../models/clinical/daily.assessment/daily.assessment.model';
+import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { Helper } from '../../../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -112,9 +114,12 @@ export class DailyAssessmentRepo implements IDailyAssessmentRepo {
         }
     };
 
-    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, frequency: ReportFrequency): Promise<any> => {
         try {
-            const records = await this.getRecords(patientUserId, numMonths);
+            const duration = Helper.frequencyToDuration(frequency);
+            const durationType = Helper.frequencyToDurationType(frequency);
+            
+            const records = await this.getRecords(patientUserId, duration, durationType);
             const records_ = records.map(x => {
                 const dayStr = x.CreatedAt.toISOString()
                     .split('T')[0];
@@ -132,9 +137,9 @@ export class DailyAssessmentRepo implements IDailyAssessmentRepo {
         }
     };
 
-    private async getRecords(patientUserId: string, months: number) {
+    private async getRecords(patientUserId: string, duration: number, durationType: DurationType) {
         const today = new Date();
-        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const from = TimeHelper.subtractDuration(new Date(), duration, durationType);
         const records = await DailyAssessment.findAll({
             where : {
                 PatientUserId : patientUserId,

@@ -1,27 +1,21 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { MedicalConditionService } from '../../../services/clinical/medical.condition.service';
-import { Loader } from '../../../startup/loader';
 import { MedicalConditionValidator } from './medical.condition.validator';
-import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicalConditionController extends BaseController {
+export class MedicalConditionController extends BaseController{
 
     //#region member variables and constructors
 
-    _service: MedicalConditionService = null;
+    _service: MedicalConditionService = Injector.Container.resolve(MedicalConditionService);
 
     _validator: MedicalConditionValidator = new MedicalConditionValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(MedicalConditionService);
-
-    }
 
     //#endregion
 
@@ -30,10 +24,8 @@ export class MedicalConditionController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('MedicalCondition.Create', request, response);
-
             const medicalConditionDomainModel = await this._validator.create(request);
-
+            await this.authorizeOne(request, null, medicalConditionDomainModel.TenantId);
             const MedicalCondition = await this._service.create(medicalConditionDomainModel);
             if (MedicalCondition == null) {
                 throw new ApiError(400, 'Cannot create record for medical condition record!');
@@ -49,15 +41,13 @@ export class MedicalConditionController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('MedicalCondition.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-
             const MedicalCondition = await this._service.getById(id);
             if (MedicalCondition == null) {
                 throw new ApiError(404, ' Medical condition record not found.');
             }
-
+            await this.authorizeOne(request, null, MedicalCondition.TenantId);
             ResponseHandler.success(request, response, 'Medical condition record retrieved successfully!', 200, {
                 MedicalCondition : MedicalCondition,
             });
@@ -68,10 +58,7 @@ export class MedicalConditionController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('MedicalCondition.Search', request, response);
-
             const filters = await this._validator.search(request);
-
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -91,17 +78,14 @@ export class MedicalConditionController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('MedicalCondition.Update', request, response);
 
             const domainModel = await this._validator.update(request);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Medical condition record not found.');
             }
-
+            await this.authorizeOne(request, null, existingRecord.TenantId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update medical condition record!');
@@ -117,14 +101,13 @@ export class MedicalConditionController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('MedicalCondition.Update', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Medical condition record not found.');
             }
-
+            await this.authorizeOne(request, null, existingRecord.TenantId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Medical condition record cannot be deleted.');

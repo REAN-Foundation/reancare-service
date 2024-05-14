@@ -12,7 +12,7 @@ describe('Observation resource: Storage, retrieval', () => {
 
         var doctorModel = DoctorMapper.convertJsonObjectToDomainModel();
         var doctorEhrId = await TestLoader.DoctorStore.create(doctorModel);
-        
+
         var model = BloodPressureMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
         model.RecordedByUserId = doctorEhrId;

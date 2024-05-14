@@ -1,22 +1,23 @@
 /* eslint-disable max-len */
 import express from 'express';
 import { UserDeviceDetailsController } from './user.device.details.controller ';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
+import { UserDeviceDetailsAuth } from './user.device.details.auth';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new UserDeviceDetailsController();
 
-    router.post('/', authenticator.authenticateClient, controller.create);
-    router.post('/notification', authenticator.authenticateClient, authenticator.authenticateUser, controller.sendTestNotification);
-    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.post('/', auth(UserDeviceDetailsAuth.create), controller.create);
+    router.post('/notification', auth(UserDeviceDetailsAuth.sendTestNotification), controller.sendTestNotification);
+    router.get('/search', auth(UserDeviceDetailsAuth.search), controller.search);
+    router.get('/by-user-id/:userId', auth(UserDeviceDetailsAuth.getByUserId), controller.getByUserId);
+    router.get('/:id', auth(UserDeviceDetailsAuth.getById), controller.getById);
+    router.put('/:id', auth(UserDeviceDetailsAuth.update), controller.update);
+    router.delete('/:id', auth(UserDeviceDetailsAuth.delete), controller.delete);
 
     app.use('/api/v1/user-device-details', router);
 };

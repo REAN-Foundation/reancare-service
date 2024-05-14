@@ -8,6 +8,7 @@ import Person from "../../models/person/person.model";
 import { DoctorDetailsDto, DoctorDto } from '../../../../../domain.types/users/doctor/doctor.dto';
 import { DoctorDomainModel } from '../../../../../domain.types/users/doctor/doctor.domain.model';
 import { DoctorSearchFilters, DoctorSearchResults } from '../../../../../domain.types/users/doctor/doctor.search.types';
+import User from "../../models/users/user/user.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +53,24 @@ export class DoctorRepo implements IDoctorRepo {
     getByUserId = async (userId: string): Promise<DoctorDetailsDto> => {
         try {
             const doctor = await Doctor.findOne({ where: { UserId: userId } });
+            const dto = await DoctorMapper.toDetailsDto(doctor);
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByPersonId = async (personId: string): Promise<DoctorDetailsDto> => {
+        try {
+            var doctor = await Doctor.findOne({ where: { PersonId: personId } });
+            if (doctor == null) {
+                const user = await User.findOne({ where: { PersonId: personId } });
+                if (user == null) {
+                    return null;
+                }
+                doctor = await Doctor.findOne({ where: { UserId: user.id } });
+            }
             const dto = await DoctorMapper.toDetailsDto(doctor);
             return dto;
         } catch (error) {

@@ -1,26 +1,24 @@
 import express from 'express';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { OrderService } from '../../../services/clinical/order.service';
-import { Loader } from '../../../startup/loader';
 import { OrderValidator } from './order.validator';
-import { BaseController } from '../../base.controller';
+import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
+import { OrderSearchFilters } from '../../../domain.types/clinical/order/order.search.types';
+import { OrderDomainModel } from '../../../domain.types/clinical/order/order.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class OrderController extends BaseController{
+export class OrderController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: OrderService = null;
+    _service: OrderService = Injector.Container.resolve(OrderService);
 
     _validator: OrderValidator = new OrderValidator();
-
-    constructor() {
-        super();
-        this._service = Loader.container.resolve(OrderService);
-    }
 
     //#endregion
 
@@ -29,14 +27,12 @@ export class OrderController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Order.Create', request, response);
-
-            const model = await this._validator.create(request);
+            const model: OrderDomainModel = await this._validator.create(request);
+            await this.authorizeOne(request, model.PatientUserId);
             const order = await this._service.create(model);
             if (order == null) {
                 throw new ApiError(400, 'Cannot create record for order!');
             }
-
             ResponseHandler.success(request, response, 'Order record created successfully!', 201, {
                 Order : order,
             });
@@ -48,14 +44,12 @@ export class OrderController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Order.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const order = await this._service.getById(id);
             if (order == null) {
                 throw new ApiError(404, 'Order record not found.');
             }
-
+            await this.authorizeOne(request, order.PatientUserId);
             ResponseHandler.success(request, response, 'Order record retrieved successfully!', 200, {
                 Order : order,
             });
@@ -67,9 +61,8 @@ export class OrderController extends BaseController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Order.Search', request, response);
-
-            const filters = await this._validator.search(request);
+            let filters: OrderSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
 
@@ -89,15 +82,13 @@ export class OrderController extends BaseController{
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Order.Update', request, response);
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Order record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update order record!');
@@ -114,14 +105,12 @@ export class OrderController extends BaseController{
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Order.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Order record not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Order record cannot be deleted.');
@@ -136,5 +125,28 @@ export class OrderController extends BaseController{
     };
 
     //#endregion
+    private authorizeSearch = async (
+        request: express.Request,
+        searchFilters: OrderSearchFilters): Promise<OrderSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

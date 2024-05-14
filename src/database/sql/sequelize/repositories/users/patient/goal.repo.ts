@@ -265,7 +265,7 @@ export class GoalRepo implements IGoalRepo {
                 var tags = JSON.stringify(updateModel.Tags);
                 goalType.Tags = tags;
             }
-            
+
             await goalType.save();
 
             return await GoalMapper.toTypeDto(goalType);

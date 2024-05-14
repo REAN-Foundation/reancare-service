@@ -1,14 +1,15 @@
 import express from 'express';
 import { ApiError } from '../../../common/api.error';
-import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/response.handler';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
-import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
-import { DoctorService } from '../../../services/users/doctor.service';
-import { Loader } from '../../../startup/loader';
+import { DoctorService } from '../../../services/users/doctor/doctor.service';
 import { DoctorValidator } from './doctor.validator';
 import { BaseUserController } from '../base.user.controller';
+import { Injector } from '../../../startup/injector';
+import { UserHelper } from '../user.helper';
+import { DoctorSearchFilters } from '../../../domain.types/users/doctor/doctor.search.types';
+import { Roles } from '../../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,11 +17,12 @@ export class DoctorController extends BaseUserController {
 
     //#region member variables and constructors
 
-    _service: DoctorService = null;
+    _service: DoctorService = Injector.Container.resolve(DoctorService);
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(DoctorService);
     }
 
     //#endregion
@@ -29,76 +31,17 @@ export class DoctorController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.Create';
+            const createModel = await DoctorValidator.create(request);
+            const [ doctor, createdNew ] = await this._userHelper.createDoctor(createModel);
 
-            const doctorDomainModel = await DoctorValidator.create(request);
-
-            //Throw an error if doctor with same name and phone number exists
-            const doctorExists = await this._service.doctorExists(doctorDomainModel);
-            if (doctorExists) {
-                throw new ApiError(400, 'Cannot create doctor! Doctor with same phone number exists.');
+            if (createdNew) {
+                ResponseHandler.success(request, response, 'Doctor created successfully!', 201, {
+                    Doctor : doctor,
+                });
+                return;
             }
-
-            const userName = await this._userService.generateUserName(
-                doctorDomainModel.User.Person.FirstName,
-                doctorDomainModel.User.Person.LastName
-            );
-
-            const displayId = await this._userService.generateUserDisplayId(
-                Roles.Doctor,
-                doctorDomainModel.User.Person.Phone
-            );
-
-            const displayName = Helper.constructPersonDisplayName(
-                doctorDomainModel.User.Person.Prefix,
-                doctorDomainModel.User.Person.FirstName,
-                doctorDomainModel.User.Person.LastName
-            );
-
-            doctorDomainModel.User.Person.DisplayName = displayName;
-            doctorDomainModel.User.UserName = userName;
-            doctorDomainModel.DisplayId = displayId;
-
-            const userDomainModel = doctorDomainModel.User;
-            const personDomainModel = userDomainModel.Person;
-
-            //Create a person first
-
-            let person = await this._personService.getPersonWithPhone(doctorDomainModel.User.Person.Phone);
-            if (person == null) {
-                person = await this._personService.create(personDomainModel);
-                if (person == null) {
-                    throw new ApiError(400, 'Cannot create person!');
-                }
-            }
-
-            const role = await this._roleService.getByName(Roles.Doctor);
-            doctorDomainModel.PersonId = person.id;
-            userDomainModel.Person.id = person.id;
-            userDomainModel.RoleId = role.id;
-
-            const user = await this._userService.create(userDomainModel);
-            if (user == null) {
-                throw new ApiError(400, 'Cannot create user!');
-            }
-            doctorDomainModel.UserId = user.id;
-
-            //KK: Note - Please add user to appointment service here...
-
-            doctorDomainModel.DisplayId = displayId;
-            const doctor = await this._service.create(doctorDomainModel);
-            if (user == null) {
-                throw new ApiError(400, 'Cannot create doctor!');
-            }
-
-            await this.addAddress(request, person.id);
-
-            ResponseHandler.success(request, response, 'Doctor created successfully!', 201, {
-                Doctor : doctor,
-            });
-
+            ResponseHandler.failure(request, response, `Doctor account already exists!`, 409);
         } catch (error) {
-
             //KK: Todo: Add rollback in case of mid-way exception
             ResponseHandler.handleError(request, response, error);
         }
@@ -106,16 +49,13 @@ export class DoctorController extends BaseUserController {
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.GetByUserId';
-
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await DoctorValidator.getByUserId(request);
 
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, userId, user.TenantId);
 
             const doctor = await this._service.getByUserId(userId);
             if (doctor == null) {
@@ -132,10 +72,8 @@ export class DoctorController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.Search';
-            await this._authorizer.authorize(request, response);
-
-            const filters = await DoctorValidator.search(request);
+            let filters: DoctorSearchFilters = await DoctorValidator.search(request);
+            filters = await this.authorizeSearch(request, filters);
 
             // const extractFull: boolean =
             //     request.query.fullDetails !== 'undefined' && typeof request.query.fullDetails === 'boolean'
@@ -158,16 +96,14 @@ export class DoctorController extends BaseUserController {
 
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.UpdateByUserId';
-            await this._authorizer.authorize(request, response);
-
             const doctorDomainModel = await DoctorValidator.updateByUserId(request);
 
             const userId: string = await DoctorValidator.getByUserId(request);
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            await this.authorizeOne(request, userId, user.TenantId);
 
             const userDomainModel: UserDomainModel = doctorDomainModel.User;
             const updatedUser = await this._userService.update(doctorDomainModel.User.id, userDomainModel);
@@ -188,7 +124,7 @@ export class DoctorController extends BaseUserController {
                 throw new ApiError(400, 'Unable to update doctor record!');
             }
 
-            await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
+            await this.createOrUpdateDefaultAddress(request, user.Person.id);
 
             ResponseHandler.success(request, response, 'Doctor records updated successfully!', 200, {
                 Doctor : updatedDoctor,
@@ -199,17 +135,15 @@ export class DoctorController extends BaseUserController {
         }
     };
 
-    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+    deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Doctor.DeleteByUserId';
-            await this._authorizer.authorize(request, response);
-
             const userId: string = await DoctorValidator.delete(request);
-            const existingUser = await this._userService.getById(userId);
-            if (existingUser == null) {
+            const user = await this._userService.getById(userId);
+            if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
-
+            await this.authorizeOne(request, userId, user.TenantId);
+            
             const deleted = await this._personService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
@@ -221,6 +155,31 @@ export class DoctorController extends BaseUserController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    //#endregion
+
+    //#region  Authorization methods
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: DoctorSearchFilters): Promise<DoctorSearchFilters> => {
+
+        const currentUser = request.currentUser;
+        const currentRole = request.currentUser.CurrentRole;
+        
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                if (currentRole !== Roles.SystemAdmin && 
+                    currentRole !== Roles.SystemUser) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.TenantId = currentUser.TenantId;
+        }
+        return searchFilters;
     };
 
     //#endregion

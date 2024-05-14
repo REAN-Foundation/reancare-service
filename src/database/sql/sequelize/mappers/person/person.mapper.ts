@@ -21,6 +21,8 @@ export class PersonMapper {
 
         const age = Helper.getAgeFromBirthDate(person.BirthDate);
 
+        const profileImageURL = Helper.constructFileDownloadURL(person.ImageResourceId);
+
         const dto: PersonDetailsDto = {
             id                   : person.id,
             Prefix               : person.Prefix,
@@ -36,6 +38,7 @@ export class PersonMapper {
             Email                : person.Email,
             TelegramChatId       : person.TelegramChatId,
             ImageResourceId      : person.ImageResourceId,
+            ProfileImageURL      : profileImageURL,
             ActiveSince          : person.CreatedAt,
             Roles                : [],
             Addresses            : []

@@ -11,8 +11,8 @@ import { SleepMapper } from '../../../mappers/wellness/daily.records/sleep.mappe
 import Sleep from '../../../models/wellness/daily.records/sleep.model';
 import { HelperRepo } from '../../common/helper.repo';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
-import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { Helper } from '../../../../../../common/helper';
+import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -226,9 +226,9 @@ export class SleepRepo implements ISleepRepo {
         }
     };
 
-    private async getSleepRecords(patientUserId: string, count: number, unit: DurationType) {
+    private async getSleepRecords(patientUserId: string, duration: number, durationType: DurationType) {
         const today = new Date();
-        const from = TimeHelper.subtractDuration(new Date(), count, unit);
+        const from = TimeHelper.subtractDuration(new Date(), duration, durationType);
         const result = await Sleep.findAll({
             where : {
                 PatientUserId : patientUserId,
@@ -293,7 +293,7 @@ export class SleepRepo implements ISleepRepo {
                     Duration       : x.SleepDuration,
                     Unit           : x.Unit,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });
@@ -331,7 +331,7 @@ export class SleepRepo implements ISleepRepo {
                     Duration       : x.SleepDuration,
                     Unit           : x.Unit,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordTimeZone : currentTimeZone,
                 };
             });

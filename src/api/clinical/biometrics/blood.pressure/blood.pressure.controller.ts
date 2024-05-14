@@ -1,47 +1,43 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
+import { ResponseHandler } from '../../../../common/handlers/response.handler';
 import { BloodPressureService } from '../../../../services/clinical/biometrics/blood.pressure.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodPressureValidator } from './blood.pressure.validator';
-import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
-import { EHRAnalyticsHandler } from '../../../../modules/ehr.analytics/ehr.analytics.handler';
-import { EHRRecordTypes } from '../../../../modules/ehr.analytics/ehr.record.types';
 import { PersonService } from '../../../../services/person/person.service';
 import { HelperRepo } from '../../../../database/sql/sequelize/repositories/common/helper.repo';
 import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
+import { Injector } from '../../../../startup/injector';
 import { PatientService } from '../../../../services/users/patient/patient.service';
-import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.vital.service';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { BiometricsController } from '../biometrics.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodPressureController extends BaseController {
+export class BloodPressureController extends BiometricsController {
 
     //#region member variables and constructors
 
-    _service: BloodPressureService = null;
-
-    _personService: PersonService = null;
-
-    _patientService: PatientService = null;
-
     _validator: BloodPressureValidator = new BloodPressureValidator();
 
-    _ehrAnalyticsHandler: EHRAnalyticsHandler = new EHRAnalyticsHandler();
+    _service: BloodPressureService = Injector.Container.resolve(BloodPressureService);
 
-    _ehrVitalService: EHRVitalService = new EHRVitalService();
+    _personService: PersonService = Injector.Container.resolve(PersonService);
+
+    _patientService: PatientService = Injector.Container.resolve(PatientService);
+
+    _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+
+    _ehrVitalService = Injector.Container.resolve(EHRVitalService);
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(BloodPressureService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._ehrVitalService = Loader.container.resolve(EHRVitalService);
     }
 
     //#endregion
@@ -51,23 +47,14 @@ export class BloodPressureController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.Create', request, response);
-
             const model = await this._validator.create(request);
+            await this.authorizeUser(request, model.PatientUserId);
             const bloodPressure = await this._service.create(model);
             if (bloodPressure == null) {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
 
-            // get user details to add records in ehr database
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(bloodPressure.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, bloodPressure.id, bloodPressure.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${bloodPressure.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBloodPressureForAppNames(bloodPressure);
 
             /*if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
@@ -94,7 +81,7 @@ export class BloodPressureController extends BaseController {
                     },
                     RecordId       : bloodPressure.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -109,16 +96,14 @@ export class BloodPressureController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const bloodPressure = await this._service.getById(id);
-            if (bloodPressure == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, ' Blood pressure record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             ResponseHandler.success(request, response, 'Blood pressure record retrieved successfully!', 200, {
-                BloodPressure : bloodPressure,
+                BloodPressure : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -128,10 +113,9 @@ export class BloodPressureController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.Search', request, response);
-
             Logger.instance().log(`trying to fetch data for search...`);
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             Logger.instance().log(`Validations passed:: ${JSON.stringify(filters)}`);
             const searchResults = await this._service.search(filters);
             Logger.instance().log(`result length.: ${searchResults.Items.length}`);
@@ -154,28 +138,19 @@ export class BloodPressureController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.Update', request, response);
-
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Blood Pressure record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
             }
 
-            var eligibleAppNames = await this._ehrAnalyticsHandler.getEligibleAppNames(updated.PatientUserId);
-            if (eligibleAppNames.length > 0) {
-                for await (var appName of eligibleAppNames) { 
-                    this._service.addEHRRecord(model.PatientUserId, id, updated.Provider, model, appName);
-                }
-            } else {
-                Logger.instance().log(`Skip adding details to EHR database as device is not eligible:${updated.PatientUserId}`);
-            }
+            await this._ehrVitalService.addEHRBloodPressureForAppNames(updated);
 
             // Adding record to award service
             if (updated.Systolic || updated.Diastolic) {
@@ -197,7 +172,7 @@ export class BloodPressureController extends BaseController {
                     },
                     RecordId       : updated.id,
                     RecordDate     : tempDate,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
             }
@@ -212,21 +187,19 @@ export class BloodPressureController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('Biometrics.BloodPressure.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Blood pressure record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Blood pressure record cannot be deleted.');
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteVitalEHRRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(record.id);
 
             ResponseHandler.success(request, response, 'Blood pressure record deleted successfully!', 200, {
                 Deleted : true,
@@ -239,36 +212,6 @@ export class BloodPressureController extends BaseController {
     //#endregion
 
     //#region Privates
-
-    private addEHRRecord = (patientUserId: uuid, recordId: uuid, provider: string, model: BloodPressureDomainModel, appName?: string) => {
-
-        if (model.Systolic) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.BloodPressure,
-                model.Systolic,
-                model.Unit,
-                'Systolic Blood Pressure',
-                'Blood Pressure',
-                appName
-            );
-        }
-        if (model.Diastolic) {
-            EHRAnalyticsHandler.addFloatRecord(
-                patientUserId,
-                recordId,
-                provider,
-                EHRRecordTypes.BloodPressure,
-                model.Diastolic,
-                model.Unit,
-                'Distolic Blood Pressure',
-                'Blood Pressure',
-                appName
-            );
-        }
-    };
 
     private sendBPMessage = async (patientUserId: uuid, model: BloodPressureDomainModel) => {
 

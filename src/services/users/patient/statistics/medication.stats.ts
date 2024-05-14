@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { DefaultChartOptions } from "../../../../modules/charts/default.chart.options";
 import { Helper } from "../../../../common/helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";

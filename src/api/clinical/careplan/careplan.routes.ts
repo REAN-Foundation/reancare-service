@@ -1,22 +1,22 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
+import { auth } from '../../../auth/auth.handler';
 import { CareplanController } from './careplan.controller';
+import { CareplanAuth } from './careplan.auth';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new CareplanController();
 
-    router.get('/eligibility/:patientUserId/providers/:provider/careplans/:careplanCode', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientEligibility);
-    router.get('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAvailableCareplans);
-    router.post('/patients/:patientUserId/enroll', authenticator.authenticateClient, authenticator.authenticateUser, controller.enroll);
-    router.get('/patients/:patientUserId/enrollments', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientEnrollments);
-    router.get('/:id/fetch-tasks', authenticator.authenticateClient, authenticator.authenticateUser, controller.fetchTasks);
-    router.get('/:id/weekly-status', authenticator.authenticateClient, authenticator.authenticateUser, controller.getWeeklyStatus);
-    router.post('/patients/update-risk', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateRisk);
+    router.get('/eligibility/:patientUserId/providers/:provider/careplans/:careplanCode', auth(CareplanAuth.getPatientEligibility), controller.getPatientEligibility);
+    router.get('/', auth(CareplanAuth.getAvailableCareplans), controller.getAvailableCareplans);
+    router.post('/patients/:patientUserId/enroll', auth(CareplanAuth.enroll), controller.enroll);
+    router.get('/patients/:patientUserId/enrollments', auth(CareplanAuth.getPatientEnrollments), controller.getPatientEnrollments);
+    router.get('/:id/fetch-tasks', auth(CareplanAuth.fetchTasks), controller.fetchTasks);
+    router.get('/:id/weekly-status', auth(CareplanAuth.getWeeklyStatus), controller.getWeeklyStatus);
+    router.post('/patients/update-risk', auth(CareplanAuth.updateRisk), controller.updateRisk);
 
     app.use('/api/v1/care-plans', router);
 };

@@ -15,7 +15,6 @@ import UserTask from '../../../models/users/user/user.task.model';
 import Patient from '../../../models/users/patient/patient.model';
 import User from '../../../models/users/user/user.model';
 import { HelperRepo } from '../../common/helper.repo';
-import { id_ID } from '@faker-js/faker';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -194,7 +193,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     PatientUserId  : x.PatientUserId,
                     Taken          : x.IsTaken,
                     DrugName       : x.DrugName,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
                     RecordDate     : tempDate,
                     RecordTimeZone : currentTimeZone,
                 };
@@ -232,7 +231,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     PatientUserId  : x.PatientUserId,
                     Taken          : x.IsTaken,
                     DrugName       : x.DrugName,
-                    RecordDateStr  : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
+                    RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.TimeScheduleEnd),
                     RecordDate     : tempDate,
                     RecordTimeZone : currentTimeZone,
                 };

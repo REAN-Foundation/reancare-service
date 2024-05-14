@@ -1,21 +1,22 @@
 import express from 'express';
-import { Loader } from '../../../../startup/loader';
+import { auth } from '../../../../auth/auth.handler';
 import { StatisticsController } from './statistics.controller';
+import { StatisticsAuth } from './statistics.auth';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
 
     const router = express.Router();
-    const authenticator = Loader.authenticator;
     const controller = new StatisticsController();
 
-    router.get('/:patientUserId/report', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientStatsReport);
-    router.get('/:patientUserId', authenticator.authenticateClient, /*authenticator.authenticateUser,*/ controller.getPatientStats);
+    router.get('/:patientUserId/report', auth(StatisticsAuth.getPatientStatsReport), controller.getPatientStatsReport);
+    router.get('/:patientUserId', auth(StatisticsAuth.getPatientStats), controller.getPatientStats);
+    router.get('/:patientUserId/health-summary', auth(StatisticsAuth.getPatientHealthSummary), controller.getPatientHealthSummary);
 
-    router.post('/:patientUserId/settings', authenticator.authenticateClient, controller.createReportSettings);
-    router.get('/:patientUserId/settings', authenticator.authenticateClient, controller.getReportSettingsByUserId);
-    router.put('/:patientUserId/settings', authenticator.authenticateClient, controller.updateReportSettingsByUserId);
-    
+    router.post('/:patientUserId/settings', auth(StatisticsAuth.createReportSettings), controller.createReportSettings);
+    router.get('/:patientUserId/settings', auth(StatisticsAuth.getReportSettingsByUserId), controller.getReportSettingsByUserId);
+    router.put('/:patientUserId/settings', auth(StatisticsAuth.updateReportSettingsByUserId), controller.updateReportSettingsByUserId);
+
     app.use('/api/v1/patient-statistics', router);
 };

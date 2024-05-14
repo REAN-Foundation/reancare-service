@@ -11,7 +11,7 @@ import {
     RECTANGULAR_CHART_WIDTH,
     SQUARE_CHART_HEIGHT,
     SQUARE_CHART_WIDTH } from "./report.helper";
-import { addSectionTitle, addNoDataDisplay, addText, addLegend } from "./stat.report.commons";
+import { addSectionTitle, addNoDataDisplay, addLegend } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
 

@@ -1,16 +1,18 @@
-import express, { application } from 'express';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { BaseController } from '../../base.controller';
+import express from 'express';
+import { ResponseHandler } from '../../../common/handlers/response.handler';
 import * as path from 'path';
 import { CustomQueryService } from '../../../services/statistics/custom.query.service';
 import { CustomQueryValidator } from './custom.query.validator';
 import { ApiError } from '../../../common/api.error';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { CustomQuerySearchFilters } from '../../../domain.types/statistics/custom.query/custom.query.search.type';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CustomQueryController extends BaseController {
+export class CustomQueryController extends BaseController{
 
     //#region member variables and constructors
     _service: CustomQueryService = null;
@@ -19,13 +21,13 @@ export class CustomQueryController extends BaseController {
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(CustomQueryService);
+        this._service = Injector.Container.resolve(CustomQueryService);
     }
 
     executeQuery = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CustomQuery.ExecuteQuery', request, response, false);
             const model = await this._validator.validateQuery(request);
+            await this.authorizeOne(request, model.UserId, model.TenantId);
             const queryResponse = await this._service.executeQuery(model);
             const message = 'Query response retrieved successfully!';
             if (model.Format === 'CSV' || model.Format === 'JSON'){
@@ -46,15 +48,13 @@ export class CustomQueryController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('CustomQuery.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const query = await this._service.getById(id);
             if (query == null) {
                 throw new ApiError(404, 'Query not found.');
             }
-
+            await this.authorizeOne(request, query.UserId, query.TenantId);
             ResponseHandler.success(request, response, 'Query retrieved successfully!', 200, {
                 Query : query,
             });
@@ -65,10 +65,9 @@ export class CustomQueryController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CustomQuery.Search', request, response);
 
             const filters = await this._validator.search(request);
-
+            await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -88,15 +87,13 @@ export class CustomQueryController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CustomQuery.Update', request, response);
-
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Query not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.UserId, existingRecord.TenantId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update Query!');
@@ -120,14 +117,13 @@ export class CustomQueryController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('CustomQuery.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Query not found.');
             }
-
+            await this.authorizeOne(request, existingRecord.UserId, existingRecord.TenantId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Query cannot be deleted.');
@@ -139,6 +135,30 @@ export class CustomQueryController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    private authorizeSearch = async (
+        request: express.Request,
+        searchFilters: CustomQuerySearchFilters): Promise<CustomQuerySearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.UserId != null) {
+            if (searchFilters.UserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.UserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.UserId = currentUser.UserId;
+        }
+        return searchFilters;
     };
 
 }

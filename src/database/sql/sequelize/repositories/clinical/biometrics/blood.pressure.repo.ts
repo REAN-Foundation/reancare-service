@@ -294,7 +294,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
                     VitalPrimaryValue   : x.Systolic,
                     VitalSecondaryValue : x.Diastolic,
                     Unit                : x.Unit,
-                    RecordDateStr       : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr       : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate          : tempDate,
                     RecordTimeZone      : currentTimeZone,
                 };
@@ -336,7 +336,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
                     VitalPrimaryValue   : x.Systolic,
                     VitalSecondaryValue : x.Diastolic,
                     Unit                : x.Unit,
-                    RecordDateStr       : await TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
+                    RecordDateStr       : TimeHelper.formatDateToLocal_YYYY_MM_DD(x.RecordDate),
                     RecordDate          : tempDate,
                     RecordTimeZone      : currentTimeZone,
                 };

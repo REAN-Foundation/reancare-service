@@ -1,6 +1,6 @@
 import express from 'express';
+import { Injector } from '../../../../startup/injector';
 import { UserService } from '../../../../services/users/user/user.service';
-import { Loader } from '../../../../startup/loader';
 import { BaseValidator, Where } from '../../../base.validator';
 import { HealthReportSettingsDomainModel, ReportFrequency } from '../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { InputValidationError } from '../../../../common/input.validation.error';
@@ -13,7 +13,7 @@ export class StatisticsValidator  extends BaseValidator {
 
     constructor() {
         super();
-        this._userService = Loader.container.resolve(UserService);
+        this._userService = Injector.Container.resolve(UserService);
     }
 
     getCreateDomainModel = async (request: express.Request): Promise<HealthReportSettingsDomainModel> => {

@@ -1,39 +1,52 @@
-import express from 'express';
-import { Authorizer } from '../auth/authorizer';
-import { ApiError } from '../common/api.error';
-import { Loader } from '../startup/loader';
+
+import express from "express";
+import { uuid } from "../domain.types/miscellaneous/system.types";
+import { ApiError } from "../common/api.error";
+import { PermissionHandler } from "../auth/custom/permission.handler";
+import { TenantService } from "../services/tenant/tenant.service";
+import { Injector } from "../startup/injector";
+import { UserService } from "../services/users/user/user.service";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class BaseController {
 
-    _authorizer: Authorizer = null;
-
-    constructor() {
-        this._authorizer = Loader.authorizer;
-    }
-
-    setContext = async (
-        context: string,
+    public authorizeOne = async (
         request: express.Request,
-        response: express.Response,
-        authorize = true) => {
+        resourceOwnerUserId?: uuid,
+        resourceTenantId?: uuid): Promise<void> => {
 
-        if (context === undefined || context === null) {
-            throw new ApiError(500, 'Invalid request context');
+        if (request.currentClient?.IsPrivileged) {
+            return;
         }
-        const tokens = context.split('.');
-        if (tokens.length < 2) {
-            throw new ApiError(500, 'Invalid request context');
+
+        let ownerUserId = resourceOwnerUserId ?? null;
+        let tenantId = resourceTenantId ?? null;
+
+        if (ownerUserId) {
+            const userService = Injector.Container.resolve(UserService);
+            const user = await userService.getById(ownerUserId);
+            if (user) {
+                ownerUserId = user.id;
+                tenantId = tenantId ?? user.TenantId;
+            }
         }
-        const resourceType = tokens[0];
-        request.context = context;
-        request.resourceType = resourceType;
-        if (request.params.id !== undefined && request.params.id !== null) {
-            request.resourceId = request.params.id;
+
+        if (tenantId == null) {
+            // If tenant is not provided, get the default tenant
+            const tenantService = Injector.Container.resolve(TenantService);
+            const tenant = await tenantService.getTenantWithCode('default');
+            if (tenant) {
+                tenantId = tenant.id;
+            }
         }
-        if (authorize) {
-            await Loader.authorizer.authorize(request, response);
+
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = tenantId;
+
+        const permitted = await PermissionHandler.checkFineGrained(request);
+        if (!permitted) {
+            throw new ApiError(403, 'Permission denied.');
         }
     };
 

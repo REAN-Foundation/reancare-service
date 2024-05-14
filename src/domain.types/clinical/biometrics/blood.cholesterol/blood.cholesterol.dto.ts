@@ -3,7 +3,8 @@ import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 export interface BloodCholesterolDto {
     id?                : uuid;
     EhrId?             : uuid;
-    PatientUserId      : uuid;
+    PatientUserId?     : uuid;
+    TenantId?          : uuid;
     TotalCholesterol?  : number;
     HDL?               : number;
     LDL?               : number;

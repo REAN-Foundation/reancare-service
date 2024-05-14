@@ -79,12 +79,6 @@ export const createPhysicalActivityCharts = async (data) => {
     //     key : 'Exercise_CaloriesBurned_LastMonth',
     //     location
     // });
-    
-    location = await createExerciseCalorieForMonth_BarChart(data.Stats.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
-    locations.push({
-        key : 'Exercise_CaloriesBurned_LastMonth',
-        location
-    });
     // location = await createExerciseMoveMinutesForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
     // locations.push({
     //     key : 'Exercise_MoveMinutes_LastMonth',

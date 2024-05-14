@@ -6,7 +6,7 @@ import { HealthReportSettingsDto } from '../../../domain.types/users/patient/hea
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class HealthReportSettingsService {
+export class HealthReportSettingService {
 
     constructor(
        @inject('IHealthReportSettingsRepo') private _healthReportSettingRepo: IHealthReportSettingsRepo,

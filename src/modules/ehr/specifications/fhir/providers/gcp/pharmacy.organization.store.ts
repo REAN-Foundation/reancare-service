@@ -1,6 +1,6 @@
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
-import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.types';
 import { IPharmacyOrganizationStore } from '../../../../interfaces/pharmacy.organization.store.interface';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,18 +65,18 @@ export class GcpPharmacyOrganizationStore implements IPharmacyOrganizationStore 
             });
         }
 
-        if (model.Address != null) {
-            var address = {
-                line       : [],
-                city       : model.Address.City ?? '',
-                district   : model.Address.District ?? '',
-                postalCode : model.Address.PostalCode ?? ''
-            };
-            if (model.Address.AddressLine != null) {
-                address.line.push(model.Address.AddressLine);
-            }
-            resource.address.push(address);
-        }
+        // if (model.Address != null) {
+        //     var address = {
+        //         line       : [],
+        //         city       : model.Address.City ?? '',
+        //         district   : model.Address.District ?? '',
+        //         postalCode : model.Address.PostalCode ?? ''
+        //     };
+        //     if (model.Address.AddressLine != null) {
+        //         address.line.push(model.Address.AddressLine);
+        //     }
+        //     resource.address.push(address);
+        // }
         return resource;
     }
 
@@ -105,21 +105,21 @@ export class GcpPharmacyOrganizationStore implements IPharmacyOrganizationStore 
             }
         }
 
-        if (updates.Address != null) {
-            var address = {
-                line       : [],
-                city       : updates.Address.City ?? '',
-                district   : updates.Address.District ?? '',
-                postalCode : updates.Address.PostalCode ?? ''
-            };
-            if (updates.Address.AddressLine != null) {
-                address.line.push(updates.Address.AddressLine);
-            }
-            if (existingResource.address.length > 0) {
-                existingResource.address.pop();
-            }
-            existingResource.address.push(address);
-        }
+        // if (updates.Address != null) {
+        //     var address = {
+        //         line       : [],
+        //         city       : updates.Address.City ?? '',
+        //         district   : updates.Address.District ?? '',
+        //         postalCode : updates.Address.PostalCode ?? ''
+        //     };
+        //     if (updates.Address.AddressLine != null) {
+        //         address.line.push(updates.Address.AddressLine);
+        //     }
+        //     if (existingResource.address.length > 0) {
+        //         existingResource.address.pop();
+        //     }
+        //     existingResource.address.push(address);
+        // }
         return existingResource;
     }
 

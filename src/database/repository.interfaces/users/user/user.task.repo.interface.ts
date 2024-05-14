@@ -28,8 +28,6 @@ export interface IUserTaskRepo {
 
     getTaskForUserWithAction (userId: string, actionId: string): Promise<UserTaskDto>;
 
-    getTaskForUserWithAction (userId: string, actionId: string): Promise<UserTaskDto>;
-
     getStats(patientUserId: string, numMonths: number): Promise<any>;
 
     getUserEngagementStats(patientUserId: string, numMonths: number): Promise<any>;

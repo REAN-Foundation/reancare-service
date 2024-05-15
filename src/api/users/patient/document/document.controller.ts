@@ -281,7 +281,6 @@ export class DocumentController extends PatientBaseController {
             if (record === null) {
                 throw new ApiError(404, 'The document cannot be found.');
             }
-            await this.authorizeOne(request, record.PatientUserId);
 
             const now = new Date();
             const sharedAt = record.SharedDate;

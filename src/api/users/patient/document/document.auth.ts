@@ -84,4 +84,13 @@ export class PatientDocumentAuth {
         RequestType : RequestType.DeleteOne,
     };
 
+    static readonly getSharedDocument: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context          : `${this._baseContext}.GetSharedDocument`,
+        Ownership        : ResourceOwnership.System,
+        ActionScope      : ActionScope.Public,
+        RequestType      : RequestType.GetOne,
+        OptionalUserAuth : true
+    };
+
 }

@@ -33,7 +33,7 @@ export const registerSharingRoutes = (app: express.Application): void => {
 
     const router = express.Router();
     const controller = new DocumentController();
-    router.get('/:key', controller.getSharedDocument);
+    router.get('/:key', auth(PatientDocumentAuth.getSharedDocument) ,controller.getSharedDocument);
     app.use('/api/v1/docs', router);
 };
 

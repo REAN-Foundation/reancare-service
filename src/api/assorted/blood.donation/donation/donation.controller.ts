@@ -62,8 +62,8 @@ export class DonationController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters: DonationSearchFilters = await this._validator.search(request);
-            await this.authorizeSearch(request, filters);
+            let filters: DonationSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -125,6 +125,11 @@ export class DonationController extends BaseController {
     authorizeSearch = async (
         request: express.Request,
         filters: DonationSearchFilters): Promise<DonationSearchFilters> => {
+            
+        if (request.currentClient?.IsPrivileged) {
+            return filters;
+        }
+
         const currentUserId = request.currentUser.UserId;
         const currentUserRole = request.currentUser.CurrentRole;
     

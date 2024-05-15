@@ -206,7 +206,7 @@ export class PatientController extends BaseUserController {
 
             // if timezone change detected then delete future medication schedules and create new one
             if (user.CurrentTimeZone != request.body.CurrentTimeZone) {
-                await this._userService.update(userId, { CurrentTimeZone : request.body.CurrentTimeZone }); 
+                await this._userService.update(userId, { CurrentTimeZone: request.body.CurrentTimeZone });
                 this.deleteAndCreateFutureMedicationSchedules(userId);
             }
 
@@ -360,7 +360,8 @@ export class PatientController extends BaseUserController {
         for await ( var m of medications) {
             if (m.FrequencyUnit !== 'Other') {
                 var deletedMedicationCount = await this._medicationConsumptionService.deleteFutureMedicationSchedules(m.id);
-                var startDate = await this._userService.getDateInUserTimeZone(m.PatientUserId, new Date().toISOString().split('T')[0]);
+                var startDate = await this._userService.getDateInUserTimeZone(m.PatientUserId, new Date().toISOString()
+                    .split('T')[0]);
                 if (m.FrequencyUnit === 'Weekly' || m.FrequencyUnit === 'Monthly') {
                     m.Duration = deletedMedicationCount;
                 } else if (m.FrequencyUnit === 'Daily') {
@@ -381,12 +382,16 @@ export class PatientController extends BaseUserController {
         request: express.Request,
         searchFilters: PatientSearchFilters): Promise<PatientSearchFilters> => {
 
+        if (request.currentClient?.IsPrivileged) {
+            return searchFilters;
+        }
+            
         const currentUser = request.currentUser;
         const currentRole = request.currentUser.CurrentRole;
         
         if (searchFilters.TenantId != null) {
             if (searchFilters.TenantId !== request.currentUser.TenantId) {
-                if (currentRole !== Roles.SystemAdmin && 
+                if (currentRole !== Roles.SystemAdmin &&
                     currentRole !== Roles.SystemUser) {
                     throw new ApiError(403, `Unauthorized`);
                 }
@@ -399,4 +404,5 @@ export class PatientController extends BaseUserController {
     };
 
     //#endregion
+
 }

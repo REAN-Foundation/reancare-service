@@ -9,6 +9,7 @@ export interface DonationCommunicationSearchFilters extends BaseSearchFilters {
     DonorUserId?               : uuid;
     TenantId?                  : uuid;
     VolunteerUserId?           : uuid,
+    DonationRecordId?           : uuid,
     FifthDayReminderFlag?      : boolean;
     DonorNoResponseFirstFlag?  : boolean;
     DonorNoResponseSecondFlag? : boolean;

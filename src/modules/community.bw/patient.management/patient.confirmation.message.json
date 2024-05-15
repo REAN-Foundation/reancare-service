@@ -1,0 +1,20 @@
+[
+    {
+        "Name": "Patient donation confirmation message",
+        "TimeSlot": "Morning",
+        "Sequence": 1,
+        "Day": 1,
+        "TemplateName": "patient_donation_confirmation",
+        "Message": { "Variables" : [
+            {
+                "type": "text",
+                "text": "Volunteer"
+            },
+            {
+                "type": "text",
+                "text": "05-05-2024"
+            }]
+        },
+        "ButtonsIds" : ["PatientDonationConfirmationYes", "PatientDonationConfirmationNo"]
+    }
+]

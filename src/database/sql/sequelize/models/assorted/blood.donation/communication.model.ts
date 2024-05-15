@@ -60,6 +60,13 @@ export default class DonationCommunication extends Model {
     })
     VolunteerUserId: string;
 
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    DonationRecordId: string;
+
     @Column({
         type         : DataType.ENUM,
         allowNull    : false,

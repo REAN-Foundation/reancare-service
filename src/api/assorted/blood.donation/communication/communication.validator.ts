@@ -17,6 +17,7 @@ export class CommunicationValidator extends BaseValidator {
             PatientUserId             : request.body.PatientUserId ?? null,
             DonorUserId               : request.body.DonorUserId ?? null,
             VolunteerUserId           : request.body.VolunteerUserId ?? null,
+            DonationRecordId          : request.body.DonationRecordId ?? null,
             FifthDayReminderFlag      : request.body.FifthDayReminderFlag ?? false,
             DonorNoResponseFirstFlag  : request.body.DonorNoResponseFirstFlag ?? false,
             DonorNoResponseSecondFlag : request.body.DonorNoResponseSecondFlag ?? false,
@@ -37,6 +38,7 @@ export class CommunicationValidator extends BaseValidator {
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
         await this.validateUuid(request, 'donorUserId', Where.Query, false, false);
         await this.validateUuid(request, 'volunteerUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'donationRecordId', Where.Query, false, false);
         await this.validateString(request, 'donorAcceptance', Where.Query, false, false);
         await this.validateBoolean(request, 'fifthDayReminderFlag', Where.Query, false, false);
         await this.validateBoolean(request, 'donorNoResponseFirstFlag', Where.Query, false, false);
@@ -64,6 +66,7 @@ export class CommunicationValidator extends BaseValidator {
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
         await this.validateUuid(request, 'DonorUserId', Where.Body, false, false);
         await this.validateUuid(request, 'VolunteerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'DonationRecordId', Where.Body, false, false);
         await this.validateBoolean(request, 'FifthDayReminderFlag', Where.Body, false, false);
         await this.validateBoolean(request, 'DonorNoResponseFirstFlag', Where.Body, false, false);
         await this.validateBoolean(request, 'DonorNoResponseSecondFlag', Where.Body, false, false);
@@ -83,6 +86,7 @@ export class CommunicationValidator extends BaseValidator {
         await this.validateBoolean(request, 'DonorNoResponseSecondFlag', Where.Body, false, false);
         await this.validateBoolean(request, 'IsRemindersLoaded', Where.Body, false, false);
         await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
+        await this.validateUuid(request, 'DonationRecordId', Where.Body, false, false);
 
         this.validateRequest(request);
     }

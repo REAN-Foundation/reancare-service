@@ -8,19 +8,20 @@ import { ReminderTypeList, RepeatAfterEveryUnitList } from '../../../domain.type
 import { TypesValidator } from './types.validator';
 import { UserEngagementCategoryList } from '../../../domain.types/statistics/user.engagement.types';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class TypesController {
+export class TypesController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: TypesService = null;
+    _service: TypesService = Injector.Container.resolve(TypesService);
 
     _validator = new TypesValidator();
 
     constructor() {
-        this._service = Injector.Container.resolve(TypesService);
+        super();
     }
 
     //#endregion
@@ -233,8 +234,9 @@ export class TypesController {
     createPriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createPriorityType(request);
-            const priorityType = await this._service.createPriorityType(domainModel);
+            const model = await this._validator.createPriorityType(request);
+            await this.authorizeOne(request);
+            const priorityType = await this._service.createPriorityType(model);
             if (priorityType == null) {
                 throw new ApiError(400, 'Cannot create priority type!');
             }
@@ -268,14 +270,14 @@ export class TypesController {
     updatePriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.updatePriorityType(request);
+            const model = await this._validator.updatePriorityType(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getPriorityTypeById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Priority type not found.');
             }
 
-            const updated = await this._service.updatePriorityType(domainModel.id, domainModel);
+            const updated = await this._service.updatePriorityType(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a priority type!');
             }
@@ -315,8 +317,8 @@ export class TypesController {
     createRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createRoleType(request);
-            const roleType = await this._service.createRoleType(domainModel);
+            const model = await this._validator.createRoleType(request);
+            const roleType = await this._service.createRoleType(model);
             if (roleType  == null) {
                 throw new ApiError(400, 'Cannot create role type!');
             }
@@ -350,14 +352,14 @@ export class TypesController {
     updateRoleType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.updateRoleType(request);
+            const model = await this._validator.updateRoleType(request);
             const id:number = parseInt(request.params.id);
             const existingRecord = await this._service.getRoleTypeById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Role type  not found.');
             }
 
-            const updated = await this._service.updateRoleType(domainModel.id, domainModel);
+            const updated = await this._service.updateRoleType(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a role type !');
             }
@@ -431,14 +433,14 @@ export class TypesController {
     updateLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.updateLabRecordType(request);
+            const model = await this._validator.updateLabRecordType(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getLabRecordTypeById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'LabRecordType not found.');
             }
 
-            const updated = await this._service.updateLabRecordType(domainModel.id, domainModel);
+            const updated = await this._service.updateLabRecordType(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a lab record type!');
             }
@@ -534,14 +536,14 @@ export class TypesController {
     updateGoalType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.updateGoalType(request);
+            const model = await this._validator.updateGoalType(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getGoalTypeById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Goal type not found.');
             }
 
-            const updated = await this._service.updateGoalType(domainModel.id, domainModel);
+            const updated = await this._service.updateGoalType(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a Goal type!');
             }

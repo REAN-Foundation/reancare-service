@@ -116,11 +116,27 @@
                 },
                 {
                     "Provider" : "REAN_BW",
+                    "Name": "Patient donation confirmation message",
+                    "Code": "Patient-Donation-Confirmation",
+                    "DisplayName": "Blood Warior Patient Confirmation",
+                    "DefaultDurationDays": 30,
+                    "Description": "Blood warrior patient messages."
+                },
+                {
+                    "Provider" : "REAN_BW",
                     "Name": "Donor messages",
                     "Code": "Donor-Reminders",
                     "DisplayName": "Blood Warior Donor",
                     "DefaultDurationDays": 30,
                     "Description": "Blood warrior donor messages."
+                },
+                {
+                    "Provider" : "REAN_BW",
+                    "Name": "Volunteer messages",
+                    "Code": "Volunteer-Donation-Confirmation",
+                    "DisplayName": "Blood Warior Volunteer",
+                    "DefaultDurationDays": 30,
+                    "Description": "Blood warrior volunteer messages."
                 }
             ]
         }

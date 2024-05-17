@@ -10,10 +10,11 @@ import { TimeHelper } from '../../../../common/time.helper';
 import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
+import { BiometricsController } from '../biometrics.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PulseController{
+export class PulseController extends BiometricsController {
 
     //#region member variables and constructors
 
@@ -23,6 +24,10 @@ export class PulseController{
 
     _ehrVitalService: EHRVitalService = Injector.Container.resolve(EHRVitalService);
 
+    constructor() {
+        super();
+    }
+
     //#endregion
 
     //#region Action methods
@@ -31,6 +36,7 @@ export class PulseController{
         try {
 
             const model = await this._validator.create(request);
+            await this.authorizeUser(request, model.PatientUserId);
             const pulse = await this._service.create(model);
             if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
@@ -72,13 +78,13 @@ export class PulseController{
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const pulse = await this._service.getById(id);
-            if (pulse == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Pulse record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             ResponseHandler.success(request, response, 'Pulse rate record retrieved successfully!', 200, {
-                Pulse : pulse,
+                Pulse : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -88,7 +94,8 @@ export class PulseController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -111,11 +118,11 @@ export class PulseController{
 
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Pulse record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update pulse record!');
@@ -156,18 +163,18 @@ export class PulseController{
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Pulse record not found.');
             }
-
+            await this.authorizeUser(request, record.PatientUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Pulse record cannot be deleted.');
             }
 
             // delete ehr record
-            this._ehrVitalService.deleteRecord(existingRecord.id);
+            this._ehrVitalService.deleteRecord(record.id);
 
             ResponseHandler.success(request, response, 'Pulse rate record deleted successfully!', 200, {
                 Deleted : true,

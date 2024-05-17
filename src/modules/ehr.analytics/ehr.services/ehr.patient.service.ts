@@ -14,10 +14,11 @@ export class EHRPatientService {
 
     public addEHRRecordPatientForAppNames = async (model: PatientDetailsDto, location?: string) => {
         try {
-            const appNames = await PatientAppNameCache.get(model.UserId);
-            for await (var appName of appNames) {
-                this.addEHRRecord(model, appName, location);
+            const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(model.UserId);
+            if (eligibleToAddEhrRecord) {
+                this.addEHRRecord(model, null, location);
             }
+
         } catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message)}`);
         }
@@ -33,18 +34,19 @@ export class EHRPatientService {
 
     public addEHRRecordEmergencyContactForAppNames = async (model: EmergencyContactDto) => {
         try {
-            const appNames = await PatientAppNameCache.get(model.PatientUserId);
-            for await (var appName of appNames) {
+            const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(model.PatientUserId);
+            if (eligibleToAddEhrRecord) {
                 if (model.ContactRelation === EmergencyContactRoles.Doctor) {
                     await EHRAnalyticsHandler.addOrUpdatePatient(
                         model.PatientUserId,
                         {
                             DoctorPersonId_1 : model.ContactPersonId,
                         },
-                        appName
+                        null
                     );
                 }
             }
+            
         } catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message)}`);
         }
@@ -183,9 +185,9 @@ export class EHRPatientService {
 
     public addEHRRecordHealthProfileForAppNames = async (model: HealthProfileDto) => {
         try {
-            const appNames = await PatientAppNameCache.get(model.PatientUserId);
-            for await (var appName of appNames) {
-                this.addEHRRecordHealthProfile(model, appName);
+            const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(model.PatientUserId);
+            if (eligibleToAddEhrRecord) {
+                this.addEHRRecordHealthProfile(model, null);
             }
         } catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message)}`);

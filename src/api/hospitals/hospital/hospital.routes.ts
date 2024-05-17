@@ -1,6 +1,7 @@
 import express from 'express';
 import { HospitalController } from './hospital.controller';
 import { auth } from '../../../auth/auth.handler';
+import { HospitalAuth } from './hospital.auth';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {
@@ -9,12 +10,12 @@ export const register = (app: express.Application): void => {
 
     const controller = new HospitalController();
 
-    router.post('/', auth('Hospital.Create'), controller.create);
-    router.get('/health-systems/:healthSystemId', auth('Hospital.GetHospitalsForHealthSystem'), controller.getHospitalsForHealthSystem);
-    router.get('/search', auth('Hospital.Search'), controller.search);
-    router.get('/:id', auth('Hospital.GetById'), controller.getById);
-    router.put('/:id', auth('Hospital.Update'), controller.update);
-    router.delete('/:id', auth('Hospital.Delete'), controller.delete);
+    router.post('/', auth(HospitalAuth.create), controller.create);
+    router.get('/health-systems/:healthSystemId', auth(HospitalAuth.getHospitalsForHealthSystem), controller.getHospitalsForHealthSystem);
+    router.get('/search', auth(HospitalAuth.search), controller.search);
+    router.get('/:id', auth(HospitalAuth.getById), controller.getById);
+    router.put('/:id', auth(HospitalAuth.update), controller.update);
+    router.delete('/:id', auth(HospitalAuth.delete), controller.delete);
 
     app.use('/api/v1/hospitals', router);
 };

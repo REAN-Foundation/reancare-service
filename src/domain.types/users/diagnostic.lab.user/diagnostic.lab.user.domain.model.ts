@@ -1,5 +1,5 @@
 import { AddressDomainModel } from "../../general/address/address.domain.model";
-import { OrganizationDomainModel } from "../../general/organization/organization.domain.model";
+import { OrganizationDomainModel } from "../../general/organization/organization.types";
 
 export interface DiagnosticLabUserDomainModel {
     MiddleName?: any;

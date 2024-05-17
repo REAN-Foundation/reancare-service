@@ -7,6 +7,7 @@ export interface BridgeDto {
     id?                   : uuid;
     Name?                 : string,
     PatientUserId?        : uuid;
+    TenantId?             : uuid;
     DonorUserId?          : uuid;
     DonorType?            : string,
     Donor?                : DonorDetailsDto;

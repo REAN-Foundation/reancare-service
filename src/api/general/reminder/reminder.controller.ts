@@ -8,28 +8,28 @@ import { PersonService } from '../../../services/person/person.service';
 import { RoleService } from '../../../services/role/role.service';
 import { ReminderValidator } from './reminder.validator';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
+import { ReminderSearchFilters } from '../../../domain.types/general/reminder/reminder.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ReminderController {
+export class ReminderController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: ReminderService = null;
+    _service: ReminderService = Injector.Container.resolve(ReminderService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _organizationService: OrganizationService = null;
+    _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
     _validator = new ReminderValidator();
 
     constructor() {
-        this._service = Injector.Container.resolve(ReminderService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._organizationService = Injector.Container.resolve(OrganizationService);
+        super();
     }
 
     //#endregion
@@ -39,8 +39,9 @@ export class ReminderController {
     createOneTimeReminder = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createOneTimeReminder(request);
-            const reminder = await this._service.create(domainModel);
+            const model = await this._validator.createOneTimeReminder(request);
+            await this.authorizeOne(request, model.UserId);
+            const reminder = await this._service.create(model);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
             }
@@ -57,8 +58,9 @@ export class ReminderController {
     createReminderWithRepeatAfterEveryN = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createReminderWithRepeatAfterEveryN(request);
-            const reminder = await this._service.create(domainModel);
+            const model = await this._validator.createReminderWithRepeatAfterEveryN(request);
+            await this.authorizeOne(request, model.UserId);
+            const reminder = await this._service.create(model);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
             }
@@ -75,8 +77,9 @@ export class ReminderController {
     createReminderWithRepeatEveryWeekday = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createReminderWithRepeatEveryWeekday(request);
-            const reminder = await this._service.create(domainModel);
+            const model = await this._validator.createReminderWithRepeatEveryWeekday(request);
+            await this.authorizeOne(request, model.UserId);
+            const reminder = await this._service.create(model);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
             }
@@ -94,8 +97,9 @@ export class ReminderController {
         request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createReminderWithRepeatEveryWeekOnDays(request);
-            const reminder = await this._service.create(domainModel);
+            const model = await this._validator.createReminderWithRepeatEveryWeekOnDays(request);
+            await this.authorizeOne(request, model.UserId);
+            const reminder = await this._service.create(model);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
             }
@@ -112,8 +116,9 @@ export class ReminderController {
     createReminderWithEveryMonthOn = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createReminderWithEveryMonthOn(request);
-            const reminder = await this._service.create(domainModel);
+            const model = await this._validator.createReminderWithEveryMonthOn(request);
+            await this.authorizeOne(request, model.UserId);
+            const reminder = await this._service.create(model);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
             }
@@ -130,8 +135,9 @@ export class ReminderController {
     createReminderWithEveryQuarterOn = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createReminderWithEveryQuarterOn(request);
-            const reminder = await this._service.create(domainModel);
+            const model = await this._validator.createReminderWithEveryQuarterOn(request);
+            await this.authorizeOne(request, model.UserId);
+            const reminder = await this._service.create(model);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
             }
@@ -148,8 +154,9 @@ export class ReminderController {
     createReminderWithRepeatEveryHour = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createReminderWithRepeatEveryHour(request);
-            const reminder = await this._service.create(domainModel);
+            const model = await this._validator.createReminderWithRepeatEveryHour(request);
+            await this.authorizeOne(request, model.UserId);
+            const reminder = await this._service.create(model);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
             }
@@ -166,8 +173,9 @@ export class ReminderController {
     createReminderWithRepeatEveryDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const domainModel = await this._validator.createReminderWithRepeatEveryDay(request);
-            const reminder = await this._service.create(domainModel);
+            const model = await this._validator.createReminderWithRepeatEveryDay(request);
+            await this.authorizeOne(request, model.UserId);
+            const reminder = await this._service.create(model);
             if (reminder == null) {
                 throw new ApiError(400, 'Cannot create reminder!');
             }
@@ -185,13 +193,14 @@ export class ReminderController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const reminder = await this._service.getById(id);
-            if (reminder == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Reminder not found.');
             }
+            await this.authorizeOne(request, record.UserId);
 
             ResponseHandler.success(request, response, 'Reminder retrieved successfully!', 200, {
-                Reminder : reminder,
+                Reminder : record,
             });
 
         } catch (error) {
@@ -202,6 +211,7 @@ export class ReminderController {
     GetRemindersForUser = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            await this.authorizeOne(request, userId);
             const reminders = await this._service.getRemindersForUser(userId);
             if (reminders == null || reminders.length === 0) {
                 throw new ApiError(404, 'Reminders not found.');
@@ -217,7 +227,8 @@ export class ReminderController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -236,10 +247,11 @@ export class ReminderController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingReminder = await this._service.getById(id);
-            if (existingReminder == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Reminder not found.');
             }
+            await this.authorizeOne(request, record.UserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Reminder cannot be deleted.');
@@ -258,6 +270,7 @@ export class ReminderController {
         try {
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            await this.authorizeOne(request, userId);
             const reminders = await this._service.getRemindersForUser(userId);
             if (reminders == null || reminders.length === 0) {
                 throw new ApiError(404, 'Reminders not found.');
@@ -276,5 +289,30 @@ export class ReminderController {
     };
 
     //#endregion
+
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: ReminderSearchFilters): Promise<ReminderSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.UserId != null) {
+            if (searchFilters.UserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.UserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.UserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

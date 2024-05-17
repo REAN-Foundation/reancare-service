@@ -14,6 +14,7 @@ export class AddressMapper {
 
         const dto: AddressDto = {
             id          : address.id,
+            TenantId    : address.TenantId,
             Type        : address.Type,
             AddressLine : address.AddressLine,
             City        : address.City,

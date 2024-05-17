@@ -13,6 +13,7 @@ export class AssessmentTemplateMapper {
 
         const dto: AssessmentTemplateDto = {
             id                          : template.id,
+            TenantId                    : template.TenantId,
             DisplayCode                 : template.DisplayCode,
             Title                       : template.Title,
             Type                        : template.Type as AssessmentType,

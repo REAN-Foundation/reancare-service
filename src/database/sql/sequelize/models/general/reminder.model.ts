@@ -17,7 +17,7 @@ import {
 import { v4 } from 'uuid';
 import User from '../users/user/user.model';
 import {
-    NotificationTypeList,
+    ReminderNotificationTypeList,
     ReminderTypeList, RepeatAfterEveryUnitList,
 } from '../../../../../domain.types/general/reminder/reminder.domain.model';
 
@@ -84,9 +84,8 @@ export default class Reminder extends Model {
 
     @IsDate
     @Column({
-        type         : DataType.DATE,
-        allowNull    : false,
-        defaultValue : new Date(),
+        type      : DataType.DATE,
+        allowNull : true,
     })
     StartDate: Date;
 
@@ -137,7 +136,7 @@ export default class Reminder extends Model {
     @Column({
         type         : DataType.ENUM,
         allowNull    : false,
-        values       : NotificationTypeList,
+        values       : ReminderNotificationTypeList,
         defaultValue : 'SMS',
     })
     NotificationType: string;

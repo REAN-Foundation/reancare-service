@@ -4,10 +4,11 @@ import { UserEngagementService } from '../../../services/statistics/user.engagem
 import { UserEngagementValidator } from './user.engagement.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserEngagementController {
+export class UserEngagementController extends BaseController{
 
     //#region member variables and constructors
     _service: UserEngagementService = null;
@@ -15,6 +16,7 @@ export class UserEngagementController {
     _validator = new UserEngagementValidator();
 
     constructor() {
+        super();
         this._service = Injector.Container.resolve(UserEngagementService);
     }
 

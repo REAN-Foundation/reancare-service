@@ -14,10 +14,10 @@ export class DiagnosisMapper {
         const dto: DiagnosisDto = {
             id                        : diagnosis.id,
             EhrId                     : diagnosis.EhrId,
-            Patient                   : null,
+            PatientUserId             : diagnosis.PatientUserId,
             MedicalPractitionerUserId : diagnosis.MedicalPractitionerUserId,
             VisitId                   : diagnosis.VisitId,
-            MedicalCondition          : null,
+            MedicalConditionId        : diagnosis.MedicalConditionId,
             ValidationStatus          : diagnosis.ValidationStatus as ClinicalValidationStatus,
             Interpretation            : diagnosis.Interpretation as ClinicalInterpretation,
             Comments                  : diagnosis.Comments,

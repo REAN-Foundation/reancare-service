@@ -76,9 +76,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
         try {
             const rolePrivileges = await RolePermission.findAll();
             const dtos: RolePrivilegeDto[] = [];
-            for (let i = 0; i < rolePrivileges.length; i++)
-            {
-                const rp = rolePrivileges[i];
+            for (const rp of rolePrivileges) {
                 const dto: RolePrivilegeDto = {
                     id        : rp.id,
                     RoleId    : rp.RoleId,
@@ -100,13 +98,11 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
         try {
             const rolePrivileges = await RolePermission.findAll({
                 where : {
-                    RoleId : roleId
-                }
+                    RoleId : roleId,
+                },
             });
             const dtos: RolePrivilegeDto[] = [];
-            for (let i = 0; i < rolePrivileges.length; i++)
-            {
-                const rp = rolePrivileges[i];
+            for (const rp of rolePrivileges) {
                 const dto: RolePrivilegeDto = {
                     id        : rp.id,
                     RoleId    : rp.RoleId,
@@ -129,10 +125,14 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
             const rolePrivileges = await RolePermission.findAll({
                 where : {
                     RoleId    : roleId,
-                    Privilege : { [Op.like]: '%' + privilege + '%' }
-                }
+                    Privilege : { [Op.like]: '%' + privilege + '%' },
+                },
             });
-            return rolePrivileges.length > 0;
+            if (rolePrivileges.length > 0) {
+                const rp = rolePrivileges[0];
+                return rp.Enabled;
+            }
+            return false;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -144,8 +144,8 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
             const rp = await RolePermission.findOne({
                 where : {
                     RoleId    : roleId,
-                    Privilege : { [Op.like]: '%' + privilege + '%' }
-                }
+                    Privilege : { [Op.like]: '%' + privilege + '%' },
+                },
             });
             if (rp == null) {
                 return null;

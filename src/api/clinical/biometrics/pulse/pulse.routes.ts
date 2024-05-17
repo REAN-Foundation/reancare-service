@@ -2,6 +2,7 @@
 import express from 'express';
 import { auth } from '../../../../auth/auth.handler';
 import { PulseController } from './pulse.controller';
+import { PulseAuth } from './pulse.auth';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -10,11 +11,11 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new PulseController();
 
-    router.post('/', auth('Clinical.Biometrics.Pulse.Create'), controller.create);
-    router.get('/search', auth('Clinical.Biometrics.Pulse.Search'), controller.search);
-    router.get('/:id', auth('Clinical.Biometrics.Pulse.GetById'), controller.getById);
-    router.put('/:id', auth('Clinical.Biometrics.Pulse.Update'), controller.update);
-    router.delete('/:id', auth('Clinical.Biometrics.Pulse.Delete'), controller.delete);
+    router.post('/', auth(PulseAuth.create), controller.create);
+    router.get('/search', auth(PulseAuth.create), controller.search);
+    router.get('/:id', auth(PulseAuth.create), controller.getById);
+    router.put('/:id', auth(PulseAuth.create), controller.update);
+    router.delete('/:id', auth(PulseAuth.create), controller.delete);
 
     app.use('/api/v1/clinical/biometrics/pulse', router);
 };

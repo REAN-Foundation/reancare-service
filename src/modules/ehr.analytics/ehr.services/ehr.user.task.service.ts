@@ -37,9 +37,9 @@ export class EHRUserTaskService {
     };
 
     public async addEHRUserTaskForAppNames(r: UserTaskDto, healthSystem?: PatientDetailsDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.Action.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecord(r, appName, healthSystem);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.Action.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecord(r, null, healthSystem);
         }
     }
 

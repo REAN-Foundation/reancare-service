@@ -133,7 +133,7 @@
                 "GetById": true,
                 "RemoveSymptomTypes": false,
                 "Update": false,
-                "search": false
+                "search": true
             }
         },
         "Biometrics": {
@@ -277,15 +277,15 @@
             "MedicationConsumption": {
                 "DeleteFutureMedicationSchedules": true,
                 "GetById": true,
-                "GetMedicationConsumptionSummaryForDay": true,
-                "GetMedicationSchedule": true,
-                "GetMedicationScheduleForDay": true,
+                "GetSummaryForDay": true,
+                "GetScheduleForDuration": true,
+                "GetScheduleForDay": true,
                 "GetSummaryByCalendarMonths": true,
                 "MarkAsMissed": true,
                 "MarkAsTaken": true,
                 "MarkListAsMissed": true,
                 "MarkListAsTaken": true,
-                "Search": true
+                "SearchForPatient": true
             }
         },
         "Order": {
@@ -477,7 +477,9 @@
             "GetById": true,
             "MarkAsRead": true,
             "Search": true,
-            "Update": true
+            "Update": true,
+            "Send":true,
+            "SendToUser": true
         },
         "Organization": {
             "AddAddress": false,
@@ -601,6 +603,10 @@
             "GetUserEngagementStatsByWeek": false,
             "GetUserEngagementStatsByYear": false,
             "GetUserEngagementStatsForUser": false
+        },
+        "DailyStatistics": {
+            "GetDailyTenantStats": false,
+            "getDailySystemStats": false
         }
     },
     "Tenant": {
@@ -835,5 +841,24 @@
                 "Update": false
             }
         }
+    },
+    "Hospitals": {
+        "HealthSystem": {
+            "Create": false,
+            "GetHealthSystemsWithTags": true,
+            "Search": true,
+            "GetById": true,
+            "Update": false,
+            "Delete": false
+        },
+        "Hospital": {
+            "Create": false,
+            "GetHospitalsForHealthSystem": true,
+            "Search": true,
+            "GetById": true,
+            "Update": false,
+            "Delete": false
+        }
     }
+   
 }

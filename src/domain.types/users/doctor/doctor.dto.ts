@@ -1,8 +1,8 @@
+import { OrganizationDto } from "../../../domain.types/general/organization/organization.types";
 import { AddressDto } from "../../general/address/address.dto";
 import { HealthcareServiceSchedule } from "../../healthcare.service/healthcare.service.domain.types";
 import { Gender } from "../../miscellaneous/system.types";
-import { OrganizationDto } from "../../general/organization/organization.dto";
-import { UserDetailsDto, UserDto } from "../user/user.dto";
+import { UserDetailsDto } from "../user/user.dto";
 
 /////////////////////////////////////////////////////////////////////////////
 

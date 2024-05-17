@@ -83,7 +83,7 @@ export interface IAssessmentHelperRepo {
 
     deleteScoringCondition(conditionId: uuid): Promise<boolean>;
 
-    searchNode(filters: AssessmentNodeSearchFilters): Promise<AssessmentNodeSearchResults>;
+    searchNodes(filters: AssessmentNodeSearchFilters): Promise<AssessmentNodeSearchResults>;
 
     addPath(pathId: uuid, path: CAssessmentNodePath): Promise<CAssessmentNodePath>;
 

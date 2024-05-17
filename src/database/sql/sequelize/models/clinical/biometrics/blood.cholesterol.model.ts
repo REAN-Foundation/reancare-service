@@ -64,6 +64,14 @@ export default class BloodCholesterol extends Model {
     })
     PatientUserId: string;
 
+    // @IsUUID(4)
+    // @ForeignKey(() => Tenant)
+    // @Column({
+    //     type      : DataType.UUID,
+    //     allowNull : false,
+    // })
+    // TenantId: string;
+
     @IsDecimal
     @Column({
         type      : DataType.FLOAT,

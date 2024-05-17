@@ -55,9 +55,11 @@ export class ActionPlanService {
         var goal =  await this._goalRepo.getById(goalId);
         var priority = await this._healthPriorityRepo.getById(goal.HealthPriorityId);
 
-        var actionPlans =  await this._careplanHandler.getActionPlans(priority.PatientUserId,
+        var actionPlans =  await this._careplanHandler.getActionPlans(
+            priority.PatientUserId,
             priority.ProviderEnrollmentId,
-            priority.Provider,priority.HealthPriorityType);
+            priority.Provider,
+            priority.HealthPriorityType);
 
         const actionPlanModels = actionPlans.map(x => {
             var a: ActionPlanDomainModel = {

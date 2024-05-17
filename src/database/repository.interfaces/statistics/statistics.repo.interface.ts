@@ -1,6 +1,7 @@
 import { StatisticSearchFilters } from "../../../domain.types/statistics/statistics.search.type";
 import { AppDownloadDomainModel } from "../../../domain.types/statistics/app.download.domain.model";
 import { AppDownloadDto } from "../../../domain.types/statistics/app.download.dto";
+import { DatabaseSchemaType } from "../../../common/database.utils/database.config";
 
 ////////////////////////////////////////////////////////////////////
 export interface IStatisticsRepo {
@@ -52,5 +53,7 @@ export interface IStatisticsRepo {
     getYearWiseMajorAilmentDistributionDetails(filter): Promise<any>;
 
     getYearWiseAddictionDistributionDetails(filter, yearWiseUserCount): Promise<any>;
+
+    createConnection(schemaType: DatabaseSchemaType): Promise<void>;
 
 }

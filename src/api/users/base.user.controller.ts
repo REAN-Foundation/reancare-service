@@ -6,25 +6,23 @@ import { PersonService } from '../../services/person/person.service';
 import { RoleService } from '../../services/role/role.service';
 import { UserService } from '../../services/users/user/user.service';
 import { Injector } from '../../startup/injector';
+import { BaseController } from '../base.controller';
 import { AddressValidator } from '../general/address/address.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BaseUserController {
+export class BaseUserController extends BaseController {
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _addressService: AddressService = null;
+    _addressService: AddressService = Injector.Container.resolve(AddressService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
     constructor() {
-        this._userService = Injector.Container.resolve(UserService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._addressService = Injector.Container.resolve(AddressService);
+        super();
     }
 
     async createOrUpdateDefaultAddress(request, personId: string): Promise<void> {

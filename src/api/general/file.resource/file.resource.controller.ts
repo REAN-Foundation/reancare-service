@@ -15,27 +15,26 @@ import AdmZip from 'adm-zip';
 import { Helper } from '../../../common/helper';
 import { FileResourceUploadDomainModel } from '../../../domain.types/general/file.resource/file.resource.domain.model';
 import { Logger } from '../../../common/logger';
-import { AuthHandler } from '../../../auth/auth.handler';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FileResourceController {
+export class FileResourceController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: FileResourceService = null;
+    _service: FileResourceService = Injector.Container.resolve(FileResourceService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
     _validator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
-        this._service = Injector.Container.resolve(FileResourceService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._personService = Injector.Container.resolve(PersonService);
+        super();
     }
 
     //#endregion
@@ -45,6 +44,7 @@ export class FileResourceController {
     uploadBinary = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model: FileResourceUploadDomainModel = this.getBinaryUploadModel(request);
+            await this.authorizeOne(request, model.OwnerUserId);
 
             const dtos = [];
             const dto = await this._service.uploadBinary(model);
@@ -65,6 +65,11 @@ export class FileResourceController {
             if (domainModels.length === 0) {
                 throw new ApiError(400, 'File resource not found!');
             }
+
+            // Authorize
+            const tempModel = domainModels[0];
+            await this.authorizeOne(request, tempModel?.OwnerUserId);
+
             var dtos = [];
             for await (var model of domainModels) {
                 var dto = await this._service.upload(model);
@@ -81,8 +86,11 @@ export class FileResourceController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            var updateModel = await this._validator.update(request);
-            var dto = await this._service.update(updateModel.ResourceId, updateModel);
+            const model = await this._validator.update(request);
+
+            await this.checkResourceAuthorization(request, model.ResourceId);
+
+            let dto = await this._service.update(model.ResourceId, model);
             dto = this.sanitizeDto(dto);
             ResponseHandler.success(request, response, 'File resource updated successfully!', 200, {
                 FileResource : dto,
@@ -95,6 +103,7 @@ export class FileResourceController {
     uploadVersion = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const metadata: FileResourceMetadata = await this._validator.uploadVersion(request);
+            await this.checkResourceAuthorization(request, metadata.ResourceId);
             var dto = await this._service.uploadVersion(metadata, metadata.IsDefaultVersion);
             dto = this.sanitizeDto(dto);
             ResponseHandler.success(request, response, 'File version uploaded successfully!', 201, {
@@ -111,6 +120,8 @@ export class FileResourceController {
             if (model.NewFileName === null) {
                 throw new ApiError(400, "Invalid file name!");
             }
+            await this.checkResourceAuthorization(request, model.id);
+
             const renamed = await this._service.rename(model.id, model.NewFileName);
             ResponseHandler.success(request, response, 'File renamed successfully!', 200, {
                 Renamed : renamed,
@@ -122,7 +133,8 @@ export class FileResourceController {
 
     searchAndDownload = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters: FileResourceSearchFilters = await this._validator.search(request);
+            let filters: FileResourceSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
 
             const downloadedFolder = await this._service.searchAndDownload(filters);
             var filenames = fs.readdirSync(downloadedFolder);
@@ -156,7 +168,8 @@ export class FileResourceController {
                 //NOTE: Please note that this is deviation from regular pattern of
                 //authentication middleware pipeline. Here we are authenticating client
                 //and user only when the file resource is not public.
-                await AuthHandler.verifyAccess(request);
+                // await AuthHandler.verifyAccess(request);
+                await this.authorizeOne(request, resource.OwnerUserId);
             }
             Logger.instance().log(`Download request for Resource Id:: ${metadata.ResourceId}
                 and Version:: ${metadata.Version}`);
@@ -180,7 +193,8 @@ export class FileResourceController {
                 //NOTE: Please note that this is deviation from regular pattern of
                 //authentication middleware pipeline. Here we are authenticating client
                 //and user only when the file resource is not public.
-                await AuthHandler.verifyAccess(request);
+                // await AuthHandler.verifyAccess(request);
+                await this.authorizeOne(request, resource.OwnerUserId);
             }
 
             const localDestination = await this._service.downloadByVersionId(
@@ -198,14 +212,19 @@ export class FileResourceController {
         try {
             request.context = 'FileResource.DownloadById';
             const metadata = await this._validator.downloadById(request);
+
             var resource = await this._service.getById(metadata.ResourceId);
+            if (!resource) {
+                throw new ApiError(404, "Resource not found!");
+            }
 
             if (resource.IsPublicResource === false) {
 
                 //NOTE: Please note that this is deviation from regular pattern of
                 //authentication middleware pipeline. Here we are authenticating client
                 //and user only when the file resource is not public.
-                await AuthHandler.verifyAccess(request);
+                // await AuthHandler.verifyAccess(request);
+                await this.authorizeOne(request, resource.OwnerUserId);
             }
 
             const localDestination = await this._service.downloadById(metadata.ResourceId);
@@ -220,8 +239,8 @@ export class FileResourceController {
         try {
             request.context = 'FileResource.Search';
 
-            const filters: FileResourceSearchFilters = await this._validator.search(request);
-
+            let filters: FileResourceSearchFilters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             var searchResults = await this._service.search(filters);
             if (searchResults == null) {
                 throw new ApiError(404, 'File resource not found.');
@@ -254,6 +273,8 @@ export class FileResourceController {
                 throw new ApiError(404, 'File resource version not found.');
             }
 
+            await this.checkResourceAuthorization(request, versionMetadata.ResourceId);
+
             //Sanitize the metadata before sending
             versionMetadata.StorageKey = null;
             versionMetadata.SourceFilePath = null;
@@ -271,6 +292,8 @@ export class FileResourceController {
             request.context = 'FileResource.GetVersions';
 
             const id: string = await this._validator.getById(request);
+
+            await this.checkResourceAuthorization(request, id);
 
             const versions = await this._service.getVersions(id);
             if (versions === null || versions.length === 0) {
@@ -306,6 +329,8 @@ export class FileResourceController {
             if (dto == null) {
                 throw new ApiError(404, 'File resource not found.');
             }
+            await this.authorizeOne(request, dto.OwnerUserId);
+
             dto = this.sanitizeDetailsDto(dto);
 
             ResponseHandler.success(request, response, 'File resource retrieved successfully!', 200, {
@@ -322,10 +347,7 @@ export class FileResourceController {
 
             request.context = 'FileResource.Delete';
             const id: string = await this._validator.delete(request);
-            const existingFileResource = await this._service.getById(id);
-            if (existingFileResource == null) {
-                throw new ApiError(404, 'File resource not found.');
-            }
+            await this.checkResourceAuthorization(request, id);
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
@@ -347,6 +369,8 @@ export class FileResourceController {
             request.context = 'FileResource.DeleteVersionByVersionId';
             const metadata: FileResourceMetadata = await this._validator.getByVersionId(request);
 
+            await this.checkResourceAuthorization(request, metadata.ResourceId);
+
             const deleted = await this._service.deleteVersionByVersionId(metadata.ResourceId, metadata.VersionId);
             if (!deleted) {
                 throw new ApiError(400, 'File resource version cannot be deleted.');
@@ -360,6 +384,14 @@ export class FileResourceController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    private async checkResourceAuthorization(request, resourceId) {
+        const record = await this._service.getById(resourceId);
+        if (!record) {
+            throw new ApiError(404, "Resource not found!");
+        }
+        await this.authorizeOne(request, record.OwnerUserId);
+    }
 
     private getBinaryUploadModel(request: express.Request) {
         var filename = request.headers["filename"] as string;
@@ -442,6 +474,7 @@ export class FileResourceController {
         filename: string) {
 
         response.setHeader('Content-type', mimeType);
+        filename = encodeURIComponent(filename);
 
         if (disposition === DownloadDisposition.Attachment) {
             response.setHeader('Content-disposition', 'attachment; filename=' + filename);
@@ -459,5 +492,26 @@ export class FileResourceController {
     }
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: FileResourceSearchFilters): Promise<FileResourceSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.OwnerUserId != null) {
+            if (searchFilters.OwnerUserId !== currentUser.UserId) {
+                const permitted = await PermissionHandler.checkConsent(
+                    searchFilters.OwnerUserId, currentUser.UserId, request.context);
+                if (!permitted) {
+                    throw new ApiError(403, 'Permission denied.');
+                }
+            }
+        }
+        else {
+            searchFilters.OwnerUserId = request.currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

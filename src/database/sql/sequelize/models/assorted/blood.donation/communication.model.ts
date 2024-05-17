@@ -4,6 +4,7 @@ import {
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
 import { DonorAcceptance, DonorAcceptanceList } from '../../../../../../domain.types/miscellaneous/clinical.types';
+import Tenant from '../../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,6 +37,14 @@ export default class DonationCommunication extends Model {
     PatientUserId: string;
 
     @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    TenantId: string;
+    
+    @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
@@ -50,6 +59,13 @@ export default class DonationCommunication extends Model {
         allowNull : true,
     })
     VolunteerUserId: string;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    DonationRecordId: string;
 
     @Column({
         type         : DataType.ENUM,

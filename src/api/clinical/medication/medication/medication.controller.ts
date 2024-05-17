@@ -23,10 +23,14 @@ import { Injector } from '../../../../startup/injector';
 import { MedicationValidator } from './medication.validator';
 import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.services/ehr.medication.service';
 import { Logger } from '../../../../common/logger';
+import { BaseController } from '../../../../api/base.controller';
+import { MedicationSearchFilters } from '../../../../domain.types/clinical/medication/medication/medication.search.types';
+import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicationController {
+export class MedicationController extends BaseController{
 
     //#region member variables and constructors
 
@@ -104,7 +108,7 @@ export class MedicationController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const domainModel = await MedicationValidator.create(request);
-
+            await this.authorizeOne(request, domainModel.PatientUserId);
             const user = await this._userService.getById(domainModel.PatientUserId);
 
             if (user == null) {
@@ -150,15 +154,12 @@ export class MedicationController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const id: string = await MedicationValidator.getParamId(request);
-
+            const id: uuid = await MedicationValidator.getParamId(request);
             const medication = await this._service.getById(id);
-            Logger.instance().log(`[MedicationTime] GetById - service call completed`);
-
             if (medication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-
+            await this.authorizeOne(request, medication.PatientUserId);
             var stats = await this._medicationConsumptionService.getConsumptionStatusForMedication(id);
             var doseValue = Helper.parseIntegerFromString(medication.Dose.toString()) ?? 1;
 
@@ -184,6 +185,7 @@ export class MedicationController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const filters = await MedicationValidator.search(request);
+            await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -206,7 +208,7 @@ export class MedicationController {
             if (existingMedication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-
+            await this.authorizeOne(request, existingMedication.PatientUserId);
             const startDate =
                 await this._userService.getDateInUserTimeZone(existingMedication.PatientUserId, request.body.StartDate);
             domainModel.StartDate = startDate;
@@ -252,7 +254,7 @@ export class MedicationController {
             if (existingMedication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-
+            await this.authorizeOne(request, existingMedication.PatientUserId);
             const deleted = await this._service.delete(id);
             Logger.instance().log(`[MedicationTime] Delete - service call completed`);
 
@@ -278,7 +280,7 @@ export class MedicationController {
     getCurrentMedications = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const patientUserId: string = await MedicationValidator.getPatientUserId(request);
-
+            await this.authorizeOne(request, patientUserId);
             const medications = await this._service.getCurrentMedications(patientUserId);
 
             ResponseHandler.success(request, response, 'Current medications retrieved successfully!', 200, {
@@ -402,6 +404,30 @@ export class MedicationController {
         }
 
     }
+
+    private authorizeSearch = async (
+        request: express.Request,
+        searchFilters: MedicationSearchFilters): Promise<MedicationSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
     //#endregion
 

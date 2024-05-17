@@ -165,52 +165,52 @@ export class EHRVitalService {
     };
 
     public async addEHRBodyHeightForAppNames(r: BodyHeightDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordBodyHeight(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordBodyHeight(r, null);
         }
     }
 
     public async addEHRBodyTemperatureForAppNames(r: BodyTemperatureDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordBodyTemerature(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordBodyTemerature(r, null);
         }
     }
 
     public async addEHRBodyWeightForAppNames(r: BodyWeightDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordBodyWeight(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordBodyWeight(r, null);
         }
     }
 
     public async addEHRBloodOxygenSaturationForAppNames(r: BloodOxygenSaturationDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordBloodOxygenSaturation(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordBloodOxygenSaturation(r, null);
         }
     }
 
     public async addEHRBloodPressureForAppNames(r: BloodPressureDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordBloodPressure(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordBloodPressure(r, null);
         }
     }
 
     public async addEHRPulseForAppNames(r: PulseDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordPulse(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordPulse(r, null);
         }
     }
 
     public async addEHRBloodGlucoseForAppNames(r: BloodGlucoseDto) {
-        const eligibleAppNames = await PatientAppNameCache.get(r.PatientUserId);
-        for (var appName of eligibleAppNames) {
-            this.addEHRRecordBloodGlucose(r, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(r.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecordBloodGlucose(r, null);
         }
     }
-
+    
 }

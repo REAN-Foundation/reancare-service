@@ -9,9 +9,12 @@ import {
     IsUUID,
     PrimaryKey,
     Length,
+    ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
+import Tenant from '../tenant/tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -42,6 +45,17 @@ export default class MedicalCondition extends Model {
     })
     EhrId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Tenant)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    TenantId: string;
+
+    @BelongsTo(() =>  Tenant)
+    Tenant:  Tenant;
+    
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),

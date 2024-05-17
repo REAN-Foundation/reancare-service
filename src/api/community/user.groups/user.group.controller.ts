@@ -8,10 +8,11 @@ import { RoleService } from '../../../services/role/role.service';
 import { UserGroupValidator } from './user.group.validator';
 import { PersonService } from '../../../services/person/person.service';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserGroupController {
+export class UserGroupController extends BaseController {
 
     //#region member variables and constructors
 
@@ -32,10 +33,12 @@ export class UserGroupController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await this._validator.create(request);
+            await this.authorizeUser(request, model.OwnerUserId);
             const record = await this._service.create(model);
             if (record == null) {
                 throw new ApiError(400, 'Cannot start conversation!');
             }
+            
             ResponseHandler.success(request, response, 'Conversation started successfully!', 201, {
                 UserGroup : record,
             });
@@ -83,6 +86,7 @@ export class UserGroupController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, existingRecord.OwnerUserId);
             const updated = await this._service.update(id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update medical condition record!');
@@ -102,6 +106,7 @@ export class UserGroupController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, existingRecord.OwnerUserId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'User group record cannot be deleted.');
@@ -121,6 +126,7 @@ export class UserGroupController {
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, group.OwnerUserId);
             const users = await this._service.getGroupUsers(id);
             ResponseHandler.success(request, response, 'User group users retrieved successfully!', 200, {
                 Users : users,
@@ -139,6 +145,7 @@ export class UserGroupController {
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, group.OwnerUserId);
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -164,6 +171,7 @@ export class UserGroupController {
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, group.OwnerUserId);
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -189,6 +197,7 @@ export class UserGroupController {
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, group.OwnerUserId);
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -214,6 +223,7 @@ export class UserGroupController {
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, group.OwnerUserId);
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User record not found.');
@@ -238,6 +248,7 @@ export class UserGroupController {
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, group.OwnerUserId);
             const admins = await this._service.getGroupAdmins(groupId);
             ResponseHandler.success(request, response, 'User group admins retrieved successfully!', 200, {
                 Admins : admins,
@@ -276,6 +287,7 @@ export class UserGroupController {
             if (group == null) {
                 throw new ApiError(404, 'User group record not found.');
             }
+            await this.authorizeUser(request, group.OwnerUserId);
             const types = await this._service.getGroupActivityTypes(groupId);
             ResponseHandler.success(request, response, 'Group activity types retrieved successfully!', 200, {
                 Types : types,
@@ -286,6 +298,16 @@ export class UserGroupController {
         }
     };
 
+    private authorizeUser = async (request: express.Request, ownerUserId: uuid) => {
+        const _userService = Injector.Container.resolve(UserService);
+        const user = await _userService.getById(ownerUserId);
+        if (!user) {
+            throw new ApiError(404, `User with Id ${ownerUserId} not found.`);
+        }
+        request.resourceOwnerUserId = ownerUserId;
+        request.resourceTenantId = user.TenantId;
+        await this.authorizeOne(request, ownerUserId, user.TenantId);
+    };
     //#endregion
 
 }

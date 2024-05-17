@@ -8,10 +8,13 @@ import { AllergyService } from '../../../services/clinical/allergy.service';
 import { UserService } from '../../../services/users/user/user.service';
 import { AllergyValidator } from './allergy.validator';
 import { Injector } from '../../../startup/injector';
+import { AllergyDomainModel } from '../../../domain.types/clinical/allergy/allergy.domain.model';
+import { BaseController } from '../../../api/base.controller';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AllergyController {
+export class AllergyController extends BaseController {
 
     //#region member variables and constructors
 
@@ -20,6 +23,10 @@ export class AllergyController {
     _validator: AllergyValidator = new AllergyValidator();
 
     _userService: UserService = Injector.Container.resolve(UserService);
+
+    constructor() {
+        super();
+    }
 
     //#endregion
 
@@ -30,7 +37,6 @@ export class AllergyController {
             ResponseHandler.success(request, response, 'Allergen categories retrieved successfully!', 200, {
                 AllergenCategories : AllergenCategoriesList,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -41,7 +47,6 @@ export class AllergyController {
             ResponseHandler.success(request, response, 'Allergen exposure routes retrieved successfully!', 200, {
                 AllergenExposureRoutes : AllergenExposureRoutesList,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -49,21 +54,16 @@ export class AllergyController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            const domainModel = await this._validator.create(request);
-
-            if (domainModel.PatientUserId != null) {
-                const person = await this._userService.getById(domainModel.PatientUserId);
-                if (person == null) {
-                    throw new ApiError(404, `User with an id ${domainModel.PatientUserId} cannot be found.`);
-                }
+            const model: AllergyDomainModel = await this._validator.create(request);
+            const user = await this._userService.getById(model.PatientUserId);
+            if (user == null) {
+                throw new ApiError(404, `User with an id ${model.PatientUserId} cannot be found.`);
             }
-
-            const allergy = await this._service.create(domainModel);
+            await this.authorizeOne(request, user.id, user.TenantId);
+            const allergy = await this._service.create(model);
             if (allergy == null) {
                 throw new ApiError(400, 'Cannot create allergy!');
             }
-
             ResponseHandler.success(request, response, 'Allergy created successfully!', 201, {
                 Allergy : allergy,
             });
@@ -76,13 +76,13 @@ export class AllergyController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const allergy = await this._service.getById(id);
-            if (allergy == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Allergy not found.');
             }
-
+            await this.authorizeOne(request, record.PatientUserId, null);
             ResponseHandler.success(request, response, 'Allergy retrieved successfully!', 200, {
-                Allergy : allergy,
+                Allergy : record,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -91,11 +91,9 @@ export class AllergyController {
 
     getForPatient = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const patientUserId = await this._validator.getParamUuid(request, 'patientUserId');
-
+            await this.authorizeOne(request, patientUserId, null);
             const allergies = await this._service.getForPatient(patientUserId);
-
             ResponseHandler.success(request, response, 'Allergies for patient retrieved successfully!', 200, {
                 Allergies : allergies
             });
@@ -108,8 +106,8 @@ export class AllergyController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            const filters: AllergySearchFilters  = await this._validator.search(request);
-
+            let filters: AllergySearchFilters  = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -127,15 +125,13 @@ export class AllergyController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const domainModel = await this._validator.update(request);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingAllergy = await this._service.getById(id);
-            if (existingAllergy == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Allergy not found.');
             }
-
+            await this.authorizeOne(request, record.PatientUserId, null);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update allergy record!');
@@ -153,11 +149,11 @@ export class AllergyController {
         try {
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingAllergy = await this._service.getById(id);
-            if (existingAllergy == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Allergy not found.');
             }
-
+            await this.authorizeOne(request, record.PatientUserId, null);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Allergy cannot be deleted.');
@@ -172,5 +168,31 @@ export class AllergyController {
     };
 
     //#endregion
+
+    //#region Authorization methods
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: AllergySearchFilters): Promise<AllergySearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.PatientUserId != null) {
+            if (searchFilters.PatientUserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.PatientUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.PatientUserId = currentUser.UserId;
+        }
+        return searchFilters;
+    };
 
 }

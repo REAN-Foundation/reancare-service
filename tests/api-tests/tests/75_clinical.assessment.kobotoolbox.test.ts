@@ -1,6 +1,6 @@
-import  request  from 'supertest';
+import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
@@ -9,142 +9,130 @@ const infra = Application.instance();
 
 //////////////////////////////////////////////////////////////////////////////////
 
-describe.skip('75 - KoboToolbox integration tests', function() {
-
+describe.skip('75 - KoboToolbox integration tests', function () {
     var agent = request.agent(infra._app);
 
-    it('75:01 -> Connect to kobo-toolbox api', function(done) {
+    it('75:01 -> Connect to kobo-toolbox api', function (done) {
         loadConnectKoboToolBoxModel();
-        const createModel = getTestData("ConnectKoboToolBoxModel");
+        const createModel = getTestData('connectKoboToolBoxModel');
         agent
             .post(`/api/v1/clinical/forms/provider/KoboToolbox/connect`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body.Data).to.have.property('Connected');
                 expect(response.body.Data.Connected).to.equal(true);
-                              
             })
             .expect(200, done);
     });
 
-    it('75:02 -> Get forms list', function(done) {
-       
+    it('75:02 -> Get forms list', function (done) {
         agent
             .get(`/api/v1/clinical/forms/provider/KoboToolbox/forms`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
-
             })
             .expect(200, done);
     });
 
-
-    it('75:03 -> Schedule assessment with generated template', function(done) {
+    it('75:03 -> Schedule assessment with generated template', function (done) {
         loadAssessmentModel();
-        const createModel = getTestData("AssessmentCreateModel");
+        const createModel = getTestData('assessmentCreateModel');
         agent
             .post(`/api/v1/clinical/assessments`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.Assessment.id, 'AssessmentId');
+            .expect((response) => {
+                setTestData(response.body.Data.Assessment.id, 'assessmentId');
                 expect(response.body.Data.Assessment).to.have.property('PatientUserId');
                 expect(response.body.Data.Assessment).to.have.property('AssessmentTemplateId');
                 expect(response.body.Data.Assessment).to.have.property('ScheduledAt');
-            
-                setTestData(response.body.Data.Assessment.id, 'AssessmentId');
 
-                expect(response.body.Data.Assessment.PatientUserId).to.equal(getTestData("AssessmentCreateModel").PatientUserId);
-                expect(response.body.Data.Assessment.AssessmentTemplateId).to.equal(getTestData("AssessmentCreateModel").AssessmentTemplateId);
-                        
+                expect(response.body.Data.Assessment.PatientUserId).to.equal(
+                    getTestData('assessmentCreateModel').PatientUserId
+                );
+                expect(response.body.Data.Assessment.AssessmentTemplateId).to.equal(
+                    getTestData('assessmentCreateModel').AssessmentTemplateId
+                );
             })
             .expect(201, done);
     });
 
-    it('75:04 -> Negative - Connect to kobo-toolbox api', function(done) {
+    it('75:04 -> Negative - Connect to kobo-toolbox api', function (done) {
         loadNegativeConnectKoboToolBoxModel();
-        const createModel = getTestData("NegativeConnectKoboToolBoxModel");
+        const createModel = getTestData('negativeConnectKoboToolBoxModel');
         agent
             .post(`/api/v1/clinical/forms/provider/KoboToolbox/connect`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                              
             })
             .expect(403, done);
     });
 
-    it('75:05 -> Negative - Get forms list', function(done) {
-       
+    it('75:05 -> Negative - Get forms list', function (done) {
         agent
             .get(`/api/v1/clinical/forms/provider/KoboToolbox/forms`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
             .expect(401, done);
     });
 
-    it('75:06 -> Negative - Schedule assessment with generated template', function(done) {
+    it('75:06 -> Negative - Schedule assessment with generated template', function (done) {
         loadAssessmentModel();
-        const createModel = getTestData("AssessmentCreateModel");
+        const createModel = getTestData('assessmentCreateModel');
         agent
             .post(`/api/v1/clinical/assessments`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('doctorJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-                        
             })
             .expect(401, done);
     });
-
 });
 
 ///////////////////////////////////////////////////////////////////////
 
-export const loadConnectKoboToolBoxModel = async (
-) => {
+export const loadConnectKoboToolBoxModel = async () => {
     const model = {
-        BaseUrl      : `${process.env.TEST_KOBO_BASE_URL}`,
-        SecondaryUrl : `${process.env.TEST_KOBO_SECONDARY_URL}`,
-        Token        : `${process.env.TEST_KOBO_TOKEN}`
+        BaseUrl: `${process.env.TEST_KOBO_BASE_URL}`,
+        SecondaryUrl: `${process.env.TEST_KOBO_SECONDARY_URL}`,
+        Token: `${process.env.TEST_KOBO_TOKEN}`,
     };
-    setTestData(model, "ConnectKoboToolBoxModel");
+    setTestData(model, 'connectKoboToolBoxModel');
 };
 
-export const loadAssessmentModel = async (
-) => {
+export const loadAssessmentModel = async () => {
     const model = {
-        PatientUserId        : getTestData("PatientUserId"),
-        AssessmentTemplateId : getTestData("AssessmentTemplateScoreId"),
-        ScheduledDate        : faker.date.future()
+        PatientUserId: getTestData('patientUserId'),
+        AssessmentTemplateId: getTestData('assessmentTemplateScoreId'),
+        ScheduledDate: faker.date.future(),
     };
-    setTestData(model, "AssessmentCreateModel");
+    setTestData(model, 'assessmentCreateModel');
 };
 
-export const loadNegativeConnectKoboToolBoxModel = async (
-) => {
+export const loadNegativeConnectKoboToolBoxModel = async () => {
     const model = {
-        Token        : `${process.env.TEST_KOBO_TOKEN}`
+        Token: `${process.env.TEST_KOBO_TOKEN}`,
     };
-    setTestData(model, "NegativeConnectKoboToolBoxModel");
+    setTestData(model, 'negativeConnectKoboToolBoxModel');
 };

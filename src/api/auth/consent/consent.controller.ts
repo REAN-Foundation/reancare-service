@@ -9,31 +9,30 @@ import { ConsentValidator } from './consent.validator';
 import { PersonService } from '../../../services/person/person.service';
 import { TenantService } from '../../../services/tenant/tenant.service';
 import { Injector } from '../../../startup/injector';
+import { ConsentCreateModel, ConsentSearchFilters } from '../../../domain.types/auth/consent.types';
+import { BaseController } from '../../../api/base.controller';
+import { PermissionHandler } from '../../../auth/custom/permission.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ConsentController {
+export class ConsentController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: ConsentService = null;
+    _service: ConsentService = Injector.Container.resolve(ConsentService);
 
-    _roleService: RoleService = null;
+    _roleService: RoleService = Injector.Container.resolve(RoleService);
 
-    _userService: UserService = null;
+    _userService: UserService = Injector.Container.resolve(UserService);
 
-    _personService: PersonService = null;
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
-    _tenantService: TenantService = null;
+    _tenantService: TenantService = Injector.Container.resolve(TenantService);
 
     _validator = new ConsentValidator();
 
     constructor() {
-        this._service = Injector.Container.resolve(ConsentService);
-        this._personService = Injector.Container.resolve(PersonService);
-        this._userService = Injector.Container.resolve(UserService);
-        this._roleService = Injector.Container.resolve(RoleService);
-        this._tenantService = Injector.Container.resolve(TenantService);
+        super();
     }
 
     //#endregion
@@ -42,7 +41,8 @@ export class ConsentController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const model = await this._validator.create(request);
+            const model: ConsentCreateModel = await this._validator.create(request);
+            await this.authorizeOne(request, model.OwnerUserId, model.TenantId);
             const record = await this._service.create(model);
             if (record == null) {
                 throw new ApiError(400, 'Cannot start conversation!');
@@ -62,6 +62,7 @@ export class ConsentController {
             if (record == null) {
                 throw new ApiError(404, ' Consent record not found.');
             }
+            await this.authorizeOne(request, record.OwnerUserId, record.TenantId);
             ResponseHandler.success(request, response, 'Consent record retrieved successfully!', 200, {
                 Consent : record,
             });
@@ -72,7 +73,8 @@ export class ConsentController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await this._validator.search(request);
+            const filters: ConsentSearchFilters = await this._validator.search(request);
+            await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -90,10 +92,11 @@ export class ConsentController {
         try {
             const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Consent record not found.');
             }
+            await this.authorizeOne(request, record.OwnerUserId, record.TenantId);
             const updated = await this._service.update(id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update consent record!');
@@ -109,10 +112,11 @@ export class ConsentController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const record = await this._service.getById(id);
+            if (record == null) {
                 throw new ApiError(404, 'Consent record not found.');
             }
+            await this.authorizeOne(request, record.OwnerUserId, record.TenantId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Consent record cannot be deleted.');
@@ -123,6 +127,33 @@ export class ConsentController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    //#endregion
+
+    //#region Authorization methods
+
+    private authorizeSearch = async (request: express.Request, searchFilters: ConsentSearchFilters)
+        : Promise<ConsentSearchFilters> => {
+
+        const currentUser = request.currentUser;
+
+        if (searchFilters.OwnerUserId != null) {
+            if (searchFilters.OwnerUserId !== request.currentUser.UserId) {
+                const hasConsent = await PermissionHandler.checkConsent(
+                    searchFilters.OwnerUserId,
+                    currentUser.UserId,
+                    request.context
+                );
+                if (!hasConsent) {
+                    throw new ApiError(403, `Unauthorized`);
+                }
+            }
+        }
+        else {
+            searchFilters.OwnerUserId = currentUser.UserId;
+        }
+        return searchFilters;
     };
 
     //#endregion

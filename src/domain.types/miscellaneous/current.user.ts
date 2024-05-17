@@ -13,5 +13,3 @@ export interface CurrentUser {
     CurrentRole   : string;
     SessionId?    : uuid;
 }
-
-export type RequestType = 'Create' | 'GetById' | 'Update' | 'Delete' | 'Search' | 'Get' | 'Other';

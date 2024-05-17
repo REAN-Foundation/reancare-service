@@ -42,25 +42,26 @@ export class EHRAnalyticsRepo {
         appName?: string,
     ) => {
 
-        var staticData: StaticEHRData = await StaticEHRData.findOne({
+        var staticData_arr: StaticEHRData[] = await StaticEHRData.findAll({
             where : {
-                PatientUserId : patientUserId,
-                AppName       : appName
+                PatientUserId : patientUserId
             }
         });
 
-        if (!staticData) {
+        if (staticData_arr.length === 0) {
             var entity = this.createEntity(details, appName);
             entity.PatientUserId = patientUserId;
-            staticData = await StaticEHRData.create(entity);
+            var staticData = await StaticEHRData.create(entity);
         } else {
-            if (staticData.DoctorPersonId_1) {
-                details.DoctorPersonId_2 = details.DoctorPersonId_1;
-                details.DoctorPersonId_1 = null;
-                staticData.DoctorPersonId_2 = details.DoctorPersonId_2;
+            for await (var staticData of staticData_arr) {
+                if (staticData.DoctorPersonId_1) {
+                    details.DoctorPersonId_2 = details.DoctorPersonId_1;
+                    details.DoctorPersonId_1 = null;
+                    staticData.DoctorPersonId_2 = details.DoctorPersonId_2;
+                }
+                staticData = this.updateEntity(staticData, details, appName);
+                staticData = await staticData.save();
             }
-            staticData = this.updateEntity(staticData, details, appName);
-            staticData = await staticData.save();
         }
 
         return staticData;
@@ -76,14 +77,14 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
-                    Type          : model.Type,
-                    AppName       : model.AppName
+                    Type          : model.Type             
                 }
             });
 
             if (existing) {
-                existing.AppName       = model.AppName;
                 existing.Provider      = model.Provider;
+                existing.Type          = model.Type,
+                existing.Name          = model.Name,
                 existing.ValueInt      = model.ValueInt;
                 existing.ValueFloat    = model.ValueFloat;
                 existing.ValueString   = model.ValueString;
@@ -146,13 +147,11 @@ export class EHRAnalyticsRepo {
             const existing = await EHRMedicationData.findOne({
                 where : {
                     PatientUserId : model.PatientUserId,
-                    RecordId      : model.RecordId,
-                    AppName       : model.AppName
+                    RecordId      : model.RecordId
                 }
             });
 
             if (existing) {
-                existing.AppName            = model.AppName,
                 existing.PatientUserId      = model.PatientUserId,
                 existing.RecordId           = model.RecordId,
                 existing.DrugName           = model.DrugName,
@@ -201,12 +200,10 @@ export class EHRAnalyticsRepo {
                 where : {
                     PatientUserId : model.PatientUserId,
                     RecordId      : model.RecordId,
-                    AppName       : model.AppName
                 }
             });
 
             if (existing) {
-                existing.AppName            = model.AppName,
                 existing.PatientUserId      = model.PatientUserId,
                 existing.RecordId           = model.RecordId,
                 existing.EnrollmentId       = model.EnrollmentId.toString(),

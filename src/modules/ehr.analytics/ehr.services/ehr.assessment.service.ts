@@ -148,9 +148,9 @@ export class EHRAssessmentService {
     };*/
 
     public addEHRRecordForAppNames = async (assessment: any, answerResponse?: any, options?: any,) => {
-        var appNames = await PatientAppNameCache.get(assessment.PatientUserId);
-        for await (var appName of appNames) {
-            this.addEHRRecord(assessment, answerResponse, options, appName);
+        const eligibleToAddEhrRecord = await PatientAppNameCache.getEligibility(assessment.PatientUserId);
+        if (eligibleToAddEhrRecord) {
+            this.addEHRRecord(assessment, answerResponse, options, null);
         }
     };
 

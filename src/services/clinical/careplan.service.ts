@@ -154,20 +154,16 @@ export class CareplanService implements IUserActionService {
 
             for (const activity of scheduledActivities) {
                 const message = activity.Description;
-                let patient = null;
-                if (activity.PlanCode === 'Donor-Reminders') {
-                    patient = await this.getDonor(activity.PatientUserId);
-                } else {
-                    patient = await this.getPatient(activity.PatientUserId);
-                }
+                const patient = await this.getUser(activity.PatientUserId);
+
                 let phoneNumber = null;
                 if (message.includes("Messages")) {
-                    phoneNumber = patient.User.Person.TelegramChatId;
+                    phoneNumber = patient.Person.TelegramChatId;
                 } else {
-                    phoneNumber = patient.User.Person.Phone;
+                    phoneNumber = patient.Person.Phone;
                 }
-                const payload = { PersonName: patient.User.Person.DisplayName };
-
+                const payload = { PersonName: patient.Person.DisplayName };
+                
                 //Set fifth day reminder flag true for patient
                 if (activity.Type === "reminder_three") {
                     await this._donationCommunicationRepo.create(
@@ -195,6 +191,10 @@ export class CareplanService implements IUserActionService {
 
     public getPatientEnrollments = async (patientUserId: string, isActive: boolean) => {
         return await this._careplanRepo.getPatientEnrollments(patientUserId, isActive);
+    };
+
+    public getEnrollment = async (enrollmentId: uuid): Promise<EnrollmentDto> => {
+        return await this._careplanRepo.getCareplanEnrollment(enrollmentId);
     };
 
     public getCompletedEnrollments = async (daysPassed: number, planNames : string[]) => {
@@ -472,16 +472,12 @@ export class CareplanService implements IUserActionService {
         return patientDto;
     }
 
-    private async getDonor(donorUserId: uuid) {
-
-        var donorDto = await this._donorRepo.getByUserId(donorUserId);
-
-        var user = await this._userRepo.getById(donorDto.UserId);
+    private async getUser(patientUserId: uuid) {
+        var user = await this._userRepo.getById(patientUserId);
         if (user.Person == null) {
             user.Person = await this._personRepo.getById(user.PersonId);
         }
-        donorDto.User = user;
-        return donorDto;
+        return user;
     }
 
     private async createScheduledUserTasks(patientUserId, careplanActivities, enrollmentDetails?) {

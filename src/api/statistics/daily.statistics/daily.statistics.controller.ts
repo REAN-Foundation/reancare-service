@@ -3,10 +3,11 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { DailyStatisticsService } from '../../../services/statistics/daily.statistics.service';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DailyStatisticsController {
+export class DailyStatisticsController extends BaseController{
 
     //#region member variables and constructors
 
@@ -33,6 +34,7 @@ export class DailyStatisticsController {
     getDailyTenantStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId = request.params.tenantId;
+            await this.authorizeOne(request, null, tenantId);
             const stats = await this._service.getDailyTenantStats(tenantId);
             if (stats === null) {
                 throw new ApiError(404, 'Daily Statistics not found.');

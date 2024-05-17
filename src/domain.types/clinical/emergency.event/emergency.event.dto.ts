@@ -1,9 +1,9 @@
-import { PatientDto } from "../../users/patient/patient/patient.dto";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 export interface EmergencyEventDto {
     id?: string,
     EhrId?: string;
-    PatientUserId?: PatientDto;
+    PatientUserId?: uuid;
     Details?: string;
     EmergencyDate?: Date;
 }

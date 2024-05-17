@@ -25,6 +25,8 @@ export class ConsentRepo implements IConsentRepo {
                 AllResourcesInCategory : model.AllResourcesInCategory,
                 TenantOwnedResource    : model.TenantOwnedResource,
                 Perpetual              : model.Perpetual,
+                Revoked                : model.Revoked,
+                RevokedTimestamp       : model.RevokedTimestamp,
                 ConsentGivenOn         : model.ConsentGivenOn,
                 ConsentValidFrom       : model.ConsentValidFrom,
                 ConsentValidTill       : model.ConsentValidTill,

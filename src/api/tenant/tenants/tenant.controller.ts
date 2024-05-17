@@ -17,10 +17,11 @@ import { EmailDetails } from "../../../modules/communication/email/email.details
 import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
 import { Helper } from '../../../common/helper';
 import { TenantSettingsService } from '../../../services/tenant/tenant.settings.service';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class TenantController{
+export class TenantController extends BaseController {
 
     //#region member variables and constructors
 
@@ -46,11 +47,11 @@ export class TenantController{
             if (model.Code === 'default') {
                 throw new ApiError(400, 'Cannot create tenant with code "default"!');
             }
+            await this.authorizeOne(request);
             const tenant = await this._service.create(model);
             if (tenant == null) {
                 throw new ApiError(400, 'Unable to create tenant.');
             }
-
             const tenantCode = tenant.Code;
             const adminUserName = (tenantCode + '-admin').toLowerCase();
             const adminPassword = Helper.generatePassword();
@@ -101,6 +102,7 @@ export class TenantController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            await this.authorizeOne(request, null, tenant.id);
             ResponseHandler.success(request, response, 'Tenant retrieved successfully!', 200, {
                 Tenant : tenant,
             });
@@ -111,6 +113,12 @@ export class TenantController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            const currentUserRole = request.currentUser.CurrentRole;
+            if (currentUserRole !== Roles.SystemAdmin &&
+                currentUserRole !== Roles.SystemUser
+            ) {
+                throw new ApiError(403, 'Unauthorized action!');
+            }
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -131,6 +139,7 @@ export class TenantController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            await this.authorizeOne(request, null, tenant.id);
             if (tenant.Code === 'default') {
                 throw new ApiError(400, 'Cannot update tenant with code "default"!');
             }
@@ -154,6 +163,7 @@ export class TenantController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            await this.authorizeOne(request, null, tenant.id);
             if (tenant.Code === 'default') {
                 throw new ApiError(400, 'Cannot delete tenant with code "default"!');
             }
@@ -174,6 +184,7 @@ export class TenantController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            await this.authorizeOne(request, null, tenant.id);
             const user = await this._service.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
@@ -196,6 +207,7 @@ export class TenantController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            await this.authorizeOne(request, null, tenant.id);
             const user = await this._service.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
@@ -217,6 +229,7 @@ export class TenantController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            await this.authorizeOne(request, null, tenant.id);
             const stats = await this._service.getTenantStats(id);
             ResponseHandler.success(request, response, 'Tenant stats retrieved successfully!', 200, {
                 Stats : stats,
@@ -234,6 +247,7 @@ export class TenantController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            await this.authorizeOne(request, null, tenant.id);
             const admins = await this._service.getTenantAdmins(id);
             ResponseHandler.success(request, response, 'Tenant admins retrieved successfully!', 200, {
                 Admins : admins,
@@ -251,6 +265,7 @@ export class TenantController{
             if (tenant == null) {
                 throw new ApiError(404, 'Tenant not found.');
             }
+            await this.authorizeOne(request, null, tenant.id);
             const moderators = await this._service.getTenantRegularUsers(id);
             ResponseHandler.success(request, response, 'Tenant moderators retrieved successfully!', 200, {
                 Moderators : moderators,

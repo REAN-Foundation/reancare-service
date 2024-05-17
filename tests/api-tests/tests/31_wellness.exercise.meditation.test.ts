@@ -1,6 +1,6 @@
-import  request  from 'supertest';
+import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
@@ -10,72 +10,49 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('31 - Meditation tests', function() {
-
+describe('31 - Meditation tests', function () {
     var agent = request.agent(infra._app);
 
-    it('31:01 -> Create meditation', function(done) {
+    it('31:01 -> Create meditation', function (done) {
         loadMeditationCreateModel();
-        const createModel = getTestData("MeditationCreateModel");
+        const createModel = getTestData('meditationCreateModel');
         agent
             .post(`/api/v1/wellness/exercise/meditations/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.Meditation.id, 'MeditationId_1');
-                expect(response.body.Data.Meditation).to.have.property('id');
-                expect(response.body.Data.Meditation).to.have.property('PatientUserId');
-                expect(response.body.Data.Meditation).to.have.property('Meditation');
-                expect(response.body.Data.Meditation).to.have.property('Description');
-                expect(response.body.Data.Meditation).to.have.property('Category');
-                expect(response.body.Data.Meditation).to.have.property('StartTime');
-                expect(response.body.Data.Meditation).to.have.property('EndTime');
+            .expect((response) => {
+                setMeditationId(response, 'meditationId_1');
+                expectMeditationProperties(response);
 
-                setTestData(response.body.Data.Meditation.id, 'MeditationId_1');
-
-                expect(response.body.Data.Meditation.PatientUserId).to.equal(getTestData("MeditationCreateModel").PatientUserId);
-                expect(response.body.Data.Meditation.Meditation).to.equal(getTestData("MeditationCreateModel").Meditation);
-                expect(response.body.Data.Meditation.Description).to.equal(getTestData("MeditationCreateModel").Description);
-                expect(response.body.Data.Meditation.Category).to.equal(getTestData("MeditationCreateModel").Category);
-
+                expectMeditationPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('31:02 -> Get meditation by id', function(done) {
-
+    it('31:02 -> Get meditation by id', function (done) {
         agent
-            .get(`/api/v1/wellness/exercise/meditations/${getTestData('MeditationId_1')}`)
+            .get(`/api/v1/wellness/exercise/meditations/${getTestData('meditationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
-                expect(response.body.Data.Meditation).to.have.property('id');
-                expect(response.body.Data.Meditation).to.have.property('PatientUserId');
-                expect(response.body.Data.Meditation).to.have.property('Meditation');
-                expect(response.body.Data.Meditation).to.have.property('Description');
-                expect(response.body.Data.Meditation).to.have.property('Category');
-                expect(response.body.Data.Meditation).to.have.property('StartTime');
-                expect(response.body.Data.Meditation).to.have.property('EndTime');
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
+                expectMeditationProperties(response);
 
-                expect(response.body.Data.Meditation.PatientUserId).to.equal(getTestData("MeditationCreateModel").PatientUserId);
-                expect(response.body.Data.Meditation.Meditation).to.equal(getTestData("MeditationCreateModel").Meditation);
-                expect(response.body.Data.Meditation.Description).to.equal(getTestData("MeditationCreateModel").Description);
-                expect(response.body.Data.Meditation.Category).to.equal(getTestData("MeditationCreateModel").Category);
+                expectMeditationPropertyValues(response);
             })
             .expect(200, done);
     });
 
-    it('31:03 -> Search meditation records', function(done) {
+    it('31:03 -> Search meditation records', function (done) {
         loadMeditationQueryString();
         agent
             .get(`/api/v1/wellness/exercise/meditations/search${loadMeditationQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body.Data.MeditationRecords).to.have.property('TotalCount');
                 expect(response.body.Data.MeditationRecords).to.have.property('RetrievedCount');
                 expect(response.body.Data.MeditationRecords).to.have.property('PageIndex');
@@ -88,154 +65,149 @@ describe('31 - Meditation tests', function() {
             .expect(200, done);
     });
 
-    it('31:04 -> Update meditation', function(done) {
+    it('31:04 -> Update meditation', function (done) {
         loadMeditationUpdateModel();
-        const updateModel = getTestData("MeditationUpdateModel");
+        const updateModel = getTestData('meditationUpdateModel');
         agent
-            .put(`/api/v1/wellness/exercise/meditations/${getTestData('MeditationId_1')}`)
+            .put(`/api/v1/wellness/exercise/meditations/${getTestData('meditationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
-            .expect(response => {
-                expect(response.body.Data.Meditation).to.have.property('id');
-                expect(response.body.Data.Meditation).to.have.property('PatientUserId');
-                expect(response.body.Data.Meditation).to.have.property('Meditation');
-                expect(response.body.Data.Meditation).to.have.property('Description');
-                expect(response.body.Data.Meditation).to.have.property('Category');
-                expect(response.body.Data.Meditation).to.have.property('StartTime');
-                expect(response.body.Data.Meditation).to.have.property('EndTime');
+            .expect((response) => {
+                expectMeditationProperties(response);
 
-                expect(response.body.Data.Meditation.PatientUserId).to.equal(getTestData("MeditationUpdateModel").PatientUserId);
-                expect(response.body.Data.Meditation.Meditation).to.equal(getTestData("MeditationUpdateModel").Meditation);
-                expect(response.body.Data.Meditation.Description).to.equal(getTestData("MeditationUpdateModel").Description);
-                expect(response.body.Data.Meditation.Category).to.equal(getTestData("MeditationUpdateModel").Category);
-
+                expect(response.body.Data.Meditation.PatientUserId).to.equal(
+                    getTestData('meditationUpdateModel').PatientUserId
+                );
+                expect(response.body.Data.Meditation.Meditation).to.equal(getTestData('meditationUpdateModel').Meditation);
+                expect(response.body.Data.Meditation.Description).to.equal(getTestData('meditationUpdateModel').Description);
+                expect(response.body.Data.Meditation.Category).to.equal(getTestData('meditationUpdateModel').Category);
             })
             .expect(200, done);
     });
 
-    it('31:05 -> Delete meditation', function(done) {
-   
+    it('31:05 -> Delete meditation', function (done) {
         agent
-            .delete(`/api/v1/wellness/exercise/meditations/${getTestData('MeditationId_1')}`)
+            .delete(`/api/v1/wellness/exercise/meditations/${getTestData('meditationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
             })
             .expect(200, done);
     });
 
-    it('Create meditation again', function(done) {
+    it('Create meditation again', function (done) {
         loadMeditationCreateModel();
-        const createModel = getTestData("MeditationCreateModel");
+        const createModel = getTestData('meditationCreateModel');
         agent
             .post(`/api/v1/wellness/exercise/meditations/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("PatientJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.Meditation.id, 'MeditationId');
-                expect(response.body.Data.Meditation).to.have.property('id');
-                expect(response.body.Data.Meditation).to.have.property('PatientUserId');
-                expect(response.body.Data.Meditation).to.have.property('Meditation');
-                expect(response.body.Data.Meditation).to.have.property('Description');
-                expect(response.body.Data.Meditation).to.have.property('Category');
-                expect(response.body.Data.Meditation).to.have.property('StartTime');
-                expect(response.body.Data.Meditation).to.have.property('EndTime');
+            .expect((response) => {
+                setMeditationId(response, 'meditationId');
+                expectMeditationProperties(response);
 
-                setTestData(response.body.Data.Meditation.id, 'MeditationId');
-
-                expect(response.body.Data.Meditation.PatientUserId).to.equal(getTestData("MeditationCreateModel").PatientUserId);
-                expect(response.body.Data.Meditation.Meditation).to.equal(getTestData("MeditationCreateModel").Meditation);
-                expect(response.body.Data.Meditation.Description).to.equal(getTestData("MeditationCreateModel").Description);
-                expect(response.body.Data.Meditation.Category).to.equal(getTestData("MeditationCreateModel").Category);
-
+                expectMeditationPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('31:06 -> Negative - Create meditation', function(done) {
+    it('31:06 -> Negative - Create meditation', function (done) {
         loadMeditationCreateModel();
-        const createModel = getTestData("Meditationl");
+        const createModel = getTestData('Meditationl');
         agent
             .post(`/api/v1/wellness/exercise/meditations/`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
             .expect(500, done);
     });
 
-    it('31:07 -> Negative - Get meditation by id', function(done) {
-
+    it('31:07 -> Negative - Get meditation by id', function (done) {
         agent
-            .get(`/api/v1/wellness/exercise/meditations/${getTestData('MeditationId_1')}`)
+            .get(`/api/v1/wellness/exercise/meditations/${getTestData('meditationId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
             .expect(404, done);
     });
 
-    it('31:08 -> Negative - Update meditation', function(done) {
+    it('31:08 -> Negative - Update meditation', function (done) {
         loadMeditationUpdateModel();
-        const updateModel = getTestData("MeditationUpdateModel");
+        const updateModel = getTestData('meditationUpdateModel');
         agent
-            .put(`/api/v1/wellness/exercise/meditations/${getTestData('MeditationId')}`)
+            .put(`/api/v1/wellness/exercise/meditations/${getTestData('meditationId')}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
             .expect(401, done);
     });
-
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadMeditationCreateModel = async (
-) => {
+function setMeditationId(response, key) {
+    setTestData(response.body.Data.Meditation.id, key);
+}
+
+function expectMeditationProperties(response) {
+    expect(response.body.Data.Meditation).to.have.property('id');
+    expect(response.body.Data.Meditation).to.have.property('PatientUserId');
+    expect(response.body.Data.Meditation).to.have.property('Meditation');
+    expect(response.body.Data.Meditation).to.have.property('Description');
+    expect(response.body.Data.Meditation).to.have.property('Category');
+    expect(response.body.Data.Meditation).to.have.property('StartTime');
+    expect(response.body.Data.Meditation).to.have.property('EndTime');
+}
+
+function expectMeditationPropertyValues(response) {
+    expect(response.body.Data.Meditation.PatientUserId).to.equal(getTestData('meditationCreateModel').PatientUserId);
+    expect(response.body.Data.Meditation.Meditation).to.equal(getTestData('meditationCreateModel').Meditation);
+    expect(response.body.Data.Meditation.Description).to.equal(getTestData('meditationCreateModel').Description);
+    expect(response.body.Data.Meditation.Category).to.equal(getTestData('meditationCreateModel').Category);
+}
+
+export const loadMeditationCreateModel = async () => {
     const model = {
-        PatientUserId : getTestData("PatientUserId"),
-        Meditation    : faker.lorem.word(),
-        Description   : faker.word.words(),
-        Category      : faker.lorem.word(),
-        StartTime     : startDate,
-        EndTime       : endDate
-  
+        PatientUserId: getTestData('patientUserId'),
+        Meditation: faker.lorem.word(),
+        Description: faker.word.words(),
+        Category: faker.lorem.word(),
+        StartTime: startDate,
+        EndTime: endDate,
     };
-    setTestData(model, "MeditationCreateModel");
+    setTestData(model, 'meditationCreateModel');
 };
 
-export const loadMeditationUpdateModel = async (
-) => {
+export const loadMeditationUpdateModel = async () => {
     const model = {
-        PatientUserId : getTestData("PatientUserId"),
-        Meditation    : faker.lorem.word(),
-        Description   : faker.word.words(),
-        Category      : faker.lorem.word(),
-        StartTime     : startDate,
-        EndTime       : endDate
-    
+        PatientUserId: getTestData('patientUserId'),
+        Meditation: faker.lorem.word(),
+        Description: faker.word.words(),
+        Category: faker.lorem.word(),
+        StartTime: startDate,
+        EndTime: endDate,
     };
-    setTestData(model, "MeditationUpdateModel");
+    setTestData(model, 'meditationUpdateModel');
 };
 
 function loadMeditationQueryString() {

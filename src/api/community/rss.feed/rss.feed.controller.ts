@@ -8,10 +8,11 @@ import { Logger } from '../../../common/logger';
 import { FileResourceService } from '../../../services/general/file.resource.service';
 import fs from 'fs';
 import { Injector } from '../../../startup/injector';
+import { BaseController } from '../../../api/base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class RssfeedController {
+export class RssfeedController extends BaseController {
 
     //#region member variables and constructors
 
@@ -33,7 +34,7 @@ export class RssfeedController {
             if (feed == null) {
                 throw new ApiError(400, 'Could not create a feed!');
             }
-
+            
             const updated = await this._service.createOrUpdateFeed(feed.id);
 
             ResponseHandler.success(request, response, 'Rssfeed created successfully!', 201, {
@@ -52,7 +53,6 @@ export class RssfeedController {
             if (feed == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
             }
-
             ResponseHandler.success(request, response, 'Rssfeed retrieved successfully!', 200, {
                 Rssfeed : feed,
             });
@@ -91,7 +91,6 @@ export class RssfeedController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
             }
-
             let updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a feed!');
@@ -114,7 +113,6 @@ export class RssfeedController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed record not found.');
             }
-
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Rssfeed can not be deleted.');
@@ -155,7 +153,6 @@ export class RssfeedController {
             if (item == null) {
                 throw new ApiError(404, 'Rssfeed not found.');
             }
-
             ResponseHandler.success(request, response, 'Rssfeed retrieved successfully!', 200, {
                 RssfeedItem : item,
             });
@@ -173,7 +170,6 @@ export class RssfeedController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed item not found.');
             }
-
             const updated = await this._service.updateFeedItem(itemId, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update a feed item!');
@@ -198,7 +194,6 @@ export class RssfeedController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Rssfeed item record not found.');
             }
-
             const deleted = await this._service.deleteFeedItem(itemId);
             if (!deleted) {
                 throw new ApiError(400, 'Rssfeed item can not be deleted.');
@@ -277,5 +272,5 @@ export class RssfeedController {
         var filestream = fs.createReadStream(localDestination);
         filestream.pipe(response);
     };
-
+    
 }

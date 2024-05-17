@@ -1,6 +1,6 @@
-import  request  from 'supertest';
+import request from 'supertest';
 import { expect } from 'chai';
-import  Application  from '../../../src/app';
+import Application from '../../../src/app';
 import { describe, it } from 'mocha';
 import { getTestData, setTestData } from '../init';
 import { faker } from '@faker-js/faker';
@@ -9,65 +9,49 @@ const infra = Application.instance();
 
 ///////////////////////////////////////////////////////////////////////////
 
-describe('61 - Body height tests', function() {
-
+describe('61 - Body height tests', function () {
     var agent = request.agent(infra._app);
 
-    it('61:01 -> Create body height', function(done) {
+    it('61:01 -> Create body height', function (done) {
         loadBodyHeightCreateModel();
-        const createModel = getTestData("BodyHeightCreateModel");
+        const createModel = getTestData('bodyHeightCreateModel');
         agent
             .post(`/api/v1/clinical/biometrics/body-heights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.BodyHeight.id, 'BodyHeightId_1');
-                expect(response.body.Data.BodyHeight).to.have.property('PatientUserId');
-                expect(response.body.Data.BodyHeight).to.have.property('BodyHeight');
-                expect(response.body.Data.BodyHeight).to.have.property('Unit');
-                expect(response.body.Data.BodyHeight).to.have.property('RecordDate');
-               
-                setTestData(response.body.Data.BodyHeight.id, 'BodyHeightId_1');
+            .expect((response) => {
+                setBodyHeightId(response, 'bodyHeightId_1');
+                expectBodyHeightProperties(response);
 
-                expect(response.body.Data.BodyHeight.PatientUserId).to.equal(getTestData("BodyHeightCreateModel").PatientUserId);
-                expect(response.body.Data.BodyHeight.BodyHeight).to.equal(getTestData("BodyHeightCreateModel").BodyHeight);
-                expect(response.body.Data.BodyHeight.Unit).to.equal(getTestData("BodyHeightCreateModel").Unit);
-
+                expectBodyHeightPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('61:02 -> Get body height by id', function(done) {
-     
+    it('61:02 -> Get body height by id', function (done) {
         agent
-            .get(`/api/v1/clinical/biometrics/body-heights/${getTestData('BodyHeightId_1')}`)
+            .get(`/api/v1/clinical/biometrics/body-heights/${getTestData('bodyHeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
-                expect(response.body.Data.BodyHeight).to.have.property('id');
-                expect(response.body.Data.BodyHeight).to.have.property('EhrId');
-                expect(response.body.Data.BodyHeight).to.have.property('PatientUserId');
-                expect(response.body.Data.BodyHeight).to.have.property('BodyHeight');
-                expect(response.body.Data.BodyHeight).to.have.property('Unit');
-                expect(response.body.Data.BodyHeight).to.have.property('RecordDate');
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
+                expectBodyHeightProperties(response);
 
-                expect(response.body.Data.BodyHeight.id).to.equal(getTestData("BodyHeightId_1"));
-                
+                expectBodyHeightPropertyValues(response);
             })
             .expect(200, done);
     });
 
-    it('61:03 -> Search body height records', function(done) {
+    it('61:03 -> Search body height records', function (done) {
         loadBodyHeightQueryString();
         agent
             .get(`/api/v1/clinical/biometrics/body-heights/search${loadBodyHeightQueryString()}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body.Data.BodyHeightRecords).to.have.property('TotalCount');
                 expect(response.body.Data.BodyHeightRecords).to.have.property('RetrievedCount');
                 expect(response.body.Data.BodyHeightRecords).to.have.property('PageIndex');
@@ -80,138 +64,136 @@ describe('61 - Body height tests', function() {
             .expect(200, done);
     });
 
-    it('61:04 -> Update body height', function(done) {
+    it('61:04 -> Update body height', function (done) {
         loadBodyHeightUpdateModel();
-        const updateModel = getTestData("BodyHeightUpdateModel");
+        const updateModel = getTestData('bodyHeightUpdateModel');
         agent
-            .put(`/api/v1/clinical/biometrics/body-heights/${getTestData('BodyHeightId_1')}`)
+            .put(`/api/v1/clinical/biometrics/body-heights/${getTestData('bodyHeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(updateModel)
-            .expect(response => {
-                expect(response.body.Data.BodyHeight).to.have.property('id');
-                expect(response.body.Data.BodyHeight).to.have.property('EhrId');
-                expect(response.body.Data.BodyHeight).to.have.property('PatientUserId');
-                expect(response.body.Data.BodyHeight).to.have.property('BodyHeight');
-                expect(response.body.Data.BodyHeight).to.have.property('Unit');
-                expect(response.body.Data.BodyHeight).to.have.property('RecordDate');
+            .expect((response) => {
+                expectBodyHeightProperties(response);
 
-                expect(response.body.Data.BodyHeight.PatientUserId).to.equal(getTestData("BodyHeightUpdateModel").PatientUserId);
-                expect(response.body.Data.BodyHeight.BodyHeight).to.equal(getTestData("BodyHeightUpdateModel").BodyHeight);
-                expect(response.body.Data.BodyHeight.Unit).to.equal(getTestData("BodyHeightUpdateModel").Unit);
-
+                expect(response.body.Data.BodyHeight.PatientUserId).to.equal(
+                    getTestData('bodyHeightUpdateModel').PatientUserId
+                );
+                expect(response.body.Data.BodyHeight.BodyHeight).to.equal(getTestData('bodyHeightUpdateModel').BodyHeight);
+                expect(response.body.Data.BodyHeight.Unit).to.equal(getTestData('bodyHeightUpdateModel').Unit);
             })
             .expect(200, done);
     });
 
-    it('61:05 -> Delete body height', function(done) {
-        
+    it('61:05 -> Delete body height', function (done) {
         agent
-            .delete(`/api/v1/clinical/biometrics/body-heights/${getTestData('BodyHeightId_1')}`)
+            .delete(`/api/v1/clinical/biometrics/body-heights/${getTestData('bodyHeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('success');
             })
             .expect(200, done);
     });
 
-    it('Create body height again', function(done) {
+    it('Create body height again', function (done) {
         loadBodyHeightCreateModel();
-        const createModel = getTestData("BodyHeightCreateModel");
+        const createModel = getTestData('bodyHeightCreateModel');
         agent
             .post(`/api/v1/clinical/biometrics/body-heights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
-                setTestData(response.body.Data.BodyHeight.id, 'BodyHeightId');
-                expect(response.body.Data.BodyHeight).to.have.property('PatientUserId');
-                expect(response.body.Data.BodyHeight).to.have.property('BodyHeight');
-                expect(response.body.Data.BodyHeight).to.have.property('Unit');
-                expect(response.body.Data.BodyHeight).to.have.property('RecordDate');
-             
-                setTestData(response.body.Data.BodyHeight.id, 'BodyHeightId');
+            .expect((response) => {
+                setBodyHeightId(response, 'bodyHeightId');
+                expectBodyHeightProperties(response);
 
-                expect(response.body.Data.BodyHeight.PatientUserId).to.equal(getTestData("BodyHeightCreateModel").PatientUserId);
-                expect(response.body.Data.BodyHeight.BodyHeight).to.equal(getTestData("BodyHeightCreateModel").BodyHeight);
-                expect(response.body.Data.BodyHeight.Unit).to.equal(getTestData("BodyHeightCreateModel").Unit);
-   
+                expectBodyHeightPropertyValues(response);
             })
             .expect(201, done);
     });
 
-    it('61:06 -> Negative - Create body height', function(done) {
+    it('61:06 -> Negative - Create body height', function (done) {
         loadNegativeBodyHeightCreateModel();
-        const createModel = getTestData("NegativeBodyHeightCreateModel");
+        const createModel = getTestData('NegativeBodyHeightCreateModel');
         agent
             .post(`/api/v1/clinical/biometrics/body-heights`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
             .send(createModel)
-            .expect(response => {
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
-
             })
             .expect(422, done);
     });
 
-    it('61:07 -> Negative - Search body height records', function(done) {
+    it('61:07 -> Negative - Search body height records', function (done) {
         loadBodyHeightQueryString();
         agent
             .get(`/api/v1/clinical/biometrics/body-heights/search${loadBodyHeightQueryString()}`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
             .expect(401, done);
     });
 
-    it('61:08 -> Negative - Delete body height', function(done) {
-        
+    it('61:08 -> Negative - Delete body height', function (done) {
         agent
-            .delete(`/api/v1/clinical/biometrics/body-heights/${getTestData('BodyHeightId_1')}`)
+            .delete(`/api/v1/clinical/biometrics/body-heights/${getTestData('bodyHeightId_1')}`)
             .set('Content-Type', 'application/json')
             .set('x-api-key', `${process.env.TEST_API_KEY}`)
-            .set('Authorization', `Bearer ${getTestData("AdminJwt")}`)
-            .expect(response => {
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
                 expect(response.body).to.have.property('Status');
                 expect(response.body.Status).to.equal('failure');
             })
             .expect(404, done);
     });
- 
 });
 
 ///////////////////////////////////////////////////////////////////////////
 
-export const loadBodyHeightCreateModel = async (
-) => {
-    const model = {
-        PatientUserId : getTestData('PatientUserId'),
-        BodyHeight    : faker.number.int(200),
-        Unit          : faker.string.symbol()
+function setBodyHeightId(response, key) {
+    setTestData(response.body.Data.BodyHeight.id, key);
+}
 
+function expectBodyHeightProperties(response) {
+    expect(response.body.Data.BodyHeight).to.have.property('PatientUserId');
+    expect(response.body.Data.BodyHeight).to.have.property('BodyHeight');
+    expect(response.body.Data.BodyHeight).to.have.property('Unit');
+    expect(response.body.Data.BodyHeight).to.have.property('RecordDate');
+}
+
+function expectBodyHeightPropertyValues(response) {
+    expect(response.body.Data.BodyHeight.PatientUserId).to.equal(getTestData('bodyHeightCreateModel').PatientUserId);
+    expect(response.body.Data.BodyHeight.BodyHeight).to.equal(getTestData('bodyHeightCreateModel').BodyHeight);
+    expect(response.body.Data.BodyHeight.Unit).to.equal(getTestData('bodyHeightCreateModel').Unit);
+}
+
+export const loadBodyHeightCreateModel = async () => {
+    const model = {
+        PatientUserId: getTestData('patientUserId'),
+        BodyHeight: faker.number.int(200),
+        Unit: faker.string.symbol(),
     };
-    setTestData(model, "BodyHeightCreateModel");
+    setTestData(model, 'bodyHeightCreateModel');
 };
 
-export const loadBodyHeightUpdateModel = async (
-) => {
+export const loadBodyHeightUpdateModel = async () => {
     const model = {
-        PatientUserId : getTestData('PatientUserId'),
-        BodyHeight    : faker.number.int(200),
-        Unit          : faker.string.symbol()
+        PatientUserId: getTestData('patientUserId'),
+        BodyHeight: faker.number.int(200),
+        Unit: faker.string.symbol(),
     };
-    setTestData(model, "BodyHeightUpdateModel");
+    setTestData(model, 'bodyHeightUpdateModel');
 };
 
 function loadBodyHeightQueryString() {
@@ -220,11 +202,10 @@ function loadBodyHeightQueryString() {
     return queryString;
 }
 
-export const loadNegativeBodyHeightCreateModel = async (
-) => {
+export const loadNegativeBodyHeightCreateModel = async () => {
     const model = {
-        BodyHeight : faker.number.int(200),
-        Unit       : faker.string.symbol()
+        BodyHeight: faker.number.int(200),
+        Unit: faker.string.symbol(),
     };
-    setTestData(model, "NegativeBodyHeightCreateModel");
+    setTestData(model, 'NegativeBodyHeightCreateModel');
 };

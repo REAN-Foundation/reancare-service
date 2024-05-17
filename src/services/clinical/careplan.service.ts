@@ -495,7 +495,7 @@ export class CareplanService implements IUserActionService {
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
 
-            var scheduledDate = TimeHelper.getDateTimeStamp(activity.ScheduledAt);
+            var scheduledDate = TimeHelper.timestamp(activity.ScheduledAt);
             if (!activitiesGroupedByDate[scheduledDate]) {
                 activitiesGroupedByDate[scheduledDate] = [];
             }
@@ -514,7 +514,6 @@ export class CareplanService implements IUserActionService {
             });
 
             activities.forEach( async (activity) => {
-                
                 let startTime = null;
                 const dayStartStr = activity.ScheduledAt.toISOString();
                 const isTimeZero = TimeHelper.isTimeZero(dayStartStr);
@@ -528,7 +527,7 @@ export class CareplanService implements IUserActionService {
                     startTime = TimeHelper.addDuration(new Date(dayStartStr), offset, DurationType.Minute);
                     Logger.instance().log(`UTC Date: ${startTime}`);
                 }
-                var endTime = TimeHelper.addDuration(startTime, 16, DurationType.Hour);
+                var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
 
                 var userTaskModel: UserTaskDomainModel = {
                     UserId             : activity.PatientUserId,

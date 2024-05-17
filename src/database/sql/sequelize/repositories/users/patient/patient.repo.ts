@@ -19,12 +19,13 @@ export class PatientRepo implements IPatientRepo {
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
             const entity = {
-                UserId           : patientDomainModel.UserId,
-                PersonId         : patientDomainModel.PersonId,
-                DisplayId        : patientDomainModel.DisplayId,
-                NationalHealthId : patientDomainModel.NationalHealthId,
-                MedicalProfileId : patientDomainModel.MedicalProfileId,
-                EhrId            : patientDomainModel.EhrId
+                UserId                    : patientDomainModel.UserId,
+                PersonId                  : patientDomainModel.PersonId,
+                DisplayId                 : patientDomainModel.DisplayId,
+                NationalHealthId          : patientDomainModel.NationalHealthId,
+                MedicalProfileId          : patientDomainModel.MedicalProfileId,
+                EhrId                     : patientDomainModel.EhrId,
+                ExternalMedicalResourceId : patientDomainModel.ExternalMedicalResourceId
             };
             const patient = await Patient.create(entity);
             const dto = await PatientMapper.toDetailsDto(patient);
@@ -78,6 +79,9 @@ export class PatientRepo implements IPatientRepo {
             if (model.IsRemindersLoaded != null) {
                 patient.IsRemindersLoaded = model.IsRemindersLoaded;
             }
+            if (model.ExternalMedicalResourceId != null) {
+                patient.ExternalMedicalResourceId = model.ExternalMedicalResourceId;
+            }
             await patient.save();
             return await PatientMapper.toDetailsDto(patient);
         } catch (error) {
@@ -124,7 +128,6 @@ export class PatientRepo implements IPatientRepo {
             if (filters.TenantId != null) {
                 userIncludesObj.where['TenantId'] = filters.TenantId;
             }
-
             if (filters.UserName != null) {
                 userIncludesObj.where['UserName'] = filters.UserName;
             }
@@ -184,6 +187,9 @@ export class PatientRepo implements IPatientRepo {
 
             if (filters.DonorAcceptance != null) {
                 search.where['DonorAcceptance'] = filters.DonorAcceptance;
+            }
+            if (filters.ExternalMedicalResourceId != null) {
+                search.where['ExternalMedicalResourceId'] = filters.ExternalMedicalResourceId;
             }
 
             search.include.push(includesObj);

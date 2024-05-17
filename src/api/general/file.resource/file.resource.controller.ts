@@ -474,6 +474,7 @@ export class FileResourceController extends BaseController {
         filename: string) {
 
         response.setHeader('Content-type', mimeType);
+        filename = encodeURIComponent(filename);
 
         if (disposition === DownloadDisposition.Attachment) {
             response.setHeader('Content-disposition', 'attachment; filename=' + filename);

@@ -22,6 +22,7 @@ export class DonorRepo implements IDonorRepo {
             const entity = {
                 UserId            : model.UserId,
                 PersonId          : model.PersonId,
+                TenantId          : model.User?.TenantId ?? null,
                 DisplayId         : model.DisplayId,
                 EhrId             : model.EhrId,
                 BloodGroup        : model.BloodGroup,

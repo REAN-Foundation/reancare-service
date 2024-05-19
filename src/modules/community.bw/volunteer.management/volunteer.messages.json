@@ -8,9 +8,13 @@
         "Message": { "Variables" : [
             {
                 "type": "text",
-                "text": "Blood"
+                "text": "Volunteer"
+            },
+            {
+                "type": "text",
+                "text": "Patient"
             }]
         },
-        "ButtonsIds" : ["Volunteer_Update_TF_Date", "FeelSchedule_Donationing_Unwell"]
+        "ButtonsIds" : ["Volunteer_Update_TF_Date", "Schedule_Donation"]
     }
 ]

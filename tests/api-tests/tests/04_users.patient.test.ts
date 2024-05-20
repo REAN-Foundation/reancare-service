@@ -195,8 +195,49 @@ describe('04 - Patient tests', function () {
             })
             .expect(200, done);
     });
+    it('04:10 -> Update patient EMRId', function (done) {
+        loadPatientUpdateEMRIdModel();
+        const updateModel = getTestData('patientUpdateEMRIdModel');
+        agent
+            .put(`/api/v1/patients/${getTestData('patientUserId')}`)
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData('adminJwt')}`)
+            .send(updateModel)
+            .expect((response) => {
+                expect(response.body.Data.Patient.User.Person).to.have.property('id');
+                expect(response.body.Data.Patient.User.Person).to.have.property('FirstName');
+                expect(response.body.Data.Patient.User.Person).to.have.property('Email');
+                expect(response.body.Data.Patient.User.Person).to.have.property('Phone');
+                expect(response.body.Data.Patient).to.have.property('ExternalMedicalResourceId');
+                expect(response.body.Data.Patient.ExternalMedicalResourceId).to.equal(
+                    getTestData('patientUpdateEMRIdModel').ExternalMedicalResourceId
+                );
+            })
+            .expect(200, done);
+    });
+    
+    it('04:11 -> Search patient EMRId records', function (done) {
+        loadPatientQueryEMRIdString();
+        agent
+            .get(`/api/v1/patients/search${loadPatientQueryEMRIdString()}`)
+            .set('Content-Type', 'application/json')
+            .set('x-api-key', `${process.env.TEST_API_KEY}`)
+            .set('Authorization', `Bearer ${getTestData('patientJwt')}`)
+            .expect((response) => {
+                expect(response.body.Data.Patients).to.have.property('TotalCount');
+                expect(response.body.Data.Patients).to.have.property('RetrievedCount');
+                expect(response.body.Data.Patients).to.have.property('PageIndex');
+                expect(response.body.Data.Patients).to.have.property('ItemsPerPage');
+                expect(response.body.Data.Patients).to.have.property('Order');
+                expect(response.body.Data.Patients.TotalCount).to.greaterThan(0);
+                expect(response.body.Data.Patients.RetrievedCount).to.greaterThan(0);
+                expect(response.body.Data.Patients.Items.length).to.greaterThan(0);
+            })
+            .expect(200, done);
+    });
 
-    it('04:10 -> Update patient details - partial address', function (done) {
+    it('04:12 -> Update patient details - partial address', function (done) {
         loadAddressUpdateModel();
         const updateModel = getTestData('addressUpdateModel');
         agent
@@ -327,7 +368,7 @@ export const loadAddressUpdateModel = async () => {
     setTestData(model, 'addressUpdateModel');
 };
 
-export const loadPatientGeModel = async () => {
+export const loadPatientGetModel = async () => {
     const model = {
         Phone: secondPatientPhoneNumber,
         Password: patientPassword,
@@ -340,6 +381,19 @@ export const loadPatientGeModel = async () => {
 function loadPatientQueryString() {
     //This is raw query. Please modify to suit the test
     const queryString = '';
+    return queryString;
+}
+
+export const loadPatientUpdateEMRIdModel = async () => {
+    const model = {
+        ExternalMedicalResourceId: "abc123",
+      };
+    setTestData(model, 'patientUpdateEMRIdModel');
+};
+
+function loadPatientQueryEMRIdString() {
+    //This is raw query. Please modify to suit the test
+    const queryString = '?externalMedicalRecordId=abc123';
     return queryString;
 }
 

@@ -132,7 +132,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateDateString(request, 'birthdateTo', Where.Query, false, false);
         await this.validateUuid(request, 'birthdateTo', Where.Query, false, false);
         await this.validateString(request, 'userName', Where.Query, false, false);
-        await this.validateString(request, 'externalMedicalRecordId', Where.Query, false, false);
+        await this.validateString(request, 'externalMedicalRecordId', Where.Query, false, true);
 
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);

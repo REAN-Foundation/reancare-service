@@ -25,7 +25,7 @@ export class PatientRepo implements IPatientRepo {
                 NationalHealthId          : patientDomainModel.NationalHealthId,
                 MedicalProfileId          : patientDomainModel.MedicalProfileId,
                 EhrId                     : patientDomainModel.EhrId,
-                ExternalMedicalResourceId : patientDomainModel.ExternalMedicalResourceId
+                ExternalMedicalResourceId : patientDomainModel.ExternalMedicalResourceId ?? null
             };
             const patient = await Patient.create(entity);
             const dto = await PatientMapper.toDetailsDto(patient);

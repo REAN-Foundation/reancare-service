@@ -521,4 +521,21 @@ export class TimeHelper {
 
     static timeDelay = ms => new Promise(res => setTimeout(res, ms));
 
+    static getDateTimeStamp = (date: Date): string => {
+        date = new Date(date.toISOString().split("T")[0]);
+        return date.getTime().toString();
+    };
+
+    static isTimeZero(timestamp: string): boolean {
+        const regex = /^(\d{4})-(\d{2})-(\d{2})T00:00:00/;
+        const match = timestamp.match(regex);
+        if (match) {
+            const year = parseInt(match[1]);
+            const month = parseInt(match[2]);
+            const day = parseInt(match[3]);
+            // Check if it's midnight
+            return year > 0 && month >= 1 && month <= 12 && day >= 1 && day <= 31;
+        }
+        return false; // Invalid timestamp format
+    }
 }

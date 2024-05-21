@@ -20,9 +20,9 @@ export class EHRHowDoYouFeelService {
                 model.id,
                 null,
                 EHRRecordTypes.Symptom,
-                model.Feeling,
-                null,
                 'Better',
+                null,
+                'How are you feeling today?',
                 null,
                 appName,
                 model.RecordDate ? model.RecordDate : null
@@ -35,9 +35,9 @@ export class EHRHowDoYouFeelService {
                 model.id,
                 null,
                 EHRRecordTypes.Symptom,
-                model.Feeling,
-                null,
                 'Same',
+                null,
+                'How are you feeling today?',
                 null,
                 appName,
                 model.RecordDate ? model.RecordDate : null
@@ -50,9 +50,9 @@ export class EHRHowDoYouFeelService {
                 model.id,
                 null,
                 EHRRecordTypes.Symptom,
-                model.Feeling,
-                null,
                 'Worse',
+                null,
+                'How are you feeling today?',
                 null,
                 appName,
                 model.RecordDate ? model.RecordDate : null
@@ -76,7 +76,7 @@ export class EHRHowDoYouFeelService {
                 EHRRecordTypes.Symptom,
                 model.Mood,
                 null,
-                'Mood',
+                'How is your mood today?',
                 null,
                 appName,
                 model.RecordDate ? model.RecordDate : null
@@ -91,7 +91,7 @@ export class EHRHowDoYouFeelService {
                 EHRRecordTypes.Symptom,
                 model.Feeling,
                 null,
-                'Feeling',
+                'How are you feeling today?',
                 null,
                 appName,
                 model.RecordDate ? model.RecordDate : null
@@ -107,7 +107,7 @@ export class EHRHowDoYouFeelService {
                     EHRRecordTypes.Symptom,
                     e,
                     null,
-                    'EnergyLevels',
+                    'How is your energy level today?',
                     null,
                     appName,
                     model.RecordDate ? model.RecordDate : null

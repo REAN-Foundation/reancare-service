@@ -209,9 +209,9 @@ describe('04 - Patient tests', function () {
                 expect(response.body.Data.Patient.User.Person).to.have.property('FirstName');
                 expect(response.body.Data.Patient.User.Person).to.have.property('Email');
                 expect(response.body.Data.Patient.User.Person).to.have.property('Phone');
-                expect(response.body.Data.Patient).to.have.property('ExternalMedicalResourceId');
-                expect(response.body.Data.Patient.ExternalMedicalResourceId).to.equal(
-                    getTestData('patientUpdateEMRIdModel').ExternalMedicalResourceId
+                expect(response.body.Data.Patient).to.have.property('ExternalMedicalRegistrationId');
+                expect(response.body.Data.Patient.ExternalMedicalRegistrationId).to.equal(
+                    getTestData('patientUpdateEMRIdModel').ExternalMedicalRegistrationId
                 );
             })
             .expect(200, done);
@@ -386,14 +386,14 @@ function loadPatientQueryString() {
 
 export const loadPatientUpdateEMRIdModel = async () => {
     const model = {
-        ExternalMedicalResourceId: "abc123",
+        ExternalMedicalRegistrationId: "abc123",
       };
     setTestData(model, 'patientUpdateEMRIdModel');
 };
 
 function loadPatientQueryEMRIdString() {
     //This is raw query. Please modify to suit the test
-    const queryString = '?externalMedicalRecordId=abc123';
+    const queryString = '?externalMedicalRegistrationId=abc123';
     return queryString;
 }
 

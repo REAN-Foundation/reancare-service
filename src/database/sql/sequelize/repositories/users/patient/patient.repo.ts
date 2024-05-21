@@ -19,13 +19,13 @@ export class PatientRepo implements IPatientRepo {
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
             const entity = {
-                UserId                    : patientDomainModel.UserId,
-                PersonId                  : patientDomainModel.PersonId,
-                DisplayId                 : patientDomainModel.DisplayId,
-                NationalHealthId          : patientDomainModel.NationalHealthId,
-                MedicalProfileId          : patientDomainModel.MedicalProfileId,
-                EhrId                     : patientDomainModel.EhrId,
-                ExternalMedicalResourceId : patientDomainModel.ExternalMedicalResourceId ?? null
+                UserId                        : patientDomainModel.UserId,
+                PersonId                      : patientDomainModel.PersonId,
+                DisplayId                     : patientDomainModel.DisplayId,
+                NationalHealthId              : patientDomainModel.NationalHealthId,
+                MedicalProfileId              : patientDomainModel.MedicalProfileId,
+                EhrId                         : patientDomainModel.EhrId,
+                ExternalMedicalRegistrationId : patientDomainModel.ExternalMedicalRegistrationId ?? null
             };
             const patient = await Patient.create(entity);
             const dto = await PatientMapper.toDetailsDto(patient);
@@ -79,8 +79,8 @@ export class PatientRepo implements IPatientRepo {
             if (model.IsRemindersLoaded != null) {
                 patient.IsRemindersLoaded = model.IsRemindersLoaded;
             }
-            if (model.ExternalMedicalResourceId != null) {
-                patient.ExternalMedicalResourceId = model.ExternalMedicalResourceId;
+            if (model.ExternalMedicalRegistrationId != null) {
+                patient.ExternalMedicalRegistrationId = model.ExternalMedicalRegistrationId;
             }
             await patient.save();
             return await PatientMapper.toDetailsDto(patient);
@@ -188,8 +188,8 @@ export class PatientRepo implements IPatientRepo {
             if (filters.DonorAcceptance != null) {
                 search.where['DonorAcceptance'] = filters.DonorAcceptance;
             }
-            if (filters.ExternalMedicalResourceId != null) {
-                search.where['ExternalMedicalResourceId'] = filters.ExternalMedicalResourceId;
+            if (filters.ExternalMedicalRegistrationId != null) {
+                search.where['ExternalMedicalRegistrationId'] = filters.ExternalMedicalRegistrationId;
             }
 
             search.include.push(includesObj);

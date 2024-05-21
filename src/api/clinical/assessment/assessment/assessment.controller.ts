@@ -39,7 +39,7 @@ export class AssessmentController extends BaseController {
 
     _ehrPatientService = Injector.Container.resolve(EHRPatientService);
 
-    _healthProfileService = Injector.Container.resolve(HealthProfileService)
+    _healthProfileService = Injector.Container.resolve(HealthProfileService);
 
     _validator: AssessmentValidator = new AssessmentValidator();
 
@@ -436,14 +436,14 @@ export class AssessmentController extends BaseController {
         if (question.Title && question.Title.includes('What is your race?')) {
             updated = {
                 Race : answerResponse.Answer.ChosenOption.Text
-            }
+            };
 
             Logger.instance().log(`Race Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
 
         } else if (question.Title && question.Title.includes('What is your ethnicity?')) {
             updated = {
                 Ethnicity : answerResponse.Answer.ChosenOption.Text
-            }
+            };
 
             Logger.instance().log(`Ethnicity Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
 

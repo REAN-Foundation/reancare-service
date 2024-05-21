@@ -18,6 +18,8 @@ import { BaseController } from '../../../../api/base.controller';
 import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
+import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
+import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +36,10 @@ export class AssessmentController extends BaseController {
     _userTaskService = Injector.Container.resolve(UserTaskService);
 
     _ehrAssessmentService = Injector.Container.resolve(EHRAssessmentService);
+
+    _ehrPatientService = Injector.Container.resolve(EHRPatientService);
+
+    _healthProfileService = Injector.Container.resolve(HealthProfileService)
 
     _validator: AssessmentValidator = new AssessmentValidator();
 
@@ -264,6 +270,11 @@ export class AssessmentController extends BaseController {
             var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
             await this._ehrAssessmentService.addEHRRecordForAppNames(assessment, answerResponse, options);
 
+            //check if questions are related to race and ethnicity
+            if (assessment.Provider && assessment.Provider === 'REAN' ) {
+                await this.updateRaceAndEthnicityForPatient(answerResponse, question, assessment);
+            }
+
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
             if (isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
@@ -417,6 +428,37 @@ export class AssessmentController extends BaseController {
         });
 
         return { score, reportUrl };
+    }
+
+    private async updateRaceAndEthnicityForPatient(answerResponse: any, question : any, assessment: any) {
+
+        var updated = null;
+        if (question.Title && question.Title.includes('What is your race?')) {
+            updated = {
+                Race : answerResponse.Answer.ChosenOption.Text
+            }
+
+            Logger.instance().log(`Race Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+
+        } else if (question.Title && question.Title.includes('What is your ethnicity?')) {
+            updated = {
+                Ethnicity : answerResponse.Answer.ChosenOption.Text
+            }
+
+            Logger.instance().log(`Ethnicity Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+
+        }
+
+        if (updated) {
+            Logger.instance().log(`Updating patient profile and EHR data : ${assessment.PatientUserId}`);
+            await this._healthProfileService.updateByPatientUserId(assessment.PatientUserId, updated);
+            updated['PatientUserId'] = assessment.PatientUserId;
+            await this._ehrPatientService.addEHRRecordHealthProfileForAppNames(updated);
+            return true;
+        } 
+
+        return false;
+
     }
 
     //#endregion

@@ -58,9 +58,10 @@ export class PatientValidator extends BaseValidator {
                 BloodDonationCycle   : request.body.BloodDonationCycle ?? null,
                 OtherInformation     : request.body.OtherInformation ?? null,
             },
-            UserId   : request.params.userId ?? null,
-            Address  : request.body.Address ?? null,
-            CohortId : request.body.CohortId ?? null,
+            UserId                        : request.params.userId ?? null,
+            Address                       : request.body.Address ?? null,
+            CohortId                      : request.body.CohortId ?? null,
+            ExternalMedicalRegistrationId : request.body.ExternalMedicalRegistrationId ?? null
         };
 
         return entity;
@@ -105,10 +106,11 @@ export class PatientValidator extends BaseValidator {
                 OtherInformation : body.OtherInformation !== undefined ? body.OtherInformation : undefined,
                 BloodGroup       : body.BloodGroup ?? null,
             },
-            Address           : body.Address ?? null,
-            DonorAcceptance   : body.DonorAcceptance ?? null,
-            IsRemindersLoaded : body.IsRemindersLoaded ?? false,
-            CohortId          : body.CohortId !== undefined ? body.CohortId : undefined,
+            Address                       : body.Address ?? null,
+            DonorAcceptance               : body.DonorAcceptance ?? null,
+            IsRemindersLoaded             : body.IsRemindersLoaded ?? false,
+            CohortId                      : body.CohortId !== undefined ? body.CohortId : undefined,
+            ExternalMedicalRegistrationId : body.ExternalMedicalRegistrationId ?? null
         };
 
         return entity;
@@ -130,6 +132,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateDateString(request, 'birthdateTo', Where.Query, false, false);
         await this.validateUuid(request, 'birthdateTo', Where.Query, false, false);
         await this.validateString(request, 'userName', Where.Query, false, false);
+        await this.validateString(request, 'externalMedicalRegistrationId', Where.Query, false, true);
 
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
@@ -140,14 +143,15 @@ export class PatientValidator extends BaseValidator {
     private getFilter(request): PatientSearchFilters {
 
         const filters: PatientSearchFilters = {
-            Phone           : request.query.phone ?? null,
-            Email           : request.query.email ?? null,
-            Name            : request.query.name ?? null,
-            Gender          : request.query.gender ?? null,
-            DonorAcceptance : request.query.donorAcceptance ?? null,
-            BirthdateFrom   : request.query.birthdateFrom ?? null,
-            BirthdateTo     : request.query.birthdateTo ?? null,
-            UserName        : request.query.userName ?? null,
+            Phone                         : request.query.phone ?? null,
+            Email                         : request.query.email ?? null,
+            Name                          : request.query.name ?? null,
+            Gender                        : request.query.gender ?? null,
+            DonorAcceptance               : request.query.donorAcceptance ?? null,
+            BirthdateFrom                 : request.query.birthdateFrom ?? null,
+            BirthdateTo                   : request.query.birthdateTo ?? null,
+            UserName                      : request.query.userName ?? null,
+            ExternalMedicalRegistrationId : request.query.externalMedicalRegistrationId ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -185,6 +189,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateUuid(request, 'CohortId', Where.Body, false, true);
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);
         await this.validateString(request, 'UserName', Where.Body, false, true);
+        await this.validateString(request, 'ExternalMedicalRegistrationId', Where.Body, false, true);
 
         await body('AddressIds').optional()
             .isArray()

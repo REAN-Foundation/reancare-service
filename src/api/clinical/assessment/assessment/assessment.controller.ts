@@ -272,7 +272,7 @@ export class AssessmentController extends BaseController {
 
             //check if questions are related to race and ethnicity
             if (assessment.Provider && assessment.Provider === 'REAN' ) {
-                await this.updateRaceAndEthnicityForPatient(answerResponse, question, assessment);
+                await this.updateHealthProfileForPatient(answerResponse, question, assessment);
             }
 
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
@@ -292,7 +292,6 @@ export class AssessmentController extends BaseController {
                 var updatedAssessment = await this._service.getById(assessment.id);
                 await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
             }
-
 
             const message = isAssessmentCompleted
                 ? 'Assessment has completed successfully!'
@@ -371,7 +370,6 @@ export class AssessmentController extends BaseController {
                 await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
             }
 
-
             const message = isAssessmentCompleted
                 ? 'Assessment has completed successfully!'
                 : 'Assessment question list answered successfully!';
@@ -430,35 +428,69 @@ export class AssessmentController extends BaseController {
         return { score, reportUrl };
     }
 
-    private async updateRaceAndEthnicityForPatient(answerResponse: any, question : any, assessment: any) {
-
-        var updated = null;
-        if (question.Title && question.Title.includes('What is your race?')) {
-            updated = {
-                Race : answerResponse.Answer.ChosenOption.Text
-            };
-
-            Logger.instance().log(`Race Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
-
-        } else if (question.Title && question.Title.includes('What is your ethnicity?')) {
-            updated = {
-                Ethnicity : answerResponse.Answer.ChosenOption.Text
-            };
-
-            Logger.instance().log(`Ethnicity Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
-
+    private async updateHealthProfileForPatient(answerResponse: any, question : any, assessment: AssessmentDto) {
+        try {
+            var updated = null;
+            if (question.Title && question.Title.includes('What is your race?')) {
+                updated = {
+                    Race : answerResponse.Answer.ChosenOption.Text
+                };
+    
+                Logger.instance().log(`Race Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+    
+            } else if (question.Title && question.Title.includes('What is your ethnicity?')) {
+                updated = {
+                    Ethnicity : answerResponse.Answer.ChosenOption.Text
+                };
+    
+                Logger.instance().log(`Ethnicity Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+    
+            } else if (question.Title && question.Title.includes('What is your marital status?')) {
+                updated = {
+                    MaritalStatus : answerResponse.Answer.ChosenOption.Text
+                };
+                Logger.instance().log(`Marital status Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+            } else if (question.Title && question.Title.includes('Do you currently smoke')) {
+                updated = {
+                    IsSmoker : answerResponse.Answer.ChosenOption.Text === 'Yes' ? 1 : 0
+                };
+                Logger.instance().log(`Is smoking Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+            } else if (question.Title && question.Title.includes('survivor or caregiver')) {
+                updated = {
+                    StrokeSurvivorOrCaregiver : answerResponse.Answer.ChosenOption.Text
+                };
+                Logger.instance().log(`Survivor or Caregiver Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+            } else if (question.Title && question.Title.includes('live alone')) {
+                updated = {
+                    LivingAlone : answerResponse.Answer.ChosenOption.Text === 'Yes' ? 1 : 0
+                };
+                Logger.instance().log(`Live alone Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+            } else if (question.Title && question.Title.includes('work prior to your stroke')) {
+                updated = {
+                    WorkedPriorToStroke : answerResponse.Answer.ChosenOption.Text === 'Yes' ? 1 : 0
+                };
+                Logger.instance().log(`Work prior to your stroke Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+            } else if (question.Title && question.Title.includes('alcoholic drink')) {
+                updated = {
+                    IsDrinker : answerResponse.Answer.ChosenOption.Text === 'Yes' ? 1 : 0
+                };
+                Logger.instance().log(`Alcoholic drink Question and Answer :: ${JSON.stringify(question.Title)} :: ${JSON.stringify(updated)}`);
+            }
+    
+            if (updated) {
+                Logger.instance().log(`Updating patient profile and EHR data : ${assessment.PatientUserId}`);
+                await this._healthProfileService.updateByPatientUserId(assessment.PatientUserId, updated);
+                updated['PatientUserId'] = assessment.PatientUserId;
+                await this._ehrPatientService.addEHRRecordHealthProfileForAppNames(updated);
+                return true;
+            }
+    
+            return false;
+    
+        } catch (error) {
+            Logger.instance().log(`Error in updating health profile & ehr static data through assessment: ${error}`);
         }
-
-        if (updated) {
-            Logger.instance().log(`Updating patient profile and EHR data : ${assessment.PatientUserId}`);
-            await this._healthProfileService.updateByPatientUserId(assessment.PatientUserId, updated);
-            updated['PatientUserId'] = assessment.PatientUserId;
-            await this._ehrPatientService.addEHRRecordHealthProfileForAppNames(updated);
-            return true;
-        } 
-
-        return false;
-
+        
     }
 
     //#endregion

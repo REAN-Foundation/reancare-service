@@ -272,7 +272,7 @@ export class AssessmentController extends BaseController {
 
             //check if questions are related to race and ethnicity
             if (assessment.Provider && assessment.Provider === 'REAN' ) {
-                await this.updateHealthProfileForPatient(answerResponse, question, assessment);
+                await this.updateHealthProfileAndEhrDataForPatient(answerResponse, question, assessment);
             }
 
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
@@ -428,7 +428,7 @@ export class AssessmentController extends BaseController {
         return { score, reportUrl };
     }
 
-    private async updateHealthProfileForPatient(answerResponse: any, question : any, assessment: AssessmentDto) {
+    private async updateHealthProfileAndEhrDataForPatient(answerResponse: any, question : any, assessment: AssessmentDto) {
         try {
             var updated = null;
             if (question.Title && question.Title.includes('What is your race?')) {

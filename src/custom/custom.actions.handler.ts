@@ -109,6 +109,15 @@ export class CustomActionsHandler {
         }
     };
 
+    public ScheduleHFHelperTextMessage = async () => {
+        try {
+            await this._ahaActions.ScheduleHFHelperTextMessage();
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending SMS to HF Helper users.`);
+        }
+    };
+
     //#endregion
 
     //#region Privates

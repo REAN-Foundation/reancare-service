@@ -59,6 +59,7 @@ export class Scheduler {
 
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
+                this.scheduleHFHelperTextMessage();
 
                 const runOnceScheduler = RunOnceScheduler.instance();
                 runOnceScheduler.schedule(Scheduler._schedules);
@@ -231,6 +232,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheducled jobs: Update Current timezone...');
                 var service = Injector.Container.resolve(UserService);
                 await service.updateCurrentTimezone();
+            })();
+        });
+    };
+
+    private scheduleHFHelperTextMessage = () => {
+        cron.schedule(Scheduler._schedules['ScheduleHFHelperTextMessage'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule HF Helper SMS...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.ScheduleHFHelperTextMessage();
             })();
         });
     };

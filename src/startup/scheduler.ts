@@ -13,7 +13,6 @@ import { UserService } from '../services/users/user/user.service';
 import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
 import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
-import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 
 ///////////////////////////////////////////////////////////////////////////
 

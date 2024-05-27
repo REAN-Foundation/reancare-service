@@ -357,6 +357,40 @@ export class AHAActions {
         }
     };
 
+    public ScheduleHFHelperTextMessage = async () => {
+        try {
+            const patientUserIds = await this._patientService.getAllPatientUserIds();
+            Logger.instance().log(`Patients being processed for sending SMS to HF Helper users: ${JSON.stringify(patientUserIds.length)}`);
+            for await (var patientUserId of patientUserIds) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
+                var userAppRegistrations = [];
+                userDevices.forEach(userDevice => {
+                    userAppRegistrations.push(userDevice.AppName);
+                });
+
+                if (userAppRegistrations.length > 0 && this.eligibleForSendingSMS(userAppRegistrations)) {
+                    Logger.instance().log(`Creating SMS for patient:${patientUserId}`);
+                    const patient = await this._patientService.getByUserId(patientUserId);
+                    const phoneNumber = patient.User.Person.Phone;
+                    const message = `Exciting News: One AHA Helper app.\nHF Helper is merging with the Heart & Stroke Helper app! Take advantage of one app with all your health education and tracking needs in one place.`;
+                    const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
+                    if (sendStatus) {
+                        Logger.instance().log(`Message sent successfully`);
+                    } else {
+                        Logger.instance().log(`Failed to send SMS for ${phoneNumber}.`);
+                    }
+                    
+                } else {
+                    Logger.instance().log(`Skip sending SMS for patient:${patientUserId}`);
+                }
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending SMS to users.`);
+        }
+    };
+
+
     //#endregion
 
     //#region Privates
@@ -506,6 +540,13 @@ export class AHAActions {
             await Loader.notificationService.sendNotificationToDevice(deviceToken, message);
         }
 
+    };
+
+    private eligibleForSendingSMS = async (userAppRegistrations) => {
+
+        const eligibleForSendingText = userAppRegistrations.indexOf('HF Helper') >= 0;
+        
+        return eligibleForSendingText;
     };
 
     //#endregion

@@ -201,6 +201,8 @@ export class MedicationController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+
+            Logger.instance().log(`[MedicationTime] Update - API call started`);
             const domainModel = await MedicationValidator.update(request);
             const id: string = await MedicationValidator.getParamId(request);
 
@@ -222,23 +224,9 @@ export class MedicationController extends BaseController{
 
             this.updateMedicationConsumption(domainModel, id, updated);
 
-            await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+            Logger.instance().log(`[MedicationTime] Update - medication response returned`);
 
-            if (updated.FrequencyUnit !== 'Other') {
-                var stats = await this._medicationConsumptionService.create(updated);
-                var doseValue = Helper.parseIntegerFromString(updated.Dose.toString()) ?? 1;
-
-                var consumptionSummary: ConsumptionSummaryDto = {
-                    TotalConsumptionCount   : stats.TotalConsumptionCount,
-                    TotalDoseCount          : stats.TotalConsumptionCount * doseValue,
-                    PendingConsumptionCount : stats.PendingConsumptionCount,
-                    PendingDoseCount        : stats.PendingConsumptionCount * doseValue,
-                };
-
-                updated.ConsumptionSummary = consumptionSummary;
-            }
-
-            ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Medication record updated successfully! Updates will be available shortly.', 200, {
                 Medication : updated,
             });
         } catch (error) {

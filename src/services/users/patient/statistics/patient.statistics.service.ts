@@ -301,7 +301,12 @@ export class PatientStatisticsService {
         }
 
         let biometrics = null;
-        if (reportSetting.LabValues || reportSetting.BodyWeight || reportSetting.BloodPressure) {
+        if (
+            reportSetting.LabValues ||
+            reportSetting.BodyWeight ||
+            reportSetting.BloodPressure ||
+            reportSetting.BloodGlucose
+        ) {
             const stats =
             await this.getLabValueStats(patientUserId, countryCode, reportSetting.ReportFrequency);
        
@@ -838,6 +843,23 @@ export class PatientStatisticsService {
         addNutritionServingsStats(document, model, y);
         addFooter(document, '', model.FooterImagePath);
     };
+
+    // private addNutritionPageB = (document, model, pageNumber) => {
+    //     var y = addTop(document, model);
+    //     y = addNutritionServingsStats(document, model, y);
+    //     y = addCalorieBalanceStats(document, model, y);
+    //     addBottom(document, pageNumber, model);
+    //     pageNumber += 1;
+    //     return pageNumber;
+    // };
+
+    // private addSleepPage = (document, model, pageNumber) => {
+    //     var y = addTop(document, model);
+    //     y = addSleepStats(document, model, y);
+    //     addBottom(document, pageNumber, model);
+    //     pageNumber += 1;
+    //     return pageNumber;
+    // };
 
     private addExercisePage = (document, model) => {
         var y = addTop(document, model);

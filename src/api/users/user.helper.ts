@@ -39,7 +39,7 @@ export class UserHelper {
     _doctorService: DoctorService = null;
 
     _patientHealthProfileService: HealthProfileService = null;
-
+    
     _tenantService: TenantService = null;
 
     constructor() {

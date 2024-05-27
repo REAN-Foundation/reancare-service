@@ -10,6 +10,7 @@ import { BaseUserController } from '../../../users/base.user.controller';
 import { VolunteerValidator } from './volunteer.validator';
 import { Injector } from '../../../../startup/injector';
 import { VolunteerSearchFilters } from '../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types';
+import { UserHelper } from '../../../users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,8 @@ export class VolunteerController extends BaseUserController {
     //#region member variables and constructors
 
     _service: VolunteerService = null;
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
@@ -76,7 +79,7 @@ export class VolunteerController extends BaseUserController {
             userDomainModel.Person.id = person.id;
             userDomainModel.RoleId = role.id;
 
-            const user = await this._userService.create(userDomainModel);
+            const user = await this._userHelper.createUser(person, model, role.id);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }

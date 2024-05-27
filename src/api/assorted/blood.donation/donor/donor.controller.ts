@@ -10,6 +10,7 @@ import { DonorValidator } from './donor.validator';
 import { BaseUserController } from '../../../users/base.user.controller';
 import { Injector } from '../../../../startup/injector';
 import { DonorSearchFilters } from '../../../../domain.types/assorted/blood.donation/donor/donor.search.types';
+import { UserHelper } from '../../../users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,8 @@ export class DonorController extends BaseUserController {
     //#region member variables and constructors
 
     _service: DonorService = Injector.Container.resolve(DonorService);
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
@@ -75,7 +78,7 @@ export class DonorController extends BaseUserController {
             userDomainModel.Person.id = person.id;
             userDomainModel.RoleId = role.id;
 
-            const user = await this._userService.create(userDomainModel);
+            const user = await this._userHelper.createUser(person, donorDomainModel, role.id);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }

@@ -44,11 +44,11 @@ export class BridgeService {
         for await (var dto of results.Items) {
             if (filters.OnlyElligible === true) {
                 dto = await this.elligibleDonors(dto);
-                if (dto === null) {
-                    continue;
-                }
             } else {
                 dto = await this.updateDetailsDto(dto);
+            }
+            if (dto === null) {
+                continue;
             }
             items.push(dto);
         }
@@ -79,6 +79,9 @@ export class BridgeService {
             return null;
         }
         var donor = await this._donorRepo.getByUserId(dto.DonorUserId);
+        if (donor == null) {
+            return null;
+        }
         const user = await this._userRepo.getById(dto.DonorUserId);
         dto.Donor = donor;
         const person = await this._personRepo.getById(user.PersonId);

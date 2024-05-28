@@ -54,7 +54,8 @@
         "ScheduleExistingSymptomDataToEHR": "30 10 29 11 *",
         "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *",
         "DailyStatistics": "0 0 * * *",
-        "ScheduleStrokeSurvey": "0 14 * * *"
+        "ScheduleStrokeSurvey": "0 14 * * *",
+        "ScheduleHFHelperTextMessage": "0 1 29 5 *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",

@@ -375,13 +375,13 @@ export class AHAActions {
                     const message = `Exciting News: One AHA Helper app.\nHF Helper is merging with the Heart & Stroke Helper app! Take advantage of one app with all your health education and tracking needs in one place.`;
                     const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
                     if (sendStatus) {
-                        Logger.instance().log(`Message sent successfully`);
+                        Logger.instance().log(`[HFSunsetSMS] Message sent successfully to ${patientUserId}`);
                     } else {
-                        Logger.instance().log(`Failed to send SMS for ${phoneNumber}.`);
+                        Logger.instance().log(`[HFSunsetSMS] Failed to send SMS for ${phoneNumber}.`);
                     }
                     
                 } else {
-                    Logger.instance().log(`Skip sending SMS for patient:${patientUserId}`);
+                    Logger.instance().log(`[HFSunsetSMS] Skip sending SMS for patient:${patientUserId}`);
                 }
             }
         }
@@ -542,10 +542,10 @@ export class AHAActions {
 
     };
 
-    private eligibleForSendingSMS = async (userAppRegistrations) => {
+    private eligibleForSendingSMS = (userAppRegistrations) => {
 
-        const eligibleForSendingText = userAppRegistrations.indexOf('HF Helper') >= 0;
-        
+        const eligibleForSendingText = userAppRegistrations.indexOf('HF Helper') !== -1;
+
         return eligibleForSendingText;
     };
 

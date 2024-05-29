@@ -10,12 +10,10 @@ import { CommunityNetworkService } from '../modules/community.bw/community.netwo
 import { ReminderSenderService } from '../services/general/reminder.sender.service';
 import { TerraSupportService } from '../api/devices/device.integrations/terra/terra.support.controller';
 import { UserService } from '../services/users/user/user.service';
-import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
 import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
 
 ///////////////////////////////////////////////////////////////////////////
-
 export class Scheduler {
 
     //#region Static privates
@@ -164,12 +162,8 @@ export class Scheduler {
     private scheduleDailyCareplanPushTasks = () => {
         cron.schedule(Scheduler._schedules['ScheduleDailyCareplanPushTasks'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
-                const careplanService = Injector.Container.resolve(CareplanService);
-                await careplanService.scheduleDailyCareplanPushTasks();
-                const nextMinutes = 15;
-                const userTaskService = Injector.Container.resolve(UserTaskSenderService);
-                await userTaskService.sendUserTasks(nextMinutes);
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.ScheduleDailyCareplanPushTasks();
             })();
         });
     };

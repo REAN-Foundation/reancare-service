@@ -163,7 +163,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['ScheduleDailyCareplanPushTasks'], () => {
             (async () => {
                 var customActionHandler = new CustomActionsHandler();
-                await customActionHandler.ScheduleDailyCareplanPushTasks();
+                await customActionHandler.scheduleDailyCareplanPushTasks();
             })();
         });
     };
@@ -235,7 +235,7 @@ export class Scheduler {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule HF Helper SMS...');
                 var customActionHandler = new CustomActionsHandler();
-                await customActionHandler.ScheduleHFHelperTextMessage();
+                await customActionHandler.scheduleHFHelperTextMessage();
             })();
         });
     };

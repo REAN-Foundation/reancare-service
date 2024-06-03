@@ -112,16 +112,16 @@ export class CustomActionsHandler {
         }
     };
 
-    public ScheduleHFHelperTextMessage = async () => {
+    public scheduleHFHelperTextMessage = async () => {
         try {
-            await this._ahaActions.ScheduleHFHelperTextMessage();
+            await this._ahaActions.scheduleHFHelperTextMessage();
         }
         catch (error) {
             Logger.instance().log(`Error sending SMS to HF Helper users.`);
         }
     };
 
-    public ScheduleDailyCareplanPushTasks = async () => {
+    public scheduleDailyCareplanPushTasks = async () => {
         try {
             if (this.isForBotChannel()) {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');

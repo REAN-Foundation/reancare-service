@@ -83,7 +83,8 @@
         "ScheduleExistingSymptomDataToEHR": "0 18 30 11 *",
         "ScheduleExistingMedicationDataToEHR": "30 18 30 11 *",
         "DailyStatistics": "0 0 * * *",
-        "ScheduleStrokeSurvey": "0 6 * * 1"
+        "ScheduleStrokeSurvey": "0 6 * * 1",
+        "ScheduleHFHelperTextMessage": "0 10 1,15 * *"
     },
     "production": {
         "FileCleanup": "*/30 * * * *",
@@ -111,6 +112,7 @@
         "ScheduleExistingSymptomDataToEHR": "10 12 2 12 *",
         "ScheduleExistingMedicationDataToEHR": "50 12 4 12 *",
         "DailyStatistics": "0 0 * * *",
-        "ScheduleStrokeSurvey": "0 14 * * *"
+        "ScheduleStrokeSurvey": "0 14 * * *",
+        "ScheduleHFHelperTextMessage": "0 10 1,15 * *"
     }
 }

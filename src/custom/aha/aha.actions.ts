@@ -357,7 +357,7 @@ export class AHAActions {
         }
     };
 
-    public ScheduleHFHelperTextMessage = async () => {
+    public scheduleHFHelperTextMessage = async () => {
         try {
             const patientUserIds = await this._patientService.getAllPatientUserIds();
             Logger.instance().log(`Patients being processed for sending SMS to HF Helper users: ${JSON.stringify(patientUserIds.length)}`);

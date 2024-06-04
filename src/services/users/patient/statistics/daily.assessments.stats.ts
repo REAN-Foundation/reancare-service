@@ -79,7 +79,6 @@ const addMoodsStats = (
     }
     return y;
 };
-
 export const createDailyAssessentCharts = async (data) => {
     var locations = [];
 

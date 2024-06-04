@@ -6,7 +6,7 @@ import {
 import { v4 } from 'uuid';
 import { UserTaskCategory, UserTaskCategoryList } from '../../../../../../domain.types/users/user.task/user.task.types';
 import User from './user.model';
-import { NotificationTypeList } from '../../../../../../domain.types/general/notification/notification.types';
+import { NotificationChannelList } from '../../../../../../domain.types/general/notification/notification.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -103,7 +103,7 @@ export default class UserTask extends Model {
     @Column({
         type         : DataType.ENUM,
         allowNull    : false,
-        values       : NotificationTypeList,
+        values       : NotificationChannelList,
         defaultValue : 'MobilePush',
     })
     Channel: string;

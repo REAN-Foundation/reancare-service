@@ -5,6 +5,9 @@ import { Logger } from '../common/logger';
 import { uuid } from '../domain.types/miscellaneous/system.types';
 import { AHAActions } from './aha/aha.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { CareplanService } from '../services/clinical/careplan.service';
+import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
+import { Injector } from '../startup/injector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -109,6 +112,31 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleHFHelperTextMessage = async () => {
+        try {
+            await this._ahaActions.scheduleHFHelperTextMessage();
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending SMS to HF Helper users.`);
+        }
+    };
+
+    public scheduleDailyCareplanPushTasks = async () => {
+        try {
+            if (this.isForBotChannel()) {
+                Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
+                const careplanService = Injector.Container.resolve(CareplanService);
+                await careplanService.scheduleDailyCareplanPushTasks();
+                const nextMinutes = 15;
+                const userTaskService = Injector.Container.resolve(UserTaskSenderService);
+                await userTaskService.sendUserTasks(nextMinutes);
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending careplan activity to bot users.`);
+        }
+    };
+
     //#endregion
 
     //#region Privates
@@ -126,6 +154,13 @@ export class CustomActionsHandler {
         process.env.NODE_ENV === 'uat';
 
         return isForAHA;
+    };
+
+    private isForBotChannel = () => {
+
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+        const isForBotChannel = systemIdentifier.includes('REAN HealthGuru');
+        return isForBotChannel;
     };
 
     //#endregion

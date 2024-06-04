@@ -10,6 +10,7 @@ import { BaseUserController } from '../../../users/base.user.controller';
 import { VolunteerValidator } from './volunteer.validator';
 import { Injector } from '../../../../startup/injector';
 import { VolunteerSearchFilters } from '../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types';
+import { UserHelper } from '../../../users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,8 @@ export class VolunteerController extends BaseUserController {
     //#region member variables and constructors
 
     _service: VolunteerService = null;
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
@@ -76,7 +79,7 @@ export class VolunteerController extends BaseUserController {
             userDomainModel.Person.id = person.id;
             userDomainModel.RoleId = role.id;
 
-            const user = await this._userService.create(userDomainModel);
+            const user = await this._userHelper.createUser(person, model, role.id);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
@@ -127,8 +130,8 @@ export class VolunteerController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await VolunteerValidator.search(request);
-            this.authorizeSearch(request, filters);
+            let filters = await VolunteerValidator.search(request);
+            filters = this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -212,8 +215,13 @@ export class VolunteerController extends BaseUserController {
     authorizeSearch = (
         request: express.Request,
         filters: VolunteerSearchFilters) => {
+
+        if (request.currentClient?.IsPrivileged) {
+            return filters;
+        }
+            
         const currentUserRole = request.currentUser.CurrentRole;
-            if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
+        if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
                 currentUserRole === Roles.Volunteer || currentUserRole === Roles.TenantAdmin ||
                 currentUserRole === Roles.TenantUser || currentUserRole === Roles.Donor) {
             return filters;
@@ -222,4 +230,5 @@ export class VolunteerController extends BaseUserController {
     };
 
     //#endregion
+
 }

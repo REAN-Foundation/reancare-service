@@ -15,7 +15,6 @@ import { DailyStatisticsService } from '../services/statistics/daily.statistics.
 import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 
 ///////////////////////////////////////////////////////////////////////////
-
 export class Scheduler {
 
     //#region Static privates
@@ -59,6 +58,7 @@ export class Scheduler {
 
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
+                this.scheduleHFHelperTextMessage();
 
                 const runOnceScheduler = RunOnceScheduler.instance();
                 runOnceScheduler.schedule(Scheduler._schedules);
@@ -163,12 +163,8 @@ export class Scheduler {
     private scheduleDailyCareplanPushTasks = () => {
         cron.schedule(Scheduler._schedules['ScheduleDailyCareplanPushTasks'], () => {
             (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
-                const careplanService = Injector.Container.resolve(CareplanService);
-                await careplanService.scheduleDailyCareplanPushTasks();
-                const nextMinutes = 15;
-                const userTaskService = Injector.Container.resolve(UserTaskSenderService);
-                await userTaskService.sendUserTasks(nextMinutes);
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleDailyCareplanPushTasks();
             })();
         });
     };
@@ -231,6 +227,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheducled jobs: Update Current timezone...');
                 var service = Injector.Container.resolve(UserService);
                 await service.updateCurrentTimezone();
+            })();
+        });
+    };
+
+    private scheduleHFHelperTextMessage = () => {
+        cron.schedule(Scheduler._schedules['ScheduleHFHelperTextMessage'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule HF Helper SMS...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleHFHelperTextMessage();
             })();
         });
     };

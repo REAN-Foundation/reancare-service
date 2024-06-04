@@ -182,7 +182,7 @@ export class UserHelper {
         return null;
     }
 
-    private async createUser(
+    public async createUser(
         person: PersonDetailsDto,
         createModel: PatientDomainModel,
         roleId: number) {

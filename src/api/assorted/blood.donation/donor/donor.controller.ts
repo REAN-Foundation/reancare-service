@@ -10,6 +10,7 @@ import { DonorValidator } from './donor.validator';
 import { BaseUserController } from '../../../users/base.user.controller';
 import { Injector } from '../../../../startup/injector';
 import { DonorSearchFilters } from '../../../../domain.types/assorted/blood.donation/donor/donor.search.types';
+import { UserHelper } from '../../../users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,8 @@ export class DonorController extends BaseUserController {
     //#region member variables and constructors
 
     _service: DonorService = Injector.Container.resolve(DonorService);
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
@@ -75,7 +78,7 @@ export class DonorController extends BaseUserController {
             userDomainModel.Person.id = person.id;
             userDomainModel.RoleId = role.id;
 
-            const user = await this._userService.create(userDomainModel);
+            const user = await this._userHelper.createUser(person, donorDomainModel, role.id);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
@@ -124,8 +127,8 @@ export class DonorController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await DonorValidator.search(request);
-            this.authorizeSearch(request, filters);
+            let filters = await DonorValidator.search(request);
+            filters = this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -210,8 +213,13 @@ export class DonorController extends BaseUserController {
     authorizeSearch = (
         request: express.Request,
         filters: DonorSearchFilters) => {
+        
+        if (request.currentClient?.IsPrivileged) {
+            return filters;
+        }
+        
         const currentUserRole = request.currentUser.CurrentRole;
-            if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
+        if (currentUserRole === Roles.SystemAdmin || currentUserRole === Roles.SystemUser ||
                 currentUserRole === Roles.Volunteer || currentUserRole === Roles.TenantAdmin ||
                 currentUserRole === Roles.TenantUser || currentUserRole === Roles.Donor) {
             return filters;

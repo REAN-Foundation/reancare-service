@@ -5,22 +5,23 @@ import DonationCommunication from "../../../models/assorted/blood.donation/commu
 
 export class DonationCommunicationMapper {
 
-    static toDetailsDto = async (communication: DonationCommunication): Promise<DonationCommunicationDto> => {
+    static toDetailsDto = async (donationCommunication: DonationCommunication): Promise<DonationCommunicationDto> => {
 
-        if (communication == null){
+        if (donationCommunication == null){
             return null;
         }
 
         const dto: DonationCommunicationDto = {
-            id                        : communication.id,
-            PatientUserId             : communication.PatientUserId,
-            DonorUserId               : communication.DonorUserId,
-            VolunteerUserId           : communication.VolunteerUserId,
-            FifthDayReminderFlag      : communication.FifthDayReminderFlag,
-            DonorNoResponseFirstFlag  : communication.DonorNoResponseFirstFlag,
-            DonorNoResponseSecondFlag : communication.DonorNoResponseSecondFlag,
-            DonorAcceptance           : communication.DonorAcceptance,
-            IsRemindersLoaded         : communication.IsRemindersLoaded
+            id                        : donationCommunication.id,
+            PatientUserId             : donationCommunication.PatientUserId,
+            DonorUserId               : donationCommunication.DonorUserId,
+            VolunteerUserId           : donationCommunication.VolunteerUserId,
+            DonationRecordId          : donationCommunication.DonationRecordId,
+            FifthDayReminderFlag      : donationCommunication.FifthDayReminderFlag,
+            DonorNoResponseFirstFlag  : donationCommunication.DonorNoResponseFirstFlag,
+            DonorNoResponseSecondFlag : donationCommunication.DonorNoResponseSecondFlag,
+            DonorAcceptance           : donationCommunication.DonorAcceptance,
+            IsRemindersLoaded         : donationCommunication.IsRemindersLoaded
         };
         return dto;
     };

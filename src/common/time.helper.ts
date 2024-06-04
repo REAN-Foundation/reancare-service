@@ -538,5 +538,5 @@ export class TimeHelper {
         }
         return false; // Invalid timestamp format
     }
-    
+
 }

@@ -6,7 +6,7 @@ import { IUserTaskRepo } from "../../../database/repository.interfaces/users/use
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 import { AssessmentService } from "../../../services/clinical/assessment/assessment.service";
-import { NotificationChannel, NotificationChannelList, NotificationType } from "../../../domain.types/general/notification/notification.types";
+import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { Injector } from "../../../startup/injector";

@@ -2,6 +2,7 @@
 import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { IBloodWarriorService } from "../interface/community.network.interface";
 import * as PatientMessages from '../patient.management/patient.messages.json';
+import * as PatientConfirmationMessage from '../patient.management/patient.confirmation.message.json';
 import { TimeHelper } from "../../../common/time.helper";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 import { CareplanConfig } from "../../../config/configuration.types";
@@ -22,7 +23,12 @@ export class PatientNetworkService implements IBloodWarriorService {
         bloodTransfusionDate?: Date,
         toDate?: Date)
             : Promise<CareplanActivity[]> => {
-        const activities = PatientMessages['default'];
+        let activities = [];
+        if (careplanCode === 'Patient-Donation-Confirmation') {
+            activities = PatientConfirmationMessage['default'];
+        } else {
+            activities = PatientMessages['default'];
+        }
         var activityEntities: CareplanActivity[] = [];
 
         activities.forEach(async activity => {
@@ -31,8 +37,14 @@ export class PatientNetworkService implements IBloodWarriorService {
             if (process.env.REAN_CAREPLAN_SCHEDULING_VARIABLE) {
                 scedulingVariable = process.env.REAN_CAREPLAN_SCHEDULING_VARIABLE;
             }
-            let activityDate = TimeHelper.subtractDuration(bloodTransfusionDate, activity[`${scedulingVariable}`], DurationType.Day);
-            activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
+            let activityDate = null;
+            if (careplanCode === 'Patient-Donation-Confirmation') {
+                activityDate = TimeHelper.addDuration(startDate, 210, DurationType.Minute);
+            } else {
+                activityDate = TimeHelper.subtractDuration(bloodTransfusionDate, activity[`${scedulingVariable}`], DurationType.Day);
+                activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
+            }
+            
             Logger.instance().log(`Date of patient reminder  ${activity.Sequence}: ${activityDate}`);
 
             var entity: CareplanActivity = {

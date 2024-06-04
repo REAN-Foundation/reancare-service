@@ -8,21 +8,22 @@ import { HealthProfileDomainModel } from '../health.profile/health.profile.domai
 //#region Domain models
 
 export interface PatientDomainModel {
-    id?                  : uuid;
-    UserId?              : uuid;
-    PersonId?            : uuid;
-    DisplayId?           : string,
-    EhrId?               : string;
-    NationalHealthId?    : string;
-    MedicalProfileId?    : string;
-    HealthSystem?        : string;
-    CohortId?            : uuid;
-    AssociatedHospital?  : string;
-    DonorAcceptance?     : string;
-    IsRemindersLoaded?   : boolean;
-    User?                : UserDomainModel;
-    HealthProfile?       : HealthProfileDomainModel
-    InsuranceIds?        : string[];
-    EmergencyContactIds? : string[];
-    Address?             : AddressDomainModel;
+    id?                           : uuid;
+    UserId?                       : uuid;
+    PersonId?                     : uuid;
+    DisplayId?                    : string,
+    EhrId?                        : string;
+    ExternalMedicalRegistrationId?: string;
+    NationalHealthId?             : string;
+    MedicalProfileId?             : string;
+    HealthSystem?                 : string;
+    CohortId?                     : uuid;
+    AssociatedHospital?           : string;
+    DonorAcceptance?              : string;
+    IsRemindersLoaded?            : boolean;
+    User?                         : UserDomainModel;
+    HealthProfile?                : HealthProfileDomainModel
+    InsuranceIds?                 : string[];
+    EmergencyContactIds?          : string[];
+    Address?                      : AddressDomainModel;
 }

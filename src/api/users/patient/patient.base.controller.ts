@@ -11,17 +11,17 @@ import { HealthPrioritySearchFilters } from '../../../domain.types/users/patient
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export type PatientBaseSearchFilters =  ActionPlanSearchFilters 
-    | DocumentSearchFilters 
-    | EmergencyContactSearchFilters 
-    | GoalSearchFilters 
+export type PatientBaseSearchFilters =  ActionPlanSearchFilters
+    | DocumentSearchFilters
+    | EmergencyContactSearchFilters
+    | GoalSearchFilters
     | HealthPrioritySearchFilters;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientBaseController extends BaseController {
 
-        //#region  Authorization methods
+    //#region  Authorization methods
 
         authorizeSearch = async (
             request: express.Request,
@@ -45,16 +45,16 @@ export class PatientBaseController extends BaseController {
             } else  if (currentRole === Roles.Patient) {
                 searchFilters.PatientUserId = currentUser.UserId;
             } else if (
-                    currentRole !== Roles.TenantAdmin &&
+                currentRole !== Roles.TenantAdmin &&
                     currentRole !== Roles.SystemAdmin &&
                     currentRole !== Roles.SystemUser
-                ) {
+            ) {
                 throw new ApiError(403, 'Permission denied.');
             }
 
             return searchFilters;
         };
     
-        //#endregion
+    //#endregion
     
 }

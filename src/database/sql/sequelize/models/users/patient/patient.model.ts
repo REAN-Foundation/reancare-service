@@ -106,6 +106,12 @@ export default class Patient extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
+    ExternalMedicalRegistrationId: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
     HealthSystem: string;
 
     @Column({

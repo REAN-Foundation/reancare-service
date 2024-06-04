@@ -33,6 +33,8 @@ export class VolunteerValidator {
                 DefaultTimeZone  : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
                 GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
+                TenantCode       : request.body.TenantCode ?? null,
+                TenantId         : request.body.TenantId ?? null,
             },
             MedIssues            : request.body.MedIssues ?? null,
             BloodGroup           : request.body.BloodGroup ?? null,
@@ -156,6 +158,11 @@ export class VolunteerValidator {
         await body('AddressId')
             .optional()
             .trim()
+            .run(request);
+
+        await body('TenantCode').optional()
+            .trim()
+            .escape()
             .run(request);
 
         const result = validationResult(request);

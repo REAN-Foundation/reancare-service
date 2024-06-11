@@ -67,7 +67,8 @@ export class ReminderSenderService {
                 if (notificationType === ReminderNotificationType.SMS) {
                     await this.sendReminderBySMS(user, reminder, schedule);
                 }
-                else if (notificationType === ReminderNotificationType.WhatsApp) {
+                else if (notificationType === ReminderNotificationType.WhatsApp ||
+                    notificationType === ReminderNotificationType.WhatsappWati) {
                     await this.sendReminderByWhatsApp(user, reminder, schedule);
                 }
                 else if (notificationType === ReminderNotificationType.Email) {
@@ -105,7 +106,7 @@ export class ReminderSenderService {
         const { messagingService, phone, message, templateName, clientName } =
             await ReminderSenderService.getUserWhatsAppDetails(user, reminder, schedule);
         const sent = await messagingService.sendWhatsappWithReanBot(phone, message, clientName,
-            templateName, null, null);
+            templateName, null, null, reminder.NotificationType);
         await ReminderSenderService.markAsDelivered(sent, schedule.id);
         return true;
     };

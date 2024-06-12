@@ -79,5 +79,12 @@
             "Sunrise Hospital and Medical Center",
             "Parkridge East Hospital"
         ]
+    },
+    {
+        "HealthSystem": "None",
+        "Tags":["RHG"],
+        "AssociatedHospitals": [
+            "Georgia Arrhythmia Foundation"
+        ]
     }
 ]

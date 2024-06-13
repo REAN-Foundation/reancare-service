@@ -81,9 +81,10 @@ export class UserTaskSenderService {
             if (userTask.Channel === NotificationChannel.Telegram) {
                 booleanResponse = await Loader.messagingService.sendMessage(userTask.TenantName, "telegram", personPhone,
                     messageType, null,  message, payload);
-            } else if (userTask.Channel === NotificationChannel.WhatsApp ) {
+            } else if (userTask.Channel === NotificationChannel.WhatsApp ||
+                userTask.Channel === NotificationChannel.WhatsappWati ) {
                 booleanResponse = await Loader.messagingService.sendWhatsappWithReanBot(personPhone, message,
-                    userTask.TenantName, messageType, null, payload);
+                    userTask.TenantName, messageType, null, payload, userTask.Channel);
             }
 
             if (!booleanResponse) {
@@ -107,7 +108,8 @@ export class UserTaskSenderService {
         const person = await this._personRepo.getById(user.PersonId);
         if (channel === NotificationChannel.Telegram) {
             personPhone = person.TelegramChatId;
-        } else if (channel === NotificationChannel.WhatsApp ) {
+        } else if (channel === NotificationChannel.WhatsApp ||
+            channel === NotificationChannel.WhatsappWati ) {
             personPhone = person.Phone;
         }
         return personPhone;

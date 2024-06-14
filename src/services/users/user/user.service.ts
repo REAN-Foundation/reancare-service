@@ -541,6 +541,7 @@ export class UserService {
             const userDomainModel: UserDomainModel = {
                 Person : {
                     Phone     : SeededSystemAdmin.Phone,
+                    Email     : SeededSystemAdmin.Email,
                     FirstName : SeededSystemAdmin.FirstName,
                 },
                 TenantId        : tenant.id,

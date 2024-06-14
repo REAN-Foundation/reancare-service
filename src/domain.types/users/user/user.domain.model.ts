@@ -39,3 +39,30 @@ export interface UserExistanceModel {
     TenantId  ?: uuid,
     TenantCode?: string,
 }
+
+export interface ChangePasswordModel {
+    Phone       ?: string;
+    Email       ?: string;
+    UserName    ?: string;
+    OldPassword  : string;
+    NewPassword  : string;
+    RoleId      ?: number;
+}
+
+export interface SendPasswordResetCodeModel {
+    Phone       ?: string;
+    Email       ?: string;
+    UserName    ?: string;
+    RoleId      ?: number;
+}
+
+export interface OtpGenerationModel {
+    Phone       ?: string;
+    Email       ?: string;
+    UserName    ?: string;
+    UserId      ?: uuid;
+    RoleId      ?: number;
+    Purpose     ?: string;
+    TenantId    ?: uuid;
+    TenantCode  ?: string;
+}

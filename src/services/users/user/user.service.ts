@@ -16,7 +16,7 @@ import { CurrentUser } from '../../../domain.types/miscellaneous/current.user';
 import { OtpPersistenceEntity } from '../../../domain.types/users/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
-import { UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
+import { ChangePasswordModel, OtpGenerationModel, SendPasswordResetCodeModel, UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto, UserDto } from '../../../domain.types/users/user/user.dto';
 import { UserLoginSessionDomainModel } from '../../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
@@ -32,6 +32,8 @@ import { Loader } from '../../../startup/loader';
 import { AuthHandler } from '../../../auth/auth.handler';
 import { HealthReportSettingsDomainModel, ReportFrequency } from '../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { IHealthReportSettingsRepo } from '../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
+import { EmailService } from '../../../modules/communication/email/email.service';
+import { EmailDetails } from '../../../modules/communication/email/email.details';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -275,24 +277,25 @@ export class UserService {
         };
     };
 
-    public generateOtp = async (otpDetails: any): Promise<boolean> => {
-        var isTestUser = await this.isInternalTestUser(otpDetails.Phone);
+    public generateOtp = async (otpModel: OtpGenerationModel): Promise<boolean> => {
+
+        var isTestUser = await this.isInternalTestUser(otpModel.Phone);
         if (isTestUser) {
             return true;
         }
 
         let person: PersonDetailsDto = null;
 
-        if (otpDetails.Phone && otpDetails.Phone?.length > 0) {
-            person = await this._personRepo.getPersonWithPhone(otpDetails.Phone);
+        if (otpModel.Phone && otpModel.Phone?.length > 0) {
+            person = await this._personRepo.getPersonWithPhone(otpModel.Phone);
             if (person == null) {
-                const message = 'User does not exist with phone(' + otpDetails.Phone + ')';
+                const message = 'User does not exist with phone(' + otpModel.Phone + ')';
                 throw new ApiError(404, message);
             }
-        } else if (otpDetails.Email && otpDetails.Email?.length > 0) {
-            person = await this._personRepo.getPersonWithEmail(otpDetails.Email);
+        } else if (otpModel.Email && otpModel.Email?.length > 0) {
+            person = await this._personRepo.getPersonWithEmail(otpModel.Email);
             if (person == null) {
-                const message = 'User does not exist with email(' + otpDetails.Email + ')';
+                const message = 'User does not exist with email(' + otpModel.Email + ')';
                 throw new ApiError(404, message);
             }
         }
@@ -302,38 +305,65 @@ export class UserService {
 
         //Now check if that person is an user with a given role
         const personId = person.id;
-        var user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, otpDetails.RoleId);
+        var user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, otpModel.RoleId);
         user = await this.updateDetailsDto(user);
         if (person == null) {
             throw new ApiError(404, 'Cannot find user with the given role.');
         }
 
-        var str = JSON.stringify(user, null, 2);
-        Logger.instance().log(str);
+        var otp = await this.createOtp(otpModel.Purpose, user.id, 5);
 
-        const otp = (Math.floor(Math.random() * 900000) + 100000).toString();
-        const currMillsecs = Date.now();
-        const validTill = new Date(currMillsecs + 300 * 1000);
-
-        const otpEntity: OtpPersistenceEntity = {
-            Purpose   : otpDetails.Purpose,
-            UserId    : user.id,
-            Otp       : otp,
-            ValidFrom : new Date(),
-            ValidTill : validTill,
-        };
-
-        const otpDto = await this._otpRepo.create(otpEntity);
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
 
         var userFirstName = 'user';
         if (user.Person && user.Person.FirstName) {
             userFirstName = user.Person.FirstName;
         }
-        const message = `Dear ${userFirstName}, ${otp} is OTP for your ${systemIdentifier} account and will expire in 3 minutes.`;
+
+        const message = `Dear ${userFirstName}, ${otp} is OTP for your ${systemIdentifier} account and will expire in 5 minutes.`;
         const sendStatus = await Loader.messagingService.sendSMS(user.Person.Phone, message);
         if (sendStatus) {
-            Logger.instance().log('Otp sent successfully.\n ' + JSON.stringify(otpDto, null, 2));
+            Logger.instance().log(`Otp sent successfully. OTP: ${otp}\n `);
+        }
+
+        return true;
+    };
+
+    public resetPassword = async (model: ChangePasswordModel): Promise<boolean> => {
+
+        const userLoginModel: UserLoginDetails = {
+            Phone      : model.Phone,
+            Email      : model.Email,
+            UserName   : model.UserName,
+            LoginRoleId: model.RoleId
+        };
+        const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
+        var tenant = await this.checkTenant(user);
+
+        const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
+        const isPasswordValid = Helper.compare(model.OldPassword, hashedPassword);
+        if (!isPasswordValid) {
+            throw new ApiError(401, 
+                `Invalid old password! Please provide correct old password. If you have forgotten your password, please use the 'Forgot Password' feature.`);
+        }
+
+        const newPasswordHash = Helper.hash(model.NewPassword);
+        await this._userRepo.updateUserHashedPassword(user.id, newPasswordHash);
+
+        return true;
+    };
+
+    public sendPasswordResetCode = async (model: SendPasswordResetCodeModel): Promise<boolean> => {
+        const userLoginModel: UserLoginDetails = {
+            Phone      : model.Phone,
+            Email      : model.Email,
+            UserName   : model.UserName,
+            LoginRoleId: model.RoleId
+        };
+        const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
+        const successful = await this.sendPasswordResetOtp(user);
+        if (successful) {
+            Logger.instance().log(`Password reset code sent successfully to user ${user.Person.DisplayName}.`);
         }
 
         return true;
@@ -525,6 +555,26 @@ export class UserService {
         return tenant;
     };
 
+    private async createOtp(purpose: string, userId: uuid, validityInMinutes = 5) {
+
+        const otp = (Math.floor(Math.random() * 900000) + 100000).toString();
+        const currMillsecs = Date.now();
+        const validTill = new Date(currMillsecs + (validityInMinutes * 60 * 1000));
+
+        const otpEntity: OtpPersistenceEntity = {
+            Purpose: purpose,
+            UserId: userId,
+            Otp: otp,
+            ValidFrom: new Date(),
+            ValidTill: validTill,
+        };
+
+        const otpDto = await this._otpRepo.create(otpEntity);
+        Logger.instance().log(`OTP : ${JSON.stringify(otpDto, null, 2)}`);
+
+        return otp;
+    }
+
     private constructUserName(firstName: string, lastName: string) {
         const rand = Math.random().toString(10)
             .substr(2, 4);
@@ -586,6 +636,46 @@ export class UserService {
             }
         }
     }
+    
+    private sendPasswordResetOtp = async (user: UserDetailsDto): Promise<boolean> => {
+
+        if (user == null) {
+            throw new ApiError(404, 'User not found.');
+        }
+        const phone = user.Person.Phone;
+        const email = user.Person.Email;
+
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+
+        var userFirstName = 'user';
+        if (user.Person && user.Person.FirstName) {
+            userFirstName = user.Person.FirstName;
+        }
+
+        const otp = await this.createOtp('PasswordReset', user.id, 10);
+
+        var successful = false;
+        if (phone && phone?.length > 0) {
+            const message = `Dear ${userFirstName}, ${otp} is OTP for your ${systemIdentifier} account and will expire in 10 minutes.`;
+            const smsStatus = await Loader.messagingService.sendSMS(user.Person.Phone, message);
+            if (smsStatus) {
+                Logger.instance().log(`Password reset code sent successfully through SMS! OTP: ${otp}\n `);
+            }
+            successful = smsStatus || successful;
+        } else if (email && email?.length > 0) {
+            const emailStatus = await this.sendPasswordResetEmail(email, otp, userFirstName);
+            if (emailStatus) {
+                Logger.instance().log(`Password reset code sent successfully through Email! OTP: ${otp}\n `);
+            }
+            successful = emailStatus || successful;
+        }
+
+        if (successful) {
+            Logger.instance().log(`Password reset code sent successfully to user ${user.Person.DisplayName}.`);
+        }
+
+        return true;
+    };
 
     private updateDetailsDto = async (dto: UserDetailsDto): Promise<UserDetailsDto> => {
         if (dto == null) {
@@ -602,27 +692,27 @@ export class UserService {
         return dto;
     };
 
-    private updateDto = async (dto: UserDto): Promise<UserDto> => {
-        if (dto == null) {
-            return null;
-        }
-        if (dto.Person == null) {
-            var person = await this._personRepo.getById(dto.PersonId);
-            dto.Person = person;
-        }
-        return dto;
-    };
+    // private updateDto = async (dto: UserDto): Promise<UserDto> => {
+    //     if (dto == null) {
+    //         return null;
+    //     }
+    //     if (dto.Person == null) {
+    //         var person = await this._personRepo.getById(dto.PersonId);
+    //         dto.Person = person;
+    //     }
+    //     return dto;
+    // };
 
-    private getTenant = async (tenantId: uuid, tenantCode: string): Promise<TenantDto> => {
-        var tenant = null;
-        if (tenantId != null) {
-            tenant = await this._tenantRepo.getById(tenantId);
-        }
-        if (tenant == null && tenantCode != null) {
-            tenant = await this._tenantRepo.getTenantWithCode(tenantCode);
-        }
-        return tenant;
-    };
+    // private getTenant = async (tenantId: uuid, tenantCode: string): Promise<TenantDto> => {
+    //     var tenant = null;
+    //     if (tenantId != null) {
+    //         tenant = await this._tenantRepo.getById(tenantId);
+    //     }
+    //     if (tenant == null && tenantCode != null) {
+    //         tenant = await this._tenantRepo.getTenantWithCode(tenantCode);
+    //     }
+    //     return tenant;
+    // };
 
     private sanitizeTimezone = (inputString) => {
         const parts = inputString.split(':');
@@ -654,6 +744,34 @@ export class UserService {
         };
         
         await this._healthReportSettingsRepo.createReportSettings(model);
+    };
+
+    private sendPasswordResetEmail = async (email: string, otp: string, userFirstName: string) => {
+        try {
+            const emailService = new EmailService();
+            var body = await emailService.getTemplate('password.reset.template.html');
+
+            body.replace('{{PLATFORM_NAME}}', process.env.PLATFORM_NAME);
+            body.replace('{{USER_FIRST_NAME}}', userFirstName);
+            body.replace('{{OTP}}', otp);
+            const emailDetails: EmailDetails = {
+                EmailTo : email,
+                Subject : `Reset Password`,
+                Body    : body,
+            };
+            Logger.instance().log(`Email details: ${JSON.stringify(emailDetails)}`);
+
+            const sent = await emailService.sendEmail(emailDetails, false);
+            if (!sent) {
+                Logger.instance().log(`Unable to send email to ${email}`);
+                return false;
+            }
+            return true;
+        }
+        catch (error) {
+            Logger.instance().log(`Unable to send email to ${email}`);
+            return false;
+        }
     };
 
     //#endregion

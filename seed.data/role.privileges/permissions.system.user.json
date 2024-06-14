@@ -732,6 +732,7 @@
             "LoginWithOtp": true,
             "LoginWithPassword": true,
             "Logout": true,
+            "SendPasswordResetCode": true,
             "ResetPassword": true,
             "RotateUserAccessToken": true,
             "Search": true

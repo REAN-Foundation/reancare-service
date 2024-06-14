@@ -536,6 +536,7 @@
     "Users.User.LoginWithPassword",
     "Users.User.Logout",
     "Users.User.ResetPassword",
+    "Users.User.SendPasswordResetCode",
     "Users.User.RotateUserAccessToken",
     "Users.User.Search",
     "Users.UserTask.CancelTask",

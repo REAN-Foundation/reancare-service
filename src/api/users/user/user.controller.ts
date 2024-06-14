@@ -122,6 +122,30 @@ export class UserController extends BaseController {
         }
     };
 
+    resetPassword = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model = await UserValidator.resetPassword(request);
+            const result = await this._service.resetPassword(model);
+            ResponseHandler.success(request, response, 'Password reset successfully!', 200, {
+                PasswordReset : result,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    sendPasswordResetCode = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model = await UserValidator.sendPasswordResetCode(request);
+            const result = await this._service.sendPasswordResetCode(model);
+            ResponseHandler.success(request, response, 'Password reset email sent successfully!', 200, {
+                SendPasswordResetEmailResult : result,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const obj = await UserValidator.generateOtp(request, response);

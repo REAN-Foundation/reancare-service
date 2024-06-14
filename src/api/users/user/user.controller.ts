@@ -8,6 +8,7 @@ import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
+import { ResetPasswordModel, ChangePasswordModel } from '../../../domain.types/users/user/user.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -122,9 +123,21 @@ export class UserController extends BaseController {
         }
     };
 
+    changePassword = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model: ChangePasswordModel = await UserValidator.changePassword(request);
+            const result = await this._service.changePassword(model);
+            ResponseHandler.success(request, response, 'Password changed successfully!', 200, {
+                PasswordReset : result,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     resetPassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const model = await UserValidator.resetPassword(request);
+            const model: ResetPasswordModel = await UserValidator.resetPassword(request);
             const result = await this._service.resetPassword(model);
             ResponseHandler.success(request, response, 'Password reset successfully!', 200, {
                 PasswordReset : result,

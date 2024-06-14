@@ -43,6 +43,7 @@ export const register = (app: express.Application): void => {
     //router.get('/search', auth(UserAuth.search), controller.search);
     router.post('/login-with-password', auth(UserAuth.loginWithPassword), controller.loginWithPassword);
 
+    router.post('/change-password', auth(UserAuth.changePassword), controller.changePassword);
     router.post('/reset-password', auth(UserAuth.resetPassword), controller.resetPassword);
     router.post('/send-password-reset-code', auth(UserAuth.sendPasswordResetCode), controller.sendPasswordResetCode);
     router.post('/generate-otp', auth(UserAuth.generateOtp), controller.generateOtp);

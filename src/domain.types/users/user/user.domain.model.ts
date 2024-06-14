@@ -49,6 +49,15 @@ export interface ChangePasswordModel {
     RoleId      ?: number;
 }
 
+export interface ResetPasswordModel {
+    Phone      ?: string;
+    Email      ?: string;
+    UserName   ?: string;
+    ResetCode   : string;
+    NewPassword : string;
+    RoleId     ?: number;
+}
+
 export interface SendPasswordResetCodeModel {
     Phone       ?: string;
     Email       ?: string;

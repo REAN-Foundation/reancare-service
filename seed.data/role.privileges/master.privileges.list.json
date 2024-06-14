@@ -535,6 +535,7 @@
     "Users.User.LoginWithOtp",
     "Users.User.LoginWithPassword",
     "Users.User.Logout",
+    "Users.User.ChangePassword",
     "Users.User.ResetPassword",
     "Users.User.SendPasswordResetCode",
     "Users.User.RotateUserAccessToken",

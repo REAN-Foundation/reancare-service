@@ -16,7 +16,7 @@ import { CurrentUser } from '../../../domain.types/miscellaneous/current.user';
 import { OtpPersistenceEntity } from '../../../domain.types/users/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
-import { ChangePasswordModel, OtpGenerationModel, SendPasswordResetCodeModel, UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
+import { ChangePasswordModel, OtpGenerationModel, ResetPasswordModel, SendPasswordResetCodeModel, UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto, UserDto } from '../../../domain.types/users/user/user.dto';
 import { UserLoginSessionDomainModel } from '../../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
@@ -329,7 +329,7 @@ export class UserService {
         return true;
     };
 
-    public resetPassword = async (model: ChangePasswordModel): Promise<boolean> => {
+    public changePassword = async (model: ChangePasswordModel): Promise<boolean> => {
 
         const userLoginModel: UserLoginDetails = {
             Phone      : model.Phone,
@@ -338,13 +338,37 @@ export class UserService {
             LoginRoleId: model.RoleId
         };
         const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
-        var tenant = await this.checkTenant(user);
 
         const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
         const isPasswordValid = Helper.compare(model.OldPassword, hashedPassword);
         if (!isPasswordValid) {
             throw new ApiError(401, 
                 `Invalid old password! Please provide correct old password. If you have forgotten your password, please use the 'Forgot Password' feature.`);
+        }
+
+        const newPasswordHash = Helper.hash(model.NewPassword);
+        await this._userRepo.updateUserHashedPassword(user.id, newPasswordHash);
+
+        return true;
+    };
+
+    public resetPassword = async (model: ResetPasswordModel): Promise<boolean> => {
+
+        const userLoginModel: UserLoginDetails = {
+            Phone      : model.Phone,
+            Email      : model.Email,
+            UserName   : model.UserName,
+            LoginRoleId: model.RoleId
+        };
+        const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
+
+        const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, model.ResetCode, 'PasswordReset');
+        if (!storedOtp) {
+            throw new ApiError(404, 'Invalid password reset code!');
+        }
+        const date = new Date();
+        if (storedOtp.ValidTill <= date) {
+            throw new ApiError(400, 'Password reset code has expired. Please regenerate code again!');
         }
 
         const newPasswordHash = Helper.hash(model.NewPassword);

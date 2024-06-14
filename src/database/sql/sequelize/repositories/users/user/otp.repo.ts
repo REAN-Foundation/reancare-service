@@ -45,15 +45,27 @@ export class OtpRepo implements IOtpRepo {
         }
     };
 
-    getByOtpAndUserId = async (userId: string, otp: string): Promise<OtpDto> => {
+    getByOtpAndUserId = async (userId: string, otp: string, purpose?: string): Promise<OtpDto> => {
         try {
-            return await Otp.findOne({
-                where : {
-                    UserId   : userId,
-                    Otp      : otp,
-                    Utilized : false,
-                },
-            });
+            if (purpose) {
+                return await Otp.findOne({
+                    where : {
+                        UserId   : userId,
+                        Otp      : otp,
+                        Purpose  : purpose,
+                        Utilized : false,
+                    },
+                });
+            }
+            else {
+                return await Otp.findOne({
+                    where : {
+                        UserId   : userId,
+                        Otp      : otp,
+                        Utilized : false,
+                    },
+                });
+            }
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

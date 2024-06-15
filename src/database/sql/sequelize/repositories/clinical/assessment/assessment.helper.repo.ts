@@ -197,6 +197,12 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 throw new ApiError(400, `Cannot delete root node of the assessment template!`);
             }
 
+            if (parentNode.NodeType === AssessmentNodeType.NodeList) {
+
+                await this.deleteChildNodes(nodeId);
+
+            }
+
             const count = await AssessmentNode.destroy({
                 where : {
                     id : nodeId
@@ -227,6 +233,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    private deleteChildNodes = async (parentNodeId: string): Promise<void> => {
+        const childNodes = await AssessmentNode.findAll({
+            where : {
+                ParentNodeId : parentNodeId
+            }
+        });
+    
+        for (const childNode of childNodes) {
+            await AssessmentNode.destroy({
+                where : {
+                    id : childNode.id
+                }
+            });
         }
     };
 
@@ -1154,13 +1176,13 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const parentNode = await AssessmentNode.findByPk(nodeId);
             const nextNode = path.NextNodeId ? await AssessmentNode.findByPk(path.NextNodeId) : null;
             const entity = {
-                DisplayCode          : displayCode,
-                ParentNodeId         : parentNode.id,
-                NextNodeId           : nextNode ? nextNode.id         : null,
-                NextNodeDisplayCode  : nextNode ? nextNode.DisplayCode: null,
-                ConditionId          : null,
-                IsExitPath           : path.IsExitPath,
-                MessageBeforeQuestion: path.MessageBeforeQuestion,
+                DisplayCode           : displayCode,
+                ParentNodeId          : parentNode.id,
+                NextNodeId            : nextNode ? nextNode.id         : null,
+                NextNodeDisplayCode   : nextNode ? nextNode.DisplayCode : null,
+                ConditionId           : null,
+                IsExitPath            : path.IsExitPath,
+                MessageBeforeQuestion : path.MessageBeforeQuestion,
             };
             var thisPath = await AssessmentNodePath.create(entity);
             return AssessmentHelperMapper.toPathDto(thisPath);
@@ -1277,22 +1299,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 condition.DisplayCode = Helper.generateDisplayCode('Condition');
             }
             const record = await AssessmentPathCondition.create({
-                DisplayCode          : condition.DisplayCode,
-                NodeId               : path.ParentNodeId,
-                PathId               : path.id,
-                ParentConditionId    : null,
-                IsCompositeCondition : condition.IsCompositeCondition,
-                CompositionType      : condition.CompositionType ?? ConditionCompositionType.And,
-                OperatorType         : condition.OperatorType,
-                FirstOperandName     : condition.FirstOperand.Name,
-                FirstOperandValue    : condition.FirstOperand.Value,
-                FirstOperandDataType : condition.FirstOperand.DataType,
-                SecondOperandName    : condition.SecondOperand.Name,
-                SecondOperandValue   : condition.SecondOperand.Value,
-                SecondOperandDataType: condition.SecondOperand.DataType,
-                ThirdOperandName     : condition.ThirdOperand ? condition.ThirdOperand.Name : null,
-                ThirdOperandValue    : condition.ThirdOperand ? condition.ThirdOperand.Value : null,
-                ThirdOperandDataType : condition.ThirdOperand ? condition.ThirdOperand.DataType : null,
+                DisplayCode           : condition.DisplayCode,
+                NodeId                : path.ParentNodeId,
+                PathId                : path.id,
+                ParentConditionId     : null,
+                IsCompositeCondition  : condition.IsCompositeCondition,
+                CompositionType       : condition.CompositionType ?? ConditionCompositionType.And,
+                OperatorType          : condition.OperatorType,
+                FirstOperandName      : condition.FirstOperand.Name,
+                FirstOperandValue     : condition.FirstOperand.Value,
+                FirstOperandDataType  : condition.FirstOperand.DataType,
+                SecondOperandName     : condition.SecondOperand.Name,
+                SecondOperandValue    : condition.SecondOperand.Value,
+                SecondOperandDataType : condition.SecondOperand.DataType,
+                ThirdOperandName      : condition.ThirdOperand ? condition.ThirdOperand.Name : null,
+                ThirdOperandValue     : condition.ThirdOperand ? condition.ThirdOperand.Value : null,
+                ThirdOperandDataType  : condition.ThirdOperand ? condition.ThirdOperand.DataType : null,
             });
             path.ConditionId = record.id;
             await path.save();
@@ -1350,8 +1372,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             var condition = await AssessmentPathCondition.findByPk(conditionId);
             if (condition) {
                 var children = await AssessmentPathCondition.findAll({
-                    where: {
-                        ParentConditionId: condition.id
+                    where : {
+                        ParentConditionId : condition.id
                     }
                 });
                 if (children.length > 0) {

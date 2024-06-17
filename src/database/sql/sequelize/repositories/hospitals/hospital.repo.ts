@@ -110,6 +110,29 @@ export class HospitalRepo implements IHospitalRepo {
                 search.where['Tags'] = { [Op.like]: '%' + filters.Tags + '%' };
             }
 
+            let orderByColum = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+            
             const searchResults = await Hospital.findAndCountAll(search);
             const dtos = searchResults.rows.map(x => HospitalMapper.toDto(x));
             const searchResult: HospitalSearchResults = {

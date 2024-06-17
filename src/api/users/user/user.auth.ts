@@ -80,9 +80,27 @@ export class UserAuth {
         RequestType : RequestType.GetMany,
     };
 
+    static readonly sendPasswordResetCode: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context       : `${this._baseContext}.SendPasswordResetCode`,
+        Ownership     : ResourceOwnership.System,
+        ActionScope   : ActionScope.Public,
+        RequestType   : RequestType.UpdateOne,
+        SignupOrSignin: true,
+    };
+
     static readonly resetPassword: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.ResetPassword`,
+        Context       : `${this._baseContext}.ResetPassword`,
+        Ownership     : ResourceOwnership.System,
+        ActionScope   : ActionScope.Public,
+        RequestType   : RequestType.UpdateOne,
+        SignupOrSignin: true,
+    };
+
+    static readonly changePassword: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.ChangePassword`,
         Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Owner,
         RequestType : RequestType.UpdateOne,

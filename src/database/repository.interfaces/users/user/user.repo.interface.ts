@@ -39,6 +39,8 @@ export interface IUserRepo {
 
     getUserHashedPassword(id: uuid): Promise<string>;
 
+    updateUserHashedPassword(id: uuid, hashedPassword: string): Promise<void>;
+
     checkUsersWithoutTenants(): Promise<void>;
 
     isTenantUser(userId: uuid, tenantId: uuid): Promise<boolean>;

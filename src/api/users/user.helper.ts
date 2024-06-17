@@ -16,7 +16,7 @@ import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { RoleDto } from '../../domain.types/role/role.dto';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
-import { UserDomainModel } from '../../domain.types/users/user/user.domain.model';
+import { OtpGenerationModel, UserDomainModel } from '../../domain.types/users/user/user.domain.model';
 import { TenantDto } from '../../domain.types/tenant/tenant.dto';
 import { DoctorDomainModel } from '../../domain.types/users/doctor/doctor.domain.model';
 import { DoctorDetailsDto } from '../../domain.types/users/doctor/doctor.dto';
@@ -148,10 +148,8 @@ export class UserHelper {
         patient.HealthProfile = healthProfile;
 
         if (person.Phone !== null && person.Phone.length > 0) {
-            var otpDetails = {
+            var otpDetails: OtpGenerationModel = {
                 Phone   : person.Phone,
-                Email   : null,
-                UserId  : null,
                 Purpose : 'Login',
                 RoleId  : roleId
             };

@@ -2,9 +2,10 @@ import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { UserDomainModel, UserExistanceModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
+import { ChangePasswordModel, OtpGenerationModel, ResetPasswordModel, SendPasswordResetCodeModel, UserDomainModel, UserExistanceModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserSearchFilters } from '../../../domain.types/users/user/user.search.types';
 import { Gender, uuid } from '../../../domain.types/miscellaneous/system.types';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -293,15 +294,6 @@ export class UserValidator {
                 .isNumeric()
                 .run(request);
 
-            // await oneOf([
-            //     body('TenantId')
-            //         .trim()
-            //         .isUUID(),
-            //     body('TenantCode')
-            //         .trim()
-            //         .escape(),
-            // ]).run(request);
-
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
@@ -380,7 +372,7 @@ export class UserValidator {
         return userDetails;
     };
 
-    static resetPassword = async (request: express.Request, response: express.Response): Promise<any> => {
+    static changePassword = async (request: express.Request): Promise<ChangePasswordModel> => {
         try {
 
             await oneOf([
@@ -390,16 +382,14 @@ export class UserValidator {
                 body('Email').optional()
                     .trim()
                     .escape(),
+                body('UserName').optional()
+                    .trim()
+                    .escape(),
             ]).run(request);
 
-            // await oneOf([
-            //     body('TenantId').exists()
-            //         .trim()
-            //         .isUUID(),
-            //     body('TenantCode').exists()
-            //         .trim()
-            //         .escape(),
-            // ]).run(request);
+            await body('OldPassword').exists()
+                .trim()
+                .run(request);
 
             await body('NewPassword').exists()
                 .trim()
@@ -410,12 +400,13 @@ export class UserValidator {
                 Helper.handleValidationError(result);
             }
 
-            const obj = {
+            const obj: ChangePasswordModel = {
                 Phone       : null,
                 Email       : null,
+                UserName    : null,
+                OldPassword : request.body.OldPassword,
                 NewPassword : request.body.NewPassword,
-                TenantId    : request.body.TenantId ?? null,
-                TenantCode  : request.body.TenantCode ?? null,
+                RoleId      : request.body.RoleId ? parseInt(request.body.RoleId, 10) : null,
             };
 
             if (typeof request.body.Phone !== 'undefined') {
@@ -424,10 +415,113 @@ export class UserValidator {
             if (typeof request.body.Email !== 'undefined') {
                 obj.Email = request.body.Email;
             }
+            if (typeof request.body.UserName !== 'undefined') {
+                obj.UserName = request.body.UserName;
+            }
 
             return obj;
         } catch (error) {
-            ResponseHandler.handleError(request, response, error);
+            Logger.instance().log(error.message);
+            return null;
+        }
+    };
+
+    static resetPassword = async (request: express.Request): Promise<ResetPasswordModel> => {
+        try {
+
+            await oneOf([
+                body('Phone').optional()
+                    .trim()
+                    .escape(),
+                body('Email').optional()
+                    .trim()
+                    .escape(),
+                body('UserName').optional()
+                    .trim()
+                    .escape(),
+            ]).run(request);
+
+            await body('ResetCode').exists()
+                .trim()
+                .run(request);
+
+            await body('NewPassword').exists()
+                .trim()
+                .run(request);
+
+            const result = validationResult(request);
+            if (!result.isEmpty()) {
+                Helper.handleValidationError(result);
+            }
+
+            const obj: ResetPasswordModel = {
+                Phone      : null,
+                Email      : null,
+                UserName   : null,
+                ResetCode  : request.body.ResetCode,
+                NewPassword: request.body.NewPassword,
+                RoleId     : request.body.RoleId ? parseInt(request.body.RoleId, 10): null,
+            };
+
+            if (typeof request.body.Phone !== 'undefined') {
+                obj.Phone = request.body.Phone;
+            }
+            if (typeof request.body.Email !== 'undefined') {
+                obj.Email = request.body.Email;
+            }
+            if (typeof request.body.UserName !== 'undefined') {
+                obj.UserName = request.body.UserName;
+            }
+
+            return obj;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
+        }
+    };
+
+    static sendPasswordResetCode = async (request: express.Request)
+        : Promise<SendPasswordResetCodeModel> => {
+        try {
+
+            await oneOf([
+                body('Phone').optional()
+                    .trim()
+                    .escape(),
+                body('Email').optional()
+                    .trim()
+                    .escape(),
+                body('UserName').optional()
+                    .trim()
+                    .escape(),
+            ]).run(request);
+
+            const result = validationResult(request);
+            if (!result.isEmpty()) {
+                Helper.handleValidationError(result);
+            }
+
+            const obj: SendPasswordResetCodeModel = {
+                Phone   : null,
+                Email   : null,
+                UserName: null,
+                RoleId  : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId, 10) : null,
+            };
+
+            if (typeof request.body.Phone !== 'undefined') {
+                obj.Phone = request.body.Phone;
+            }
+            if (typeof request.body.Email !== 'undefined') {
+                obj.Email = request.body.Email;
+            }
+            if (typeof request.body.UserName !== 'undefined') {
+                obj.UserName = request.body.UserName;
+            }
+
+            return obj;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
         }
     };
 
@@ -471,7 +565,7 @@ export class UserValidator {
                 Helper.handleValidationError(result);
             }
 
-            const obj = {
+            const obj: OtpGenerationModel = {
                 Phone      : null,
                 Email      : null,
                 UserId     : null,

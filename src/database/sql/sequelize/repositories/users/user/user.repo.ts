@@ -280,6 +280,17 @@ export class UserRepo implements IUserRepo {
         return user.Password;
     };
 
+    updateUserHashedPassword = async (id: string, newPasswordHash: string): Promise<void> => {
+        try {
+            var user = await User.findByPk(id);
+            user.Password = newPasswordHash;
+            await user.save();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     checkUsersWithoutTenants = async (): Promise<void> => {
         try {
 

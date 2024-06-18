@@ -16,7 +16,7 @@ import { CurrentUser } from '../../../domain.types/miscellaneous/current.user';
 import { OtpPersistenceEntity } from '../../../domain.types/users/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
-import { ChangePasswordModel, OtpGenerationModel, ResetPasswordModel, SendPasswordResetCodeModel, UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
+import { ChangePasswordModel, OtpGenerationModel, ResetPasswordModel, SendPasswordResetCodeModel, UserBasicDetails, UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto, UserDto } from '../../../domain.types/users/user/user.dto';
 import { UserLoginSessionDomainModel } from '../../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
@@ -34,6 +34,7 @@ import { HealthReportSettingsDomainModel, ReportFrequency } from '../../../domai
 import { IHealthReportSettingsRepo } from '../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
 import { EmailService } from '../../../modules/communication/email/email.service';
 import { EmailDetails } from '../../../modules/communication/email/email.details';
+import { UserSearchFilters, UserSearchResults } from '../../../domain.types/users/user/user.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,6 +141,10 @@ export class UserService {
         var dto = await this._userRepo.update(id, model);
         dto = await this.updateDetailsDto(dto);
         return dto;
+    };
+
+    public search = async (filters: UserSearchFilters): Promise<UserSearchResults> => {
+        return await this._userRepo.search(filters);
     };
 
     public delete = async (id: string): Promise<boolean> => {
@@ -567,6 +572,47 @@ export class UserService {
         await this._userRepo.checkUsersWithoutTenants();
     };
 
+    public getUserDetails = async (model: UserBasicDetails): Promise<UserDetailsDto> => {
+        let person: PersonDetailsDto = null;
+        let user: UserDetailsDto = null;
+
+        if (model.Phone) {
+            person = await this._personRepo.getPersonWithPhone(model.Phone);
+            if (person == null) {
+                const message = 'User does not exist with phone(' + model.Phone + ')';
+                Logger.instance().log(message);
+            }
+        }
+        if (model.Email) {
+            person = await this._personRepo.getPersonWithEmail(model.Email);
+            if (person == null) {
+                const message = 'User does not exist with email(' + model.Email + ')';
+                Logger.instance().log(message);
+            }
+        } 
+        if (model.UserName) {
+            user = await this._userRepo.getUserWithUserName(model.UserName);
+            user = await this.updateDetailsDto(user);
+            if (user == null) {
+                const message = 'User does not exist with username (' + model.UserName + ')';
+                Logger.instance().log(message);
+            }
+            person = await this._personRepo.getById(user.Person.id);
+        }
+        if (person == null) {
+            return null;
+        }
+
+        user  = await this._userRepo.getByPersonId(person.id);
+        if (user == null) {
+            return null;
+        }
+        user = await this.updateDetailsDto(user);
+        user.Person = user.Person ?? person;
+
+        return user;
+    };
+
     //#endregion
 
     //#region Privates
@@ -608,27 +654,27 @@ export class UserService {
         return userName;
     }
 
-    private async checkUserDetails(loginModel: UserLoginDetails): Promise<UserDetailsDto> {
+    private async checkUserDetails(model: UserBasicDetails): Promise<UserDetailsDto> {
         let person: PersonDetailsDto = null;
         let user: UserDetailsDto = null;
 
-        if (loginModel.Phone) {
-            person = await this._personRepo.getPersonWithPhone(loginModel.Phone);
+        if (model.Phone) {
+            person = await this._personRepo.getPersonWithPhone(model.Phone);
             if (person == null) {
-                const message = 'User does not exist with phone(' + loginModel.Phone + ')';
+                const message = 'User does not exist with phone(' + model.Phone + ')';
                 throw new ApiError(404, message);
             }
-        } else if (loginModel.Email) {
-            person = await this._personRepo.getPersonWithEmail(loginModel.Email);
+        } else if (model.Email) {
+            person = await this._personRepo.getPersonWithEmail(model.Email);
             if (person == null) {
-                const message = 'User does not exist with email(' + loginModel.Email + ')';
+                const message = 'User does not exist with email(' + model.Email + ')';
                 throw new ApiError(404, message);
             }
-        } else if (loginModel.UserName) {
-            user = await this._userRepo.getUserWithUserName(loginModel.UserName);
+        } else if (model.UserName) {
+            user = await this._userRepo.getUserWithUserName(model.UserName);
             user = await this.updateDetailsDto(user);
             if (user == null) {
-                const message = 'User does not exist with username (' + loginModel.UserName + ')';
+                const message = 'User does not exist with username (' + model.UserName + ')';
                 throw new ApiError(404, message);
             }
             person = await this._personRepo.getById(user.Person.id);

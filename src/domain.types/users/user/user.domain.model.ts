@@ -20,15 +20,18 @@ export interface UserDomainModel {
     RoleId          ?: number;
 }
 
-export interface UserLoginDetails {
+export interface UserBasicDetails {
     Phone      ?: string,
     Email      ?: string,
     UserName   ?: string;
+    TenantId   ?: uuid,
+    TenantCode ?: string,
+}
+
+export interface UserLoginDetails extends UserBasicDetails {
     Password   ?: string,
     Otp        ?: string,
     LoginRoleId?: number,
-    TenantId   ?: uuid,
-    TenantCode ?: string,
 }
 
 export interface UserExistanceModel {

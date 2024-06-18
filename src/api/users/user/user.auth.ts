@@ -16,9 +16,8 @@ export class UserAuth {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.Create`,
         Ownership      : ResourceOwnership.System,
-        ActionScope    : ActionScope.Public,
+        ActionScope    : ActionScope.System,
         RequestType    : RequestType.CreateOne,
-        SignupOrSignin : true
     };
 
     static readonly loginWithPassword: AuthOptions = {
@@ -80,6 +79,22 @@ export class UserAuth {
         RequestType : RequestType.GetMany,
     };
 
+    static readonly update: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.Update`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
+    };
+
+    static readonly delete: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.Delete`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
+    };
+    
     static readonly sendPasswordResetCode: AuthOptions = {
         ...DefaultAuthOptions,
         Context       : `${this._baseContext}.SendPasswordResetCode`,

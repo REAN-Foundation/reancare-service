@@ -7,7 +7,7 @@ import Person from '../../models/person/person.model';
 
 export class PersonMapper {
 
-    static toDetailsDto = async (person: Person): Promise<PersonDetailsDto> => {
+    static toDetailsDto = (person: Person): PersonDetailsDto => {
 
         if (person == null){
             return null;

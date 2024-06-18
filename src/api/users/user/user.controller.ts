@@ -10,6 +10,7 @@ import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
 import { ResetPasswordModel, ChangePasswordModel } from '../../../domain.types/users/user/user.domain.model';
+import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,8 +32,31 @@ export class UserController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            let person: PersonDetailsDto = null;
+            let user: UserDetailsDto = null;
             const domainModel = await UserValidator.create(request);
-            const user = await this._service.create(domainModel);
+            if (domainModel.Person.Phone != null && domainModel.Person.Email != null) {
+                person = await this._service.checkforExistingPersonWithPhone(
+                    domainModel.Person.Phone,
+                );
+            }
+
+            if (person) {
+                user = await this._service.getByPersonId(person.id);
+                if (user) {
+                    throw new ApiError(409, 'User already exists with phone');
+                }
+                throw new ApiError(409, 'Phone already exists');
+            }
+
+            person = await this._personService.create(domainModel.Person);
+            if (person == null) {
+                throw new ApiError(400, 'Cannot create person!');
+            }
+            
+            domainModel.Person.id = person.id;
+
+            user = await this._service.create(domainModel);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }

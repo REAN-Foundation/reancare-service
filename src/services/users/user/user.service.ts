@@ -337,17 +337,17 @@ export class UserService {
     public changePassword = async (model: ChangePasswordModel): Promise<boolean> => {
 
         const userLoginModel: UserLoginDetails = {
-            Phone      : model.Phone,
-            Email      : model.Email,
-            UserName   : model.UserName,
-            LoginRoleId: model.RoleId
+            Phone       : model.Phone,
+            Email       : model.Email,
+            UserName    : model.UserName,
+            LoginRoleId : model.RoleId
         };
         const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
 
         const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
         const isPasswordValid = Helper.compare(model.OldPassword, hashedPassword);
         if (!isPasswordValid) {
-            throw new ApiError(401, 
+            throw new ApiError(401,
                 `Invalid old password! Please provide correct old password. If you have forgotten your password, please use the 'Forgot Password' feature.`);
         }
 
@@ -360,10 +360,10 @@ export class UserService {
     public resetPassword = async (model: ResetPasswordModel): Promise<boolean> => {
 
         const userLoginModel: UserLoginDetails = {
-            Phone      : model.Phone,
-            Email      : model.Email,
-            UserName   : model.UserName,
-            LoginRoleId: model.RoleId
+            Phone       : model.Phone,
+            Email       : model.Email,
+            UserName    : model.UserName,
+            LoginRoleId : model.RoleId
         };
         const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
 
@@ -384,10 +384,10 @@ export class UserService {
 
     public sendPasswordResetCode = async (model: SendPasswordResetCodeModel): Promise<boolean> => {
         const userLoginModel: UserLoginDetails = {
-            Phone      : model.Phone,
-            Email      : model.Email,
-            UserName   : model.UserName,
-            LoginRoleId: model.RoleId
+            Phone       : model.Phone,
+            Email       : model.Email,
+            UserName    : model.UserName,
+            LoginRoleId : model.RoleId
         };
         const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
         const successful = await this.sendPasswordResetOtp(user);
@@ -592,11 +592,11 @@ export class UserService {
         const validTill = new Date(currMillsecs + (validityInMinutes * 60 * 1000));
 
         const otpEntity: OtpPersistenceEntity = {
-            Purpose: purpose,
-            UserId: userId,
-            Otp: otp,
-            ValidFrom: new Date(),
-            ValidTill: validTill,
+            Purpose   : purpose,
+            UserId    : userId,
+            Otp       : otp,
+            ValidFrom : new Date(),
+            ValidTill : validTill,
         };
 
         const otpDto = await this._otpRepo.create(otpEntity);
@@ -802,6 +802,17 @@ export class UserService {
             Logger.instance().log(`Unable to send email to ${email}`);
             return false;
         }
+    };
+
+    public checkforExistingPersonWithPhone
+    = async (phone: string): Promise<PersonDetailsDto> => {
+
+        const persons
+            = await this._personRepo.getPersonWithPhone(phone);
+        if (persons) {
+            return persons;
+        }
+        return null;
     };
 
     //#endregion

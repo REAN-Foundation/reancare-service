@@ -343,7 +343,7 @@ export class UserRepo implements IUserRepo {
             search['offset'] = offset;
 
             const foundResults = await User.findAndCountAll(search);
-            const dtos = foundResults.rows.map(x => UserMapper.toDetailsDto(x));
+            const dtos = foundResults.rows.map(x => UserMapper.toDetailsDto(x, null, PersonMapper.toDetailsDto(x.Person)));
 
             const searchResults: UserSearchResults = {
                 TotalCount     : foundResults.count,

@@ -16,9 +16,8 @@ export class UserAuth {
         ...DefaultAuthOptions,
         Context        : `${this._baseContext}.Create`,
         Ownership      : ResourceOwnership.System,
-        ActionScope    : ActionScope.Public,
+        ActionScope    : ActionScope.System,
         RequestType    : RequestType.CreateOne,
-        SignupOrSignin : true
     };
 
     static readonly loginWithPassword: AuthOptions = {

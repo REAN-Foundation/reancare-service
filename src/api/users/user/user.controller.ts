@@ -9,7 +9,13 @@ import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
-import { ResetPasswordModel, ChangePasswordModel } from '../../../domain.types/users/user/user.domain.model';
+import { 
+    ResetPasswordModel, 
+    ChangePasswordModel, 
+    UserDomainModel, 
+    UserBasicDetails
+} from '../../../domain.types/users/user/user.domain.model';
+import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,14 +37,50 @@ export class UserController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const domainModel = await UserValidator.create(request);
-            const user = await this._service.create(domainModel);
+            const model: UserDomainModel = await UserValidator.create(request);
+
+            let person: PersonDetailsDto = null;
+            let user: UserDetailsDto = null;
+
+            const basicDetails: UserBasicDetails = {
+                Phone      : model.Person.Phone,
+                Email      : model.Person.Email,
+                UserName   : model.UserName,
+                TenantId   : model.TenantId,
+                TenantCode : model.TenantCode,
+            };
+
+            const existingUser = await this._service.getUserDetails(basicDetails);
+            if (existingUser) {
+                const existingUserRole = existingUser.RoleId;
+                const existingUserTenantId = existingUser.TenantId;
+                if (existingUserRole === model.RoleId && existingUserTenantId === model.TenantId) {
+                    throw new ApiError(409, 'User already exists');
+                }
+                person = existingUser.Person;
+            }
+            if (existingUser) {
+                throw new ApiError(409, 'User already exists');
+            }
+
+            if (person == null) {
+                person = await this._personService.create(model.Person);
+                if (person == null) {
+                    throw new ApiError(400, 'Cannot create person!');
+                }
+            }
+
+            model.Person.id = person.id;
+
+            user = await this._service.create(model);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
+
             ResponseHandler.success(request, response, 'User created successfully!', 201, {
                 User : user,
             });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

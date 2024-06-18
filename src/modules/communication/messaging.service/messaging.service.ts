@@ -29,10 +29,10 @@ export class MessagingService {
     };
 
     sendWhatsappWithReanBot = async (toPhone: string, message: any, provider:string,
-        type:string, PlanCode:string, payload = null): Promise<boolean> => {
+        type:string, PlanCode:string, payload = null, channelName?: string ): Promise<boolean> => {
 
         let templateName = null;
-        const channel = "whatsappMeta";
+        const channel = await this.getBotChannel(channelName);
 
         toPhone = toPhone.replace(/\D/g, '');
         message = JSON.parse(message);
@@ -88,6 +88,14 @@ export class MessagingService {
             "GMU"            : "GMU",
         };
         return clientName[provider] ?? provider;
+    }
+
+    private getBotChannel (channel) {
+        const channnelName = {
+            "WhatsApp"     : "whatsappMeta",
+            "WhatsappWati" : "whatsappWati"
+        };
+        return channnelName[channel] ?? "whatsappMeta";
     }
 
 }

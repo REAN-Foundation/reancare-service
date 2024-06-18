@@ -17,13 +17,14 @@ export enum NotificationTarget {
 }
 
 export enum NotificationChannel {
-    Email      = 'Email',
-    SMS        = 'SMS',
-    WebPush    = 'WebPush',
-    MobilePush = 'MobilePush',
-    Webhook    = 'Webhook',
-    WhatsApp   = 'WhatsApp',
-    Telegram   = 'Telegram',
+    Email        = 'Email',
+    SMS          = 'SMS',
+    WebPush      = 'WebPush',
+    MobilePush   = 'MobilePush',
+    Webhook      = 'Webhook',
+    WhatsApp     = 'WhatsApp',
+    Telegram     = 'Telegram',
+    WhatsappWati = 'WhatsappWati',
 }
 
 export const NotificationTypeList: NotificationType [] = [
@@ -47,6 +48,7 @@ export const NotificationChannelList: NotificationChannel [] = [
     NotificationChannel.Webhook,
     NotificationChannel.WhatsApp,
     NotificationChannel.Telegram,
+    NotificationChannel.WhatsappWati,
 ];
 
 ///////////////////////////////////////////////////////////////////////////

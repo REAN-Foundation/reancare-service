@@ -57,12 +57,8 @@ export class UserController extends BaseController {
                 if (existingUserRole === model.RoleId && existingUserTenantId === model.TenantId) {
                     throw new ApiError(409, 'User already exists');
                 }
-                person = existingUser.Person;
             }
-            if (existingUser) {
-                throw new ApiError(409, 'User already exists');
-            }
-
+            person = existingUser?.Person;
             if (person == null) {
                 person = await this._personService.create(model.Person);
                 if (person == null) {
@@ -80,7 +76,7 @@ export class UserController extends BaseController {
             ResponseHandler.success(request, response, 'User created successfully!', 201, {
                 User : user,
             });
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

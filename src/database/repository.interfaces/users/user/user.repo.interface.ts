@@ -2,6 +2,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto } from '../../../../domain.types/users/user/user.dto';
 import { TenantDto } from '../../../../domain.types/tenant/tenant.dto';
+import { UserSearchFilters, UserSearchResults } from '../../../../domain.types/users/user/user.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +21,8 @@ export interface IUserRepo {
     getByPersonId(personId: uuid): Promise<UserDetailsDto>;
 
     updateLastLogin(id: uuid): Promise<void>;
+
+    search(filters: UserSearchFilters): Promise<UserSearchResults>;
 
     delete(id: uuid): Promise<boolean>;
 

@@ -540,6 +540,8 @@
     "Users.User.SendPasswordResetCode",
     "Users.User.RotateUserAccessToken",
     "Users.User.Search",
+    "Users.User.Update",
+    "Users.User.Delete",
     "Users.UserTask.CancelTask",
     "Users.UserTask.Create",
     "Users.UserTask.Delete",

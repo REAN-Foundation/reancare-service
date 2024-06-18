@@ -34,6 +34,7 @@ import { HealthReportSettingsDomainModel, ReportFrequency } from '../../../domai
 import { IHealthReportSettingsRepo } from '../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
 import { EmailService } from '../../../modules/communication/email/email.service';
 import { EmailDetails } from '../../../modules/communication/email/email.details';
+import { UserSearchFilters, UserSearchResults } from '../../../domain.types/users/user/user.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,6 +141,10 @@ export class UserService {
         var dto = await this._userRepo.update(id, model);
         dto = await this.updateDetailsDto(dto);
         return dto;
+    };
+
+    public search = async (filters: UserSearchFilters): Promise<UserSearchResults> => {
+        return await this._userRepo.search(filters);
     };
 
     public delete = async (id: string): Promise<boolean> => {

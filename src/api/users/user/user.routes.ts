@@ -11,7 +11,8 @@ export const register = (app: express.Application): void => {
 
     ///////////////////////////////////////////////////////////////
 
-    // Obsolete routes. Will be discontinued in future
+    //#region Obsolete routes. Will be discontinued in future
+
     const obsoleteRouter = express.Router();
 
     obsoleteRouter.get('/by-phone/:phone/role/:roleId',
@@ -32,12 +33,15 @@ export const register = (app: express.Application): void => {
 
     app.use('/api/v1/users', obsoleteRouter);
 
+    //#endregion
+
     /////////////////////////////////////////////////////////////////
 
     const router = express.Router();
 
     router.get('/:phone/tenants', auth(UserAuth.getTenantsForUserWithPhone), controller.getTenantsForUserWithPhone);
     router.get('/:email/tenants', auth(UserAuth.getTenantsForUserWithEmail), controller.getTenantsForUserWithEmail);
+    router.get('/search', auth(UserAuth.search), controller.search);
     router.get('/:id', auth(UserAuth.getById), controller.getById);
 
     //router.get('/search', auth(UserAuth.search), controller.search);
@@ -52,6 +56,8 @@ export const register = (app: express.Application): void => {
 
     router.post('/access-token/:refreshToken', auth(UserAuth.rotateUserAccessToken), controller.rotateUserAccessToken);
     router.post('/', auth(UserAuth.create), controller.create);
+    router.put('/:id', auth(UserAuth.update), controller.update);
+    router.delete('/:id', auth(UserAuth.delete), controller.delete);
 
     app.use('/api/v1/users', router);
 

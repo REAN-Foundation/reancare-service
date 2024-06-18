@@ -14,6 +14,8 @@ import { TenantMapper } from '../../../mappers/tenant/tenant.mapper';
 import { TenantDto } from '../../../../../../domain.types/tenant/tenant.dto';
 import { PersonMapper } from '../../../mappers/person/person.mapper';
 import Role from '../../../models/role/role.model';
+import { UserSearchFilters, UserSearchResults } from '../../../../../../domain.types/users/user/user.search.types';
+import { BaseSearchFilters } from '../../../../../../domain.types/miscellaneous/base.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -248,10 +250,112 @@ export class UserRepo implements IUserRepo {
             if (userDomainModel.LastLogin != null) {
                 user.LastLogin = userDomainModel.LastLogin;
             }
+
             await user.save();
 
             const dto = await UserMapper.toDetailsDto(user);
             return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    search = async (filters: UserSearchFilters): Promise<any> => {
+        try {
+
+            const search: any = { where: {}, include: [] };
+            const includesObj =
+            {
+                model    : Person,
+                required : true,
+                where    : {
+                },
+            };
+
+            if (filters.TenantId) {
+                search.where['TenantId'] = filters.TenantId;
+            }
+            if (filters.UserName) {
+                search.where['UserName'] = { [Op.like]: '%' + filters.UserName + '%' };
+            }
+            if (filters.UserId) {
+                search.where['id'] = filters.UserId;
+            }
+            if (filters.Phone) {
+                includesObj.where['Phone'] = { [Op.like]: '%' + filters.Phone + '%' };
+            }
+            if (filters.Email) {
+                includesObj.where['Email'] = { [Op.like]: '%' + filters.Email + '%' };
+            }
+            if (filters.Name != null) {
+                includesObj.where[Op.or] = [
+                    {
+                        FirstName : { [Op.like]: '%' + filters.Name + '%' },
+                    },
+                    {
+                        LastName : { [Op.like]: '%' + filters.Name + '%' },
+                    },
+                ];
+            }
+            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.CreatedDateFrom,
+                    [Op.lte] : filters.CreatedDateTo,
+                };
+            }
+            else if (filters.CreatedDateFrom == null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.lte] : filters.CreatedDateTo,
+                };
+            }
+            else if (filters.CreatedDateFrom != null && filters.CreatedDateTo == null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.CreatedDateFrom,
+                };
+            }
+
+            search.include.push(includesObj);
+            const orderByColum = 'CreatedAt';
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+            if (filters.OrderBy) {
+                const personAttributes = ['FirstName', 'LastName', 'BirthDate', 'Gender', 'Phone', 'Email'];
+                const isPersonColumn = personAttributes.includes(filters.OrderBy);
+                if (isPersonColumn) {
+                    search['order'] = [[ 'Person', filters.OrderBy, order]];
+                }
+            }
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await User.findAndCountAll(search);
+            const dtos = foundResults.rows.map(x => UserMapper.toDetailsDto(x));
+
+            const searchResults: UserSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

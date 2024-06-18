@@ -4,6 +4,7 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserDetailsDto } from '../../../domain.types/users/user/user.dto';
 import { UserService } from '../../../services/users/user/user.service';
+import { PersonService } from '../../../services/person/person.service';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
@@ -17,6 +18,8 @@ export class UserController extends BaseController {
     //#region member variables and constructors
 
     _service: UserService = Injector.Container.resolve(UserService);
+
+    _personService = Injector.Container.resolve(PersonService);
 
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
@@ -52,6 +55,75 @@ export class UserController extends BaseController {
             await this.authorizeOne(request, user.id, user.TenantId);
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
                 user : user,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId = request.params.id;
+            const user = await this._service.getById(userId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            await this.authorizeOne(request, userId, user.TenantId);
+
+            const model = await UserValidator.update(request);
+
+            let updatedUser = await this._service.update(userId, model);
+            if (user == null) {
+                throw new ApiError(400, 'Cannot update user!');
+            }
+
+            const personModel = model.Person;
+            const person = await this._personService.update(user.PersonId, personModel);
+            if (person == null) {
+                throw new ApiError(400, 'Cannot update person!');
+            }
+
+            updatedUser = await this._service.getById(userId);
+            ResponseHandler.success(request, response, 'User updated successfully!', 200, {
+                User : updatedUser,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId = request.params.id;
+            const user = await this._service.getById(userId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            await this.authorizeOne(request, userId, user.TenantId);
+
+            const personId = user.PersonId;
+            const userDeleted = await this._service.delete(userId);
+            if (userDeleted == null) {
+                throw new ApiError(400, 'Cannot delete user!');
+            }
+            const personDeleted = await this._personService.delete(personId);
+            if (personDeleted == null) {
+                throw new ApiError(400, 'Cannot delete person!');
+            }
+            ResponseHandler.success(request, response, 'User deleted successfully!', 200, {
+                Deleted : userDeleted && personDeleted,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    search = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const searchParams = await UserValidator.search(request);
+            const users = await this._service.search(searchParams);
+            ResponseHandler.success(request, response, 'Users retrieved successfully!', 200, {
+                Users : users,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

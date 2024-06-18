@@ -736,7 +736,9 @@
             "SendPasswordResetCode": true,
             "ResetPassword": true,
             "RotateUserAccessToken": true,
-            "Search": true
+            "Search": true,
+            "Update": true,
+            "Delete": true
         },
         "UserTask": {
             "CancelTask": false,

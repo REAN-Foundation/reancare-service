@@ -61,6 +61,9 @@ export class HospitalRepo implements IHospitalRepo {
             if (model.Tags != null) {
                 record.Tags = model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null;
             }
+            if (model.HealthSystemId != null) {
+                record.HealthSystemId = model.HealthSystemId;
+            }
             await record.save();
 
             return await this.getById(id);

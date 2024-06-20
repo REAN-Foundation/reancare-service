@@ -2,14 +2,14 @@ import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { 
-    ChangePasswordModel, 
-    OtpGenerationModel, 
-    ResetPasswordModel, 
-    SendPasswordResetCodeModel, 
-    UserDomainModel, 
-    UserExistanceModel, 
-    UserLoginDetails 
+import {
+    ChangePasswordModel,
+    OtpGenerationModel,
+    ResetPasswordModel,
+    SendPasswordResetCodeModel,
+    UserDomainModel,
+    UserExistanceModel,
+    UserLoginDetails
 } from '../../../domain.types/users/user/user.domain.model';
 import { UserSearchFilters } from '../../../domain.types/users/user/user.search.types';
 import { Gender, uuid } from '../../../domain.types/miscellaneous/system.types';
@@ -196,8 +196,8 @@ export class UserValidator {
     static getUpdateModel = (request): UserDomainModel => {
             
         const model: UserDomainModel = {
-            RoleId   : request.body.RoleId,
-            Person   : {
+            RoleId : request.body.RoleId,
+            Person : {
                 Prefix     : request.body.Prefix ?? null,
                 FirstName  : request.body.FirstName,
                 MiddleName : request.body.MiddleName ?? null,
@@ -278,6 +278,11 @@ export class UserValidator {
                 .escape()
                 .run(request);
 
+            await query('roleIds').optional()
+                .trim()
+                .escape()
+                .run(request);
+
             // await query('birthdateFrom').optional()
             //     .isDate()
             //     .trim()
@@ -353,6 +358,7 @@ export class UserValidator {
             Name            : request.query.name as string ?? null,
             Gender          : request.query.gender as Gender ?? null,
             UserName        : request.query.userName as string ?? null,
+            RoleIds         : request.query.roleIds ? (request.query.roleIds as string).split(',') : null,
             // BirthdateFrom   : request.query.birthdateFrom ? new Date(request.query.birthdateFrom as string) : null,
             // BirthdateTo     : request.query.birthdateTo ? new Date(request.query.birthdateTo as string) : null,
             CreatedDateFrom : request.query.createdDateFrom ? new Date(request.query.createdDateFrom as string) : null,
@@ -552,12 +558,12 @@ export class UserValidator {
             }
 
             const obj: ResetPasswordModel = {
-                Phone      : null,
-                Email      : null,
-                UserName   : null,
-                ResetCode  : request.body.ResetCode,
-                NewPassword: request.body.NewPassword,
-                RoleId     : request.body.RoleId ? parseInt(request.body.RoleId, 10): null,
+                Phone       : null,
+                Email       : null,
+                UserName    : null,
+                ResetCode   : request.body.ResetCode,
+                NewPassword : request.body.NewPassword,
+                RoleId      : request.body.RoleId ? parseInt(request.body.RoleId, 10) : null,
             };
 
             if (typeof request.body.Phone !== 'undefined') {
@@ -599,10 +605,10 @@ export class UserValidator {
             }
 
             const obj: SendPasswordResetCodeModel = {
-                Phone   : null,
-                Email   : null,
-                UserName: null,
-                RoleId  : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId, 10) : null,
+                Phone    : null,
+                Email    : null,
+                UserName : null,
+                RoleId   : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId, 10) : null,
             };
 
             if (typeof request.body.Phone !== 'undefined') {

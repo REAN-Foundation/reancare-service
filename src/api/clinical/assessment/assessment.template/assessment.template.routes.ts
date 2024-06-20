@@ -2,6 +2,7 @@ import express from 'express';
 import { auth } from '../../../../auth/auth.handler';
 import { AssessmentTemplateController } from '../../../clinical/assessment/assessment.template/assessment.template.controller';
 import { AssessmentTemplateAuth } from '../../../clinical/assessment/assessment.template/assessment.template.auth';
+import { fileUploadMiddleware } from '../../../../middlewares/file.upload.middleware';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +10,8 @@ export const register = (app: express.Application): void => {
 
     const router = express.Router();
     const controller = new AssessmentTemplateController();
-
+    fileUploadMiddleware(router);
+    
     router.post('/:id/nodes', auth(AssessmentTemplateAuth.addNode), controller.addNode);
     router.get('/nodes/search', auth(AssessmentTemplateAuth.searchNodes), controller.searchNodes);
     router.get('/:id/nodes/:nodeId', auth(AssessmentTemplateAuth.getNode), controller.getNode);

@@ -10,6 +10,7 @@ export interface UserSearchFilters extends BaseSearchFilters {
     Name    ?: string;
     Gender  ?: Gender;
     UserName?: string;
+    RoleIds?: string[];
 }
 
 export interface UserSearchResults extends BaseSearchResults {

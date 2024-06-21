@@ -279,6 +279,9 @@ export class UserRepo implements IUserRepo {
             if (filters.UserName) {
                 search.where['UserName'] = { [Op.like]: '%' + filters.UserName + '%' };
             }
+            if (filters.RoleIds) {
+                search.where['RoleId'] = { [Op.in]: filters.RoleIds };
+            }
             if (filters.UserId) {
                 search.where['id'] = filters.UserId;
             }

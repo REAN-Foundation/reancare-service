@@ -60,6 +60,14 @@ export class PermissionHandler {
             return true;
         }
 
+        if (currentUserRole === Roles.TenantAdmin) {
+            // Tenant Admin has access to all resources in the tenant scope
+            if (request.resourceTenantId === currentUser.TenantId
+              && request.actionScope === ActionScope.Tenant) {
+                return true;
+            }
+        }
+      
         return await this.checkByRequestType(request, currentUser);
     };
 
@@ -91,7 +99,7 @@ export class PermissionHandler {
     };
 
     private static checkByRequestType = async (
-        request: express.Request, 
+        request: express.Request,
         currentUser: CurrentUser) => {
 
         const requestType         = request.requestType;

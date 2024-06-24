@@ -468,8 +468,8 @@
             "Rename": false,
             "Search": true,
             "SearchAndDownload": false,
-            "Update": false,
-            "Upload": false
+            "Update": true,
+            "Upload": true
         },
         "Notification": {
             "Create": false,
@@ -606,7 +606,7 @@
         },
         "DailyStatistics": {
             "GetDailyTenantStats": false,
-            "getDailySystemStats": false
+            "getDailySystemStats": true
         }
     },
     "Tenant": {
@@ -848,12 +848,12 @@
     },
     "Hospitals": {
         "HealthSystem": {
-            "Create": false,
+            "Create": true,
             "GetHealthSystemsWithTags": true,
             "Search": true,
             "GetById": true,
-            "Update": false,
-            "Delete": false
+            "Update": true,
+            "Delete": true
         },
         "Hospital": {
             "Create": true,

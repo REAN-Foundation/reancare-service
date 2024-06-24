@@ -304,11 +304,11 @@
                 "Update": false
             },
             "Symptom": {
-                "Create": false,
-                "Delete": false,
+                "Create": true,
+                "Delete": true,
                 "GetById": true,
                 "Search": true,
-                "Update": false
+                "Update": true
             },
             "SymptomType": {
                 "Create": false,
@@ -611,8 +611,8 @@
     },
     "Tenant": {
         "Tenants": {
-            "Create": false,
-            "Delete": false,
+            "Create": true,
+            "Delete": true,
             "DemoteAdmin": true,
             "GetById": true,
             "GetTenantAdmins": true,

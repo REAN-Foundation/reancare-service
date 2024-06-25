@@ -7,7 +7,6 @@ import { PDFGenerator } from "../../../../modules/reports/pdf.generator";
 export type Alignment = "left" | "right" | "center";
 export const SECOND_COLUMN_START = 310;
 export const FIRST_COLUMN_START = 50;
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export function addBottom(document: any, pageNumber: any, model: any) {

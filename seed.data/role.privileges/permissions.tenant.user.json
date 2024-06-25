@@ -605,7 +605,7 @@
             "GetUserEngagementStatsForUser": false
         },
         "DailyStatistics": {
-            "GetDailyTenantStats": false,
+            "GetDailyTenantStats": true,
             "getDailySystemStats": false
         }
     },
@@ -848,20 +848,20 @@
     },
     "Hospitals": {
         "HealthSystem": {
-            "Create": false,
+            "Create": true,
             "GetHealthSystemsWithTags": true,
             "Search": true,
             "GetById": true,
-            "Update": false,
-            "Delete": false
+            "Update": true,
+            "Delete": true
         },
         "Hospital": {
-            "Create": false,
+            "Create": true,
             "GetHospitalsForHealthSystem": true,
             "Search": true,
             "GetById": true,
-            "Update": false,
-            "Delete": false
+            "Update": true,
+            "Delete": true
         }
     }
    

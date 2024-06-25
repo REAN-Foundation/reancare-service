@@ -459,7 +459,7 @@
         "FileResource": {
             "Delete": false,
             "DeleteVersionByVersionId": false,
-            "DownloadById": false,
+            "DownloadById": true,
             "DownloadByVersionId": false,
             "DownloadByVersionName": false,
             "GetResourceInfo": false,

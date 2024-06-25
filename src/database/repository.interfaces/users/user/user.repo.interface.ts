@@ -2,6 +2,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto } from '../../../../domain.types/users/user/user.dto';
 import { TenantDto } from '../../../../domain.types/tenant/tenant.dto';
+import { UserSearchFilters, UserSearchResults } from '../../../../domain.types/users/user/user.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +22,8 @@ export interface IUserRepo {
 
     updateLastLogin(id: uuid): Promise<void>;
 
+    search(filters: UserSearchFilters): Promise<UserSearchResults>;
+
     delete(id: uuid): Promise<boolean>;
 
     getUserByPersonIdAndRole(personId: uuid, loginRoleId: number): Promise<UserDetailsDto>;
@@ -38,6 +41,8 @@ export interface IUserRepo {
     update(id: uuid, userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 
     getUserHashedPassword(id: uuid): Promise<string>;
+
+    updateUserHashedPassword(id: uuid, hashedPassword: string): Promise<void>;
 
     checkUsersWithoutTenants(): Promise<void>;
 

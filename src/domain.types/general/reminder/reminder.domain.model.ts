@@ -85,7 +85,8 @@ export enum ReminderNotificationType {
     WhatsApp       = 'WhatsApp',
     Telegram       = 'Telegram',
     Slack          = 'Slack',
-    MicrosoftTeams = 'MicrosoftTeams'
+    MicrosoftTeams = 'MicrosoftTeams',
+    WhatsappWati   = 'WhatsappWati',
 }
 
 export const ReminderNotificationTypeList: ReminderNotificationType [] = [
@@ -98,6 +99,7 @@ export const ReminderNotificationTypeList: ReminderNotificationType [] = [
     ReminderNotificationType.Telegram,
     ReminderNotificationType.Slack,
     ReminderNotificationType.MicrosoftTeams,
+    ReminderNotificationType.WhatsappWati,
 ];
 
 export interface ReminderDomainModel {

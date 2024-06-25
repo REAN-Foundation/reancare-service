@@ -1,18 +1,18 @@
+import { BaseSearchFilters, BaseSearchResults } from "../../../domain.types/miscellaneous/base.search.types";
 import { Gender, uuid } from "../../miscellaneous/system.types";
+import { UserDto } from "./user.dto";
 
-export interface UserSearchFilters {
-    TenantId        ?: uuid;
-    Phone           ?: string;
-    Email           ?: string;
-    UserId          ?: uuid;
-    Name            ?: string;
-    Gender          ?: Gender;
-    BirthdateFrom   ?: Date;
-    BirthdateTo     ?: Date;
-    CreatedDateFrom ?: Date;
-    CreatedDateTo   ?: Date;
-    OrderBy         ?: string;
-    Order           ?: string;
-    PageIndex       ?: number;
-    ItemsPerPage    ?: number;
+export interface UserSearchFilters extends BaseSearchFilters {
+    TenantId?: uuid;
+    Phone   ?: string;
+    Email   ?: string;
+    UserId  ?: uuid;
+    Name    ?: string;
+    Gender  ?: Gender;
+    UserName?: string;
+    RoleIds?: string[];
+}
+
+export interface UserSearchResults extends BaseSearchResults {
+    Items: UserDto[];
 }

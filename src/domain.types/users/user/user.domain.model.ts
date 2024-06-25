@@ -20,15 +20,18 @@ export interface UserDomainModel {
     RoleId          ?: number;
 }
 
-export interface UserLoginDetails {
+export interface UserBasicDetails {
     Phone      ?: string,
     Email      ?: string,
     UserName   ?: string;
+    TenantId   ?: uuid,
+    TenantCode ?: string,
+}
+
+export interface UserLoginDetails extends UserBasicDetails {
     Password   ?: string,
     Otp        ?: string,
     LoginRoleId?: number,
-    TenantId   ?: uuid,
-    TenantCode ?: string,
 }
 
 export interface UserExistanceModel {
@@ -38,4 +41,40 @@ export interface UserExistanceModel {
     RoleId     : number,
     TenantId  ?: uuid,
     TenantCode?: string,
+}
+
+export interface ChangePasswordModel {
+    Phone       ?: string;
+    Email       ?: string;
+    UserName    ?: string;
+    OldPassword  : string;
+    NewPassword  : string;
+    RoleId      ?: number;
+}
+
+export interface ResetPasswordModel {
+    Phone      ?: string;
+    Email      ?: string;
+    UserName   ?: string;
+    ResetCode   : string;
+    NewPassword : string;
+    RoleId     ?: number;
+}
+
+export interface SendPasswordResetCodeModel {
+    Phone       ?: string;
+    Email       ?: string;
+    UserName    ?: string;
+    RoleId      ?: number;
+}
+
+export interface OtpGenerationModel {
+    Phone       ?: string;
+    Email       ?: string;
+    UserName    ?: string;
+    UserId      ?: uuid;
+    RoleId      ?: number;
+    Purpose     ?: string;
+    TenantId    ?: uuid;
+    TenantCode  ?: string;
 }

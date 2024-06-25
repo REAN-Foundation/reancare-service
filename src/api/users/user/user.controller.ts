@@ -4,10 +4,18 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { UserDetailsDto } from '../../../domain.types/users/user/user.dto';
 import { UserService } from '../../../services/users/user/user.service';
+import { PersonService } from '../../../services/person/person.service';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
+import { 
+    ResetPasswordModel, 
+    ChangePasswordModel, 
+    UserDomainModel, 
+    UserBasicDetails
+} from '../../../domain.types/users/user/user.domain.model';
+import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +24,8 @@ export class UserController extends BaseController {
     //#region member variables and constructors
 
     _service: UserService = Injector.Container.resolve(UserService);
+
+    _personService = Injector.Container.resolve(PersonService);
 
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
@@ -27,14 +37,46 @@ export class UserController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const domainModel = await UserValidator.create(request);
-            const user = await this._service.create(domainModel);
+            const model: UserDomainModel = await UserValidator.create(request);
+
+            let person: PersonDetailsDto = null;
+            let user: UserDetailsDto = null;
+
+            const basicDetails: UserBasicDetails = {
+                Phone      : model.Person.Phone,
+                Email      : model.Person.Email,
+                UserName   : model.UserName,
+                TenantId   : model.TenantId,
+                TenantCode : model.TenantCode,
+            };
+
+            const existingUser = await this._service.getUserDetails(basicDetails);
+            if (existingUser) {
+                const existingUserRole = existingUser.RoleId;
+                const existingUserTenantId = existingUser.TenantId;
+                if (existingUserRole === model.RoleId && existingUserTenantId === model.TenantId) {
+                    throw new ApiError(409, 'User already exists');
+                }
+            }
+            person = existingUser?.Person;
+            if (person == null) {
+                person = await this._personService.create(model.Person);
+                if (person == null) {
+                    throw new ApiError(400, 'Cannot create person!');
+                }
+            }
+
+            model.Person.id = person.id;
+
+            user = await this._service.create(model);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
+
             ResponseHandler.success(request, response, 'User created successfully!', 201, {
                 User : user,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -51,6 +93,75 @@ export class UserController extends BaseController {
             await this.authorizeOne(request, user.id, user.TenantId);
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
                 user : user,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId = request.params.id;
+            const user = await this._service.getById(userId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            await this.authorizeOne(request, userId, user.TenantId);
+
+            const model = await UserValidator.update(request);
+
+            let updatedUser = await this._service.update(userId, model);
+            if (user == null) {
+                throw new ApiError(400, 'Cannot update user!');
+            }
+
+            const personModel = model.Person;
+            const person = await this._personService.update(user.PersonId, personModel);
+            if (person == null) {
+                throw new ApiError(400, 'Cannot update person!');
+            }
+
+            updatedUser = await this._service.getById(userId);
+            ResponseHandler.success(request, response, 'User updated successfully!', 200, {
+                User : updatedUser,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId = request.params.id;
+            const user = await this._service.getById(userId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            await this.authorizeOne(request, userId, user.TenantId);
+
+            const personId = user.PersonId;
+            const userDeleted = await this._service.delete(userId);
+            if (userDeleted == null) {
+                throw new ApiError(400, 'Cannot delete user!');
+            }
+            const personDeleted = await this._personService.delete(personId);
+            if (personDeleted == null) {
+                throw new ApiError(400, 'Cannot delete person!');
+            }
+            ResponseHandler.success(request, response, 'User deleted successfully!', 200, {
+                Deleted : userDeleted && personDeleted,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    search = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const searchParams = await UserValidator.search(request);
+            const users = await this._service.search(searchParams);
+            ResponseHandler.success(request, response, 'Users retrieved successfully!', 200, {
+                Users : users,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -117,6 +228,42 @@ export class UserController extends BaseController {
 
             ResponseHandler.success(request, response, message, 200, data, true);
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    changePassword = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model: ChangePasswordModel = await UserValidator.changePassword(request);
+            const result = await this._service.changePassword(model);
+            ResponseHandler.success(request, response, 'Password changed successfully!', 200, {
+                PasswordReset : result,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    resetPassword = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model: ResetPasswordModel = await UserValidator.resetPassword(request);
+            const result = await this._service.resetPassword(model);
+            ResponseHandler.success(request, response, 'Password reset successfully!', 200, {
+                PasswordReset : result,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    sendPasswordResetCode = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model = await UserValidator.sendPasswordResetCode(request);
+            const result = await this._service.sendPasswordResetCode(model);
+            ResponseHandler.success(request, response, 'Password reset email sent successfully!', 200, {
+                SendPasswordResetEmailResult : result,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

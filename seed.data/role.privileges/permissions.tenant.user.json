@@ -605,7 +605,7 @@
             "GetUserEngagementStatsForUser": false
         },
         "DailyStatistics": {
-            "GetDailyTenantStats": false,
+            "GetDailyTenantStats": true,
             "getDailySystemStats": false
         }
     },
@@ -732,9 +732,13 @@
             "LoginWithOtp": true,
             "LoginWithPassword": true,
             "Logout": true,
+            "ChangePassword": true,
+            "SendPasswordResetCode": true,
             "ResetPassword": true,
             "RotateUserAccessToken": true,
-            "Search": true
+            "Search": true,
+            "Update": true,
+            "Delete": true
         },
         "UserTask": {
             "CancelTask": false,
@@ -844,20 +848,20 @@
     },
     "Hospitals": {
         "HealthSystem": {
-            "Create": false,
+            "Create": true,
             "GetHealthSystemsWithTags": true,
             "Search": true,
             "GetById": true,
-            "Update": false,
-            "Delete": false
+            "Update": true,
+            "Delete": true
         },
         "Hospital": {
-            "Create": false,
+            "Create": true,
             "GetHospitalsForHealthSystem": true,
             "Search": true,
             "GetById": true,
-            "Update": false,
-            "Delete": false
+            "Update": true,
+            "Delete": true
         }
     }
    

@@ -7,7 +7,7 @@ export interface IOtpRepo {
 
     getLatestByUserId(userId: string): Promise<OtpDto>;
 
-    getByOtpAndUserId(userId: string, otp: string): Promise<OtpDto>;
+    getByOtpAndUserId(userId: string, otp: string, purpose?: string): Promise<OtpDto>;
 
     markAsUtilized(id: string): Promise<OtpDto>;
 }

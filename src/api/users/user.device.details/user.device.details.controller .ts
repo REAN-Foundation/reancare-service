@@ -181,6 +181,27 @@ export class UserDeviceDetailsController extends BaseUserController {
         }
     };
 
+    sendNotificationWithTopic = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            var details = await UserDeviceDetailsValidator.sendNotificationWithTopic(request, response);
+
+            const message = await this._firebaseNotificationService.formatNotificationMessage(
+                details.Type, details.Title, details.Body, details.Url, details.Topic);
+
+            // call notification service to send to topic
+            await this._firebaseNotificationService.sendMessageToTopic(details.Topic, message);
+
+            ResponseHandler.success(request, response, 'Notification with topic sent successfully!', 201, {
+                Topic       : details.Topic,
+                Title       : details.Title,
+                Type        : details.Type,
+                Body        : details.Body,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     private addUserDeviceDetails = async (request): Promise<any> => {
 
         const userDeviceDetailsDomainModel = await UserDeviceDetailsValidator.create(request);

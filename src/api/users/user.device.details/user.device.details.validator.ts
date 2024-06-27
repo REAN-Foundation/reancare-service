@@ -243,4 +243,37 @@ export class UserDeviceDetailsValidator {
         }
     };
 
+    static sendNotificationWithTopic = async (request: express.Request, response: express.Response): Promise<any> => {
+        try {
+
+            await body('Topic').exists()
+                .run(request);
+
+            await body('Title').exists()
+                .run(request);
+
+            await body('Body').exists()
+                .run(request);
+
+            await body('Url').optional()
+                .run(request);
+
+            const result = validationResult(request);
+            if (!result.isEmpty()) {
+                Helper.handleValidationError(result);
+            }
+
+            var details = {
+                Topic : request.body.Topic,
+                Title : request.body.Title,
+                Body  : request.body.Body,
+                Url   : request.body.Url ?? null
+            };
+            return details;
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }

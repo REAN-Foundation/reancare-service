@@ -475,6 +475,7 @@
     "Users.DeviceDetails.GetByUserId",
     "Users.DeviceDetails.Search",
     "Users.DeviceDetails.SendTestNotification",
+    "Users.DeviceDetails.SendNotificationWithTopic",
     "Users.DeviceDetails.Update",
     "Users.Doctor.Create",
     "Users.Doctor.DeleteByUserId",

@@ -643,7 +643,8 @@
             "GetByUserId": false,
             "Search": true,
             "SendTestNotification": false,
-            "Update": false
+            "Update": false,
+            "SendNotificationWithTopic": false
         },
         "Doctor": {
             "Create": true,

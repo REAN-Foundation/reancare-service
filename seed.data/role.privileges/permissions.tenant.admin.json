@@ -311,11 +311,11 @@
                 "Update": true
             },
             "SymptomType": {
-                "Create": false,
-                "Delete": false,
+                "Create": true,
+                "Delete": true,
                 "GetById": true,
                 "Search": true,
-                "Update": false
+                "Update": true
             }
         }
     },

@@ -25,6 +25,20 @@ export class EHRMentalWellBeingService {
                 model.RecordDate ? model.RecordDate : null
             );
         }
+        if (model.SleepMinutes) {
+            EHRAnalyticsHandler.addFloatRecord(
+                model.PatientUserId,
+                model.id,
+                null,
+                EHRRecordTypes.MentalWellBeing,
+                model.SleepMinutes,
+                model.Unit,
+                'Sleep',
+                null,
+                appName,
+                model.RecordDate ? model.RecordDate : null
+            );
+        }
     };
 
     public addEHRRecordMeditation = async (model: MeditationDto, appName?: string) => {

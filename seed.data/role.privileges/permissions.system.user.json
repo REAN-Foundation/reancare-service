@@ -459,7 +459,7 @@
         "FileResource": {
             "Delete": false,
             "DeleteVersionByVersionId": false,
-            "DownloadById": false,
+            "DownloadById": true,
             "DownloadByVersionId": false,
             "DownloadByVersionName": false,
             "GetResourceInfo": false,
@@ -643,7 +643,8 @@
             "GetByUserId": false,
             "Search": true,
             "SendTestNotification": false,
-            "Update": false
+            "Update": false,
+            "SendNotificationWithTopic": false
         },
         "Doctor": {
             "Create": true,

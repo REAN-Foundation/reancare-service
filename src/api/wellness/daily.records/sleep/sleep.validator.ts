@@ -16,8 +16,9 @@ export class SleepValidator extends BaseValidator{
         const sleepModel: SleepDomainModel = {
             PatientUserId : request.body.PatientUserId ?? null,
             SleepDuration : request.body.SleepDuration ?? null,
+            SleepMinutes  : request.body.SleepMinutes ?? null,
             RecordDate    : request.body.RecordDate ?? new Date(),
-            Unit          : request.body.Unit
+            Unit          : request.body.Unit ?? null
         };
 
         return sleepModel;
@@ -54,7 +55,8 @@ export class SleepValidator extends BaseValidator{
     private  async validateCreateBody(request) {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
-        await this.validateInt(request, 'SleepDuration', Where.Body, true, false);
+        await this.validateInt(request, 'SleepDuration', Where.Body, false, true);
+        await this.validateInt(request, 'SleepMinutes', Where.Body, false, true);
         await this.validateString(request, 'Unit', Where.Body, false, true);
         await this.validateDate(request, 'RecordDate', Where.Body, false, true);
 
@@ -65,6 +67,7 @@ export class SleepValidator extends BaseValidator{
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
         await this.validateInt(request, 'SleepDuration', Where.Body, false, false);
+        await this.validateInt(request, 'SleepMinutes', Where.Body, false, false);
         await this.validateString(request, 'Unit', Where.Body, false, false);
         await this.validateDate(request, 'RecordDate', Where.Body, false, false);
 

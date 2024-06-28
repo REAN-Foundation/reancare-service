@@ -28,6 +28,14 @@ export class UserDeviceDetailsAuth {
         RequestType : RequestType.UpdateOne,
     };
 
+    static readonly sendNotificationWithTopic: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.SendNotificationWithTopic`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.UpdateOne,
+    };
+
     static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,

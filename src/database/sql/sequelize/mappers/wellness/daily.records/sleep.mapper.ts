@@ -16,6 +16,7 @@ export class SleepMapper {
             PatientUserId : sleep.PatientUserId,
             Unit          : sleep.Unit,
             SleepDuration : sleep.SleepDuration,
+            SleepMinutes  : sleep.SleepMinutes,
             RecordDate    : sleep.RecordDate,
         };
         return dto;

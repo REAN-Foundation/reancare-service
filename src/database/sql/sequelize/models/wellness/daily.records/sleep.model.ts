@@ -36,19 +36,21 @@ export default class DailyRecordsSleep extends Model {
     @IsInt
     @Column({
         type         : DataType.INTEGER,
-        allowNull    : false,
-        defaultValue : 0,
-        validate     : {
-            min : 0
-        }
+        allowNull    : true,
     })
     SleepDuration: number;
+
+    @IsInt
+    @Column({
+        type         : DataType.INTEGER,
+        allowNull    : true,
+    })
+    SleepMinutes: number;
 
     @Length({ max: 16 })
     @Column({
         type         : DataType.STRING(8),
-        allowNull    : false,
-        defaultValue : 'minutes'
+        allowNull    : true,
     })
     Unit: string;
 

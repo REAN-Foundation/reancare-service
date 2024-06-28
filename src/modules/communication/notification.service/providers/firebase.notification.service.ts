@@ -2,6 +2,7 @@ import * as admin from 'firebase-admin';
 import { Logger } from '../../../../common/logger';
 import { INotificationService } from '../notification.service.interface';
 import fs from 'fs';
+import { NullableBoolean } from 'aws-sdk/clients/autoscaling';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +68,7 @@ export class FirebaseNotificationService implements INotificationService {
         }
     };
 
-    formatNotificationMessage = (notificationType: string, title: string, body: any, url = null): any => {
+    formatNotificationMessage = (notificationType: string, title: string, body: any, url = null, topic?: null): any => {
         var message = {
             data : {
                 type         : notificationType,
@@ -112,6 +113,10 @@ export class FirebaseNotificationService implements INotificationService {
         if (url) {
             message.data["url"] = url;
         }
+        if (topic) {
+            message["topic"] = topic;
+        }
+
         Logger.instance().log(`Notification Payload: ${JSON.stringify(message)}`);
         return message;
     };

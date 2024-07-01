@@ -8,6 +8,7 @@ import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 import { CareplanConfig } from "../../../config/configuration.types";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { Logger } from "./../../../common/logger";
+import { UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 
 export class PatientNetworkService implements IBloodWarriorService {
 
@@ -39,10 +40,10 @@ export class PatientNetworkService implements IBloodWarriorService {
             }
             let activityDate = null;
             if (careplanCode === 'Patient-Donation-Confirmation') {
-                activityDate = TimeHelper.addDuration(startDate, 210, DurationType.Minute);
+                activityDate = TimeHelper.addDuration(startDate, 540, DurationType.Minute);  // At 9 AM 9 * 60
             } else {
                 activityDate = TimeHelper.subtractDuration(bloodTransfusionDate, activity[`${scedulingVariable}`], DurationType.Day);
-                activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
+                activityDate = TimeHelper.addDuration(activityDate, 540, DurationType.Minute); // At 9 AM 9 * 60
             }
             
             Logger.instance().log(`Date of patient reminder  ${activity.Sequence}: ${activityDate}`);
@@ -53,13 +54,15 @@ export class PatientNetworkService implements IBloodWarriorService {
                 Provider               : this.providerName(),
                 ProviderActionId       : activity.Sequence,
                 Title                  : activity.Name,
-                Type                   : activity.TemplateName,
+                Type                   : UserTaskCategory.Message,
+                Category               : UserTaskCategory.Message,
                 PlanCode               : careplanCode,
-                Description            : activity.Message,
+                Description            : activity.Name,
                 Language               : 'English',
                 ScheduledAt            : activityDate,
                 TimeSlot               : activity.TimeSlot,
-                IsRegistrationActivity : activity.IsRegistrationActivity
+                IsRegistrationActivity : activity.IsRegistrationActivity,
+                RawContent             : JSON.stringify(activity.Message)
             };
 
             activityEntities.push(entity);

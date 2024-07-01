@@ -4,12 +4,14 @@
         "TimeSlot": "Morning",
         "Sequence": 1,
         "Day": 1,
-        "TemplateName": "donation_day_reminder_donor",
-        "Message": { "Variables" : [
-            {
-                "type": "text",
-                "text": "Blood"
-            }]
+        "Message": { "Variables" : {
+            "en" : [
+                {
+                    "type": "text",
+                    "text": "Blood"
+                }]
+        },
+            "TemplateName": "donation_day_reminder_donor"
         }
     },
     {
@@ -17,17 +19,19 @@
         "TimeSlot": "Morning",
         "Sequence": 2,
         "Day": 1,
-        "TemplateName": "donor_feedback_1",
-        "Message": { "Variables" : [
-            {
-                "type": "text",
-                "text": "Blood Warrior"
-            },
-            {
-                "type": "text",
-                "text": "Blood"
-            }],
-            "ButtonsIds" : ["Generate_Certificate", "Home_Menu"]
+        "Message": { "Variables" : {
+            "en" : [
+                {
+                    "type": "text",
+                    "text": "Blood Warrior"
+                },
+                {
+                    "type": "text",
+                    "text": "Blood"
+                }]
+        },
+            "ButtonsIds" : ["Generate_Certificate", "Home_Menu"],
+            "TemplateName": "donor_feedback_1"
         }
     }
 ]

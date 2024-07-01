@@ -622,7 +622,7 @@ export class UserTaskRepo implements IUserTaskRepo {
             const foundResults = await UserTask.findAndCountAll({
                 where : {
                     Channel : {
-                        [Op.or] : [NotificationChannel.Telegram, NotificationChannel.WhatsApp]
+                        [Op.or] : [NotificationChannel.Telegram, NotificationChannel.WhatsApp, NotificationChannel.WhatsappWati]
                     },
                     ScheduledStartTime : {
                         [Op.gte] : from,

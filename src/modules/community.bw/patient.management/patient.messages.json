@@ -4,8 +4,7 @@
         "TimeSlot": "Morning",
         "Sequence": 3,
         "Day": 10,
-        "TemplateName": "reminder_1",
-        "Message": { "Variables" : [
+        "Message": { "Variables" : { "en" : [
             {
                 "type": "text",
                 "text": "Blood Warrior"
@@ -17,7 +16,8 @@
             {
                 "type": "text",
                 "text": "Blood"
-            }]
+            }]},
+            "TemplateName": "reminder_1"
         }
     },
     {
@@ -25,13 +25,15 @@
         "TimeSlot": "Morning",
         "Sequence": 2,
         "Day": 7,
-        "TemplateName": "reminder_2",
-        "Message": { "Variables" : [
-            {
-                "type": "text",
-                "text": "patient"
-            }],
-            "ButtonsIds" : ["Feeling_Good", "Feeling_Unwell"]
+        "Message": { "Variables" : {
+            "en" : [
+                {
+                    "type": "text",
+                    "text": "patient"
+                }]
+        },
+            "ButtonsIds" : ["Feeling_Good", "Feeling_Unwell"],
+            "TemplateName": "reminder_2"
         }
     },
     {
@@ -39,21 +41,23 @@
         "TimeSlot": "Morning",
         "Sequence": 1,
         "Day": 5,
-        "TemplateName": "reminder_three",
-        "Message": { "Variables" : [
-            {
-                "type": "text",
-                "text": "5"
-            },
-            {
-                "type": "text",
-                "text": "blood transfusion"
-            },
-            {
-                "type": "text",
-                "text": "donation"
-            }],
-            "ButtonsIds" : ["Raise_Request_Yes", "Raise_Request_No"]
+        "Message": { "Variables" : {
+            "en" : [
+                {
+                    "type": "text",
+                    "text": "5"
+                },
+                {
+                    "type": "text",
+                    "text": "blood transfusion"
+                },
+                {
+                    "type": "text",
+                    "text": "donation"
+                }]
+        },
+            "ButtonsIds" : ["Raise_Request_Yes", "Raise_Request_No"],
+            "TemplateName": "reminder_three"
         }
     }
 ]

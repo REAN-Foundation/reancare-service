@@ -450,7 +450,7 @@
     "Statistics.UserEngagement.GetUserEngagementStatsByYear",
     "Statistics.UserEngagement.GetUserEngagementStatsForUser",
     "Statistics.DailyStatistics.GetDailyTenantStats",
-    "Statistics.DailyStatistics.getDailySystemStats",
+    "Statistics.DailyStatistics.GetDailySystemStats",
     "Tenant.Tenants.Create",
     "Tenant.Tenants.Delete",
     "Tenant.Tenants.DemoteAdmin",

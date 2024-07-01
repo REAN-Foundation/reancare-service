@@ -606,7 +606,7 @@
         },
         "DailyStatistics": {
             "GetDailyTenantStats": true,
-            "getDailySystemStats": false
+            "GetDailySystemStats": false
         }
     },
     "Tenant": {

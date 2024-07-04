@@ -4,17 +4,19 @@
         "TimeSlot": "Morning",
         "Sequence": 1,
         "Day": 1,
-        "TemplateName": "volunteer_reminder_1",
-        "Message": { "Variables" : [
-            {
-                "type": "text",
-                "text": "Volunteer"
-            },
-            {
-                "type": "text",
-                "text": "Patient"
-            }]
+        "Message": { "Variables" : {
+            "en" : [
+                {
+                    "type": "text",
+                    "text": "Volunteer"
+                },
+                {
+                    "type": "text",
+                    "text": "Patient"
+                }]
+        }
         },
-        "ButtonsIds" : ["Volunteer_Update_TF_Date", "Schedule_Donation"]
+        "ButtonsIds" : ["Volunteer_Update_TF_Date", "Schedule_Donation"],
+        "TemplateName": "volunteer_reminder_1"
     }
 ]

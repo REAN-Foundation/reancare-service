@@ -62,13 +62,6 @@ export class CommunityNetworkService {
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
-        // let patient = null;
-        // if (enrollmentDetails.PlanCode === 'Donor-Reminders') {
-        //     patient = await this.getDonor(enrollmentDetails.PatientUserId);
-        // } else {
-        //     patient = await this.getPatient(enrollmentDetails.PatientUserId);
-        // }
-
         const user = await this._userRepo.getById(enrollmentDetails.PatientUserId);
         const person = await this._personRepo.getById(user.PersonId);
         if (!user) {
@@ -150,13 +143,14 @@ export class CommunityNetworkService {
                 Category         : x.Category,
                 ProviderActionId : x.ProviderActionId,
                 Title            : x.Title,
-                Description      : JSON.stringify(x.Description),
+                Description      : x.Description,
                 Url              : x.Url,
                 Language         : x.Language,
                 ScheduledAt      : x.ScheduledAt,
                 Sequence         : x.Sequence,
                 Frequency        : x.Frequency,
-                Status           : x.Status
+                Status           : x.Status,
+                RawContent       : x.RawContent
             };
 
             return a;
@@ -174,7 +168,7 @@ export class CommunityNetworkService {
 
         //task scheduling
 
-        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
+        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities, enrollmentDetails);
 
         return dto;
     };
@@ -361,7 +355,7 @@ export class CommunityNetworkService {
         return donorDto;
     }
 
-    private async createScheduledUserTasks(patientUserId, careplanActivities) {
+    private async createScheduledUserTasks(patientUserId, careplanActivities, enrollmentDetail?) {
 
         // create user tasks based on activities
 
@@ -396,11 +390,10 @@ export class CommunityNetworkService {
 
             activities.forEach( async (activity) => {
                 var dayStartStr = activity.ScheduledAt.toISOString();
-                var dayStart = TimeHelper.getDateWithTimezone(dayStartStr, timezoneOffset);
-                dayStart = TimeHelper.addDuration(dayStart, 7, DurationType.Hour); // Start at 7:00 AM
-                var scheduleDelay = (activity.Sequence - 1) * 1;
-                var startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
-                var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
+                const offset = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
+                const startTime = TimeHelper.addDuration(new Date(dayStartStr), offset, DurationType.Minute);
+                Logger.instance().log(`UTC Date: ${startTime}`);
+                var endTime = TimeHelper.addDuration(startTime, 16, DurationType.Hour);       // End at 11:00 PM
 
                 var userTaskModel: UserTaskDomainModel = {
                     UserId             : activity.PatientUserId,
@@ -411,7 +404,9 @@ export class CommunityNetworkService {
                     ActionType         : UserActionType.Careplan,
                     ActionId           : activity.id,
                     ScheduledStartTime : startTime,
-                    ScheduledEndTime   : endTime
+                    ScheduledEndTime   : endTime,
+                    Channel            : enrollmentDetail.Channel ?? null,
+                    TenantName         : enrollmentDetail.TenantName ?? null,
                 };
 
                 var userTask = await this._userTaskRepo.create(userTaskModel);

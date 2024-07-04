@@ -36,7 +36,14 @@ export class MessagingService {
 
         toPhone = toPhone.replace(/\D/g, '');
         message = JSON.parse(message);
-        if (message.Variables) {
+        if (message.Variables || message.TemplateVariables) {
+            if (message.TemplateVariables) {
+                message.Variables = message.TemplateVariables;
+                const buttonIds = message.TemplateButtonIds;
+                if ((buttonIds != null && (Array.isArray(buttonIds))) ? buttonIds.length : false) {
+                    message.ButtonsIds = message.TemplateButtonIds;
+                }
+            }
             templateName = type;
             type = "template";
         }

@@ -111,6 +111,15 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleStrokeSurveyTextMessage = async () => {
+        try {
+            await this._ahaActions.scheduleStrokeSurveyTextMessage();
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending stroke survey text message.`);
+        }
+    };
+
     public scheduleHFHelperTextMessage = async () => {
         try {
             await this._ahaActions.scheduleHFHelperTextMessage();

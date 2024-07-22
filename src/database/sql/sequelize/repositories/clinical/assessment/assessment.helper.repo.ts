@@ -530,7 +530,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 thisNode.QueryResponseType = updates['QueryResponseType'];
             }
             if (Helper.hasProperty(updates, 'RawData')) {
-                thisNode.RawData = updates['RawData'];
+                thisNode.RawData = updates['RawData'] ? JSON.stringify(updates['RawData']) : null;
             }
             if (Helper.hasProperty(updates, 'Message')) {
                 thisNode.Message = updates['Message'];

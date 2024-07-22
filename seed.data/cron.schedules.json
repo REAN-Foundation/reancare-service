@@ -26,6 +26,7 @@
         "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *",
         "DailyStatistics": "*/45 * * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
+        "ScheduleStrokeSurveyTextMessage": "0 13 * * *",
         "ScheduleHFHelperTextMessage": "0 1 * * 1"    
     },
     "development": {
@@ -55,6 +56,7 @@
         "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *",
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
+        "ScheduleStrokeSurveyTextMessage": "0 13 * * *",
         "ScheduleHFHelperTextMessage": "0 1 29 5 *"
     },
     "uat": {
@@ -84,6 +86,7 @@
         "ScheduleExistingMedicationDataToEHR": "30 18 30 11 *",
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 6 * * 1",
+        "ScheduleStrokeSurveyTextMessage": "0 13 * * *",
         "ScheduleHFHelperTextMessage": "0 10 1,15 * *"
     },
     "production": {
@@ -113,6 +116,7 @@
         "ScheduleExistingMedicationDataToEHR": "50 12 4 12 *",
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
+        "ScheduleStrokeSurveyTextMessage": "0 13 * * *",
         "ScheduleHFHelperTextMessage": "0 10 1,15 * *"
     }
 }

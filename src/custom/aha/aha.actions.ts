@@ -20,6 +20,7 @@ import { PersonService } from '../../services/person/person.service';
 import { UserService } from '../../services/users/user/user.service';
 import { TimeHelper } from '../../common/time.helper';
 import { Injector } from '../../startup/injector';
+import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +63,7 @@ export class AHAActions {
 
     public performActions_PostRegistration = async (patient: PatientDetailsDto, clientCode: string) => {
         try {
+
             /*var skipClientList = ["HCHLSTRL"];
             if (skipClientList.indexOf(clientCode) === -1) {
                 // await this.createAHAHealthSurveyTask(patient);
@@ -357,6 +359,53 @@ export class AHAActions {
         }
     };
 
+    public scheduleStrokeSurveyTextMessage = async () => {
+        try {
+            let careplanEnrollments: EnrollmentDto[] = [];
+            let daysPassed = 1;
+            var firstDayAfterCareplanCompletedEnrollments = await this._careplanService.getCompletedEnrollments(daysPassed, ["Stroke"]);
+            daysPassed = 8;
+            var thirdDayAfterCareplanCompletedEnrollments = await this._careplanService.getCompletedEnrollments(daysPassed, ["Stroke"]);
+            daysPassed = 15;
+            var sixthDayAfterCareplanCompletedEnrollments = await this._careplanService.getCompletedEnrollments(daysPassed, ["Stroke"]);
+
+            careplanEnrollments = [
+                ...(firstDayAfterCareplanCompletedEnrollments ?? []),
+                ...(thirdDayAfterCareplanCompletedEnrollments ?? []),
+                ...(sixthDayAfterCareplanCompletedEnrollments ?? [])
+            ];
+
+            for await (var careplanEnrollment of careplanEnrollments) {
+                Logger.instance().log(`[StrokeTextMessageCron] Enrollment details:${JSON.stringify(careplanEnrollment)}`);
+                var patient = await this._patientService.getByUserId(careplanEnrollment.PatientUserId);
+
+                var userDevices = await this._userDeviceDetailsService.getByUserId(patient.UserId);
+                var userAppRegistrations = [];
+                userDevices.forEach(userDevice => {
+                    userAppRegistrations.push(userDevice.AppName);
+                });
+
+                if (userAppRegistrations.length > 0 && this.eligibleForStrokeSurveyTextMessage(userAppRegistrations)) {
+                    Logger.instance().log(`[StrokeTextMessageCron] Sending Stroke survey text message to user:${patient.UserId}`);
+                    const phoneNumber = patient?.User?.Person?.Phone;
+                    const message = `The American Heart Association would like to hear your thoughts on the Heart & Stroke Helper app! We would greatly appreciate if you could fill out this survey. After you submit, you will receive a $10 Amazon e-gift card. survey link: https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk`;
+                    const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
+                    if (sendStatus) {
+                        Logger.instance().log(`[StrokeSurveySMS] Message sent successfully to ${patient.UserId}`);
+                    } else {
+                        Logger.instance().log(`[StrokeSurveySMS] Failed to send SMS for ${phoneNumber}.`);
+                    }
+                } else {
+                    Logger.instance().log(`[StrokeSurveySMS] Skip sending Stroke survey text message as device is not eligible:${patient.UserId}`);
+                }
+            }
+            Logger.instance().log(`[StrokeTextMessageCron] Cron completed successfully.`);
+        }
+        catch (error) {
+            Logger.instance().log(`[StrokeTextMessageCron] Error occured while sending Stroke survey text message`);
+        }
+    };
+
     public scheduleHFHelperTextMessage = async () => {
         try {
             const patientUserIds = await this._patientService.getAllPatientUserIds();
@@ -389,7 +438,6 @@ export class AHAActions {
             Logger.instance().log(`Error sending SMS to users.`);
         }
     };
-
 
     //#endregion
 
@@ -493,12 +541,18 @@ export class AHAActions {
     };
 
     private eligibleForStrokeSurvey = (userAppRegistrations) => {
-
         const eligibleForStrokeSurvey =
         userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
         (process.env.NODE_ENV === 'development' && userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ) ||
         (process.env.NODE_ENV === 'uat' && userAppRegistrations.indexOf('REAN HealthGuru') >= 0 );
         return eligibleForStrokeSurvey;
+    };
+
+    private eligibleForStrokeSurveyTextMessage = (userAppRegistrations) => {
+        const eligibleForStrokeSurveyTextMessage = userAppRegistrations.indexOf('Heart &amp; Stroke Helper™') >= 0 ||
+        (process.env.NODE_ENV === 'development' && userAppRegistrations.indexOf('REAN HealthGuru') >= 0 ) ||
+        (process.env.NODE_ENV === 'uat' && userAppRegistrations.indexOf('REAN HealthGuru') >= 0 );
+        return eligibleForStrokeSurveyTextMessage;
     };
 
     private sendCareplanRegistrationReminder = async (userDeviceTokens) => {

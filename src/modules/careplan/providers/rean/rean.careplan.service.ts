@@ -184,7 +184,7 @@ export class ReanCareplanService implements ICareplanService {
                 Title                  : activity.Asset.Name,
                 Type                   : activity.AssetType,
                 Category               : activity.AssetType,
-                Description            : activity.Description,
+                Description            : activity.Asset.Description,
                 Language               : 'English',
                 ScheduledAt            : activity.ScheduledDate,
                 TimeSlot               : activity.TimeSlot,

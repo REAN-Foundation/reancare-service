@@ -69,11 +69,14 @@ export class UserTaskSenderService {
                 const assessment = await this._assessmentService.create(entity);
                 userTask["Action"] = { Assessment: assessment };
                 messageType = 'reancareAssessment';
-                message  = "Sending assessment to Rean bot";
+                message  = "{\"message\":\"Sending assessment to Rean bot\"}";
 
-            } else if (userTask.Category === 'Message') {
+            } else if (userTask.Category === 'Message' && userTask.Channel === NotificationChannel.Telegram) {
                 message = rawContent.Description;
                 messageType = 'text';
+            } else if (userTask.Category === 'Message' && (userTask.Channel === NotificationChannel.WhatsApp || userTask.Channel === NotificationChannel.WhatsappWati)) {
+                message = careplanActivity.RawContent;
+                messageType = rawContent.TemplateName;
             }
 
             let booleanResponse = false;
@@ -87,7 +90,7 @@ export class UserTaskSenderService {
                     userTask.TenantName, messageType, null, payload, userTask.Channel);
             }
 
-            if (!booleanResponse) {
+            if (booleanResponse === false) {
                 Logger.instance().log(`Something went wrong with rean bot wrapper`);
                 return false;
             } else {

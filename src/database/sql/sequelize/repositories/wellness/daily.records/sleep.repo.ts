@@ -23,6 +23,7 @@ export class SleepRepo implements ISleepRepo {
             const entity = {
                 PatientUserId : createModel.PatientUserId,
                 SleepDuration : createModel.SleepDuration,
+                SleepMinutes  : createModel.SleepMinutes,
                 Unit          : createModel.Unit,
                 RecordDate    : createModel.RecordDate,
             };
@@ -156,6 +157,9 @@ export class SleepRepo implements ISleepRepo {
             }
             if (updateModel.SleepDuration != null) {
                 sleep.SleepDuration = updateModel.SleepDuration;
+            }
+            if (updateModel.SleepMinutes != null) {
+                sleep.SleepMinutes = updateModel.SleepMinutes;
             }
             if (updateModel.Unit != null) {
                 sleep.Unit = updateModel.Unit;

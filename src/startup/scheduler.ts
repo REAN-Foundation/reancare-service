@@ -55,7 +55,8 @@ export class Scheduler {
                 this.scheduleCurrentTimezoneUpdate();
                 this.scheduleDailyStatistics();
                 this.scheduleStrokeSurvey();
-
+                this.scheduleStrokeSurveyTextMessage();
+                
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
                 this.scheduleHFHelperTextMessage();
@@ -195,6 +196,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Stroke Survey notification...');
                 var customActionHandler = new CustomActionsHandler();
                 await customActionHandler.scheduleStrokeSurvey();
+            })();
+        });
+    };
+
+    private scheduleStrokeSurveyTextMessage = () => {
+        cron.schedule(Scheduler._schedules['ScheduleStrokeSurveyTextMessage'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Stroke Survey text message...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleStrokeSurveyTextMessage();
             })();
         });
     };

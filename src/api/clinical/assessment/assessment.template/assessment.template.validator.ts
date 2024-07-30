@@ -186,6 +186,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateDecimal(request, 'Score', Where.Body, false, false);
         await this.validateDecimal(request, 'Sequence', Where.Body, false, false);
         await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
+        await this.validateObject(request, 'RawData', Where.Body, false, false);
 
         this.validateRequest(request);
 

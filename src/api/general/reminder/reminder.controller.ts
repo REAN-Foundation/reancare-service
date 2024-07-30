@@ -297,6 +297,10 @@ export class ReminderController extends BaseController {
 
         const currentUser = request.currentUser;
 
+        if (request.currentClient?.IsPrivileged) {
+            return searchFilters;
+        }
+
         if (searchFilters.UserId != null) {
             if (searchFilters.UserId !== request.currentUser.UserId) {
                 const hasConsent = await PermissionHandler.checkConsent(

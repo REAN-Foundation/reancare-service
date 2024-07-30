@@ -676,6 +676,10 @@ export class AssessmentTemplateController extends BaseController {
         request: express.Request,
         searchFilters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchFilters> => {
 
+        if (request.currentClient?.IsPrivileged) {
+            return searchFilters;
+        }
+
         if (searchFilters.TenantId != null) {
             if (searchFilters.TenantId !== request.currentUser.TenantId) {
                 throw new ApiError(403, 'Forbidden');

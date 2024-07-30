@@ -606,7 +606,7 @@
         },
         "DailyStatistics": {
             "GetDailyTenantStats": true,
-            "getDailySystemStats": true
+            "GetDailySystemStats": true
         }
     },
     "Tenant": {
@@ -643,7 +643,8 @@
             "GetByUserId": true,
             "Search": true,
             "SendTestNotification": true,
-            "Update": true
+            "Update": true,
+            "SendNotificationWithTopic": true
         },
         "Doctor": {
             "Create": true,

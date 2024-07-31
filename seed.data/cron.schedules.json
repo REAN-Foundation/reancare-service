@@ -27,7 +27,9 @@
         "DailyStatistics": "*/45 * * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 1 * * 1"    
+        "ScheduleHFHelperTextMessage": "0 1 * * 1" ,   
+        "ScheduleGGHNFollowUpReminder": "10 * * * *"
+
     },
     "development": {
         "FileCleanup": "*/55 * * * *",

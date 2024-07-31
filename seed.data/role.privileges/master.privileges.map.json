@@ -864,6 +864,14 @@
             "Update": true,
             "Delete": true
         }
+    },
+    "FollowUpCancellations": {
+        "Create": true,
+        "Search": true,
+        "GetById": true,
+        "Update": true,
+        "Delete": true
     }
+   
     
 }

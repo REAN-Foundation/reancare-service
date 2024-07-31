@@ -87,7 +87,7 @@ import { register as registerHealthSystemRoutes } from './hospitals/health.syste
 import { register as registerHospitalRoutes } from './hospitals/hospital/hospital.routes';
 import { register as registerDailyStatisticsRoutes } from './statistics/daily.statistics/daily.statistics.routes';
 import { register as registerTenantFeatureSettingRoutes } from './tenant/settings/tenant.settings.routes';
-
+import { register as registerFollowUpCancellationRoutes } from './followup.cancellation/followup.cancellation.routes';
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
@@ -198,6 +198,7 @@ export class Router {
                 registerHospitalRoutes(this._app);
                 registerDailyStatisticsRoutes(this._app);
                 registerTenantFeatureSettingRoutes(this._app);
+                registerFollowUpCancellationRoutes(this._app);
 
                 resolve(true);
 

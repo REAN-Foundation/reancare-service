@@ -20,8 +20,8 @@
     "license": "ISC",
     "dependencies": {
         "@aws-sdk/client-s3": "^3.325.0",
-        "@aws-sdk/client-ses": "^3.370.0",
-        "@aws-sdk/credential-provider-node": "^3.501.0",
+        "@aws-sdk/client-ses": "^3.621.0",
+        "@aws-sdk/credential-provider-node": "^3.621.0",
         "@aws-sdk/lib-storage": "^3.405.0",
         "@aws-sdk/s3-request-presigner": "^3.498.0",
         "@faker-js/faker": "^8.0.2",

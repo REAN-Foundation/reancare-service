@@ -86,12 +86,24 @@ export class FollowUpCancellationController extends BaseController {
             if (domainModel.CancelDate && domainModel.CancelDate < new Date()) {
                 throw new ApiError(400, `Invalid cancellation date.`);
             }
+            
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const exitingCancellationDetails = await this._service.getById(id);
             if (!exitingCancellationDetails) {
                 throw new ApiError(404, 'Follow-up cancellation details not found.');
             }
+
             await this.authorizeOne(request, null, exitingCancellationDetails.TenantId);
+            const filter: FollowUpCancellationSearchFilters = {
+                TenantId   : exitingCancellationDetails.TenantId,
+                CancelDate : domainModel.CancelDate
+            };
+            const followupCancellationSchedules = await this._service.search(filter);
+
+            if (followupCancellationSchedules.TotalCount) {
+                throw new ApiError(409, `Cancellation of follow-up is already scheduled for the date: ${domainModel.CancelDate}`);
+            }
+            
             const updated = await this._service.update(domainModel.id, domainModel);
             if (!updated) {
                 throw new ApiError(400, 'Unable to update follow-up cancellation record!');

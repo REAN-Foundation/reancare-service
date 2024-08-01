@@ -58,9 +58,9 @@ export class FollowUpCancellationValidator extends BaseValidator {
     }
 
     private async validateUpdateBody(request) {
-        // await this.validateUuid(request, 'TenantId', Where.Body, false, false);
-        // await this.validateString(request, 'TenantName', Where.Body, false, false);
-        await this.validateDateString(request, 'CancelDate', Where.Body, false, false);
+        await this.validateUuid(request, 'TenantId', Where.Body, false, false);
+        await this.validateString(request, 'TenantName', Where.Body, false, false);
+        await this.validateDate(request, 'CancelDate', Where.Body, true, false);
         await this.validateRequest(request);
     }
 

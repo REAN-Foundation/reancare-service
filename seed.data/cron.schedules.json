@@ -57,7 +57,7 @@
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 1 29 5 *"
+        "ScheduleHFHelperTextMessage": "0 1 6 8 *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",

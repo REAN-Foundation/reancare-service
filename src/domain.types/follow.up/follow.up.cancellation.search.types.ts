@@ -6,6 +6,8 @@ export interface FollowUpCancellationSearchFilters extends BaseSearchFilters {
     TenantId?            : uuid;
     TenantName?          : string;
     CancelDate?          : Date;
+    DateFrom?            : Date;
+    DateTo?              : Date;
 }
 
 export interface FollowUpCancellationSearchResults extends BaseSearchResults {

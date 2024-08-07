@@ -10,6 +10,7 @@ import { FollowUpCancellationSearchResults } from "../../../../../domain.types/f
 import { uuid } from "../../../../../domain.types/miscellaneous/system.types";
 // import { Op } from "sequelize";
 import FollowUpCancellation from "../../models/follow.up/follow.up.cancellation.model";
+import { Op } from "sequelize";
 
 export class FollowUpCancellationRepo implements IFollowUpCancellationRepo {
 
@@ -52,6 +53,20 @@ export class FollowUpCancellationRepo implements IFollowUpCancellationRepo {
             }
             if (filters.CancelDate) {
                 search.where['CancelDate'] = filters.CancelDate;
+            }
+            if (filters.DateFrom != null && filters.DateTo != null) {
+                search.where['CancelDate'] = {
+                    [Op.gte] : filters.DateFrom,
+                    [Op.lte] : filters.DateTo,
+                };
+            } else if (filters.DateFrom === null && filters.DateTo !== null) {
+                search.where['CancelDate'] = {
+                    [Op.lte] : filters.DateTo,
+                };
+            } else if (filters.DateFrom !== null && filters.DateTo === null) {
+                search.where['CancelDate'] = {
+                    [Op.gte] : filters.DateFrom,
+                };
             }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {

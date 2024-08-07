@@ -38,6 +38,8 @@ export class FollowUpCancellationValidator extends BaseValidator {
         await this.validateUuid(request, 'tenantId', Where.Body, false, false);
         await this.validateString(request, 'tenantName', Where.Query, false, false);
         await this.validateDate(request, 'cancelDate', Where.Body, false, false);
+        await this.validateDate(request, 'dateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'dateTo', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getFilter(request);
@@ -70,6 +72,8 @@ export class FollowUpCancellationValidator extends BaseValidator {
             TenantId   : request.query.tenantId ?? null,
             TenantName : request.query.tenantName ?? null,
             CancelDate : request.query.cancelDate ?? null,
+            DateFrom   : request.query.dateFrom ?? null,
+            DateTo     : request.query.dateTo ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

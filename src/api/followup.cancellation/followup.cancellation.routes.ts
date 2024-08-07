@@ -14,11 +14,6 @@ export const register = (app: express.Application): void => {
     router.put('/:id', auth(FollowUpCancellationAuth.update), controller.update);
     router.delete('/:id', auth(FollowUpCancellationAuth.delete), controller.delete);
 
-    // router.post('/', controller.create);
-    // router.get('/search', controller.search);
-    // router.get('/:id', controller.getById);
-    // router.put('/:id', controller.update);
-    // router.delete('/:id', controller.delete);
 
-    app.use('/api/v1/follow-up-cancellations', router);
+    app.use('/api/v1/follow-up/cancellations', router);
 };

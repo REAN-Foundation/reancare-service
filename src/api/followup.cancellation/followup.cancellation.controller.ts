@@ -7,6 +7,7 @@ import { FollowUpCancellationValidator } from "./followup.cancellation.validator
 import { Injector } from "../../startup/injector";
 import { FollowUpCancellationService } from "../../services/follow.up/follow.up.cancellation.service";
 import { FollowUpCancellationSearchFilters } from "../../domain.types/follow.up/follow.up.cancellation.search.types";
+import { Logger } from "../../common/logger";
 
 export class FollowUpCancellationController extends BaseController {
 

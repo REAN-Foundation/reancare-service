@@ -92,8 +92,9 @@ export default class UserDeviceDetails extends Model {
     AppVersion: string;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
+        type         : DataType.INTEGER,
+        defaultValue : 0,
+        allowNull    : true,
     })
     ChangeCount: number;
 

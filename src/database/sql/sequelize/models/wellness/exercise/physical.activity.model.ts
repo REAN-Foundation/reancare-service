@@ -141,8 +141,9 @@ export default class PhysicalActivity extends Model {
 
     @IsInt
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
+        type         : DataType.INTEGER,
+        allowNull    : true,
+        defaultValue : 0
     })
     DurationInMin: number;
 

@@ -24,6 +24,7 @@ export enum NotificationChannel {
     Webhook      = 'Webhook',
     WhatsApp     = 'WhatsApp',
     Telegram     = 'Telegram',
+    Slack        = 'Slack',
     WhatsappWati = 'WhatsappWati',
 }
 
@@ -48,6 +49,7 @@ export const NotificationChannelList: NotificationChannel [] = [
     NotificationChannel.Webhook,
     NotificationChannel.WhatsApp,
     NotificationChannel.Telegram,
+    NotificationChannel.Slack,
     NotificationChannel.WhatsappWati,
 ];
 

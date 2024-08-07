@@ -5,6 +5,7 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import {
+    MaritalStatusList,
     //MaritalStatusList,
     Severity,
     SeverityList } from '../../../../../../domain.types/miscellaneous/system.types';
@@ -92,8 +93,10 @@ export default class HealthProfile extends Model {
     HasHeartAilment: boolean;
 
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
+        type         : DataType.STRING(128),
+        allowNull    : true,
+        values       : MaritalStatusList,
+        defaultValue : 'Unknown'
     })
     MaritalStatus: string;
 
@@ -105,9 +108,8 @@ export default class HealthProfile extends Model {
     Ethnicity: string;
 
     @Column({
-        type         : DataType.STRING(128),
-        allowNull    : true,
-        defaultValue : ''
+        type      : DataType.STRING(128),
+        allowNull : true,
     })
     Race: string;
 

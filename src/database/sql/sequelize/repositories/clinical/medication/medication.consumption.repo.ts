@@ -90,7 +90,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
     deleteFutureMedicationSchedules = async(medicationId: uuid): Promise<number> => {
         try {
-
+            let deletedCount: number = 0;
             var selector = {
                 where : {
                     MedicationId      : medicationId,
@@ -99,21 +99,33 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 }
             };
 
-            const ids = (await MedicationConsumption.findAll(selector)).map(x => x.id);
-            const deletedCount = await MedicationConsumption.destroy(selector);
-            Logger.instance().log(`Deleted ${deletedCount} medication consumptions.`);
+            const existingTask = await UserTask.findOne({
+                where : {
+                    ParentActionId : medicationId
+                }
+            });
 
-            if (deletedCount > 0) {
-                var deletedTaskCount = await UserTask.destroy({
+            if (existingTask) {
+                deletedCount = await UserTask.destroy({
+                    where : {
+                        ParentActionId     : medicationId,
+                        ScheduledStartTime : { [Op.gte] : new Date(new Date().toISOString()
+                            .split('T')[0]) }
+                    }
+                });
+            } else {
+                const ids = (await MedicationConsumption.findAll(selector)).map(x => x.id);
+                deletedCount = await UserTask.destroy({
                     where : {
                         ActionId : ids, //ActionType : UserTaskActionType.Medication
                     }
                 });
-                Logger.instance().log(`Deleted ${deletedTaskCount} medication associated user tasks.`);
-
             }
-            return deletedCount;
 
+            const deletedConsumptionCount = await MedicationConsumption.destroy(selector);
+            Logger.instance().log(`Deleted ${deletedCount} users tasks.`);
+            Logger.instance().log(`Deleted ${deletedConsumptionCount} medication consumptions.`);
+            return deletedConsumptionCount;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

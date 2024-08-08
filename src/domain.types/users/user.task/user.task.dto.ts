@@ -11,6 +11,7 @@ export interface UserTaskDto {
     Transcription?        : string;
     ActionType?           : UserActionType;
     ActionId?             : string;
+    ParentActionId?       : string;
     Action?               : any;
     ScheduledStartTime?   : Date;
     ScheduledEndTime?     : Date;

@@ -1,6 +1,6 @@
 import {
     BelongsTo,
-    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, Index, IsDate, IsUUID,
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
@@ -79,6 +79,7 @@ export default class UserTask extends Model {
     })
     ActionType: string;
 
+    @Index
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
@@ -86,6 +87,14 @@ export default class UserTask extends Model {
     })
     ActionId: string;
 
+    @Index
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    ParentActionId: string;
+    
     @IsDate
     @Column({
         type      : DataType.DATE,

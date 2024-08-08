@@ -462,6 +462,7 @@ export class MedicationConsumptionService implements IUserActionService {
             UserId             : consumption.PatientUserId,
             Category           : UserTaskCategory.Medication,
             ActionId           : consumption.id,
+            ParentActionId     : consumption.MedicationId,
             ActionType         : UserActionType.Medication,
             ScheduledStartTime : consumption.TimeScheduleStart,
             ScheduledEndTime   : consumption.TimeScheduleEnd,

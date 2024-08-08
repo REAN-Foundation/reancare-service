@@ -28,6 +28,7 @@ export interface MedicationConsumptionDto {
     id?               : string,
     PatientUserId?    : string;
     DrugName?         : string;
+    MedicationId?     : string;
     Details?          : string;
     TimeScheduleStart?: Date;
     TimeScheduleEnd?  : Date;

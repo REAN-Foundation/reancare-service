@@ -25,6 +25,7 @@ export class UserTaskValidator extends BaseValidator {
             Category             : request.body.Category ?? null,
             ActionType           : request.body.ActionType ?? null,
             ActionId             : request.body.ActionId ?? null,
+            ParentActionId       : request.body.ParentActionId ?? null,
             ScheduledStartTime   : request.body.ScheduledStartTime ?? null,
             ScheduledEndTime     : request.body.ScheduledEndTime ?? null,
             IsRecurrent          : request.body.IsRecurrent ?? null,
@@ -46,6 +47,7 @@ export class UserTaskValidator extends BaseValidator {
         await this.validateString(request, 'category', Where.Query, false, false, true);
         await this.validateString(request, 'actionType', Where.Query, false, false, true);
         await this.validateUuid(request, 'actionId', Where.Query, false, false);
+        await this.validateUuid(request, 'parentActionId', Where.Query, false, false);
         await this.validateString(request, 'scheduledFrom', Where.Query, false, false);
         await this.validateString(request, 'scheduledTo', Where.Query, false, false);
         await this.validateString(request, 'status', Where.Query, false, false);
@@ -105,6 +107,7 @@ export class UserTaskValidator extends BaseValidator {
         await this.validateString(request, 'Category', Where.Body, true, false);
         await this.validateString(request, 'ActionType', Where.Body, false, false);
         await this.validateUuid(request, 'ActionId', Where.Body, false, true);
+        await this.validateUuid(request, 'ParentActionId', Where.Body, false, true);
         await this.validateString(request, 'ActionType', Where.Body, false, true);
         await this.validateDate(request, 'ScheduledStartTime', Where.Body, true, false);
         await this.validateDate(request, 'ScheduledEndTime', Where.Body, false, false);
@@ -172,14 +175,15 @@ export class UserTaskValidator extends BaseValidator {
         }
 
         var filters: UserTaskSearchFilters = {
-            UserId        : userId,
-            Task          : request.query.task as string ?? null,
-            Category      : request.query.category as string ?? null,
-            ActionType    : request.query.actionType as string ?? null,
-            ActionId      : request.query.actionId as uuid ?? null,
-            ScheduledFrom : scheduledFrom,
-            ScheduledTo   : scheduledTo,
-            Status        : status,
+            UserId         : userId,
+            Task           : request.query.task as string ?? null,
+            Category       : request.query.category as string ?? null,
+            ActionType     : request.query.actionType as string ?? null,
+            ActionId       : request.query.actionId as uuid ?? null,
+            ParentActionId : request.query.parentActionId as uuid ?? null,
+            ScheduledFrom  : scheduledFrom,
+            ScheduledTo    : scheduledTo,
+            Status         : status,
         };
 
         return this.updateBaseSearchFilters(request, filters);

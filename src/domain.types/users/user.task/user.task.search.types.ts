@@ -7,6 +7,7 @@ export interface UserTaskSearchFilters {
     Category?        : string;
     ActionType?      : string;
     ActionId?        : string;
+    ParentActionId?  : string;
     ScheduledFrom?   : Date;
     ScheduledTo?     : Date;
     Status?          : ProgressStatus;

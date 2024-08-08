@@ -97,7 +97,7 @@ export default class Medication extends Model {
 
     @Column({
         type      : DataType.STRING(128),
-        allowNull : false,
+        allowNull : true,
     })
     Dose: string;
 

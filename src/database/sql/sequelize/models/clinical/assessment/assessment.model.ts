@@ -21,6 +21,7 @@ import User from '../../users/user/user.model';
 import UserTask from '../../users/user/user.task.model';
 import AssessmentNode from './assessment.node.model';
 import AssessmentTemplate from './assessment.template.model';
+import { AssessmentType, AssessmentTypeList } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -62,6 +63,15 @@ export default class Assessment extends Model {
         allowNull : true,
     })
     Description: string;
+
+    //NOTE: Type is added just to remove migration ambiguity
+    @Column({
+        type         : DataType.ENUM,
+        values       : AssessmentTypeList,
+        defaultValue : AssessmentType.Careplan,
+        allowNull    : false,
+    })
+    Type: string;
 
     @IsUUID(4)
     @ForeignKey(() => AssessmentTemplate)

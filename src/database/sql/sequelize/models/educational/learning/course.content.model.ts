@@ -99,7 +99,6 @@ export default class CourseContent extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        allowNull    : false,
         defaultValue : CourseContentType.Video,
         values       : CourseContentTypeList,
     })

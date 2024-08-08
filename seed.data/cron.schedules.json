@@ -87,7 +87,7 @@
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 6 * * 1",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 10 1,15 * *"
+        "ScheduleHFHelperTextMessage": "0 10 * * 3"
     },
     "production": {
         "FileCleanup": "*/30 * * * *",
@@ -117,6 +117,6 @@
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 10 1,15 * *"
+        "ScheduleHFHelperTextMessage": "0 10 * * 3"
     }
 }

@@ -30,6 +30,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                 Category           : model.Category ?? null,
                 ActionType         : model.ActionType ?? null,
                 ActionId           : model.ActionId ?? null,
+                ParentActionId     : model.ParentActionId ?? null,
                 ScheduledStartTime : model.ScheduledStartTime ?? null,
                 ScheduledEndTime   : model.ScheduledEndTime ?? null,
                 Channel            : model.Channel ?? NotificationChannel.MobilePush,
@@ -89,7 +90,10 @@ export class UserTaskRepo implements IUserTaskRepo {
                 search.where['UserId'] = filters.UserId;
             }
             if (filters.ActionId != null) {
-                search.where['ReferenceItemId'] = filters.ActionId;
+                search.where['ActionId'] = filters.ActionId;
+            }
+            if (filters.ParentActionId != null) {
+                search.where['ParentActionId'] = filters.ParentActionId;
             }
             if (filters.Task != null) {
                 search.where['Task'] = { [Op.like]: '%' + filters.Task + '%' };
@@ -307,6 +311,10 @@ export class UserTaskRepo implements IUserTaskRepo {
 
             if (model.ActionId != null) {
                 userTask.ActionId = model.ActionId;
+            }
+
+            if (model.ParentActionId != null) {
+                userTask.ParentActionId = model.ParentActionId;
             }
 
             if (model.IsRecurrent != null) {

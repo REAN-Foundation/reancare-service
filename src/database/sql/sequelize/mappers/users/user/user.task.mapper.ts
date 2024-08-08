@@ -25,6 +25,7 @@ export class UserTaskMapper {
             Category             : task.Category as UserTaskCategory,
             ActionType           : task.ActionType as UserActionType,
             ActionId             : task.ActionId,
+            ParentActionId       : task.ParentActionId,
             ScheduledStartTime   : task.ScheduledStartTime,
             ScheduledEndTime     : task.ScheduledEndTime,
             Status               : status,

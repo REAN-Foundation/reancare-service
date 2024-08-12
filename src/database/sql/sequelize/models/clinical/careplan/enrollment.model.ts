@@ -87,6 +87,12 @@ export default class CareplanEnrollment extends Model {
     EndDate: Date;
 
     @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    StopAt: Date;
+
+    @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : true

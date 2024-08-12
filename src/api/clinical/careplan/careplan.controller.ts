@@ -185,6 +185,34 @@ export class CareplanController extends BaseController {
         }
     };
 
+    getPatientActiveEnrollments = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const patientUserId = request.params.patientUserId;
+            await this.authorizeOne(request, patientUserId);
+            const enrollments = await this._service.getPatientActiveEnrollments(patientUserId);
+            ResponseHandler.success(request, response, 'Patient active enrollments retrieved successfully!', 200, {
+                PatientEnrollments : enrollments,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    stop = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this._validator.stop(request);
+            const careplanEnrollmentId = request.params.id;
+            const enrollment = await this._service.getEnrollment(careplanEnrollmentId);
+            var updatedEnrollment = await this._service.stop(enrollment);
+            ResponseHandler.success(request, response, "Patient's current care plan has been successfully stopped!", 200, {
+                Enrollment : updatedEnrollment
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

@@ -68,4 +68,20 @@ export class CareplanAuth {
         RequestType : RequestType.UpdateOne,
     };
 
+    static readonly getPatientActiveEnrollments: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetPatientActiveEnrollments`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetMany,
+    };
+
+    static readonly stop: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.Stop`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Owner,
+        RequestType : RequestType.UpdateOne,
+    };
+
 }

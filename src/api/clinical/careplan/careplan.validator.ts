@@ -56,6 +56,10 @@ export class CareplanValidator extends BaseValidator {
         return this.updateRiskDomainModel(request);
     };
 
+    stop = async (request: express.Request) => {
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+    };
+
     private async validateCreateBody(request) {
         await this.validateString(request, 'Provider', Where.Body, true, false);
         await this.validateString(request, 'PlanCode', Where.Body, true, false);

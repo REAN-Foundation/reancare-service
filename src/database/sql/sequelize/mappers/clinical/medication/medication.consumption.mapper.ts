@@ -60,6 +60,7 @@ export class MedicationConsumptionMapper {
             id                : consumption.id,
             PatientUserId     : consumption.PatientUserId,
             DrugName          : consumption.DrugName,
+            MedicationId      : consumption.MedicationId,
             Details           : consumption.Details,
             TimeScheduleStart : consumption.TimeScheduleStart,
             TimeScheduleEnd   : consumption.TimeScheduleEnd,

@@ -73,7 +73,7 @@ export const queryHealthSystemEnrollmentCount = `SELECT COUNT(DISTINCT(careplan_
                                                                 AND
                                                                 user.TenantId = "{{tenantId}}"
                                                                 AND
-                                                                patient.HealthSystem = '{{healthSystem}}'
+                                                                patient.HealthSystem = "{{healthSystem}}"
                                                         )`;
 
 export const queryAhaTenant =  `SELECT id FROM tenants WHERE Code = "default"`;

@@ -98,7 +98,7 @@ import { DailyStatisticsRepo } from './repositories/statistics/daily.statistics.
 import { AhaStatisticsRepo } from './repositories/statistics/aha.statistics.repo';
 import { TenantSettingsRepo } from './repositories/tenant/tenant.settings.repo';
 import { HealthReportSettingsRepo } from './repositories/users/patient/health.report.setting.repo';
-import { FollowUpCancellationRepo } from './repositories/follow.up/follow.up.cancellation.repo';
+import { FollowUpCancellationRepo } from './repositories/tenant/followups/cancellations/follow.up.cancellation.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 

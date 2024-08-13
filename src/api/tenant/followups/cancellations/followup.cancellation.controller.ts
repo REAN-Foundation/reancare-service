@@ -1,12 +1,12 @@
-import { ResponseHandler } from "../../common/handlers/response.handler";
-import { BaseController } from "../base.controller";
+import { ResponseHandler } from "../../../../common/handlers/response.handler";
+import { BaseController } from "../../../base.controller";
 import express from 'express';
-import { ApiError } from '../../common/api.error';
-import { uuid } from '../../domain.types/miscellaneous/system.types';
+import { ApiError } from '../../../../common/api.error';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { FollowUpCancellationValidator } from "./followup.cancellation.validator";
-import { Injector } from "../../startup/injector";
-import { FollowUpCancellationService } from "../../services/follow.up/follow.up.cancellation.service";
-import { FollowUpCancellationSearchFilters } from "../../domain.types/follow.up/follow.up.cancellation.search.types";
+import { Injector } from "../../../../startup/injector";
+import { FollowUpCancellationService } from "../../../../services/tenant/followups/cancellations/follow.up.cancellation.service";
+import { FollowUpCancellationSearchFilters } from "../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.search.types";
 
 export class FollowUpCancellationController extends BaseController {
 

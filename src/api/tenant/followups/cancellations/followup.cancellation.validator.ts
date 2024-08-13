@@ -1,8 +1,7 @@
-import { FollowUpCancellationSearchFilters } from "../../domain.types/follow.up/follow.up.cancellation.search.types";
-import { BaseValidator, Where } from "../base.validator";
-import { FollowUpCancellationDomainModel } from "../../domain.types/follow.up/follow.up.cancellation.domain.model";
-// import { request } from "express";
 import express from 'express';
+import { BaseValidator, Where } from '../../../../api/base.validator';
+import { FollowUpCancellationDomainModel } from '../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.domain.model';
+import { FollowUpCancellationSearchFilters } from '../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.search.types';
 
 export class FollowUpCancellationValidator extends BaseValidator {
 

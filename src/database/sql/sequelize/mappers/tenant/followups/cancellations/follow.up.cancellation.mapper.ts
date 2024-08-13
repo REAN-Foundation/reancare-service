@@ -1,6 +1,6 @@
-import { FollowUpCancellationDto } from '../../../../../domain.types/follow.up/follow.up.cancellation.dto';
-import FollowUpCancellation from '../../models/follow.up/follow.up.cancellation.model';
-///////////////////////////////////////////////////////////////////////////////////
+
+import { FollowUpCancellationDto } from "../../../../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.dto";
+import FollowUpCancellation from "../../../../../../../database/sql/sequelize/models/tenant/followups/cancellations/follow.up.cancellation.model";
 
 export class FollowUpCancellationMapper {
 

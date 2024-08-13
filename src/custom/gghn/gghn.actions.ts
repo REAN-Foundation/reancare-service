@@ -6,9 +6,9 @@ import { TenantSettingsService } from '../../services/tenant/tenant.settings.ser
 import { TimeHelper } from '../../common/time.helper';
 import needle = require('needle');
 import { DateStringFormat } from '../../domain.types/miscellaneous/time.types';
-import { FollowUpCancellationService } from '../../services/follow.up/follow.up.cancellation.service';
-import { FollowUpCancellationSearchFilters } from '../../domain.types/follow.up/follow.up.cancellation.search.types';
 import { ScheduleFrequency, TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
+import { FollowUpCancellationService } from '../../services/tenant/followups/cancellations/follow.up.cancellation.service';
+import { FollowUpCancellationSearchFilters } from '../../domain.types/tenant/followups/cancellations/follow.up.cancellation.search.types';
 
 export class GGHNActions {
 

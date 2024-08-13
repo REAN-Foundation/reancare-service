@@ -1,5 +1,5 @@
-import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.search.types";
-import { uuid } from "../miscellaneous/system.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { BaseSearchFilters, BaseSearchResults } from "../../../../domain.types/miscellaneous/base.search.types";
 import { FollowUpCancellationDto } from "./follow.up.cancellation.dto";
 
 export interface FollowUpCancellationSearchFilters extends BaseSearchFilters {

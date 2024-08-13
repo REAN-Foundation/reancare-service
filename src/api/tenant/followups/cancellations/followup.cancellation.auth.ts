@@ -1,8 +1,4 @@
-import { ResourceOwnership } from "../../auth/auth.types";
-import { RequestType } from "../../auth/auth.types";
-import { ActionScope } from "../../auth/auth.types";
-import { DefaultAuthOptions } from "../../auth/auth.types";
-import { AuthOptions } from "../../auth/auth.types";
+import { ActionScope, AuthOptions, DefaultAuthOptions, RequestType, ResourceOwnership } from "../../../../auth/auth.types";
 
 export class FollowUpCancellationAuth {
 

@@ -1,7 +1,7 @@
 import express from 'express';
 import { FollowUpCancellationController } from './followup.cancellation.controller';
 import { FollowUpCancellationAuth } from './followup.cancellation.auth';
-import { auth } from '../../auth/auth.handler';
+import { auth } from '../../../../auth/auth.handler';
 
 export const register = (app: express.Application): void => {
 

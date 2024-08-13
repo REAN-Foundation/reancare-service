@@ -1,4 +1,4 @@
-import { uuid } from "../miscellaneous/system.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
 export interface FollowUpCancellationDto {
     id           : uuid,

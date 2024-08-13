@@ -1,8 +1,8 @@
+import { FollowUpCancellationDomainModel } from "../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.domain.model";
+import { IFollowUpCancellationRepo } from "../../../../database/repository.interfaces/tenant/followups/cancellations/follow.up.cancellation.repo.interface";
 import { inject, injectable } from "tsyringe";
-import { IFollowUpCancellationRepo } from "../../database/repository.interfaces/follow.up/follow.up.cancellation.repo.interface";
-import { FollowUpCancellationDomainModel } from "../../domain.types/follow.up/follow.up.cancellation.domain.model";
-import { FollowUpCancellationDto } from "../../domain.types/follow.up/follow.up.cancellation.dto";
-import { FollowUpCancellationSearchFilters, FollowUpCancellationSearchResults } from "../../domain.types/follow.up/follow.up.cancellation.search.types";
+import { FollowUpCancellationDto } from "../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.dto";
+import { FollowUpCancellationSearchFilters, FollowUpCancellationSearchResults } from "../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

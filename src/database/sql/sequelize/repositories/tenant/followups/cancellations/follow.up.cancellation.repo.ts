@@ -1,14 +1,13 @@
-import { ApiError } from "../../../../../common/api.error";
-import { Logger } from "../../../../../common/logger";
-import { IFollowUpCancellationRepo } from "../../../../repository.interfaces/follow.up/follow.up.cancellation.repo.interface";
-import { FollowUpCancellationMapper } from "../../mappers/follow.up/follow.up.cancellation.mapper";
-import { FollowUpCancellationDomainModel } from "../../../../../domain.types/follow.up/follow.up.cancellation.domain.model";
-import { FollowUpCancellationDto } from "../../../../../domain.types/follow.up/follow.up.cancellation.dto";
-import { FollowUpCancellationSearchFilters } from "../../../../../domain.types/follow.up/follow.up.cancellation.search.types";
-import { FollowUpCancellationSearchResults } from "../../../../../domain.types/follow.up/follow.up.cancellation.search.types";
-import { uuid } from "../../../../../domain.types/miscellaneous/system.types";
-import FollowUpCancellation from "../../models/follow.up/follow.up.cancellation.model";
+import { ApiError } from "../../../../../../../common/api.error";
+import { Logger } from "../../../../../../../common/logger";
+import { IFollowUpCancellationRepo } from "../../../../../../repository.interfaces/tenant/followups/cancellations/follow.up.cancellation.repo.interface";
+import { FollowUpCancellationMapper } from "../../../../mappers/tenant/followups/cancellations/follow.up.cancellation.mapper";
+import { uuid } from "../../../../../../../domain.types/miscellaneous/system.types";
 import { Op } from "sequelize";
+import { FollowUpCancellationDomainModel } from "../../../../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.domain.model";
+import { FollowUpCancellationDto } from "../../../../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.dto";
+import FollowUpCancellation from "../../../../../../../database/sql/sequelize/models/tenant/followups/cancellations/follow.up.cancellation.model";
+import { FollowUpCancellationSearchFilters, FollowUpCancellationSearchResults } from "../../../../../../../domain.types/tenant/followups/cancellations/follow.up.cancellation.search.types";
 
 export class FollowUpCancellationRepo implements IFollowUpCancellationRepo {
 

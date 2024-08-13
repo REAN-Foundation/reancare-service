@@ -697,7 +697,6 @@ export class CareplanService implements IUserActionService {
 
     public stop = async (enrollment: EnrollmentDto ) => {
         await this._careplanRepo.deleteFutureCareplanTask(enrollment);
-        // update the careplan enrollemnt entry with StopAt: New Date, IsActive: false
         const updatedCareplan = await this._careplanRepo.stop(enrollment.id);
         return updatedCareplan;
     };

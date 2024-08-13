@@ -90,7 +90,7 @@ export default class CareplanEnrollment extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    StopAt: Date;
+    StoppedAt: Date;
 
     @Column({
         type         : DataType.BOOLEAN,

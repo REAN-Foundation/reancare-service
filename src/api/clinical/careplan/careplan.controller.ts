@@ -204,6 +204,10 @@ export class CareplanController extends BaseController {
             await this._validator.stop(request);
             const careplanEnrollmentId = request.params.id;
             const enrollment = await this._service.getEnrollment(careplanEnrollmentId);
+            if (enrollment == null) {
+                throw new ApiError(404, 'Care plan enrollment does not exist.');
+            }
+            await this.authorizeOne(request, enrollment.PatientUserId);
             var updatedEnrollment = await this._service.stop(enrollment);
             ResponseHandler.success(request, response, "Patient's current care plan has been successfully stopped!", 200, {
                 Enrollment : updatedEnrollment

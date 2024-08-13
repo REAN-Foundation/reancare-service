@@ -557,7 +557,8 @@ export class CareplanRepo implements ICareplanRepo {
         try {
             const careplanEnrollment = await CareplanEnrollment.findByPk(careplanEnrollmentId);
             careplanEnrollment.IsActive = false;
-            careplanEnrollment.StopAt = new Date();
+            careplanEnrollment.StoppedAt = new Date();
+            careplanEnrollment.EndDate = new Date();
             await careplanEnrollment.save();
 
             return EnrollmentMapper.toDto(careplanEnrollment);

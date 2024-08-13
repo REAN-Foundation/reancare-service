@@ -80,7 +80,7 @@ export class CareplanAuth {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Stop`,
         Ownership   : ResourceOwnership.Owner,
-        ActionScope : ActionScope.Owner,
+        ActionScope : ActionScope.Tenant,
         RequestType : RequestType.UpdateOne,
     };
 

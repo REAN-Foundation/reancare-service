@@ -146,6 +146,8 @@
     "Clinical.Careplan.GetPatientEnrollments",
     "Clinical.Careplan.GetWeeklyStatus",
     "Clinical.Careplan.UpdateRisk",
+    "Clinical.Careplan.GetPatientActiveEnrollments",
+    "Clinical.Careplan.Stop",
     "Clinical.ClinicalTypes.GetClinicalValidationStatuses",
     "Clinical.ClinicalTypes.GetInterpretations",
     "Clinical.ClinicalTypes.GetSeverities",

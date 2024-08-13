@@ -201,7 +201,9 @@
             "GetPatientEligibility": true,
             "GetPatientEnrollments": true,
             "GetWeeklyStatus": true,
-            "UpdateRisk": false
+            "UpdateRisk": false,
+            "GetPatientActiveEnrollments": true,
+            "Stop": true
         },
         "ClinicalTypes": {
             "GetClinicalValidationStatuses": true,

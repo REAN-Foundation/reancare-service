@@ -27,7 +27,8 @@
         "DailyStatistics": "*/45 * * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 1 * * 1"    
+        "ScheduleHFHelperTextMessage": "0 1 * * 1",
+        "ScheduleGGHNFollowUpReminder": "*/2 * * * *"
     },
     "development": {
         "FileCleanup": "*/55 * * * *",
@@ -57,7 +58,8 @@
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 1 6 8 *"
+        "ScheduleHFHelperTextMessage": "0 1 6 8 *",
+        "ScheduleGGHNFollowUpReminder": "0 5 * * *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",
@@ -87,7 +89,8 @@
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 6 * * 1",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 10 * * 3"
+        "ScheduleHFHelperTextMessage": "0 10 * * 3",
+        "ScheduleGGHNFollowUpReminder": "0 5 * * *"
     },
     "production": {
         "FileCleanup": "*/30 * * * *",
@@ -117,6 +120,7 @@
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 10 * * 3"
+        "ScheduleHFHelperTextMessage": "0 10 * * 3",
+        "ScheduleGGHNFollowUpReminder": "0 5 * * *"
     }
 }

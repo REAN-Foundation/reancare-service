@@ -8,7 +8,8 @@ import {
     UserInterfaces,
     PatientAppSettings,
     TenantSettingsDomainModel,
-    TenantSettingsTypes
+    TenantSettingsTypes,
+    WeekDay
 } from '../../domain.types/tenant/tenant.settings.types';
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
@@ -154,9 +155,49 @@ export class TenantSettingsService {
                 Slack   : false,
                 Email   : false,
             },
-            Personalization : false,
-            LocationContext : false,
-            Localization    : true,
+            Personalization     : false,
+            LocationContext     : false,
+            Localization        : true,
+            AppointmentFollowup : {
+                UploadAppointmentDocument : false,
+                AppointmentEhrApi         : false,
+                AppointmentEhrApiDetails  : {
+                    CustomApi        : false,
+                    FhirApi          : false,
+                    CustomApiDetails : {
+                        Url         : null,
+                        Credentials : {
+                            UserName : null,
+                            Password : null,
+                        }
+                    },
+                    FhirApiDetails : {
+                        Url         : null,
+                        Credentials : {
+                            UserName : null,
+                            Password : null,
+                        }
+                    },
+                    FollowupMechanism : {
+                        ManualTrigger     : false,
+                        ScheduleTrigger   : false,
+                        ScheduleFrequency : {
+                            Daily      : false,
+                            Weekly     : false,
+                            WeekDay    : WeekDay.Monday,
+                            Monthly    : false,
+                            DayOfMonth : 1
+                        },
+                        ScheduleTiming   : null,
+                        FollowupMessages : false,
+                        MessageFrequency : {
+                            OneDayBefore  : false,
+                            OneHourBefore : false,
+                            OneWeekBefore : false
+                        }
+                    }
+                }
+            }
         };
 
         const forms: FormsIntegrations = {

@@ -7,12 +7,15 @@ import { AHAActions } from './aha/aha.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 import { Injector } from '../startup/injector';
+import { GGHNActions } from './gghn/gghn.actions';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class CustomActionsHandler {
 
     _ahaActions: AHAActions = new AHAActions();
+
+    _gghnActions: GGHNActions = new GGHNActions();
 
     //#region Public
 
@@ -126,6 +129,15 @@ export class CustomActionsHandler {
         }
         catch (error) {
             Logger.instance().log(`Error sending SMS to HF Helper users.`);
+        }
+    };
+
+    public scheduleGGHNFollowUpReminder = async () => {
+        try {
+            await this._gghnActions.scheduleGGHNFollowUpReminder();
+        }
+        catch (error) {
+            Logger.instance().log(`Error in schedule of GGHN FollowUp Reminder.`);
         }
     };
 

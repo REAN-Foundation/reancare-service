@@ -866,6 +866,13 @@
             "Update": true,
             "Delete": true
         }
+    },
+    "FollowUpCancellations": {
+        "Create": false,
+        "Search": false,
+        "GetById": false,
+        "Update": false,
+        "Delete": false
     }
     
 }

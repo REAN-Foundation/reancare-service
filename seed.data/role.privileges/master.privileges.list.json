@@ -615,5 +615,10 @@
     "Wellness.Nutrition.WaterConsumption.Delete",
     "Wellness.Nutrition.WaterConsumption.GetById",
     "Wellness.Nutrition.WaterConsumption.Search",
-    "Wellness.Nutrition.WaterConsumption.Update"
+    "Wellness.Nutrition.WaterConsumption.Update",
+    "FollowUpCancellations.Create",
+    "FollowUpCancellations.Delete",
+    "FollowUpCancellations.GetById",
+    "FollowUpCancellations.Search",
+    "FollowUpCancellations.Update"
 ]

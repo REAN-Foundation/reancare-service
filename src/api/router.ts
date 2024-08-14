@@ -87,7 +87,7 @@ import { register as registerHealthSystemRoutes } from './hospitals/health.syste
 import { register as registerHospitalRoutes } from './hospitals/hospital/hospital.routes';
 import { register as registerDailyStatisticsRoutes } from './statistics/daily.statistics/daily.statistics.routes';
 import { register as registerTenantFeatureSettingRoutes } from './tenant/settings/tenant.settings.routes';
-import { register as registerFollowUpCancellationRoutes } from './followup.cancellation/followup.cancellation.routes';
+import { register as registerFollowUpCancellationRoutes } from './tenant/followups/cancellations/followup.cancellation.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 

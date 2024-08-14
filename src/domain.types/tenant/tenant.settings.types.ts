@@ -6,6 +6,16 @@ export enum TenantSettingsTypes {
     Forms               = 'Forms'
 }
 
+export enum WeekDay {
+    Sunday      = 'Sunday',
+    Monday      = 'Monday',
+    Tuesday     = 'Tuesday',
+    Wednesday   = 'Wednesday',
+    Thursday    = 'Thursday',
+    Friday      = 'Friday',
+    Saturday    = 'Saturday'
+}
+
 export const TenantSettingsTypesList = [
     TenantSettingsTypes.UserInterfaces,
     TenantSettingsTypes.Common,
@@ -96,8 +106,55 @@ export interface ChatBotSettings {
     Personalization    : boolean,
     LocationContext    : boolean,
     Localization       : boolean,
+    AppointmentFollowup: AppointmentFollowup
 }
 
+export interface AppointmentFollowup {
+    UploadAppointmentDocument: boolean,
+    AppointmentEhrApi: boolean,
+    AppointmentEhrApiDetails: AppointmentEhrApiDetails
+}
+
+export interface AppointmentEhrApiDetails {
+    CustomApi: boolean,
+    CustomApiDetails: ApiDetails,
+    FhirApi: boolean,
+    FhirApiDetails: ApiDetails,
+    FollowupMechanism: FollowupMechanism
+}
+
+export interface FollowupMechanism {
+    ManualTrigger: boolean,
+    ScheduleTrigger: boolean,
+    ScheduleFrequency: ScheduleFrequency,
+    ScheduleTiming: string,
+    FollowupMessages: boolean,
+    MessageFrequency: MessageFrequency
+}
+
+export interface MessageFrequency {
+    OneDayBefore: boolean,
+    OneHourBefore: boolean,
+    OneWeekBefore: boolean,
+}
+
+export interface ScheduleFrequency {
+    Daily : boolean,
+    Weekly : boolean,
+    WeekDay: WeekDay,
+    Monthly : boolean,
+    DayOfMonth: number,
+}
+
+export interface ApiDetails {
+    Url? : string,
+    Credentials?: Credentials,
+}
+
+export interface Credentials {
+    UserName?: string,
+    Password?: string,
+}
 export interface FormsIntegrations {
     KoboToolbox: boolean;
     ODK        : boolean;

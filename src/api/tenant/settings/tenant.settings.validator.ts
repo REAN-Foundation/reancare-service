@@ -141,6 +141,28 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateString(request, 'ChatBot.LocationContext', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Localization', Where.Body, true, false);
 
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.UploadAppointmentDocument', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApi', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.CustomApi', Where.Body, true, false);
+        await this.validateString(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.CustomApiDetails.Url', Where.Body, true, true);
+        await this.validateString(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.CustomApiDetails.UserName', Where.Body, true, true);
+        await this.validateString(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.CustomApiDetails.Password', Where.Body, true, true);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FhirApi', Where.Body, true, false);
+        await this.validateString(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FhirApiDetails.Url', Where.Body, true, true);
+        await this.validateString(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FhirApiDetails.UserName', Where.Body, true, true);
+        await this.validateString(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FhirApiDetails.Password', Where.Body, true, true);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.ManualTrigger', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.ScheduleTrigger', Where.Body, true, false);
+        await this.validateString(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.ScheduleTiming', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.FollowupMessages', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.ScheduleFrequency.Daily', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.ScheduleFrequency.Weekly', Where.Body, true, false);
+        await this.validateString(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.ScheduleFrequency.WeekDay', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.ScheduleFrequency.Monthly', Where.Body, true, false);
+        await this.validateInt(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.ScheduleFrequency.DayOfMonth', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.MessageFrequency.OneDayBefore', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.MessageFrequency.OneHourBefore', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FollowupMechanism.MessageFrequency.OneWeekBefore', Where.Body, true, false);
         this.validateRequest(request);
 
         const model: ChatBotSettings = {
@@ -157,9 +179,68 @@ export class TenantSettingsValidator extends BaseValidator {
                 ClickUp : request.body.ChatBot.SupportChannels.ClickUp,
                 Slack   : request.body.ChatBot.SupportChannels.Slack,
             },
-            Personalization : request.body.ChatBot.Personalization,
-            LocationContext : request.body.ChatBot.LocationContext,
-            Localization    : request.body.ChatBot.Localization,
+            Personalization     : request.body.ChatBot.Personalization,
+            LocationContext     : request.body.ChatBot.LocationContext,
+            Localization        : request.body.ChatBot.Localization,
+            AppointmentFollowup : {
+                UploadAppointmentDocument : request.body.ChatBot.AppointmentFollowup.UploadAppointmentDocument,
+                AppointmentEhrApi         : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApi,
+                AppointmentEhrApiDetails  : {
+                    CustomApi        : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.CustomApi,
+                    FhirApi          : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FhirApi,
+                    CustomApiDetails : {
+                        Url :
+                        request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.CustomApiDetails.Url ?? null,
+                        Credentials : {
+                            UserName : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                CustomApiDetails.Credentials.UserName ?? null,
+                            Password : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                CustomApiDetails.Credentials.Password ?? null,
+                        }
+                    },
+                    FhirApiDetails : {
+                        Url :
+                        request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.FhirApiDetails.Url ?? null,
+                        Credentials : {
+                            UserName : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FhirApiDetails.Credentials.UserName ?? null,
+                            Password : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FhirApiDetails.Credentials.Password ?? null,
+                        }
+                    },
+                    FollowupMechanism : {
+                        ManualTrigger : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                            FollowupMechanism.ManualTrigger,
+                        ScheduleTrigger : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                            FollowupMechanism.ScheduleTrigger,
+                        ScheduleFrequency : {
+                            Daily : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FollowupMechanism.ScheduleFrequency.Daily,
+                            Weekly : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FollowupMechanism.ScheduleFrequency.Weekly,
+                            WeekDay : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FollowupMechanism.ScheduleFrequency.WeekDay,
+                            Monthly : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FollowupMechanism.ScheduleFrequency.Monthly,
+                            DayOfMonth : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FollowupMechanism.ScheduleFrequency.DayOfMonth,
+                        },
+                        ScheduleTiming : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                            FollowupMechanism.ScheduleTiming,
+                        FollowupMessages : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                            FollowupMechanism.FollowupMessages,
+                        MessageFrequency : {
+                            OneDayBefore : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FollowupMechanism.MessageFrequency.OneDayBefore,
+                            OneHourBefore : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FollowupMechanism.MessageFrequency.OneHourBefore,
+                            OneWeekBefore : request.body.ChatBot.AppointmentFollowup.AppointmentEhrApiDetails.
+                                FollowupMechanism.MessageFrequency.OneWeekBefore
+                        }
+                    }
+                }
+            }
+
         };
 
         return model;

@@ -4,7 +4,7 @@ import { IRoleRepo } from '../../database/repository.interfaces/role/role.repo.i
 import { injectable, inject } from 'tsyringe';
 import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
 import { PersonDetailsDto, PersonDto } from '../../domain.types/person/person.dto';
-import { PersonSearchFilters } from '../../domain.types/person/patient.search.types';
+import { PersonSearchFilters,  PersonSearchResults } from '../../domain.types/person/patient.search.types';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { OrganizationDto } from '../../domain.types/general/organization/organization.types';
 
@@ -38,17 +38,42 @@ export class PersonService {
         return await this._personRepo.exists(id);
     };
 
-    public search = async (
-        filters: PersonSearchFilters
-    ): Promise<PersonDetailsDto[] | PersonDto[]> => {
-        var items = [];
-        var dtos = await this._personRepo.search(filters);
-        for await (var dto of dtos) {
-            dto = await this.updateDto(dto);
-            items.push(dto);
+    public getPersonWithEmail = async (email: string): Promise<PersonDetailsDto> => {
+        return await this._personRepo.getPersonWithEmail(email);
+    };
+
+    public search = async (filters: PersonSearchFilters): Promise<PersonSearchResults> => {
+        return await this._personRepo.search(filters);
+    };
+
+    public isMultiplePersonWithSamePhone = async (phone: string): Promise<boolean> => {
+        if (!phone) {
+            return false;
         }
-        dtos = items;
-        return dtos;
+        const persons = await this._personRepo.search({
+            Phone : phone
+        });
+
+        if (persons.TotalCount > 1) {
+            return true;
+        }
+
+        return false;
+    };
+
+    public isMultiplePersonWithSameEmail = async (email: string): Promise<boolean> => {
+        if (!email) {
+            return false;
+        }
+        const persons = await this._personRepo.search({
+            Phone : email
+        });
+
+        if (persons.TotalCount > 1) {
+            return true;
+        }
+
+        return false;
     };
 
     public update = async (id: string, personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {

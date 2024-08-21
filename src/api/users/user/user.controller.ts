@@ -9,10 +9,10 @@ import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
-import { 
-    ResetPasswordModel, 
-    ChangePasswordModel, 
-    UserDomainModel, 
+import {
+    ResetPasswordModel,
+    ChangePasswordModel,
+    UserDomainModel,
     UserBasicDetails
 } from '../../../domain.types/users/user/user.domain.model';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
@@ -50,14 +50,20 @@ export class UserController extends BaseController {
                 TenantCode : model.TenantCode,
             };
 
-            const existingUser = await this._service.getUserDetails(basicDetails);
-            if (existingUser) {
-                const existingUserRole = existingUser.RoleId;
-                const existingUserTenantId = existingUser.TenantId;
-                if (existingUserRole === model.RoleId && existingUserTenantId === model.TenantId) {
-                    throw new ApiError(409, 'User already exists');
-                }
+            const isMultiplePersonWithSamePhone =
+            await this._personService.isMultiplePersonWithSamePhone(model.Person.Phone);
+            if (isMultiplePersonWithSamePhone) {
+                throw new ApiError(409, `Multiple persons are associated with the phone ${model.Person.Phone}`);
             }
+
+            const isMultiplePersonWithSameEmail =
+            await this._personService.isMultiplePersonWithSameEmail(model.Person.Email);
+            if (isMultiplePersonWithSameEmail) {
+                throw new ApiError(409, `Multiple persons are associated with the Email ${model.Person.Email}`);
+            }
+
+            const existingUser = await this._service.getUserDetails(basicDetails, model.RoleId);
+            
             person = existingUser?.Person;
             if (person == null) {
                 person = await this._personService.create(model.Person);
@@ -108,7 +114,21 @@ export class UserController extends BaseController {
             }
             await this.authorizeOne(request, userId, user.TenantId);
 
-            const model = await UserValidator.update(request);
+            const model: UserDomainModel = await UserValidator.update(request);
+            
+            if (model.Person.Phone && (user.Person.Phone !== model.Person.Phone)) {
+                const isPersonExistsWithPhone = await this._personService.getPersonWithPhone(model.Person.Phone);
+                if (isPersonExistsWithPhone) {
+                    throw new ApiError(409, `Person already exists with the phone ${model.Person.Phone}`);
+                }
+            }
+
+            if (model.Person.Email && (user.Person.Email !== model.Person.Email)) {
+                const isPersonExistsWithEmail = await this._personService.getPersonWithEmail(model.Person.Email);
+                if (isPersonExistsWithEmail) {
+                    throw new ApiError(409, `Person already exists with the email ${model.Person.Email}`);
+                }
+            }
 
             let updatedUser = await this._service.update(userId, model);
             if (user == null) {
@@ -139,17 +159,12 @@ export class UserController extends BaseController {
             }
             await this.authorizeOne(request, userId, user.TenantId);
 
-            const personId = user.PersonId;
             const userDeleted = await this._service.delete(userId);
             if (userDeleted == null) {
                 throw new ApiError(400, 'Cannot delete user!');
             }
-            const personDeleted = await this._personService.delete(personId);
-            if (personDeleted == null) {
-                throw new ApiError(400, 'Cannot delete person!');
-            }
             ResponseHandler.success(request, response, 'User deleted successfully!', 200, {
-                Deleted : userDeleted && personDeleted,
+                Deleted : userDeleted,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -272,6 +287,23 @@ export class UserController extends BaseController {
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const obj = await UserValidator.generateOtp(request, response);
+            
+            if (obj.Phone) {
+                const isMultiplePersonWithSamePhone =
+                await this._personService.isMultiplePersonWithSamePhone(obj.Phone);
+                if (isMultiplePersonWithSamePhone) {
+                    throw new ApiError(409, `Multiple persons are associated with the phone ${obj.Phone}`);
+                }
+            }
+
+            if (obj.Email) {
+                const isMultiplePersonWithSameEmail =
+                await this._personService.isMultiplePersonWithSameEmail(obj.Email);
+                if (isMultiplePersonWithSameEmail) {
+                    throw new ApiError(409, `Multiple persons are associated with the Email ${obj.Email}`);
+                }
+            }
+            
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
                 GenerateOTPResult : entity,

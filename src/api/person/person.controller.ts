@@ -186,7 +186,11 @@ export class PersonController extends BaseController {
     };
 
     private async authorizePerson(request: express.Request, personId: uuid) {
-        const user = await this._userService.getByPersonId(personId);
+        const users = await this._userService.getByPersonId(personId);
+        if (users.length === 0) {
+            return;
+        }
+        var user = users[0];
         if (user != null) {
             await this.authorizeOne(request, user.id, user.TenantId);
         }

@@ -99,31 +99,31 @@ export class PersonRepo implements IPersonRepo {
         return null;
     };
 
-    getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
+    getAllPersonsWithPhoneAndRole = async (phone: string | undefined | null, roleId: number): Promise<PersonDetailsDto[]> => {
 
-        if (phone != null && typeof phone !== 'undefined') {
+        if (!phone) {
+            return null;
+        }
 
-            //KK: To be optimized with associations
-
-            const personsWithRole: PersonDetailsDto[] = [];
-            var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
-            var persons = await Person.findAll({
-                where : {
-                    Phone : { [Op.in] : possiblePhoneNumbers,
-                    }
-                }
-            });
-
-            for await (const person of persons) {
-                const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
-                if (withRole != null) {
-                    const dto = await PersonMapper.toDetailsDto(person);
-                    personsWithRole.push(dto);
+        const personsWithRole: PersonDetailsDto[] = [];
+        var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
+        var persons = await Person.findAll({
+            where : {
+                Phone : { [Op.in] : possiblePhoneNumbers,
                 }
             }
+        });
 
-            return personsWithRole;
+        for await (const person of persons) {
+            const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
+            if (withRole != null) {
+                const dto = await PersonMapper.toDetailsDto(person);
+                personsWithRole.push(dto);
+            }
         }
+
+        return personsWithRole;
+
         return null;
     };
 

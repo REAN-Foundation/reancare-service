@@ -17,6 +17,7 @@ import {
     UserLoginDetails
 } from '../../../domain.types/users/user/user.domain.model';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
+import { UserHelper } from '../user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,6 +30,8 @@ export class UserController extends BaseController {
     _personService = Injector.Container.resolve(PersonService);
 
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
@@ -51,19 +54,20 @@ export class UserController extends BaseController {
                 TenantCode : model.TenantCode,
             };
 
-            const existingUser = await this._service.getUserDetails(basicDetails);
-            if (existingUser) {
-                const existingUserRole = existingUser.RoleId;
-                const existingUserTenantId = existingUser.TenantId;
-                if (existingUserRole === model.RoleId && existingUserTenantId === model.TenantId) {
-                    throw new ApiError(409, 'User already exists');
-                }
-            }
-            person = existingUser?.Person;
-            if (person == null) {
+            await this._userHelper.performDuplicatePersonCheck(basicDetails.Phone, basicDetails.Email);
+
+            const existingPerson = await this._service.getExistingPerson(basicDetails);
+            if (existingPerson == null) {
                 person = await this._personService.create(model.Person);
                 if (person == null) {
                     throw new ApiError(400, 'Cannot create person!');
+                }
+            }
+            else {
+                person = existingPerson;
+                var existingUserWithRole = await this._service.getUserByPersonIdAndRole(existingPerson.id, model.RoleId);
+                if (existingUserWithRole) {
+                    throw new ApiError(409, `User already exists with the same role.`);
                 }
             }
 
@@ -273,6 +277,23 @@ export class UserController extends BaseController {
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const obj = await UserValidator.generateOtp(request, response);
+            
+            if (obj.Phone) {
+                const isMultiplePersonWithSamePhone =
+                await this._personService.multiplePersonsWithSamePhone(obj.Phone);
+                if (isMultiplePersonWithSamePhone) {
+                    throw new ApiError(409, `Multiple persons are associated with the phone ${obj.Phone}`);
+                }
+            }
+
+            if (obj.Email) {
+                const isMultiplePersonWithSameEmail =
+                await this._personService.multiplePersonsWithSameEmail(obj.Email);
+                if (isMultiplePersonWithSameEmail) {
+                    throw new ApiError(409, `Multiple persons are associated with the Email ${obj.Email}`);
+                }
+            }
+            
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
                 GenerateOTPResult : entity,

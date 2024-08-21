@@ -286,21 +286,7 @@ export class UserController extends BaseController {
         try {
             const obj = await UserValidator.generateOtp(request, response);
             
-            if (obj.Phone) {
-                const isMultiplePersonWithSamePhone =
-                await this._personService.multiplePersonsWithSamePhone(obj.Phone);
-                if (isMultiplePersonWithSamePhone) {
-                    throw new ApiError(409, `Multiple persons are associated with the phone ${obj.Phone}`);
-                }
-            }
-
-            if (obj.Email) {
-                const isMultiplePersonWithSameEmail =
-                await this._personService.multiplePersonsWithSameEmail(obj.Email);
-                if (isMultiplePersonWithSameEmail) {
-                    throw new ApiError(409, `Multiple persons are associated with the Email ${obj.Email}`);
-                }
-            }
+            await this._userHelper.performDuplicatePersonCheck(obj.Phone, obj.Email);
             
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {

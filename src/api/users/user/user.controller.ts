@@ -16,6 +16,7 @@ import {
     UserBasicDetails
 } from '../../../domain.types/users/user/user.domain.model';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
+import { UserHelper } from '../user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +29,8 @@ export class UserController extends BaseController {
     _personService = Injector.Container.resolve(PersonService);
 
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
@@ -50,25 +53,20 @@ export class UserController extends BaseController {
                 TenantCode : model.TenantCode,
             };
 
-            const isMultiplePersonWithSamePhone =
-            await this._personService.isMultiplePersonWithSamePhone(model.Person.Phone);
-            if (isMultiplePersonWithSamePhone) {
-                throw new ApiError(409, `Multiple persons are associated with the phone ${model.Person.Phone}`);
-            }
+            await this._userHelper.performDuplicatePersonCheck(basicDetails.Phone, basicDetails.Email);
 
-            const isMultiplePersonWithSameEmail =
-            await this._personService.isMultiplePersonWithSameEmail(model.Person.Email);
-            if (isMultiplePersonWithSameEmail) {
-                throw new ApiError(409, `Multiple persons are associated with the Email ${model.Person.Email}`);
-            }
-
-            const existingUser = await this._service.getUserDetails(basicDetails, model.RoleId);
-            
-            person = existingUser?.Person;
-            if (person == null) {
+            const existingPerson = await this._service.getExistingPerson(basicDetails);
+            if (existingPerson == null) {
                 person = await this._personService.create(model.Person);
                 if (person == null) {
                     throw new ApiError(400, 'Cannot create person!');
+                }
+            }
+            else {
+                person = existingPerson;
+                var existingUserWithRole = await this._service.getUserByPersonIdAndRole(existingPerson.id, model.RoleId);
+                if (existingUserWithRole) {
+                    throw new ApiError(409, `User already exists with the same role.`);
                 }
             }
 
@@ -290,7 +288,7 @@ export class UserController extends BaseController {
             
             if (obj.Phone) {
                 const isMultiplePersonWithSamePhone =
-                await this._personService.isMultiplePersonWithSamePhone(obj.Phone);
+                await this._personService.multiplePersonsWithSamePhone(obj.Phone);
                 if (isMultiplePersonWithSamePhone) {
                     throw new ApiError(409, `Multiple persons are associated with the phone ${obj.Phone}`);
                 }
@@ -298,7 +296,7 @@ export class UserController extends BaseController {
 
             if (obj.Email) {
                 const isMultiplePersonWithSameEmail =
-                await this._personService.isMultiplePersonWithSameEmail(obj.Email);
+                await this._personService.multiplePersonsWithSameEmail(obj.Email);
                 if (isMultiplePersonWithSameEmail) {
                     throw new ApiError(409, `Multiple persons are associated with the Email ${obj.Email}`);
                 }

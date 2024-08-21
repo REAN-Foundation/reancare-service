@@ -92,10 +92,14 @@ export class UserService {
         return dto;
     };
 
-    public getByPersonId = async (personId: string): Promise<UserDetailsDto> => {
-        var dto = await this._userRepo.getByPersonId(personId);
-        dto = await this.updateDetailsDto(dto);
-        return dto;
+    public getByPersonId = async (personId: string): Promise<UserDetailsDto[]> => {
+        var users_: UserDetailsDto[] = await this._userRepo.getByPersonId(personId);
+        var users: UserDetailsDto[] = [];
+        for await (var user of users_) {
+            user = await this.updateDetailsDto(user);
+            users.push(user);
+        }
+        return users;
     };
 
     public getByPhoneAndRole = async (phone: string, roleId: number): Promise<UserDetailsDto> => {
@@ -127,6 +131,12 @@ export class UserService {
         return dto;
     };
 
+    public getUserByPersonIdAndRole = async (personId: string, loginRoleId: number): Promise<UserDetailsDto> => {
+        var dto = await this._userRepo.getUserByPersonIdAndRole(personId, loginRoleId);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
+    };
+
     public update = async (id: string, model: UserDomainModel): Promise<UserDetailsDto> => {
         // timezone sanitization
 
@@ -152,6 +162,7 @@ export class UserService {
     };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
+
         const user: UserDetailsDto = await this.checkUserDetails(
             loginModel.Phone,
             loginModel.Email,
@@ -320,7 +331,7 @@ export class UserService {
             throw new ApiError(404, 'Cannot find user.');
         }
 
-        //Now check if that person is an user with a given role
+        //Now check if that person is a user with a given role
         const personId = person.id;
         var user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, otpModel.RoleId);
         user = await this.updateDetailsDto(user);
@@ -364,8 +375,8 @@ export class UserService {
         const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
         const isPasswordValid = Helper.compare(model.OldPassword, hashedPassword);
         if (!isPasswordValid) {
-            throw new ApiError(401,
-                `Invalid old password! Please provide correct old password. If you have forgotten your password, please use the 'Forgot Password' feature.`);
+            const message = 'Invalid old password! Please provide correct old password. If you have forgotten your password, please use the "Forgot Password" feature.';
+            throw new ApiError(401, message);
         }
 
         const newPasswordHash = Helper.hash(model.NewPassword);
@@ -599,7 +610,8 @@ export class UserService {
         await this._userRepo.checkUsersWithoutTenants();
     };
 
-    public getUserDetails = async (model: UserBasicDetails, roleId: number): Promise<UserDetailsDto> => {
+    public getExistingPerson = async (model: UserBasicDetails): Promise<PersonDetailsDto> => {
+
         let person: PersonDetailsDto = null;
         let user: UserDetailsDto = {};
 
@@ -617,7 +629,7 @@ export class UserService {
                 Logger.instance().log(message);
             }
         }
-        if (model.UserName) {
+        if (model.UserName && !person) {
             user = await this._userRepo.getUserWithUserName(model.UserName);
             user = await this.updateDetailsDto(user);
             if (user == null) {
@@ -630,19 +642,7 @@ export class UserService {
             return null;
         }
 
-        const isUserWithRoleAlreadyExists = await this.isUserWithRoleAlreadyExists(
-            person.Phone,
-            person.Email,
-            roleId
-        );
-        
-        if (isUserWithRoleAlreadyExists) {
-            throw new ApiError(409, 'User with role already exists');
-        }
-
-        user.Person = user.Person ?? person;
-
-        return user;
+        return person;
     };
 
     //#endregion
@@ -687,12 +687,13 @@ export class UserService {
     }
 
     private async checkUserDetails(
-        phone: string,
-        email: string,
-        username: string,
+        phone: string | undefined | null,
+        email: string | undefined | null,
+        username: string | undefined | null,
         roleId: number,
         tenantId: string = null
     ): Promise<UserDetailsDto> {
+
         let person: PersonDetailsDto = null;
         let user: UserDetailsDto = null;
         let userId = null;
@@ -898,7 +899,7 @@ export class UserService {
         }
     };
 
-    private isUserWithRoleAlreadyExists = async (phone: string, email: string, roleId: number): Promise<boolean> => {
+    private userWithRoleExists = async (phone: string, email: string, roleId: number): Promise<boolean> => {
         const searchResult = await this._userRepo.search({
             Phone   : phone,
             Email   : email,
@@ -911,6 +912,7 @@ export class UserService {
 
         return false;
     };
+
     //#endregion
 
 }

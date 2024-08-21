@@ -16,7 +16,7 @@ import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { RoleDto } from '../../domain.types/role/role.dto';
 import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
-import { OtpGenerationModel, UserDomainModel } from '../../domain.types/users/user/user.domain.model';
+import { OtpGenerationModel, UserBasicDetails, UserDomainModel } from '../../domain.types/users/user/user.domain.model';
 import { TenantDto } from '../../domain.types/tenant/tenant.dto';
 import { DoctorDomainModel } from '../../domain.types/users/doctor/doctor.domain.model';
 import { DoctorDetailsDto } from '../../domain.types/users/doctor/doctor.dto';
@@ -53,6 +53,26 @@ export class UserHelper {
         this._doctorService = Injector.Container.resolve(DoctorService);
     }
 
+    public performDuplicatePersonCheck = async (
+        phone: string | null | undefined, 
+        email: string | null | undefined) => {
+
+        if (phone) {
+            const multiplePersonsWithSamePhone = await this._personService.multiplePersonsWithSamePhone(phone);
+            if (multiplePersonsWithSamePhone) {
+                const message = `Multiple persons are associated with the phone ${phone}. Please contact support to merge your accounts.`;
+                throw new ApiError(409, message);
+            }
+        }
+        if (email) {
+            const multiplePersonsWithSameEmail = await this._personService.multiplePersonsWithSameEmail(email);
+            if (multiplePersonsWithSameEmail) {
+                const message = `Multiple persons are associated with the Email ${email}. Please contact support to merge your accounts.`;
+                throw new ApiError(409, message);
+            }
+        }
+    };
+
     createPatient = async(createModel: PatientDomainModel): Promise<[PatientDetailsDto, boolean]> => {
 
         var person: PersonDetailsDto = null;
@@ -64,11 +84,17 @@ export class UserHelper {
             throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
         }
 
-        if (createModel.User.Person.Phone != null && createModel.User.Person.Phone.length > 0) {
-            person = await this._patientService.checkforExistingPersonWithRole(createModel, patientRole.id);
-        }
+        await this.performDuplicatePersonCheck(createModel.User.Person.Phone, createModel.User.Person.Email);
 
-        //Check if the user exists with the same username
+        // First check using phone and email if the person exists
+        const basicDetails: UserBasicDetails = {
+            Phone    : createModel.User.Person.Phone,
+            Email    : createModel.User.Person.Email
+        };
+        person = await this._userService.getExistingPerson(basicDetails);
+
+        //If the person does not exist with the same phone and email, check if the person exists with the same username.
+        //This is true for the patients coming from the bot.
         //We are allowing some patient's coming from the bot to be created without phone number or email
         if (person == null && createModel.User.UserName != null) {
             user = await this._userService.getByUserName(createModel.User.UserName);
@@ -104,29 +130,7 @@ export class UserHelper {
             }
         }
         else {
-            if (createModel.User.Person.Phone) {
-                const isMultiplePersonWithSamePhone =
-                await this._personService.isMultiplePersonWithSamePhone(createModel.User.Person.Phone);
-                if (isMultiplePersonWithSamePhone) {
-                    throw new ApiError(409, `Multiple persons are associated with the phone ${createModel.User.Person.Phone}`);
-                }
-            }
-
-            if (createModel.User.Person.Email) {
-                const isMultiplePersonWithSameEmail =
-                await this._personService.isMultiplePersonWithSameEmail(createModel.User.Person.Email);
-                if (isMultiplePersonWithSameEmail) {
-                    throw new ApiError(409, `Multiple persons are associated with the Email ${createModel.User.Person.Email}`);
-                }
-            }
-
-            const personDetails = await this.getPersonWithPhoneOrEmail(createModel);
-            if (!personDetails) {
-                person = await this._personService.create(createModel.User.Person);
-            } else {
-                person = personDetails;
-            }
-
+            person = await this._personService.create(createModel.User.Person);
             if (person == null) {
                 throw new ApiError(400, 'Cannot create person!');
             }
@@ -288,11 +292,17 @@ export class UserHelper {
             throw new ApiError(404, 'Role- ' + Roles.Doctor + ' does not exist!');
         }
 
-        if (createModel.User.Person.Phone != null && createModel.User.Person.Phone.length > 0) {
-            person = await this._doctorService.checkforExistingPersonWithRole(createModel, doctorRole.id);
-        }
+        await this.performDuplicatePersonCheck(createModel.User.Person.Phone, createModel.User.Person.Email);
 
-        //Check if the user exists with the same username
+        // First check using phone and email if the person exists
+        const basicDetails: UserBasicDetails = {
+            Phone    : createModel.User.Person.Phone,
+            Email    : createModel.User.Person.Email
+        };
+        person = await this._userService.getExistingPerson(basicDetails);
+
+        //If the person does not exist with the same phone and email, check if the person exists with the same username.
+        //This is true for the patients coming from the bot.
         //We are allowing some patient's coming from the bot to be created without phone number or email
         if (person == null && createModel.User.UserName != null) {
             user = await this._userService.getByUserName(createModel.User.UserName);
@@ -323,28 +333,7 @@ export class UserHelper {
             }
         }
         else {
-            if (createModel.User.Person.Phone) {
-                const isMultiplePersonWithSamePhone =
-                await this._personService.isMultiplePersonWithSamePhone(createModel.User.Person.Phone);
-                if (isMultiplePersonWithSamePhone) {
-                    throw new ApiError(409, `Multiple persons are associated with the phone ${createModel.User.Person.Phone}`);
-                }
-            }
-
-            if (createModel.User.Person.Email) {
-                const isMultiplePersonWithSameEmail =
-                await this._personService.isMultiplePersonWithSameEmail(createModel.User.Person.Email);
-                if (isMultiplePersonWithSameEmail) {
-                    throw new ApiError(409, `Multiple persons are associated with the Email ${createModel.User.Person.Email}`);
-                }
-            }
-            
-            const personDetails = await this.getPersonWithPhoneOrEmail(createModel);
-            if (!personDetails) {
-                person = await this._personService.create(createModel.User.Person);
-            } else {
-                person = personDetails;
-            }
+            person = await this._personService.create(createModel.User.Person);
             if (person == null) {
                 throw new ApiError(400, 'Cannot create person!');
             }
@@ -370,20 +359,6 @@ export class UserHelper {
         doctor.User.Person.Addresses = [address];
 
         return [ doctor, true ];
-    };
-
-    private getPersonWithPhoneOrEmail = async (
-        model: PatientDomainModel | DoctorDomainModel
-    ) : Promise<PersonDetailsDto> => {
-        let personExistWithPhone = null;
-        let personExistWithEmail = null;
-        if (model.User.Person.Phone) {
-            personExistWithPhone = await this._personService.getPersonWithPhone(model.User.Person.Phone);
-        }
-        if (model.User.Person.Email) {
-            personExistWithEmail = await this._personService.getPersonWithEmail(model.User.Person.Email);
-        }
-        return personExistWithPhone || personExistWithEmail;
     };
     
 }

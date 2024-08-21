@@ -46,7 +46,7 @@ export class PersonService {
         return await this._personRepo.search(filters);
     };
 
-    public isMultiplePersonWithSamePhone = async (phone: string): Promise<boolean> => {
+    public multiplePersonsWithSamePhone = async (phone: string): Promise<boolean> => {
         if (!phone) {
             return false;
         }
@@ -61,7 +61,7 @@ export class PersonService {
         return false;
     };
 
-    public isMultiplePersonWithSameEmail = async (email: string): Promise<boolean> => {
+    public multiplePersonsWithSameEmail = async (email: string): Promise<boolean> => {
         if (!email) {
             return false;
         }

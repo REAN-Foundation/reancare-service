@@ -104,7 +104,29 @@ export class UserHelper {
             }
         }
         else {
-            person = await this._personService.create(createModel.User.Person);
+            if (createModel.User.Person.Phone) {
+                const isMultiplePersonWithSamePhone =
+                await this._personService.isMultiplePersonWithSamePhone(createModel.User.Person.Phone);
+                if (isMultiplePersonWithSamePhone) {
+                    throw new ApiError(409, `Multiple persons are associated with the phone ${createModel.User.Person.Phone}`);
+                }
+            }
+
+            if (createModel.User.Person.Email) {
+                const isMultiplePersonWithSameEmail =
+                await this._personService.isMultiplePersonWithSameEmail(createModel.User.Person.Email);
+                if (isMultiplePersonWithSameEmail) {
+                    throw new ApiError(409, `Multiple persons are associated with the Email ${createModel.User.Person.Email}`);
+                }
+            }
+
+            const personDetails = await this.getPersonWithPhoneOrEmail(createModel);
+            if (!personDetails) {
+                person = await this._personService.create(createModel.User.Person);
+            } else {
+                person = personDetails;
+            }
+
             if (person == null) {
                 throw new ApiError(400, 'Cannot create person!');
             }
@@ -301,7 +323,28 @@ export class UserHelper {
             }
         }
         else {
-            person = await this._personService.create(createModel.User.Person);
+            if (createModel.User.Person.Phone) {
+                const isMultiplePersonWithSamePhone =
+                await this._personService.isMultiplePersonWithSamePhone(createModel.User.Person.Phone);
+                if (isMultiplePersonWithSamePhone) {
+                    throw new ApiError(409, `Multiple persons are associated with the phone ${createModel.User.Person.Phone}`);
+                }
+            }
+
+            if (createModel.User.Person.Email) {
+                const isMultiplePersonWithSameEmail =
+                await this._personService.isMultiplePersonWithSameEmail(createModel.User.Person.Email);
+                if (isMultiplePersonWithSameEmail) {
+                    throw new ApiError(409, `Multiple persons are associated with the Email ${createModel.User.Person.Email}`);
+                }
+            }
+            
+            const personDetails = await this.getPersonWithPhoneOrEmail(createModel);
+            if (!personDetails) {
+                person = await this._personService.create(createModel.User.Person);
+            } else {
+                person = personDetails;
+            }
             if (person == null) {
                 throw new ApiError(400, 'Cannot create person!');
             }
@@ -329,4 +372,18 @@ export class UserHelper {
         return [ doctor, true ];
     };
 
+    private getPersonWithPhoneOrEmail = async (
+        model: PatientDomainModel | DoctorDomainModel
+    ) : Promise<PersonDetailsDto> => {
+        let personExistWithPhone = null;
+        let personExistWithEmail = null;
+        if (model.User.Person.Phone) {
+            personExistWithPhone = await this._personService.getPersonWithPhone(model.User.Person.Phone);
+        }
+        if (model.User.Person.Email) {
+            personExistWithEmail = await this._personService.getPersonWithEmail(model.User.Person.Email);
+        }
+        return personExistWithPhone || personExistWithEmail;
+    };
+    
 }

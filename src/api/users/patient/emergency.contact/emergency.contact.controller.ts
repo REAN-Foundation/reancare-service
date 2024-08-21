@@ -101,6 +101,22 @@ export class EmergencyContactController extends PatientBaseController {
                     Email     : model.ContactPerson.Email ?? null
                 };
 
+                if (personDomainModel.Phone) {
+                    const isMultiplePersonWithSamePhone =
+                    await this._personService.isMultiplePersonWithSamePhone(personDomainModel.Phone);
+                    if (isMultiplePersonWithSamePhone) {
+                        throw new ApiError(409, `Multiple persons are associated with the phone ${personDomainModel.Phone}`);
+                    }
+                }
+
+                if (personDomainModel.Email) {
+                    const isMultiplePersonWithSameEmail =
+                    await this._personService.isMultiplePersonWithSameEmail(personDomainModel.Email);
+                    if (isMultiplePersonWithSameEmail) {
+                        throw new ApiError(409, `Multiple persons are associated with the Email ${personDomainModel.Email}`);
+                    }
+                }
+                
                 const existingPerson = await this._personService.getPersonWithPhone(model.ContactPerson.Phone);
                 if (existingPerson !== null) {
 

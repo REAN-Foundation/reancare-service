@@ -20,6 +20,7 @@ import { OrganizationDto } from '../../../../../domain.types/general/organizatio
 import { RoleDto } from '../../../../../domain.types/role/role.dto';
 import Role from '../../models/role/role.model';
 import { RoleMapper } from '../../mappers/role/role.mapper';
+import { PersonSearchFilters, PersonSearchResults } from '../../../../../domain.types/person/person.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -265,14 +266,77 @@ export class PersonRepo implements IPersonRepo {
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    search(filters: any): Promise<PersonDto[]> {
-        const dtos: PersonDto[] = [];
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        return new Promise((resolve, reject) => {
-            resolve(dtos);
-        });
-    }
+    search = async (filters: PersonSearchFilters): Promise<PersonSearchResults> => {
+        try {
+            const search: any = { where: {} };
+            if (filters.Phone) {
+                search.where['Phone'] = filters.Phone;
+            }
+            if (filters.Email) {
+                search.where['Email'] = filters.Email;
+            }
+            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.CreatedDateFrom,
+                    [Op.lte] : filters.CreatedDateTo,
+                };
+            }
+            else if (filters.CreatedDateFrom == null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.lte] : filters.CreatedDateTo,
+                };
+            }
+            else if (filters.CreatedDateFrom != null && filters.CreatedDateTo == null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.CreatedDateFrom,
+                };
+            }
+
+            const orderByColum = 'CreatedAt';
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+            if (filters.OrderBy) {
+                const personAttributes = ['FirstName', 'LastName', 'BirthDate', 'Gender', 'Phone', 'Email'];
+                const isPersonColumn = personAttributes.includes(filters.OrderBy);
+                if (isPersonColumn) {
+                    search['order'] = [[ 'Person', filters.OrderBy, order]];
+                }
+            }
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await Person.findAndCountAll(search);
+            const dtos = foundResults.rows.map(x => PersonMapper.toDetailsDto(x));
+
+            const searchResults: PersonSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     getOrganizations = async (id: string): Promise<OrganizationDto[]> => {
         try {

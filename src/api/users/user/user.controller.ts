@@ -113,7 +113,21 @@ export class UserController extends BaseController {
             }
             await this.authorizeOne(request, userId, user.TenantId);
 
-            const model = await UserValidator.update(request);
+            const model: UserDomainModel = await UserValidator.update(request);
+            
+            if (model.Person.Phone && (user.Person.Phone !== model.Person.Phone)) {
+                const isPersonExistsWithPhone = await this._personService.getPersonWithPhone(model.Person.Phone);
+                if (isPersonExistsWithPhone) {
+                    throw new ApiError(409, `Person already exists with the phone ${model.Person.Phone}`);
+                }
+            }
+
+            if (model.Person.Email && (user.Person.Email !== model.Person.Email)) {
+                const isPersonExistsWithEmail = await this._personService.getPersonWithEmail(model.Person.Email);
+                if (isPersonExistsWithEmail) {
+                    throw new ApiError(409, `Person already exists with the email ${model.Person.Email}`);
+                }
+            }
 
             let updatedUser = await this._service.update(userId, model);
             if (user == null) {
@@ -144,17 +158,12 @@ export class UserController extends BaseController {
             }
             await this.authorizeOne(request, userId, user.TenantId);
 
-            const personId = user.PersonId;
             const userDeleted = await this._service.delete(userId);
             if (userDeleted == null) {
                 throw new ApiError(400, 'Cannot delete user!');
             }
-            const personDeleted = await this._personService.delete(personId);
-            if (personDeleted == null) {
-                throw new ApiError(400, 'Cannot delete person!');
-            }
             ResponseHandler.success(request, response, 'User deleted successfully!', 200, {
-                Deleted : userDeleted && personDeleted,
+                Deleted : userDeleted,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

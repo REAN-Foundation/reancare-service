@@ -15,7 +15,6 @@ import { TenantDto } from '../../../../../../domain.types/tenant/tenant.dto';
 import { PersonMapper } from '../../../mappers/person/person.mapper';
 import Role from '../../../models/role/role.model';
 import { UserSearchFilters, UserSearchResults } from '../../../../../../domain.types/users/user/user.search.types';
-import { BaseSearchFilters } from '../../../../../../domain.types/miscellaneous/base.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -266,7 +265,7 @@ export class UserRepo implements IUserRepo {
         }
     };
 
-    search = async (filters: UserSearchFilters): Promise<any> => {
+    search = async (filters: UserSearchFilters): Promise<UserSearchResults> => {
         try {
 
             const search: any = { where: {}, include: [] };

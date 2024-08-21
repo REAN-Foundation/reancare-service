@@ -162,7 +162,6 @@ export class UserService {
     };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
-
         const user: UserDetailsDto = await this.checkUserDetails(
             loginModel.Phone,
             loginModel.Email,
@@ -237,7 +236,13 @@ export class UserService {
             loginModel.Phone = loginModel.Phone.split('-')[1];
         }
 
-        const user: UserDetailsDto = await this.checkUserDetails(loginModel);
+        const user: UserDetailsDto = await this.checkUserDetails(
+            loginModel.Phone,
+            loginModel.Email,
+            loginModel.UserName,
+            loginModel.LoginRoleId,
+            loginModel.TenantId
+        );
         var tenant = await this.checkTenant(user);
 
         if (!isTestUser) {
@@ -329,7 +334,7 @@ export class UserService {
         const personId = person.id;
         var user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, otpModel.RoleId);
         user = await this.updateDetailsDto(user);
-        if (person == null) {
+        if (person == null || user == null) {
             throw new ApiError(404, 'Cannot find user with the given role.');
         }
 
@@ -354,12 +359,17 @@ export class UserService {
     public changePassword = async (model: ChangePasswordModel): Promise<boolean> => {
 
         const userLoginModel: UserLoginDetails = {
-            Phone      : model.Phone,
-            Email      : model.Email,
-            UserName   : model.UserName,
-            LoginRoleId: model.RoleId
+            Phone       : model.Phone,
+            Email       : model.Email,
+            UserName    : model.UserName,
+            LoginRoleId : model.RoleId
         };
-        const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
+        const user: UserDetailsDto = await this.checkUserDetails(
+            userLoginModel.Phone,
+            userLoginModel.Email,
+            userLoginModel.UserName,
+            userLoginModel.LoginRoleId
+        );
 
         const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
         const isPasswordValid = Helper.compare(model.OldPassword, hashedPassword);
@@ -377,12 +387,17 @@ export class UserService {
     public resetPassword = async (model: ResetPasswordModel): Promise<boolean> => {
 
         const userLoginModel: UserLoginDetails = {
-            Phone      : model.Phone,
-            Email      : model.Email,
-            UserName   : model.UserName,
-            LoginRoleId: model.RoleId
+            Phone       : model.Phone,
+            Email       : model.Email,
+            UserName    : model.UserName,
+            LoginRoleId : model.RoleId
         };
-        const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
+        const user: UserDetailsDto = await this.checkUserDetails(
+            userLoginModel.Phone,
+            userLoginModel.Email,
+            userLoginModel.UserName,
+            model.RoleId,
+        );
 
         const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, model.ResetCode, 'PasswordReset');
         if (!storedOtp) {
@@ -401,12 +416,17 @@ export class UserService {
 
     public sendPasswordResetCode = async (model: SendPasswordResetCodeModel): Promise<boolean> => {
         const userLoginModel: UserLoginDetails = {
-            Phone      : model.Phone,
-            Email      : model.Email,
-            UserName   : model.UserName,
-            LoginRoleId: model.RoleId
+            Phone       : model.Phone,
+            Email       : model.Email,
+            UserName    : model.UserName,
+            LoginRoleId : model.RoleId
         };
-        const user: UserDetailsDto = await this.checkUserDetails(userLoginModel);
+        const user: UserDetailsDto = await this.checkUserDetails(
+            userLoginModel.Phone,
+            userLoginModel.Email,
+            userLoginModel.UserName,
+            model.RoleId,
+        );
         const successful = await this.sendPasswordResetOtp(user);
         if (successful) {
             Logger.instance().log(`Password reset code sent successfully to user ${user.Person.DisplayName}.`);
@@ -592,7 +612,7 @@ export class UserService {
     public getExistingPerson = async (model: UserBasicDetails): Promise<PersonDetailsDto> => {
 
         let person: PersonDetailsDto = null;
-        let user: UserDetailsDto = null;
+        let user: UserDetailsDto = {};
 
         if (model.Phone) {
             person = await this._personRepo.getPersonWithPhone(model.Phone);
@@ -601,7 +621,7 @@ export class UserService {
                 Logger.instance().log(message);
             }
         }
-        if (model.Email) {
+        if (model.Email && !person) {
             person = await this._personRepo.getPersonWithEmail(model.Email);
             if (person == null) {
                 const message = 'User does not exist with email(' + model.Email + ')';
@@ -644,11 +664,11 @@ export class UserService {
         const validTill = new Date(currMillsecs + (validityInMinutes * 60 * 1000));
 
         const otpEntity: OtpPersistenceEntity = {
-            Purpose: purpose,
-            UserId: userId,
-            Otp: otp,
-            ValidFrom: new Date(),
-            ValidTill: validTill,
+            Purpose   : purpose,
+            UserId    : userId,
+            Otp       : otp,
+            ValidFrom : new Date(),
+            ValidTill : validTill,
         };
 
         const otpDto = await this._otpRepo.create(otpEntity);
@@ -675,33 +695,48 @@ export class UserService {
 
         let person: PersonDetailsDto = null;
         let user: UserDetailsDto = null;
+        let userId = null;
 
-        if (model.Phone) {
-            person = await this._personRepo.getPersonWithPhone(model.Phone);
-            if (person == null) {
-                const message = 'User does not exist with phone(' + model.Phone + ')';
+        if (phone) {
+            const searchResult = await this._userRepo.search({
+                Phone    : phone,
+                RoleIds  : [roleId as unknown as string],
+                TenantId : tenantId
+            });
+            userId = searchResult.TotalCount > 0 ? searchResult.Items[0].id : null;
+
+            if (userId == null) {
+                const message = 'User does not exist with phone(' + phone + ')';
                 throw new ApiError(404, message);
             }
-        } else if (model.Email) {
-            person = await this._personRepo.getPersonWithEmail(model.Email);
-            if (person == null) {
-                const message = 'User does not exist with email(' + model.Email + ')';
+        } else if (email) {
+            const searchResult = await this._userRepo.search({
+                Email    : email,
+                RoleIds  : [roleId as unknown as string],
+                TenantId : tenantId
+            });
+            userId = searchResult.TotalCount > 0 ? searchResult.Items[0].id : null;
+
+            if (userId == null) {
+                const message = 'User does not exist with email(' + email + ')';
                 throw new ApiError(404, message);
             }
-        } else if (model.UserName) {
-            user = await this._userRepo.getUserWithUserName(model.UserName);
+        } else if (username) {
+            user = await this._userRepo.getUserWithUserName(username);
             user = await this.updateDetailsDto(user);
             if (user == null) {
-                const message = 'User does not exist with username (' + model.UserName + ')';
+                const message = 'User does not exist with username (' + username + ')';
                 throw new ApiError(404, message);
             }
+            userId = user.id;
             person = await this._personRepo.getById(user.Person.id);
         }
-        if (person == null) {
-            throw new ApiError(404, 'Cannot find person.');
+
+        if (userId == null) {
+            throw new ApiError(404, 'Cannot find user.');
         }
 
-        user  = await this._userRepo.getByPersonId(person.id);
+        user  = await this._userRepo.getById(userId);
         if (user == null) {
             throw new ApiError(404, 'Cannot find user.');
         }
@@ -876,7 +911,6 @@ export class UserService {
 
         return false;
     };
-
     //#endregion
 
 }

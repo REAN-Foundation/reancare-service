@@ -691,6 +691,16 @@ export class CareplanService implements IUserActionService {
         return await this._handler.scheduleDailyHighRiskCareplan(provider);
     };
 
+    public getPatientActiveEnrollments = async (patientUserId: string ) => {
+        return await this._careplanRepo.getPatientActiveEnrollments(patientUserId);
+    };
+
+    public stop = async (enrollment: EnrollmentDto ) => {
+        await this._careplanRepo.deleteFutureCareplanTask(enrollment);
+        const updatedCareplan = await this._careplanRepo.stop(enrollment.id);
+        return updatedCareplan;
+    };
+
     //#endregion
 
 }

@@ -23,6 +23,7 @@ export class EnrollmentMapper {
             PlanName            : enrollment.PlanName,
             StartAt             : enrollment.StartDate,
             EndAt               : enrollment.EndDate,
+            StoppedAt           : enrollment.StoppedAt,
             IsActive            : enrollment.IsActive,
             Complication        : enrollment.Complication,
             HasHighRisk         : enrollment.HasHighRisk

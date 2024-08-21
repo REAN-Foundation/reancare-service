@@ -10,6 +10,7 @@ export interface EnrollmentDto {
     EnrollmentStringId?  : number | string;
     StartAt?             : Date;
     EndAt?               : Date;
+    StoppedAt?           : Date;
     IsActive             : boolean;
     Complication        ?: string;
     HasHighRisk?         : boolean;

@@ -130,29 +130,7 @@ export class UserHelper {
             }
         }
         else {
-            if (createModel.User.Person.Phone) {
-                const isMultiplePersonWithSamePhone =
-                await this._personService.isMultiplePersonWithSamePhone(createModel.User.Person.Phone);
-                if (isMultiplePersonWithSamePhone) {
-                    throw new ApiError(409, `Multiple persons are associated with the phone ${createModel.User.Person.Phone}`);
-                }
-            }
-
-            if (createModel.User.Person.Email) {
-                const isMultiplePersonWithSameEmail =
-                await this._personService.isMultiplePersonWithSameEmail(createModel.User.Person.Email);
-                if (isMultiplePersonWithSameEmail) {
-                    throw new ApiError(409, `Multiple persons are associated with the Email ${createModel.User.Person.Email}`);
-                }
-            }
-
-            const personDetails = await this.getPersonWithPhoneOrEmail(createModel);
-            if (!personDetails) {
-                person = await this._personService.create(createModel.User.Person);
-            } else {
-                person = personDetails;
-            }
-
+            person = await this._personService.create(createModel.User.Person);
             if (person == null) {
                 throw new ApiError(400, 'Cannot create person!');
             }
@@ -355,28 +333,7 @@ export class UserHelper {
             }
         }
         else {
-            if (createModel.User.Person.Phone) {
-                const isMultiplePersonWithSamePhone =
-                await this._personService.multiplePersonsWithSamePhone(createModel.User.Person.Phone);
-                if (isMultiplePersonWithSamePhone) {
-                    throw new ApiError(409, `Multiple persons are associated with the phone ${createModel.User.Person.Phone}`);
-                }
-            }
-
-            if (createModel.User.Person.Email) {
-                const isMultiplePersonWithSameEmail =
-                await this._personService.multiplePersonsWithSameEmail(createModel.User.Person.Email);
-                if (isMultiplePersonWithSameEmail) {
-                    throw new ApiError(409, `Multiple persons are associated with the Email ${createModel.User.Person.Email}`);
-                }
-            }
-            
-            const personDetails = await this.getPersonWithPhoneOrEmail(createModel);
-            if (!personDetails) {
-                person = await this._personService.create(createModel.User.Person);
-            } else {
-                person = personDetails;
-            }
+            person = await this._personService.create(createModel.User.Person);
             if (person == null) {
                 throw new ApiError(400, 'Cannot create person!');
             }

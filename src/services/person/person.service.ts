@@ -7,6 +7,7 @@ import { PersonDetailsDto, PersonDto } from '../../domain.types/person/person.dt
 import { PersonSearchFilters } from '../../domain.types/person/patient.search.types';
 import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { OrganizationDto } from '../../domain.types/general/organization/organization.types';
+import { RoleDto } from '../../domain.types/role/role.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +33,14 @@ export class PersonService {
         var dto = await this._personRepo.getById(id);
         dto = await this.updateDetailsDto(dto);
         return dto;
+    };
+
+    public getPersonRolesByPhone = async (phone: string): Promise<RoleDto[]> => {
+        return await this._personRepo.getPersonRolesByPhone(phone);
+    };
+
+    public getPersonRolesByEmail = async (email: string): Promise<RoleDto[]> => {
+        return await this._personRepo.getPersonRolesByEmail(email);
     };
 
     public exists = async (id: string): Promise<boolean> => {

@@ -2,6 +2,7 @@ import { OrganizationDto } from "../../../domain.types/general/organization/orga
 import { AddressDto } from "../../../domain.types/general/address/address.dto";
 import { PersonDomainModel } from "../../../domain.types/person/person.domain.model";
 import { PersonDetailsDto, PersonDto } from "../../../domain.types/person/person.dto";
+import { RoleDto } from "../../../domain.types/role/role.dto";
 
 export interface IPersonRepo {
 
@@ -12,6 +13,10 @@ export interface IPersonRepo {
     exists(id: string): Promise<boolean>;
 
     delete(id: string): Promise<boolean>;
+
+    getPersonRolesByPhone(phone: string): Promise<RoleDto[]>;
+
+    getPersonRolesByEmail(email: string): Promise<RoleDto[]>;
 
     personExistsWithPhone(phone: string): Promise<boolean>;
 

@@ -12,6 +12,22 @@ export class PersonAuth {
 
     static readonly _baseContext = 'Person';
 
+    static readonly getPersonRolesByPhone: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetPersonRolesByPhone`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetMany,
+    };
+
+    static readonly getPersonRolesByEmail: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetPersonRolesByEmail`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetMany,
+    };
+
     static readonly getAllPersonsWithPhoneAndRole: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.GetAllPersonsWithPhoneAndRole`,

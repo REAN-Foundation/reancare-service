@@ -1,5 +1,5 @@
 import express from 'express';
-import { param, validationResult } from 'express-validator';
+import { body, param, validationResult } from 'express-validator';
 import { Helper } from '../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +47,39 @@ export class PersonValidator {
         const addressId = request.params.addressId;
 
         return { id, addressId };
+    };
+
+    static getPersonRolesByPhone = async (request: express.Request): Promise<string> => {
+
+        await body('Phone')
+        .exists()
+        .escape()
+        .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        return request.body.Phone;
+    };
+
+    static getPersonRolesByEmail = async (request: express.Request): Promise<string> => {
+            
+        await body('Email')
+            .exists()
+            .isEmail()
+            .normalizeEmail()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        return request.body.Email;
     };
 
     static getAllPersonsWithPhoneAndRole = async (request: express.Request)

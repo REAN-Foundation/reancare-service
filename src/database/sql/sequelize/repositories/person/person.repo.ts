@@ -17,6 +17,9 @@ import PersonAddresses from "../../models/person/person.addresses.model";
 import Person from '../../models/person/person.model';
 import PersonRole from "../../models/person/person.role.model";
 import { OrganizationDto } from '../../../../../domain.types/general/organization/organization.types';
+import { RoleDto } from '../../../../../domain.types/role/role.dto';
+import Role from '../../models/role/role.model';
+import { RoleMapper } from '../../mappers/role/role.mapper';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +31,50 @@ export class PersonRepo implements IPersonRepo {
             return existing != null;
         }
         return false;
+    };
+
+    getPersonRolesByPhone = async (phone: string): Promise<RoleDto[]> => {
+        const roles: RoleDto[] = [];
+        if (phone == null || typeof phone === 'undefined') {
+            return roles;
+        }
+        var person = await Person.findOne({
+            where : {
+                Phone : { [Op.like]: '%' + phone + '%' }
+                }
+            }
+        );
+        if (person == null) {
+            return roles;
+        }
+        const personRoles = await PersonRole.findAll({ where: { PersonId: person.id } });
+        for await (const personRole of personRoles) {
+            const role = await Role.findOne({ where: { id: personRole.RoleId } });
+            roles.push(RoleMapper.toDto(role));
+        }
+        return roles;
+    };
+
+    getPersonRolesByEmail = async (email: string): Promise<RoleDto[]> => {
+        const roles: RoleDto[] = [];
+        if (email == null || typeof email === 'undefined') {
+            return roles;
+        }
+        var person = await Person.findOne({
+            where : {
+                Email : { [Op.like]: '%' + email + '%' }
+                }
+            }
+        );
+        if (person == null) {
+            return roles;
+        }
+        const personRoles = await PersonRole.findAll({ where: { PersonId: person.id } });
+        for await (const personRole of personRoles) {
+            const role = await Role.findOne({ where: { id: personRole.RoleId } });
+            roles.push(RoleMapper.toDto(role));
+        }
+        return roles;
     };
 
     personExistsWithPhone = async (phone: string): Promise<boolean> => {

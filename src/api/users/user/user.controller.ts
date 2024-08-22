@@ -13,7 +13,8 @@ import {
     ResetPasswordModel, 
     ChangePasswordModel, 
     UserDomainModel, 
-    UserBasicDetails
+    UserBasicDetails,
+    UserLoginDetails
 } from '../../../domain.types/users/user/user.domain.model';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 
@@ -200,7 +201,7 @@ export class UserController extends BaseController {
 
     loginWithPassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const loginObject = await UserValidator.loginWithPassword(request, response);
+            const loginObject: UserLoginDetails = await UserValidator.loginWithPassword(request, response);
             const userDetails = await this._service.loginWithPassword(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);

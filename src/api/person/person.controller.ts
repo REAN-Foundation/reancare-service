@@ -49,6 +49,34 @@ export class PersonController extends BaseController {
         }
     };
 
+    getPersonRolesByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const phone: string = await PersonValidator.getPersonRolesByPhone(request);
+            const roles = await this._service.getPersonRolesByPhone(phone);
+            const message = roles.length === 0 ?
+                'No records found!' : `Total ${roles.length} roles retrieved successfully!`;
+            ResponseHandler.success(request, response, message, 200, {
+                Roles : roles,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPersonRolesByEmail = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const email: string = await PersonValidator.getPersonRolesByEmail(request);
+            const roles = await this._service.getPersonRolesByEmail(email);
+            const message = roles.length === 0 ?
+                'No records found!' : `Total ${roles.length} roles retrieved successfully!`;
+            ResponseHandler.success(request, response, message, 200, {
+                Roles : roles,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getAllPersonsWithPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const { phone, roleId } = await PersonValidator.getAllPersonsWithPhoneAndRole(request);
@@ -56,7 +84,6 @@ export class PersonController extends BaseController {
             const message =
                 persons.length === 0 ?
                     'No records found!' : `Total ${persons.length} person records retrieved successfully!`;
-
             ResponseHandler.success(request, response, message, 200, {
                 Persons : persons,
             });

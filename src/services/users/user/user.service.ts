@@ -84,11 +84,8 @@ export class UserService {
     public getById = async (id: string): Promise<UserDetailsDto> => {
         var dto = await this._userRepo.getById(id);
         Logger.instance().log(`DTO from user repo: ${JSON.stringify(dto)}`);
-
         dto = await this.updateDetailsDto(dto);
-
         Logger.instance().log(`Update details DTO: ${JSON.stringify(dto)}`);
-
         return dto;
     };
 
@@ -525,7 +522,7 @@ export class UserService {
         }
     };
 
-    getDateInUserTimeZone = async (userId, dateStr: string, useCurrent = true) => {
+    public getDateInUserTimeZone = async (userId, dateStr: string, useCurrent = true) => {
         var user = await this.getById(userId);
         if (user === null) {
             throw new ApiError(422, 'Invalid user id.');
@@ -898,19 +895,6 @@ export class UserService {
         }
     };
 
-    private userWithRoleExists = async (phone: string, email: string, roleId: number): Promise<boolean> => {
-        const searchResult = await this._userRepo.search({
-            Phone   : phone,
-            Email   : email,
-            RoleIds : [roleId as unknown as string]
-        });
-
-        if (searchResult.Items.length) {
-            return true;
-        }
-
-        return false;
-    };
     //#endregion
 
 }

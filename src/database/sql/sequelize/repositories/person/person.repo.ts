@@ -124,8 +124,6 @@ export class PersonRepo implements IPersonRepo {
         }
 
         return personsWithRole;
-
-        return null;
     };
 
     personExistsWithEmail = async (email: string): Promise<boolean> => {

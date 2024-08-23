@@ -21,6 +21,7 @@ import { RoleDto } from '../../../../../domain.types/role/role.dto';
 import Role from '../../models/role/role.model';
 import { RoleMapper } from '../../mappers/role/role.mapper';
 import { PersonSearchFilters, PersonSearchResults } from '../../../../../domain.types/person/person.search.types';
+import User from '../../models/users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -48,9 +49,9 @@ export class PersonRepo implements IPersonRepo {
         if (person == null) {
             return roles;
         }
-        const personRoles = await PersonRole.findAll({ where: { PersonId: person.id } });
-        for await (const personRole of personRoles) {
-            const role = await Role.findOne({ where: { id: personRole.RoleId } });
+        const users = await User.findAll({ where: { PersonId: person.id } });
+        for await (const user of users) {
+            const role = await Role.findOne({ where: { id: user.RoleId } });
             roles.push(RoleMapper.toDto(role));
         }
         return roles;
@@ -70,9 +71,9 @@ export class PersonRepo implements IPersonRepo {
         if (person == null) {
             return roles;
         }
-        const personRoles = await PersonRole.findAll({ where: { PersonId: person.id } });
-        for await (const personRole of personRoles) {
-            const role = await Role.findOne({ where: { id: personRole.RoleId } });
+        const users = await User.findAll({ where: { PersonId: person.id } });
+        for await (const user of users) {
+            const role = await Role.findOne({ where: { id: user.RoleId } });
             roles.push(RoleMapper.toDto(role));
         }
         return roles;

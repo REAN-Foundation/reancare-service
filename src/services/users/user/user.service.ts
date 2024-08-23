@@ -694,26 +694,36 @@ export class UserService {
         let user: UserDetailsDto = null;
         let userId = null;
 
+        var search: any = {};
         if (phone) {
-            const searchResult = await this._userRepo.search({
-                Phone    : phone,
-                RoleIds  : [roleId as unknown as string],
-                TenantId : tenantId
-            });
-            userId = searchResult.TotalCount > 0 ? searchResult.Items[0].id : null;
+            search['Phone'] = phone;
+        }
+        if (email) {
+            search['Email'] = email;
+        }
+        if (phone) {
+            search['Phone'] = phone;
+        }
+        if (username) {
+            search['UserName'] = username;
+        }
+        if (roleId) {
+            search['RoleIds'] = [roleId];
+        }
+        if (tenantId) {
+            search['TenantId'] = tenantId;
+        }
 
+        if (phone) {
+            const searchResult = await this._userRepo.search(search);
+            userId = searchResult.TotalCount > 0 ? searchResult.Items[0].id : null;
             if (userId == null) {
                 const message = 'User does not exist with phone(' + phone + ')';
                 throw new ApiError(404, message);
             }
         } else if (email) {
-            const searchResult = await this._userRepo.search({
-                Email    : email,
-                RoleIds  : [roleId as unknown as string],
-                TenantId : tenantId
-            });
+            const searchResult = await this._userRepo.search(search);
             userId = searchResult.TotalCount > 0 ? searchResult.Items[0].id : null;
-
             if (userId == null) {
                 const message = 'User does not exist with email(' + email + ')';
                 throw new ApiError(404, message);
@@ -722,8 +732,21 @@ export class UserService {
             user = await this._userRepo.getUserWithUserName(username);
             user = await this.updateDetailsDto(user);
             if (user == null) {
-                const message = 'User does not exist with username (' + username + ')';
-                throw new ApiError(404, message);
+                //Check if the email has been given as username
+                if (!email) {
+                    search = {
+                        Email    : username,
+                    };
+                    if (roleId) {
+                        search['RoleIds'] = [roleId];
+                    }
+                    const searchResult = await this._userRepo.search(search);
+                    userId = searchResult.TotalCount > 0 ? searchResult.Items[0].id : null;
+                }
+                if (userId == null) {
+                    const message = 'User does not exist with username or email (' + username + ')';
+                    throw new ApiError(404, message);
+                }
             }
             userId = user.id;
             person = await this._personRepo.getById(user.Person.id);

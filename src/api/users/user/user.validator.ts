@@ -408,7 +408,7 @@ export class UserValidator {
                 UserName    : null,
                 Password    : request.body.Password,
                 Otp         : null,
-                LoginRoleId : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId, 10) : 2,
+                LoginRoleId : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId, 10) : null,
                 TenantId    : request.body.TenantId ?? null,
                 TenantCode  : request.body.TenantCode ?? null,
             };

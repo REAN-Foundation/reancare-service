@@ -30,8 +30,6 @@ import { IUserTaskRepo } from '../../../database/repository.interfaces/users/use
 import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
 import { Loader } from '../../../startup/loader';
 import { AuthHandler } from '../../../auth/auth.handler';
-import { HealthReportSettingsDomainModel, ReportFrequency } from '../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
-import { IHealthReportSettingsRepo } from '../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
 import { EmailService } from '../../../modules/communication/email/email.service';
 import { EmailDetails } from '../../../modules/communication/email/email.details';
 import { UserSearchFilters, UserSearchResults } from '../../../domain.types/users/user/user.search.types';
@@ -55,7 +53,6 @@ export class UserService {
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
-        @inject('IHealthReportSettingsRepo') private _healthReportSettingsRepo: IHealthReportSettingsRepo
     ) {}
 
     //#region Publics
@@ -75,7 +72,9 @@ export class UserService {
         if (dto == null) {
             return null;
         }
-        await this.createUserDefaultHealthReportSettings(dto);
+        if (model.RoleId) {
+            await this._personRoleRepo.addPersonRole(dto.Person.id, model.RoleId);
+        }
         dto = await this.updateDetailsDto(dto);
         await this.generateLoginOtp(model, dto);
         return dto;
@@ -159,6 +158,13 @@ export class UserService {
     };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
+
+        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
+        
+        if (isTestUser && loginModel.Phone.startsWith('+')) {
+            loginModel.Phone = loginModel.Phone.split('-')[1];
+        }
+
         const user: UserDetailsDto = await this.checkUserDetails(
             loginModel.Phone,
             loginModel.Email,
@@ -168,7 +174,6 @@ export class UserService {
         );
         var tenant = await this.checkTenant(user);
 
-        var isTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
         if (!isTestUser) {
             const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
             const isPasswordValid = Helper.compare(loginModel.Password, hashedPassword);
@@ -368,6 +373,10 @@ export class UserService {
             userLoginModel.LoginRoleId
         );
 
+        if (user == null) {
+            throw new ApiError(404, 'User not found.');
+        }
+
         const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
         const isPasswordValid = Helper.compare(model.OldPassword, hashedPassword);
         if (!isPasswordValid) {
@@ -395,6 +404,10 @@ export class UserService {
             userLoginModel.UserName,
             model.RoleId,
         );
+
+        if (user == null) {
+            throw new ApiError(404, 'User not found.');
+        }
 
         const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, model.ResetCode, 'PasswordReset');
         if (!storedOtp) {
@@ -867,27 +880,6 @@ export class UserService {
 
         const extractedString = parts.slice(0, 2).join(':');
         return extractedString;
-    };
-
-    private createUserDefaultHealthReportSettings = async (user) => {
-        const model: HealthReportSettingsDomainModel = {
-            PatientUserId : user.id,
-            Preference    : {
-                ReportFrequency             : ReportFrequency.Month,
-                HealthJourney               : true,
-                MedicationAdherence         : true,
-                BodyWeight                  : true,
-                BloodGlucose                : true,
-                BloodPressure               : true,
-                SleepHistory                : true,
-                LabValues                   : true,
-                ExerciseAndPhysicalActivity : true,
-                FoodAndNutrition            : true,
-                DailyTaskStatus             : true
-            }
-        };
-        
-        await this._healthReportSettingsRepo.createReportSettings(model);
     };
 
     private sendPasswordResetEmail = async (email: string, otp: string, userFirstName: string) => {

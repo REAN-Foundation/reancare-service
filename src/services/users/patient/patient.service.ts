@@ -19,6 +19,7 @@ import { Injector } from '../../../startup/injector';
 import { AuthHandler } from '../../../auth/auth.handler';
 import { IHealthReportSettingsRepo } from '../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
 import { HealthReportSettingsDomainModel, ReportFrequency } from '../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +56,7 @@ export class PatientService {
         dto = await this.updateDetailsDto(dto);
         const role = await this._roleRepo.getByName(Roles.Patient);
         await this._personRoleRepo.addPersonRole(dto.User.Person.id, role.id);
-        await this.createUserDefaultHealthReportSettings(dto);
+        await this.createUserDefaultHealthReportSettings(dto.User.id);
 
         return dto;
     };
@@ -160,9 +161,9 @@ export class PatientService {
 
     //#region Privates
 
-    private createUserDefaultHealthReportSettings = async (user) => {
+    private createUserDefaultHealthReportSettings = async (userId: uuid) => {
         const model: HealthReportSettingsDomainModel = {
-            PatientUserId : user.id,
+            PatientUserId : userId,
             Preference    : {
                 ReportFrequency             : ReportFrequency.Month,
                 HealthJourney               : true,

@@ -72,8 +72,8 @@ export class UserService {
         if (dto == null) {
             return null;
         }
-        if (model.RoleId) {
-            await this._personRoleRepo.addPersonRole(dto.Person.id, model.RoleId);
+        if (model.RoleId && dto.PersonId) {
+            await this._personRoleRepo.addPersonRole(dto.PersonId, model.RoleId);
         }
         dto = await this.updateDetailsDto(dto);
         await this.generateLoginOtp(model, dto);
@@ -459,11 +459,13 @@ export class UserService {
         return await AuthHandler.rotateUserSessionToken(refreshToken);
     };
 
-    public generateUserName = async (firstName, lastName): Promise<string> => {
-        if (firstName == null) {
+    public generateUserName = async (
+        firstName: string | null | undefined, 
+        lastName: string | null | undefined): Promise<string> => {
+        if (!firstName) {
             firstName = generate({ length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false });
         }
-        if (lastName == null) {
+        if (!lastName) {
             lastName = generate({ length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false });
         }
         let userName = this.constructUserName(firstName, lastName);
@@ -689,8 +691,8 @@ export class UserService {
 
     private constructUserName(firstName: string, lastName: string) {
         const rand = Math.random().toString(10)
-            .substr(2, 4);
-        let userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
+            .substring(2, 4);
+        let userName = firstName.substring(0, 3) + lastName.substring(0, 3) + rand;
         userName = userName.toLowerCase();
         return userName;
     }

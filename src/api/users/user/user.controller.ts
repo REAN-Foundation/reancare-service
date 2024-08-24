@@ -18,6 +18,8 @@ import {
 } from '../../../domain.types/users/user/user.domain.model';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { UserHelper } from '../user.helper';
+import { RoleService } from '../../../services/role/role.service';
+import { Roles } from '../../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +30,8 @@ export class UserController extends BaseController {
     _service: UserService = Injector.Container.resolve(UserService);
 
     _personService = Injector.Container.resolve(PersonService);
+
+    _roleService = Injector.Container.resolve(RoleService);
 
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
 
@@ -69,9 +73,14 @@ export class UserController extends BaseController {
                 if (existingUserWithRole) {
                     throw new ApiError(409, `User already exists with the same role.`);
                 }
+                await this.checkMultipleAdministrativeRoles(model.RoleId, existingPerson.id);
             }
 
             model.Person.id = person.id;
+
+            if (!model.UserName) {
+                model.UserName = await this._service.generateUserName(model.Person.FirstName, model.Person.LastName);
+            }
 
             user = await this._service.create(model);
             if (user == null) {
@@ -407,4 +416,25 @@ export class UserController extends BaseController {
         }
     };
 
+    private async checkMultipleAdministrativeRoles(newRoleId: number, existingPersonId: string) {
+        var allRoles = await this._roleService.search({});
+        var newRoleName = allRoles.find(r => r.id == newRoleId).RoleName;
+        if (newRoleName !== Roles.TenantAdmin &&
+            newRoleName !== Roles.TenantUser &&
+            newRoleName !== Roles.SystemAdmin &&
+            newRoleName !== Roles.SystemUser) {
+            return;
+        }
+        var existingUsers = await this._service.getByPersonId(existingPersonId);
+        for (var i = 0; i < existingUsers.length; i++) {
+            var existingUserRoleName = allRoles.find(r => r.id == existingUsers[i].RoleId).RoleName;
+            if (existingUserRoleName == Roles.TenantAdmin ||
+                existingUserRoleName == Roles.TenantUser ||
+                existingUserRoleName == Roles.SystemAdmin ||
+                existingUserRoleName == Roles.SystemUser) {
+                const msg = `User cannot have multiple administrative roles. You can change one administrative role to another.`
+                throw new ApiError(409, msg);
+            }
+        }
+    }
 }

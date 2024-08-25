@@ -9,10 +9,10 @@ import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
-import { 
-    ResetPasswordModel, 
-    ChangePasswordModel, 
-    UserDomainModel, 
+import {
+    ResetPasswordModel,
+    ChangePasswordModel,
+    UserDomainModel,
     UserBasicDetails,
     UserLoginDetails
 } from '../../../domain.types/users/user/user.domain.model';
@@ -432,9 +432,10 @@ export class UserController extends BaseController {
                 existingUserRoleName == Roles.TenantUser ||
                 existingUserRoleName == Roles.SystemAdmin ||
                 existingUserRoleName == Roles.SystemUser) {
-                const msg = `User cannot have multiple administrative roles. You can change one administrative role to another.`
+                const msg = `User cannot have multiple administrative roles. You can change one administrative role to another.`;
                 throw new ApiError(409, msg);
             }
         }
     }
+
 }

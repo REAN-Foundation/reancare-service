@@ -196,7 +196,7 @@ export class BaseValidator {
 
         chain = chain.trim();
         chain = chain.isEmail();
-        chain = chain.normalizeEmail();
+        // chain = chain.normalizeEmail();
 
         await chain.run(request);
     };

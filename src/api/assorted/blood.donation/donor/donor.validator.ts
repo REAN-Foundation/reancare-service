@@ -93,7 +93,7 @@ export class DonorValidator {
             .trim()
             .isEmail()
             .escape()
-            .normalizeEmail()
+            // .normalizeEmail()
             .run(request);
 
         await body('FirstName').optional()

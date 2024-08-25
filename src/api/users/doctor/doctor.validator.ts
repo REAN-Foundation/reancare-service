@@ -94,7 +94,7 @@ export class DoctorValidator {
             .trim()
             .isEmail()
             .escape()
-            .normalizeEmail()
+            // .normalizeEmail()
             .run(request);
 
         await body('UserName').optional()

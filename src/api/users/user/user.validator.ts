@@ -498,6 +498,11 @@ export class UserValidator {
                 .trim()
                 .run(request);
 
+            await body('RoleId').optional()
+                .trim()
+                .isNumeric()
+                .run(request);
+                
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
@@ -509,7 +514,7 @@ export class UserValidator {
                 UserName    : null,
                 OldPassword : request.body.OldPassword,
                 NewPassword : request.body.NewPassword,
-                RoleId      : request.body.RoleId ? parseInt(request.body.RoleId, 10) : null,
+                RoleId      : request.body.RoleId ? parseInt(request.body.RoleId, 10) : 2,
             };
 
             if (typeof request.body.Phone !== 'undefined') {
@@ -599,6 +604,12 @@ export class UserValidator {
                     .escape(),
             ]).run(request);
 
+            await body('LoginRoleId')
+                .optional()
+                .trim()
+                .isNumeric()
+                .run(request);
+        
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
@@ -745,7 +756,7 @@ export class UserValidator {
                 Email       : null,
                 Password    : null,
                 Otp         : request.body.Otp,
-                LoginRoleId : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId) : null,
+                LoginRoleId : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId) : 2,
                 TenantId    : request.body.TenantId ?? null,
                 TenantCode  : request.body.TenantCode ?? null,
             };

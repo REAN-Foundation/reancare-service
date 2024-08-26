@@ -205,7 +205,7 @@ export class PatientController extends BaseUserController {
             }
 
             // if timezone change detected then delete future medication schedules and create new one
-            if (user.CurrentTimeZone != request.body.CurrentTimeZone) {
+            if (user.CurrentTimeZone !== request.body.CurrentTimeZone) {
                 await this._userService.update(userId, { CurrentTimeZone: request.body.CurrentTimeZone });
                 this.deleteAndCreateFutureMedicationSchedules(userId);
             }
@@ -227,6 +227,21 @@ export class PatientController extends BaseUserController {
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
             await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
+            
+            if (userDomainModel.Person.Phone && (updatedUser.Person.Phone !== userDomainModel.Person.Phone)) {
+                const isPersonExistsWithPhone = await this._personService.getPersonWithPhone(userDomainModel.Person.Phone);
+                if (isPersonExistsWithPhone) {
+                    throw new ApiError(409, `Person already exists with the phone ${userDomainModel.Person.Phone}`);
+                }
+            }
+
+            if (userDomainModel.Person.Email && (updatedUser.Person.Email !== userDomainModel.Person.Email)) {
+                const isPersonExistsWithEmail = await this._personService.getPersonWithEmail(userDomainModel.Person.Email);
+                if (isPersonExistsWithEmail) {
+                    throw new ApiError(409, `Person already exists with the email ${userDomainModel.Person.Email}`);
+                }
+            }
+
             const updatedPerson = await this._personService.update(user.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
@@ -270,7 +285,6 @@ export class PatientController extends BaseUserController {
             if (!patient) {
                 throw new ApiError(404, 'Patient account does not exist!');
             }
-            const personId = patient.User.PersonId;
             if (currentUserId !== patientUserId) {
                 throw new ApiError(403, 'You do not have permissions to delete this patient account.');
             }
@@ -299,10 +313,7 @@ export class PatientController extends BaseUserController {
             }
             //TODO: Please add check here whether the patient-person
             //has other roles in the system
-            deleted = await this._personService.delete(personId);
-            if (!deleted) {
-                throw new ApiError(400, 'User cannot be deleted.');
-            }
+            
             // invalidate all sessions
             var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
             if (!invalidatedAllSessions) {

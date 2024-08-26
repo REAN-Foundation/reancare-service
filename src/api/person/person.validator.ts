@@ -1,16 +1,21 @@
-import express from 'express';
-import { param, validationResult } from 'express-validator';
+import express, { query } from 'express';
+import { body, param, validationResult } from 'express-validator';
 import { Helper } from '../../common/helper';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PersonValidator {
+export class PersonValidator  extends BaseValidator {
 
-    static validateId = async (request: express.Request): Promise<string> => {
-        return await PersonValidator.getParamId(request);
+    constructor() {
+        super();
+    }
+
+    validateId = async (request: express.Request): Promise<string> => {
+        return await this.getParamId(request);
     };
 
-    private static async getParamId(request): Promise<string> {
+    private async getParamId(request): Promise<string> {
 
         await param('id').trim()
             .escape()
@@ -25,7 +30,7 @@ export class PersonValidator {
         return request.params.id;
     }
 
-    static addOrRemoveAddress = async (request: express.Request): Promise<{ id: string; addressId: string }> => {
+    addOrRemoveAddress = async (request: express.Request): Promise<{ id: string; addressId: string }> => {
 
         await param('id').trim()
             .escape()
@@ -47,6 +52,18 @@ export class PersonValidator {
         const addressId = request.params.addressId;
 
         return { id, addressId };
+    };
+
+    getPersonRolesByPhone = async (request: express.Request): Promise<string> => {
+        await this.validateString(request, 'phone', Where.Query, true, false);
+        this.validateRequest(request);
+        return request.query.phone as string;
+    };
+
+    getPersonRolesByEmail = async (request: express.Request): Promise<string> => {
+        await this.validateEmail(request, 'email', Where.Query, true, false);
+        this.validateRequest(request);
+        return request.query.email as string;
     };
 
     static getAllPersonsWithPhoneAndRole = async (request: express.Request)

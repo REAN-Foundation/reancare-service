@@ -112,6 +112,21 @@ export class DoctorController extends BaseUserController {
             }
             const personDomainModel: PersonDomainModel = doctorDomainModel.User.Person;
             personDomainModel.id = updatedUser.Person.id;
+            
+            if (userDomainModel.Person.Phone && (updatedUser.Person.Phone !== userDomainModel.Person.Phone)) {
+                const isPersonExistsWithPhone = await this._personService.getPersonWithPhone(userDomainModel.Person.Phone);
+                if (isPersonExistsWithPhone) {
+                    throw new ApiError(409, `Person already exists with the phone ${userDomainModel.Person.Phone}`);
+                }
+            }
+
+            if (userDomainModel.Person.Email && (updatedUser.Person.Email !== userDomainModel.Person.Email)) {
+                const isPersonExistsWithEmail = await this._personService.getPersonWithEmail(userDomainModel.Person.Email);
+                if (isPersonExistsWithEmail) {
+                    throw new ApiError(409, `Person already exists with the email ${userDomainModel.Person.Email}`);
+                }
+            }
+
             const updatedPerson = await this._personService.update(personDomainModel.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
@@ -143,11 +158,6 @@ export class DoctorController extends BaseUserController {
                 throw new ApiError(404, 'User not found.');
             }
             await this.authorizeOne(request, userId, user.TenantId);
-            
-            const deleted = await this._personService.delete(userId);
-            if (!deleted) {
-                throw new ApiError(400, 'User cannot be deleted.');
-            }
 
             ResponseHandler.success(request, response, 'Doctor records deleted successfully!', 200, {
                 Deleted : true,
@@ -170,7 +180,7 @@ export class DoctorController extends BaseUserController {
         
         if (searchFilters.TenantId != null) {
             if (searchFilters.TenantId !== request.currentUser.TenantId) {
-                if (currentRole !== Roles.SystemAdmin && 
+                if (currentRole !== Roles.SystemAdmin &&
                     currentRole !== Roles.SystemUser) {
                     throw new ApiError(403, `Unauthorized`);
                 }

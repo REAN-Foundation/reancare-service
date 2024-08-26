@@ -24,6 +24,8 @@ export class PersonController extends BaseController {
 
     _organizationService: OrganizationService = Injector.Container.resolve(OrganizationService);
 
+    _validator: PersonValidator = new PersonValidator();
+
     constructor() {
         super();
     }
@@ -32,7 +34,7 @@ export class PersonController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const id: string = await PersonValidator.validateId(request);
+            const id: string = await this._validator.validateId(request);
             const person = await this._service.getById(id);
             if (person == null) {
                 ResponseHandler.failure(request, response, 'Person not found.', 404);
@@ -49,6 +51,34 @@ export class PersonController extends BaseController {
         }
     };
 
+    getPersonRolesByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const phone: string = await this._validator.getPersonRolesByPhone(request);
+            const roles = await this._service.getPersonRolesByPhone(phone);
+            const message = roles.length === 0 ?
+                'No records found!' : `Total ${roles.length} roles retrieved successfully!`;
+            ResponseHandler.success(request, response, message, 200, {
+                Roles : roles,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPersonRolesByEmail = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const email: string = await this._validator.getPersonRolesByEmail(request);
+            const roles = await this._service.getPersonRolesByEmail(email);
+            const message = roles.length === 0 ?
+                'No records found!' : `Total ${roles.length} roles retrieved successfully!`;
+            ResponseHandler.success(request, response, message, 200, {
+                Roles : roles,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getAllPersonsWithPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const { phone, roleId } = await PersonValidator.getAllPersonsWithPhoneAndRole(request);
@@ -56,7 +86,6 @@ export class PersonController extends BaseController {
             const message =
                 persons.length === 0 ?
                     'No records found!' : `Total ${persons.length} person records retrieved successfully!`;
-
             ResponseHandler.success(request, response, message, 200, {
                 Persons : persons,
             });
@@ -68,7 +97,7 @@ export class PersonController extends BaseController {
 
     getOrganizations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const id: string = await PersonValidator.validateId(request);
+            const id: string = await this._validator.validateId(request);
             await this.authorizePerson(request, id);
             const organizations = await this._service.getOrganizations(id);
 
@@ -85,7 +114,7 @@ export class PersonController extends BaseController {
 
     addAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
+            const { id, addressId } = await this._validator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
                 throw new ApiError(404, 'Person not found.');
@@ -106,7 +135,7 @@ export class PersonController extends BaseController {
 
     removeAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
+            const { id, addressId } = await this._validator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
                 throw new ApiError(404, 'Person not found.');
@@ -127,7 +156,7 @@ export class PersonController extends BaseController {
 
     getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const id: string = await PersonValidator.validateId(request);
+            const id: string = await this._validator.validateId(request);
             await this.authorizePerson(request, id);
             const addresses = await this._service.getAddresses(id);
 
@@ -159,7 +188,11 @@ export class PersonController extends BaseController {
     };
 
     private async authorizePerson(request: express.Request, personId: uuid) {
-        const user = await this._userService.getByPersonId(personId);
+        const users = await this._userService.getByPersonId(personId);
+        if (users.length === 0) {
+            return;
+        }
+        var user = users[0];
         if (user != null) {
             await this.authorizeOne(request, user.id, user.TenantId);
         }

@@ -28,7 +28,7 @@
         "ScheduleStrokeSurvey": "0 14 * * *",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
         "ScheduleHFHelperTextMessage": "0 1 * * 1",
-        "ScheduleGGHNFollowUpReminder": "*/2 * * * *"
+        "ScheduleGGHNFollowUpReminder": "0 5 * * *"
     },
     "development": {
         "FileCleanup": "*/55 * * * *",

@@ -46,7 +46,7 @@ export class Scheduler {
                 //this.scheduleMonthlyCustomTasks();
                 this.scheduleDailyCareplanPushTasks();
                 this.scheduleDailyHighRiskCareplan();
-                this.scheduleHsSurvey();
+                // this.scheduleHsSurvey();
                 this.scheduleReminderOnNoActionToDonationRequest();
                 this.scheduleReminders();
                 this.scheduleCareplanRegistrationReminders();
@@ -180,15 +180,16 @@ export class Scheduler {
         });
     };
 
-    private scheduleHsSurvey = () => {
-        cron.schedule(Scheduler._schedules['ScheduleHsSurvey'], () => {
-            (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule Custom HS Survey Tasks...');
-                var customActionHandler = new CustomActionsHandler();
-                await customActionHandler.scheduleHsSurvey();
-            })();
-        });
-    };
+    //Shut down - Cholesterol survey text mesages on August 12, 2024
+    // private scheduleHsSurvey = () => {
+    //     cron.schedule(Scheduler._schedules['ScheduleHsSurvey'], () => {
+    //         (async () => {
+    //             Logger.instance().log('Running scheduled jobs: Schedule Custom HS Survey Tasks...');
+    //             var customActionHandler = new CustomActionsHandler();
+    //             await customActionHandler.scheduleHsSurvey();
+    //         })();
+    //     });
+    // };
 
     private scheduleStrokeSurvey = () => {
         cron.schedule(Scheduler._schedules['ScheduleStrokeSurvey'], () => {

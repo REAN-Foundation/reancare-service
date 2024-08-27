@@ -1,7 +1,11 @@
 import { OrganizationDto } from "../../../domain.types/general/organization/organization.types";
 import { AddressDto } from "../../../domain.types/general/address/address.dto";
 import { PersonDomainModel } from "../../../domain.types/person/person.domain.model";
-import { PersonDetailsDto, PersonDto } from "../../../domain.types/person/person.dto";
+import { PersonDetailsDto } from "../../../domain.types/person/person.dto";
+import { RoleDto } from "../../../domain.types/role/role.dto";
+import { PersonSearchFilters, PersonSearchResults } from "../../../domain.types/person/person.search.types";
+
+///////////////////////////////////////////////////////////////////////////////////////
 
 export interface IPersonRepo {
 
@@ -13,6 +17,10 @@ export interface IPersonRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getPersonRolesByPhone(phone: string): Promise<RoleDto[]>;
+
+    getPersonRolesByEmail(email: string): Promise<RoleDto[]>;
+
     personExistsWithPhone(phone: string): Promise<boolean>;
 
     getPersonWithPhone(phone: string): Promise<PersonDetailsDto>;
@@ -23,7 +31,7 @@ export interface IPersonRepo {
 
     getPersonWithEmail(email: string): Promise<PersonDetailsDto>;
 
-    search(filters: any): Promise<PersonDto[]>;
+    search(filters: PersonSearchFilters): Promise<PersonSearchResults>;
 
     // searchFull(filters: any): Promise<PersonDetailsDto[]>;
 

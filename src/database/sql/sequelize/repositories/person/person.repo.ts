@@ -17,6 +17,11 @@ import PersonAddresses from "../../models/person/person.addresses.model";
 import Person from '../../models/person/person.model';
 import PersonRole from "../../models/person/person.role.model";
 import { OrganizationDto } from '../../../../../domain.types/general/organization/organization.types';
+import { RoleDto } from '../../../../../domain.types/role/role.dto';
+import Role from '../../models/role/role.model';
+import { RoleMapper } from '../../mappers/role/role.mapper';
+import { PersonSearchFilters, PersonSearchResults } from '../../../../../domain.types/person/person.search.types';
+import User from '../../models/users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +33,50 @@ export class PersonRepo implements IPersonRepo {
             return existing != null;
         }
         return false;
+    };
+
+    getPersonRolesByPhone = async (phone: string): Promise<RoleDto[]> => {
+        const roles: RoleDto[] = [];
+        if (phone == null || typeof phone === 'undefined') {
+            return roles;
+        }
+        var person = await Person.findOne({
+            where : {
+                Phone : { [Op.like]: '%' + phone + '%' }
+                }
+            }
+        );
+        if (person == null) {
+            return roles;
+        }
+        const users = await User.findAll({ where: { PersonId: person.id } });
+        for await (const user of users) {
+            const role = await Role.findOne({ where: { id: user.RoleId } });
+            roles.push(RoleMapper.toDto(role));
+        }
+        return roles;
+    };
+
+    getPersonRolesByEmail = async (email: string): Promise<RoleDto[]> => {
+        const roles: RoleDto[] = [];
+        if (email == null || typeof email === 'undefined') {
+            return roles;
+        }
+        var person = await Person.findOne({
+            where : {
+                Email : { [Op.like]: '%' + email + '%' }
+                }
+            }
+        );
+        if (person == null) {
+            return roles;
+        }
+        const users = await User.findAll({ where: { PersonId: person.id } });
+        for await (const user of users) {
+            const role = await Role.findOne({ where: { id: user.RoleId } });
+            roles.push(RoleMapper.toDto(role));
+        }
+        return roles;
     };
 
     personExistsWithPhone = async (phone: string): Promise<boolean> => {
@@ -52,32 +101,30 @@ export class PersonRepo implements IPersonRepo {
         return null;
     };
 
-    getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
+    getAllPersonsWithPhoneAndRole = async (phone: string | undefined | null, roleId: number): Promise<PersonDetailsDto[]> => {
 
-        if (phone != null && typeof phone !== 'undefined') {
+        if (!phone) {
+            return null;
+        }
 
-            //KK: To be optimized with associations
-
-            const personsWithRole: PersonDetailsDto[] = [];
-            var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
-            var persons = await Person.findAll({
-                where : {
-                    Phone : { [Op.in] : possiblePhoneNumbers,
-                    }
-                }
-            });
-
-            for await (const person of persons) {
-                const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
-                if (withRole != null) {
-                    const dto = await PersonMapper.toDetailsDto(person);
-                    personsWithRole.push(dto);
+        const personsWithRole: PersonDetailsDto[] = [];
+        var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
+        var persons = await Person.findAll({
+            where : {
+                Phone : { [Op.in] : possiblePhoneNumbers,
                 }
             }
+        });
 
-            return personsWithRole;
+        for await (const person of persons) {
+            const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
+            if (withRole != null) {
+                const dto = await PersonMapper.toDetailsDto(person);
+                personsWithRole.push(dto);
+            }
         }
-        return null;
+
+        return personsWithRole;
     };
 
     personExistsWithEmail = async (email: string): Promise<boolean> => {
@@ -218,14 +265,77 @@ export class PersonRepo implements IPersonRepo {
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    search(filters: any): Promise<PersonDto[]> {
-        const dtos: PersonDto[] = [];
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        return new Promise((resolve, reject) => {
-            resolve(dtos);
-        });
-    }
+    search = async (filters: PersonSearchFilters): Promise<PersonSearchResults> => {
+        try {
+            const search: any = { where: {} };
+            if (filters.Phone) {
+                search.where['Phone'] = filters.Phone;
+            }
+            if (filters.Email) {
+                search.where['Email'] = filters.Email;
+            }
+            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.CreatedDateFrom,
+                    [Op.lte] : filters.CreatedDateTo,
+                };
+            }
+            else if (filters.CreatedDateFrom == null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.lte] : filters.CreatedDateTo,
+                };
+            }
+            else if (filters.CreatedDateFrom != null && filters.CreatedDateTo == null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.CreatedDateFrom,
+                };
+            }
+
+            const orderByColum = 'CreatedAt';
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+            if (filters.OrderBy) {
+                const personAttributes = ['FirstName', 'LastName', 'BirthDate', 'Gender', 'Phone', 'Email'];
+                const isPersonColumn = personAttributes.includes(filters.OrderBy);
+                if (isPersonColumn) {
+                    search['order'] = [[ 'Person', filters.OrderBy, order]];
+                }
+            }
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await Person.findAndCountAll(search);
+            const dtos = foundResults.rows.map(x => PersonMapper.toDetailsDto(x));
+
+            const searchResults: PersonSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     getOrganizations = async (id: string): Promise<OrganizationDto[]> => {
         try {

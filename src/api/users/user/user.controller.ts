@@ -9,13 +9,17 @@ import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
-import { 
-    ResetPasswordModel, 
-    ChangePasswordModel, 
-    UserDomainModel, 
-    UserBasicDetails
+import {
+    ResetPasswordModel,
+    ChangePasswordModel,
+    UserDomainModel,
+    UserBasicDetails,
+    UserLoginDetails
 } from '../../../domain.types/users/user/user.domain.model';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
+import { UserHelper } from '../user.helper';
+import { RoleService } from '../../../services/role/role.service';
+import { Roles } from '../../../domain.types/role/role.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +31,11 @@ export class UserController extends BaseController {
 
     _personService = Injector.Container.resolve(PersonService);
 
+    _roleService = Injector.Container.resolve(RoleService);
+
     _userDeviceDetailsService: UserDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
@@ -50,23 +58,29 @@ export class UserController extends BaseController {
                 TenantCode : model.TenantCode,
             };
 
-            const existingUser = await this._service.getUserDetails(basicDetails);
-            if (existingUser) {
-                const existingUserRole = existingUser.RoleId;
-                const existingUserTenantId = existingUser.TenantId;
-                if (existingUserRole === model.RoleId && existingUserTenantId === model.TenantId) {
-                    throw new ApiError(409, 'User already exists');
-                }
-            }
-            person = existingUser?.Person;
-            if (person == null) {
+            await this._userHelper.performDuplicatePersonCheck(basicDetails.Phone, basicDetails.Email);
+
+            const existingPerson = await this._service.getExistingPerson(basicDetails);
+            if (existingPerson == null) {
                 person = await this._personService.create(model.Person);
                 if (person == null) {
                     throw new ApiError(400, 'Cannot create person!');
                 }
             }
+            else {
+                person = existingPerson;
+                var existingUserWithRole = await this._service.getUserByPersonIdAndRole(existingPerson.id, model.RoleId);
+                if (existingUserWithRole) {
+                    throw new ApiError(409, `User already exists with the same role.`);
+                }
+                await this.checkMultipleAdministrativeRoles(model.RoleId, existingPerson.id);
+            }
 
             model.Person.id = person.id;
+
+            if (!model.UserName) {
+                model.UserName = await this._service.generateUserName(model.Person.FirstName, model.Person.LastName);
+            }
 
             user = await this._service.create(model);
             if (user == null) {
@@ -108,7 +122,21 @@ export class UserController extends BaseController {
             }
             await this.authorizeOne(request, userId, user.TenantId);
 
-            const model = await UserValidator.update(request);
+            const model: UserDomainModel = await UserValidator.update(request);
+            
+            if (model.Person.Phone && (user.Person.Phone !== model.Person.Phone)) {
+                const isPersonExistsWithPhone = await this._personService.getPersonWithPhone(model.Person.Phone);
+                if (isPersonExistsWithPhone) {
+                    throw new ApiError(409, `Person already exists with the phone ${model.Person.Phone}`);
+                }
+            }
+
+            if (model.Person.Email && (user.Person.Email !== model.Person.Email)) {
+                const isPersonExistsWithEmail = await this._personService.getPersonWithEmail(model.Person.Email);
+                if (isPersonExistsWithEmail) {
+                    throw new ApiError(409, `Person already exists with the email ${model.Person.Email}`);
+                }
+            }
 
             let updatedUser = await this._service.update(userId, model);
             if (user == null) {
@@ -139,17 +167,12 @@ export class UserController extends BaseController {
             }
             await this.authorizeOne(request, userId, user.TenantId);
 
-            const personId = user.PersonId;
             const userDeleted = await this._service.delete(userId);
             if (userDeleted == null) {
                 throw new ApiError(400, 'Cannot delete user!');
             }
-            const personDeleted = await this._personService.delete(personId);
-            if (personDeleted == null) {
-                throw new ApiError(400, 'Cannot delete person!');
-            }
             ResponseHandler.success(request, response, 'User deleted successfully!', 200, {
-                Deleted : userDeleted && personDeleted,
+                Deleted : userDeleted,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -200,7 +223,7 @@ export class UserController extends BaseController {
 
     loginWithPassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const loginObject = await UserValidator.loginWithPassword(request, response);
+            const loginObject: UserLoginDetails = await UserValidator.loginWithPassword(request, response);
             const userDetails = await this._service.loginWithPassword(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);
@@ -272,6 +295,9 @@ export class UserController extends BaseController {
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const obj = await UserValidator.generateOtp(request, response);
+            
+            await this._userHelper.performDuplicatePersonCheck(obj.Phone, obj.Email);
+            
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
                 GenerateOTPResult : entity,
@@ -389,5 +415,27 @@ export class UserController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    private async checkMultipleAdministrativeRoles(newRoleId: number, existingPersonId: string) {
+        var allRoles = await this._roleService.search({});
+        var newRoleName = allRoles.find(r => r.id == newRoleId).RoleName;
+        if (newRoleName !== Roles.TenantAdmin &&
+            newRoleName !== Roles.TenantUser &&
+            newRoleName !== Roles.SystemAdmin &&
+            newRoleName !== Roles.SystemUser) {
+            return;
+        }
+        var existingUsers = await this._service.getByPersonId(existingPersonId);
+        for (var i = 0; i < existingUsers.length; i++) {
+            var existingUserRoleName = allRoles.find(r => r.id == existingUsers[i].RoleId).RoleName;
+            if (existingUserRoleName == Roles.TenantAdmin ||
+                existingUserRoleName == Roles.TenantUser ||
+                existingUserRoleName == Roles.SystemAdmin ||
+                existingUserRoleName == Roles.SystemUser) {
+                const msg = `User cannot have multiple administrative roles. You can change one administrative role to another.`;
+                throw new ApiError(409, msg);
+            }
+        }
+    }
 
 }

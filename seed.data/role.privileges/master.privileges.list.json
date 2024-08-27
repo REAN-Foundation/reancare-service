@@ -413,6 +413,8 @@
     "General.Types.RoleType.Update",
     "Person.AddAddress",
     "Person.GetAddresses",
+    "Person.GetPersonRolesByPhone",
+    "Person.GetPersonRolesByEmail",
     "Person.GetAllPersonsWithPhone",
     "Person.GetAllPersonsWithPhoneAndRole",
     "Person.GetById",

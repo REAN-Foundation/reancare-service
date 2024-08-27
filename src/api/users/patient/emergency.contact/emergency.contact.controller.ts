@@ -17,6 +17,7 @@ import { HospitalService } from '../../../../services/hospitals/hospital.service
 import { HealthSystemService } from '../../../../services/hospitals/health.system.service';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 import { PatientBaseController } from '../patient.base.controller';
+import { UserHelper } from '../../user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -43,6 +44,8 @@ export class EmergencyContactController extends PatientBaseController {
     _hospitalService = Injector.Container.resolve(HospitalService);
 
     _ehrPatientService = Injector.Container.resolve(EHRPatientService);
+
+    _userHelper = new UserHelper();
 
     //#endregion
 
@@ -101,6 +104,8 @@ export class EmergencyContactController extends PatientBaseController {
                     Email     : model.ContactPerson.Email ?? null
                 };
 
+                await this._userHelper.performDuplicatePersonCheck(personDomainModel.Phone, personDomainModel.Email);
+                
                 const existingPerson = await this._personService.getPersonWithPhone(model.ContactPerson.Phone);
                 if (existingPerson !== null) {
 

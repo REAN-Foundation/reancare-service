@@ -75,7 +75,7 @@ export class PersonService {
             return false;
         }
         const persons = await this._personRepo.search({
-            Phone : email
+            Email : email
         });
 
         if (persons.TotalCount > 1) {

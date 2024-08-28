@@ -79,7 +79,7 @@ export class UserController extends BaseController {
 
             model.Person.id = person.id;
 
-            const updatedPerson = await this.updatePersonInfromation(person, model);
+            const updatedPerson = await this.updatePersonInformation(person, model);
 
             if (!updatedPerson) {
                 throw new ApiError(409, `User already exists with the same email.`);
@@ -445,7 +445,7 @@ export class UserController extends BaseController {
         }
     }
 
-    private async updatePersonInfromation (person: PersonDetailsDto, model: UserDomainModel) {
+    private async updatePersonInformation (person: PersonDetailsDto, model: UserDomainModel) {
         const personUpdateModel: PersonDomainModel = {};
         if (!person.Email && model.Person.Email) {
             const personWithEmail = await this._personService.getPersonWithEmail(model.Person.Email);

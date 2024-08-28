@@ -514,7 +514,7 @@ export class UserValidator {
                 UserName    : null,
                 OldPassword : request.body.OldPassword,
                 NewPassword : request.body.NewPassword,
-                RoleId      : request.body.RoleId ? parseInt(request.body.RoleId, 10) : 2,
+                RoleId      : request.body.RoleId ? parseInt(request.body.RoleId, 10) : null,
             };
 
             if (typeof request.body.Phone !== 'undefined') {
@@ -756,7 +756,7 @@ export class UserValidator {
                 Email       : null,
                 Password    : null,
                 Otp         : request.body.Otp,
-                LoginRoleId : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId) : 2,
+                LoginRoleId : request.body.LoginRoleId ? parseInt(request.body.LoginRoleId) : null,
                 TenantId    : request.body.TenantId ?? null,
                 TenantCode  : request.body.TenantCode ?? null,
             };

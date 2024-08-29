@@ -34,7 +34,7 @@ export const addExerciseStats = (document, model, y) => {
     // }
 
     let chartImage = 'Exercise_MoveMinutes_LastMonth';
-    const detailedTitle = 'Move Minutes for Last Month';
+    const detailedTitle = `Move Minutes for Last ${Helper.frequencyToDays(model.ReportFrequency)}`;
     const titleColor = '#505050';
     const sectionTitle = 'Exercise and Physical Activity';
     const icon = Helper.getIconsPath('exercise.png');
@@ -79,7 +79,6 @@ export const createPhysicalActivityCharts = async (data) => {
     //     key : 'Exercise_CaloriesBurned_LastMonth',
     //     location
     // });
-
     // location = await createExerciseMoveMinutesForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
     // locations.push({
     //     key : 'Exercise_MoveMinutes_LastMonth',

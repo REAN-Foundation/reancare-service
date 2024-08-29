@@ -498,6 +498,11 @@ export class UserValidator {
                 .trim()
                 .run(request);
 
+            await body('RoleId').optional()
+                .trim()
+                .isNumeric()
+                .run(request);
+                
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
@@ -599,6 +604,12 @@ export class UserValidator {
                     .escape(),
             ]).run(request);
 
+            await body('LoginRoleId')
+                .optional()
+                .trim()
+                .isNumeric()
+                .run(request);
+        
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);

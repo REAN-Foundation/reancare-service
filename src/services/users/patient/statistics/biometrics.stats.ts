@@ -13,7 +13,6 @@ import {
 import { addSectionTitle, addNoDataDisplay } from "./stat.report.commons";
 
 //////////////////////////////////////////////////////////////////////////////////
-
 export const addBodyWeightStats = (model: any, document: PDFKit.PDFDocument, y: any) => {
 
     const chartImage = 'BodyWeight_Last6Months';

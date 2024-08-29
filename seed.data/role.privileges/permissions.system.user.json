@@ -559,6 +559,8 @@
         "AddAddress": false,
         "GetAddresses": false,
         "GetAllPersonsWithPhone": true,
+        "GetPersonRolesByPhone": true,
+        "GetPersonRolesByEmail": true,
         "GetAllPersonsWithPhoneAndRole": true,
         "GetById": false,
         "GetOrganizations": false,

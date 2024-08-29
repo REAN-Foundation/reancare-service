@@ -17,6 +17,9 @@ import { Roles } from '../../../domain.types/role/role.types';
 import { PatientStore } from '../../../modules/ehr/services/patient.store';
 import { Injector } from '../../../startup/injector';
 import { AuthHandler } from '../../../auth/auth.handler';
+import { IHealthReportSettingsRepo } from '../../../database/repository.interfaces/users/patient/health.report.setting.repo.interface';
+import { HealthReportSettingsDomainModel, ReportFrequency } from '../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +37,7 @@ export class PatientService {
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('IHealthProfileRepo') private _healthProfileRepo: IHealthProfileRepo,
-        
+        @inject('IHealthReportSettingsRepo') private _healthReportSettingsRepo: IHealthReportSettingsRepo
     ) {
         if (ConfigurationManager.EhrEnabled()) {
             this._ehrPatientStore = Injector.Container.resolve(PatientStore);
@@ -53,6 +56,7 @@ export class PatientService {
         dto = await this.updateDetailsDto(dto);
         const role = await this._roleRepo.getByName(Roles.Patient);
         await this._personRoleRepo.addPersonRole(dto.User.Person.id, role.id);
+        await this.createUserDefaultHealthReportSettings(dto.User.id);
 
         return dto;
     };
@@ -156,6 +160,27 @@ export class PatientService {
     //#endregion
 
     //#region Privates
+
+    private createUserDefaultHealthReportSettings = async (userId: uuid) => {
+        const model: HealthReportSettingsDomainModel = {
+            PatientUserId : userId,
+            Preference    : {
+                ReportFrequency             : ReportFrequency.Month,
+                HealthJourney               : true,
+                MedicationAdherence         : true,
+                BodyWeight                  : true,
+                BloodGlucose                : true,
+                BloodPressure               : true,
+                SleepHistory                : true,
+                LabValues                   : true,
+                ExerciseAndPhysicalActivity : true,
+                FoodAndNutrition            : true,
+                DailyTaskStatus             : true
+            }
+        };
+        
+        await this._healthReportSettingsRepo.createReportSettings(model);
+    };
 
     private updateDetailsDto = async (dto: PatientDetailsDto): Promise<PatientDetailsDto> => {
         if (dto == null) {

@@ -15,7 +15,6 @@ import { TenantDto } from '../../../../../../domain.types/tenant/tenant.dto';
 import { PersonMapper } from '../../../mappers/person/person.mapper';
 import Role from '../../../models/role/role.model';
 import { UserSearchFilters, UserSearchResults } from '../../../../../../domain.types/users/user/user.search.types';
-import { BaseSearchFilters } from '../../../../../../domain.types/miscellaneous/base.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -69,14 +68,19 @@ export class UserRepo implements IUserRepo {
         return await UserMapper.toDetailsDto(user);
     };
 
-    getByPersonId = async (personId: string): Promise<UserDetailsDto> => {
+    getByPersonId = async (personId: string): Promise<UserDetailsDto[]> => {
         try {
-            const user = await User.findOne({ where: { PersonId: personId } });
-            const tenant = await Tenant.findByPk(user.TenantId);
-            const person = await Person.findByPk(personId);
-            const role = await Role.findByPk(user.RoleId);
-            const personDto = await PersonMapper.toDetailsDto(person);
-            return UserMapper.toDetailsDto(user, tenant, personDto, role);
+            var users: UserDetailsDto[] = [];
+            const users_ = await User.findAll({ where: { PersonId: personId } });
+            for await (const user of users_) {
+                const tenant = await Tenant.findByPk(user.TenantId);
+                const person = await Person.findByPk(personId);
+                const role = await Role.findByPk(user.RoleId);
+                const personDto = await PersonMapper.toDetailsDto(person);
+                var dto = UserMapper.toDetailsDto(user, tenant, personDto, role);
+                users.push(dto);
+            }
+            return users;
         }
         catch (error) {
             Logger.instance().log(error.message);
@@ -261,7 +265,7 @@ export class UserRepo implements IUserRepo {
         }
     };
 
-    search = async (filters: UserSearchFilters): Promise<any> => {
+    search = async (filters: UserSearchFilters): Promise<UserSearchResults> => {
         try {
 
             const search: any = { where: {}, include: [] };

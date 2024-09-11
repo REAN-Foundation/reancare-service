@@ -20,6 +20,7 @@ import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { UserHelper } from '../user.helper';
 import { RoleService } from '../../../services/role/role.service';
 import { Roles } from '../../../domain.types/role/role.types';
+import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,6 +78,12 @@ export class UserController extends BaseController {
             }
 
             model.Person.id = person.id;
+
+            const updatedPerson = await this.updatePersonInformation(person, model);
+
+            if (!updatedPerson) {
+                throw new ApiError(409, `User already exists with the same email.`);
+            }
 
             if (!model.UserName) {
                 model.UserName = await this._service.generateUserName(model.Person.FirstName, model.Person.LastName);
@@ -432,10 +439,29 @@ export class UserController extends BaseController {
                 existingUserRoleName == Roles.TenantUser ||
                 existingUserRoleName == Roles.SystemAdmin ||
                 existingUserRoleName == Roles.SystemUser) {
-                const msg = `User cannot have multiple administrative roles. You can change one administrative role to another.`;
+                const msg = `User cannot have multiple administrative roles.`;
                 throw new ApiError(409, msg);
             }
         }
+    }
+
+    private async updatePersonInformation (person: PersonDetailsDto, model: UserDomainModel) {
+        const personUpdateModel: PersonDomainModel = {};
+        if (!person.Email && model.Person.Email) {
+            const personWithEmail = await this._personService.getPersonWithEmail(model.Person.Email);
+            if (personWithEmail) {
+                return null;
+            }
+            personUpdateModel.Email = model.Person.Email;
+        }
+        if (!person.FirstName && model.Person.FirstName) {
+            personUpdateModel.FirstName = model.Person.FirstName;
+        }
+        if (!person.LastName && model.Person.LastName) {
+            personUpdateModel.LastName = model.Person.LastName;
+        }
+        const updatedPerson = await this._personService.update(person.id, personUpdateModel);
+        return updatedPerson;
     }
 
 }

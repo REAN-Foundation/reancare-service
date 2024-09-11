@@ -59,6 +59,7 @@ export class Scheduler {
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
                 this.scheduleHFHelperTextMessage();
+                this.scheduleGGHNFollowUpReminder();
 
                 const runOnceScheduler = RunOnceScheduler.instance();
                 runOnceScheduler.schedule(Scheduler._schedules);
@@ -248,6 +249,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule HF Helper SMS...');
                 var customActionHandler = new CustomActionsHandler();
                 await customActionHandler.scheduleHFHelperTextMessage();
+            })();
+        });
+    };
+
+    private scheduleGGHNFollowUpReminder  = () => {
+        cron.schedule(Scheduler._schedules['ScheduleGGHNFollowUpReminder'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: GGHNFollowUpReminder...');
+                var customActionHandler = new CustomActionsHandler();
+                customActionHandler.scheduleGGHNFollowUpReminder();
             })();
         });
     };

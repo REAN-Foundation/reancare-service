@@ -201,7 +201,9 @@
             "GetPatientEligibility": true,
             "GetPatientEnrollments": true,
             "GetWeeklyStatus": true,
-            "UpdateRisk": true
+            "UpdateRisk": true,
+            "GetPatientActiveEnrollments": true,
+            "Stop": true
         },
         "ClinicalTypes": {
             "GetClinicalValidationStatuses": true,
@@ -866,6 +868,13 @@
             "Update": true,
             "Delete": true
         }
+    },
+    "FollowUpCancellations": {
+        "Create": true,
+        "Search": true,
+        "GetById": true,
+        "Update": true,
+        "Delete": true
     }
     
 }

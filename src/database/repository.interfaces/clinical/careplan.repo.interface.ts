@@ -68,4 +68,7 @@ export interface ICareplanRepo {
 
     deleteFutureCareplanTask(enrollment): Promise<number>;
 
+    getPatientActiveEnrollments(patientUserId: uuid): Promise<EnrollmentDto[]>;
+
+    stop(enrollmentId: uuid): Promise<EnrollmentDto>;
 }

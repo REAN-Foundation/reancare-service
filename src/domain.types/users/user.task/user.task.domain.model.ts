@@ -6,4 +6,5 @@ export interface UserTaskDomainModel extends TaskBase {
     DisplayId?           : string;
     ActionType?          : UserActionType;
     ActionId?            : string;
+    ParentActionId?      : string;
 }

@@ -55,7 +55,6 @@ export default class AssessmentNode extends Model {
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
         defaultValue : true,
     })
     Required: boolean;

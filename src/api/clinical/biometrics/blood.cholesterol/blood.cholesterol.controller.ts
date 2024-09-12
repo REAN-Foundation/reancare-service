@@ -7,6 +7,7 @@ import { Injector } from '../../../../startup/injector';
 import { BloodCholesterolValidator } from './blood.cholesterol.validator';
 import { BloodCholesterolDomainModel } from '../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.domain.model';
 import { BiometricsController } from '../biometrics.controller';
+import { BiometricsEvents } from '../biometrics.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +31,7 @@ export class BloodCholesterolController extends BiometricsController {
             if (record == null) {
                 throw new ApiError(400, 'Cannot create record for blood cholesterol!');
             }
+            BiometricsEvents.onBiometricsAdded(request, record, 'blood.cholesterol');
             ResponseHandler.success(request, response, 'Blood cholesterol record created successfully!', 201, {
                 BloodCholesterol : record,
             });
@@ -88,7 +90,7 @@ export class BloodCholesterolController extends BiometricsController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood cholesterol record!');
             }
-
+            BiometricsEvents.onBiometricsUpdated(request, updated, 'blood.cholesterol');
             ResponseHandler.success(request, response, 'Blood cholesterol record updated successfully!', 200, {
                 BloodCholesterol : updated,
             });
@@ -110,6 +112,7 @@ export class BloodCholesterolController extends BiometricsController {
             if (!deleted) {
                 throw new ApiError(400, 'Blood cholesterol record cannot be deleted.');
             }
+            BiometricsEvents.onBiometricsDeleted(request, record, 'blood.cholesterol');
             ResponseHandler.success(request, response, 'Blood cholesterol record deleted successfully!', 200, {
                 Deleted : true,
             });

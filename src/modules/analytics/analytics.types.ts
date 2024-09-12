@@ -106,19 +106,12 @@ export enum AnalyticsEventType {
     SymptomDelete = "symptom-delete",
 
     // Biometrics / Vitals events
-    VitalAddPulse = "vital-add-pulse",
-    VitalAddTemperature = "vital-add-temperature",
-    VitalAddBloodPressure = "vital-add-blood-pressure",
-    VitalAddBloodSugar = "vital-add-blood-sugar",
-    VitalAddWeight = "vital-add-weight",
-    VitalAddHeight = "vital-add-height",
-    VitalAddOxygenSaturation = "vital-add-oxygen-saturation",
-    VitalAddRespiratoryRate = "vital-add-respiratory-rate",
+    VitalsAdd = "vitals-add",
+    VitalsUpdate = "vitals-update",
+    VitalsDelete = "vitals-delete",
 
-    VitalAlertTriggered = "vital-alert-triggered",
-    VitalAlertResolved = "vital-alert-resolved",
-
-    VitalSearch = "vital-search",
+    VitalAlertTriggered = "vitals-alert-triggered",
+    VitalAlertResolved = "vitals-alert-resolved",
 
     // Lab test events
     LabRecordAdd = "lab-record-add",
@@ -438,4 +431,14 @@ export enum AnalyticsEventSubject {
     MedicationSchedule = "medication-schedule",
     UserTask = "user-task",
     CareplanEnrollment = "careplan-enrollment",
+    
+    VitalsCholesterol = "vitals-cholesterol",
+    VitalsPulse = "vitals-pulse",
+    VitalsBodyTemperature = "vitals-body-temperature",
+    VitalsBloodPressure = "vitals-blood-pressure",
+    VitalsBloodGlucose = "vitals-blood-glucose",
+    VitalsBodyWeight = "vitals-body-weight",
+    VitalsBodyHeight = "vitals-body-height",
+    VitalsBloodOxygenSaturation = "vitals-blood-oxygen-saturation",
+    VitalsRespiratoryRate = "vitals-respiratory-rate",
 }

@@ -6,6 +6,7 @@ import { Injector } from '../../../../startup/injector';
 import { BodyHeightValidator } from './body.height.validator';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
+import { BiometricsEvents } from '../biometrics.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +37,7 @@ export class BodyHeightController extends BiometricsController {
             }
             await this._ehrVitalService.addEHRBodyHeightForAppNames(bodyHeight);
 
+            BiometricsEvents.onBiometricsAdded(request, bodyHeight, 'body.height');
             ResponseHandler.success(request, response, 'Height record created successfully!', 201, {
                 BodyHeight : bodyHeight
             });
@@ -98,6 +100,7 @@ export class BodyHeightController extends BiometricsController {
             }
             await this._ehrVitalService.addEHRBodyHeightForAppNames(updated);
 
+            BiometricsEvents.onBiometricsUpdated(request, updated, 'body.height');
             ResponseHandler.success(request, response, 'Height record updated successfully!', 200, {
                 BodyHeight : updated
             });
@@ -120,6 +123,7 @@ export class BodyHeightController extends BiometricsController {
             }
             this._ehrVitalService.deleteRecord(record.id);
 
+            BiometricsEvents.onBiometricsDeleted(request, record, 'body.height');
             ResponseHandler.success(request, response, 'Height record deleted successfully!', 200, {
                 Deleted : true,
             });

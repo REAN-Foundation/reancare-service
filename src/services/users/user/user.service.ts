@@ -16,7 +16,7 @@ import { CurrentUser } from '../../../domain.types/miscellaneous/current.user';
 import { OtpPersistenceEntity } from '../../../domain.types/users/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
-import { ChangePasswordModel, OtpGenerationModel, ResetPasswordModel, SendPasswordResetCodeModel, UserBasicDetails, UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
+import { ChangePasswordModel, OtpGenerationModel, UserAccountActionResult, ResetPasswordModel, SendPasswordResetCodeModel, UserBasicDetails, UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
 import { UserDetailsDto, UserDto } from '../../../domain.types/users/user/user.dto';
 import { UserLoginSessionDomainModel } from '../../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
@@ -212,6 +212,7 @@ export class UserService {
             CurrentRoleId : user.Role.id,
             CurrentRole   : user.Role.RoleName,
             SessionId     : loginSessionDetails.id,
+            IsTestUser    : isTestUser,
         };
 
         const sessionId = currentUser.SessionId;
@@ -287,7 +288,8 @@ export class UserService {
             UserName      : user.UserName,
             CurrentRoleId : user.Role.id,
             CurrentRole   : user.Role.RoleName,
-            SessionId     : loginSessionDetails.id
+            SessionId     : loginSessionDetails.id,
+            IsTestUser    : isTestUser,
         };
 
         const sessionId = currentUser.SessionId;
@@ -306,11 +308,11 @@ export class UserService {
         };
     };
 
-    public generateOtp = async (otpModel: OtpGenerationModel): Promise<boolean> => {
+    public generateOtp = async (otpModel: OtpGenerationModel): Promise<UserAccountActionResult> => {
 
         var isTestUser = await this.isInternalTestUser(otpModel.Phone);
         if (isTestUser) {
-            return true;
+            return { Success: true, User: null };
         }
 
         let person: PersonDetailsDto = null;
@@ -355,10 +357,10 @@ export class UserService {
             Logger.instance().log(`Otp sent successfully. OTP: ${otp}\n `);
         }
 
-        return true;
+        return { Success: sendStatus, User: user };
     };
 
-    public changePassword = async (model: ChangePasswordModel): Promise<boolean> => {
+    public changePassword = async (model: ChangePasswordModel): Promise<UserAccountActionResult> => {
 
         const userLoginModel: UserLoginDetails = {
             Phone       : model.Phone,
@@ -387,10 +389,10 @@ export class UserService {
         const newPasswordHash = Helper.hash(model.NewPassword);
         await this._userRepo.updateUserHashedPassword(user.id, newPasswordHash);
 
-        return true;
+        return { Success: true, User: user };
     };
 
-    public resetPassword = async (model: ResetPasswordModel): Promise<boolean> => {
+    public resetPassword = async (model: ResetPasswordModel): Promise<UserAccountActionResult> => {
 
         const userLoginModel: UserLoginDetails = {
             Phone       : model.Phone,
@@ -421,10 +423,10 @@ export class UserService {
         const newPasswordHash = Helper.hash(model.NewPassword);
         await this._userRepo.updateUserHashedPassword(user.id, newPasswordHash);
 
-        return true;
+        return { Success: true, User: user };
     };
 
-    public sendPasswordResetCode = async (model: SendPasswordResetCodeModel): Promise<boolean> => {
+    public sendPasswordResetCode = async (model: SendPasswordResetCodeModel): Promise<UserAccountActionResult> => {
         const userLoginModel: UserLoginDetails = {
             Phone       : model.Phone,
             Email       : model.Email,
@@ -442,7 +444,7 @@ export class UserService {
             Logger.instance().log(`Password reset code sent successfully to user ${user.Person.DisplayName}.`);
         }
 
-        return true;
+        return { Success: successful, User: user };
     };
 
     public invalidateSession = async (sesssionId: uuid): Promise<boolean> => {

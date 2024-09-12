@@ -116,6 +116,7 @@ export class PatientService {
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
                 CurrentRole   : 'Patient',
+                IsTestUser    : items[0].IsTestUser ?? false
             };
             const accessToken = await AuthHandler.generateUserSessionToken(currentUser);
             items[0].accessToken = accessToken;

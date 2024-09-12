@@ -14,13 +14,15 @@ import {
     ChangePasswordModel,
     UserDomainModel,
     UserBasicDetails,
-    UserLoginDetails
+    UserLoginDetails,
+    UserAccountActionResult
 } from '../../../domain.types/users/user/user.domain.model';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { UserHelper } from '../user.helper';
 import { RoleService } from '../../../services/role/role.service';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
+import { UserEvents } from './user.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -94,6 +96,8 @@ export class UserController extends BaseController {
                 throw new ApiError(400, 'Cannot create user!');
             }
 
+            UserEvents.onUserCreated(request, user);
+
             ResponseHandler.success(request, response, 'User created successfully!', 201, {
                 User : user,
             });
@@ -157,6 +161,9 @@ export class UserController extends BaseController {
             }
 
             updatedUser = await this._service.getById(userId);
+
+            UserEvents.onUserUpdated(request, updatedUser);
+
             ResponseHandler.success(request, response, 'User updated successfully!', 200, {
                 User : updatedUser,
             });
@@ -178,6 +185,9 @@ export class UserController extends BaseController {
             if (userDeleted == null) {
                 throw new ApiError(400, 'Cannot delete user!');
             }
+
+            UserEvents.onUserDeleted(request, user);
+
             ResponseHandler.success(request, response, 'User deleted successfully!', 200, {
                 Deleted : userDeleted,
             });
@@ -256,6 +266,8 @@ export class UserController extends BaseController {
                 SessionValidTill  : userDetails.sessionValidTill
             };
 
+            UserEvents.onUserLoginWithPassword(request, user);
+
             ResponseHandler.success(request, response, message, 200, data, true);
 
         } catch (error) {
@@ -266,9 +278,13 @@ export class UserController extends BaseController {
     changePassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model: ChangePasswordModel = await UserValidator.changePassword(request);
-            const result = await this._service.changePassword(model);
+            const result: UserAccountActionResult = await this._service.changePassword(model);
+
+            const user = result.User;
+            UserEvents.onUserPasswordChanged(request, user);
+
             ResponseHandler.success(request, response, 'Password changed successfully!', 200, {
-                PasswordReset : result,
+                PasswordReset : result.Success,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -278,9 +294,13 @@ export class UserController extends BaseController {
     resetPassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model: ResetPasswordModel = await UserValidator.resetPassword(request);
-            const result = await this._service.resetPassword(model);
+            const result: UserAccountActionResult = await this._service.resetPassword(model);
+
+            const user = result.User;
+            UserEvents.onUserPasswordReset(request, user);
+
             ResponseHandler.success(request, response, 'Password reset successfully!', 200, {
-                PasswordReset : result,
+                PasswordReset : result.Success,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -290,9 +310,13 @@ export class UserController extends BaseController {
     sendPasswordResetCode = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await UserValidator.sendPasswordResetCode(request);
-            const result = await this._service.sendPasswordResetCode(model);
+            const result: UserAccountActionResult = await this._service.sendPasswordResetCode(model);
+
+            const user = result.User;
+            UserEvents.onSendPasswordResetCode(request, user);
+
             ResponseHandler.success(request, response, 'Password reset email sent successfully!', 200, {
-                SendPasswordResetEmailResult : result,
+                SendPasswordResetEmailResult : result.Success,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -302,12 +326,14 @@ export class UserController extends BaseController {
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const obj = await UserValidator.generateOtp(request, response);
-            
             await this._userHelper.performDuplicatePersonCheck(obj.Phone, obj.Email);
-            
-            const entity = await this._service.generateOtp(obj);
+            const result: UserAccountActionResult = await this._service.generateOtp(obj);
+
+            const user = result.User;
+            UserEvents.onGenerateOtp(request, user);
+
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
-                GenerateOTPResult : entity,
+                GenerateOTPResult : result.Success,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -343,6 +369,8 @@ export class UserController extends BaseController {
 
             const message = `User '${user.Person.DisplayName}' logged in successfully!`;
 
+            UserEvents.onUserLoginWithOtp(request, user);
+
             ResponseHandler.success(request, response, message, 200, data, true);
 
         } catch (error) {
@@ -354,6 +382,11 @@ export class UserController extends BaseController {
         try {
             const sesssionId = request.currentUser.SessionId;
             const userId = request.currentUser.UserId;
+
+            const user = await this._service.getById(userId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
 
             var deviceToken = await UserValidator.logoutToken(request);
 
@@ -378,6 +411,8 @@ export class UserController extends BaseController {
                     await this._userDeviceDetailsService.delete(d.id);
                 }
             }
+
+            UserEvents.onUserLogout(request, user);
 
             ResponseHandler.success(request, response, 'User logged out successfully!', 200);
 

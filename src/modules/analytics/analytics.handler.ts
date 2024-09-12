@@ -73,7 +73,7 @@ export class AnalyticsHandler {
                 'x-api-key'       : apiKey,
             };
 
-            const timezoneOffsetMinutes = TimeHelper.getTimezoneOffsets(user.CurrentTimeZone, DurationType.Minutes);
+            const timezoneOffsetMinutes = TimeHelper.getTimezoneOffsets(user.CurrentTimeZone, DurationType.Minute);
 
             var url = process.env.ANALYTICS_API_BASE_URL + '/users';
             var body = {

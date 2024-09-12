@@ -17,6 +17,7 @@ import { EHRUserTaskService } from '../../../modules/ehr.analytics/ehr.services/
 import { BaseUserController } from '../base.user.controller';
 import { UserTaskSearchFilters } from '../../../domain.types/users/user.task/user.task.search.types';
 import { PermissionHandler } from '../../../auth/custom/permission.handler';
+import { UserTaskEvents } from './user.task.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -190,7 +191,7 @@ export class UserTaskController extends BaseUserController {
                     updated['Action'] = action;
                 }
             }
-
+            UserTaskEvents.onUserTaskStarted(request, updated);
             ResponseHandler.success(request, response, 'User task started successfully!', 200, {
                 UserTask : updated,
             });
@@ -236,6 +237,7 @@ export class UserTaskController extends BaseUserController {
                 await this._ehrUserTaskService.addEHRUserTaskForAppNames(updated, healthSystem);
             }
 
+            UserTaskEvents.onUserTaskCompleted(request, updated);
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
                 UserTask : updated,
             });
@@ -275,6 +277,7 @@ export class UserTaskController extends BaseUserController {
                 }
             }
 
+            UserTaskEvents.onUserTaskUpdated(request, updated);
             ResponseHandler.success(request, response, 'User task record updated successfully!', 200, {
                 UserTask : updated,
             });
@@ -313,6 +316,7 @@ export class UserTaskController extends BaseUserController {
                 }
             }
 
+            UserTaskEvents.onUserTaskCancelled(request, updated);
             ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
                 UserTask : updated,
             });

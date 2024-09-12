@@ -180,11 +180,12 @@ export enum AnalyticsEventType {
     CareplanTaskReschedule = "careplan-task-reschedule",
 
     // User task events
-    TaskStart = "task-start",
-    TaskComplete = "task-complete",
-    TaskCancel = "task-cancel",
-    TaskFail = "task-fail",
-    TaskReschedule = "task-reschedule",
+    UserTaskStart = "user-task-start",
+    UserTaskComplete = "user-task-complete",
+    UserTaskCancel = "user-task-cancel",
+    UserTaskFail = "user-task-fail",
+    UserTaskReschedule = "user-task-reschedule",
+    UserTaskUpdate = "user-task-update",
 
     // User goal events
     GoalCreate = "goal-create",
@@ -434,4 +435,5 @@ export enum AnalyticsEventSubject {
     LoginSession = "login-session",
     Medication = "medication",
     MedicationSchedule = "medication-schedule",
+    UserTask = "user-task",
 }

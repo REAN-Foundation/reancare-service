@@ -23,6 +23,7 @@ import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.service
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
+import { UserEvents } from '../../user/user.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -78,6 +79,7 @@ export class PatientController extends BaseUserController {
                 });
                 return;
             }
+            UserEvents.onUserCreated(request, patient.User);
             ResponseHandler.failure(request, response, `Patient account already exists!`, 409);
         } catch (error) {
 
@@ -266,6 +268,7 @@ export class PatientController extends BaseUserController {
 
             const patient = await this._service.getByUserId(userId);
 
+            UserEvents.onUserUpdated(request, patient.User);
             ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
                 Patient : patient,
             });
@@ -323,6 +326,7 @@ export class PatientController extends BaseUserController {
             // delete static ehr record
             await this._ehrPatientService.deleteStaticEHRRecord(userId);
 
+            UserEvents.onUserDeleted(request, user);
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,
             });

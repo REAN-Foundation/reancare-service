@@ -4,6 +4,8 @@ import { AnalyticsEvent } from "./analytics.types";
 import axios from 'axios';
 import { UserDetailsDto } from '../../domain.types/users/user/user.dto';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
+import { TimeHelper } from '../../common/time.helper';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
 
 /////////////////////////////////////////////////////////////////////
 
@@ -71,9 +73,16 @@ export class AnalyticsHandler {
                 'x-api-key'       : apiKey,
             };
 
+            const timezoneOffsetMinutes = TimeHelper.getTimezoneOffsets(user.CurrentTimeZone, DurationType.Minutes);
+
             var url = process.env.ANALYTICS_API_BASE_URL + '/users';
             var body = {
-                ...user,
+                id : user.id,
+                TenantId : user.TenantId,
+                RoleId : user.RoleId ?? user.Role?.id,
+                OnboardingSource : 'Unknown',
+                TimezoneOffsetMin : timezoneOffsetMinutes,
+                RegistrationDate: user.Person.ActiveSince ?? new Date(),
             };
             var response = await axios.post(url, body, { headers });
             if (response.status === 201) {

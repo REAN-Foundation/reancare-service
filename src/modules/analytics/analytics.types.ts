@@ -172,6 +172,7 @@ export enum AnalyticsEventType {
     CareplanStart = "careplan-start",
     CareplanStop = "careplan-stop",
     CareplanComplete = "careplan-complete",
+
     //Careplan tasks
     CareplanTaskStart = "careplan-task-start",
     CareplanTaskComplete = "careplan-task-complete",
@@ -436,4 +437,5 @@ export enum AnalyticsEventSubject {
     Medication = "medication",
     MedicationSchedule = "medication-schedule",
     UserTask = "user-task",
+    CareplanEnrollment = "careplan-enrollment",
 }

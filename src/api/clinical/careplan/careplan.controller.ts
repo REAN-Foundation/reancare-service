@@ -11,6 +11,8 @@ import { CommunityNetworkService } from '../../../modules/community.bw/community
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
 import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { EnrollmentDto } from '../../../domain.types/clinical/careplan/enrollment/enrollment.dto';
+import { CareplanEvents } from './careplan.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +79,7 @@ export class CareplanController extends BaseController {
             model.StartDate = startDate;
             model.EndDate = endDate;
 
-            let enrollment = null;
+            let enrollment: EnrollmentDto = null;
             if (model.Provider === 'REAN_BW') {
                 enrollment = await this._communityNetworkService.enroll(model);
             } else {
@@ -87,6 +89,7 @@ export class CareplanController extends BaseController {
                 throw new ApiError(400, 'Cannot enroll patient to careplan!');
             }
 
+            CareplanEvents.onCareplanEnrolled(request, enrollment);
             ResponseHandler.success(request, response, 'Patient enrollment done successfully!', 201, {
                 Enrollment : enrollment,
             });
@@ -209,6 +212,10 @@ export class CareplanController extends BaseController {
             }
             await this.authorizeOne(request, enrollment.PatientUserId);
             var updatedEnrollment = await this._service.stop(enrollment);
+            if (updatedEnrollment == null) {
+                throw new ApiError(400, 'Cannot stop patient\'s current care plan!');
+            }
+            CareplanEvents.onCareplanStopped(request, updatedEnrollment);
             ResponseHandler.success(request, response, "Patient's current care plan has been successfully stopped!", 200, {
                 Enrollment : updatedEnrollment
             });

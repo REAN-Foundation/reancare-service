@@ -11,6 +11,7 @@ import { HowDoYouFeelSearchFilters } from '../../../../domain.types/clinical/sym
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { HowDoYouFeelDomainModel } from '../../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
 import { UserService } from '../../../../services/users/user/user.service';
+import { SymptomEvents } from '../symptom.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +38,9 @@ export class HowDoYouFeelController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for how do you feel!');
             }
             await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(howDoYouFeel);
+            
+            SymptomEvents.onSymptomAdded(request, howDoYouFeel, 'how.do.you.feel');
+            
             ResponseHandler.success(request, response, 'How do you feel record created successfully!', 201, {
                 HowDoYouFeel : howDoYouFeel,
             });
@@ -98,6 +102,8 @@ export class HowDoYouFeelController extends BaseController {
 
             await this._ehrHowDoYouFeelService.addEHRHowDoYouFeelForAppNames(updated);
 
+            SymptomEvents.onSymptomUpdated(request, updated, 'how.do.you.feel');
+
             ResponseHandler.success(request, response, 'How do you feel record updated successfully!', 200, {
                 HowDoYouFeel : updated,
             });
@@ -119,6 +125,8 @@ export class HowDoYouFeelController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'How do you feel record cannot be deleted.');
             }
+
+            SymptomEvents.onSymptomDeleted(request, existingRecord, 'how.do.you.feel');
 
             ResponseHandler.success(request, response, 'How do you feel record deleted successfully!', 200, {
                 Deleted : true,

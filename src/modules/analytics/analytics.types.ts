@@ -441,4 +441,7 @@ export enum AnalyticsEventSubject {
     VitalsBodyHeight = "vitals-body-height",
     VitalsBloodOxygenSaturation = "vitals-blood-oxygen-saturation",
     VitalsRespiratoryRate = "vitals-respiratory-rate",
+
+    Symptom = "symptom",
+    SymptomHowDoYouFeel = "symptom-how-do-you-feel",
 }

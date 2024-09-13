@@ -8,6 +8,7 @@ import { SymptomAssessmentValidator } from './symptom.assessment.validator';
 import { BaseController } from '../../../base.controller';
 import { SymptomAssessmentSearchFilters } from '../../../../domain.types/clinical/symptom/symptom.assessment/symptom.assessment.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { AssessmentEvents } from '../assessment.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,6 +36,9 @@ export class SymptomAssessmentController extends BaseController {
             if (assessment == null) {
                 throw new ApiError(400, 'Cannot create assessment!');
             }
+
+            AssessmentEvents.onAssessmentCreated(request, assessment, 'symptom.assessment');
+
             ResponseHandler.success(request, response, 'Symptom assessment created successfully!', 201, {
                 SymptomAssessment : assessment,
             });
@@ -88,6 +92,9 @@ export class SymptomAssessmentController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update assessment record!');
             }
+
+            AssessmentEvents.onAssessmentCompleted(request, updated, 'symptom.assessment');
+
             ResponseHandler.success(request, response, 'Symptom assessment record updated successfully!', 200, {
                 SymptomAssessment : updated,
             });
@@ -108,6 +115,9 @@ export class SymptomAssessmentController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Symptom assessment cannot be deleted.');
             }
+
+            AssessmentEvents.onAssessmentDeleted(request, record, 'symptom.assessment');
+
             ResponseHandler.success(request, response, 'Symptom assessment record deleted successfully!', 200, {
                 Deleted : true,
             });

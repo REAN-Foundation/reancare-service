@@ -20,6 +20,7 @@ import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
+import { AssessmentEvents } from '../assessment.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,6 +60,8 @@ export class AssessmentController extends BaseController {
             if (assessment == null) {
                 throw new ApiError(400, 'Cannot create record for assessment!');
             }
+
+            AssessmentEvents.onAssessmentCreated(request, assessment, 'assessment');
 
             ResponseHandler.success(request, response, 'Assessment record created successfully!', 201, {
                 Assessment : assessment,
@@ -138,6 +141,8 @@ export class AssessmentController extends BaseController {
                 throw new ApiError(400, 'Assessment record cannot be deleted.');
             }
 
+            AssessmentEvents.onAssessmentDeleted(request, record, 'assessment');
+
             ResponseHandler.success(request, response, 'Assessment record deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -155,6 +160,8 @@ export class AssessmentController extends BaseController {
             }
             await this.authorizeOne(request, record.PatientUserId);
             const next = await this._service.startAssessment(id);
+
+            AssessmentEvents.onAssessmentStarted(request, record, 'assessment');
 
             ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
                 Next : next,
@@ -291,11 +298,15 @@ export class AssessmentController extends BaseController {
                 }
                 var updatedAssessment = await this._service.getById(assessment.id);
                 await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
+
+                AssessmentEvents.onAssessmentCompleted(request, updatedAssessment, 'assessment');
             }
 
             const message = isAssessmentCompleted
                 ? 'Assessment has completed successfully!'
                 : 'Assessment question answered successfully!';
+
+            AssessmentEvents.onAssessmentQuestionAnswered(request, answerResponse, assessment, 'assessment');
 
             ResponseHandler.success(request, response, message, 200, { AnswerResponse: answerResponse });
 
@@ -368,11 +379,16 @@ export class AssessmentController extends BaseController {
                 var updatedAssessment = await this._service.getById(assessment.id);
                 updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore']);
                 await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
+
+                AssessmentEvents.onAssessmentCompleted(request, updatedAssessment, 'assessment');
             }
 
             const message = isAssessmentCompleted
                 ? 'Assessment has completed successfully!'
                 : 'Assessment question list answered successfully!';
+            
+            const answerRes = answerResponse.Answer.length > 0 ? answerResponse.Answer[0] : null;
+            AssessmentEvents.onAssessmentQuestionAnswered(request, answerRes, assessment, 'assessment');
 
             ResponseHandler.success(request, response, message, 200, { AnswerResponse: answerResponse });
         } catch (error) {

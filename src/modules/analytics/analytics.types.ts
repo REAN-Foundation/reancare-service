@@ -283,33 +283,17 @@ export enum AnalyticsEventType {
     FeedbackResponse = "feedback-response",
 
     // Assessment events
-    AssessmentTemplateCreate = "assessment-template-create",
-    AssessmentTemplateUpdate = "assessment-template-update",
-    AssessmentTemplateDelete = "assessment-template-delete",
     AssessmentCreate = "assessment-create",
     AssessmentStart = "assessment-start",
     AssessmentComplete = "assessment-complete",
     AssessmentCancel = "assessment-cancel",
-    AssessmentQuestionAnswered = "assessment-question-answered",
-
-    // Daily assessments
-    DailyAssessmentCreate = "daily-assessment-create",
-    DailyAssessmentStart = "daily-assessment-start",
-    DailyAssessmentComplete = "daily-assessment-complete",
-    DailyAssessmentCancel = "daily-assessment-cancel",
-    DailyAssessmentQuestionAnswered = "daily-assessment-question-answered",
-
-    // Energy level assessment events
-    EnergyLevelQuestionAnswered = "energy-level-question-answered",
-
-    // Form events
-    FormAnsweringStart = "form-answering-start",
-    FormAnsweringCancel = "form-answering-cancel",
-    FormQuestionAnswered = "form-question-answered",
-    FormPresented = "form-presented",
-    FormSubmitted = "form-submitted",
-    FormDraftSaved = "form-draft-saved",
-    FormDraftDeleted = "form-draft-deleted",
+    AssessmentDelete = "assessment-delete",
+    AssessmentQuestionAnswer = "assessment-question-answer",
+    AssessmentQuestionSkip = "assessment-question-skip",
+    AssessmentFormPresented = "assessment-form-presented",
+    AssessmentFormSubmitted = "assessment-form-submitted",
+    AssessmentFormDraftSaved = "assessment-form-draft-saved",
+    AssessmentFormDraftDeleted = "assessment-form-draft-deleted",
 
     // Chatbot events
     ChatbotSentMessage = "chatbot-sent-message",
@@ -444,4 +428,13 @@ export enum AnalyticsEventSubject {
 
     Symptom = "symptom",
     SymptomHowDoYouFeel = "symptom-how-do-you-feel",
+
+    Assessment = "assessment",
+    AssessmentQuestion = "assessment-question",
+    DailyAssessment = "daily-assessment",
+    EnergyLevelAssessment = "energy-level-assessment",
+    SymptomAssessment = "symptom-assessment",
+    SurveyAssessment = "survey-assessment",
+    FormAssessment = "form-assessment",
+
 }

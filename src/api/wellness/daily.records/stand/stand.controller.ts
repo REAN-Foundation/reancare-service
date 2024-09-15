@@ -10,6 +10,7 @@ import { BaseController } from '../../../../api/base.controller';
 import { StandSearchFilters } from '../../../../domain.types/wellness/daily.records/stand/stand.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { UserService } from '../../../../services/users/user/user.service';
+import { DailyRecordEvents } from '../daily.record.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +39,7 @@ export class StandController extends BaseController {
             }
 
             await this._ehrPhysicalActivityService.addEHRRecordStandForAppNames(stand);
-
+            DailyRecordEvents.onDailyRecordAdd(request, stand, 'stand-record-add', 'stand', 'stand');
             ResponseHandler.success(request, response, 'Stand record created successfully!', 201, {
                 Stand : stand,
 

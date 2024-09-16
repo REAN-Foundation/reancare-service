@@ -58,7 +58,7 @@ export class Scheduler {
                 
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
-                this.scheduleHFHelperTextMessage();
+                // this.scheduleHFHelperTextMessage();
                 this.scheduleGGHNFollowUpReminder();
 
                 const runOnceScheduler = RunOnceScheduler.instance();
@@ -243,15 +243,16 @@ export class Scheduler {
         });
     };
 
-    private scheduleHFHelperTextMessage = () => {
-        cron.schedule(Scheduler._schedules['ScheduleHFHelperTextMessage'], () => {
-            (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule HF Helper SMS...');
-                var customActionHandler = new CustomActionsHandler();
-                await customActionHandler.scheduleHFHelperTextMessage();
-            })();
-        });
-    };
+    //Shut down - HF helper retirement message on September 15, 2024
+    // private scheduleHFHelperTextMessage = () => {
+    //     cron.schedule(Scheduler._schedules['ScheduleHFHelperTextMessage'], () => {
+    //         (async () => {
+    //             Logger.instance().log('Running scheduled jobs: Schedule HF Helper SMS...');
+    //             var customActionHandler = new CustomActionsHandler();
+    //             await customActionHandler.scheduleHFHelperTextMessage();
+    //         })();
+    //     });
+    // };
 
     private scheduleGGHNFollowUpReminder  = () => {
         cron.schedule(Scheduler._schedules['ScheduleGGHNFollowUpReminder'], () => {

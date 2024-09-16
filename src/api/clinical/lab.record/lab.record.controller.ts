@@ -11,6 +11,7 @@ import { BaseController } from '../../../api/base.controller';
 import { LabRecordSearchFilters } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types';
 import { PermissionHandler } from '../../../auth/custom/permission.handler';
 import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
+import { LabRecordEvents } from './lab.record.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +41,7 @@ export class LabRecordController extends BaseController {
                 throw new ApiError(400, 'Cannot create lab record!');
             }
             await this._ehrLabService.addEHRLabRecordForAppNames(labRecord);
+            LabRecordEvents.onLabRecordAdd(request, labRecord);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record created successfully!`, 201, {
                 LabRecord : labRecord,
             });
@@ -58,6 +60,7 @@ export class LabRecordController extends BaseController {
                 throw new ApiError(404, 'Lab record not found.');
             }
             await this.authorizeOne(request, labRecord.PatientUserId, null);
+            LabRecordEvents.onLabRecordAdd(request, labRecord);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record retrieved successfully!`, 200, {
                 LabRecord : labRecord,
             });
@@ -77,7 +80,6 @@ export class LabRecordController extends BaseController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} lab records retrieved successfully!`;
-
             ResponseHandler.success(request, response, message, 200, {
                 LabRecordRecords : searchResults });
 
@@ -127,7 +129,7 @@ export class LabRecordController extends BaseController {
 
             // delete ehr record
             this._ehrLabService.deleteLabEHRRecord(existingRecord.id);
-
+            // LabRecordEvents.onLabRecordDelete(request, existingRecord);
             ResponseHandler.success(request, response, `${existingRecord.DisplayName} record deleted successfully!`, 200, {
                 Deleted : true,
             });

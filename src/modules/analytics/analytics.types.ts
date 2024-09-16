@@ -38,6 +38,7 @@ export enum AnalyticsEventCategory  {
     Mood            = "mood",
     Sleep           = "sleep",
     Steps           = "steps",
+    Stand           = "stand",
     Device          = "device",
     Survey          = "survey",
     Assessment      = "assessment",
@@ -436,5 +437,17 @@ export enum AnalyticsEventSubject {
     SymptomAssessment = "symptom-assessment",
     SurveyAssessment = "survey-assessment",
     FormAssessment = "form-assessment",
+
+    LabRecord = "lab-record",
+    Step      = "step",
+    Sleep     = "sleep",
+    Stand     = "stand",
+    Mood      = "mood",
+    Nutrition = "nutrition",
+    Food = "food",
+    Water = "water",
+    Goal = "goal",
+
+    Exercise = "exercise"
 
 }

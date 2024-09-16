@@ -10,6 +10,7 @@ import { StepCountSearchFilters } from '../../../../domain.types/wellness/daily.
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { BaseController } from '../../../../api/base.controller';
 import { UserService } from '../../../../services/users/user/user.service';
+import { DailyRecordEvents } from '../daily.record.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +49,7 @@ export class StepCountController extends BaseController {
             }
 
             await this._ehrPhysicalActivityService.addEHRRecordStepCountForAppNames(stepCount);
-
+            DailyRecordEvents.onDailyRecordAdd(request, stepCount, 'step-record-add', 'steps', 'step');
             ResponseHandler.success(request, response, 'Step count created successfully!', 201, {
                 StepCount : stepCount,
 

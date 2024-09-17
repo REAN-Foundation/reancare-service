@@ -14,6 +14,7 @@ import { FoodConsumptionSearchFilters } from '../../../../domain.types/wellness/
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { BaseController } from '../../../../api/base.controller';
 import { UserService } from '../../../../services/users/user/user.service';
+import { NutritionEvents } from '../nutrition.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +68,7 @@ export class FoodConsumptionController extends BaseController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
-
+            NutritionEvents.onNutritionCreate(request, foodConsumption, 'nutrition-start', 'nutrition', 'food');
             ResponseHandler.success(request, response, 'Nutrition record created successfully!', 201, {
                 FoodConsumption : foodConsumption,
             });
@@ -202,6 +203,7 @@ export class FoodConsumptionController extends BaseController {
                     RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp)
                 });
             }
+            NutritionEvents.onNutritionCreate(request, updated, 'nutrition-update', 'nutrition', 'food');
             ResponseHandler.success(request, response, 'Nutrition record updated successfully!', 200, {
                 FoodConsumption : updated,
             });
@@ -224,7 +226,7 @@ export class FoodConsumptionController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Nutrition record cannot be deleted.');
             }
-
+            NutritionEvents.onNutritionCreate(request, existingRecord, 'nutrition-cancel', 'nutrition', 'food');
             ResponseHandler.success(request, response, 'Nutrition record deleted successfully!', 200, {
                 Deleted : true,
             });

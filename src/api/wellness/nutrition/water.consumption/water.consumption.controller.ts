@@ -9,6 +9,7 @@ import { WaterConsumptionSearchFilters } from '../../../../domain.types/wellness
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { BaseController } from '../../../../api/base.controller';
 import { UserService } from '../../../../services/users/user/user.service';
+import { NutritionEvents } from '../nutrition.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +38,7 @@ export class WaterConsumptionController extends BaseController {
             if (WaterConsumption == null) {
                 throw new ApiError(400, 'Cannot create record for water consumption!');
             }
+            NutritionEvents.onNutritionCreate(request, WaterConsumption, 'water-intake-add', 'water-intake', 'water');
             ResponseHandler.success(request, response, 'Water consumption record created successfully!', 201, {
                 WaterConsumption : WaterConsumption,
             });
@@ -97,7 +99,7 @@ export class WaterConsumptionController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update waterConsumption record!');
             }
-
+            NutritionEvents.onNutritionCreate(request, updated, 'water-intake-update', 'water-intake', 'water');
             ResponseHandler.success(request, response, 'Water consumption record updated successfully!', 200, {
                 WaterConsumption : updated,
             });
@@ -118,7 +120,7 @@ export class WaterConsumptionController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Water consumption record cannot be deleted.');
             }
-
+            NutritionEvents.onNutritionCreate(request, existingRecord, 'water-intake-delete', 'water-intake', 'water');
             ResponseHandler.success(request, response, 'Water consumption record deleted successfully!', 200, {
                 Deleted : true,
             });

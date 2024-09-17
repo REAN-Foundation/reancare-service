@@ -17,6 +17,8 @@ export class AssessmentEvents {
         switch (type) {
             case 'assessment':
                 return AnalyticsEventSubject.Assessment;
+            case 'careplan.assessment':
+                return AnalyticsEventSubject.CarePlanAssessment
             case 'daily.assessment':
                 return AnalyticsEventSubject.DailyAssessment;
             case 'symptom.assessment':

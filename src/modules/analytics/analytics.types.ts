@@ -28,7 +28,6 @@ export enum AnalyticsEventCategory  {
     LabRecords      = "lab-records",
     Documents       = "documents",
     Careplan        = "careplan",
-    CareplanTask    = "careplan-task",
     UserTask        = "user-task",
     Communication   = "communication",
     Notification    = "notification",
@@ -110,8 +109,10 @@ export enum AnalyticsEventType {
     VitalsUpdate = "vitals-update",
     VitalsDelete = "vitals-delete",
 
-    VitalAlertTriggered = "vitals-alert-triggered",
-    VitalAlertResolved = "vitals-alert-resolved",
+    VitalsAlertTriggered = "vitals-alert-triggered",
+    VitalsAlertResolved = "vitals-alert-resolved",
+
+    VitalsSearch = "vitals-search",
 
     // Lab test events
     LabRecordAdd = "lab-record-add",
@@ -165,13 +166,6 @@ export enum AnalyticsEventType {
     CareplanStart = "careplan-start",
     CareplanStop = "careplan-stop",
     CareplanComplete = "careplan-complete",
-
-    //Careplan tasks
-    CareplanTaskStart = "careplan-task-start",
-    CareplanTaskComplete = "careplan-task-complete",
-    CareplanTaskCancel = "careplan-task-cancel",
-    CareplanTaskFail = "careplan-task-fail",
-    CareplanTaskReschedule = "careplan-task-reschedule",
 
     // User task events
     UserTaskStart = "user-task-start",
@@ -430,6 +424,7 @@ export enum AnalyticsEventSubject {
     SymptomHowDoYouFeel = "symptom-how-do-you-feel",
 
     Assessment = "assessment",
+    CarePlanAssessment = "careplan-assessment",
     AssessmentQuestion = "assessment-question",
     DailyAssessment = "daily-assessment",
     EnergyLevelAssessment = "energy-level-assessment",

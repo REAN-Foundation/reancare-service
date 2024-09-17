@@ -17,7 +17,7 @@ export class UserTaskEvents {
             const message = `User '${userId}' has started task '${task.id}'.`;
             const eventName = AnalyticsEventType.UserTaskStart;
             const eventCategory = AnalyticsEventCategory.UserTask;
-            const eventSubject = AnalyticsEventSubject.UserTask;
+            const eventSubject = task.Category;
             const event: AnalyticsEvent = {
                 UserId          : userId,
                 TenantId        : tenantId,
@@ -56,7 +56,7 @@ export class UserTaskEvents {
             const message = `User '${userId}' has completed task '${task.id}'.`;
             const eventName = AnalyticsEventType.UserTaskComplete;
             const eventCategory = AnalyticsEventCategory.UserTask;
-            const eventSubject = AnalyticsEventSubject.UserTask;
+            const eventSubject = task.Category;
             const event: AnalyticsEvent = {
                 UserId          : userId,
                 TenantId        : tenantId,
@@ -95,7 +95,7 @@ export class UserTaskEvents {
             const message = `User '${userId}' has cancelled task '${task.id}'.`;
             const eventName = AnalyticsEventType.UserTaskCancel;
             const eventCategory = AnalyticsEventCategory.UserTask;
-            const eventSubject = AnalyticsEventSubject.UserTask;
+            const eventSubject = task.Category;
             const event: AnalyticsEvent = {
                 UserId          : userId,
                 TenantId        : tenantId,
@@ -134,7 +134,7 @@ export class UserTaskEvents {
             const message = `User '${userId}' has updated task '${task.id}'.`;
             const eventName = AnalyticsEventType.UserTaskUpdate;
             const eventCategory = AnalyticsEventCategory.UserTask;
-            const eventSubject = AnalyticsEventSubject.UserTask;
+            const eventSubject = task.Category;
             const event: AnalyticsEvent = {
                 UserId          : userId,
                 TenantId        : tenantId,

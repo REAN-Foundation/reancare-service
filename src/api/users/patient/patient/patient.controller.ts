@@ -74,12 +74,12 @@ export class PatientController extends BaseUserController {
             await this._ehrPatientService.addEHRRecordPatientForAppNames(patient);
 
             if (createdNew) {
+                UserEvents.onUserCreated(request, patient.User);
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
                     Patient : patient,
                 });
                 return;
             }
-            UserEvents.onUserCreated(request, patient.User);
             ResponseHandler.failure(request, response, `Patient account already exists!`, 409);
         } catch (error) {
 

@@ -77,12 +77,12 @@ export class AnalyticsHandler {
 
             var url = process.env.ANALYTICS_API_BASE_URL + '/users';
             var body = {
-                id : user.id,
-                TenantId : user.TenantId,
-                RoleId : user.RoleId ?? user.Role?.id,
-                OnboardingSource : 'Unknown',
+                id                : user.id,
+                TenantId          : user.TenantId,
+                RoleId            : user.RoleId ?? user.Role?.id,
+                OnboardingSource  : 'Unknown',
                 TimezoneOffsetMin : timezoneOffsetMinutes,
-                RegistrationDate: user.Person.ActiveSince ?? new Date(),
+                RegistrationDate  : user.Person.ActiveSince ?? new Date(),
             };
             var response = await axios.post(url, body, { headers });
             if (response.status === 201) {
@@ -130,11 +130,11 @@ export class AnalyticsHandler {
 
     // Create a user
     public static createUser(user: UserDetailsDto): void {
-       AnalyticsHandler._addUserQueue.push(user, (err) => {
+        AnalyticsHandler._addUserQueue.push(user, (err) => {
             if (err) {
                 Logger.instance().log('Error creating user:' + err.message);
             }
-       });
+        });
     }
 
     // Delete a user

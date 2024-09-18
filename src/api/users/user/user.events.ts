@@ -3,6 +3,7 @@ import { AnalyticsEvent, AnalyticsEventCategory, AnalyticsEventSubject, Analytic
 import { AnalyticsHandler } from '../../../modules/analytics/analytics.handler';
 import { UserDetailsDto } from '../../../domain.types/users/user/user.dto';
 import { getCommonEventParams } from '../../../modules/analytics/analytics.common';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,21 +24,21 @@ export class UserEvents {
             const eventCategory = AnalyticsEventCategory.UserAccount;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.createUser(user);
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -57,21 +58,21 @@ export class UserEvents {
             const message = `User '${user.id}' account is updated.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -91,22 +92,22 @@ export class UserEvents {
             const message = `User '${user.id}' account is deleted.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
             AnalyticsHandler.deleteUser(user.id);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -126,21 +127,21 @@ export class UserEvents {
             const message = `User '${user.id}' logged in using pasword.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -160,21 +161,21 @@ export class UserEvents {
             const message = `User '${user.id}' logged in using OTP.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -194,21 +195,21 @@ export class UserEvents {
             const message = `User '${user.id}' logged out.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -228,21 +229,21 @@ export class UserEvents {
             const message = `User '${user.id}' changed password.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -262,21 +263,21 @@ export class UserEvents {
             const message = `User '${user.id}' password reset.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -296,21 +297,21 @@ export class UserEvents {
             const message = `User '${user.id}' password reset code sent.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 
@@ -330,21 +331,21 @@ export class UserEvents {
             const message = `User '${user.id}' OTP generated.`;
             const event: AnalyticsEvent = {
                 ...params,
-                ResourceId: user.id,
-                ResourceType: 'user',
-                SourceVersion: null,
-                EventName: eventName,
-                EventSubject: eventSubject,
-                EventCategory: eventCategory,
-                ActionStatement: message,
-                Attributes: {
-                    RoleId: user.Role.id ?? (user.RoleId ?? null),
-                    RoleName: user.Role? user.Role.RoleName : null,
+                ResourceId      : user.id,
+                ResourceType    : 'user',
+                SourceVersion   : null,
+                EventName       : eventName,
+                EventSubject    : eventSubject,
+                EventCategory   : eventCategory,
+                ActionStatement : message,
+                Attributes      : {
+                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
         } catch (error) {
-            console.error(error);
+            Logger.instance().log(error?.message);
         }
     }
 

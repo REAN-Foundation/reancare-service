@@ -462,7 +462,7 @@ export class UserService {
     };
 
     public generateUserName = async (
-        firstName: string | null | undefined, 
+        firstName: string | null | undefined,
         lastName: string | null | undefined): Promise<string> => {
         if (!firstName) {
             firstName = generate({ length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false });
@@ -752,7 +752,7 @@ export class UserService {
                 //Check if the email has been given as username
                 if (!email) {
                     search = {
-                        Email    : username,
+                        Email : username,
                     };
                     if (roleId) {
                         search['RoleIds'] = [roleId];

@@ -54,7 +54,7 @@ export class UserHelper {
     }
 
     public performDuplicatePersonCheck = async (
-        phone: string | null | undefined, 
+        phone: string | null | undefined,
         email: string | null | undefined) => {
         const support = process.env.SUPPORT_EMAIL || 'support';
         if (phone) {

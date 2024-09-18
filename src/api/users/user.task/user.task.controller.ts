@@ -421,7 +421,6 @@ export class UserTaskController extends BaseUserController {
 
     //#endregion
 
-
     authorizeSearch = async (
         request: express.Request,
         searchFilters: UserTaskSearchFilters): Promise<UserTaskSearchFilters> => {

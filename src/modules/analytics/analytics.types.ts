@@ -58,25 +58,25 @@ export enum AnalyticsEventType {
     UserUpdate = "user-update",
     UserDelete = "user-delete",
 
-    UserPasswordChange = "user-password-change",
-    UserPasswordReset = "user-password-reset",
+    UserPasswordChange        = "user-password-change",
+    UserPasswordReset         = "user-password-reset",
     UserSendPasswordResetCode = "user-send-password-reset-code",
-    UserEmailChange = "user-email-change",
-    UserPhoneChange = "user-phone-change",
-    UserMetadataUpdate = "user-metadata-update",
+    UserEmailChange           = "user-email-change",
+    UserPhoneChange           = "user-phone-change",
+    UserMetadataUpdate        = "user-metadata-update",
 
     // User login session events
     UserLoginWithPassword = "user-login-with-password",
-    UserLoginWithOtp = "user-login-with-otp",
-    UserGenerateOtp = "user-generate-otp",
-    UserLogout = "user-logout",
+    UserLoginWithOtp      = "user-login-with-otp",
+    UserGenerateOtp       = "user-generate-otp",
+    UserLogout            = "user-logout",
 
     // User profile events
     PatientHealthProfileUpdate = "patient-health-profile-update",
 
     // Screen events
-    ScreenEntry = "screen-entry",
-    ScreenExit = "screen-exit",
+    ScreenEntry       = "screen-entry",
+    ScreenExit        = "screen-exit",
     ScreenButtonClick = "screen-button-click",
 
     // Medication events
@@ -87,7 +87,7 @@ export enum AnalyticsEventType {
     MedicationScheduleTaken = "medication-schedule-taken",
     MedicationScheduleMissed = "medication-schedule-missed",
     // Medication refill events
-    MedicationRefill = "medication-refill",
+    MedicationRefill        = "medication-refill",
     MedicationRefillRequest = "medication-refill-request",
 
     // Drug order events
@@ -106,104 +106,104 @@ export enum AnalyticsEventType {
     SymptomDelete = "symptom-delete",
 
     // Biometrics / Vitals events
-    VitalsAdd = "vitals-add",
+    VitalsAdd    = "vitals-add",
     VitalsUpdate = "vitals-update",
     VitalsDelete = "vitals-delete",
 
     VitalsAlertTriggered = "vitals-alert-triggered",
-    VitalsAlertResolved = "vitals-alert-resolved",
+    VitalsAlertResolved  = "vitals-alert-resolved",
 
     VitalsSearch = "vitals-search",
 
     // Lab test events
-    LabRecordAdd = "lab-record-add",
-    LabRecordSearch = "lab-record-search",
-    LabOrderCreate = "lab-order-create",
-    LabOrderUpdate = "lab-order-update",
-    LabOrderDelete = "lab-order-delete",
-    LabOrderSend = "lab-order-send",
-    LabOrderRead = "lab-order-read",
-    LabTestsDone = "lab-tests-done",
-    LabResultsSend = "lab-results-send",
-    LabResultsRead = "lab-results-read",
+    LabRecordAdd     = "lab-record-add",
+    LabRecordSearch  = "lab-record-search",
+    LabOrderCreate   = "lab-order-create",
+    LabOrderUpdate   = "lab-order-update",
+    LabOrderDelete   = "lab-order-delete",
+    LabOrderSend     = "lab-order-send",
+    LabOrderRead     = "lab-order-read",
+    LabTestsDone     = "lab-tests-done",
+    LabResultsSend   = "lab-results-send",
+    LabResultsRead   = "lab-results-read",
     LabResultsUpdate = "lab-results-update",
     LabResultsDelete = "lab-results-delete",
 
     // Patient documents
-    DocumentUpload = "document-upload",
-    DocumentDelete = "document-delete",
-    DocumentShare = "document-share",
+    DocumentUpload  = "document-upload",
+    DocumentDelete  = "document-delete",
+    DocumentShare   = "document-share",
     DocumentUnshare = "document-unshare",
-    DocumentSearch = "document-search",
+    DocumentSearch  = "document-search",
 
     // Communication events
-    SMSSend = "sms-send",
-    SMSDelivered = "sms-delivered",
-    SMSRead = "sms-read",
-    EmailSend = "email-send",
-    EmailDelivered = "email-delivered",
-    EmailRead = "email-read",
-    WhatsAppMessageSend = "whatsapp-message-send",
-    WhatsAppMessageDelivered = "whatsapp-message-delivered",
-    WhatsAppMessageRead = "whatsapp-message-read",
-    TelegramMessageSend = "telegram-message-send",
-    TelegramMessageDelivered = "telegram-message-delivered",
-    TelegramMessageRead = "telegram-message-read",
-    PushNotificationSend = "push-notification-send",
+    SMSSend                   = "sms-send",
+    SMSDelivered              = "sms-delivered",
+    SMSRead                   = "sms-read",
+    EmailSend                 = "email-send",
+    EmailDelivered            = "email-delivered",
+    EmailRead                 = "email-read",
+    WhatsAppMessageSend       = "whatsapp-message-send",
+    WhatsAppMessageDelivered  = "whatsapp-message-delivered",
+    WhatsAppMessageRead       = "whatsapp-message-read",
+    TelegramMessageSend       = "telegram-message-send",
+    TelegramMessageDelivered  = "telegram-message-delivered",
+    TelegramMessageRead       = "telegram-message-read",
+    PushNotificationSend      = "push-notification-send",
     PushNotificationDelivered = "push-notification-delivered",
-    PushNotificationRead = "push-notification-read",
-    WebNotificationSend = "web-notification-send",
-    WebNotificationDelivered = "web-notification-delivered",
-    WebNotificationRead = "web-notification-read",
+    PushNotificationRead      = "push-notification-read",
+    WebNotificationSend       = "web-notification-send",
+    WebNotificationDelivered  = "web-notification-delivered",
+    WebNotificationRead       = "web-notification-read",
 
     // Notification events
-    NotificationSend = "notification-send",
+    NotificationSend      = "notification-send",
     NotificationDelivered = "notification-delivered",
-    NotificationRead = "notification-read",
-    NotificationResponse = "notification-response",
+    NotificationRead      = "notification-read",
+    NotificationResponse  = "notification-response",
 
     // Careplan
     CareplanEnrollment = "careplan-enrollment",
-    CareplanStart = "careplan-start",
-    CareplanStop = "careplan-stop",
-    CareplanComplete = "careplan-complete",
+    CareplanStart      = "careplan-start",
+    CareplanStop       = "careplan-stop",
+    CareplanComplete   = "careplan-complete",
 
     // User task events
-    UserTaskStart = "user-task-start",
-    UserTaskComplete = "user-task-complete",
-    UserTaskCancel = "user-task-cancel",
-    UserTaskFail = "user-task-fail",
+    UserTaskStart      = "user-task-start",
+    UserTaskComplete   = "user-task-complete",
+    UserTaskCancel     = "user-task-cancel",
+    UserTaskFail       = "user-task-fail",
     UserTaskReschedule = "user-task-reschedule",
-    UserTaskUpdate = "user-task-update",
+    UserTaskUpdate     = "user-task-update",
 
     // User goal events
-    GoalCreate = "goal-create",
-    GoalStart = "goal-start",
+    GoalCreate   = "goal-create",
+    GoalStart    = "goal-start",
     GoalComplete = "goal-complete",
-    GoalCancel = "goal-cancel",
-    GoalFail = "goal-fail",
-    GoalUpdate = "goal-update",
+    GoalCancel   = "goal-cancel",
+    GoalFail     = "goal-fail",
+    GoalUpdate   = "goal-update",
 
     // Exercise events
-    ExerciseStart = "exercise-start",
+    ExerciseStart    = "exercise-start",
     ExerciseComplete = "exercise-complete",
-    ExerciseCancel = "exercise-cancel",
-    ExerciseFail = "exercise-fail",
-    ExerciseUpdate = "exercise-update",
+    ExerciseCancel   = "exercise-cancel",
+    ExerciseFail     = "exercise-fail",
+    ExerciseUpdate   = "exercise-update",
 
     // Meditation events
-    MeditationStart = "meditation-start",
+    MeditationStart    = "meditation-start",
     MeditationComplete = "meditation-complete",
 
     // Nutrition events
-    NutritionStart = "nutrition-start",
+    NutritionStart    = "nutrition-start",
     NutritionComplete = "nutrition-complete",
-    NutritionCancel = "nutrition-cancel",
-    NutritionFail = "nutrition-fail",
-    NutritionUpdate = "nutrition-update",
+    NutritionCancel   = "nutrition-cancel",
+    NutritionFail     = "nutrition-fail",
+    NutritionUpdate   = "nutrition-update",
 
     // Water intake events
-    WaterIntakeAdd = "water-intake-add",
+    WaterIntakeAdd    = "water-intake-add",
     WaterIntakeUpdate = "water-intake-update",
     WaterIntakeDelete = "water-intake-delete",
 

@@ -16,6 +16,7 @@ import { EHRMedicationService } from '../../../../modules/ehr.analytics/ehr.serv
 import { BaseController } from '../../../../api/base.controller';
 import { MedicationConsumptionSearchFilters } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { MedicationConsumptionEvents } from './medication.consumption.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,6 +72,10 @@ export class MedicationConsumptionController extends BaseController {
                 });
             }
 
+            if (dtos.length > 0) {
+                MedicationConsumptionEvents.onMedicationConsumptionTaken(request, dtos[0]);
+            }
+
             ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
                 MedicationConsumptions : dtos,
             });
@@ -112,7 +117,9 @@ export class MedicationConsumptionController extends BaseController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
-
+            if (dtos.length > 0) {
+                MedicationConsumptionEvents.onMedicationConsumptionMissed(request, dtos[0]);
+            }
             ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {
                 MedicationConsumptions : dtos,
             });
@@ -148,6 +155,8 @@ export class MedicationConsumptionController extends BaseController {
                 RecordDateStr  : tempDateStr,
                 RecordTimeZone : currentTimeZone,
             });
+            
+            MedicationConsumptionEvents.onMedicationConsumptionTaken(request, dto);
 
             ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
                 MedicationConsumption : dto,
@@ -183,6 +192,8 @@ export class MedicationConsumptionController extends BaseController {
                 RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(dto.TimeScheduleEnd),
                 RecordTimeZone : currentTimeZone,
             });
+
+            MedicationConsumptionEvents.onMedicationConsumptionMissed(request, dto);
 
             ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {
                 MedicationConsumption : dto,

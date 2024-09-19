@@ -10,6 +10,7 @@ import { Injector } from '../../../startup/injector';
 import { UserHelper } from '../user.helper';
 import { DoctorSearchFilters } from '../../../domain.types/users/doctor/doctor.search.types';
 import { Roles } from '../../../domain.types/role/role.types';
+import { UserEvents } from '../user/user.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +41,7 @@ export class DoctorController extends BaseUserController {
                 });
                 return;
             }
+            UserEvents.onUserCreated(request, doctor.User);
             ResponseHandler.failure(request, response, `Doctor account already exists!`, 409);
         } catch (error) {
             //KK: Todo: Add rollback in case of mid-way exception
@@ -140,7 +142,7 @@ export class DoctorController extends BaseUserController {
             }
 
             await this.createOrUpdateDefaultAddress(request, user.Person.id);
-
+            UserEvents.onUserUpdated(request, updatedUser);
             ResponseHandler.success(request, response, 'Doctor records updated successfully!', 200, {
                 Doctor : updatedDoctor,
             });
@@ -158,7 +160,7 @@ export class DoctorController extends BaseUserController {
                 throw new ApiError(404, 'User not found.');
             }
             await this.authorizeOne(request, userId, user.TenantId);
-
+            UserEvents.onUserDeleted(request, user);
             ResponseHandler.success(request, response, 'Doctor records deleted successfully!', 200, {
                 Deleted : true,
             });

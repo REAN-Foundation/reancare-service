@@ -11,6 +11,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
+import { BiometricsEvents } from '../biometrics.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +67,8 @@ export class BloodOxygenSaturationController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+            
+            BiometricsEvents.onBiometricsAdded(request, record, 'blood.oxygen.saturation');
             ResponseHandler.success(request, response, 'Blood oxygen saturation record created successfully!', 201, {
                 BloodOxygenSaturation : record,
             });
@@ -152,6 +155,8 @@ export class BloodOxygenSaturationController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+
+            BiometricsEvents.onBiometricsUpdated(request, updated, 'blood.oxygen.saturation');
             ResponseHandler.success(request, response, 'Blood oxygen saturation record updated successfully!', 200, {
                 BloodOxygenSaturation : updated,
             });
@@ -176,6 +181,7 @@ export class BloodOxygenSaturationController extends BiometricsController {
 
             this._ehrVitalService.deleteRecord(record.id);
 
+            BiometricsEvents.onBiometricsDeleted(request, record, 'blood.oxygen.saturation');
             ResponseHandler.success(request, response, 'Blood oxygen saturation record deleted successfully!', 200, {
                 Deleted : true,
             });

@@ -11,6 +11,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
+import { BiometricsEvents } from '../biometrics.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +67,7 @@ export class BloodGlucoseController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+            BiometricsEvents.onBiometricsAdded(request, bloodGlucose, 'blood.glucose');
             ResponseHandler.success(request, response, 'Blood glucose record created successfully!', 201, {
                 BloodGlucose : bloodGlucose,
             });
@@ -150,6 +152,7 @@ export class BloodGlucoseController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+            BiometricsEvents.onBiometricsUpdated(request, updated, 'blood.glucose');
             ResponseHandler.success(request, response, 'Blood glucose record updated successfully!', 200, {
                 BloodGlucose : updated,
             });
@@ -175,6 +178,7 @@ export class BloodGlucoseController extends BiometricsController {
             // delete ehr record
             this._ehrVitalService.deleteRecord(record.id);
 
+            BiometricsEvents.onBiometricsDeleted(request, record, 'blood.glucose');
             ResponseHandler.success(request, response, 'Blood glucose record deleted successfully!', 200, {
                 Deleted : true,
             });

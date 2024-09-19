@@ -6,6 +6,7 @@ import { GoalService } from '../../../../services/users/patient/goal.service';
 import { Injector } from '../../../../startup/injector';
 import { GoalValidator } from './goal.validator';
 import { PatientBaseController } from '../patient.base.controller';
+import { GoalEvents } from './goal.event';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +35,7 @@ export class GoalController extends PatientBaseController {
             if (goal == null) {
                 throw new ApiError(400, 'Cannot create record for patient goal!');
             }
-
+            GoalEvents.onGoalStart(request, goal);
             ResponseHandler.success(request, response, 'Patient goal record created successfully!', 201, {
                 Goal : goal,
             });
@@ -129,7 +130,7 @@ export class GoalController extends PatientBaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update patient goal record!');
             }
-
+            GoalEvents.onGoalUpdate(request, updated);
             ResponseHandler.success(request, response, 'Patient goal record updated successfully!', 200, {
                 Goal : updated,
             });
@@ -151,7 +152,7 @@ export class GoalController extends PatientBaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Patient goal record cannot be deleted.');
             }
-
+            GoalEvents.onGoalCancel(request, record);
             ResponseHandler.success(request, response, 'Patient goal record deleted successfully!', 200, {
                 Deleted : true,
             });

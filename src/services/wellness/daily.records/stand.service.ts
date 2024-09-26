@@ -21,6 +21,10 @@ export class StandService {
         return await this._standRepo.getById(id);
     };
 
+    getStandByDateAndPatientUserId = async (date: Date, patientUserId: string): Promise<StandDto> => {
+        return await this._standRepo.getStandByDateAndPatientUserId(date, patientUserId);
+    };
+    
     search = async (filters: StandSearchFilters): Promise<StandSearchResults> => {
         return await this._standRepo.search(filters);
     };

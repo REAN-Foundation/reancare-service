@@ -17,7 +17,7 @@ export class StandValidator extends BaseValidator {
             PatientUserId : request.body.PatientUserId,
             Stand         : request.body.Stand,
             Unit          : request.body.Unit,
-            RecordDate    : request.body.RecordDate ?? new Date(),
+            RecordDate    : request.body.RecordDate ? new Date(request.body.RecordDate) : new Date(),
         };
 
         return standModel;

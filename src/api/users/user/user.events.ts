@@ -31,8 +31,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.createUser(user);
@@ -66,8 +66,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
@@ -100,8 +100,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
@@ -135,8 +135,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
@@ -169,8 +169,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
@@ -203,8 +203,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
@@ -237,8 +237,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
@@ -271,8 +271,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
@@ -305,8 +305,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);
@@ -339,8 +339,8 @@ export class UserEvents {
                 EventCategory   : eventCategory,
                 ActionStatement : message,
                 Attributes      : {
-                    RoleId   : user.Role.id ?? (user.RoleId ?? null),
-                    RoleName : user.Role ? user.Role.RoleName : null,
+                    RoleId   : user.Role?.id ?? (user.RoleId ?? null),
+                    RoleName : user.Role ? user.Role?.RoleName : null,
                 }
             };
             AnalyticsHandler.pushEvent(event);

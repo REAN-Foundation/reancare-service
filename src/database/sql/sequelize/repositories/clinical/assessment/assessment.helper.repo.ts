@@ -535,6 +535,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (Helper.hasProperty(updates, 'Message')) {
                 thisNode.Message = updates['Message'];
             }
+            if (Helper.hasProperty(updates, 'ServeListNodeChildrenAtOnce')) {
+                thisNode.ServeListNodeChildrenAtOnce = updates['ServeListNodeChildrenAtOnce'];
+            }
             thisNode = await thisNode.save();
             return await this.populateNodeDetails(thisNode);
 

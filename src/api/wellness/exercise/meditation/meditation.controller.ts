@@ -65,6 +65,7 @@ export class MeditationController extends BaseController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+            ExerciseEvent.onExerciseStart(request, 'meditation-start', meditation);
             ResponseHandler.success(request, response, 'Meditation record created successfully!', 201, {
                 Meditation : meditation,
             });

@@ -73,7 +73,7 @@ export class PhysicalActivityController extends BaseController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
-            ExerciseEvent.onExerciseStart(request, physicalActivity);
+            ExerciseEvent.onExerciseStart(request, 'exercise-start',  physicalActivity);
             ResponseHandler.success(request, response, 'Physical activity record created successfully!', 201, {
                 PhysicalActivity : physicalActivity,
             });
@@ -154,7 +154,7 @@ export class PhysicalActivityController extends BaseController {
                     RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                 });
             }
-            ExerciseEvent.onExerciseUpdate(request, updated);
+            ExerciseEvent.onExerciseUpdate(request, 'exercise-update', updated);
             ResponseHandler.success(request, response, 'Physical activity record updated successfully!', 200, {
                 PhysicalActivity : updated,
             });
@@ -176,7 +176,7 @@ export class PhysicalActivityController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Physical activity record cannot be deleted.');
             }
-            ExerciseEvent.onExerciseCancel(request, physicalActivity);
+            ExerciseEvent.onExerciseCancel(request, 'exercise-cancel', physicalActivity);
             ResponseHandler.success(request, response, 'Physical activity record deleted successfully!', 200, {
                 Deleted : true,
             });

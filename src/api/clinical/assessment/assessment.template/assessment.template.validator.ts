@@ -79,9 +79,10 @@ export class AssessmentTemplateValidator extends BaseValidator {
     private async validateUpdateBody(request) {
         await this.validateString(request, 'Type', Where.Body, false, false);
         await this.validateString(request, 'Title', Where.Body, false, false);
-        await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'Provider', Where.Body, false, false);
         await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, true);
-        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, true);
+        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
         this.validateRequest(request);

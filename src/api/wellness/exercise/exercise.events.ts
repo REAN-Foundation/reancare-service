@@ -7,14 +7,36 @@ import { PhysicalActivityDto } from '../../../domain.types/wellness/exercise/phy
 
 export class ExerciseEvent {
 
-    static async onExerciseStart(request: express.Request, exerciseDto: MeditationDto | PhysicalActivityDto) {
+    static getAnalyticsEventType(eventType: string): AnalyticsEventType {
+        switch (eventType) {
+            case 'exercise-start':
+                return AnalyticsEventType.ExerciseStart;
+            case 'exercise-complete':
+                return AnalyticsEventType.ExerciseComplete;
+            case 'exercise-cancel':
+                return AnalyticsEventType.ExerciseCancel;
+            case 'exercise-fail':
+                return AnalyticsEventType.ExerciseFail;
+            case 'exercise-update':
+                return AnalyticsEventType.ExerciseUpdate;
+            case 'meditation-start':
+                return AnalyticsEventType.MeditationStart;
+            case 'meditation-complete':
+                return AnalyticsEventType.MeditationComplete;
+        }
+    }
+
+    static async onExerciseStart(
+        request: express.Request,
+        eventType: string,
+        exerciseDto: MeditationDto | PhysicalActivityDto) {
         try {
             const sourceName = request.currentClient?.ClientName ?? 'Unknown';
             const userId = request.currentUser?.UserId ?? null;
             const tenantId = request.currentUser?.TenantId ?? (request.currentUserTenantId ?? null);
             const sessionId = request.currentUser?.SessionId ?? null;
             const message = `User '${userId}' started exercise '${exerciseDto.id}'.`;
-            const eventName = AnalyticsEventType.ExerciseStart;
+            const eventName = ExerciseEvent.getAnalyticsEventType(eventType);
             const eventCategory = AnalyticsEventCategory.Exercise;
             const eventSubject = AnalyticsEventSubject.Exercise;
             const event: AnalyticsEvent = {
@@ -42,14 +64,17 @@ export class ExerciseEvent {
         }
     }
 
-    static async onExerciseComplete(request: express.Request, exerciseDto: MeditationDto | PhysicalActivityDto) {
+    static async onExerciseComplete(
+        request: express.Request,
+        eventType: string,
+        exerciseDto: MeditationDto | PhysicalActivityDto) {
         try {
             const sourceName = request.currentClient?.ClientName ?? 'Unknown';
             const userId = request.currentUser?.UserId ?? null;
             const tenantId = request.currentUser?.TenantId ?? (request.currentUserTenantId ?? null);
             const sessionId = request.currentUser?.SessionId ?? null;
             const message = `User '${userId}' completed exercise '${exerciseDto.id}'.`;
-            const eventName = AnalyticsEventType.ExerciseComplete;
+            const eventName = ExerciseEvent.getAnalyticsEventType(eventType);
             const eventCategory = AnalyticsEventCategory.Exercise;
             const eventSubject = AnalyticsEventSubject.Exercise;
             const event: AnalyticsEvent = {
@@ -77,14 +102,17 @@ export class ExerciseEvent {
         }
     }
 
-    static async onExerciseCancel(request: express.Request, exerciseDto: MeditationDto | PhysicalActivityDto) {
+    static async onExerciseCancel(
+        request: express.Request,
+        eventType: string,
+        exerciseDto: MeditationDto | PhysicalActivityDto) {
         try {
             const sourceName = request.currentClient?.ClientName ?? 'Unknown';
             const userId = request.currentUser?.UserId ?? null;
             const tenantId = request.currentUser?.TenantId ?? (request.currentUserTenantId ?? null);
             const sessionId = request.currentUser?.SessionId ?? null;
             const message = `User '${userId}' cancelled exercise '${exerciseDto.id}'.`;
-            const eventName = AnalyticsEventType.ExerciseCancel;
+            const eventName = ExerciseEvent.getAnalyticsEventType(eventType);
             const eventCategory = AnalyticsEventCategory.Exercise;
             const eventSubject = AnalyticsEventSubject.Exercise;
             const event: AnalyticsEvent = {
@@ -112,14 +140,17 @@ export class ExerciseEvent {
         }
     }
 
-    static async onExerciseUpdate(request: express.Request, exerciseDto: MeditationDto | PhysicalActivityDto) {
+    static async onExerciseUpdate(
+        request: express.Request,
+        eventType: string,
+        exerciseDto: MeditationDto | PhysicalActivityDto) {
         try {
             const sourceName = request.currentClient?.ClientName ?? 'Unknown';
             const userId = request.currentUser?.UserId ?? null;
             const tenantId = request.currentUser?.TenantId ?? (request.currentUserTenantId ?? null);
             const sessionId = request.currentUser?.SessionId ?? null;
             const message = `User '${userId}' updated exercise '${exerciseDto.id}'.`;
-            const eventName = AnalyticsEventType.ExerciseUpdate;
+            const eventName = ExerciseEvent.getAnalyticsEventType(eventType);
             const eventCategory = AnalyticsEventCategory.Exercise;
             const eventSubject = AnalyticsEventSubject.Exercise;
             const event: AnalyticsEvent = {

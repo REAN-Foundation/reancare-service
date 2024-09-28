@@ -442,7 +442,6 @@ export enum AnalyticsEventSubject {
     Food = "food",
     Water = "water",
     Goal = "goal",
-
     Exercise = "exercise"
 
 }

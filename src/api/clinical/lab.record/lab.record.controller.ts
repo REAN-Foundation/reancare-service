@@ -60,7 +60,6 @@ export class LabRecordController extends BaseController {
                 throw new ApiError(404, 'Lab record not found.');
             }
             await this.authorizeOne(request, labRecord.PatientUserId, null);
-            LabRecordEvents.onLabRecordAdd(request, labRecord);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record retrieved successfully!`, 200, {
                 LabRecord : labRecord,
             });

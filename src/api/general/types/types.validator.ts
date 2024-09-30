@@ -36,13 +36,17 @@ export class TypesValidator extends BaseValidator {
     getLabRecordTypeDomainModel = (request: express.Request): LabRecordTypeDomainModel => {
 
         const createModel: LabRecordTypeDomainModel = {
-            TypeName       : request.body.TypeName ?? null,
-            DisplayName    : request.body.DisplayName ?? null,
-            SnowmedCode    : request.body.SnowmedCode ?? null,
-            LoincCode      : request.body.LoincCode ?? null,
-            NormalRangeMin : request.body.NormalRangeMin ?? null,
-            NormalRangeMax : request.body.NormalRangeMax ?? null,
-            Unit           : request.body.Unit ?? null,
+            TypeName    : request.body.TypeName ?? null,
+            DisplayName : request.body.DisplayName ?? null,
+            SnowmedCode : request.body.SnowmedCode !== undefined && request.body.SnowmedCode !== null ?
+                request.body.SnowmedCode : null,
+            LoincCode : request.body.LoincCode !== undefined && request.body.LoincCode !== null ?
+                request.body.LoincCode : null,
+            NormalRangeMin : request.body.NormalRangeMin !== undefined && request.body.NormalRangeMin !== null ?
+                request.body.NormalRangeMin : null,
+            NormalRangeMax : request.body.NormalRangeMax !== undefined && request.body.NormalRangeMax !== null ?
+                request.body.NormalRangeMax : null,
+            Unit : request.body.Unit !== undefined && request.body.Unit !== null ? request.body.Unit : null,
         };
 
         return createModel;
@@ -83,12 +87,12 @@ export class TypesValidator extends BaseValidator {
     };
 
     createLabRecordType = async (request: express.Request): Promise<LabRecordTypeDomainModel> => {
-        await this.validateUpdateLabRecordTypeBody(request);
+        await this.validateCreateLabRecordTypeBody(request);
         return this.getLabRecordTypeDomainModel(request);
     };
 
     updateLabRecordType = async (request: express.Request): Promise<LabRecordTypeDomainModel> => {
-        await this.validateCreateLabRecordTypeBody(request);
+        await this.validateUpdateLabRecordTypeBody(request);
         const domainModel = this.getLabRecordTypeDomainModel(request);
         domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;

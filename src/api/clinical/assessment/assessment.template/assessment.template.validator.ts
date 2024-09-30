@@ -16,13 +16,16 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): AssessmentTemplateDomainModel => {
         const model: AssessmentTemplateDomainModel = {
-            Type                        : request.body.Type ?? null,
-            Title                       : request.body.Title ?? null,
-            Description                 : request.body.Description ?? null,
-            DisplayCode                 : request.body.DisplayCode ?? null,
-            ScoringApplicable           : request.body.ScoringApplicable ?? false,
-            ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
-            Provider                    : request.body.Provider ?? null,
+            Type        : request.body.Type ?? null,
+            Title       : request.body.Title ?? null,
+            Description : request.body.Description !== undefined && request.body.Description !== null ?
+                request.body.Description : null,
+            DisplayCode            : request.body.DisplayCode ?? null,
+            ScoringApplicable      : request.body.ScoringApplicable ?? false,
+            ProviderAssessmentCode : request.body.ProviderAssessmentCode !== undefined &&
+            request.body.ProviderAssessmentCode !== null ? request.body.ProviderAssessmentCode : null,
+            Provider : request.body.Provider !== undefined && request.body.Provider ?
+                request.body.Provider : null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
             TenantId                    : request.body.TenantId ?? request.currentUser.TenantId,
@@ -80,6 +83,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'Type', Where.Body, false, false);
         await this.validateString(request, 'Title', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateString(request, 'Provider', Where.Body, false, true);
         await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, true);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, true);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);

@@ -133,11 +133,11 @@ export class TypesValidator extends BaseValidator {
     private async validateCreateLabRecordTypeBody(request) {
         await this.validateString(request, 'TypeName', Where.Body, true, false);
         await this.validateString(request, 'DisplayName', Where.Body, true, false);
-        await this.validateString(request, 'SnowmedCode ', Where.Body, false, true);
-        await this.validateString(request, 'LoincCode', Where.Body, false, true);
-        await this.validateDecimal(request, 'NormalRangeMin', Where.Body, false, true);
-        await this.validateDecimal(request, 'NormalRangeMax', Where.Body, false, true);
-        await this.validateString(request, 'Unit', Where.Body, false, true);
+        await this.validateString(request, 'SnowmedCode ', Where.Body, false, false);
+        await this.validateString(request, 'LoincCode', Where.Body, false, false);
+        await this.validateDecimal(request, 'NormalRangeMin', Where.Body, false, false);
+        await this.validateDecimal(request, 'NormalRangeMax', Where.Body, false, false);
+        await this.validateString(request, 'Unit', Where.Body, false, false);
         await this.validateRequest(request);
     }
 

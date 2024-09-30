@@ -11,6 +11,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
+import { BiometricsEvents } from '../biometrics.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +67,8 @@ export class BodyWeightController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+
+            BiometricsEvents.onBiometricsAdded(request, bodyWeight, 'body.weight');
             ResponseHandler.success(request, response, 'Weight record created successfully!', 201, {
                 BodyWeight : bodyWeight,
             });
@@ -149,6 +152,8 @@ export class BodyWeightController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+
+            BiometricsEvents.onBiometricsUpdated(request, updated, 'body.weight');
             ResponseHandler.success(request, response, 'Weight record updated successfully!', 200, {
                 BodyWeight : updated,
             });
@@ -174,6 +179,7 @@ export class BodyWeightController extends BiometricsController {
             // delete ehr record
             this._ehrVitalService.deleteRecord(record.id);
 
+            BiometricsEvents.onBiometricsDeleted(request, record, 'body.weight');
             ResponseHandler.success(request, response, 'Weight record deleted successfully!', 200, {
                 Deleted : true,
             });

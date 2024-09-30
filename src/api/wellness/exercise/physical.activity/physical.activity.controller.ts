@@ -14,6 +14,7 @@ import { EHRPhysicalActivityService } from '../../../../modules/ehr.analytics/eh
 import { PhysicalActivitySearchFilters } from '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { BaseController } from '../../../../api/base.controller';
+import { ExerciseEvent } from '../exercise.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +73,7 @@ export class PhysicalActivityController extends BaseController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+            ExerciseEvent.onExerciseStart(request, 'exercise-start',  physicalActivity);
             ResponseHandler.success(request, response, 'Physical activity record created successfully!', 201, {
                 PhysicalActivity : physicalActivity,
             });
@@ -152,7 +154,7 @@ export class PhysicalActivityController extends BaseController {
                     RecordDateStr : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                 });
             }
-
+            ExerciseEvent.onExerciseUpdate(request, 'exercise-update', updated);
             ResponseHandler.success(request, response, 'Physical activity record updated successfully!', 200, {
                 PhysicalActivity : updated,
             });
@@ -174,7 +176,7 @@ export class PhysicalActivityController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Physical activity record cannot be deleted.');
             }
-
+            ExerciseEvent.onExerciseCancel(request, 'exercise-cancel', physicalActivity);
             ResponseHandler.success(request, response, 'Physical activity record deleted successfully!', 200, {
                 Deleted : true,
             });

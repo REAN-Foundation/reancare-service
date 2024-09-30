@@ -10,6 +10,7 @@ import { SymptomSearchFilters } from '../../../../domain.types/clinical/symptom/
 import { BaseController } from '../../../../api/base.controller';
 import { SymptomDomainModel } from '../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
 import { UserService } from '../../../../services/users/user/user.service';
+import { SymptomEvents } from '../symptom.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +34,8 @@ export class SymptomController extends BaseController {
             if (symptom == null) {
                 throw new ApiError(400, 'Cannot create symptom!');
             }
+
+            SymptomEvents.onSymptomAdded(request, symptom, 'symptom');
 
             ResponseHandler.success(request, response, 'Symptom created successfully!', 201, {
                 Symptom : symptom,
@@ -87,6 +90,9 @@ export class SymptomController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update symptom record!');
             }
+
+            SymptomEvents.onSymptomUpdated(request, updated, 'symptom');
+
             ResponseHandler.success(request, response, 'Symptom record updated successfully!', 200, {
                 Symptom : updated,
             });
@@ -107,6 +113,9 @@ export class SymptomController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Symptom cannot be deleted.');
             }
+
+            SymptomEvents.onSymptomDeleted(request, existingSymptom, 'symptom');
+            
             ResponseHandler.success(request, response, 'Symptom record deleted successfully!', 200, {
                 Deleted : true,
             });

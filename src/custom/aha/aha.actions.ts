@@ -421,7 +421,7 @@ export class AHAActions {
                     Logger.instance().log(`Creating SMS for patient:${patientUserId}`);
                     const patient = await this._patientService.getByUserId(patientUserId);
                     const phoneNumber = patient.User.Person.Phone;
-                    const message = `We want to inform you that HF Helper will be retired on August 31st. To ensure you continue receiving valuable health support, please install or migrate to our new app, Heart & Stroke Helper. Click https://onelink.to/te87km to download the Heart & Stroke Helper App.`;
+                    const message = `We want to inform you that HF Helper will be retired on September 15th. To ensure you continue receiving valuable health support, please install or migrate to our new app, Heart & Stroke Helper. Click https://onelink.to/te87km to download the Heart & Stroke Helper App.`;
                     const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
                     if (sendStatus) {
                         Logger.instance().log(`[HFSunsetSMS] Message sent successfully to ${patientUserId}`);

@@ -1,5 +1,6 @@
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../person/person.domain.model';
+import { UserDetailsDto } from './user.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +51,11 @@ export interface ChangePasswordModel {
     OldPassword  : string;
     NewPassword  : string;
     RoleId      ?: number;
+}
+
+export interface UserAccountActionResult {
+    Success: boolean;
+    User: UserDetailsDto;
 }
 
 export interface ResetPasswordModel {

@@ -12,4 +12,5 @@ export interface CurrentUser {
     CurrentRoleId : number;
     CurrentRole   : string;
     SessionId?    : uuid;
+    IsTestUser?   : boolean;
 }

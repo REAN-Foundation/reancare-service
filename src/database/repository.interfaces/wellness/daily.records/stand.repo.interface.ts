@@ -10,6 +10,8 @@ export interface IStandRepo {
 
     getById(id: string): Promise<StandDto>;
 
+    getStandByDateAndPatientUserId(date: Date, patientUserId: string): Promise<StandDto>;
+
     search(filters: StandSearchFilters): Promise<StandSearchResults>;
 
     update(id: string, standDomainModel: StandDomainModel): Promise<StandDto>;

@@ -38,6 +38,21 @@ export class StandRepo implements IStandRepo {
         }
     };
 
+    getStandByDateAndPatientUserId = async (recordDate: Date, patientUserId: string): Promise<StandDto> => {
+        try {
+            const stand = await Stand.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                    RecordDate    : recordDate,
+                },
+            });
+            return await StandMapper.toDto(stand);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: StandSearchFilters): Promise<StandSearchResults> => {
         try {
             const search = { where: {} };

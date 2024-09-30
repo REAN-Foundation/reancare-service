@@ -11,6 +11,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
+import { BiometricsEvents } from '../biometrics.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +67,8 @@ export class BodyTemperatureController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+
+            BiometricsEvents.onBiometricsAdded(request, bodyTemperature, 'body.temperature');
             ResponseHandler.success(request, response, 'Body temperature record created successfully!', 201, {
                 BodyTemperature : bodyTemperature,
             });
@@ -150,6 +153,8 @@ export class BodyTemperatureController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+
+            BiometricsEvents.onBiometricsUpdated(request, updated, 'body.temperature');
             ResponseHandler.success(request, response, 'Body temperature record updated successfully!', 200, {
                 BodyTemperature : updated,
             });
@@ -175,6 +180,7 @@ export class BodyTemperatureController extends BiometricsController {
             // delete ehr record
             this._ehrVitalService.deleteRecord(record.id);
 
+            BiometricsEvents.onBiometricsDeleted(request, record, 'body.temperature');
             ResponseHandler.success(request, response, 'Body temperature record deleted successfully!', 200, {
                 Deleted : true,
             });

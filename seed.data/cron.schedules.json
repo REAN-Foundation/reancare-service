@@ -89,7 +89,7 @@
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 6 * * 1",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 10 * * 3",
+        "ScheduleHFHelperTextMessage": "0 10 * * 3,6",
         "ScheduleGGHNFollowUpReminder": "0 5 * * *"
     },
     "production": {
@@ -120,7 +120,7 @@
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
         "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
-        "ScheduleHFHelperTextMessage": "0 10 * * 3",
+        "ScheduleHFHelperTextMessage": "0 10 * * 3,6",
         "ScheduleGGHNFollowUpReminder": "0 5 * * *"
     }
 }

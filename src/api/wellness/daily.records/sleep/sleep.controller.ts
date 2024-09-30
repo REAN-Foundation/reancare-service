@@ -15,6 +15,7 @@ import { BaseController } from '../../../../api/base.controller';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { SleepSearchFilters } from '../../../../domain.types/wellness/daily.records/sleep/sleep.search.types';
 import { UserService } from '../../../../services/users/user/user.service';
+import { DailyRecordEvents } from '../daily.record.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -74,7 +75,7 @@ export class SleepController extends BaseController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
-
+            DailyRecordEvents.onDailyRecordAdd(request, sleep, 'sleep-record-add', 'sleep', 'sleep');
             ResponseHandler.success(request, response, 'Sleep record created successfully!', 201, {
                 SleepRecord : sleep,
             });

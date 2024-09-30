@@ -54,20 +54,20 @@ export class UserHelper {
     }
 
     public performDuplicatePersonCheck = async (
-        phone: string | null | undefined, 
+        phone: string | null | undefined,
         email: string | null | undefined) => {
-
+        const support = process.env.SUPPORT_EMAIL || 'support';
         if (phone) {
             const multiplePersonsWithSamePhone = await this._personService.multiplePersonsWithSamePhone(phone);
             if (multiplePersonsWithSamePhone) {
-                const message = `Multiple persons are associated with the phone ${phone}. Please contact support to merge your accounts.`;
+                const message = `Multiple persons are associated with the phone ${phone}. Please contact ${support} to merge your accounts.`;
                 throw new ApiError(409, message);
             }
         }
         if (email) {
             const multiplePersonsWithSameEmail = await this._personService.multiplePersonsWithSameEmail(email);
             if (multiplePersonsWithSameEmail) {
-                const message = `Multiple persons are associated with the Email ${email}. Please contact support to merge your accounts.`;
+                const message = `Multiple persons are associated with the Email ${email}. Please contact ${support} to merge your accounts.`;
                 throw new ApiError(409, message);
             }
         }
@@ -88,8 +88,8 @@ export class UserHelper {
 
         // First check using phone and email if the person exists
         const basicDetails: UserBasicDetails = {
-            Phone    : createModel.User.Person.Phone,
-            Email    : createModel.User.Person.Email
+            Phone : createModel.User.Person.Phone,
+            Email : createModel.User.Person.Email
         };
         person = await this._userService.getExistingPerson(basicDetails);
 
@@ -296,8 +296,8 @@ export class UserHelper {
 
         // First check using phone and email if the person exists
         const basicDetails: UserBasicDetails = {
-            Phone    : createModel.User.Person.Phone,
-            Email    : createModel.User.Person.Email
+            Phone : createModel.User.Person.Phone,
+            Email : createModel.User.Person.Email
         };
         person = await this._userService.getExistingPerson(basicDetails);
 

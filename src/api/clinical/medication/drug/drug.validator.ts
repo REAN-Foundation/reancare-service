@@ -14,14 +14,20 @@ export class DrugValidator extends BaseValidator{
     getDomainModel = (request: express.Request): DrugDomainModel => {
 
         const DrugModel: DrugDomainModel = {
-            DrugName             : request.body.DrugName,
-            GenericName          : request.body.GenericName ?? null,
-            Ingredients          : request.body.Ingredients ?? null,
-            Strength             : request.body.Strength ?? null,
-            OtherCommercialNames : request.body.OtherCommercialNames ?? null,
-            Manufacturer         : request.body.Manufacturer ?? null,
-            OtherInformation     : request.body.OtherInformation ?? null,
-
+            DrugName    : request.body.DrugName,
+            GenericName : request.body.GenericName !== undefined && request.body.GenericName !== null ?
+                request.body.GenericName : null,
+            Ingredients : request.body.Ingredients !== undefined && request.body.Ingredients !== null ?
+                request.body.Ingredients : null,
+            Strength : request.body.Strength !== undefined && request.body.Strength !== null ?
+                request.body.Strength : null,
+            OtherCommercialNames : request.body.OtherCommercialNames !== undefined &&
+                request.body.OtherCommercialNames !== null ?
+                request.body.OtherCommercialNames : null,
+            Manufacturer : request.body.Manufacturer !== undefined && request.body.Manufacturer !== null ?
+                request.body.Manufacturer : null,
+            OtherInformation : request.body.OtherInformation !== undefined && request.body.OtherInformation !== null ?
+                request.body.OtherInformation : null,
         };
 
         return DrugModel;

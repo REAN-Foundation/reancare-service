@@ -141,7 +141,7 @@ export class TypesValidator extends BaseValidator {
         await this.validateString(request, 'LoincCode', Where.Body, false, true);
         await this.validateDecimal(request, 'NormalRangeMin', Where.Body, false, true);
         await this.validateDecimal(request, 'NormalRangeMax', Where.Body, false, true);
-        await this.validateString(request, 'Unit', Where.Body, false, false);
+        await this.validateString(request, 'Unit', Where.Body, false, true);
         await this.validateRequest(request);
     }
 

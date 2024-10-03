@@ -46,7 +46,7 @@ export class AnalyticsHandler {
                 'x-api-key'       : apiKey,
             };
 
-            var url = process.env.ANALYTICS_API_BASE_URL + '/events';
+            var url = process.env.ANALYTICS_API_BASE_URL + '/events/';
             var body = {
                 ...event,
             };

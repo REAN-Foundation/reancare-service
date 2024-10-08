@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import * as asyncLib from 'async';
 import { Logger } from "../../../common/logger";
 import { Loader } from "../../../startup/loader";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
@@ -12,6 +13,8 @@ import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/
 import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const ASYNC_TASK_COUNT = 4;
 
 @injectable()
 export class UserTaskSenderService {
@@ -27,7 +30,37 @@ export class UserTaskSenderService {
         this._assessmentService = Injector.Container.resolve(AssessmentService);
     }
 
-    public sendUserTasks = async (timePeriod: number) => {
+    public _q = asyncLib.queue((timePeriod: number, onCompleted) => {
+        (async () => {
+            await this.sendUserTasks(timePeriod);
+            onCompleted();
+        })();
+    }, ASYNC_TASK_COUNT);
+
+    public enqueueSendUserTasks = async (timePeriodMin: number) => {
+        try {
+            this.enqueue(timePeriodMin);
+        }
+        catch (error) {
+            Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);
+        }
+    };
+
+    //#region Privates
+
+    private enqueue = (timePeriod: number) => {
+        this._q.push(timePeriod, (timePeriod, error) => {
+            if (error) {
+                Logger.instance().log(`Error sending reminders: ${JSON.stringify(error)}`);
+                Logger.instance().log(`Error sending reminders: ${JSON.stringify(error.stack, null, 2)}`);
+            }
+            else {
+                Logger.instance().log(`Sent reminders!`);
+            }
+        });
+    };
+
+    private sendUserTasks = async (timePeriod: number) => {
         try {
             const userTasks = await this._userTaskRepo.getUserTasksOfSelectiveChannel(timePeriod);
             if (!userTasks || userTasks.length === 0) {

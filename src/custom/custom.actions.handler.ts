@@ -147,7 +147,7 @@ export class CustomActionsHandler {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const nextMinutes = 15;
                 const userTaskService = Injector.Container.resolve(UserTaskSenderService);
-                await userTaskService.sendUserTasks(nextMinutes);
+                await userTaskService.enqueueSendUserTasks(nextMinutes);
             }
         }
         catch (error) {

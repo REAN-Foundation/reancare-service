@@ -285,6 +285,7 @@ export class PatientController extends BaseUserController {
             const currentUserId = request.currentUser.UserId;
             const patientUserId = userId;
             const patient = await this._service.getByUserId(userId);
+            const personId = patient.User.PersonId;
             if (!patient) {
                 throw new ApiError(404, 'Patient account does not exist!');
             }
@@ -296,27 +297,36 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(404, 'User not found.');
             }
             await this.authorizeOne(request, user.id, user.TenantId);
-
-            var deleted = await this._userDeviceDetailsService.deleteByUserId(userId);
+            
+            let deleted = await this._service.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
+            
             deleted = await this._patientHealthProfileService.deleteByPatientUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
+            
+            deleted = await this._userDeviceDetailsService.deleteByUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            
             deleted = await this._cohortService.removeUserFromAllCohorts(userId);
+            
             deleted = await this._userService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-            deleted = await this._service.deleteByUserId(userId);
-            if (!deleted) {
-                throw new ApiError(400, 'User cannot be deleted.');
-            }
+            
             //TODO: Please add check here whether the patient-person
             //has other roles in the system
-            
+            const personDeleted = await this._personService.delete(personId);
+            if (personDeleted == null) {
+                Logger.instance().log(`Cannot delete person!`);
+            }
+
             // invalidate all sessions
             var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
             if (!invalidatedAllSessions) {

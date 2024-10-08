@@ -14,5 +14,7 @@ export interface IDoctorRepo {
 
     search(filters: DoctorSearchFilters): Promise<DoctorSearchResults>;
 
+    deleteByUserId(userId: string): Promise<boolean>;
+
     // searchFull(filters: DoctorSearchFilters): Promise<DoctorDetailsSearchResults>;
 }

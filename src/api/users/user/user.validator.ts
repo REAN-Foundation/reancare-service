@@ -107,7 +107,9 @@ export class UserValidator {
     };
 
     private static getCreateModel(request): UserDomainModel {
-
+        if (typeof request.body.RoleId === 'string') {
+            request.body.RoleId = parseInt(request.body.RoleId);
+        }
         const model: UserDomainModel = {
             TenantId : request.body.TenantId,
             RoleId   : request.body.RoleId,

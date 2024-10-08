@@ -173,19 +173,22 @@ export class DoctorController extends BaseUserController {
                 throw new ApiError(404, 'User not found.');
             }
             await this.authorizeOne(request, userId, user.TenantId);
-            let deleted = await this._cohortService.removeUserFromAllCohorts(userId);
+            
+            let deleted = await this._service.deleteByUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'Doctor cannot be deleted.');
+            }
+
             deleted = await this._userService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-            deleted = await this._service.deleteByUserId(userId);
-            if (!deleted) {
-                throw new ApiError(400, 'Doctor cannot be deleted.');
-            }
+            
             const personDeleted = await this._personService.delete(personId);
             if (personDeleted == null) {
                 Logger.instance().log(`Cannot delete person!`);
             }
+            
             var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
             if (!invalidatedAllSessions) {
                 throw new ApiError(400, 'Doctor sessions cannot be deleted.');

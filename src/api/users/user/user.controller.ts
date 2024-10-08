@@ -179,11 +179,17 @@ export class UserController extends BaseController {
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
+            const personId = user.PersonId;
             await this.authorizeOne(request, userId, user.TenantId);
 
             const userDeleted = await this._service.delete(userId);
             if (userDeleted == null) {
                 throw new ApiError(400, 'Cannot delete user!');
+            }
+
+            const personDeleted = await this._personService.delete(personId);
+            if (personDeleted == null) {
+                Logger.instance().log(`Cannot delete person!`);
             }
 
             UserEvents.onUserDeleted(request, user);

@@ -8,6 +8,7 @@ import { PersonSearchFilters, PersonSearchResults } from '../../domain.types/per
 import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { OrganizationDto } from '../../domain.types/general/organization/organization.types';
 import { RoleDto } from '../../domain.types/role/role.dto';
+import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +18,8 @@ export class PersonService {
     constructor(
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
-        @inject('IRoleRepo') private _roleRepo: IRoleRepo
+        @inject('IRoleRepo') private _roleRepo: IRoleRepo,
+        @inject('IUserRepo') private _userRepo: IUserRepo,
     ) {}
 
     //#region Publics
@@ -92,7 +94,18 @@ export class PersonService {
     };
 
     public delete = async (id: string): Promise<boolean> => {
-        return await this._personRepo.delete(id);
+        if (!id) {
+            return null;
+        }
+        const existingUsers = await this._userRepo.getByPersonId(id);
+        if (existingUsers && existingUsers.length === 0) {
+            const person = await this._personRepo.delete(id);
+            if (person) {
+                return person;
+            }
+            return null;
+        }
+        return null;
     };
 
     getPersonWithPhone = async (phone: string): Promise<PersonDetailsDto> => {

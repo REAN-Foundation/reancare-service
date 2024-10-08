@@ -79,6 +79,10 @@ export class DoctorService {
         return dto;
     };
 
+    public deleteByUserId = async (id: string): Promise<boolean> => {
+        return await this._doctorRepo.deleteByUserId(id);
+    };
+
     public search = async (
         filters: DoctorSearchFilters
     ): Promise<DoctorDetailsSearchResults | DoctorSearchResults> => {

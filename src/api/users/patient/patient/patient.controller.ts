@@ -285,6 +285,7 @@ export class PatientController extends BaseUserController {
             const currentUserId = request.currentUser.UserId;
             const patientUserId = userId;
             const patient = await this._service.getByUserId(userId);
+            const personId = patient.User.PersonId;
             if (!patient) {
                 throw new ApiError(404, 'Patient account does not exist!');
             }
@@ -317,6 +318,11 @@ export class PatientController extends BaseUserController {
             //TODO: Please add check here whether the patient-person
             //has other roles in the system
             
+            const personDeleted = await this._personService.delete(personId);
+            if (personDeleted == null) {
+                Logger.instance().log(`Cannot delete person!`);
+            }
+
             // invalidate all sessions
             var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
             if (!invalidatedAllSessions) {

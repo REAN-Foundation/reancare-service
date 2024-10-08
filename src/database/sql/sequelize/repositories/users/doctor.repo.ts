@@ -79,6 +79,20 @@ export class DoctorRepo implements IDoctorRepo {
         }
     };
 
+    deleteByUserId = async (userId: string): Promise<boolean> => {
+        try {
+            const count = await Doctor.destroy({
+                where : {
+                    UserId : userId
+                }
+            });
+            return count === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateByUserId = async (userId: string, model: DoctorDomainModel): Promise<DoctorDetailsDto> => {
         try {

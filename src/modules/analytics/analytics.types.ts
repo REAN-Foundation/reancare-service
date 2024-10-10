@@ -117,6 +117,7 @@ export enum AnalyticsEventType {
 
     // Lab test events
     LabRecordAdd     = "lab-record-add",
+    LabRecordDelete = "lab-record-delete",
     LabRecordSearch  = "lab-record-search",
     LabOrderCreate   = "lab-order-create",
     LabOrderUpdate   = "lab-order-update",
@@ -410,7 +411,8 @@ export enum AnalyticsEventSubject {
     MedicationSchedule = "medication-schedule",
     UserTask = "user-task",
     CareplanEnrollment = "careplan-enrollment",
-    
+    CareplanStop = "careplan-stop",
+
     VitalsCholesterol = "vitals-cholesterol",
     VitalsPulse = "vitals-pulse",
     VitalsBodyTemperature = "vitals-body-temperature",

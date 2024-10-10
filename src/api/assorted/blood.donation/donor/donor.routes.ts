@@ -14,7 +14,7 @@ export const register = (app: express.Application): void => {
     router.get('/search', auth(DonorAuth.search), controller.search);
     router.get('/:userId', auth(DonorAuth.getByUserId), controller.getByUserId);
     router.put('/:userId', auth(DonorAuth.updateByUserId), controller.updateByUserId);
-    router.delete('/:userId', auth(DonorAuth.deleteByUserId), controller.delete);
+    router.delete('/:userId', auth(DonorAuth.deleteByUserId), controller.deleteByUserId);
 
     app.use('/api/v1/donors', router);
 };

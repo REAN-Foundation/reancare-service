@@ -17,7 +17,7 @@ export class CareplanEvents {
             const message = `User '${userId}' has enrolled in careplan '${enrollment.PlanName}'.`;
             const eventName = AnalyticsEventType.CareplanEnrollment;
             const eventCategory = AnalyticsEventCategory.Careplan;
-            const eventSubject = AnalyticsEventSubject.CareplanEnrollment;
+            const eventSubject = `${AnalyticsEventSubject.CareplanEnrollment}-${enrollment.PlanCode}`;
             const event: AnalyticsEvent = {
                 UserId          : userId,
                 TenantId        : tenantId,
@@ -98,7 +98,7 @@ export class CareplanEvents {
             const message = `User '${userId}' has stopped careplan '${enrollment.PlanName}'.`;
             const eventName = AnalyticsEventType.CareplanStop;
             const eventCategory = AnalyticsEventCategory.Careplan;
-            const eventSubject = AnalyticsEventSubject.CareplanEnrollment;
+            const eventSubject = `${AnalyticsEventSubject.CareplanStop}-${enrollment.PlanCode}`;
             const event: AnalyticsEvent = {
                 UserId          : userId,
                 TenantId        : tenantId,

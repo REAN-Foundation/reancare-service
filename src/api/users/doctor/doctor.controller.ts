@@ -11,7 +11,6 @@ import { UserHelper } from '../user.helper';
 import { DoctorSearchFilters } from '../../../domain.types/users/doctor/doctor.search.types';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserEvents } from '../user/user.events';
-import { CohortService } from '../../../services/community/cohort.service';
 import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -21,8 +20,6 @@ export class DoctorController extends BaseUserController {
     //#region member variables and constructors
 
     _service: DoctorService = Injector.Container.resolve(DoctorService);
-
-    _cohortService: CohortService = Injector.Container.resolve(CohortService);
 
     _userHelper: UserHelper = new UserHelper();
 

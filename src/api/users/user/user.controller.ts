@@ -321,7 +321,7 @@ export class UserController extends BaseController {
             const user = result.User;
             UserEvents.onSendPasswordResetCode(request, user);
 
-            ResponseHandler.success(request, response, 'Password reset email sent successfully!', 200, {
+            ResponseHandler.success(request, response, 'Password reset code sent successfully!', 200, {
                 SendPasswordResetEmailResult : result.Success,
             });
         } catch (error) {

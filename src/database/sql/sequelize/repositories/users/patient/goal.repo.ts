@@ -10,8 +10,7 @@ import { GoalSearchFilters, GoalSearchResults } from '../../../../../../domain.t
 import { GoalTypeDomainModel } from '../../../../../../domain.types/users/patient/goal.type/goal.type.domain.model';
 import { GoalTypeDto } from '../../../../../../domain.types/users/patient/goal.type/goal.type.dto';
 import GoalType from '../../../models/users/patient/goal.type.model';
-import { GoalTypeSearchFilters } from '../../../../../../domain.types/users/patient/goal.type/goal.types.search';
-import { GoalTypeSearchResults } from '../../../../../../domain.types/users/patient/goal.type/goal.types.search';
+import { GoalTypeSearchFilters, GoalTypeSearchResults } from '../../../../../../domain.types/users/patient/goal.type/goal.types.search';
 
 ///////////////////////////////////////////////////////////////////////
 

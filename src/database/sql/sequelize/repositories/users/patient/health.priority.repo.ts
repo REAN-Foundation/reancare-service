@@ -10,8 +10,7 @@ import { HealthPriorityTypeDto } from '../../../../../../domain.types/users/pati
 import HealthPriorityType    from '../../../models/users/patient/health.priority.type.model';
 import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from '../../../../../../domain.types/users/patient/health.priority/health.priority.search.types';
 import { Op } from 'sequelize';
-import { HealthPriorityTypeSearchResults } from '../../../../../../domain.types/users/patient/health.priority.type/health.priority.types.search';
-import { HealthPriorityTypeSearchFilters } from '../../../../../../domain.types/users/patient/health.priority.type/health.priority.types.search';
+import { HealthPriorityTypeSearchResults, HealthPriorityTypeSearchFilters } from '../../../../../../domain.types/users/patient/health.priority.type/health.priority.types.search';
 
 ///////////////////////////////////////////////////////////////////////
 

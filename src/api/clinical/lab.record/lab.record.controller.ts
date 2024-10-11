@@ -128,7 +128,7 @@ export class LabRecordController extends BaseController {
 
             // delete ehr record
             this._ehrLabService.deleteLabEHRRecord(existingRecord.id);
-            // LabRecordEvents.onLabRecordDelete(request, existingRecord);
+            LabRecordEvents.onLabRecordDelete(request, existingRecord);
             ResponseHandler.success(request, response, `${existingRecord.DisplayName} record deleted successfully!`, 200, {
                 Deleted : true,
             });

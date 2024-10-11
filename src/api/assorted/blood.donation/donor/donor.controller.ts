@@ -11,6 +11,7 @@ import { BaseUserController } from '../../../users/base.user.controller';
 import { Injector } from '../../../../startup/injector';
 import { DonorSearchFilters } from '../../../../domain.types/assorted/blood.donation/donor/donor.search.types';
 import { UserHelper } from '../../../users/user.helper';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -184,18 +185,42 @@ export class DonorController extends BaseUserController {
         }
     };
 
-    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+    deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: string = await DonorValidator.delete(request);
+
+            const currentUserId = request.currentUser.UserId;
+            const donor = await this._service.getByUserId(userId);
+            const personId = donor.User.PersonId;
+            if (!donor) {
+                throw new ApiError(404, 'Donor account does not exist!');
+            }
+            if (currentUserId !== userId) {
+                throw new ApiError(403, 'You do not have permissions to delete this donor account.');
+            }
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
-                throw new ApiError(404, 'User not found.');
+                throw new ApiError(404, 'User does not exist!');
             }
             await this.authorizeOne(request, null, existingUser.TenantId);
-            const deleted = await this._personService.delete(existingUser.PersonId);
-            await this._service.deleteByUserId(userId);
+
+            let deleted = await this._service.deleteByUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'Donor cannot be deleted.');
+            }
+            deleted = await this._userService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
+            }
+            
+            const personDeleted = await this._personService.delete(personId);
+            if (personDeleted == null) {
+                Logger.instance().log(`Cannot delete person!`);
+            }
+            
+            var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
+            if (!invalidatedAllSessions) {
+                throw new ApiError(400, 'Donor sessions cannot be deleted.');
             }
 
             ResponseHandler.success(request, response, 'Donor records deleted successfully!', 200, {

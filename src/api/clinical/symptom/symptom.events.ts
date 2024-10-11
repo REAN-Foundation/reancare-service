@@ -11,14 +11,12 @@ type SymptomEventDto = HowDoYouFeelDto | SymptomDto;
 
 export class SymptomEvents {
 
-    static getEventSubject(type: string): AnalyticsEventSubject {
-        switch (type) {
-            case 'symptom':
-                return AnalyticsEventSubject.Symptom;
-            case 'how.do.you.feel':
-                return AnalyticsEventSubject.SymptomHowDoYouFeel;
-            default:
-                return AnalyticsEventSubject.Symptom;
+    static getEventSubject(record: SymptomEventDto): string {
+        if ('Feeling' in record) {
+            return record.Feeling as string;
+        }
+        if ('Symptom' in record) {
+            return record.Symptom;
         }
     }
 
@@ -31,7 +29,7 @@ export class SymptomEvents {
             const message = `User '${userId}' has added symptom record.`;
             const eventName = AnalyticsEventType.SymptomAdd;
             const eventCategory = AnalyticsEventCategory.Symptoms;
-            const eventSubject = this.getEventSubject(type);
+            const eventSubject = this.getEventSubject(record);
             const resourceType = type === 'how.do.you.feel' ? 'symptom-how-do-you-feel' : type;
             const event: AnalyticsEvent = {
                 UserId          : userId,
@@ -67,7 +65,7 @@ export class SymptomEvents {
             const message = `User '${userId}' has updated symptom record.`;
             const eventName = AnalyticsEventType.SymptomUpdate;
             const eventCategory = AnalyticsEventCategory.Symptoms;
-            const eventSubject = this.getEventSubject(type);
+            const eventSubject = this.getEventSubject(record);
             const resourceType = type === 'how.do.you.feel' ? 'symptom-how-do-you-feel' : type;
             const event: AnalyticsEvent = {
                 UserId          : userId,
@@ -103,7 +101,7 @@ export class SymptomEvents {
             const message = `User '${userId}' has deleted symptom record.`;
             const eventName = AnalyticsEventType.SymptomDelete;
             const eventCategory = AnalyticsEventCategory.Symptoms;
-            const eventSubject = this.getEventSubject(type);
+            const eventSubject = this.getEventSubject(record);
             const resourceType = type === 'how.do.you.feel' ? 'symptom-how-do-you-feel' : type;
             const event: AnalyticsEvent = {
                 UserId          : userId,

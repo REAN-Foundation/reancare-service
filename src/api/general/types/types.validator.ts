@@ -72,7 +72,7 @@ export class TypesValidator extends BaseValidator {
 
     searchPriorities = async (request: express.Request): Promise<HealthPriorityTypeSearchFilters> => {
         await this.validateString(request, 'type', Where.Query, false, false);
-        await this.validateString(request, 'tag', Where.Query, false, false);
+        await this.validateString(request, 'tags', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getPriorityFilter(request);
@@ -124,7 +124,7 @@ export class TypesValidator extends BaseValidator {
 
     searchGoalTypes = async (request: express.Request): Promise<GoalTypeSearchFilters> => {
         await this.validateString(request, 'type', Where.Query, false, false);
-        await this.validateString(request, 'tag', Where.Query, false, false);
+        await this.validateString(request, 'tags', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getGoalTypeFilter(request);
@@ -198,8 +198,8 @@ export class TypesValidator extends BaseValidator {
     private getPriorityFilter(request): HealthPriorityTypeSearchFilters {
 
         const filters: HealthPriorityTypeSearchFilters = {
-            Type : request.query.Type ?? null,
-            Tags : request.query.tag ? request.query.tag.split(',') : null,
+            Type : request.query.type ?? null,
+            Tags : request.query.tags ? request.query.tags.split(',') : null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -208,8 +208,8 @@ export class TypesValidator extends BaseValidator {
     private getGoalTypeFilter(request): GoalTypeSearchFilters {
 
         const filters: GoalTypeSearchFilters = {
-            Type : request.query.Type ?? null,
-            Tags : request.query.tag ? request.query.tag.split(',') : null,
+            Type : request.query.type ?? null,
+            Tags : request.query.tags ? request.query.tags.split(',') : null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

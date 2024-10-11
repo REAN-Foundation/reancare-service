@@ -267,6 +267,23 @@ export class TypesController extends BaseController {
         }
     };
 
+    searchPriorities = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const filters = await this._validator.searchPriorities(request);
+            const searchResults = await this._service.searchPriorities(filters);
+            const count = searchResults.Items.length;
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} priorities records retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, { PriorityTypes: searchResults });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     updatePriorityType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
@@ -430,6 +447,23 @@ export class TypesController extends BaseController {
         }
     };
 
+    searchLabRecordTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const filters = await this._validator.searchLabRecordTypes(request);
+            const searchResults = await this._service.searchLabRecordTypes(filters);
+            const count = searchResults.Items.length;
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} lab records types retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, { LabRecordTypes: searchResults });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     updateLabRecordType = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
@@ -527,6 +561,23 @@ export class TypesController extends BaseController {
             ResponseHandler.success(request, response, message, 200, {
                 GoalTypes : goalTypes ,
             });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    searchGoalTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const filters = await this._validator.searchGoalTypes(request);
+            const searchResults = await this._service.searchGoalTypes(filters);
+            const count = searchResults.Items.length;
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} goal type records retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, { GoalTypes: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

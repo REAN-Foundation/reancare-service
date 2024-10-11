@@ -284,4 +284,36 @@ export class TypesAuth {
         OptionalUserAuth : true
     };
 
+    static readonly searchRoleTypes: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.RoleType.Search`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.Search,
+    };
+
+    static readonly searchLabRecordTypes: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.LabRecordType.Search`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.Search,
+    };
+
+    static readonly searchPriorities: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.HealthPriorityType.Search`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.Search,
+    };
+
+    static readonly searchGoalTypes: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GoalType.Search`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.Search,
+    };
+
 }

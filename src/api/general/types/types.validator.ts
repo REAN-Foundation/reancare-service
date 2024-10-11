@@ -4,6 +4,9 @@ import { RoleDomainModel } from '../../../domain.types/role/role.domain.model';
 import { GoalTypeDomainModel } from '../../../domain.types/users/patient/goal.type/goal.type.domain.model';
 import { HealthPriorityTypeDomainModel } from '../../../domain.types/users/patient/health.priority.type/health.priority.type.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
+import { HealthPriorityTypeSearchFilters } from '../../../domain.types/users/patient/health.priority.type/health.priority.types.search';
+import { GoalTypeSearchFilters } from '../../../domain.types/users/patient/goal.type/goal.types.search';
+import { LabRecordTypeSearchFilters } from '../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,6 +70,14 @@ export class TypesValidator extends BaseValidator {
         return this.getPriorityTypeDomainModel(request);
     };
 
+    searchPriorities = async (request: express.Request): Promise<HealthPriorityTypeSearchFilters> => {
+        await this.validateString(request, 'type', Where.Query, false, false);
+        await this.validateString(request, 'tag', Where.Query, false, false);
+        await this.validateBaseSearchFilters(request);
+        this.validateRequest(request);
+        return this.getPriorityFilter(request);
+    };
+
     updatePriorityType = async (request: express.Request): Promise<HealthPriorityTypeDomainModel> => {
         await this.validateUpdatePriorityTypeBody(request);
         const domainModel = this.getPriorityTypeDomainModel(request);
@@ -98,9 +109,25 @@ export class TypesValidator extends BaseValidator {
         return domainModel;
     };
 
+    searchLabRecordTypes = async (request: express.Request): Promise<LabRecordTypeSearchFilters> => {
+        await this.validateString(request, 'typeName', Where.Query, false, false);
+        await this.validateString(request, 'displayName', Where.Query, false, false);
+        await this.validateBaseSearchFilters(request);
+        this.validateRequest(request);
+        return this.getLabRecordTypeFilter(request);
+    };
+
     createGoalType = async (request: express.Request): Promise<GoalTypeDomainModel> => {
         await this.validateCreateGoalTypeBody(request);
         return this.getGoalTypeDomainModel(request);
+    };
+
+    searchGoalTypes = async (request: express.Request): Promise<GoalTypeSearchFilters> => {
+        await this.validateString(request, 'type', Where.Query, false, false);
+        await this.validateString(request, 'tag', Where.Query, false, false);
+        await this.validateBaseSearchFilters(request);
+        this.validateRequest(request);
+        return this.getGoalTypeFilter(request);
     };
 
     updateGoalType = async (request: express.Request): Promise<GoalTypeDomainModel> => {
@@ -166,6 +193,36 @@ export class TypesValidator extends BaseValidator {
         await this.validateString(request, 'Type', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, true);
         await this.validateRequest(request);
+    }
+
+    private getPriorityFilter(request): HealthPriorityTypeSearchFilters {
+
+        const filters: HealthPriorityTypeSearchFilters = {
+            Type : request.query.Type ?? null,
+            Tags : request.query.tag ? request.query.tag.split(',') : null,
+        };
+
+        return this.updateBaseSearchFilters(request, filters);
+    }
+
+    private getGoalTypeFilter(request): GoalTypeSearchFilters {
+
+        const filters: GoalTypeSearchFilters = {
+            Type : request.query.Type ?? null,
+            Tags : request.query.tag ? request.query.tag.split(',') : null,
+        };
+
+        return this.updateBaseSearchFilters(request, filters);
+    }
+
+    private getLabRecordTypeFilter(request): LabRecordTypeSearchFilters {
+
+        const filters: LabRecordTypeSearchFilters = {
+            TypeName    : request.query.typeName ?? null,
+            DisplayName : request.query.displayName ?? null,
+        };
+
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

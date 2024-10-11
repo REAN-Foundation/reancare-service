@@ -10,6 +10,8 @@ import { HealthPriorityTypeDto } from '../../../../../../domain.types/users/pati
 import HealthPriorityType    from '../../../models/users/patient/health.priority.type.model';
 import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from '../../../../../../domain.types/users/patient/health.priority/health.priority.search.types';
 import { Op } from 'sequelize';
+import { HealthPriorityTypeSearchResults } from '../../../../../../domain.types/users/patient/health.priority.type/health.priority.types.search';
+import { HealthPriorityTypeSearchFilters } from '../../../../../../domain.types/users/patient/health.priority.type/health.priority.types.search';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -246,6 +248,64 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         try {
             const priorityType = await HealthPriorityType.findByPk(id);
             return HealthPriorityMapper.toTypeDto(priorityType);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    searchPriorities = async (filters: HealthPriorityTypeSearchFilters): Promise<HealthPriorityTypeSearchResults> => {
+        try {
+            const search = { where: {} };
+
+            if (filters.Type != null) {
+                search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
+            }
+            if (filters.Tags != null) {
+                search.where['Tags'] = { [Op.like]: '%' + filters.Tags + '%' };
+            }
+            let orderByColum = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await HealthPriorityType.findAndCountAll(search);
+            const dtos: HealthPriorityTypeDto[] = [];
+            for (const healthPriority of foundResults.rows) {
+                const dto = await HealthPriorityMapper.toTypeDto(healthPriority);
+                dtos.push(dto);
+            }
+
+            const searchResults: HealthPriorityTypeSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

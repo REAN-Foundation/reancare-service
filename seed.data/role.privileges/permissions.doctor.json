@@ -526,7 +526,8 @@
                 "Delete": false,
                 "GetById": true,
                 "GetGoalTypes": true,
-                "Update": false
+                "Update": false,
+                "Search": true
             },
             "GroupActivityTypes": true,
             "HealthPriority": {
@@ -536,13 +537,15 @@
                 "Create": false,
                 "Delete": false,
                 "GetById": true,
-                "Update": false
+                "Update": false,
+                "Search": true
             },
             "LabRecordType": {
                 "Create": false,
                 "Delete": false,
                 "GetById": true,
-                "Update": false
+                "Update": false,
+                "Search": true
             },
             "LabRecords": true,
             "ReminderRepeatAfterEveryNUnits": true,

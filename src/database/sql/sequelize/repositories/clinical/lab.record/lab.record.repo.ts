@@ -196,7 +196,11 @@ export class LabRecordRepo implements ILabRecordRepo {
             const search = { where: {} };
 
             if (filters.DisplayName != null) {
-                search.where['DisplayName'] = filters.DisplayName;
+                search.where['DisplayName'] = { [Op.like]: '%' + filters.DisplayName + '%' };
+            }
+            
+            if (filters.TypeName != null) {
+                search.where['TypeName'] = { [Op.like]: '%' + filters.TypeName + '%' };
             }
 
             let orderByColum = 'CreatedAt';

@@ -1,8 +1,10 @@
+import { GoalTypeSearchFilters } from "../../../../domain.types/users/patient/goal.type/goal.types.search";
 import { GoalTypeDomainModel } from "../../../../domain.types/users/patient/goal.type/goal.type.domain.model";
 import { GoalTypeDto } from "../../../../domain.types/users/patient/goal.type/goal.type.dto";
 import { GoalDomainModel } from "../../../../domain.types/users/patient/goal/goal.domain.model";
 import { GoalDto } from "../../../../domain.types/users/patient/goal/goal.dto";
 import { GoalSearchFilters, GoalSearchResults } from "../../../../domain.types/users/patient/goal/goal.search.types";
+import { GoalTypeSearchResults } from "../../../../domain.types/users/patient/goal.type/goal.types.search";
 
 export interface IGoalRepo {
 
@@ -21,6 +23,8 @@ export interface IGoalRepo {
     createGoalType(goalTypeDomainModel: GoalTypeDomainModel): Promise<GoalTypeDto>;
 
     getGoalTypeById(id: string): Promise<GoalTypeDto>;
+
+    searchGoalTypes(filters: GoalTypeSearchFilters): Promise<GoalTypeSearchResults>;
 
     getGoalTypes(tags?: string): Promise<GoalTypeDto[]>;
 

@@ -1,6 +1,7 @@
 import express from "express";
 import { Logger } from "../common/logger";
 import { register as registerAddressRoutes } from "./general/address/address.routes";
+import { register as registerRoleRoutes } from "./role/role.routes";
 import { register as registerClientRoutes } from "./client.apps/client.app.routes";
 import { register as registerAllergyRoutes } from './clinical/allergy/allergy.routes';
 import { register as registerBloodGlucoseRoutes } from './clinical/biometrics/blood.glucose/blood.glucose.routes';
@@ -112,6 +113,7 @@ export class Router {
 
                 registerUserRoutes(this._app);
                 registerAddressRoutes(this._app);
+                registerRoleRoutes(this._app);
                 registerClientRoutes(this._app);
                 registerPatientRoutes(this._app);
                 registerDoctorRoutes(this._app);

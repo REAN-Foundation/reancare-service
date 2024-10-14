@@ -15,6 +15,12 @@ import { IGoalRepo } from "../../database/repository.interfaces/users/patient/go
 import { GoalTypeDto } from "../../domain.types/users/patient/goal.type/goal.type.dto";
 import { GoalTypeDomainModel } from "../../domain.types/users/patient/goal.type/goal.type.domain.model";
 import { QueryResponseTypeList } from "../../domain.types/clinical/assessment/assessment.types";
+import { HealthPriorityTypeSearchFilters } from "../../domain.types/users/patient/health.priority.type/health.priority.types.search";
+import { HealthPriorityTypeSearchResults } from "../../domain.types/users/patient/health.priority.type/health.priority.types.search";
+import { LabRecordTypeSearchResults } from "../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types";
+import { LabRecordTypeSearchFilters } from "../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types";
+import { GoalTypeSearchFilters } from "../../domain.types/users/patient/goal.type/goal.types.search";
+import { GoalTypeSearchResults } from "../../domain.types/users/patient/goal.type/goal.types.search";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,6 +89,10 @@ export class TypesService {
         return await this._healthPriorityRepo.createType(healthPriorityTypeDomainModel);
     };
 
+    searchPriorities = async (filters: HealthPriorityTypeSearchFilters): Promise<HealthPriorityTypeSearchResults> => {
+        return await this._healthPriorityRepo.searchPriorities(filters);
+    };
+
     getPriorityTypeById = async (id: string): Promise<HealthPriorityTypeDto> => {
         return await this._healthPriorityRepo.getPriorityTypeById(id);
     };
@@ -124,6 +134,10 @@ export class TypesService {
         return await this._labRecordTypeRepo.getLabRecordTypeById(id);
     };
 
+    searchLabRecordTypes = async (filters: LabRecordTypeSearchFilters): Promise<LabRecordTypeSearchResults> => {
+        return await this._labRecordTypeRepo.searchType(filters);
+    };
+
     updateLabRecordType = async (id: string, labRecordTypeDomainModel: LabRecordTypeDomainModel):
     Promise<LabRecordTypeDto> => {
         return await this._labRecordTypeRepo.updateLabRecordType(id, labRecordTypeDomainModel);
@@ -141,6 +155,10 @@ export class TypesService {
 
     getGoalTypeById = async (id: string): Promise<GoalTypeDto> => {
         return await this._goalTypeRepo.getGoalTypeById(id);
+    };
+
+    searchGoalTypes = async (filters: GoalTypeSearchFilters): Promise<GoalTypeSearchResults> => {
+        return await this._goalTypeRepo.searchGoalTypes(filters);
     };
 
     getGoalTypes = async (tags?: string): Promise<GoalTypeDto[]> => {

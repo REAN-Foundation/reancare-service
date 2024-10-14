@@ -3,6 +3,8 @@ import { HealthPriorityTypeDomainModel } from '../../../../domain.types/users/pa
 import { HealthPriorityTypeDto } from '../../../../domain.types/users/patient/health.priority.type/health.priority.type.dto';
 import { HealthPriorityDomainModel } from '../../../../domain.types/users/patient/health.priority/health.priority.domain.model';
 import { HealthPriorityDto } from '../../../../domain.types/users/patient/health.priority/health.priority.dto';
+import { HealthPriorityTypeSearchFilters } from '../../../../domain.types/users/patient/health.priority.type/health.priority.types.search';
+import { HealthPriorityTypeSearchResults } from '../../../../domain.types/users/patient/health.priority.type/health.priority.types.search';
 
 export interface IHealthPriorityRepo {
 
@@ -23,6 +25,8 @@ export interface IHealthPriorityRepo {
     createType(healthPriorityTypeDomainModel: HealthPriorityTypeDomainModel): Promise<HealthPriorityTypeDto>;
 
     getPriorityTypeById(id: string): Promise<HealthPriorityTypeDto>;
+
+    searchPriorities(filters: HealthPriorityTypeSearchFilters): Promise<HealthPriorityTypeSearchResults>;
 
     updatePriorityType(id: string, healthPriorityTypeDomainModel: HealthPriorityTypeDomainModel):
      Promise<HealthPriorityTypeDto>;

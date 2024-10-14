@@ -10,6 +10,7 @@ import { GoalSearchFilters, GoalSearchResults } from '../../../../../../domain.t
 import { GoalTypeDomainModel } from '../../../../../../domain.types/users/patient/goal.type/goal.type.domain.model';
 import { GoalTypeDto } from '../../../../../../domain.types/users/patient/goal.type/goal.type.dto';
 import GoalType from '../../../models/users/patient/goal.type.model';
+import { GoalTypeSearchFilters, GoalTypeSearchResults } from '../../../../../../domain.types/users/patient/goal.type/goal.types.search';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -248,6 +249,65 @@ export class GoalRepo implements IGoalRepo {
             }
 
             return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    searchGoalTypes = async (filters: GoalTypeSearchFilters): Promise<GoalTypeSearchResults> => {
+        try {
+            const search = { where: {} };
+
+            if (filters.Type != null) {
+                search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
+            }
+            if (filters.Tags != null) {
+                search.where['Tags'] = { [Op.like]: '%' + filters.Tags + '%' };
+            }
+
+            let orderByColum = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await GoalType.findAndCountAll(search);
+
+            const dtos: GoalTypeDto[] = [];
+            for (const contact of foundResults.rows) {
+                const dto = GoalMapper.toTypeDto(contact);
+                dtos.push(dto);
+            }
+
+            const searchResults: GoalSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

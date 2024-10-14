@@ -1,6 +1,7 @@
 import express from 'express';
-import { RoleDomainModel, RoleSearchFilters } from '../../domain.types/role/role.domain.model';
+import { RoleDomainModel } from '../../domain.types/role/role.domain.model';
 import { BaseValidator, Where } from '../base.validator';
+import { RoleSearchFilters } from '../../domain.types/role/role.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -43,6 +44,7 @@ export class RoleValidator extends BaseValidator {
         await this.validateBoolean(request, 'isSystemRole', Where.Query, false, false);
         await this.validateBoolean(request, 'isUserRole', Where.Query, false, false);
         await this.validateBoolean(request, 'isDefaultRole', Where.Query, false, false);
+        await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
 
         const model: RoleSearchFilters = {
@@ -53,7 +55,7 @@ export class RoleValidator extends BaseValidator {
             TenantId      : request.query.tenantId as string ?? null,
             IsDefaultRole : request.query.isDefaultRole ? request.query.isDefaultRole as string === 'true' : null,
         };
-        return model;
+        return this.updateBaseSearchFilters(request, model);
     };
 
     update = async (request: express.Request): Promise<RoleDomainModel> => {

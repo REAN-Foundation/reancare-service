@@ -27,7 +27,7 @@ export const BiometricsTypeList: BiometricsType[] = [
     BiometricsType.Pulse,
 ];
 
-export type BiometricSearchFilters = BloodCholesterolSearchFilters 
+export type BiometricSearchFilters = BloodCholesterolSearchFilters
     | BloodGlucoseSearchFilters
     | BloodOxygenSaturationSearchFilters
     | BloodPressureSearchFilters
@@ -36,3 +36,15 @@ export type BiometricSearchFilters = BloodCholesterolSearchFilters
     | BodyTemperatureSearchFilters
     | PulseSearchFilters;
     
+export enum Severity {
+        LOW = "Low",
+        NORMAL = "Normal",
+        HIGH = "High",
+        VERY_HIGH = "Very High"
+    }
+
+export interface AlertNotification {
+        severity: Severity;
+        range: string;
+        message: string;
+    }

@@ -52,7 +52,7 @@ jobs:
          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
         with:
            tag: ${{ github.event.inputs.Tag_name }}
-           repo: REAN-Foundation/reancare-service
+           repo: REAN-Foundation/user-analytics
            
       - name: Configure AWS credentials
         if: ${{ steps.checkTag.outputs.exists == 'true' }}
@@ -67,7 +67,7 @@ jobs:
         id: imageidvar
         run: |
           image_tag+=${{ steps.result_release.outputs.tag_name }} && image_tag+=_ && image_tag+=${{ steps.result_release.outputs.id }}
-          echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
+          echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name user-analytics-prod --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
             
       - name: ECR Image and Github Tag Check
         run: |
@@ -121,7 +121,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: default
-          image: public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_name }}_${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
+          image: public.ecr.aws/i9y2d4u3/user-analytics-prod:${{ needs.Github-ECR-Tag-Check.outputs.release_name }}_${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

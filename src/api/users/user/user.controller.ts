@@ -466,7 +466,12 @@ export class UserController extends BaseController {
 
     private async checkMultipleAdministrativeRoles(newRoleId: number, existingPersonId: string) {
         var allRoles = await this._roleService.search({});
-        var newRoleName = allRoles.Items.find(r => r.id === newRoleId).RoleName;
+        var newRoleName = allRoles.Items.find(r => r.id === newRoleId)?.RoleName;
+        if (!newRoleName) {
+            const msg = 'Role not found.';
+            Logger.instance().log(`Role not found: Role id ${newRoleId}`);
+            throw new ApiError(404, msg);
+        }
         if (newRoleName !== Roles.TenantAdmin &&
             newRoleName !== Roles.TenantUser &&
             newRoleName !== Roles.SystemAdmin &&
@@ -475,7 +480,11 @@ export class UserController extends BaseController {
         }
         var existingUsers = await this._service.getByPersonId(existingPersonId);
         for (var i = 0; i < existingUsers.length; i++) {
-            var existingUserRoleName = allRoles.Items.find(r => r.id === existingUsers[i].RoleId).RoleName;
+            var existingUserRoleName = allRoles.Items.find(r => r.id === existingUsers[i].RoleId)?.RoleName;
+            if (!existingUserRoleName) {
+                const msg = 'Role not found.';
+                throw new ApiError(404, msg);
+            }
             if (existingUserRoleName === Roles.TenantAdmin ||
                 existingUserRoleName === Roles.TenantUser ||
                 existingUserRoleName === Roles.SystemAdmin ||

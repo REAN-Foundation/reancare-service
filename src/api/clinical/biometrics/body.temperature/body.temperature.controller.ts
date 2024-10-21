@@ -12,6 +12,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { BiometricAlerts } from '../biometrics.alert';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,6 +70,7 @@ export class BodyTemperatureController extends BiometricsController {
             }
 
             BiometricsEvents.onBiometricsAdded(request, bodyTemperature, 'body.temperature');
+            BiometricAlerts.forBodyTemperature(bodyTemperature);
             ResponseHandler.success(request, response, 'Body temperature record created successfully!', 201, {
                 BodyTemperature : bodyTemperature,
             });

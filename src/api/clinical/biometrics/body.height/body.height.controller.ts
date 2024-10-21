@@ -36,7 +36,7 @@ export class BodyHeightController extends BiometricsController {
                 throw new ApiError(400, 'Cannot create record for height!');
             }
             await this._ehrVitalService.addEHRBodyHeightForAppNames(bodyHeight);
-
+            
             BiometricsEvents.onBiometricsAdded(request, bodyHeight, 'body.height');
             ResponseHandler.success(request, response, 'Height record created successfully!', 201, {
                 BodyHeight : bodyHeight

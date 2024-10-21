@@ -18,6 +18,7 @@ import { UserDeviceDetailsService } from '../../../../services/users/user/user.d
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { BiometricAlerts } from '../biometrics.alert';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -87,6 +88,7 @@ export class BloodPressureController extends BiometricsController {
                 });
             }
             BiometricsEvents.onBiometricsAdded(request, bloodPressure, 'blood.pressure');
+            BiometricAlerts.forBloodPressure(bloodPressure);
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
             });

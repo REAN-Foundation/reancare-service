@@ -12,6 +12,10 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
+import { BodyHeightDto } from '../../../../domain.types/clinical/biometrics/body.height/body.height.dto';
+import { Logger } from '../../../../common/logger';
+import { BiometricAlerts } from '../biometrics.alert';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +24,8 @@ export class BodyWeightController extends BiometricsController {
     //#region member variables and constructors
 
     _service: BodyWeightService = Injector.Container.resolve(BodyWeightService);
+
+    _heightService: BodyHeightService = Injector.Container.resolve(BodyHeightService);
 
     _validator: BodyWeightValidator = new BodyWeightValidator();
 
@@ -66,6 +72,11 @@ export class BodyWeightController extends BiometricsController {
                     RecordDateStr  : TimeHelper.formatDateToLocal_YYYY_MM_DD(timestamp),
                     RecordTimeZone : currentTimeZone,
                 });
+            }
+
+            const bodyHeight = await this.getBodyHeightByUserId(bodyWeight.PatientUserId);
+            if (bodyHeight) {
+                BiometricAlerts.forBodyBMI(bodyWeight, bodyHeight);
             }
 
             BiometricsEvents.onBiometricsAdded(request, bodyWeight, 'body.weight');
@@ -189,5 +200,24 @@ export class BodyWeightController extends BiometricsController {
     };
 
     //#endregion
+
+    private getBodyHeightByUserId = async (userId: uuid): Promise<BodyHeightDto> => {
+        try {
+            const bodyHeights = await this._heightService.search({
+                PatientUserId : userId,
+                Order         : 'descending',
+                OrderBy       : 'CreatedAt',
+            });
+
+            if (bodyHeights.TotalCount === 0) {
+                return null;
+            }
+            return bodyHeights.Items[0];
+
+        } catch (error) {
+            Logger.instance().log(`Error fetching body height by user id: ${error.message}`);
+            return null;
+        }
+    };
 
 }

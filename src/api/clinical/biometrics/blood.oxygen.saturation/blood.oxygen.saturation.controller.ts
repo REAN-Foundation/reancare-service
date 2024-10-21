@@ -12,6 +12,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { BiometricAlerts } from '../biometrics.alert';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,6 +70,7 @@ export class BloodOxygenSaturationController extends BiometricsController {
             }
             
             BiometricsEvents.onBiometricsAdded(request, record, 'blood.oxygen.saturation');
+            BiometricAlerts.forBloodOxygenSaturation(record);
             ResponseHandler.success(request, response, 'Blood oxygen saturation record created successfully!', 201, {
                 BloodOxygenSaturation : record,
             });

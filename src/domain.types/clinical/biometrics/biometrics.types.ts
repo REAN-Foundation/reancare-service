@@ -17,6 +17,15 @@ export enum BiometricsType {
     Pulse                 = 'Pulse',
 }
 
+export enum BiometricAlertType {
+    BloodGlucoseAlert          = 'BloodGlucoseAlert',
+    BloodOxygenSaturationAlert = 'BloodOxygenSaturationAlert',
+    BloodPressureAlert         = 'BloodPressureAlert',
+    BodyBmiAlert               = 'BodyBmiAlert',
+    BodyTemperatureAlert       = 'BodyTemperatureAlert',
+    PulseAlert                 = 'PulseAlert',
+}
+
 export const BiometricsTypeList: BiometricsType[] = [
     BiometricsType.BloodGlucose,
     BiometricsType.BloodOxygenSaturation,

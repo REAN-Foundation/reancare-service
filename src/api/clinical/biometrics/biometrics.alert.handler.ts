@@ -16,11 +16,11 @@ import { PulseAlertCreateModel } from '../../../domain.types/clinical/biometrics
 import { BodyTemperatureAlertCreateModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.temperature';
 import { BloodOxygenAlertCreateModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation';
 import { BodyBmiAlertCreateModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.bmi';
+import { BiometricAlertType } from '../../../domain.types/clinical/biometrics/biometrics.types';
 
 ///////////////////////////////////////////////////////////////////////////////
 
 const title = 'Dear {{PatientName}},';
-const notificationType = 'Alert';
 
 ///////////////////////////////////////////////////////////////////////////////
 @injectable()
@@ -149,7 +149,7 @@ export class BiometricAlertHandler {
            Logger.instance().log(`Notification Body: ${body}`);
 
            var message = Loader.notificationService.formatNotificationMessage(
-               notificationType, notificationTitle, body
+               BiometricAlertType.BloodGlucoseAlert, notificationTitle, body
            );
            for await (var device of deviceList) {
                await Loader.notificationService.sendNotificationToDevice(device.Token, message);
@@ -185,7 +185,7 @@ export class BiometricAlertHandler {
            Logger.instance().log(`Notification Body: ${body}`);
            
            const message = Loader.notificationService.formatNotificationMessage(
-               notificationType, notificationTitle, body
+               BiometricAlertType.BloodPressureAlert, notificationTitle, body
            );
            for await (var device of deviceList) {
                await Loader.notificationService.sendNotificationToDevice(device.Token, message);
@@ -220,7 +220,7 @@ export class BiometricAlertHandler {
            Logger.instance().log(`Notification Body: ${body}`);
 
            var message = Loader.notificationService.formatNotificationMessage(
-               notificationType, notificationTitle, body
+               BiometricAlertType.PulseAlert, notificationTitle, body
            );
            for await (var device of deviceList) {
                await Loader.notificationService.sendNotificationToDevice(device.Token, message);
@@ -255,7 +255,7 @@ export class BiometricAlertHandler {
            Logger.instance().log(`Notification Body: ${body}`);
 
            var message = Loader.notificationService.formatNotificationMessage(
-               notificationType, notificationTitle, body
+               BiometricAlertType.BodyTemperatureAlert, notificationTitle, body
            );
            for await (var device of deviceList) {
                await Loader.notificationService.sendNotificationToDevice(device.Token, message);
@@ -290,7 +290,7 @@ export class BiometricAlertHandler {
            Logger.instance().log(`Notification Body: ${body}`);
 
            var message = Loader.notificationService.formatNotificationMessage(
-               notificationType, notificationTitle, body
+               BiometricAlertType.BloodOxygenSaturationAlert, notificationTitle, body
            );
            for await (var device of deviceList) {
                await Loader.notificationService.sendNotificationToDevice(device.Token, message);
@@ -325,7 +325,7 @@ export class BiometricAlertHandler {
            Logger.instance().log(`Notification Body: ${body}`);
 
            var message = Loader.notificationService.formatNotificationMessage(
-               notificationType, notificationTitle, body
+               BiometricAlertType.BodyBmiAlert, notificationTitle, body
            );
            
            for await (var device of deviceList) {

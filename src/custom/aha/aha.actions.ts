@@ -388,7 +388,7 @@ export class AHAActions {
                 if (userAppRegistrations.length > 0 && this.eligibleForStrokeSurveyTextMessage(userAppRegistrations)) {
                     Logger.instance().log(`[StrokeTextMessageCron] Sending Stroke survey text message to user:${patient.UserId}`);
                     const phoneNumber = patient?.User?.Person?.Phone;
-                    const message = `The American Heart Association would like to hear your thoughts on the Heart & Stroke Helper app! We would greatly appreciate if you could fill out this survey. After you submit, you will receive a $10 Amazon e-gift card. survey link: https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk`;
+                    const message = `The American Heart Association would like to hear your thoughts on the Heart & Stroke Helper app! Fill out the survey below and receive a $10 Amazon e-gift card. Please disregard this message if you have already filled out the survey. Survey link: https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk`;
                     const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
                     if (sendStatus) {
                         Logger.instance().log(`[StrokeSurveySMS] Message sent successfully to ${patient.UserId}`);

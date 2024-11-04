@@ -57,7 +57,7 @@
         "ScheduleExistingMedicationDataToEHR": "0 19 29 11 *",
         "DailyStatistics": "0 0 * * *",
         "ScheduleStrokeSurvey": "0 14 * * *",
-        "ScheduleStrokeSurveyTextMessage": "30 15 * * *",
+        "ScheduleStrokeSurveyTextMessage": "30 6 4 * *",
         "ScheduleHFHelperTextMessage": "0 1 6 8 *",
         "ScheduleGGHNFollowUpReminder": "0 5 * * *"
     },

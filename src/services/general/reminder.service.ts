@@ -49,19 +49,6 @@ export class ReminderService {
 
     search = async (filters: ReminderSearchFilters): Promise<ReminderSearchResults> => {
         const searchResults = await this._reminderRepo.search(filters);
-        const filteredReminders : ReminderDto[] = [];
-        for (const reminder of searchResults.Items) {
-            if (reminder.ReminderType === ReminderType.OneTime) {
-                const checkResult = await this._reminderScheduleRepo.isReminderHasFutureSchedule(reminder.id);
-                if (checkResult === true) {
-                    filteredReminders.push(reminder);
-                }
-            } else {
-                filteredReminders.push(reminder);
-            }
-        }
-        searchResults.Items = filteredReminders;
-        searchResults.RetrievedCount = filteredReminders.length;
         return searchResults;
     };
 

@@ -21,22 +21,42 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
         }
     };
 
-    getRandom = async(): Promise<KnowledgeNuggetDto> => {
+    getRandom = async(filters: KnowledgeNuggetSearchFilters): Promise<KnowledgeNuggetDto> => {
+        try {
+            //NOTE: The following literal is for MySQL, for PostgreSQL, please use `var literal = 'random()';`
+            var literal = new Utils.Literal('rand()');
 
-        //NOTE: The following literal is for MySQL, for PostgreSQL, please use `var literal = 'random()';`
-        var literal = new Utils.Literal('rand()');
+            const search = { where: {} };
+            
+            if (filters.Tags != null) {
+                const tags = filters.Tags.split(',').map(tag => tag.trim());
+                search.where[Op.or] = tags.map(tag => ({
+                    Tags : {
+                        [Op.like] : `%${tag}%`,
+                    },
+                }));
+            }
 
-        const topic = await KnowledgeNugget.findOne(
-            {
-                order      : literal,
-                limit      : 1,
-                attributes : [
-                    "id",
-                    "TopicName",
-                    "BriefInformation"
-                ]
-            });
-        return KnowledgeNuggetMapper.toDto(topic);
+            const topic = await KnowledgeNugget.findOne(
+                {
+                    order      : literal,
+                    limit      : 1,
+                    attributes : [
+                        "id",
+                        "TopicName",
+                        "BriefInformation",
+                        "AdditionalResources",
+                        "Tags"
+                    ],
+                    ...search
+                });
+            return KnowledgeNuggetMapper.toDto(topic);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+       
     };
 
     create = async (model: KnowledgeNuggetDomainModel):

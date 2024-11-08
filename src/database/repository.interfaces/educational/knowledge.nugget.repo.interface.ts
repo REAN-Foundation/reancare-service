@@ -4,7 +4,7 @@ import { KnowledgeNuggetSearchFilters, KnowledgeNuggetSearchResults } from "../.
 
 export interface IKnowledgeNuggetRepo {
 
-    getRandom(): Promise<KnowledgeNuggetDto>;
+    getRandom(filters: KnowledgeNuggetSearchFilters): Promise<KnowledgeNuggetDto>;
 
     create(knowledgeNuggetDomainModel: KnowledgeNuggetDomainModel): Promise<KnowledgeNuggetDto>;
 

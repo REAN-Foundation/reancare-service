@@ -40,16 +40,16 @@ export const bloodPressureNotificationTemplate: AlertNotification[] = [
     {
         severity : Severity.HYPERTENSION_STAGE1,
         range    : `Systolic  BP is in high range (${SYSTOLIC_BP_STAGE1_MIN}-${SYSTOLIC_BP_STAGE1_MAX} mmHg) or Diastolic  BP is in high range (${DIASTOLIC_BP_STAGE1_MIN}-${DIASTOLIC_BP_STAGE1_MAX} mmHg)`,
-        message  : "Your recent blood pressure reading is {{Systolic}}/{{Diastolic}} mmHg, It is in Hypertension stage1.Your health care professional should prescribe lifestyle changes. They may add medication based on your risk of heart disease or stroke. Medication should also be added if you have conditions such as diabetes,failure and kidney disease."
+        message  : "Your recent blood pressure reading is {{Systolic}}/{{Diastolic}} mmHg, It is in Hypertension stage1. Your health care professional should prescribe lifestyle changes. They may add medication based on your risk of heart disease or stroke. Medication should also be added if you have conditions such as diabetes,failure and kidney disease."
     },
     {
         severity : Severity.HYPERTENSION_STAGE2,
         range    : `Systolic  BP is in high range (${SYSTOLIC_BP_STAGE2_MIN}-${SYSTOLIC_BP_STAGE2_MAX} mmHg) or Diastolic  BP is in high range (${DIASTOLIC_BP_STAGE2_MIN}-${DIASTOLIC_BP_STAGE2_MAX} mmHg) `,
-        message  : "Your recent blood pressure reading is {{Systolic}}/{{Diastolic}} mmHg, It is in Hypertension stage2. Your health care professional should prescribe lifestyle changes and medication to lower your blood pressure.You may need one or more medications to keep your blood pressure in a healthy range."
+        message  : "Your recent blood pressure reading is {{Systolic}}/{{Diastolic}} mmHg, It is in Hypertension stage2. Your health care professional should prescribe lifestyle changes and medication to lower your blood pressure. You may need one or more medications to keep your blood pressure in a healthy range."
     },
     {
         severity : Severity.HYPERTENSIVE_CRISIS,
         range    : `Systolic  BP is in very high range (${SYSTOLIC_BP_HYPERTENSIVE_CRISIS_THRESHOLD} mmHg or higher) or/and Diastolic  BP is in very high range (${DIASTOLIC_BP_HYPERTENSIVE_CRISIS_THRESHOLD} mmHg or higher) `,
-        message  : "Your recent blood pressure reading is {{Systolic}}/{{Diastolic}} mmHg, You may be in hypertensive crisis. 1.Wait five minutes. 2.Take your blood pressure reading again. If your readings are still high, call your health care professional right away.Call 911 if your blood pressure is higher than 180/120 and you are having chest pain, numbness, weakness, change in vision or difficulty speaking."
+        message  : "Your recent blood pressure reading is {{Systolic}}/{{Diastolic}} mmHg, You may be in hypertensive crisis. 1.Wait five minutes. 2.Take your blood pressure reading again. If your readings are still high, call your health care professional right away. Call 911 if your blood pressure is higher than 180/120 and you are having chest pain, numbness, weakness, change in vision or difficulty speaking."
     }
 ];

@@ -14,9 +14,11 @@ export class KnowledgeNuggetValidator extends BaseValidator {
     getDomainModel = (request: express.Request): KnowledgeNuggetDomainModel => {
 
         const KnowledgeNuggetModel: KnowledgeNuggetDomainModel = {
-            TopicName           : request.body.TopicName ?? null,
-            BriefInformation    : request.body.BriefInformation ?? null,
-            DetailedInformation : request.body.DetailedInformation ?? null,
+            TopicName        : request.body.TopicName ?? null,
+            BriefInformation : request.body.BriefInformation !== undefined &&
+            request.body.BriefInformation !== null ? request.body.BriefInformation : null,
+            DetailedInformation : request.body.DetailedInformation !== undefined &&
+             request.body.DetailedInformation !== null ? request.body.DetailedInformation : null,
             AdditionalResources : request.body.AdditionalResources ?? [],
             Tags                : request.body.Tags ?? [],
         };

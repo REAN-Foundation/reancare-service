@@ -29,6 +29,7 @@ export const register = (app: express.Application): void => {
 
     //Priority type
     router.post('/priorities/', auth(TypesAuth.createPriorityType), controller.createPriorityType);
+    router.get('/priorities/search', auth(TypesAuth.searchPriorities), controller.searchPriorities);
     router.get('/priorities/:id', auth(TypesAuth.getPriorityTypeById), controller.getPriorityTypeById);
     router.put('/priorities/:id', auth(TypesAuth.updatePriorityType), controller.updatePriorityType);
     router.delete('/priorities/:id', auth(TypesAuth.deletePriorityType), controller.deletePriorityType);
@@ -40,13 +41,16 @@ export const register = (app: express.Application): void => {
     router.delete('/person-roles/:id', auth(TypesAuth.deleteRoleType), controller.deleteRoleType);
 
     //Lab record
+
     router.post('/lab-records/', auth(TypesAuth.createLabRecordType), controller.createLabRecordType);
+    router.get('/lab-records/search', auth(TypesAuth.searchLabRecordTypes), controller.searchLabRecordTypes);
     router.get('/lab-records/:id', auth(TypesAuth.getLabRecordTypeById), controller.getLabRecordTypeById);
     router.put('/lab-records/:id', auth(TypesAuth.updateLabRecordType), controller.updateLabRecordType);
     router.delete('/lab-records/:id', auth(TypesAuth.deleteLabRecordType), controller.deleteLabRecordType);
 
     //Goal type
     router.post('/goal-types/', auth(TypesAuth.createGoalType), controller.createGoalType);
+    router.get('/goal-types/search', auth(TypesAuth.searchGoalTypes), controller.searchGoalTypes);
     router.get('/goal-types/:id', auth(TypesAuth.getGoalTypeById), controller.getGoalTypeById);
     router.put('/goal-types/:id', auth(TypesAuth.updateGoalType), controller.updateGoalType);
     router.delete('/goal-types/:id', auth(TypesAuth.deleteGoalType), controller.deleteGoalType);

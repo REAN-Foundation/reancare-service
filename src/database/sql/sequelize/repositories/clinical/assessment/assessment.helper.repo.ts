@@ -197,6 +197,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 throw new ApiError(400, `Cannot delete root node of the assessment template!`);
             }
 
+            await this.deleteChildNodes(nodeId);
+
             const count = await AssessmentNode.destroy({
                 where : {
                     id : nodeId
@@ -227,6 +229,23 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    private deleteChildNodes = async (parentNodeId: string): Promise<void> => {
+        const childNodes = await AssessmentNode.findAll({
+            where : {
+                ParentNodeId : parentNodeId
+            }
+        });
+    
+        for (const childNode of childNodes) {
+            await this.deleteChildNodes(childNode.id);
+            await AssessmentNode.destroy({
+                where : {
+                    id : childNode.id
+                }
+            });
         }
     };
 
@@ -534,6 +553,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'Message')) {
                 thisNode.Message = updates['Message'];
+            }
+            if (Helper.hasProperty(updates, 'ServeListNodeChildrenAtOnce')) {
+                thisNode.ServeListNodeChildrenAtOnce = updates['ServeListNodeChildrenAtOnce'];
             }
             thisNode = await thisNode.save();
             return await this.populateNodeDetails(thisNode);

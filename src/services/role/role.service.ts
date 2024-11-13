@@ -1,10 +1,10 @@
 import { inject, injectable } from "tsyringe";
 import { IRoleRepo } from "../../database/repository.interfaces/role/role.repo.interface";
 import { RoleDto } from "../../domain.types/role/role.dto";
-import { RoleSearchFilters } from "../../domain.types/role/role.domain.model";
 import { Logger } from "../../common/logger";
 import { DefaultRoles } from "../../domain.types/role/role.types";
 import { ITenantRepo } from "../../database/repository.interfaces/tenant/tenant.repo.interface";
+import { RoleSearchResults, RoleSearchFilters } from "../../domain.types/role/role.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +32,7 @@ export class RoleService {
         return await this._roleRepo.delete(id);
     };
 
-    search = async (filters: RoleSearchFilters): Promise<RoleDto[]> => {
+    search = async (filters: RoleSearchFilters): Promise<RoleSearchResults> => {
         return await this._roleRepo.search(filters);
     };
 

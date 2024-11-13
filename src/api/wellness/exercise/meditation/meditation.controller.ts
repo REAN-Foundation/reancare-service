@@ -14,6 +14,7 @@ import { BaseController } from '../../../../api/base.controller';
 import { MeditationSearchFilters } from '../../../../domain.types/wellness/exercise/meditation/meditation.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { UserService } from '../../../../services/users/user/user.service';
+import { ExerciseEvent } from '../exercise.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +65,7 @@ export class MeditationController extends BaseController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
-
+            ExerciseEvent.onExerciseStart(request, 'meditation-start', meditation);
             ResponseHandler.success(request, response, 'Meditation record created successfully!', 201, {
                 Meditation : meditation,
             });
@@ -127,7 +128,6 @@ export class MeditationController extends BaseController {
             }
 
             await this._ehrMentalWellBeingService.addEHRMeditationForAppNames(updated);
-
             ResponseHandler.success(request, response, 'Meditation record updated successfully!', 200, {
                 Meditation : updated,
             });
@@ -149,7 +149,6 @@ export class MeditationController extends BaseController {
             if (!deleted) {
                 throw new ApiError(400, 'Meditation record cannot be deleted.');
             }
-
             ResponseHandler.success(request, response, 'Meditation record deleted successfully!', 200, {
                 Deleted : true,
             });

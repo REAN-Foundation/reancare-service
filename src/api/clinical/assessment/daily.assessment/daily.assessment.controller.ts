@@ -10,6 +10,7 @@ import { DailyAssessmentDomainModel } from '../../../../domain.types/clinical/da
 import { BaseController } from '../../../../api/base.controller';
 import { DailyAssessmentSearchFilters } from '../../../../domain.types/clinical/daily.assessment/daily.assessment.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
+import { AssessmentEvents } from '../assessment.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,6 +47,8 @@ export class DailyAssessmentController extends BaseController {
 
             await this._ehrHowDoYouFeelService.addEHRDailyAssessmentForAppNames(dailyAssessment);
 
+            AssessmentEvents.onAssessmentCreated(request, dailyAssessment, 'daily.assessment');
+
             ResponseHandler.success(request, response, 'Daily assessment record created successfully!', 201, {
                 DailyAssessment : dailyAssessment,
             });
@@ -74,7 +77,6 @@ export class DailyAssessmentController extends BaseController {
     };
 
     //#endregion
-
 
     //#region Authorization
 

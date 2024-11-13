@@ -152,6 +152,23 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         }
     };
 
+    isReminderHasFutureSchedule = async (reminderId: string): Promise<boolean> => {
+        try {
+            const schedules = await ReminderSchedule.findAll({
+                where : {
+                    ReminderId : reminderId,
+                    Schedule   : {
+                        [Op.gte] : new Date(),
+                    }
+                },
+            });
+            return schedules.length > 0 ? true : false;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     deleteAllSchedulesForUser = async (userId: string): Promise<number> => {
         try {
             const schedulesDeleted = await ReminderSchedule.destroy({

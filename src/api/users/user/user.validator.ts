@@ -107,7 +107,9 @@ export class UserValidator {
     };
 
     private static getCreateModel(request): UserDomainModel {
-
+        if (typeof request.body.RoleId === 'string') {
+            request.body.RoleId = parseInt(request.body.RoleId);
+        }
         const model: UserDomainModel = {
             TenantId : request.body.TenantId,
             RoleId   : request.body.RoleId,
@@ -185,6 +187,13 @@ export class UserValidator {
             .escape()
             .run(request);
 
+        await body('ImageResourceId')
+            .optional()
+            .isUUID()
+            .trim()
+            .escape()
+            .run(request);
+
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
@@ -198,12 +207,13 @@ export class UserValidator {
         const model: UserDomainModel = {
             RoleId : request.body.RoleId,
             Person : {
-                Prefix     : request.body.Prefix ?? null,
-                FirstName  : request.body.FirstName,
-                MiddleName : request.body.MiddleName ?? null,
-                LastName   : request.body.LastName,
-                Phone      : request.body.Phone ?? null,
-                Email      : request.body.Email ?? null,
+                Prefix          : request.body.Prefix ?? null,
+                FirstName       : request.body.FirstName,
+                MiddleName      : request.body.MiddleName ?? null,
+                LastName        : request.body.LastName,
+                Phone           : request.body.Phone ?? null,
+                Email           : request.body.Email ?? null,
+                ImageResourceId : request.body.ImageResourceId ?? null,
             },
             DefaultTimeZone : request.body.DefaultTimeZone ?? null,
             CurrentTimeZone : request.body.CurrentTimeZone ?? null,

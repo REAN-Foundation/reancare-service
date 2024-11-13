@@ -26,11 +26,13 @@ export class KnowledgeNuggetController extends BaseController {
 
             const patientUserId = await this._validator.getParamUuid(request, 'patientUserId');
 
-            const nugget = await this._service.getTodaysTopic(patientUserId);
+            const filters = await this._validator.search(request);
+
+            const nugget = await this._service.getTodaysTopic(patientUserId, filters);
             if (nugget == null) {
-                throw new ApiError(400, 'Cannot create record for knowledge nugget!');
+                throw new ApiError(400, 'Knowledge nugget record not found.');
             }
-            ResponseHandler.success(request, response, 'Knowledge nugget record created successfully!', 200, {
+            ResponseHandler.success(request, response, 'Knowledge nugget record retrieved successfully!', 200, {
                 KnowledgeNugget : nugget,
             });
         }

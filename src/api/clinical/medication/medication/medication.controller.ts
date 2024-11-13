@@ -27,6 +27,7 @@ import { BaseController } from '../../../../api/base.controller';
 import { MedicationSearchFilters } from '../../../../domain.types/clinical/medication/medication/medication.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { MedicationEvents } from './medication.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -141,7 +142,8 @@ export class MedicationController extends BaseController{
             for await (var mc of medicationConsumptions) {
                 await this._ehrMedicationService.addEHRMedicationConsumptionForAppNames(mc);
             }
-
+            
+            MedicationEvents.onMedicationCreated(request, medication);
             ResponseHandler.success(request, response, 'Medication created successfully!', 201, {
                 Medication : medication,
             });
@@ -224,7 +226,7 @@ export class MedicationController extends BaseController{
 
             this.updateMedicationConsumption(domainModel, id, updated);
 
-            Logger.instance().log(`[MedicationTime] Update - medication response returned`);
+            MedicationEvents.onMedicationUpdated(request, updated);
 
             ResponseHandler.success(request, response, 'Medication record updated successfully! Updates will be available shortly.', 200, {
                 Medication : updated,
@@ -255,7 +257,7 @@ export class MedicationController extends BaseController{
             // delete ehr record
             this._ehrMedicationService.deleteMedicationEHRRecords(id);
 
-            Logger.instance().log(`[MedicationTime] Delete - medication response returned`);
+            MedicationEvents.onMedicationDeleted(request, existingMedication);
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
                 Deleted : true,
             });

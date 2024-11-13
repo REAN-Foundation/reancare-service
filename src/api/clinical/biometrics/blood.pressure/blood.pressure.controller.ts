@@ -17,6 +17,8 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
+import { BiometricsEvents } from '../biometrics.events';
+import { BiometricAlerts } from '../biometrics.alert';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -85,6 +87,8 @@ export class BloodPressureController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+            BiometricsEvents.onBiometricsAdded(request, bloodPressure, 'blood.pressure');
+            BiometricAlerts.forBloodPressure(bloodPressure);
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
             });
@@ -176,6 +180,7 @@ export class BloodPressureController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+            BiometricsEvents.onBiometricsUpdated(request, updated, 'blood.pressure');
             ResponseHandler.success(request, response, 'Blood pressure record updated successfully!', 200, {
                 BloodPressure : updated,
             });
@@ -201,6 +206,7 @@ export class BloodPressureController extends BiometricsController {
             // delete ehr record
             this._ehrVitalService.deleteRecord(record.id);
 
+            BiometricsEvents.onBiometricsDeleted(request, record, 'blood.pressure');
             ResponseHandler.success(request, response, 'Blood pressure record deleted successfully!', 200, {
                 Deleted : true,
             });

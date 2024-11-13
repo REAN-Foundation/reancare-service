@@ -17,6 +17,15 @@ export enum BiometricsType {
     Pulse                 = 'Pulse',
 }
 
+export enum BiometricAlertType {
+    BloodGlucoseAlert          = 'BloodGlucoseAlert',
+    BloodOxygenSaturationAlert = 'BloodOxygenSaturationAlert',
+    BloodPressureAlert         = 'BloodPressureAlert',
+    BodyBmiAlert               = 'BodyBmiAlert',
+    BodyTemperatureAlert       = 'BodyTemperatureAlert',
+    PulseAlert                 = 'PulseAlert',
+}
+
 export const BiometricsTypeList: BiometricsType[] = [
     BiometricsType.BloodGlucose,
     BiometricsType.BloodOxygenSaturation,
@@ -27,7 +36,7 @@ export const BiometricsTypeList: BiometricsType[] = [
     BiometricsType.Pulse,
 ];
 
-export type BiometricSearchFilters = BloodCholesterolSearchFilters 
+export type BiometricSearchFilters = BloodCholesterolSearchFilters
     | BloodGlucoseSearchFilters
     | BloodOxygenSaturationSearchFilters
     | BloodPressureSearchFilters
@@ -36,3 +45,19 @@ export type BiometricSearchFilters = BloodCholesterolSearchFilters
     | BodyTemperatureSearchFilters
     | PulseSearchFilters;
     
+export enum Severity {
+    LOW = "Low",
+    NORMAL = "Normal",
+    ELEVATED = "Elevated",
+    HYPERTENSION_STAGE1 = "Hypertension_stage1",
+    HYPERTENSION_STAGE2 = "Hypertension_stage2",
+    HYPERTENSIVE_CRISIS = "Hypertensive_crisis",
+    HIGH = "High",
+    VERY_HIGH = "Very High"
+    }
+
+export interface AlertNotification {
+        severity: Severity;
+        range: string;
+        message: string;
+    }

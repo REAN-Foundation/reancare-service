@@ -5,7 +5,8 @@ import {
     ReminderDomainModel,
     ReminderDto,
     ReminderSearchResults,
-    ReminderSearchFilters
+    ReminderSearchFilters,
+    ReminderType
 } from '../../domain.types/general/reminder/reminder.domain.model';
 import { Logger } from "../../common/logger";
 
@@ -47,7 +48,8 @@ export class ReminderService {
     };
 
     search = async (filters: ReminderSearchFilters): Promise<ReminderSearchResults> => {
-        return await this._reminderRepo.search(filters);
+        const searchResults = await this._reminderRepo.search(filters);
+        return searchResults;
     };
 
     delete = async (id: string): Promise<boolean> => {

@@ -1,6 +1,6 @@
-import { RoleDomainModel, RoleSearchFilters } from '../../../domain.types/role/role.domain.model';
+import { RoleSearchFilters, RoleSearchResults } from '../../../domain.types/role/role.search.types';
+import { RoleDomainModel } from '../../../domain.types/role/role.domain.model';
 import { RoleDto } from '../../../domain.types/role/role.dto';
-
 export interface IRoleRepo {
 
     create(roleDomainModel: RoleDomainModel): Promise<RoleDto>;
@@ -11,7 +11,7 @@ export interface IRoleRepo {
 
     delete(id: number): Promise<boolean>;
 
-    search(filters: RoleSearchFilters): Promise<RoleDto[]>;
+    search(filters: RoleSearchFilters): Promise<RoleSearchResults>;
 
     searchByName(name?: string): Promise<RoleDto[]>;
 

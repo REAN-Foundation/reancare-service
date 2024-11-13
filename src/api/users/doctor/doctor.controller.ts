@@ -10,6 +10,8 @@ import { Injector } from '../../../startup/injector';
 import { UserHelper } from '../user.helper';
 import { DoctorSearchFilters } from '../../../domain.types/users/doctor/doctor.search.types';
 import { Roles } from '../../../domain.types/role/role.types';
+import { UserEvents } from '../user/user.events';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +42,7 @@ export class DoctorController extends BaseUserController {
                 });
                 return;
             }
+            UserEvents.onUserCreated(request, doctor.User);
             ResponseHandler.failure(request, response, `Doctor account already exists!`, 409);
         } catch (error) {
             //KK: Todo: Add rollback in case of mid-way exception
@@ -140,7 +143,7 @@ export class DoctorController extends BaseUserController {
             }
 
             await this.createOrUpdateDefaultAddress(request, user.Person.id);
-
+            UserEvents.onUserUpdated(request, updatedUser);
             ResponseHandler.success(request, response, 'Doctor records updated successfully!', 200, {
                 Doctor : updatedDoctor,
             });
@@ -153,12 +156,41 @@ export class DoctorController extends BaseUserController {
     deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const userId: string = await DoctorValidator.delete(request);
+            const currentUserId = request.currentUser.UserId;
+            const doctor = await this._service.getByUserId(userId);
+            const personId = doctor.User.PersonId;
+            if (!doctor) {
+                throw new ApiError(404, 'Doctor account does not exist!');
+            }
+            if (currentUserId !== userId) {
+                throw new ApiError(403, 'You do not have permissions to delete this doctor account.');
+            }
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
             await this.authorizeOne(request, userId, user.TenantId);
+            
+            let deleted = await this._service.deleteByUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'Doctor cannot be deleted.');
+            }
 
+            deleted = await this._userService.delete(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            
+            const personDeleted = await this._personService.delete(personId);
+            if (personDeleted == null) {
+                Logger.instance().log(`Cannot delete person!`);
+            }
+            
+            var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
+            if (!invalidatedAllSessions) {
+                throw new ApiError(400, 'Doctor sessions cannot be deleted.');
+            }
+            UserEvents.onUserDeleted(request, user);
             ResponseHandler.success(request, response, 'Doctor records deleted successfully!', 200, {
                 Deleted : true,
             });

@@ -24,4 +24,6 @@ export interface IReminderScheduleRepo {
 
     markAsAcknowledged(id: string): Promise<boolean>;
 
+    isReminderHasFutureSchedule(reminderId: string): Promise<boolean>;
+
 }

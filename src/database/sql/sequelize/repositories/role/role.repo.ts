@@ -5,7 +5,8 @@ import { RoleDto } from '../../../../../domain.types/role/role.dto';
 import { RoleMapper } from '../../mappers/role/role.mapper';
 import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { RoleDomainModel, RoleSearchFilters } from '../../../../../domain.types/role/role.domain.model';
+import { RoleDomainModel } from '../../../../../domain.types/role/role.domain.model';
+import { RoleSearchFilters, RoleSearchResults } from '../../../../../domain.types/role/role.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -84,33 +85,62 @@ export class RoleRepo implements IRoleRepo {
         }
     };
 
-    search = async (filters: RoleSearchFilters): Promise<RoleDto[]> => {
+    search = async (filters: RoleSearchFilters): Promise<RoleSearchResults> => {
         try {
-            let filter = { where: {} };
+            const search = { where: {} };
             if (filters.RoleName != null) {
-                filter = {
-                    where : {
-                        RoleName : { [Op.like]: '%' + filters.RoleName + '%' },
-                    },
-                };
+                search.where['RoleName'] = { [Op.like]: '%' + filters.RoleName + '%' };
             }
+
             if (filters.TenantId != null) {
-                filter.where['TenantId'] = filters.TenantId;
+                search.where['TenantId'] = filters.TenantId;
             }
             if (filters.ParentRoleId) {
-                filter.where['ParentRoleId'] = filters.ParentRoleId;
+                search.where['ParentRoleId'] = filters.ParentRoleId;
             }
             if (filters.IsSystemRole) {
-                filter.where['IsSystemRole'] = filters.IsSystemRole;
+                search.where['IsSystemRole'] = filters.IsSystemRole;
             }
             if (filters.IsUserRole) {
-                filter.where['IsUserRole'] = filters.IsUserRole;
+                search.where['IsUserRole'] = filters.IsUserRole;
             }
-            const roles = await Role.findAll(filter);
-            const dtos = roles.map((x) => {
-                return RoleMapper.toDto(x);
-            });
-            return dtos;
+
+            let orderByColum = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+            
+            const foundResults = await Role.findAndCountAll(search);
+            const dtos = foundResults.rows.map(x => RoleMapper.toDto(x));
+            const searchResult: RoleSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResult;
         }
         catch (error) {
             Logger.instance().log(error.message);

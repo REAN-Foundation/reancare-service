@@ -10,6 +10,8 @@ import { BaseController } from '../../../../api/base.controller';
 import { StandSearchFilters } from '../../../../domain.types/wellness/daily.records/stand/stand.search.types';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { UserService } from '../../../../services/users/user/user.service';
+import { DailyRecordEvents } from '../daily.record.events';
+import { StandDto } from '../../../../domain.types/wellness/daily.records/stand/stand.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,13 +34,20 @@ export class StandController extends BaseController {
 
             const domainModel = await this._validator.create(request);
             await this.authorizeUser(request, domainModel.PatientUserId);
-            const stand = await this._service.create(domainModel);
+            let stand: StandDto = null;
+            const existingStand = await this._service.getStandByDateAndPatientUserId(
+                domainModel.RecordDate, domainModel.PatientUserId);
+            if (existingStand !== null) {
+                stand = await this._service.update(existingStand.id, domainModel);
+            } else {
+                stand = await this._service.create(domainModel);
+            }
             if (stand == null) {
                 throw new ApiError(400, 'Cannot create stand record!');
             }
 
             await this._ehrPhysicalActivityService.addEHRRecordStandForAppNames(stand);
-
+            DailyRecordEvents.onDailyRecordAdd(request, stand, 'stand-record-add', 'stand', 'stand');
             ResponseHandler.success(request, response, 'Stand record created successfully!', 201, {
                 Stand : stand,
 

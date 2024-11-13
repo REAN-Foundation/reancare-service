@@ -102,7 +102,6 @@ export class ResponseHandler {
             if (logDataObject && responseObject.Context !== 'General.Types.GetPersonRoleTypes'){
                 Logger.instance().log(JSON.stringify(responseObject, null, 2));
             }
-
         }
 
         ActivityRecorder.record(responseObject);

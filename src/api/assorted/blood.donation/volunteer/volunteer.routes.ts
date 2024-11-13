@@ -14,7 +14,7 @@ export const register = (app: express.Application): void => {
     router.get('/search', auth(VolunteerAuth.search), controller.search);
     router.get('/:userId', auth(VolunteerAuth.getByUserId), controller.getByUserId);
     router.put('/:userId', auth(VolunteerAuth.updateByUserId), controller.updateByUserId);
-    router.delete('/:userId', auth(VolunteerAuth.deleteByUserId), controller.delete);
+    router.delete('/:userId', auth(VolunteerAuth.deleteByUserId), controller.deleteByUserId);
 
     app.use('/api/v1/volunteers', router);
 };

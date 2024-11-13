@@ -11,6 +11,7 @@ import { DurationType } from '../../../../domain.types/miscellaneous/time.types'
 import { AwardsFactsService } from '../../../../modules/awards.facts/awards.facts.service';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
+import { BiometricsEvents } from '../biometrics.events';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +67,8 @@ export class PulseController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+
+            BiometricsEvents.onBiometricsAdded(request, pulse, 'pulse');
             ResponseHandler.success(request, response, 'Pulse rate record created successfully!', 201, {
                 Pulse : pulse,
             });
@@ -151,6 +154,8 @@ export class PulseController extends BiometricsController {
                     RecordTimeZone : currentTimeZone,
                 });
             }
+
+            BiometricsEvents.onBiometricsUpdated(request, updated, 'pulse');
             ResponseHandler.success(request, response, 'Pulse rate record updated successfully!', 200, {
                 Pulse : updated,
             });
@@ -176,6 +181,7 @@ export class PulseController extends BiometricsController {
             // delete ehr record
             this._ehrVitalService.deleteRecord(record.id);
 
+            BiometricsEvents.onBiometricsDeleted(request, record, 'pulse');
             ResponseHandler.success(request, response, 'Pulse rate record deleted successfully!', 200, {
                 Deleted : true,
             });

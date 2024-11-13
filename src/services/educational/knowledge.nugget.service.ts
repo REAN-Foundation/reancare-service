@@ -14,13 +14,13 @@ export class KnowledgeNuggetService {
         @inject('IKnowledgeNuggetRepo') private _knowledgeNuggetRepo: IKnowledgeNuggetRepo,
     ) { }
 
-    getTodaysTopic = async (patientUserId: string): Promise<KnowledgeNuggetDto> => {
+    getTodaysTopic = async (patientUserId: string, filters: KnowledgeNuggetSearchFilters): Promise<KnowledgeNuggetDto> => {
 
         //patientUserId - Will be used in future to fetch patient specific topics
         //For now,just log
         Logger.instance().log(`Knowledge nugget fetched for patient with user-id ${patientUserId}.`);
 
-        return await this._knowledgeNuggetRepo.getRandom();
+        return await this._knowledgeNuggetRepo.getRandom(filters);
     };
 
     create = async (knowledgeNuggetDomainModel: KnowledgeNuggetDomainModel):

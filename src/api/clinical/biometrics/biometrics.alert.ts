@@ -21,7 +21,7 @@ export class BiometricAlerts {
     static async forBloodPressure(model: BloodPressureDto) {
         try {
             const notification = BiometricAlerts.getBloodPressureNotification(model.Systolic, model.Diastolic);
-            if (!notification) {
+            if (!notification || notification?.severity === Severity.NORMAL) {
                 return;
             }
             const bloodPressureAlertmodel: BloodPressureAlertCreateModel = {};

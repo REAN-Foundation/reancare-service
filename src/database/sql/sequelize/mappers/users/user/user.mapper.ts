@@ -3,6 +3,7 @@ import { PersonDetailsDto, PersonDto } from '../../../../../../domain.types/pers
 import { UserDetailsDto, UserDto } from '../../../../../../domain.types/users/user/user.dto';
 import Tenant from '../../../models/tenant/tenant.model';
 import Role from '../../../models/role/role.model';
+import { PreferredLanguage } from '../../../../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +25,7 @@ export class UserMapper {
             TenantName      : tenant?.Name,
             Person          : personDto,
             IsTestUser      : user.IsTestUser,
+            Language        : user.Language as PreferredLanguage,
             LastLogin       : user.LastLogin,
             DefaultTimeZone : user.DefaultTimeZone,
             CurrentTimeZone : user.CurrentTimeZone,

@@ -3,6 +3,7 @@ import { query, body, validationResult, param } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { DoctorDomainModel } from '../../../domain.types/users/doctor/doctor.domain.model';
 import { DoctorSearchFilters } from '../../../domain.types/users/doctor/doctor.search.types';
+import { PreferredLanguage } from '../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +34,7 @@ export class DoctorValidator {
                 Password         : request.body.Password ?? null,
                 DefaultTimeZone  : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
+                Language         : request.body.Language as PreferredLanguage ?? null,
                 GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
                 TenantId         : request.body.TenantId ?? null,
             },
@@ -122,6 +124,13 @@ export class DoctorValidator {
             .escape()
             .run(request);
 
+        await body('Language').optional()
+            .trim()
+            .escape()
+            .isIn(Object.values(PreferredLanguage))
+            .withMessage(`Language must be one of the following: ${Object.values(PreferredLanguage).join(', ')}`)
+            .run(request);
+            
         await body('BirthDate').optional()
             .trim()
             .escape()

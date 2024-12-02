@@ -15,6 +15,7 @@ import { TenantDto } from '../../../../../../domain.types/tenant/tenant.dto';
 import { PersonMapper } from '../../../mappers/person/person.mapper';
 import Role from '../../../models/role/role.model';
 import { UserSearchFilters, UserSearchResults } from '../../../../../../domain.types/users/user/user.search.types';
+import { PreferredLanguage } from '../../../../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -180,6 +181,7 @@ export class UserRepo implements IUserRepo {
                 TenantId        : model.TenantId ?? null,
                 UserName        : model.UserName,
                 IsTestUser      : model.IsTestUser ?? false,
+                Language        : model.Language ?? PreferredLanguage.English,
                 Password        : model.Password ? Helper.hash(model.Password) : null,
                 DefaultTimeZone : model.DefaultTimeZone ?? '+05:30',
                 CurrentTimeZone : model.CurrentTimeZone ?? model.DefaultTimeZone ?? '+05:30',
@@ -236,6 +238,11 @@ export class UserRepo implements IUserRepo {
                 userDomainModel.CurrentTimeZone !== null &&
                 userDomainModel.CurrentTimeZone.length > 0) {
                 user.CurrentTimeZone = userDomainModel.CurrentTimeZone;
+            }
+            if (userDomainModel.Language !== undefined &&
+                userDomainModel.Language !== null &&
+                userDomainModel.Language.length > 0) {
+                user.Language = userDomainModel.Language;
             }
             if (userDomainModel.UserName !== undefined &&
                 userDomainModel.UserName !== null &&

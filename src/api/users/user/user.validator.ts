@@ -15,6 +15,7 @@ import { UserSearchFilters } from '../../../domain.types/users/user/user.search.
 import { Gender, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Logger } from '../../../common/logger';
 import { InputValidationError } from '../../../common/input.validation.error';
+import { PreferredLanguage } from '../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -97,6 +98,13 @@ export class UserValidator {
             .isBoolean()
             .run(request);
 
+        await body('Language').optional()
+            .trim()
+            .escape()
+            .isIn(Object.values(PreferredLanguage))
+            .withMessage(`Language must be one of the following: ${Object.values(PreferredLanguage).join(', ')}`)
+            .run(request);
+            
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
@@ -126,6 +134,7 @@ export class UserValidator {
             DefaultTimeZone : request.body.DefaultTimeZone ?? null,
             CurrentTimeZone : request.body.CurrentTimeZone ?? null,
             IsTestUser      : request.body.IsTestUser ?? false,
+            Language        : request.body.Language as PreferredLanguage ?? null,
         };
 
         return model;
@@ -187,6 +196,14 @@ export class UserValidator {
             .escape()
             .run(request);
 
+        await body('Language')
+            .optional()
+            .trim()
+            .escape()
+            .isIn(Object.values(PreferredLanguage))
+            .withMessage(`Language must be one of the following: ${Object.values(PreferredLanguage).join(', ')}`)
+            .run(request);
+            
         await body('ImageResourceId')
             .optional()
             .isUUID()
@@ -217,6 +234,7 @@ export class UserValidator {
             },
             DefaultTimeZone : request.body.DefaultTimeZone ?? null,
             CurrentTimeZone : request.body.CurrentTimeZone ?? null,
+            Language        : request.body.Language as PreferredLanguage ?? null,
         };
 
         return model;

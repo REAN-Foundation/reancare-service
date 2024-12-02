@@ -1,6 +1,7 @@
 import { PersonDetailsDto, PersonDto } from "../../person/person.dto";
 import { RoleDto } from "../../role/role.dto";
 import { uuid } from "../../miscellaneous/system.types";
+import { PreferredLanguage } from "./user.types";
 
 export interface UserDetailsDto {
     id             ?: uuid;
@@ -13,6 +14,7 @@ export interface UserDetailsDto {
     Role           ?: RoleDto;
     UserName       ?: string;
     IsTestUser     ?: boolean;
+    Language       ?: PreferredLanguage;
     DefaultTimeZone?: string;
     CurrentTimeZone?: string;
     LastLogin      ?: Date;

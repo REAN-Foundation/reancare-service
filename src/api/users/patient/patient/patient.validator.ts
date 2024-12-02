@@ -5,6 +5,7 @@ import { PatientDomainModel } from '../../../../domain.types/users/patient/patie
 import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
 import { Helper } from '../../../../common/helper';
+import { PreferredLanguage } from '../../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,6 +50,7 @@ export class PatientValidator extends BaseValidator {
                 UserName        : request.body.UserName ?? null,
                 DefaultTimeZone : request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone : request.body.CurrentTimeZone ?? null,
+                Language        : request.body.Language as PreferredLanguage ?? null,
                 TenantId        : request.body.TenantId ?? null,
                 TenantCode      : request.body.TenantCode ?? null,
             },
@@ -100,6 +102,7 @@ export class PatientValidator extends BaseValidator {
                 UserName        : body.UserName ?? null,
                 DefaultTimeZone : body.DefaultTimeZone ?? null,
                 CurrentTimeZone : body.CurrentTimeZone ?? null,
+                Language        : body.Language as PreferredLanguage ?? null,
                 TenantId        : body.TenantId ?? null,
             },
             HealthProfile : {
@@ -185,6 +188,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
         await this.validateBoolean(request, 'IsRemindersLoaded', Where.Body, false, true);
         await this.validateUuid(request, 'TenantId', Where.Body, false, true);
+        await this.validateEnum(request, 'Language', Where.Body, false, true, PreferredLanguage);
         await this.validateString(request, 'TenantCode', Where.Body, false, true);
         await this.validateUuid(request, 'CohortId', Where.Body, false, true);
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);

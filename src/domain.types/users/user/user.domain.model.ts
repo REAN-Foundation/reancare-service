@@ -1,6 +1,7 @@
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../person/person.domain.model';
 import { UserDetailsDto } from './user.dto';
+import { PreferredLanguage } from './user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +17,7 @@ export interface UserDomainModel {
     DefaultTimeZone ?: string;
     CurrentTimeZone ?: string;
     IsTestUser      ?: boolean;
+    Language        ?: PreferredLanguage;
     GenerateLoginOTP?: boolean;
     LastLogin       ?: Date;
     RoleId          ?: number;

@@ -361,6 +361,28 @@ export class BaseValidator {
         return chain;
     }
 
+    validateEnum = async (
+        request: express.Request,
+        field: string,
+        where: Where,
+        required: boolean,
+        nullable: boolean,
+        enumType: object
+    ) => {
+        var chain: ValidationChain = this.getValidationChain(field, where);
+        chain = chain.trim();
+        chain = this.checkRequired(required, chain, nullable);
+    
+        chain = chain.custom((value) => {
+            if (!Object.values(enumType).includes(value)) {
+                throw new Error(`${field} must be one of the following values: ${Object.values(enumType).join(', ')}`);
+            }
+            return true;
+        });
+    
+        await chain.run(request);
+    };
+
     //#endregion
 
 }

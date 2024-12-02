@@ -108,6 +108,14 @@ export default class User extends Model {
     })
     IsTestUser: boolean;
 
+    @Length({ max: 8 })
+    @Column({
+        type         : DataType.STRING(8),
+        allowNull    : false,
+        defaultValue : 'en-US'
+    })
+    PreferredLanguage: string;
+    
     @HasOne(() => HealthReportSetting)
     HealthReportSetting: HealthReportSetting;
 

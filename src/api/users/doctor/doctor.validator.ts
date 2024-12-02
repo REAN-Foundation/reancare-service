@@ -3,6 +3,7 @@ import { query, body, validationResult, param } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { DoctorDomainModel } from '../../../domain.types/users/doctor/doctor.domain.model';
 import { DoctorSearchFilters } from '../../../domain.types/users/doctor/doctor.search.types';
+import { SupportedLanguage } from '../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,13 +29,14 @@ export class DoctorValidator {
                     BirthDate       : birthdate,
                     ImageResourceId : request.body.ImageResourceId ?? null,
                 },
-                id               : request.params.userId,
-                UserName         : request.body.UserName ?? null,
-                Password         : request.body.Password ?? null,
-                DefaultTimeZone  : request.body.DefaultTimeZone ?? null,
-                CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
-                GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
-                TenantId         : request.body.TenantId ?? null,
+                id                : request.params.userId,
+                UserName          : request.body.UserName ?? null,
+                Password          : request.body.Password ?? null,
+                DefaultTimeZone   : request.body.DefaultTimeZone ?? null,
+                CurrentTimeZone   : request.body.DefaultTimeZone ?? null,
+                PreferredLanguage : request.body.PreferredLanguage as SupportedLanguage ?? null,
+                GenerateLoginOTP  : request.body.DefaultTimeZone ?? null,
+                TenantId          : request.body.TenantId ?? null,
             },
             NationalDigiDoctorId   : request.body.NationalDigiDoctorId ?? null,
             Qualifications         : request.body.Qualifications ?? null,
@@ -122,6 +124,13 @@ export class DoctorValidator {
             .escape()
             .run(request);
 
+        await body('PreferredLanguage').optional()
+            .trim()
+            .escape()
+            .isIn(Object.values(SupportedLanguage))
+            .withMessage(`Preferred language must be one of the following: ${Object.values(SupportedLanguage).join(', ')}`)
+            .run(request);
+            
         await body('BirthDate').optional()
             .trim()
             .escape()

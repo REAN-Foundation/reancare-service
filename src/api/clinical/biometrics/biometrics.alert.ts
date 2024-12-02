@@ -3,6 +3,9 @@ import { BiometricAlertHandler } from "./biometrics.alert.handler";
 import { AlertNotification, Severity } from "../../../domain.types/clinical/biometrics/biometrics.types";
 import { BloodPressureDto } from "../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
 import { BloodPressureAlertCreateModel, bloodPressureNotificationTemplate } from "../../../domain.types/clinical/biometrics/alert.notificattion/blood.pressure";
+import { Injector } from "../../../startup/injector";
+import { UserService } from "../../../services/users/user/user.service";
+import { PreferredLanguage } from "../../../domain.types/users/user/user.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +21,12 @@ enum BloodPressureCategory {
 
 export class BiometricAlerts {
 
+    private static defaultUserLanguagePreference = PreferredLanguage.English;
+
+    private static resolveUserServiceDependency(): UserService {
+        return Injector.Container.resolve(UserService);
+    }
+
     static async forBloodPressure(model: BloodPressureDto) {
         try {
             const notification = BiometricAlerts.getBloodPressureNotification(model.Systolic, model.Diastolic);
@@ -28,7 +37,14 @@ export class BiometricAlerts {
             bloodPressureAlertmodel.PatientUserId = model.PatientUserId;
             bloodPressureAlertmodel.Systolic = model.Systolic;
             bloodPressureAlertmodel.Diastolic = model.Diastolic;
-            bloodPressureAlertmodel.BloodPressureNotification = notification;
+
+            const userLanguagePreference = await BiometricAlerts.getUserLanguagePreference(model.PatientUserId);
+            bloodPressureAlertmodel.BloodPressureNotification = {
+                severity : notification.severity,
+                range    : notification.range,
+                message  : notification.message[userLanguagePreference] ??
+                notification.message[BiometricAlerts.defaultUserLanguagePreference]
+            };
 
             BiometricAlertHandler.BloodPressureAlert(bloodPressureAlertmodel);
         } catch (error) {
@@ -82,5 +98,17 @@ export class BiometricAlerts {
                 return null;
         }
     };
+
+    private static async getUserLanguagePreference(patientUserId: string): Promise<string> {
+        try {
+            const _userService = BiometricAlerts.resolveUserServiceDependency();
+            const user = await _userService.getById(patientUserId);
+            return user?.Language || PreferredLanguage.English;
+        }
+        catch (error) {
+            Logger.instance().log(`Error in getting user language preference : ${error}`);
+            return PreferredLanguage.English;
+        }
+    }
 
 }

@@ -56,8 +56,14 @@ export enum Severity {
     VERY_HIGH = "Very High"
     }
 
-export interface AlertNotification {
+export interface AlertNotificationCreateModel {
         severity: Severity;
         range: string;
         message: string;
+    }
+
+export interface AlertNotification {
+        severity: Severity;
+        range: string;
+        message: {[key: string]: string};
     }

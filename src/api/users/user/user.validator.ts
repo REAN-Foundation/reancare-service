@@ -15,7 +15,7 @@ import { UserSearchFilters } from '../../../domain.types/users/user/user.search.
 import { Gender, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Logger } from '../../../common/logger';
 import { InputValidationError } from '../../../common/input.validation.error';
-import { PreferredLanguage } from '../../../domain.types/users/user/user.types';
+import { SupportedLanguage } from '../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -98,11 +98,11 @@ export class UserValidator {
             .isBoolean()
             .run(request);
 
-        await body('Language').optional()
+        await body('PreferredLanguage').optional()
             .trim()
             .escape()
-            .isIn(Object.values(PreferredLanguage))
-            .withMessage(`Language must be one of the following: ${Object.values(PreferredLanguage).join(', ')}`)
+            .isIn(Object.values(SupportedLanguage))
+            .withMessage(`Preferred language must be one of the following: ${Object.values(SupportedLanguage).join(', ')}`)
             .run(request);
             
         const result = validationResult(request);
@@ -129,12 +129,12 @@ export class UserValidator {
                 Phone      : request.body.Phone ?? null,
                 Email      : request.body.Email ?? null,
             },
-            UserName        : request.body.UserName ?? null,
-            Password        : request.body.Password,
-            DefaultTimeZone : request.body.DefaultTimeZone ?? null,
-            CurrentTimeZone : request.body.CurrentTimeZone ?? null,
-            IsTestUser      : request.body.IsTestUser ?? false,
-            Language        : request.body.Language as PreferredLanguage ?? null,
+            UserName          : request.body.UserName ?? null,
+            Password          : request.body.Password,
+            DefaultTimeZone   : request.body.DefaultTimeZone ?? null,
+            CurrentTimeZone   : request.body.CurrentTimeZone ?? null,
+            IsTestUser        : request.body.IsTestUser ?? false,
+            PreferredLanguage : request.body.PreferredLanguage as SupportedLanguage ?? null,
         };
 
         return model;
@@ -196,12 +196,12 @@ export class UserValidator {
             .escape()
             .run(request);
 
-        await body('Language')
+        await body('PreferredLanguage')
             .optional()
             .trim()
             .escape()
-            .isIn(Object.values(PreferredLanguage))
-            .withMessage(`Language must be one of the following: ${Object.values(PreferredLanguage).join(', ')}`)
+            .isIn(Object.values(SupportedLanguage))
+            .withMessage(`Preferred language must be one of the following: ${Object.values(SupportedLanguage).join(', ')}`)
             .run(request);
             
         await body('ImageResourceId')
@@ -232,9 +232,9 @@ export class UserValidator {
                 Email           : request.body.Email ?? null,
                 ImageResourceId : request.body.ImageResourceId ?? null,
             },
-            DefaultTimeZone : request.body.DefaultTimeZone ?? null,
-            CurrentTimeZone : request.body.CurrentTimeZone ?? null,
-            Language        : request.body.Language as PreferredLanguage ?? null,
+            DefaultTimeZone   : request.body.DefaultTimeZone ?? null,
+            CurrentTimeZone   : request.body.CurrentTimeZone ?? null,
+            PreferredLanguage : request.body.PreferredLanguage as SupportedLanguage ?? null,
         };
 
         return model;

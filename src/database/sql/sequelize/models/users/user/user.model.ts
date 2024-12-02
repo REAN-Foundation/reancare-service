@@ -114,7 +114,7 @@ export default class User extends Model {
         allowNull    : false,
         defaultValue : 'en-US'
     })
-    Language: string;
+    PreferredLanguage: string;
     
     @HasOne(() => HealthReportSetting)
     HealthReportSetting: HealthReportSetting;

@@ -14,10 +14,6 @@ import { BloodPressureAlertCreateModel } from '../../../domain.types/clinical/bi
 import { BiometricAlertType } from '../../../domain.types/clinical/biometrics/biometrics.types';
 
 ///////////////////////////////////////////////////////////////////////////////
-
-const title = 'Dear {{PatientName}},';
-
-///////////////////////////////////////////////////////////////////////////////
 @injectable()
 export class BiometricAlertHandler {
 
@@ -60,7 +56,7 @@ export class BiometricAlertHandler {
            var deviceListsStr = JSON.stringify(deviceList, null, 2);
            Logger.instance().log(`Sent blood pressure notifications to - ${deviceListsStr}`);
 
-           const notificationTitle = title.replace("{{PatientName}}", person.FirstName ?? "there");
+           const notificationTitle = model.BloodPressureNotification.title.replace("{{PatientName}}", person.FirstName ?? '');
 
            var body = model.BloodPressureNotification.message;
            body = body.replace("{{Systolic}}", model.Systolic.toString());

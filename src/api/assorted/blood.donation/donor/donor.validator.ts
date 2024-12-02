@@ -4,7 +4,7 @@ import { DonorDomainModel } from '../../../../domain.types/assorted/blood.donati
 import { Helper } from '../../../../common/helper';
 import { DonorSearchFilters } from '../../../../domain.types/assorted/blood.donation/donor/donor.search.types';
 import { DonorType } from '../../../../domain.types/miscellaneous/clinical.types';
-import { PreferredLanguage } from '../../../../domain.types/users/user/user.types';
+import { SupportedLanguage } from '../../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,14 +30,14 @@ export class DonorValidator {
                     BirthDate       : birthdate,
                     ImageResourceId : request.body.ImageResourceId ?? null,
                 },
-                id               : request.params.userId,
-                Password         : request.body.Password ?? null,
-                DefaultTimeZone  : request.body.DefaultTimeZone ?? null,
-                CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
-                Language         : request.body.Language as PreferredLanguage ?? null,
-                GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
-                TenantCode       : request.body.TenantCode ?? null,
-                TenantId         : request.body.TenantId ?? null,
+                id                : request.params.userId,
+                Password          : request.body.Password ?? null,
+                DefaultTimeZone   : request.body.DefaultTimeZone ?? null,
+                CurrentTimeZone   : request.body.DefaultTimeZone ?? null,
+                PreferredLanguage : request.body.PreferredLanguage as SupportedLanguage ?? null,
+                GenerateLoginOTP  : request.body.DefaultTimeZone ?? null,
+                TenantCode        : request.body.TenantCode ?? null,
+                TenantId          : request.body.TenantId ?? null,
             },
             MedIssues         : request.body.MedIssues ?? [],
             BloodGroup        : request.body.BloodGroup ?? null,
@@ -124,11 +124,11 @@ export class DonorValidator {
             .isDate()
             .run(request);
 
-        await body('Language').optional()
+        await body('PreferredLanguage').optional()
             .trim()
             .escape()
-            .isIn(Object.values(PreferredLanguage))
-            .withMessage(`Language must be one of the following: ${Object.values(PreferredLanguage).join(', ')}`)
+            .isIn(Object.values(SupportedLanguage))
+            .withMessage(`Preferred language must be one of the following: ${Object.values(SupportedLanguage).join(', ')}`)
             .run(request);
             
         await body('BloodGroup').optional()

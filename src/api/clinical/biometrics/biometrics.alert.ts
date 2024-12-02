@@ -5,7 +5,7 @@ import { BloodPressureDto } from "../../../domain.types/clinical/biometrics/bloo
 import { BloodPressureAlertCreateModel, bloodPressureNotificationTemplate } from "../../../domain.types/clinical/biometrics/alert.notificattion/blood.pressure";
 import { Injector } from "../../../startup/injector";
 import { UserService } from "../../../services/users/user/user.service";
-import { PreferredLanguage } from "../../../domain.types/users/user/user.types";
+import { SupportedLanguage } from "../../../domain.types/users/user/user.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +21,7 @@ enum BloodPressureCategory {
 
 export class BiometricAlerts {
 
-    private static defaultUserLanguagePreference = PreferredLanguage.English;
+    private static DEFAULT_USER_LANGUAGE_PREFERENCE = SupportedLanguage.English;
 
     private static resolveUserServiceDependency(): UserService {
         return Injector.Container.resolve(UserService);
@@ -42,8 +42,10 @@ export class BiometricAlerts {
             bloodPressureAlertmodel.BloodPressureNotification = {
                 severity : notification.severity,
                 range    : notification.range,
-                message  : notification.message[userLanguagePreference] ??
-                notification.message[BiometricAlerts.defaultUserLanguagePreference]
+                title    : notification.title[userLanguagePreference] ??
+                notification.title[BiometricAlerts.DEFAULT_USER_LANGUAGE_PREFERENCE],
+                message : notification.message[userLanguagePreference] ??
+                notification.message[BiometricAlerts.DEFAULT_USER_LANGUAGE_PREFERENCE]
             };
 
             BiometricAlertHandler.BloodPressureAlert(bloodPressureAlertmodel);
@@ -103,11 +105,11 @@ export class BiometricAlerts {
         try {
             const _userService = BiometricAlerts.resolveUserServiceDependency();
             const user = await _userService.getById(patientUserId);
-            return user?.Language || PreferredLanguage.English;
+            return user?.PreferredLanguage || SupportedLanguage.English;
         }
         catch (error) {
             Logger.instance().log(`Error in getting user language preference : ${error}`);
-            return PreferredLanguage.English;
+            return SupportedLanguage.English;
         }
     }
 

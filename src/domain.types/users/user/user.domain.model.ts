@@ -1,26 +1,26 @@
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../person/person.domain.model';
 import { UserDetailsDto } from './user.dto';
-import { PreferredLanguage } from './user.types';
+import { SupportedLanguage } from './user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //#region Domain models
 
 export interface UserDomainModel {
-    id              ?: string;
-    Person          ?: PersonDomainModel;
-    TenantId        ?: uuid;
-    TenantCode      ?: string;
-    UserName        ?: string;
-    Password        ?: string;
-    DefaultTimeZone ?: string;
-    CurrentTimeZone ?: string;
-    IsTestUser      ?: boolean;
-    Language        ?: PreferredLanguage;
-    GenerateLoginOTP?: boolean;
-    LastLogin       ?: Date;
-    RoleId          ?: number;
+    id                  ?: string;
+    Person              ?: PersonDomainModel;
+    TenantId            ?: uuid;
+    TenantCode          ?: string;
+    UserName            ?: string;
+    Password            ?: string;
+    DefaultTimeZone     ?: string;
+    CurrentTimeZone     ?: string;
+    IsTestUser          ?: boolean;
+    PreferredLanguage   ?: SupportedLanguage;
+    GenerateLoginOTP    ?: boolean;
+    LastLogin           ?: Date;
+    RoleId              ?: number;
 }
 
 export interface UserBasicDetails {

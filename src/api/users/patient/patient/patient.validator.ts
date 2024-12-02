@@ -5,7 +5,7 @@ import { PatientDomainModel } from '../../../../domain.types/users/patient/patie
 import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
 import { Helper } from '../../../../common/helper';
-import { PreferredLanguage } from '../../../../domain.types/users/user/user.types';
+import { SupportedLanguage } from '../../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,14 +45,14 @@ export class PatientValidator extends BaseValidator {
                     WorkedPriorToStroke       : request.body.WorkedPriorToStroke ?? null,
                     ImageResourceId           : request.body.ImageResourceId ?? null,
                 },
-                id              : request.params.userId,
-                Password        : request.body.Password ?? null,
-                UserName        : request.body.UserName ?? null,
-                DefaultTimeZone : request.body.DefaultTimeZone ?? null,
-                CurrentTimeZone : request.body.CurrentTimeZone ?? null,
-                Language        : request.body.Language as PreferredLanguage ?? null,
-                TenantId        : request.body.TenantId ?? null,
-                TenantCode      : request.body.TenantCode ?? null,
+                id                : request.params.userId,
+                Password          : request.body.Password ?? null,
+                UserName          : request.body.UserName ?? null,
+                DefaultTimeZone   : request.body.DefaultTimeZone ?? null,
+                CurrentTimeZone   : request.body.CurrentTimeZone ?? null,
+                PreferredLanguage : request.body.PreferredLanguage as SupportedLanguage ?? null,
+                TenantId          : request.body.TenantId ?? null,
+                TenantCode        : request.body.TenantCode ?? null,
             },
             HealthProfile : {
                 BloodGroup           : request.body.BloodGroup ?? null,
@@ -98,12 +98,12 @@ export class PatientValidator extends BaseValidator {
                     WorkedPriorToStroke       : body.WorkedPriorToStroke !== undefined ? body.WorkedPriorToStroke            : undefined,
                     ImageResourceId           : body.ImageResourceId !== undefined ? body.ImageResourceId                    : undefined,
                 },
-                Password        : body.Password ?? null,
-                UserName        : body.UserName ?? null,
-                DefaultTimeZone : body.DefaultTimeZone ?? null,
-                CurrentTimeZone : body.CurrentTimeZone ?? null,
-                Language        : body.Language as PreferredLanguage ?? null,
-                TenantId        : body.TenantId ?? null,
+                Password          : body.Password ?? null,
+                UserName          : body.UserName ?? null,
+                DefaultTimeZone   : body.DefaultTimeZone ?? null,
+                CurrentTimeZone   : body.CurrentTimeZone ?? null,
+                PreferredLanguage : body.PreferredLanguage as SupportedLanguage ?? null,
+                TenantId          : body.TenantId ?? null,
             },
             HealthProfile : {
                 OtherInformation : body.OtherInformation !== undefined ? body.OtherInformation : undefined,
@@ -188,7 +188,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateString(request, 'DonorAcceptance', Where.Body, false, false);
         await this.validateBoolean(request, 'IsRemindersLoaded', Where.Body, false, true);
         await this.validateUuid(request, 'TenantId', Where.Body, false, true);
-        await this.validateEnum(request, 'Language', Where.Body, false, true, PreferredLanguage);
+        await this.validateEnum(request, 'PreferredLanguage', Where.Body, false, true, SupportedLanguage);
         await this.validateString(request, 'TenantCode', Where.Body, false, true);
         await this.validateUuid(request, 'CohortId', Where.Body, false, true);
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);

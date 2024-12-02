@@ -59,11 +59,13 @@ export enum Severity {
 export interface AlertNotificationCreateModel {
         severity: Severity;
         range: string;
+        title: string;
         message: string;
     }
 
 export interface AlertNotification {
         severity: Severity;
         range: string;
+        title: {[key: string]: string};
         message: {[key: string]: string};
     }

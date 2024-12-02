@@ -15,7 +15,7 @@ import { TenantDto } from '../../../../../../domain.types/tenant/tenant.dto';
 import { PersonMapper } from '../../../mappers/person/person.mapper';
 import Role from '../../../models/role/role.model';
 import { UserSearchFilters, UserSearchResults } from '../../../../../../domain.types/users/user/user.search.types';
-import { PreferredLanguage } from '../../../../../../domain.types/users/user/user.types';
+import { SupportedLanguage } from '../../../../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -176,15 +176,15 @@ export class UserRepo implements IUserRepo {
     create = async (model: UserDomainModel): Promise<UserDetailsDto> => {
         try {
             const entity = {
-                PersonId        : model.Person.id,
-                RoleId          : model.RoleId ?? null,
-                TenantId        : model.TenantId ?? null,
-                UserName        : model.UserName,
-                IsTestUser      : model.IsTestUser ?? false,
-                Language        : model.Language ?? PreferredLanguage.English,
-                Password        : model.Password ? Helper.hash(model.Password) : null,
-                DefaultTimeZone : model.DefaultTimeZone ?? '+05:30',
-                CurrentTimeZone : model.CurrentTimeZone ?? model.DefaultTimeZone ?? '+05:30',
+                PersonId          : model.Person.id,
+                RoleId            : model.RoleId ?? null,
+                TenantId          : model.TenantId ?? null,
+                UserName          : model.UserName,
+                IsTestUser        : model.IsTestUser ?? false,
+                PreferredLanguage : model.PreferredLanguage ?? SupportedLanguage.English,
+                Password          : model.Password ? Helper.hash(model.Password) : null,
+                DefaultTimeZone   : model.DefaultTimeZone ?? '+05:30',
+                CurrentTimeZone   : model.CurrentTimeZone ?? model.DefaultTimeZone ?? '+05:30',
             };
             const user = await User.create(entity);
 
@@ -239,10 +239,10 @@ export class UserRepo implements IUserRepo {
                 userDomainModel.CurrentTimeZone.length > 0) {
                 user.CurrentTimeZone = userDomainModel.CurrentTimeZone;
             }
-            if (userDomainModel.Language !== undefined &&
-                userDomainModel.Language !== null &&
-                userDomainModel.Language.length > 0) {
-                user.Language = userDomainModel.Language;
+            if (userDomainModel.PreferredLanguage !== undefined &&
+                userDomainModel.PreferredLanguage !== null &&
+                userDomainModel.PreferredLanguage.length > 0) {
+                user.PreferredLanguage = userDomainModel.PreferredLanguage;
             }
             if (userDomainModel.UserName !== undefined &&
                 userDomainModel.UserName !== null &&

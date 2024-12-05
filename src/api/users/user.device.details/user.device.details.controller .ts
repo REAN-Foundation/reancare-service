@@ -192,10 +192,10 @@ export class UserDeviceDetailsController extends BaseUserController {
             await this._firebaseNotificationService.sendMessageToTopic(details.Topic, message);
 
             ResponseHandler.success(request, response, 'Notification with topic sent successfully!', 201, {
-                Topic       : details.Topic,
-                Title       : details.Title,
-                Type        : details.Type,
-                Body        : details.Body,
+                Topic : details.Topic,
+                Title : details.Title,
+                Type  : details.Type,
+                Body  : details.Body,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

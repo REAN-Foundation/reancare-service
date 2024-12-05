@@ -258,6 +258,9 @@ export class UserDeviceDetailsValidator {
             await body('Url').optional()
                 .run(request);
 
+            await body('Type').optional()
+                .run(request);
+                
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
@@ -267,7 +270,8 @@ export class UserDeviceDetailsValidator {
                 Topic : request.body.Topic,
                 Title : request.body.Title,
                 Body  : request.body.Body,
-                Url   : request.body.Url ?? null
+                Url   : request.body.Url ?? null,
+                Type  : request.body.Type ?? "General"
             };
             return details;
 

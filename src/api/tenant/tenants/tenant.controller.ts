@@ -18,6 +18,7 @@ import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
 import { Helper } from '../../../common/helper';
 import { TenantSettingsService } from '../../../services/tenant/tenant.settings.service';
 import { BaseController } from '../../../api/base.controller';
+import { UserHelper } from '../../../api/users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,11 +40,14 @@ export class TenantController extends BaseController {
 
     _validator: TenantValidator = new TenantValidator();
 
+    _userHelper: UserHelper = new UserHelper();
+
     //#endregion
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await this._validator.createOrUpdate(request, false);
+            await this._userHelper.performDuplicatePersonCheck(model.Phone, model.Email);
             if (model.Code === 'default') {
                 throw new ApiError(400, 'Cannot create tenant with code "default"!');
             }

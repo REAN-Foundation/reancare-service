@@ -439,6 +439,14 @@ export class UserService {
             userLoginModel.UserName,
             model.RoleId,
         );
+
+        if (!userLoginModel.Phone) {
+            user.Person.Phone = null;
+        }
+        if (!userLoginModel.Email) {
+            user.Person.Email = null;
+        }
+
         const successful = await this.sendPasswordResetOtp(user);
         if (successful) {
             Logger.instance().log(`Password reset code sent successfully to user ${user.Person.DisplayName}.`);
@@ -895,9 +903,9 @@ export class UserService {
             const emailService = new EmailService();
             var body = await emailService.getTemplate('password.reset.template.html');
 
-            body.replace('{{PLATFORM_NAME}}', process.env.PLATFORM_NAME);
-            body.replace('{{USER_FIRST_NAME}}', userFirstName);
-            body.replace('{{OTP}}', otp);
+            body = body.replace(/{{PLATFORM_NAME}}/g, process.env.PLATFORM_NAME);
+            body = body.replace('{{USER_FIRST_NAME}}', userFirstName);
+            body = body.replace('{{OTP}}', otp);
             const emailDetails: EmailDetails = {
                 EmailTo : email,
                 Subject : `Reset Password`,

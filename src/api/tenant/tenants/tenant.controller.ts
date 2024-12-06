@@ -285,10 +285,13 @@ export class TenantController extends BaseController {
             const emailService = new EmailService();
             var body = await emailService.getTemplate('tenant.welcome.template.html');
 
-            body.replace('{{PLATFORM_NAME}}', process.env.PLATFORM_NAME);
-            body.replace('{{TENANT_NAME}}', tenant.Name);
-            body.replace('{{TENANT_ADMIN_USER_NAME}}', adminUserName);
-            body.replace('{{TENANT_ADMIN_PASSWORD}}', adminPassword);
+            body = body.replace(/{{PLATFORM_NAME}}/g, process.env.PLATFORM_NAME);
+            body = body.replace(/{{PLATFORM_WEBSITE}}/g, process.env.PLATFORM_WEBSITE);
+            body = body.replace(/{{PLATFORM_SUPPORT_EMAIL}}/g, process.env.PLATFORM_SUPPORT_EMAIL);
+            body = body.replace(/{{TENANT_NAME}}/g, tenant.Name);
+            body = body.replace('{{TENANT_ADMIN_USER_NAME}}', adminUserName);
+            body = body.replace('{{TENANT_ADMIN_PASSWORD}}', adminPassword);
+
             const emailDetails: EmailDetails = {
                 EmailTo : tenant.Email,
                 Subject : `Welcome`,

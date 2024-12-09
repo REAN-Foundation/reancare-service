@@ -1,0 +1,31 @@
+{
+    "MedicationReminder": {
+        "NotificationType": "Upcoming medication",
+        "Title": "Hola {{PatientName}}, recordatorio para tomar {{DrugName}}.",
+        "Body": "Por favor, tome su medicamento antes de las {{EndTime}}."
+
+    },
+
+    "CareplanRegistrationReminder": {
+        "NotificationType": "Careplan registration reminder",
+        "Title": "Elija un Viaje de Salud Ahora",
+        "Body": "¡Reciba información diaria de salud inscribiéndose en nuestro viaje de salud gratuito basado en la ciencia!"
+    },
+    
+    "BPNotification": {
+        "NotificationType": "Alert",
+        "Title": "Estimado/a {{PatientName}},",
+        "Body": "Su presión arterial sistólica reciente es {{Systolic}} y la presión arterial diastólica es {{Diastolic}}, está elevada.\nPor favor, consulte a su médico.\nLa categoría de presión arterial cambiará según los valores sistólico y diastólico."
+    },
+
+    "StrokeSurveyNotification": {
+        "NotificationType": "Web",
+        "Title": "Encuesta del Asistente de Corazón y Derrame Cerebral",
+        "Body": "¡Cuéntenos qué piensa sobre la aplicación Heart & Stroke Helper y reciba una tarjeta de regalo de $10!",
+        "Url": "https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk"
+    },
+
+    "StrokeSurveyTextMessage": {
+        "Message" : "La Asociación Americana del Corazón quiere conocer tu opinión sobre la aplicación Heart & Stroke Helper. ¡Completa la encuesta a continuación y recibe una tarjeta de regalo electrónica de Amazon de $10! Por favor, ignora este mensaje si ya has completado la encuesta. Enlace de la encuesta: https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk"
+    }
+}

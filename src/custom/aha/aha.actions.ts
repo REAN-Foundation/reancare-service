@@ -1,5 +1,4 @@
 import { PatientService } from '../../services/users/patient/patient.service';
-import * as MessageTemplates from '../../modules/communication/message.template/message.templates.json';
 import { Loader } from '../../startup/loader';
 import { PatientDetailsDto } from '../../domain.types/users/patient/patient/patient.dto';
 import { CustomTaskDomainModel } from '../../domain.types/users/custom.task/custom.task.domain.model';
@@ -21,6 +20,8 @@ import { UserService } from '../../services/users/user/user.service';
 import { TimeHelper } from '../../common/time.helper';
 import { Injector } from '../../startup/injector';
 import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
+import { SupportedLanguage } from '../../domain.types/users/user/user.types';
+import { loadLanguageTemplates } from '../../modules/communication/message.template/language/language.selector';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,7 +131,11 @@ export class AHAActions {
                         if (userAppRegistrations.length > 0 &&
                             this.eligibleForCareplanRegistartionReminder(userAppRegistrations)) {
                             Logger.instance().log(`Sending careplan registration reminder to :${patient.UserId}`);
-                            await this.sendCareplanRegistrationReminder(userDeviceTokens);
+                            const user = await this._userService.getById(patient.UserId);
+                            await this.sendCareplanRegistrationReminder(
+                                userDeviceTokens,
+                                user?.PreferredLanguage
+                            );
                         } else {
                             Logger.instance().log(`Skip sending careplan registration reminder as device is not eligible:${patient.UserId}`);
                         }
@@ -176,7 +181,8 @@ export class AHAActions {
                         if (userAppRegistrations.length > 0 &&
                             this.eligibleForCareplanRegistartionReminder(userAppRegistrations)) {
                             Logger.instance().log(`Sending careplan registration reminder (old user) to :${patient.UserId}`);
-                            await this.sendCareplanRegistrationReminder(userDeviceTokens);
+                            const user = await this._userService.getById(patient.UserId);
+                            await this.sendCareplanRegistrationReminder(userDeviceTokens, user?.PreferredLanguage);
                         } else {
                             Logger.instance().log(`Skip sending careplan registration reminder (old user) as device is not eligible:${patient.UserId}`);
                         }
@@ -347,7 +353,7 @@ export class AHAActions {
 
                 if (userAppRegistrations.length > 0 && this.eligibleForStrokeSurvey(userAppRegistrations)) {
                     Logger.instance().log(`[StrokeCron] Sending Stroke survey notification to user:${patient.UserId}`);
-                    await this.sendStrokeSurveyNotification(userDeviceTokens);
+                    await this.sendStrokeSurveyNotification(userDeviceTokens, patient?.User?.PreferredLanguage);
                 } else {
                     Logger.instance().log(`[StrokeCron] Skip sending Stroke survey notification as device is not eligible:${patient.UserId}`);
                 }
@@ -388,7 +394,11 @@ export class AHAActions {
                 if (userAppRegistrations.length > 0 && this.eligibleForStrokeSurveyTextMessage(userAppRegistrations)) {
                     Logger.instance().log(`[StrokeTextMessageCron] Sending Stroke survey text message to user:${patient.UserId}`);
                     const phoneNumber = patient?.User?.Person?.Phone;
-                    const message = `The American Heart Association would like to hear your thoughts on the Heart & Stroke Helper app! Fill out the survey below and receive a $10 Amazon e-gift card. Please disregard this message if you have already filled out the survey. Survey link: https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk`;
+
+                    const preferredLanguage = patient?.User?.PreferredLanguage ?? SupportedLanguage.English;
+                    const messageTemplate = loadLanguageTemplates(preferredLanguage);
+                    const message = messageTemplate['StrokeSurveyTextMessage'].Message;
+           
                     const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
                     if (sendStatus) {
                         Logger.instance().log(`[StrokeSurveySMS] Message sent successfully to ${patient.UserId}`);
@@ -555,18 +565,20 @@ export class AHAActions {
         return eligibleForStrokeSurveyTextMessage;
     };
 
-    private sendCareplanRegistrationReminder = async (userDeviceTokens) => {
+    private sendCareplanRegistrationReminder = async (
+        userDeviceTokens, preferredLanguage: SupportedLanguage = SupportedLanguage.English) => {
 
-        var title = MessageTemplates['CareplanRegistrationReminder'].Title;
-        var body = MessageTemplates['CareplanRegistrationReminder'].Body;
+        const messageTemplate = loadLanguageTemplates(preferredLanguage);
+        var title = messageTemplate['CareplanRegistrationReminder'].Title;
+        var body = messageTemplate['CareplanRegistrationReminder'].Body;
 
         Logger.instance().log(`Notification Title: ${title}`);
         Logger.instance().log(`Notification Body: ${body}`);
 
-        Logger.instance().log(`Notification template: ${JSON.stringify(MessageTemplates['CareplanRegistrationReminder'])}`);
+        Logger.instance().log(`Notification template: ${JSON.stringify(messageTemplate['CareplanRegistrationReminder'])}`);
 
         var message = Loader.notificationService.formatNotificationMessage(
-            MessageTemplates['CareplanRegistrationReminder'].NotificationType, title, body
+            messageTemplate['CareplanRegistrationReminder'].NotificationType, title, body
         );
         for await (var deviceToken of userDeviceTokens) {
             await Loader.notificationService.sendNotificationToDevice(deviceToken, message);
@@ -574,20 +586,22 @@ export class AHAActions {
 
     };
 
-    private sendStrokeSurveyNotification = async (userDeviceTokens) => {
+    private sendStrokeSurveyNotification = async (
+        userDeviceTokens, preferredLanguage: SupportedLanguage = SupportedLanguage.English) => {
 
-        var title = MessageTemplates['StrokeSurveyNotification'].Title;
-        var body = MessageTemplates['StrokeSurveyNotification'].Body;
-        var url = MessageTemplates['StrokeSurveyNotification'].Url;
+        const messageTemplate = loadLanguageTemplates(preferredLanguage);
+        var title = messageTemplate['StrokeSurveyNotification'].Title;
+        var body = messageTemplate['StrokeSurveyNotification'].Body;
+        var url = messageTemplate['StrokeSurveyNotification'].Url;
 
         Logger.instance().log(`Notification Title: ${title}`);
         Logger.instance().log(`Notification Body: ${body}`);
         Logger.instance().log(`Notification URL: ${url}`);
 
-        Logger.instance().log(`Notification template: ${JSON.stringify(MessageTemplates['StrokeSurveyNotification'])}`);
+        Logger.instance().log(`Notification template: ${JSON.stringify(messageTemplate['StrokeSurveyNotification'])}`);
 
         var message = Loader.notificationService.formatNotificationMessage(
-            MessageTemplates['StrokeSurveyNotification'].NotificationType, title, body, url
+            messageTemplate['StrokeSurveyNotification'].NotificationType, title, body, url
         );
         Logger.instance().log(`[StrokeCron] Notification Paylod: ${JSON.stringify(message)}`);
         for await (var deviceToken of userDeviceTokens) {

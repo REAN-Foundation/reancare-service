@@ -22,9 +22,10 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { MedicationConsumptionStore } from "../../../modules/ehr/services/medication.consumption.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
-import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
 import { MedicationConsumptionSearchFilters } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types";
 import { Injector } from "../../../startup/injector";
+import { SupportedLanguage } from "../../../domain.types/users/user/user.types";
+import { loadLanguageTemplates } from "../../../modules/communication/message.template/language/language.selector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -760,6 +761,7 @@ export class MedicationConsumptionService implements IUserActionService {
 
         var patientUserId = medicationSchedules[0].PatientUserId;
         var user = await this._userRepo.getById(patientUserId);
+        const language = user.PreferredLanguage ?? SupportedLanguage.English;
         var person = await this._personRepo.getById(user.PersonId);
 
         var deviceList = await this._userDeviceDetailsRepo.getByUserId(patientUserId);
@@ -775,17 +777,18 @@ export class MedicationConsumptionService implements IUserActionService {
         var updatedTime = TimeHelper.subtractDuration(
             medicationSchedules[0].TimeScheduleEnd, duration, DurationType.Minute);
 
-        var title = MessageTemplates.MedicationReminder.Title;
-        title = title.replace("{{PatientName}}", person.FirstName ?? "there");
+        const messageTemplate = loadLanguageTemplates(language);
+        var title = messageTemplate.MedicationReminder.Title;
+        title = title.replace("{{PatientName}}", person.FirstName ?? '');
         title = title.replace("{{DrugName}}", medicationDrugNames.join(', '));
-        var body = MessageTemplates.MedicationReminder.Body;
+        var body = messageTemplate.MedicationReminder.Body;
         body = body.replace("{{EndTime}}", TimeHelper.format(updatedTime, 'hh:mm A'));
 
         Logger.instance().log(`Notification Title: ${title}`);
         Logger.instance().log(`Notification Body: ${body}`);
 
         var message = Loader.notificationService.formatNotificationMessage(
-            MessageTemplates.MedicationReminder.NotificationType, title, body
+            messageTemplate.MedicationReminder.NotificationType, title, body
         );
         Logger.instance().log(`Seding notification to patient :: ${patientUserId} - ${JSON.stringify(message)}`);
         

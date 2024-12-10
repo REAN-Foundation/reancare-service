@@ -37,7 +37,17 @@ export class MeditationController extends BaseController {
 
             const model = await this._validator.create(request);
             await this.authorizeUser(request, model.PatientUserId);
-            const meditation = await this._service.create(model);
+            let meditation = null;
+
+            const existingMeditation = await this._service.getMeditationByStartDateAndPatientUserId(
+                model.StartTime, model.PatientUserId);
+
+            if (existingMeditation !== null) {
+                meditation = await this._service.update(existingMeditation.id, model);
+            } else {
+                meditation = await this._service.create(model);
+            }
+            
             if (meditation == null) {
                 throw new ApiError(400, 'Cannot create record for meditation!');
             }

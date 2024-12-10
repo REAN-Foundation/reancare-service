@@ -46,4 +46,8 @@ export class MeditationService {
         return await this._meditationRepo.getAllUserResponsesBefore(patientUserId, date);
     };
 
+    getMeditationByStartDateAndPatientUserId = async (startDate: Date, patientUserId: string): Promise<MeditationDto> => {
+        return await this._meditationRepo.getMeditationByStartDateAndPatientUserId(startDate, patientUserId);
+    };
+
 }

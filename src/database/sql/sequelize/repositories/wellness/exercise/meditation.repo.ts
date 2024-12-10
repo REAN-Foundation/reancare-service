@@ -237,4 +237,26 @@ export class MeditationRepo implements IMeditationRepo {
         }
     };
 
+    getMeditationByStartDateAndPatientUserId = async (
+        startDate: Date, patientUserId: string): Promise<MeditationDto> => {
+        try {
+            const startOfDay = TimeHelper.startOf(startDate, DurationType.Day);
+            const endOfDay = TimeHelper.endOf(startDate, DurationType.Day);
+
+            const meditation = await MeditationModel.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                    StartTime     : {
+                        [Op.gte] : startOfDay,
+                        [Op.lte] : endOfDay,
+                    }
+                }
+            });
+            return MeditationMapper.toDto(meditation);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

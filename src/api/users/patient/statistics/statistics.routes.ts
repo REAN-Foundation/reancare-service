@@ -13,6 +13,7 @@ export const register = (app: express.Application): void => {
     router.get('/:patientUserId/report', auth(StatisticsAuth.getPatientStatsReport), controller.getPatientStatsReport);
     router.get('/:patientUserId', auth(StatisticsAuth.getPatientStats), controller.getPatientStats);
     router.get('/:patientUserId/health-summary', auth(StatisticsAuth.getPatientHealthSummary), controller.getPatientHealthSummary);
+    router.get('/:patientUserId/dashboard-summary', auth(StatisticsAuth.getPatientDashboardSummary), controller.getPatientDashboardSummary);
 
     router.post('/:patientUserId/settings', auth(StatisticsAuth.createReportSettings), controller.createReportSettings);
     router.get('/:patientUserId/settings', auth(StatisticsAuth.getReportSettingsByUserId), controller.getReportSettingsByUserId);

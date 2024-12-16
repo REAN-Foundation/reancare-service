@@ -7,7 +7,7 @@ import { IFoodConsumptionRepo } from "../../../../database/repository.interfaces
 import { IPhysicalActivityRepo } from "../../../../database/repository.interfaces/wellness/exercise/physical.activity.repo.interface";
 import { IBodyWeightRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { ILabRecordRepo } from "../../../../database/repository.interfaces/clinical/lab.record/lab.record.interface";
-import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { ProgressStatus, uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { ISleepRepo } from "../../../../database/repository.interfaces/wellness/daily.records/sleep.repo.interface";
 import { PatientDetailsDto } from "../../../../domain.types/users/patient/patient/patient.dto";
 import { Helper } from "../../../../common/helper";
@@ -26,7 +26,7 @@ import { Logger } from "../../../../common/logger";
 import { addBloodGlucoseStats, addBloodPressureStats, addBodyWeightStats, addCholStats, addLipidStats, createBiometricsCharts } from "./biometrics.stats";
 import { createCalorieBalanceChart } from "./calorie.balance.stats";
 import { createCareplanCharts } from "./careplan.stats";
-import { addDailyAssessmentsStats, createDailyAssessentCharts } from "./daily.assessments.stats";
+import { addDailyAssessmentsStats } from "./daily.assessments.stats";
 import { addExerciseStats, createPhysicalActivityCharts } from "./exercise.stats";
 import { addCurrentMedications, addMedicationStats, createMedicationTrendCharts } from "./medication.stats";
 import { addNutritionQuestionnaire, addNutritionServingsStats, createNutritionCharts } from "./nutrition.stats";
@@ -40,7 +40,7 @@ import { DurationType } from "../../../../domain.types/miscellaneous/time.types"
 import { IBloodOxygenSaturationRepo } from "../../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface";
 import { IPulseRepo } from "../../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
 import { IEmergencyEventRepo } from "../../../../database/repository.interfaces/clinical/emergency.event.repo.interface";
-import { HealthSummaryDto } from "../../../../domain.types/statistics/custom.query/custom.query.dto";
+import { DashboardSummaryDto, HealthSummaryDto } from "../../../../domain.types/statistics/custom.query/custom.query.dto";
 import { CustomQueryMapper } from "../../../../database/sql/sequelize/mappers/statistics/custom.query.mapper";
 import { BloodGlucoseDto } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
 import { BloodOxygenSaturationDto } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
@@ -52,6 +52,19 @@ import { EmergencyEventDto } from "../../../../domain.types/clinical/emergency.e
 import { LabRecordDto } from "../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
 import { MedicationDto } from "../../../../domain.types/clinical/medication/medication/medication.dto";
 import { ReportFrequency, Settings } from "../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model";
+import { UserTaskDto } from "../../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskSearchFilters, UserTaskSearchResults } from "../../../../domain.types/users/user.task/user.task.search.types";
+import { MedicationSearchResults } from "../../../../domain.types/clinical/medication/medication/medication.search.types";
+import { BloodGlucoseSearchResults } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types";
+import { BloodOxygenSaturationSearchResults } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types";
+import { BloodPressureSearchResults } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types";
+import { BodyWeightSearchResults } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types";
+import { BodyHeightSearchResults } from "../../../../domain.types/clinical/biometrics/body.height/body.height.search.types";
+import { BodyTemperatureDto } from "../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto";
+import { BodyTemperatureSearchResults } from "../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.search.types";
+import { IBodyTemperatureRepo } from "../../../../database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface";
+import { PulseSearchResults } from "../../../../domain.types/clinical/biometrics/pulse/pulse.search.types";
+import { UserActionType } from "../../../../domain.types/users/user.task/user.task.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const BODY_WEIGHT_SECTION_SIZE = 325;
@@ -86,6 +99,7 @@ export class PatientStatisticsService {
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IBodyTemperatureRepo') private _bodyTemperatureRepo: IBodyTemperatureRepo
     ) {
     }
 
@@ -140,111 +154,41 @@ export class PatientStatisticsService {
         };
     };
 
-    public getHealthSummary = async(patientUserId: uuid): Promise<HealthSummaryDto> => {
-        const filter = {
-            PatientUserId : patientUserId,
+    public getPatientHealthSummary = async(patientUserId: uuid): Promise<HealthSummaryDto> => {
+        return await this.getHealthSummary(patientUserId);
+    };
+
+    public getPatientDashboardSummary = async(patientUserId: uuid): Promise<DashboardSummaryDto> => {
+        const healthSummary = await this.getHealthSummary(patientUserId);
+
+        const careplanSummary = await this.getUserTaskSummary(patientUserId, UserActionType.Careplan);
+        const completedTaskSummary = await this.getUserTaskSummaryByStatus(patientUserId, ProgressStatus.Completed);
+        const medicationSummary = await this.getUserTaskSummary(patientUserId, UserActionType.Medication);
+        const appointmentSummary = await this.getUserTaskSummary(patientUserId, UserActionType.Appointment);
+        const customSummary = await this.getUserTaskSummary(patientUserId, UserActionType.Custom);
+
+        const taskCount = careplanSummary.length + medicationSummary.length +
+        appointmentSummary.length + customSummary.length + customSummary.length;
+        const completedTaskCount = completedTaskSummary.length;
+        const notCompletedTaskCount = taskCount - completedTaskCount;
+
+        const dashboardSummary : DashboardSummaryDto = {
+            TaskCount             : taskCount,
+            CompletedTaskCount    : completedTaskCount,
+            PendingTaskCount      : notCompletedTaskCount,
+            HealthProfile         : healthSummary.HealthProfile,
+            BloodGlucose          : healthSummary.BloodGlucose,
+            BloodOxygenSaturation : healthSummary.BloodOxygenSaturation,
+            BloodPressure         : healthSummary.BloodPressure,
+            BodyHeight            : healthSummary.BodyHeight,
+            BodyWeight            : healthSummary.BodyWeight,
+            BodyTemperature       : healthSummary.BodyTemperature,
+            Pulse                 : healthSummary.Pulse,
+            CarePlanTasks         : careplanSummary,
+            CompletedTasks        : completedTaskSummary,
         };
 
-        const healthSummary: HealthSummaryDto = {};
-
-        const patientHealthProfile = await this._healthProfileRepo.getByPatientUserId(patientUserId);
-        const healthProfileSummary = CustomQueryMapper.toHealthProfileSummaryDto(patientHealthProfile);
-        if (healthProfileSummary){
-            healthSummary.HealthProfile = healthProfileSummary;
-        }
-        
-        const patientMedication = await this._medicationRepo.search(filter);
-        if (patientMedication.TotalCount > 0) {
-            const medicationSummary: MedicationDto[] = [];
-            for (const medication of patientMedication.Items) {
-                const dto = CustomQueryMapper.toMedicationSummaryDto(medication);
-                medicationSummary.push(dto);
-            }
-            healthSummary.Medication = medicationSummary;
-        }
-
-        const patientBloodGlucose = await this._bloodGlucoseRepo.search(filter);
-        if (patientBloodGlucose.TotalCount > 0) {
-            const bloodGlucoseSummary: BloodGlucoseDto[] = [];
-            for (const bloodGlucose of patientBloodGlucose.Items) {
-                const dto = CustomQueryMapper.toBloodGlucoseSummaryDto(bloodGlucose);
-                bloodGlucoseSummary.push(dto);
-            }
-            healthSummary.BloodGlucose = bloodGlucoseSummary;
-        }
-
-        const patientBloodOxygenSaturation =
-        await this._bloodOxygenSaturationRepo.search(filter);
-        if (patientBloodOxygenSaturation.TotalCount > 0) {
-            const bloodOxygenSaturationSummary: BloodOxygenSaturationDto[] = [];
-            for (const oxygenSaturation of patientBloodOxygenSaturation.Items) {
-                const dto = CustomQueryMapper.toBloodOxygenSaturationSummaryDto(oxygenSaturation);
-                bloodOxygenSaturationSummary.push(dto);
-            }
-            healthSummary.BloodOxygenSaturation = bloodOxygenSaturationSummary;
-        }
-
-        const patientBloodPressure = await this._bloodPressureRepo.search(filter);
-        if (patientBloodPressure.TotalCount > 0) {
-            const bloodPressureSummary: BloodPressureDto[] = [];
-            for (const bloodPressure of patientBloodPressure.Items) {
-                const dto = CustomQueryMapper.toBloodPressureSummaryDto(bloodPressure);
-                bloodPressureSummary.push(dto);
-            }
-            healthSummary.BloodPressure = bloodPressureSummary;
-        }
-
-        const patientBodyHeight =  await this._bodyHeightRepo.search(filter);
-        if (patientBodyHeight.TotalCount > 0) {
-            const bodyHeightSummary: BodyHeightDto[] = [];
-            for (const bodyHeight of patientBodyHeight.Items) {
-                const dto = CustomQueryMapper.toBodyHeightSummaryDto(bodyHeight);
-                bodyHeightSummary.push(dto);
-            }
-            healthSummary.BodyHeight = bodyHeightSummary;
-        }
-        
-        const patientBodyWeight = await this._bodyWeightRepo.search(filter);
-        if (patientBodyWeight.TotalCount > 0) {
-            const bodyWeightSummary: BodyWeightDto[] = [];
-            for (const bodyWeight of patientBodyWeight.Items) {
-                const dto = CustomQueryMapper.toBodyWeightSummaryDto(bodyWeight);
-                bodyWeightSummary.push(dto);
-            }
-            healthSummary.BodyWeight = bodyWeightSummary;
-        }
-        
-        const patientPulse = await this._pulseRepo.search(filter);
-        if (patientPulse.TotalCount > 0) {
-            const pulseSummary: PulseDto[] = [];
-            for (const pulse of patientPulse.Items) {
-                const dto = CustomQueryMapper.toPulseSummaryDto(pulse);
-                pulseSummary.push(dto);
-            }
-            healthSummary.Pulse = pulseSummary;
-        }
-
-        const patientLabRecord = await this._labRecordsRepo.search(filter);
-        if (patientLabRecord.TotalCount > 0) {
-            const labRecordSummary: LabRecordDto[] = [];
-            for (const labRecord of patientLabRecord.Items) {
-                const dto = CustomQueryMapper.toLabRecordSummaryDto(labRecord);
-                labRecordSummary.push(dto);
-            }
-            healthSummary.LabRecord = labRecordSummary;
-        }
-
-        const patientEmergencyEvent = await this._emergencyEventRepo.search(filter);
-        if (patientEmergencyEvent.TotalCount > 0) {
-            const emergencyEventSummary: EmergencyEventDto[] = [];
-            for (const emergencyEvent of patientEmergencyEvent.Items) {
-                const dto = CustomQueryMapper.toEmergencyEventSummaryDto(emergencyEvent);
-                emergencyEventSummary.push(dto);
-            }
-            healthSummary.EmergencyEvent = emergencyEventSummary;
-        }
-        
-        return healthSummary;
+        return dashboardSummary;
     };
 
     public getPatientStats = async (patientUserId: uuid, reportSetting: Settings = {
@@ -893,6 +837,188 @@ export class PatientStatisticsService {
             return 365;
         }
     };
+
+    private getHealthSummary = async(patientUserId: uuid): Promise<HealthSummaryDto> => {
+        const filter = {
+            PatientUserId : patientUserId,
+            PageIndex     : 0
+        };
+
+        const healthSummary: HealthSummaryDto = {};
+
+        const patientHealthProfile = await this._healthProfileRepo.getByPatientUserId(patientUserId);
+        const healthProfileSummary = CustomQueryMapper.toHealthProfileSummaryDto(patientHealthProfile);
+        if (healthProfileSummary){
+            healthSummary.HealthProfile = healthProfileSummary;
+        }
+        
+        let medicationSummary: MedicationDto[] = [];
+        let patientMedications: MedicationSearchResults = null;
+        let page = 0;
+
+        do {
+            filter.PageIndex = page;
+            patientMedications = await this._medicationRepo.search(filter);
+            medicationSummary = medicationSummary.concat(patientMedications.Items);
+            page++;
+        } while (patientMedications.Items.length > 0);
+        
+        healthSummary.Medication = medicationSummary;
+    
+        let bloodGlucoseSummary: BloodGlucoseDto[] = [];
+        let bloodGlucoseSearchResults: BloodGlucoseSearchResults = null;
+        page = 0;
+
+        do {
+            filter.PageIndex = page;
+            bloodGlucoseSearchResults = await this._bloodGlucoseRepo.search(filter);
+            bloodGlucoseSummary = bloodGlucoseSummary.concat(bloodGlucoseSearchResults.Items);
+            page++;
+        } while (bloodGlucoseSearchResults.Items.length > 0);
+
+        healthSummary.BloodGlucose = bloodGlucoseSummary;
+
+        let bloodOxygenSaturationSummary: BloodOxygenSaturationDto[] = [];
+        let bloodOxygenSaturationSearchResults: BloodOxygenSaturationSearchResults = null;
+        page = 0;
+
+        do {
+            filter.PageIndex = page;
+            bloodOxygenSaturationSearchResults = await this._bloodOxygenSaturationRepo.search(filter);
+            bloodOxygenSaturationSummary = bloodOxygenSaturationSummary.concat(bloodOxygenSaturationSearchResults.Items);
+            page++;
+        } while (bloodOxygenSaturationSearchResults.Items.length > 0);
+
+        healthSummary.BloodOxygenSaturation = bloodOxygenSaturationSummary;
+
+        let bloodPressureSummary: BloodPressureDto[] = [];
+        let bloodPressureSearchResults: BloodPressureSearchResults = null;
+        page = 0;
+
+        do {
+            filter.PageIndex = page;
+            bloodPressureSearchResults = await this._bloodPressureRepo.search(filter);
+            bloodPressureSummary = bloodPressureSummary.concat(bloodPressureSearchResults.Items);
+            page++;
+        } while (bloodPressureSearchResults.Items.length > 0);
+
+        healthSummary.BloodPressure = bloodPressureSummary;
+
+        let weightSummary: BodyWeightDto[] = [];
+        let weightSearchResults: BodyWeightSearchResults = null;
+        page = 0;
+
+        do {
+            filter.PageIndex = page;
+            weightSearchResults = await this._bodyWeightRepo.search(filter);
+            weightSummary = weightSummary.concat(weightSearchResults.Items);
+            page++;
+        } while (weightSearchResults.Items.length > 0);
+
+        healthSummary.BodyWeight = weightSummary;
+
+        let heightSummary: BodyHeightDto[] = [];
+        let heightSearchResults: BodyHeightSearchResults = null;
+        page = 0;
+
+        do {
+            filter.PageIndex = page;
+            heightSearchResults = await this._bodyHeightRepo.search(filter);
+            heightSummary = heightSummary.concat(heightSearchResults.Items);
+            page++;
+        } while (heightSearchResults.Items.length > 0);
+
+        healthSummary.BodyHeight = heightSummary;
+
+        let pulseSummary: PulseDto[] = [];
+        let pulseSearchResults: PulseSearchResults = null;
+        page = 0;
+
+        do {
+            filter.PageIndex = page;
+            pulseSearchResults = await this._pulseRepo.search(filter);
+            pulseSummary = pulseSummary.concat(pulseSearchResults.Items);
+            page++;
+        } while (pulseSearchResults.Items.length > 0);
+
+        healthSummary.Pulse = pulseSummary;
+
+        let temperatureSummary: BodyTemperatureDto[] = [];
+        let temperatureSearchResults: BodyTemperatureSearchResults = null;
+        page = 0;
+
+        do {
+            filter.PageIndex = page;
+            temperatureSearchResults = await this._bodyTemperatureRepo.search(filter);
+            temperatureSummary = temperatureSummary.concat(temperatureSearchResults.Items);
+            page++;
+        } while (temperatureSearchResults.Items.length > 0);
+
+        healthSummary.BodyTemperature = temperatureSummary;
+
+        const patientLabRecord = await this._labRecordsRepo.search(filter);
+        if (patientLabRecord.TotalCount > 0) {
+            const labRecordSummary: LabRecordDto[] = [];
+            for (const labRecord of patientLabRecord.Items) {
+                const dto = CustomQueryMapper.toLabRecordSummaryDto(labRecord);
+                labRecordSummary.push(dto);
+            }
+            healthSummary.LabRecord = labRecordSummary;
+        }
+
+        const patientEmergencyEvent = await this._emergencyEventRepo.search(filter);
+        if (patientEmergencyEvent.TotalCount > 0) {
+            const emergencyEventSummary: EmergencyEventDto[] = [];
+            for (const emergencyEvent of patientEmergencyEvent.Items) {
+                const dto = CustomQueryMapper.toEmergencyEventSummaryDto(emergencyEvent);
+                emergencyEventSummary.push(dto);
+            }
+            healthSummary.EmergencyEvent = emergencyEventSummary;
+        }
+        
+        return healthSummary;
+    };
+
+    private getUserTaskSummary = async (patientUserId: string, actionType: UserActionType): Promise<UserTaskDto[]> => {
+        const filters: UserTaskSearchFilters = {
+            UserId     : patientUserId,
+            ActionType : actionType,
+        };
+
+        let careplanTasks: UserTaskDto[] = [];
+        let userTasks: UserTaskSearchResults = null;
+        let page = 0;
+        
+        do {
+            filters.PageIndex = page;
+            userTasks = await this._userTaskRepo.search(filters);
+            careplanTasks = careplanTasks.concat(userTasks.Items);
+            page++;
+        } while (userTasks.Items.length > 0);
+        
+        return careplanTasks;
+    };
+
+    private getUserTaskSummaryByStatus = async (patientUserId: string, status: ProgressStatus): Promise<UserTaskDto[]> => {
+        const filters: UserTaskSearchFilters = {
+            UserId : patientUserId,
+            Status : status,
+        };
+
+        let careplanTasks: UserTaskDto[] = [];
+        let userTasks: UserTaskSearchResults = null;
+        let page = 0;
+        
+        do {
+            filters.PageIndex = page;
+            userTasks = await this._userTaskRepo.search(filters);
+            careplanTasks = careplanTasks.concat(userTasks.Items);
+            page++;
+        } while (userTasks.Items.length > 0);
+        
+        return careplanTasks;
+    };
+
     //#endregion
 
 }

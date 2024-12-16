@@ -10,6 +10,7 @@ import { PulseDto } from '../../../../../domain.types/clinical/biometrics/pulse/
 import { LabRecordDto } from '../../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto';
 import { EmergencyEventDto } from '../../../../../domain.types/clinical/emergency.event/emergency.event.dto';
 import { MedicationDto } from '../../../../../domain.types/clinical/medication/medication/medication.dto';
+import { BodyTemperatureDto } from '../../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -75,6 +76,20 @@ export class CustomQueryMapper {
             Frequency : medication.Frequency,
             Duration  : medication.Duration
         };
+        return dto;
+    };
+
+    static toBodyTemperatureSummaryDto = (bodyTemperature: BodyTemperatureDto): BodyTemperatureDto => {
+        if (bodyTemperature === null) {
+            return null;
+        }
+
+        const dto: BodyTemperatureDto = {
+            BodyTemperature : bodyTemperature.BodyTemperature,
+            Unit            : bodyTemperature.Unit,
+            RecordDate      : bodyTemperature.RecordDate
+        };
+
         return dto;
     };
 

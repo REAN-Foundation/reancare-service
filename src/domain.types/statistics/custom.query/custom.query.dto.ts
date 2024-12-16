@@ -9,6 +9,8 @@ import { LabRecordDto } from "../../../domain.types/clinical/lab.record/lab.reco
 import { EmergencyEventDto } from "../../../domain.types/clinical/emergency.event/emergency.event.dto";
 import { HealthProfileDto } from "../../../domain.types/users/patient/health.profile/health.profile.dto";
 import { MedicationDto } from "../../../domain.types/clinical/medication/medication/medication.dto";
+import { UserTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
+import { BodyTemperatureDto } from "../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto";
 
 export interface CustomQueryDto {
   id?          : string;
@@ -29,8 +31,24 @@ export interface HealthSummaryDto {
     BloodPressure?          :BloodPressureDto[],
     BodyHeight?             :BodyHeightDto[],
     BodyWeight?             :BodyWeightDto[],
+    BodyTemperature?        :BodyTemperatureDto[],
     Pulse?                  :PulseDto[],
     LabRecord?              :LabRecordDto[],
     EmergencyEvent?         :EmergencyEventDto[],
   }
  
+export interface DashboardSummaryDto {
+    TaskCount?: number;
+    CompletedTaskCount?: number;
+    PendingTaskCount?: number;
+    HealthProfile?          :HealthProfileDto,
+    BloodGlucose?           :BloodGlucoseDto[],
+    BloodOxygenSaturation?  :BloodOxygenSaturationDto[],
+    BloodPressure?          :BloodPressureDto[],
+    BodyHeight?             :BodyHeightDto[],
+    BodyWeight?             :BodyWeightDto[],
+    BodyTemperature?        :BodyTemperatureDto[],
+    Pulse?                  :PulseDto[],
+    CarePlanTasks?          :UserTaskDto[],
+    CompletedTasks?         :UserTaskDto[],
+  }

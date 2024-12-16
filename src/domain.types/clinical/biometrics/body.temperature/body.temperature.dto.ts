@@ -1,7 +1,7 @@
 export interface BodyTemperatureDto {
     id?              : string;
     EhrId?           : string;
-    PatientUserId    : string;
+    PatientUserId?    : string;
     TerraSummaryId?   : string;
     Provider?         : string;
     PatientId?       : string;

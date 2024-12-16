@@ -64,8 +64,6 @@ export class StatisticsController extends PatientBaseController {
 
     getPatientHealthSummary = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            // request.context = 'PatientStatistics.getPatientHealthSummary'; ???
-
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             await this.authorizeOne(request, patientUserId);
             const existingUser = await this._userService.getById(patientUserId);
@@ -73,13 +71,35 @@ export class StatisticsController extends PatientBaseController {
                 throw new ApiError(404, 'User not found.');
             }
 
-            const patientHealthSummary =  await this._service.getHealthSummary(patientUserId);
+            const patientHealthSummary =  await this._service.getPatientHealthSummary(patientUserId);
             ResponseHandler.success(
                 request,
                 response,
                 'Patient health summary retrieved successfully!',
                 200,
                 patientHealthSummary
+            );
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPatientDashboardSummary = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
+            await this.authorizeOne(request, patientUserId);
+            const existingUser = await this._userService.getById(patientUserId);
+            if (existingUser == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+
+            const patientDashboardSummary =  await this._service.getPatientDashboardSummary(patientUserId);
+            ResponseHandler.success(
+                request,
+                response,
+                'Patient dashboard summary retrieved successfully!',
+                200,
+                patientDashboardSummary
             );
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

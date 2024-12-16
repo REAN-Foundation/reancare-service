@@ -94,6 +94,7 @@ export class StatisticsController extends PatientBaseController {
             }
 
             const patientDashboardSummary =  await this._service.getPatientDashboardSummary(patientUserId);
+            patientDashboardSummary.UserProfile = existingUser?.Person;
             ResponseHandler.success(
                 request,
                 response,

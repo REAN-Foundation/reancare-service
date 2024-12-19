@@ -44,7 +44,7 @@
 
         "General" : {
             "NotificationType": "General",
-            "Title"           : "Stay Connected with {{AppName}}!",
+            "Title"           : "Your Health Journey Awaits!",
             "Body"            : "Hi {{PatientName}}, Life gets busy, we understand! Reconnect with {{AppName}} today and keep your health goals in focus. We’re here to support you."
         }
     }

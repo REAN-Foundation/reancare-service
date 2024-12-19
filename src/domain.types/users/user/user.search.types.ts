@@ -11,6 +11,8 @@ export interface UserSearchFilters extends BaseSearchFilters {
     Gender  ?: Gender;
     UserName?: string;
     RoleIds?: string[];
+    LastLoginDateFrom?: Date;
+    LastLoginDateTo?: Date;
 }
 
 export interface UserSearchResults extends BaseSearchResults {

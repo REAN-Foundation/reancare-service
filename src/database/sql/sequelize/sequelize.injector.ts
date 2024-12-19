@@ -99,6 +99,7 @@ import { AhaStatisticsRepo } from './repositories/statistics/aha.statistics.repo
 import { TenantSettingsRepo } from './repositories/tenant/tenant.settings.repo';
 import { HealthReportSettingsRepo } from './repositories/users/patient/health.report.setting.repo';
 import { FollowUpCancellationRepo } from './repositories/tenant/followups/cancellations/follow.up.cancellation.repo';
+import { ActivityTrackerRepo } from './repositories/users/patient/patient.tracker.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -207,6 +208,7 @@ export class SequelizeInjector {
         container.register('ITenantSettingsRepo',TenantSettingsRepo);
         container.register('IHealthReportSettingsRepo',HealthReportSettingsRepo);
         container.register('IFollowUpCancellationRepo',FollowUpCancellationRepo);
+        container.register('IActivityTrackerRepo', ActivityTrackerRepo);
 
     }
 

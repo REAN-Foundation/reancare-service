@@ -329,6 +329,23 @@ export class UserRepo implements IUserRepo {
                 };
             }
 
+            if (filters.LastLoginDateFrom != null && filters.LastLoginDateTo != null) {
+                search.where['LastLogin'] = {
+                    [Op.gte] : filters.LastLoginDateFrom,
+                    [Op.lte] : filters.LastLoginDateTo,
+                };
+            }
+            else if (filters.LastLoginDateFrom == null && filters.LastLoginDateTo != null) {
+                search.where['LastLogin'] = {
+                    [Op.lte] : filters.LastLoginDateTo,
+                };
+            }
+            else if (filters.LastLoginDateFrom != null && filters.LastLoginDateTo == null) {
+                search.where['LastLogin'] = {
+                    [Op.gte] : filters.LastLoginDateFrom,
+                };
+            }
+
             search.include.push(includesObj);
             const orderByColum = 'CreatedAt';
             let order = 'ASC';

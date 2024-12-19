@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Op } from 'sequelize';
+import { col, fn, literal, Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { TimeHelper } from '../../../../../../common/time.helper';
@@ -7,7 +7,7 @@ import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneo
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { UserTaskCategory } from '../../../../../../domain.types/users/user.task/user.task.types';
 import { UserTaskDomainModel } from '../../../../../../domain.types/users/user.task/user.task.domain.model';
-import { TaskSummaryDto, UserTaskDto } from '../../../../../../domain.types/users/user.task/user.task.dto';
+import { MostRecentActivityDto, TaskSummaryDto, UserTaskDto } from '../../../../../../domain.types/users/user.task/user.task.dto';
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../../../../domain.types/users/user.task/user.task.search.types';
 import { IUserTaskRepo } from '../../../../../repository.interfaces/users/user/user.task.repo.interface';
 import { UserTaskMapper } from '../../../mappers/users/user/user.task.mapper';
@@ -15,7 +15,6 @@ import User from '../../../models/users/user/user.model';
 import UserTask from '../../../models/users/user/user.task.model';
 import { HelperRepo } from '../../common/helper.repo';
 import { NotificationChannel } from '../../../../../../domain.types/general/notification/notification.types';
-import CareplanActivity from '../../../models/clinical/careplan/careplan.activity.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -650,6 +649,37 @@ export class UserTaskRepo implements IUserTaskRepo {
 
         } catch (error) {
             Logger.instance().log(error.message);
+        }
+    };
+
+    getMostRecentUserActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        try {
+            const recentActivityDetails = await UserTask.findAll({
+                attributes : [
+                    'UserId',
+                    [fn('MAX', col('UpdatedAt')), 'MostRecentActivityDate'],
+                    [literal("CONCAT(`ActionType`, '-', `Category`)"), 'ActivityDetails']
+                ],
+                where : {
+                    UserId    : patientUserId,
+                    UpdatedAt : {
+                        [Op.lte] : new Date(),
+                    },
+                },
+                group : ['UserId'],
+            });
+
+            const result: MostRecentActivityDto[] = recentActivityDetails.map(task => ({
+                PatientUserId      : task.getDataValue('UserId'),
+                RecentActivityDate : task.getDataValue('MostRecentActivityDate'),
+                ActivityDetails    : task.getDataValue('ActivityDetails'),
+            }));
+    
+            return result.length > 0 ? result[0] : null;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
         }
     };
 

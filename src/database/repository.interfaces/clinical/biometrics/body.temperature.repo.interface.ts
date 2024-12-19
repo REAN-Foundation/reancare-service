@@ -1,3 +1,4 @@
+import { MostRecentActivityDto } from "../../../../domain.types/users/user.task/user.task.dto";
 import { BodyTemperatureDomainModel } from "../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model";
 import { BodyTemperatureDto } from "../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto";
 import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from "../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.search.types";
@@ -20,5 +21,7 @@ export interface IBodyTemperatureRepo {
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
     getRecent(patientUserId: string): Promise<BodyTemperatureDto>;
+
+    getMostRecentBodyTemperatureActivity (patientUserId: string): Promise<MostRecentActivityDto>;
 
 }

@@ -60,7 +60,9 @@ export class Scheduler {
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
                 // this.scheduleHFHelperTextMessage();
                 this.scheduleGGHNFollowUpReminder();
-
+                this.scheduleNotificationToInactiveUsers();
+                this.userActivityTracker();
+                
                 const runOnceScheduler = RunOnceScheduler.instance();
                 runOnceScheduler.schedule(Scheduler._schedules);
 
@@ -275,6 +277,25 @@ export class Scheduler {
     //     });
     // };
 
+    private scheduleNotificationToInactiveUsers  = () => {
+        cron.schedule(Scheduler._schedules['scheduleNotificationToInactiveUsers'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs:one month inactive user text reminder...');
+                var customActionHandler = new CustomActionsHandler();
+                customActionHandler.scheduleNotificationToInactiveUsers();
+            })();
+        });
+    };
+
+    private userActivityTracker = () => {
+        cron.schedule(Scheduler._schedules['UserActivityTracker'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: User Activity Tracker...');
+                var service = Injector.Container.resolve(UserService);
+                await service.userActivityTracker();
+            })();
+        });
+    };
     //#endregion
 
 }

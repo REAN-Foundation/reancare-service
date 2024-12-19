@@ -57,3 +57,4 @@ export const UserActionTypeList: UserActionType [] = [
     UserActionType.Appointment,
     UserActionType.Careplan,
 ];
+

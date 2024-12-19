@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
@@ -13,6 +13,7 @@ import { DurationType } from '../../../../../../domain.types/miscellaneous/time.
 import { HelperRepo } from '../../common/helper.repo';
 import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { Helper } from '../../../../../../common/helper';
+import { MostRecentActivityDto } from '../../../../../../domain.types/users/user.task/user.task.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -317,6 +318,36 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
         catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    getMostRecentBloodGlucoseActivity = async (patientUserId: string): Promise<MostRecentActivityDto> => {
+        try {
+            const recentActivityDetails = await BloodGlucose.findAll({
+                attributes : [
+                    'PatientUserId',
+                    [fn('MAX', col('UpdatedAt')), 'MostRecentActivityDate']
+                ],
+                where : {
+                    PatientUserId : patientUserId,
+                    UpdatedAt     : {
+                        [Op.lte] : new Date(),
+                    },
+                },
+                group : ['PatientUserId'],
+            });
+    
+            const result: MostRecentActivityDto[] = recentActivityDetails.map(task => ({
+                PatientUserId      : task.getDataValue('PatientUserId'),
+                RecentActivityDate : task.getDataValue('MostRecentActivityDate'),
+                ActivityDetails    : 'Blood Glucose',
+            }));
+        
+            return result.length > 0 ? result[0] : null;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
         }
     };
 

@@ -27,5 +27,25 @@
 
     "StrokeSurveyTextMessage": {
         "Message" : "La Asociación Americana del Corazón quiere conocer tu opinión sobre la aplicación Heart & Stroke Helper. ¡Completa la encuesta a continuación y recibe una tarjeta de regalo electrónica de Amazon de $10! Por favor, ignora este mensaje si ya has completado la encuesta. Enlace de la encuesta: https://americanheart.co1.qualtrics.com/jfe/form/SV_eD2XNWEuNRK6ALk"
+    },
+
+    "InactiveUserNotification": {
+        "Caregiver" : {
+            "NotificationType": "General",
+            "Title"           : "Your Care Makes a Difference!",
+            "Body"            : "Hi {{PatientName}}, it's been over a month since you last checked in. Your loved ones count on you! Reconnect with {{AppName}} today to track, support, and care better."
+        },
+
+        "Survior" : {
+            "NotificationType": "General",
+            "Title"           : "Your Health Journey Awaits!",
+            "Body"            : "Hi {{PatientName}}, we've missed you! It's been over a month since you last engaged with {{AppName}}. Restart your health journey today and take a step toward a healthier you."
+        },
+
+        "General" : {
+            "NotificationType": "General",
+            "Title"           : "Your Health Journey Awaits!",
+            "Body"            : "Hi {{PatientName}}, Life gets busy, we understand! Reconnect with {{AppName}} today and keep your health goals in focus. We’re here to support you."
+        }
     }
 }

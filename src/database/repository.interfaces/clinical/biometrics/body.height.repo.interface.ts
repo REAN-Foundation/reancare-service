@@ -1,3 +1,4 @@
+import { MostRecentActivityDto } from "../../../../domain.types/users/user.task/user.task.dto";
 import { BodyHeightDomainModel } from "../../../../domain.types/clinical/biometrics/body.height/body.height.domain.model";
 import { BodyHeightDto } from "../../../../domain.types/clinical/biometrics/body.height/body.height.dto";
 import { BodyHeightSearchFilters, BodyHeightSearchResults } from "../../../../domain.types/clinical/biometrics/body.height/body.height.search.types";
@@ -15,5 +16,7 @@ export interface IBodyHeightRepo {
     delete(id: string): Promise<boolean>;
 
     getRecent(patientUserId: string): Promise<BodyHeightDto>;
+
+    getMostRecentBodyHeightActivity (patientUserId: string): Promise<MostRecentActivityDto>;
 
 }

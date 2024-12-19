@@ -17,7 +17,7 @@ import { OtpPersistenceEntity } from '../../../domain.types/users/otp/otp.domain
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { Roles } from '../../../domain.types/role/role.types';
 import { ChangePasswordModel, OtpGenerationModel, UserAccountActionResult, ResetPasswordModel, SendPasswordResetCodeModel, UserBasicDetails, UserDomainModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
-import { UserDetailsDto } from '../../../domain.types/users/user/user.dto';
+import { UserDetailsDto, UserDto } from '../../../domain.types/users/user/user.dto';
 import { UserLoginSessionDomainModel } from '../../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
@@ -33,6 +33,19 @@ import { AuthHandler } from '../../../auth/auth.handler';
 import { EmailService } from '../../../modules/communication/email/email.service';
 import { EmailDetails } from '../../../modules/communication/email/email.details';
 import { UserSearchFilters, UserSearchResults } from '../../../domain.types/users/user/user.search.types';
+import { IBloodGlucoseRepo } from '../../../database/repository.interfaces/clinical/biometrics/blood.glucose.repo.interface';
+import { IBloodOxygenSaturationRepo } from '../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface';
+import { IBloodPressureRepo } from '../../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface';
+import { IBodyHeightRepo } from '../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface';
+import { IBodyTemperatureRepo } from '../../../database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface';
+import { IBodyWeightRepo } from '../../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface';
+import { IPulseRepo } from '../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ';
+import { MostRecentActivityDto } from '../../../domain.types/users/user.task/user.task.dto';
+import { ActivityTrackerDomainModel } from '../../../domain.types/users/patient/activity.tracker/activity.tracker.domain.model';
+import { IActivityTrackerRepo } from '../../../database/repository.interfaces/users/patient/activity.tracker.repo.interface';
+import { InactiveUsersNotificationFrequency } from '../../../domain.types/users/user/user.types';
+import { ActivityTrackerSearchFilters, ActivityTrackerSearchResults } from '../../../domain.types/users/patient/activity.tracker/activity.tracker.search.types';
+import { ActivityTrackerDto } from '../../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +66,14 @@ export class UserService {
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
+        @inject('IBloodGlucoseRepo') private _bloodGlucoseRepo: IBloodGlucoseRepo,
+        @inject('IBloodOxygenSaturationRepo') private _bloodOxygenSaturationRepo: IBloodOxygenSaturationRepo,
+        @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
+        @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
+        @inject('IBodyTemperatureRepo') private _bodyTemperatureRepo: IBodyTemperatureRepo,
+        @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
+        @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
+        @inject('IActivityTrackerRepo') private _activityTrackerRepo: IActivityTrackerRepo
     ) {}
 
     //#region Publics
@@ -666,9 +687,94 @@ export class UserService {
         return person;
     };
 
+    public userActivityTracker = async () => {
+        try {
+            Logger.instance().log('Starting user activity tracker');
+
+            const users = await this.getAllUsers();
+
+            for await (const user of users) {
+
+                const recentUserLoginActivity: MostRecentActivityDto = {
+                    PatientUserId      : user.id,
+                    RecentActivityDate : user.LastLoginDate ?? null,
+                    ActivityDetails    : 'Login'
+                };
+
+                const recentUserTaskActivity =  await this._userTaskRepo.getMostRecentUserActivity(user.id);
+                
+                const vitalActivities = await this.getRecentVitalActivity(user.id);
+
+                const recentUserVitalActivity = this.getMostRecentUserActivity(vitalActivities);
+
+                const recentUserActivity = this.getMostRecentUserActivity(
+                    [recentUserLoginActivity,
+                        recentUserTaskActivity,
+                        recentUserVitalActivity].filter(activity => activity !== null));
+
+                await this.createActvityTrackRecord(
+                    user.id, recentUserLoginActivity, recentUserTaskActivity, recentUserVitalActivity, recentUserActivity);
+            }
+
+        } catch (error) {
+            Logger.instance().log(error);
+        }
+    };
     //#endregion
 
     //#region Privates
+
+    private getAllUsers = async () => {
+        let users: UserDto[] = [];
+        let userSearchResults : UserSearchResults = null;
+        let page = 0;
+
+        const userSearchfilters :UserSearchFilters = {};
+
+        do {
+            userSearchfilters.PageIndex = page;
+            userSearchResults = await this._userRepo.search(userSearchfilters);
+            users = users.concat(userSearchResults.Items);
+            page++;
+        } while (userSearchResults.Items.length > 0);
+
+        const today = new Date();
+        const daysPassed = InactiveUsersNotificationFrequency.FifteenDays;
+        const endDate = TimeHelper.subtractDuration(today, daysPassed, DurationType.Day);
+        const startDate = today;
+        const filters: ActivityTrackerSearchFilters = {
+            LastActivityDateFrom : endDate,
+            LastActivityDateTo   : startDate
+        };
+
+        page = 0;
+        let activityTrackerResults : ActivityTrackerSearchResults = null;
+        let activityTrackerRecords : ActivityTrackerDto[] = [];
+
+        do {
+            filters.PageIndex = page;
+            activityTrackerResults = await this._activityTrackerRepo.search(filters);
+            activityTrackerRecords = activityTrackerRecords.concat(activityTrackerResults.Items);
+            page++;
+        } while (activityTrackerResults.Items.length > 0);
+
+        const _activityTrackerRecords = activityTrackerRecords.map((activityTracker) => {
+            return activityTracker.PatientUserId;
+        });
+
+        users = users.filter((user) => {
+            if (!_activityTrackerRecords.includes(user.id)) {
+                return user;
+            }
+        });
+
+        return users.map((user) => {
+            return {
+                id            : user.id,
+                LastLoginDate : user.LastLogin
+            };
+        });
+    };
 
     private checkTenant = async (user: UserDetailsDto): Promise<TenantDto> => {
         const tenantId = user.TenantId;
@@ -926,6 +1032,104 @@ export class UserService {
         }
     };
 
+    private getRecentVitalActivity = async (userId: string): Promise<MostRecentActivityDto[]> => {
+        const recentGlucoseActivity = await this._bloodGlucoseRepo.getMostRecentBloodGlucoseActivity(userId);
+        const recentOxygenSaturationActivity = await this._bloodOxygenSaturationRepo.
+            getMostRecentBloodOxygenSaturationActivity(userId);
+        const recentBloodPressureActivity = await this._bloodPressureRepo.getMostRecentBloodPressureActivity(userId);
+        const recentBodyTemperatureActivity = await this._bodyTemperatureRepo.getMostRecentBodyTemperatureActivity(userId);
+        const recentWeightActivity = await this._bodyWeightRepo.getMostRecentBodyWeightActivity(userId);
+        const recentHeightActivity = await this._bodyHeightRepo.getMostRecentBodyHeightActivity(userId);
+        const recentPulseRateActivity = await this._pulseRepo.getMostRecentPulseActivity(userId);
+
+        const activities: MostRecentActivityDto[] = [
+            recentGlucoseActivity,
+            recentOxygenSaturationActivity,
+            recentBloodPressureActivity,
+            recentBodyTemperatureActivity,
+            recentWeightActivity,
+            recentHeightActivity,
+            recentPulseRateActivity].filter(activity => activity !== null);
+
+        if (!activities || activities.length === 0) {
+            return null;
+        }
+        
+        return activities;
+    };
+
+    private getMostRecentUserActivity = (activities: MostRecentActivityDto[]): MostRecentActivityDto => {
+        if (!activities || activities.length === 0) {
+            return null;
+        }
+        return activities.reduce((mostRecent, current) => {
+            if (!current.RecentActivityDate) {
+                return mostRecent;
+            }
+            if (!mostRecent?.RecentActivityDate || current.RecentActivityDate > mostRecent.RecentActivityDate) {
+                return current;
+            }
+            return mostRecent;
+        }, null as MostRecentActivityDto | null);
+    };
+
+    private createActvityTrackRecord = async (
+        userId: string,
+        recentUserLoginActivity: MostRecentActivityDto,
+        recentUserTaskActivity: MostRecentActivityDto,
+        recentUserVitalActivity: MostRecentActivityDto,
+        recentUserActivity: MostRecentActivityDto) => {
+        
+        try {
+            const activityTrackDomainModel: ActivityTrackerDomainModel = this.getActivityTrackerDomainModel(
+                userId, recentUserLoginActivity, recentUserTaskActivity, recentUserVitalActivity, recentUserActivity);
+    
+            const searchResult = await this._activityTrackerRepo.search({
+                PatientUserId : userId,
+            });
+    
+            if (searchResult.TotalCount > 0) {
+                await this._activityTrackerRepo.update(searchResult.Items[0].id, activityTrackDomainModel);
+            }
+            else {
+                await this._activityTrackerRepo.create(activityTrackDomainModel);
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Unable to create activity tracker record for user ${userId}`);
+        }
+        
+    };
+
+    private getActivityTrackerDomainModel = (
+        userId: string,
+        recentUserLoginActivity: MostRecentActivityDto,
+        recentUserTaskActivity: MostRecentActivityDto,
+        recentUserVitalActivity: MostRecentActivityDto,
+        recentUserActivity: MostRecentActivityDto) => {
+
+        const activityTrackerDomainModel: ActivityTrackerDomainModel = {
+            PatientUserId : userId,
+        };
+    
+        if (recentUserLoginActivity) {
+            activityTrackerDomainModel.LastLoginDate = recentUserLoginActivity.RecentActivityDate ?? null;
+        }
+        if (recentUserTaskActivity) {
+            activityTrackerDomainModel.LastUserTaskDate = recentUserTaskActivity.RecentActivityDate ?? null;
+            activityTrackerDomainModel.UserTaskDetails = recentUserTaskActivity.ActivityDetails ?? null;
+        }
+    
+        if (recentUserVitalActivity) {
+            activityTrackerDomainModel.LastVitalUpdateDate = recentUserVitalActivity.RecentActivityDate ?? null;
+            activityTrackerDomainModel.UpdatedVitalDetails = recentUserVitalActivity.ActivityDetails ?? null;
+        }
+        if (recentUserActivity) {
+            activityTrackerDomainModel.LastActivityDate = recentUserActivity.RecentActivityDate ?? null;
+        }
+        return activityTrackerDomainModel;
+        
+    };
     //#endregion
 
 }

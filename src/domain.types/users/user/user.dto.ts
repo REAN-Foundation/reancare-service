@@ -24,6 +24,7 @@ export interface UserDto {
     id             ?: uuid;
     PersonId       ?: uuid;
     TenantId       ?: uuid;
+    LastLogin      ?: Date;
     Person         ?: PersonDto;
     DefaultTimeZone?: string;
     CurrentTimeZone?: string;

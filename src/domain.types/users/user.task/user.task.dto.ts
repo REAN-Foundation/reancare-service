@@ -1,4 +1,4 @@
-import { ProgressStatus } from "../../../domain.types/miscellaneous/system.types";
+import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
 import { UserActionType, UserTaskCategory } from "./user.task.types";
 
 export interface UserTaskDto {
@@ -38,4 +38,10 @@ export interface TaskSummaryDto {
     CompletedTasks : UserTaskDto[];
     InProgressTasks: UserTaskDto[];
     PendingTasks   : UserTaskDto[];
+}
+
+export interface MostRecentActivityDto {
+    PatientUserId?: uuid;
+    RecentActivityDate? : Date;
+    ActivityDetails?: string;
 }

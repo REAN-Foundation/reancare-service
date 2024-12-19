@@ -20,8 +20,15 @@ import { UserService } from '../../services/users/user/user.service';
 import { TimeHelper } from '../../common/time.helper';
 import { Injector } from '../../startup/injector';
 import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
-import { SupportedLanguage } from '../../domain.types/users/user/user.types';
+import { InactiveUserDuration, InactiveUsersNotificationFrequency, SupportedLanguage } from '../../domain.types/users/user/user.types';
 import { loadLanguageTemplates } from '../../modules/communication/message.template/language/language.selector';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { ActivityTrackerSearchFilters } from '../../domain.types/users/patient/activity.tracker/activity.tracker.search.types';
+import { ActivityTrackerSearchResults } from '../../domain.types/users/patient/activity.tracker/activity.tracker.search.types';
+import { ActivityTrackerDto } from '../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
+import { ActivityTrackerRepo } from '../../database/sql/sequelize/repositories/users/patient/patient.tracker.repo';
+import { AppName } from '../../domain.types/statistics/aha/aha.type';
+import { PatientType } from '../../domain.types/users/patient/patient/patient.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +52,8 @@ export class AHAActions {
 
     _fileResourceService: FileResourceService = null;
 
+    _activityTrackerRepo: ActivityTrackerRepo = null;
+
     _userService: UserService = null;
 
     constructor() {
@@ -57,7 +66,7 @@ export class AHAActions {
         this._userDeviceDetailsService = Injector.Container.resolve(UserDeviceDetailsService);
         this._fileResourceService = Injector.Container.resolve(FileResourceService);
         this._userService = Injector.Container.resolve(UserService);
-
+        this._activityTrackerRepo = Injector.Container.resolve(ActivityTrackerRepo);
     }
 
     //#region Public
@@ -449,6 +458,42 @@ export class AHAActions {
         }
     };
 
+    public scheduleNotificationToInactiveUsers = async () => {
+        try {
+            const inactiveUserIds = await this.getInactiveUsers();
+            Logger.instance().log(`Inactive users being processed for sending notifications: ${JSON.stringify(inactiveUserIds.length)}`);
+
+            for await (var inactiveUserId of inactiveUserIds) {
+                var userDevices = await this._userDeviceDetailsService.getByUserId(inactiveUserId);
+                var userAppRegistrations = [];
+                var userDeviceTokens = [];
+                userDevices.forEach(userDevice => {
+                    userAppRegistrations.push(userDevice.AppName);
+                    userDeviceTokens.push(userDevice.Token);
+                });
+                const appName = this.getAppName(userAppRegistrations);
+                if (userAppRegistrations.length > 0 && appName) {
+                    Logger.instance().log(`[InactiveUserNotificationCron] Sending notification to inactive user:${inactiveUserId}`);
+                    const user = await this._userService.getById(inactiveUserId);
+                    if (user) {
+                        await this.sendInactiveUserNotification(
+                            userDeviceTokens,
+                            user?.PreferredLanguage,
+                            user?.Person?.StrokeSurvivorOrCaregiver,
+                            user?.Person?.FirstName,
+                            appName
+                        );
+                    }
+                } else {
+                    Logger.instance().log(`[InactiveUserNotificationCron] Skip notification as device is not eligible:${inactiveUserId}`);
+                }
+            }
+            Logger.instance().log(`[InactiveUserNotificationCron] Cron completed successfully.`);
+        }
+        catch (error) {
+            Logger.instance().log(`[InactiveUserNotificationCron] Error occured while sending notification to inactive users: ${error.message}`);
+        }
+    };
     //#endregion
 
     //#region Privates
@@ -610,6 +655,42 @@ export class AHAActions {
 
     };
 
+    private sendInactiveUserNotification = async (
+        userDeviceTokens,
+        preferredLanguage: SupportedLanguage = SupportedLanguage.English,
+        caregiverOrSurvior: string = null,
+        patientName: string,
+        appName: string
+    ) => {
+
+        try {
+            const messageTemplate = loadLanguageTemplates(preferredLanguage);
+
+            const customMessageTemplate = this.getCustomMessageTemplate(caregiverOrSurvior, messageTemplate);
+    
+            const title = customMessageTemplate?.Title;
+            let body = customMessageTemplate?.Body;
+            const notificationType = customMessageTemplate?.NotificationType;
+    
+            body = body.replace('{{PatientName}}', patientName || 'Dear');
+            body = body.replace('{{AppName}}', appName);
+    
+            Logger.instance().log(`Notification Title: ${title}`);
+            Logger.instance().log(`Notification Body: ${body}`);
+            Logger.instance().log(`Notification template: ${JSON.stringify(customMessageTemplate)}`);
+    
+            var message = Loader.notificationService.formatNotificationMessage(notificationType, title, body);
+            Logger.instance().log(`[InactiveUserNotificationCron] Inactive user notification Paylod: ${JSON.stringify(message)}`);
+            for await (var deviceToken of userDeviceTokens) {
+                await Loader.notificationService.sendNotificationToDevice(deviceToken, message);
+            }
+    
+        } catch (error) {
+            Logger.instance().log(`[InactiveUserNotificationCron] Error sending notification to inactive users: ${error}`);
+        }
+        
+    };
+
     private eligibleForSendingSMS = (userAppRegistrations) => {
 
         const eligibleForSendingText = userAppRegistrations.indexOf('HF Helper') !== -1;
@@ -617,6 +698,60 @@ export class AHAActions {
         return eligibleForSendingText;
     };
 
+    private getInactiveUsers = async () => {
+        const today = new Date();
+        const daysPassed = InactiveUsersNotificationFrequency.FifteenDays;
+        const endDate = TimeHelper.subtractDuration(today, daysPassed, DurationType.Day);
+        const startDate = TimeHelper.subtractDuration(endDate, InactiveUserDuration.OneYear, DurationType.Day);
+        const filters: ActivityTrackerSearchFilters = {
+            LastActivityDateFrom : startDate,
+            LastActivityDateTo   : endDate
+        };
+        
+        let page = 0;
+        let activityTrackerResults : ActivityTrackerSearchResults = null;
+        let activityTrackerRecords : ActivityTrackerDto[] = [];
+        
+        do {
+            filters.PageIndex = page;
+            activityTrackerResults = await this._activityTrackerRepo.search(filters);
+            activityTrackerRecords = activityTrackerRecords.concat(activityTrackerResults.Items);
+            page++;
+        } while (activityTrackerResults.Items.length > 0);
+
+        return activityTrackerRecords.map((activityTracker) => {
+            return activityTracker.PatientUserId;
+        });
+    };
+
+    private getCustomMessageTemplate = (caregiverOrSurvior: string, messageTemplate) => {
+        caregiverOrSurvior = caregiverOrSurvior?.toLowerCase() || '';
+
+        if (caregiverOrSurvior === PatientType.Caregiver) {
+            return messageTemplate['InactiveUserNotification'].Caregiver;
+        } else if (caregiverOrSurvior === PatientType.Survior) {
+            return messageTemplate['InactiveUserNotification'].Survior;
+        } else {
+            return messageTemplate['InactiveUserNotification'].General;
+        }
+
+    };
+
+    private getAppName = (userAppRegistrations) => {
+        if (process.env.NODE_ENV === 'development' && userAppRegistrations.indexOf(AppName.REANHealthGuru) >= 0 ) {
+            return AppName.REANHealthGuru;
+        } else if (process.env.NODE_ENV === 'uat' && userAppRegistrations.indexOf(AppName.REANHealthGuru) >= 0 ) {
+            return AppName.REANHealthGuru;
+        } else if (process.env.NODE_ENV === 'production' && userAppRegistrations.indexOf(AppName.REANHealthGuru) >= 0 ) {
+            return AppName.REANHealthGuru;
+        } else if (process.env.NODE_ENV === 'uat' && userAppRegistrations.indexOf(AppName.HF) >= 0 ) {
+            return AppName.HS;
+        } else if (process.env.NODE_ENV === 'production' && userAppRegistrations.indexOf(AppName.HS) >= 0 ) {
+            return AppName.HS;
+        } else {
+            return null;
+        }
+    };
     //#endregion
 
 }

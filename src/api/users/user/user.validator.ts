@@ -311,6 +311,18 @@ export class UserValidator {
                 .escape()
                 .run(request);
 
+            await query('lastLoginDateFrom').optional()
+                .isDate()
+                .trim()
+                .escape()
+                .run(request);
+
+            await query('lastLoginDateTo').optional()
+                .isDate()
+                .trim()
+                .escape()
+                .run(request);
+                
             // await query('birthdateFrom').optional()
             //     .isDate()
             //     .trim()

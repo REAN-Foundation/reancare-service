@@ -1,3 +1,4 @@
+import { MostRecentActivityDto } from "../../../../domain.types/users/user.task/user.task.dto";
 import { BloodOxygenSaturationDomainModel } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model";
 import { BloodOxygenSaturationDto } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
 import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults } from "../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types";
@@ -20,5 +21,7 @@ export interface IBloodOxygenSaturationRepo {
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
     getRecent(patientUserId: string): Promise<BloodOxygenSaturationDto>;
+
+    getMostRecentBloodOxygenSaturationActivity (patientUserId: string): Promise<MostRecentActivityDto>;
 
 }

@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
@@ -13,6 +13,7 @@ import BloodPressure from '../../../models/clinical/biometrics/blood.pressure.mo
 import { HelperRepo } from '../../common/helper.repo';
 import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { Helper } from '../../../../../../common/helper';
+import { MostRecentActivityDto } from '../../../../../../domain.types/users/user.task/user.task.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -346,6 +347,36 @@ export class BloodPressureRepo implements IBloodPressureRepo {
         catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    getMostRecentBloodPressureActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        try {
+            const recentActivityDetails = await BloodPressure.findAll({
+                attributes : [
+                    'PatientUserId',
+                    [fn('MAX', col('UpdatedAt')), 'MostRecentActivityDate']
+                ],
+                where : {
+                    PatientUserId : patientUserId,
+                    UpdatedAt     : {
+                        [Op.lte] : new Date(),
+                    },
+                },
+                group : ['PatientUserId'],
+            });
+            
+            const result: MostRecentActivityDto[] = recentActivityDetails.map(task => ({
+                PatientUserId      : task.getDataValue('PatientUserId'),
+                RecentActivityDate : task.getDataValue('MostRecentActivityDate'),
+                ActivityDetails    : 'Blood Pressure',
+            }));
+                
+            return result.length > 0 ? result[0] : null;
+            
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
         }
     };
 

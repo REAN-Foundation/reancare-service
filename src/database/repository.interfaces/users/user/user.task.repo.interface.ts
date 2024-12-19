@@ -1,5 +1,5 @@
 import { UserTaskDomainModel } from "../../../../domain.types/users/user.task/user.task.domain.model";
-import { TaskSummaryDto, UserTaskDto } from "../../../../domain.types/users/user.task/user.task.dto";
+import { MostRecentActivityDto, TaskSummaryDto, UserTaskDto } from "../../../../domain.types/users/user.task/user.task.dto";
 import { UserTaskSearchFilters, UserTaskSearchResults } from "../../../../domain.types/users/user.task/user.task.search.types";
 
 export interface IUserTaskRepo {
@@ -33,4 +33,6 @@ export interface IUserTaskRepo {
     getUserEngagementStats(patientUserId: string, numMonths: number): Promise<any>;
 
     getUserTasksOfSelectiveChannel(timePeriod: number): Promise<any>;
+
+    getMostRecentUserActivity(userId: string): Promise<MostRecentActivityDto>;
 }

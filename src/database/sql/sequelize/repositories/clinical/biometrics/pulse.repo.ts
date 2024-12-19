@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { PulseDomainModel } from "../../../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model";
@@ -10,6 +10,8 @@ import PulseModel from '../../../models/clinical/biometrics/pulse.model';
 import { HelperRepo } from '../../common/helper.repo';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { MostRecentActivityDto } from '../../../../../../domain.types/users/user.task/user.task.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -275,6 +277,36 @@ export class PulseRepo implements IPulseRepo {
         catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    getMostRecentPulseActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        try {
+            const recentActivityDetails = await PulseModel.findAll({
+                attributes : [
+                    'PatientUserId',
+                    [fn('MAX', col('UpdatedAt')), 'MostRecentActivityDate']
+                ],
+                where : {
+                    PatientUserId : patientUserId,
+                    UpdatedAt     : {
+                        [Op.lte] : new Date(),
+                    },
+                },
+                group : ['PatientUserId'],
+            });
+                            
+            const result: MostRecentActivityDto[] = recentActivityDetails.map(task => ({
+                PatientUserId      : task.getDataValue('PatientUserId'),
+                RecentActivityDate : task.getDataValue('MostRecentActivityDate'),
+                ActivityDetails    : 'Pulse',
+            }));
+                                
+            return result.length > 0 ? result[0] : null;
+                            
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
         }
     };
 

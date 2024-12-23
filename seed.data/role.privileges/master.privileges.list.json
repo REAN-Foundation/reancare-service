@@ -625,5 +625,6 @@
     "FollowUpCancellations.Delete",
     "FollowUpCancellations.GetById",
     "FollowUpCancellations.Search",
-    "FollowUpCancellations.Update"
+    "FollowUpCancellations.Update",
+    "User.Patient.Statistics.GetPatientDashboardSummary"
 ]

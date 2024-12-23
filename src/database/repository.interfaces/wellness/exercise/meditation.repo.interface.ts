@@ -19,4 +19,5 @@ export interface IMeditationRepo {
 
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
+    getMeditationByStartDateAndPatientUserId(startDate: Date, patientUserId: string): Promise<MeditationDto>;
 }

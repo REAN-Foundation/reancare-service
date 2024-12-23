@@ -721,6 +721,7 @@
             "Statistics": {
                 "GetPatientStats": false,
                 "GetPatientStatsReport": false,
+                "GetPatientDashboardSummary": false,
                 "GetReportSettingsByUserId": true,
                 "UpdateReportSettingsByUserId": true,
                 "CreateReportSettings": true

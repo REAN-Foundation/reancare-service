@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin';
 import { Logger } from '../../../../common/logger';
 import { INotificationService } from '../notification.service.interface';
 import fs from 'fs';
-import { NullableBoolean } from 'aws-sdk/clients/autoscaling';
+import { ApiError } from '../../../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -65,10 +65,11 @@ export class FirebaseNotificationService implements INotificationService {
         } catch (error) {
             var errorMessage = 'Error sending notification to topic: ' + topic;
             Logger.instance().error(errorMessage, 500, error.message);
+            throw new ApiError(500, error.message);
         }
     };
 
-    formatNotificationMessage = (notificationType: string, title: string, body: any, url = null, topic?: null): any => {
+    formatNotificationMessage = (notificationType: string = 'General', title: string, body: any, url = null, topic?: null): any => {
         var message = {
             data : {
                 type         : notificationType,

@@ -36,6 +36,14 @@ export class StatisticsAuth {
         RequestType : RequestType.GetMany,
     };
 
+    static readonly getPatientDashboardSummary: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetPatientDashboardSummary`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant, //Could be public?
+        RequestType : RequestType.GetMany,
+    };
+
     static readonly createReportSettings: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateReportSettings`,

@@ -3,6 +3,7 @@ import { query, body, validationResult, param } from 'express-validator';
 import { VolunteerSearchFilters } from '../../../../domain.types/assorted/blood.donation/volunteer/volunteer.search.types';
 import { Helper } from '../../../../common/helper';
 import { VolunteerDomainModel } from '../../../../domain.types/assorted/blood.donation/volunteer/volunteer.domain.model';
+import { SupportedLanguage } from '../../../../domain.types/users/user/user.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,23 +29,24 @@ export class VolunteerValidator {
                     BirthDate       : birthdate,
                     ImageResourceId : request.body.ImageResourceId ?? null,
                 },
-                id               : request.params.userId,
-                Password         : request.body.Password ?? null,
-                DefaultTimeZone  : request.body.DefaultTimeZone ?? null,
-                CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
-                GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
-                TenantCode       : request.body.TenantCode ?? null,
-                TenantId         : request.body.TenantId ?? null,
+                id                : request.params.userId,
+                Password          : request.body.Password ?? null,
+                DefaultTimeZone   : request.body.DefaultTimeZone ?? null,
+                CurrentTimeZone   : request.body.DefaultTimeZone ?? null,
+                PreferredLanguage : request.body.PreferredLanguage as SupportedLanguage ?? null,
+                GenerateLoginOTP  : request.body.DefaultTimeZone ?? null,
+                TenantCode        : request.body.TenantCode ?? null,
+                TenantId          : request.body.TenantId ?? null,
             },
-            MedIssues            : request.body.MedIssues ?? null,
-            BloodGroup           : request.body.BloodGroup ?? null,
-            SelectedBridgeId     : request.body.SelectedBridgeId ?? null,
-            SelectedBloodGroup   : request.body.SelectedBloodGroup ?? null,
-            SelectedPhoneNumber  : request.body.SelectedPhoneNumber ?? null,
-            LastDonationId       : request.body.LastDonationId ?? null,
-            LastDonationDate     : request.body.LastDonationDate ?? null,
-            IsAvailable          : request.body.IsAvailable ?? false,
-            AddressId            : request.body.AddressId,
+            MedIssues           : request.body.MedIssues ?? null,
+            BloodGroup          : request.body.BloodGroup ?? null,
+            SelectedBridgeId    : request.body.SelectedBridgeId ?? null,
+            SelectedBloodGroup  : request.body.SelectedBloodGroup ?? null,
+            SelectedPhoneNumber : request.body.SelectedPhoneNumber ?? null,
+            LastDonationId      : request.body.LastDonationId ?? null,
+            LastDonationDate    : request.body.LastDonationDate ?? null,
+            IsAvailable         : request.body.IsAvailable ?? false,
+            AddressId           : request.body.AddressId,
         };
 
         if (
@@ -122,6 +124,13 @@ export class VolunteerValidator {
             .isDate()
             .run(request);
 
+        await body('PreferredLanguage').optional()
+            .trim()
+            .escape()
+            .isIn(Object.values(SupportedLanguage))
+            .withMessage(`Preferred language must be one of the following: ${Object.values(SupportedLanguage).join(', ')}`)
+            .run(request);
+            
         await body('BloodGroup').optional()
             .trim()
             .escape()

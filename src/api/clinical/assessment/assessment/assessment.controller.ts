@@ -21,6 +21,7 @@ import { AssessmentSearchFilters } from '../../../../domain.types/clinical/asses
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { AssessmentEvents } from '../assessment.events';
+import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -408,12 +409,20 @@ export class AssessmentController extends BaseController {
             if (activity !== null) {
                 var userTaskId = activity.UserTaskId;
                 await this._userTaskService.finishTask(userTaskId);
+                ActivityTrackerHandler.addOrUpdateActivity({
+                    PatientUserId      : assessment.PatientUserId,
+                    RecentActivityDate : new Date(),
+                });
             }
             await this._careplanService.completeAction(parentActivityId, new Date(), true, assessment);
         } else {
             var task = await this._userTaskService.getByActionId(assessmentId);
             if (task) {
                 await this._userTaskService.finishTask(task.id);
+                ActivityTrackerHandler.addOrUpdateActivity({
+                    PatientUserId      : assessment.PatientUserId,
+                    RecentActivityDate : new Date(),
+                });
             }
         }
     }

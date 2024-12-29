@@ -12,6 +12,7 @@ import { CustomTaskService } from '../../services/users/user/custom.task.service
 import { CustomTaskDomainModel } from '../../domain.types/users/custom.task/custom.task.domain.model';
 import { ApiError } from '../../common/api.error';
 import { Injector } from '../../startup/injector';
+import { ActivityTrackerHandler } from '../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -75,6 +76,10 @@ export class CommonActions {
         };
 
         const userTask = await this._userTaskService.create(userTaskBody);
+        ActivityTrackerHandler.addOrUpdateActivity({
+            PatientUserId      : userTaskBody.UserId,
+            RecentActivityDate : new Date()
+        });
         Logger.instance().log(`[KCCQTask] Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
 
         return userTask.ActionId;
@@ -99,6 +104,12 @@ export class CommonActions {
         };
 
         var userTask = await this._userTaskService.create(userTaskModel);
+
+        ActivityTrackerHandler.addOrUpdateActivity({
+            PatientUserId      : userTaskModel.UserId,
+            RecentActivityDate : new Date()
+        });
+
         userTask['Action'] = customTask;
         return userTask;
     };

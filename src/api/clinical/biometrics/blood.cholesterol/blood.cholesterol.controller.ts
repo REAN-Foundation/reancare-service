@@ -8,6 +8,7 @@ import { BloodCholesterolValidator } from './blood.cholesterol.validator';
 import { BloodCholesterolDomainModel } from '../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.domain.model';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,9 +33,14 @@ export class BloodCholesterolController extends BiometricsController {
                 throw new ApiError(400, 'Cannot create record for blood cholesterol!');
             }
             BiometricsEvents.onBiometricsAdded(request, record, 'blood.cholesterol');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Blood cholesterol record created successfully!', 201, {
                 BloodCholesterol : record,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -91,6 +97,10 @@ export class BloodCholesterolController extends BiometricsController {
                 throw new ApiError(400, 'Unable to update blood cholesterol record!');
             }
             BiometricsEvents.onBiometricsUpdated(request, updated, 'blood.cholesterol');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Blood cholesterol record updated successfully!', 200, {
                 BloodCholesterol : updated,
             });

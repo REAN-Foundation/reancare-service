@@ -9,6 +9,8 @@ import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/
 import { CareplanHandler } from '../../../modules/careplan/careplan.handler';
 import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/patient.dto";
 import { IPatientRepo } from "../../../database/repository.interfaces/users/patient/patient.repo.interface";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { MostRecentActivityDto } from "../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -95,6 +97,10 @@ export class UserTaskService {
     getHealthSystem = async (id: string): Promise<PatientDetailsDto> => {
         var details = await this._patientRepo.getByUserId(id);
         return details;
+    };
+
+    getMostRecentUserActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        return await this._userTaskRepo.getMostRecentUserActivity(patientUserId);
     };
 
 }

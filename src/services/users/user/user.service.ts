@@ -33,6 +33,7 @@ import { AuthHandler } from '../../../auth/auth.handler';
 import { EmailService } from '../../../modules/communication/email/email.service';
 import { EmailDetails } from '../../../modules/communication/email/email.details';
 import { UserSearchFilters, UserSearchResults } from '../../../domain.types/users/user/user.search.types';
+import { MostRecentActivityDto } from '../../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -664,6 +665,10 @@ export class UserService {
         }
 
         return person;
+    };
+
+    getRecentUserActivity = async (): Promise<MostRecentActivityDto[]> => {
+        return await this._userRepo.getRecentUserActivity();
     };
 
     //#endregion

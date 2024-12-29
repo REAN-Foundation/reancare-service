@@ -7,6 +7,7 @@ import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from '../.
 import { TemperatureStore } from "../../../modules/ehr/services/body.temperature.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { Injector } from "../../../startup/injector";
+import { MostRecentActivityDto } from "../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +65,10 @@ export class BodyTemperatureService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bodyTemperatureRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    getMostRecentBodyTemperatureActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        return await this._bodyTemperatureRepo.getMostRecentBodyTemperatureActivity(patientUserId);
     };
 
 }

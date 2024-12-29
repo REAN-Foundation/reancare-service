@@ -31,6 +31,7 @@ import { TimeHelper } from "../../../../common/time.helper";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 import { Injector } from "../../../../startup/injector";
 import { UserTaskSearchFilters } from "../../../../domain.types/users/user.task/user.task.search.types";
+import { ActivityTrackerHandler } from "../../../../services/users/patient/activity.tracker/activity.tracker.handler";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1021,6 +1022,10 @@ export class AhaCareplanService implements ICareplanService {
         };
 
         const userTask = await this._userTaskService.create(userTaskBody);
+        ActivityTrackerHandler.addOrUpdateActivity({
+            PatientUserId      : model.PatientUserId,
+            RecentActivityDate : new Date()
+        });
 
         return userTask.ActionId;
     };
@@ -1055,22 +1060,22 @@ export class AhaCareplanService implements ICareplanService {
     private checkIfMedicalProfileTaskExist = async (
         patientUserId: uuid,
         templateName : string
-        ) => {
+    ) => {
 
-            const filters: UserTaskSearchFilters = {
-                UserId       : patientUserId,
-                Task         : templateName,
-                OrderBy      : 'CreatedAt',
-                Order        : 'descending',
-                ItemsPerPage : 1
-            };
+        const filters: UserTaskSearchFilters = {
+            UserId       : patientUserId,
+            Task         : templateName,
+            OrderBy      : 'CreatedAt',
+            Order        : 'descending',
+            ItemsPerPage : 1
+        };
         
-            const userTask = await this._userTaskService.search(filters);
-            if (userTask.TotalCount === 0) {
-                return true;
-            } else {
-                return false;
-            }
+        const userTask = await this._userTaskService.search(filters);
+        if (userTask.TotalCount === 0) {
+            return true;
+        } else {
+            return false;
+        }
             
     };
 
@@ -1112,6 +1117,11 @@ export class AhaCareplanService implements ICareplanService {
         };
 
         const userTask = await this._userTaskService.create(userTaskBody);
+
+        ActivityTrackerHandler.addOrUpdateActivity({
+            PatientUserId      : userTaskBody.UserId,
+            RecentActivityDate : new Date()
+        });
 
         return userTask.ActionId;
     };

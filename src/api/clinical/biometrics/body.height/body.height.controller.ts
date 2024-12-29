@@ -7,6 +7,7 @@ import { BodyHeightValidator } from './body.height.validator';
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +39,10 @@ export class BodyHeightController extends BiometricsController {
             await this._ehrVitalService.addEHRBodyHeightForAppNames(bodyHeight);
             
             BiometricsEvents.onBiometricsAdded(request, bodyHeight, 'body.height');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Height record created successfully!', 201, {
                 BodyHeight : bodyHeight
             });
@@ -101,6 +106,10 @@ export class BodyHeightController extends BiometricsController {
             await this._ehrVitalService.addEHRBodyHeightForAppNames(updated);
 
             BiometricsEvents.onBiometricsUpdated(request, updated, 'body.height');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Height record updated successfully!', 200, {
                 BodyHeight : updated
             });

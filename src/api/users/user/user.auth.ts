@@ -178,8 +178,8 @@ export class UserAuth {
     static readonly deleteProfileImage: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.DeleteProfileImage`,
-        Ownership   : ResourceOwnership.System,
-        ActionScope : ActionScope.System,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
         RequestType : RequestType.UpdateOne,
     };
 

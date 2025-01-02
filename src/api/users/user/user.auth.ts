@@ -175,6 +175,14 @@ export class UserAuth {
         RequestType : RequestType.GetMany,
     };
 
+    static readonly deleteProfileImage: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.DeleteProfileImage`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.UpdateOne,
+    };
+
     /////////////////////////////////////////////////////////
 
     // The following are implicitly handled through concrete roles

@@ -747,6 +747,7 @@
             "RotateUserAccessToken": true,
             "Search": true,
             "Update": true,
+            "DeleteProfileImage": true,
             "Delete": true
         },
         "UserTask": {

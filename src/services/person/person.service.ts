@@ -9,6 +9,7 @@ import { AddressDto } from '../../domain.types/general/address/address.dto';
 import { OrganizationDto } from '../../domain.types/general/organization/organization.types';
 import { RoleDto } from '../../domain.types/role/role.dto';
 import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
+import { UserDetailsDto } from '../../domain.types/users/user/user.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +133,11 @@ export class PersonService {
 
     getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
         return await this._personRepo.getAllPersonsWithPhoneAndRole(phone, roleId);
+    };
+
+    deleteProfileImage = async (id: string, personDomainModel: PersonDomainModel): Promise<UserDetailsDto> => {
+        var dto = await this._personRepo.deleteProfileImage(id, personDomainModel);
+        return dto;
     };
 
     //#endregion

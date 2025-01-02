@@ -3,6 +3,7 @@ import { ReportFrequency } from "../../../../domain.types/users/patient/health.r
 import { BloodPressureDomainModel } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model";
 import { BloodPressureDto } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
 import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types";
+import { MostRecentActivityDto } from "../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 export interface IBloodPressureRepo {
 
@@ -24,4 +25,6 @@ export interface IBloodPressureRepo {
     getAllUserResponsesBetween(patientUserId: string, dateFrom: Date, dateTo: Date): Promise<any[]>;
 
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
+
+    getMostRecentBloodPressureActivity(patientUserId: string): Promise<MostRecentActivityDto>;
 }

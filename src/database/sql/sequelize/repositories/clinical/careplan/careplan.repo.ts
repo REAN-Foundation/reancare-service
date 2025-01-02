@@ -20,6 +20,7 @@ import { Helper } from '../../../../../../common/helper';
 import UserTask from '../../../models/users/user/user.task.model';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import { CareplanCode } from '../../../../../../domain.types/statistics/aha/aha.type';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -95,6 +96,22 @@ export class CareplanRepo implements ICareplanRepo {
         try {
             const enrollment = await CareplanEnrollment.findAll({
                 where : {}
+            });
+            return enrollment.map(x => {
+                return EnrollmentMapper.toDto(x);
+            });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public getAllCareplanEnrollmentByPlanCode = async (planCode: CareplanCode): Promise<EnrollmentDto[]> => {
+        try {
+            const enrollment = await CareplanEnrollment.findAll({
+                where : {
+                    PlanCode : planCode
+                }
             });
             return enrollment.map(x => {
                 return EnrollmentMapper.toDto(x);

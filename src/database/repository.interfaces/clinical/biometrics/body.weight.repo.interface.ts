@@ -2,6 +2,7 @@ import { ReportFrequency } from "../../../../domain.types/users/patient/health.r
 import { BodyWeightDomainModel } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model";
 import { BodyWeightDto } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.dto";
 import { BodyWeightSearchFilters, BodyWeightSearchResults } from "../../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types";
+import { MostRecentActivityDto } from "../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 export interface IBodyWeightRepo {
 
@@ -22,4 +23,6 @@ export interface IBodyWeightRepo {
     getAllUserResponsesBetween(patientUserId: string, dateFrom: Date, dateTo: Date): Promise<any[]>;
 
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
+
+    getMostRecentBodyWeightActivity(patientUserId: string): Promise<MostRecentActivityDto>;
 }

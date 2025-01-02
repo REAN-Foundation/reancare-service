@@ -181,6 +181,14 @@ export class CustomActionsHandler {
         return isForBotChannel;
     };
 
+    public scheduleNotificationToInactiveUsers = async () => {
+        try {
+            await this._ahaActions.scheduleNotificationToInactiveUsers();
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending notification to inactive users.`);
+        }
+    };
     //#endregion
 
 }

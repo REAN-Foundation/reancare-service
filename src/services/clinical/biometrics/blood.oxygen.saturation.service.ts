@@ -7,6 +7,7 @@ import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults 
 import { BloodOxygenSaturationStore } from "../../../modules/ehr/services/blood.oxygen.saturation.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { Injector } from "../../../startup/injector";
+import { MostRecentActivityDto } from "../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +65,10 @@ export class BloodOxygenSaturationService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bloodOxygenSaturationRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    getMostRecentBloodOxygenSaturationActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        return await this._bloodOxygenSaturationRepo.getMostRecentBloodOxygenSaturationActivity(patientUserId);
     };
 
 }

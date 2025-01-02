@@ -7,7 +7,8 @@ export enum CareplanCode {
 
 export enum AppName {
    HS = 'Heart &amp; Stroke Helper™',
-   HF = 'HF Helper'
+   HF = 'HF Helper',
+   REANHealthGuru = 'REAN HealthGuru'
 }
 
 export enum HealthSystem {

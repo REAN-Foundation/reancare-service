@@ -12,6 +12,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,6 +70,10 @@ export class BodyTemperatureController extends BiometricsController {
             }
 
             BiometricsEvents.onBiometricsAdded(request, bodyTemperature, 'body.temperature');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Body temperature record created successfully!', 201, {
                 BodyTemperature : bodyTemperature,
             });
@@ -155,6 +160,10 @@ export class BodyTemperatureController extends BiometricsController {
             }
 
             BiometricsEvents.onBiometricsUpdated(request, updated, 'body.temperature');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Body temperature record updated successfully!', 200, {
                 BodyTemperature : updated,
             });

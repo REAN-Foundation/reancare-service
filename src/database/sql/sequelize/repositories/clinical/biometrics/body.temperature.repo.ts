@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { BodyTemperatureDomainModel } from "../../../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model";
@@ -10,6 +10,8 @@ import BodyTemperatureModel from '../../../models/clinical/biometrics/body.tempe
 import { HelperRepo } from '../../common/helper.repo';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { MostRecentActivityDto } from '../../../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -274,6 +276,38 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
         catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    getMostRecentBodyTemperatureActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        try {
+            const recentActivityDetails = await BodyTemperatureModel.findOne({
+                attributes : [
+                    'PatientUserId',
+                    [fn('MAX', col('UpdatedAt')), 'MostRecentActivityDate']
+                ],
+                where : {
+                    PatientUserId : patientUserId,
+                    UpdatedAt     : {
+                        [Op.lte] : new Date(),
+                    },
+                },
+            });
+                    
+            if (!recentActivityDetails) {
+                return null;
+            }
+
+            const result: MostRecentActivityDto = {
+                PatientUserId      : recentActivityDetails.getDataValue('PatientUserId'),
+                RecentActivityDate : recentActivityDetails.getDataValue('MostRecentActivityDate'),
+            };
+
+            return result;
+                    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
         }
     };
 

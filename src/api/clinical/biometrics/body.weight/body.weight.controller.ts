@@ -12,6 +12,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,6 +70,10 @@ export class BodyWeightController extends BiometricsController {
             }
 
             BiometricsEvents.onBiometricsAdded(request, bodyWeight, 'body.weight');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Weight record created successfully!', 201, {
                 BodyWeight : bodyWeight,
             });
@@ -154,6 +159,10 @@ export class BodyWeightController extends BiometricsController {
             }
 
             BiometricsEvents.onBiometricsUpdated(request, updated, 'body.weight');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Weight record updated successfully!', 200, {
                 BodyWeight : updated,
             });

@@ -26,6 +26,7 @@ import { MedicationConsumptionSearchFilters } from "../../../domain.types/clinic
 import { Injector } from "../../../startup/injector";
 import { SupportedLanguage } from "../../../domain.types/users/user/user.types";
 import { loadLanguageTemplates } from "../../../modules/communication/message.template/language/language.selector";
+import { ActivityTrackerHandler } from "../../users/patient/activity.tracker/activity.tracker.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -470,7 +471,10 @@ export class MedicationConsumptionService implements IUserActionService {
             IsRecurrent        : false,
         };
         await this._userTaskRepo.create(domainModel);
-
+        ActivityTrackerHandler.addOrUpdateActivity({
+            PatientUserId      : consumption.PatientUserId,
+            RecentActivityDate : new Date(),
+        });
         return true;
     };
 

@@ -34,6 +34,8 @@ import { IDonationCommunicationRepo } from "../../database/repository.interfaces
 import { PatientDetailsDto } from "../../domain.types/users/patient/patient/patient.dto";
 import { EHRCareplanActivityService } from "../../modules/ehr.analytics/ehr.services/ehr.careplan.activity.service";
 import { Injector } from "../../startup/injector";
+import { ActivityTrackerHandler } from "../users/patient/activity.tracker/activity.tracker.handler";
+import { CareplanCode } from "../../domain.types/statistics/aha/aha.type";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -422,6 +424,10 @@ export class CareplanService implements IUserActionService {
         return await this._careplanRepo.getActivities(patientUserId, startTime, endTime);
     };
 
+    public getAllCareplanEnrollmentByPlanCode = async (planCode: CareplanCode): Promise<EnrollmentDto[]> => {
+        return await this._careplanRepo.getAllCareplanEnrollmentByPlanCode(planCode);
+    };
+
     private getAssessment = async (
         activity: CareplanActivityDto,
         template: AssessmentTemplateDto,
@@ -544,7 +550,10 @@ export class CareplanService implements IUserActionService {
                 };
 
                 var userTask = await this._userTaskRepo.create(userTaskModel);
-
+                ActivityTrackerHandler.addOrUpdateActivity({
+                    PatientUserId      : activity.PatientUserId,
+                    RecentActivityDate : new Date(),
+                });
                 await this._careplanRepo.setUserTaskToActivity(activity.id, userTask.id);
 
                 Logger.instance().log(`User task dto: ${JSON.stringify(userTask)}`);

@@ -3,6 +3,7 @@ import { UserDomainModel } from '../../../../domain.types/users/user/user.domain
 import { UserDetailsDto } from '../../../../domain.types/users/user/user.dto';
 import { TenantDto } from '../../../../domain.types/tenant/tenant.dto';
 import { UserSearchFilters, UserSearchResults } from '../../../../domain.types/users/user/user.search.types';
+import { MostRecentActivityDto } from '../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,5 +52,7 @@ export interface IUserRepo {
     getTenantsForUser(userId: uuid): Promise<TenantDto[]>;
 
     getAllRegisteredUsers(): Promise<any[]>;
+
+    getRecentUserActivity(): Promise<MostRecentActivityDto[]>;
 
 }

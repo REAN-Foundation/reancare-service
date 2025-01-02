@@ -2,6 +2,7 @@ import { ReportFrequency } from '../../../../domain.types/users/patient/health.r
 import { BloodGlucoseDomainModel } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 import { BloodGlucoseDto } from "../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
 import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types';
+import { MostRecentActivityDto } from '../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
 
 export interface IBloodGlucoseRepo {
 
@@ -22,5 +23,7 @@ export interface IBloodGlucoseRepo {
     getAllUserResponsesBetween(patientUserId: string, dateFrom: Date, dateTo: Date): Promise<any[]>;
 
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
+
+    getMostRecentBloodGlucoseActivity(patientUserId: string): Promise<MostRecentActivityDto>;
 
 }

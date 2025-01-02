@@ -12,6 +12,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,6 +69,10 @@ export class BloodGlucoseController extends BiometricsController {
                 });
             }
             BiometricsEvents.onBiometricsAdded(request, bloodGlucose, 'blood.glucose');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Blood glucose record created successfully!', 201, {
                 BloodGlucose : bloodGlucose,
             });
@@ -153,6 +158,10 @@ export class BloodGlucoseController extends BiometricsController {
                 });
             }
             BiometricsEvents.onBiometricsUpdated(request, updated, 'blood.glucose');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Blood glucose record updated successfully!', 200, {
                 BloodGlucose : updated,
             });

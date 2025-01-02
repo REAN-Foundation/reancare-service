@@ -13,6 +13,8 @@ import { BaseController } from '../../../api/base.controller';
 import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { EnrollmentDto } from '../../../domain.types/clinical/careplan/enrollment/enrollment.dto';
 import { CareplanEvents } from './careplan.events';
+import { ActivityTrackerHandler } from '../../../services/users/patient/activity.tracker/activity.tracker.handler';
+import { CareplanCode } from '../../../domain.types/statistics/aha/aha.type';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -90,6 +92,9 @@ export class CareplanController extends BaseController {
             }
 
             CareplanEvents.onCareplanEnrolled(request, enrollment);
+            if (enrollment.PlanCode === CareplanCode.Stroke) {
+                ActivityTrackerHandler.create(enrollment.PatientUserId, new Date());
+            }
             ResponseHandler.success(request, response, 'Patient enrollment done successfully!', 201, {
                 Enrollment : enrollment,
             });

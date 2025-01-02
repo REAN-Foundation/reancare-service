@@ -23,6 +23,7 @@ import { RoleService } from '../../../services/role/role.service';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { UserEvents } from './user.events';
+import { ActivityTrackerHandler } from '../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -377,6 +378,10 @@ export class UserController extends BaseController {
 
             UserEvents.onUserLoginWithOtp(request, user);
 
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : user.id,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, message, 200, data, true);
 
         } catch (error) {

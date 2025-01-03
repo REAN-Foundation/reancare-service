@@ -4,6 +4,7 @@ import { PersonDomainModel } from "../../../domain.types/person/person.domain.mo
 import { PersonDetailsDto } from "../../../domain.types/person/person.dto";
 import { RoleDto } from "../../../domain.types/role/role.dto";
 import { PersonSearchFilters, PersonSearchResults } from "../../../domain.types/person/person.search.types";
+import { UserDetailsDto } from "../../../domain.types/users/user/user.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,4 +45,6 @@ export interface IPersonRepo {
     removeAddress(id: string, addressId: string): Promise<boolean>;
 
     getAddresses(id: string): Promise<AddressDto[]>;
+
+    deleteProfileImage(id: string, personDomainModel: PersonDomainModel): Promise<UserDetailsDto>;
 }

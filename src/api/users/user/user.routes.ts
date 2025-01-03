@@ -57,6 +57,7 @@ export const register = (app: express.Application): void => {
     router.post('/access-token/:refreshToken', auth(UserAuth.rotateUserAccessToken), controller.rotateUserAccessToken);
     router.post('/', auth(UserAuth.create), controller.create);
     router.put('/:id', auth(UserAuth.update), controller.update);
+    router.put('/:id/profile-image', auth(UserAuth.deleteProfileImage), controller.deleteProfileImage);
     router.delete('/:id', auth(UserAuth.delete), controller.delete);
 
     app.use('/api/v1/users', router);

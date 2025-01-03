@@ -469,6 +469,28 @@ export class UserController extends BaseController {
         }
     };
 
+    deleteProfileImage = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId = request.params.id;
+            const user = await this._service.getById(userId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            await this.authorizeOne(request, userId, user.TenantId);
+            const model: UserDomainModel = await UserValidator.update(request);
+            const personModel = model.Person;
+            const updatedUser = await this._personService.deleteProfileImage(user.PersonId, personModel);
+            if (updatedUser == null) {
+                throw new ApiError(400, 'Cannot update user!');
+            }
+            ResponseHandler.success(request, response, 'User profile image deleted successfully!', 200, {
+                User : updatedUser,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     private async checkMultipleAdministrativeRoles(newRoleId: number, existingPersonId: string) {
         var allRoles = await this._roleService.search({});
         var newRoleName = allRoles.Items.find(r => r.id === newRoleId)?.RoleName;

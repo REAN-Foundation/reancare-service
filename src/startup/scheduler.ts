@@ -292,7 +292,7 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['UserActivityTracker'], () => {
             (async () => {
                 const now = new Date();
-                const targetDate = new Date("2024-02-01");
+                const targetDate = new Date("2025-02-01");
                 if (now < targetDate) {
                     Logger.instance().log('Running scheduled jobs: User Activity Tracker...');
                     var service = Injector.Container.resolve(ActivityTrackerHandler);

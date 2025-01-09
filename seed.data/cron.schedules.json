@@ -63,7 +63,7 @@
         "ScheduleHFHelperTextMessage": "0 1 6 8 *",
         "ScheduleGGHNFollowUpReminder": "0 5 * * *",
          "UserActivityTracker": "20 8 6 1 *",
-        "scheduleNotificationToInactiveUsers": "5 7 9 1 *"
+        "scheduleNotificationToInactiveUsers": "5 9 9 1 *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",

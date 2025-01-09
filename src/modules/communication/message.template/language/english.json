@@ -50,8 +50,8 @@
 
     "InactiveStrokeUserNotification": {
        "NotificationType" : "Alert",
-        "Title"           : "Your Health Journey Awaits!",
-        "Body"            : "Hi {{PatientName}}, Having a stroke is often overwhelming for stroke survivors and their family members. Don’t forget that your {{AppName}} is here to support your recovery."
+        "Title"           : "We've Missed You!",
+        "Body"            : "Hi {{PatientName}}, The {{AppName}} is here to support you. Come back to explore stroke resources, track your medications, and monitor your activity."
     }
 }
 

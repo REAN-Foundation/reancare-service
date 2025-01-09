@@ -33,17 +33,17 @@ jobs:
 #           LINTER_RULES_PATH: /
 #           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
 #           VALIDATE_TYPESCRIPT_ES: true
-          
-          
+
+
   Github-ECR-Tag-Check:
     runs-on: ubuntu-latest
     steps:
       - name: check tag
         uses: mukunku/tag-exists-action@v1.2.0
         id: checkTag
-        with: 
+        with:
           tag: ${{ github.event.inputs.Tag_name }}
-      
+
       - name: Get release
         if: ${{ steps.checkTag.outputs.exists == 'true' }}
         id: result_release
@@ -53,7 +53,7 @@ jobs:
         with:
            tag: ${{ github.event.inputs.Tag_name }}
            repo: REAN-Foundation/reancare-service
-           
+
       - name: Configure AWS credentials
         if: ${{ steps.checkTag.outputs.exists == 'true' }}
         uses: aws-actions/configure-aws-credentials@v1
@@ -61,19 +61,19 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-          
+
       - name:  Get ECR Image Tag
         if: ${{ steps.checkTag.outputs.exists == 'true' }}
         id: imageidvar
         run: |
           image_tag+=${{ steps.result_release.outputs.tag_name }} && image_tag+=_ && image_tag+=${{ steps.result_release.outputs.id }}
           echo "imagetag_value=$(aws ecr-public describe-image-tags --repository-name reancare --region us-east-1 --query "imageTagDetails[?imageTag=='$image_tag'].imageTag" --output text)" >> $GITHUB_OUTPUT
-            
+
       - name: ECR Image and Github Tag Check
         run: |
           if [[ ${{ steps.checkTag.outputs.exists }} == 'false' ]]; then exit 1; fi
           if [[ -z "${{ steps.imageidvar.outputs.imagetag_value }}" ]]; then exit 1; fi
-    
+
     outputs:
       release_name: ${{ steps.result_release.outputs.tag_name }}
       release_id: ${{ steps.result_release.outputs.id }}
@@ -87,7 +87,7 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
-           
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -124,7 +124,7 @@ jobs:
           image: public.ecr.aws/i9y2d4u3/reancare:${{ needs.Github-ECR-Tag-Check.outputs.release_name }}_${{ needs.Github-ECR-Tag-Check.outputs.release_id }}
 
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           wait-for-service-stability: true

@@ -14,7 +14,7 @@ on:
     branches: [main]
 
 jobs:
-  
+
   Publish-Release:
     runs-on: ubuntu-latest
     steps:
@@ -25,11 +25,11 @@ jobs:
           publish : true
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
-           
+
     outputs:
       release_id: ${{ steps.new_publish.outputs.id }}
       release_name: ${{ steps.new_publish.outputs.tag_name }}
-    
+
 
   Deploy-ECS:
     needs: Publish-Release
@@ -91,7 +91,7 @@ jobs:
           image: public.ecr.aws/i9y2d4u3/reancare:${{ needs.Publish-Release.outputs.release_name }}_${{ needs.Publish-Release.outputs.release_id }}
 
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           wait-for-service-stability: true

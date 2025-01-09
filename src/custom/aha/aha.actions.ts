@@ -20,7 +20,7 @@ import { UserService } from '../../services/users/user/user.service';
 import { TimeHelper } from '../../common/time.helper';
 import { Injector } from '../../startup/injector';
 import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
-import { FIFTEEN_DAYS, ONE_YEAR, PatientType, SupportedLanguage } from '../../domain.types/users/user/user.types';
+import { ONE_YEAR, PatientType, SEVEN_DAYS, SupportedLanguage } from '../../domain.types/users/user/user.types';
 import { loadLanguageTemplates } from '../../modules/communication/message.template/language/language.selector';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { AppName } from '../../domain.types/statistics/aha/aha.type';
@@ -704,7 +704,7 @@ export class AHAActions {
     private getInactiveUsers = async (): Promise<string[]> => {
         try {
             const today = new Date();
-            const daysPassed = FIFTEEN_DAYS;
+            const daysPassed = SEVEN_DAYS;
             const endDate = TimeHelper.subtractDuration(today, daysPassed, DurationType.Day);
             const startDate = TimeHelper.subtractDuration(endDate, ONE_YEAR, DurationType.Day);
     

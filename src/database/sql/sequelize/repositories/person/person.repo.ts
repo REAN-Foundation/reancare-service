@@ -22,6 +22,7 @@ import Role from '../../models/role/role.model';
 import { RoleMapper } from '../../mappers/role/role.mapper';
 import { PersonSearchFilters, PersonSearchResults } from '../../../../../domain.types/person/person.search.types';
 import User from '../../models/users/user/user.model';
+import { UserDetailsDto } from '../../../../../domain.types/users/user/user.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -410,6 +411,22 @@ export class PersonRepo implements IPersonRepo {
             var list = personAddresses.map(x => x.Address);
             return list.map(y => AddressMapper.toDto(y));
 
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    deleteProfileImage = async (id: string, personDomainModel: PersonDomainModel): Promise<UserDetailsDto> => {
+        try {
+            const person = await Person.findOne({ where: { id: id } });
+            if (person.ImageResourceId === personDomainModel.ImageResourceId) {
+                person.ImageResourceId = null;
+            }
+            
+            await person.save();
+            const dto = await PersonMapper.toDetailsDto(person);
+            return dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

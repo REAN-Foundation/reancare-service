@@ -6,6 +6,7 @@ import { BloodGlucoseDto } from '../../../domain.types/clinical/biometrics/blood
 import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types';
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { Injector } from "../../../startup/injector";
+import { MostRecentActivityDto } from "../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +63,10 @@ export class BloodGlucoseService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bloodGlucoseRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    getMostRecentBloodGlucoseActivity = async (patientUserId: string): Promise<MostRecentActivityDto> => {
+        return await this._bloodGlucoseRepo.getMostRecentBloodGlucoseActivity(patientUserId);
     };
 
 }

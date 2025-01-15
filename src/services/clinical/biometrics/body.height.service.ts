@@ -6,6 +6,8 @@ import { BodyHeightDto } from '../../../domain.types/clinical/biometrics/body.he
 import { BodyHeightSearchFilters, BodyHeightSearchResults } from '../../../domain.types/clinical/biometrics/body.height/body.height.search.types';
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { Injector } from "../../../startup/injector";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { MostRecentActivityDto } from "../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,6 +53,10 @@ export class BodyHeightService {
 
     delete = async (id: string): Promise<boolean> => {
         return await this._bodyHeightRepo.delete(id);
+    };
+
+    getMostRecentBodyHeightActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        return await this._bodyHeightRepo.getMostRecentBodyHeightActivity(patientUserId);
     };
 
 }

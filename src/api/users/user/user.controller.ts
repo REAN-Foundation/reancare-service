@@ -23,6 +23,7 @@ import { RoleService } from '../../../services/role/role.service';
 import { Roles } from '../../../domain.types/role/role.types';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { UserEvents } from './user.events';
+import { ActivityTrackerHandler } from '../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -377,6 +378,10 @@ export class UserController extends BaseController {
 
             UserEvents.onUserLoginWithOtp(request, user);
 
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : user.id,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, message, 200, data, true);
 
         } catch (error) {
@@ -458,6 +463,28 @@ export class UserController extends BaseController {
             const tenants = await this._service.getTenantsForUser(id);
             ResponseHandler.success(request, response, 'User tenants retrieved successfully!', 200, {
                 Tenants : tenants,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deleteProfileImage = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const userId = request.params.id;
+            const user = await this._service.getById(userId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            await this.authorizeOne(request, userId, user.TenantId);
+            const model: UserDomainModel = await UserValidator.update(request);
+            const personModel = model.Person;
+            const updatedUser = await this._personService.deleteProfileImage(user.PersonId, personModel);
+            if (updatedUser == null) {
+                throw new ApiError(400, 'Cannot update user!');
+            }
+            ResponseHandler.success(request, response, 'User profile image deleted successfully!', 200, {
+                User : updatedUser,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

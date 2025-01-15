@@ -18,6 +18,7 @@ import { BaseUserController } from '../base.user.controller';
 import { UserTaskSearchFilters } from '../../../domain.types/users/user.task/user.task.search.types';
 import { PermissionHandler } from '../../../auth/custom/permission.handler';
 import { UserTaskEvents } from './user.task.events';
+import { ActivityTrackerHandler } from '../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -74,6 +75,10 @@ export class UserTaskController extends BaseUserController {
                 throw new ApiError(400, 'Cannot create userTask!');
             }
 
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.UserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'User task created successfully!', 201, {
                 UserTask : userTask,
             });
@@ -192,6 +197,10 @@ export class UserTaskController extends BaseUserController {
                 }
             }
             UserTaskEvents.onUserTaskStarted(request, updated);
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : updated.UserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'User task started successfully!', 200, {
                 UserTask : updated,
             });
@@ -238,6 +247,10 @@ export class UserTaskController extends BaseUserController {
             }
 
             UserTaskEvents.onUserTaskCompleted(request, updated);
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : updated.UserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
                 UserTask : updated,
             });
@@ -278,6 +291,10 @@ export class UserTaskController extends BaseUserController {
             }
 
             UserTaskEvents.onUserTaskUpdated(request, updated);
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : updated.UserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'User task record updated successfully!', 200, {
                 UserTask : updated,
             });

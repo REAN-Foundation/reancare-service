@@ -26,6 +26,7 @@ import { IDonationCommunicationRepo } from "../../database/repository.interfaces
 import { Injector } from "../../startup/injector";
 import { IDonorRepo } from "../../database/repository.interfaces/assorted/blood.donation/donor.repo.interface";
 import { VolunteerNetworkService } from "./volunteer.management/volunteer.network.service";
+import { ActivityTrackerHandler } from "../../services/users/patient/activity.tracker/activity.tracker.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -410,6 +411,11 @@ export class CommunityNetworkService {
                 };
 
                 var userTask = await this._userTaskRepo.create(userTaskModel);
+
+                ActivityTrackerHandler.addOrUpdateActivity({
+                    PatientUserId      : userTaskModel.UserId,
+                    RecentActivityDate : new Date(),
+                });
 
                 await this._careplanRepo.setUserTaskToActivity(activity.id, userTask.id);
 

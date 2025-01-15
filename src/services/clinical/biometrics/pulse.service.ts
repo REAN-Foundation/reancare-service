@@ -7,6 +7,7 @@ import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/cl
 import { PulseStore } from "../../../modules/ehr/services/pulse.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { Injector } from "../../../startup/injector";
+import { MostRecentActivityDto } from "../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +65,10 @@ export class PulseService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._pulseRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    getMostRecentPulseActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        return await this._pulseRepo.getMostRecentPulseActivity(patientUserId);
     };
 
 }

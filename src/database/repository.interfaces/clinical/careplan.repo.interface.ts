@@ -4,6 +4,7 @@ import { EnrollmentDto } from "../../../domain.types/clinical/careplan/enrollmen
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityDto } from '../../../domain.types/clinical/careplan/activity/careplan.activity.dto';
 import { CareplanActivityDomainModel } from '../../../domain.types/clinical/careplan/activity/careplan.activity.domain.model';
+import { CareplanCode } from '../../../domain.types/statistics/aha/aha.type';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,4 +72,6 @@ export interface ICareplanRepo {
     getPatientActiveEnrollments(patientUserId: uuid): Promise<EnrollmentDto[]>;
 
     stop(enrollmentId: uuid): Promise<EnrollmentDto>;
+
+    getAllCareplanEnrollmentByPlanCode(planCode: CareplanCode): Promise<EnrollmentDto[]>;
 }

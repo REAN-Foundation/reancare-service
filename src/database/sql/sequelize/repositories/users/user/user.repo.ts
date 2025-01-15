@@ -16,6 +16,7 @@ import { PersonMapper } from '../../../mappers/person/person.mapper';
 import Role from '../../../models/role/role.model';
 import { UserSearchFilters, UserSearchResults } from '../../../../../../domain.types/users/user/user.search.types';
 import { SupportedLanguage } from '../../../../../../domain.types/users/user/user.types';
+import { MostRecentActivityDto } from '../../../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -487,6 +488,23 @@ export class UserRepo implements IUserRepo {
         catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    getRecentUserActivity = async (): Promise<MostRecentActivityDto[]> => {
+        try {
+            const users = await User.findAll({});
+               
+            const dtos = users.map(user => {
+                return {
+                    PatientUserId      : user.id,
+                    RecentActivityDate : user.UpdatedAt,
+                };
+            });
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return [];
         }
     };
 

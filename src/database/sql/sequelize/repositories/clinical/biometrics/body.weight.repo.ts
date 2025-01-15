@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
@@ -12,6 +12,8 @@ import { DurationType } from '../../../../../../domain.types/miscellaneous/time.
 import { HelperRepo } from '../../common/helper.repo';
 import { Helper } from '../../../../../../common/helper';
 import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { MostRecentActivityDto } from '../../../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -305,5 +307,37 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         bodyWeights = bodyWeights.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
         return bodyWeights;
     }
+
+    getMostRecentBodyWeightActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        try {
+            const recentActivityDetails = await BodyWeight.findOne({
+                attributes : [
+                    'PatientUserId',
+                    [fn('MAX', col('UpdatedAt')), 'MostRecentActivityDate']
+                ],
+                where : {
+                    PatientUserId : patientUserId,
+                    UpdatedAt     : {
+                        [Op.lte] : new Date(),
+                    },
+                },
+            });
+                        
+            if (!recentActivityDetails) {
+                return null;
+            }
+
+            const result: MostRecentActivityDto = {
+                PatientUserId      : recentActivityDetails.getDataValue('PatientUserId'),
+                RecentActivityDate : recentActivityDetails.getDataValue('MostRecentActivityDate'),
+            };
+
+            return result;
+                        
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
+        }
+    };
 
 }

@@ -12,6 +12,7 @@ import { AwardsFactsService } from '../../../../modules/awards.facts/awards.fact
 import { EHRVitalService } from '../../../../modules/ehr.analytics/ehr.services/ehr.vital.service';
 import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
+import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,6 +70,10 @@ export class PulseController extends BiometricsController {
             }
 
             BiometricsEvents.onBiometricsAdded(request, pulse, 'pulse');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Pulse rate record created successfully!', 201, {
                 Pulse : pulse,
             });
@@ -156,6 +161,10 @@ export class PulseController extends BiometricsController {
             }
 
             BiometricsEvents.onBiometricsUpdated(request, updated, 'pulse');
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : model.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             ResponseHandler.success(request, response, 'Pulse rate record updated successfully!', 200, {
                 Pulse : updated,
             });

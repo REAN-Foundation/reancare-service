@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Op } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { TimeHelper } from '../../../../../../common/time.helper';
@@ -15,7 +15,7 @@ import User from '../../../models/users/user/user.model';
 import UserTask from '../../../models/users/user/user.task.model';
 import { HelperRepo } from '../../common/helper.repo';
 import { NotificationChannel } from '../../../../../../domain.types/general/notification/notification.types';
-import CareplanActivity from '../../../models/clinical/careplan/careplan.activity.model';
+import { MostRecentActivityDto } from '../../../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -650,6 +650,38 @@ export class UserTaskRepo implements IUserTaskRepo {
 
         } catch (error) {
             Logger.instance().log(error.message);
+        }
+    };
+
+    getMostRecentUserActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        try {
+            const recentActivityDetails = await UserTask.findOne({
+                attributes : [
+                    'UserId',
+                    [fn('MAX', col('UpdatedAt')), 'MostRecentActivityDate']
+                ],
+                where : {
+                    UserId    : patientUserId,
+                    UpdatedAt : {
+                        [Op.lte] : new Date(),
+                    },
+                },
+            });
+
+            if (!recentActivityDetails) {
+                return null;
+            }
+
+            const result: MostRecentActivityDto = {
+                PatientUserId      : recentActivityDetails.getDataValue('UserId'),
+                RecentActivityDate : recentActivityDetails.getDataValue('MostRecentActivityDate'),
+            };
+
+            return result;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
         }
     };
 

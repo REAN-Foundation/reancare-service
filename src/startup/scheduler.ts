@@ -12,6 +12,7 @@ import { TerraSupportService } from '../api/devices/device.integrations/terra/te
 import { UserService } from '../services/users/user/user.service';
 import { RunOnceScheduler } from '../modules/run.once.scripts/run.once.scheduler';
 import { DailyStatisticsService } from '../services/statistics/daily.statistics.service';
+import { ActivityTrackerHandler } from '../services/users/patient/activity.tracker/activity.tracker.handler';
 
 ///////////////////////////////////////////////////////////////////////////
 export class Scheduler {
@@ -60,6 +61,8 @@ export class Scheduler {
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
                 // this.scheduleHFHelperTextMessage();
                 this.scheduleGGHNFollowUpReminder();
+                this.scheduleUserActivityTracker();
+                this.scheduleNotificationToInactiveUsers();
 
                 const runOnceScheduler = RunOnceScheduler.instance();
                 runOnceScheduler.schedule(Scheduler._schedules);
@@ -275,6 +278,30 @@ export class Scheduler {
     //     });
     // };
 
+    private scheduleNotificationToInactiveUsers  = () => {
+        cron.schedule(Scheduler._schedules['scheduleNotificationToInactiveUsers'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs:one month inactive user text reminder...');
+                var customActionHandler = new CustomActionsHandler();
+                customActionHandler.scheduleNotificationToInactiveUsers();
+            })();
+        });
+    };
+    
+    private scheduleUserActivityTracker = () => {
+        cron.schedule(Scheduler._schedules['UserActivityTracker'], () => {
+            (async () => {
+                const now = new Date();
+                const targetDate = new Date("2025-02-01");
+                if (now < targetDate) {
+                    Logger.instance().log('Running scheduled jobs: User Activity Tracker...');
+                    var service = Injector.Container.resolve(ActivityTrackerHandler);
+                    await service.userActivityTracker();
+                }
+                
+            })();
+        });
+    };
     //#endregion
 
 }

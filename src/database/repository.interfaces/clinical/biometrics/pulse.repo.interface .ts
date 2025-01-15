@@ -1,3 +1,4 @@
+import { MostRecentActivityDto } from "../../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 import { PulseDomainModel } from "../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model";
 import { PulseDto } from "../../../../domain.types/clinical/biometrics/pulse/pulse.dto";
 import { PulseSearchFilters, PulseSearchResults } from "../../../../domain.types/clinical/biometrics/pulse/pulse.search.types";
@@ -20,5 +21,7 @@ export interface IPulseRepo {
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
     getRecent(patientUserId: string): Promise<PulseDto>;
+
+    getMostRecentPulseActivity (patientUserId: string): Promise<MostRecentActivityDto>;
 
 }

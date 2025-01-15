@@ -13,6 +13,7 @@ import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 import { Injector } from "../../../startup/injector";
+import { MostRecentActivityDto } from "../../../domain.types/users/patient/activity.tracker/activity.tracker.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -98,6 +99,10 @@ export class BloodPressureService {
     getAllUserResponsesBefore = async (patientUserId: string, date: Date)
         : Promise<any[]> => {
         return await this._bloodPressureRepo.getAllUserResponsesBefore(patientUserId, date);
+    };
+
+    getMostRecentBloodPressureActivity = async (patientUserId: uuid): Promise<MostRecentActivityDto> => {
+        return await this._bloodPressureRepo.getMostRecentBloodPressureActivity(patientUserId);
     };
 
 }

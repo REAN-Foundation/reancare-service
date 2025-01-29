@@ -110,9 +110,14 @@ export class HospitalRepo implements IHospitalRepo {
                 search.where['TenantId'] = { [Op.eq]: filters.TenantId };
             }
             if (filters.Tags != null) {
-                search.where['Tags'] = { [Op.like]: '%' + filters.Tags + '%' };
+                const tags = filters.Tags.split(',').map(tag => tag.trim());
+                search.where[Op.or] = tags.map(tag => ({
+                    Tags : {
+                        [Op.like] : `%${tag}%`,
+                    },
+                }));
             }
-
+            
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

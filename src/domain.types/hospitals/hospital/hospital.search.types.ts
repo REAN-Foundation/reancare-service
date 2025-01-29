@@ -6,7 +6,7 @@ export interface HospitalSearchFilters extends BaseSearchFilters {
     TenantId?      : uuid,
     Name?          : string;
     HealthSystemId?: uuid;
-    Tags?          : string[];
+    Tags?          : string;
 }
 
 export interface HospitalSearchResults extends BaseSearchResults {

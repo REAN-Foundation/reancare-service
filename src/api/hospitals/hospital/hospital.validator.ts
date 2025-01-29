@@ -79,7 +79,7 @@ export class HospitalValidator extends BaseValidator {
             TenantId       : request.query.TenantId ?? null,
             HealthSystemId : request.query.healthSystemId ?? null,
             Name           : request.query.name ?? null,
-            Tags           : request.query.tag ? request.query.tag.split(',') : null,
+            Tags           : request.query.tags ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

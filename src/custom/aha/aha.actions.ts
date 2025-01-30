@@ -738,9 +738,9 @@ export class AHAActions {
         } else if (process.env.NODE_ENV === 'production' && userAppRegistrations.indexOf(AppName.REANHealthGuru) >= 0 ) {
             return AppName.REANHealthGuru;
         } else if (process.env.NODE_ENV === 'uat' && userAppRegistrations.indexOf(AppName.HF) >= 0 ) {
-            return AppName.HS;
+            return AppName.HeartAndStrokeHelper;
         } else if (process.env.NODE_ENV === 'production' && userAppRegistrations.indexOf(AppName.HS) >= 0 ) {
-            return AppName.HS;
+            return AppName.HeartAndStrokeHelper;
         } else {
             return null;
         }

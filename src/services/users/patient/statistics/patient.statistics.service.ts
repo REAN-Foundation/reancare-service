@@ -288,7 +288,7 @@ export class PatientStatisticsService {
         let sleepTrend = null;
         if (reportSetting.SleepHistory) {
             const sleepStats = await this._sleepRepo.getStats(patientUserId, reportSetting.ReportFrequency);
-            const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
+            const sumSleepMinutes = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
             var i = 0;
             if (sleepStats.length > 0) {
                 for await (var s of sleepStats) {
@@ -297,10 +297,13 @@ export class PatientStatisticsService {
                     }
                 }
             }
-            const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / i;
+            const averageSleepHours = sleepStats.length === 0 ? null : (sumSleepMinutes / i) / 60;
             const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
             sleepTrend = {
-                Stats               : sleepStats,
+                Stats : sleepStats.map(entry => ({
+                    ...entry,
+                    SleepDuration : entry.SleepDuration / 60
+                })),
                 AverageForLastMonth : averageSleepHoursStr,
             };
         }

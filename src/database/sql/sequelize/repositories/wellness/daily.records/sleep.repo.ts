@@ -201,8 +201,9 @@ export class SleepRepo implements ISleepRepo {
             return records.map(x => {
                 const dayStr = x.RecordDate.toISOString()
                     .split('T')[0];
+                const sleepInMinutes = (x.SleepDuration ?? 0) * 60 + (x.SleepMinutes ?? 0);
                 return {
-                    SleepDuration : x.SleepDuration,
+                    SleepDuration : sleepInMinutes,
                     DayStr        : dayStr,
                 };
             });
@@ -245,6 +246,7 @@ export class SleepRepo implements ISleepRepo {
         let sleepRecords = result.map(x => {
             return {
                 SleepDuration : x.SleepDuration,
+                SleepMinutes  : x.SleepMinutes,
                 RecordDate    : x.RecordDate,
             };
         });

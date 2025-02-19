@@ -116,7 +116,7 @@ export class PatientStatisticsService {
         const date = new Date();
         const patientName = patient.User.Person.DisplayName;
         const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        var offsetMinutes = TimeHelper.getTimezoneOffset(timezone, DurationType.Minute);
         const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
         const dateObj = new Date(assessmentDate);
         const options: Intl.DateTimeFormatOptions = {

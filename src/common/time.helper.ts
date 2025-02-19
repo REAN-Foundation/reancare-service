@@ -368,6 +368,57 @@ export class TimeHelper {
         return offsetMinutes;
     };
 
+    static getTimezoneOffset = (timezoneOffsetStr: string, durationType: DurationType): number => {
+        let offsetMinutes = 0;
+    
+        const offsetTmp = timezoneOffsetStr.trim();
+
+        if (offsetTmp.includes(':')) {
+            const tokens = offsetTmp.split(":");
+            const offsetHours = parseInt(tokens[0]);
+            let offsetMins = parseInt(tokens[1]);
+
+            if (offsetHours < 0) {
+                offsetMins = -Math.abs(offsetMins);
+            }
+    
+            offsetMinutes = offsetHours * 60 + offsetMins;
+        }
+        else {
+            const len = offsetTmp.length;
+   
+            const offsetHours = parseInt(offsetTmp.slice(0, len - 2));
+            let offsetMins = parseInt(offsetTmp.slice(len - 2));
+    
+            if (offsetHours < 0) {
+                offsetMins = -Math.abs(offsetMins);
+            }
+    
+            offsetMinutes = offsetHours * 60 + offsetMins;
+        }
+    
+        switch (durationType) {
+            case DurationType.Milisecond:
+                return offsetMinutes * 60 * 1000;
+            case DurationType.Second:
+                return offsetMinutes * 60;
+            case DurationType.Minute:
+                return offsetMinutes;
+            case DurationType.Hour:
+                return offsetMinutes / 60.0;
+            case DurationType.Day:
+                return offsetMinutes / (24.0 * 60);
+            case DurationType.Week:
+                return offsetMinutes / (24.0 * 60 * 7);
+            case DurationType.Month:
+                return offsetMinutes / (24.0 * 60 * 30);
+            case DurationType.Year:
+                return offsetMinutes / (24.0 * 60 * 365);
+            default:
+                return offsetMinutes;
+        }
+    };
+
     static strToUtc = (dateStr: string, timeZoneOffsetMinutes?: number): Date => {
 
         if (timeZoneOffsetMinutes !== undefined) {

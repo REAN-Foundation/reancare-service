@@ -298,7 +298,7 @@ export class PatientStatisticsService {
                 }
             }
             const averageSleepHours = sleepStats.length === 0 ? null : (sumSleepMinutes / i) / 60;
-            const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
+            const averageSleepHoursStr = this.convertHoursToHHMM(averageSleepHours ? averageSleepHours.toFixed(1) : null);
             sleepTrend = {
                 Stats : sleepStats.map(entry => ({
                     ...entry,
@@ -1022,6 +1022,17 @@ export class PatientStatisticsService {
         return careplanTasks;
     };
 
+    private convertHoursToHHMM = (hoursStr: string): string => {
+        if (!hoursStr)
+        {
+            return null;
+        }
+    
+        const hours = Math.floor(parseFloat(hoursStr));
+        const minutes = Math.round((parseFloat(hoursStr) - hours) * 60);
+    
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    };
     //#endregion
 
 }

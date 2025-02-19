@@ -29,7 +29,7 @@ export const addSleepStats = (model, document, y) => {
         y = addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
         y = y + 23;
         const value = model.Stats.Sleep.AverageForLastMonth?.toString();
-        y = addLabeledText(document, 'Average Sleep (Hours)', value, y);
+        y = addLabeledText(document, 'Average Sleep (HH:MM)', value, y);
     }
     return y;
 };

@@ -67,6 +67,13 @@ export class UserTaskSenderService {
                 return;
             }
             for await (const userTask of userTasks) {
+                const careplanActivity = await this._careplanRepo.getActivity(userTask.ActionId);
+                userTask.Sequence = careplanActivity.Sequence;
+            }
+            userTasks.sort((a, b) => {
+                return a.Sequence - b.Sequence;
+            });
+            for await (const userTask of userTasks) {
                 if (userTask.ActionId != null && userTask.ActionType === 'Careplan') {
                     await this.sendUserTaskOnBot(userTask.UserId, userTask);
                     await this.timer(300);

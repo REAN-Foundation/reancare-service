@@ -587,6 +587,14 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (filters.TemplateId != null) {
                 search.where['TemplateId'] = filters.TemplateId;
             }
+            if (filters.Tags != null) {
+                const tags = filters.Tags.split(',').map(tag => tag.trim());
+                search.where[Op.or] = tags.map(tag => ({
+                    Tags : {
+                        [Op.like] : `%${tag}%`,
+                    },
+                }));
+            }
             let orderByColum = 'Title';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

@@ -256,6 +256,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'title', Where.Query, false, false);
         await this.validateString(request, 'nodeType', Where.Query, false, false, true);
         await this.validateString(request, 'templateId', Where.Query, false, false, true);
+        await this.validateString(request, 'tags', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getNodeFilter(request);
@@ -266,6 +267,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Title      : request.query.title ?? null,
             NodeType   : request.query.nodeType ?? null,
             TemplateId : request.query.templateId ?? null,
+            Tags       : request.query.tags ?? null,
+
         };
 
         return this.updateBaseSearchFilters(request, filters);

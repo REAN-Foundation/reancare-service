@@ -74,6 +74,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 ProviderAssessmentCode      : t.ProviderAssessmentCode,
                 FileResourceId              : t.FileResourceId,
                 ServeListNodeChildrenAtOnce : t.ServeListNodeChildrenAtOnce,
+                Tags                        : t.Tags,
             };
 
             var template = await AssessmentTemplate.create(templateModel as any);
@@ -146,6 +147,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             RootNodeDisplayCode    : rootNode.DisplayCode,
             Nodes                  : nodes,
             Type                   : template.Type as AssessmentType,
+            Tags                   : Array.isArray(template.Tags) ? template.Tags : [template.Tags],
+
         };
         return templateObj;
     };
@@ -472,6 +475,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce,
                 QueryResponseType           : QueryResponseType.None,
                 RawData                     : nodeObj.RawData ?? null,
+                Tags                        : nodeObj.Tags && nodeObj.Tags.length > 0 ? JSON.stringify(nodeObj.Tags) : null,
             };
 
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -556,6 +560,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'ServeListNodeChildrenAtOnce')) {
                 thisNode.ServeListNodeChildrenAtOnce = updates['ServeListNodeChildrenAtOnce'];
+            }
+            if (Helper.hasProperty(updates, 'Tags')) {
+                thisNode.Tags = updates['Tags'] ? JSON.stringify(updates['Tags']) : null;
             }
             thisNode = await thisNode.save();
             return await this.populateNodeDetails(thisNode);

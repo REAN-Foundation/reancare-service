@@ -12,4 +12,5 @@ export interface AssessmentTemplateDomainModel {
     ServeListNodeChildrenAtOnce?: boolean;
     TotalNumberOfQuestions?     : number;
     TenantId?                   : uuid;
+    Tags?                       : string[];
 }

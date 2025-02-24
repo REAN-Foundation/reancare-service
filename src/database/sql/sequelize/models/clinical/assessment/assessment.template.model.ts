@@ -141,6 +141,13 @@ export default class AssessmentTemplate extends Model {
     })
     TotalNumberOfQuestions: number;
 
+    @Length({ max: 512 })
+    @Column({
+        type      : DataType.STRING(512),
+        allowNull : true,
+    })
+    Tags: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

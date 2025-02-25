@@ -177,6 +177,13 @@ export default class AssessmentNode extends Model {
     })
     RawData: string;
 
+    @Length({ max: 512 })
+    @Column({
+        type      : DataType.STRING(512),
+        allowNull : true,
+    })
+    Tags: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

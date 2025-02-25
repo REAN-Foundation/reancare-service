@@ -5,6 +5,7 @@ export interface AssessmentNodeSearchFilters extends BaseSearchFilters{
   Title?          : string;
   NodeType?       : AssessmentNodeType;
   TemplateId?     : string;
+  Tags?           : string;
 }
 
 export interface AssessmentNodeSearchResults extends BaseSearchResults{

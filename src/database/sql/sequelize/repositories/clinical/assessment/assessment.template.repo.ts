@@ -31,6 +31,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                 ScoringApplicable           : model.ScoringApplicable ?? false,
                 TotalNumberOfQuestions      : model.TotalNumberOfQuestions ?? null,
                 TenantId                    : model.TenantId ?? null,
+                Tags                        : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);
@@ -78,6 +79,14 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             }
             if (filters.DisplayCode != null) {
                 search.where['DisplayCode'] = filters.DisplayCode;
+            }
+            if (filters.Tags != null) {
+                const tags = filters.Tags.split(',').map(tag => tag.trim());
+                search.where[Op.or] = tags.map(tag => ({
+                    Tags : {
+                        [Op.like] : `%${tag}%`,
+                    },
+                }));
             }
             let orderByColum = 'Title';
             if (filters.OrderBy) {
@@ -157,6 +166,12 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             }
             if (updateModel.TotalNumberOfQuestions != null) {
                 assessmentTemplate.TotalNumberOfQuestions = updateModel.TotalNumberOfQuestions;
+            }
+            if (updateModel.Tags != null) {
+                assessmentTemplate.Tags =
+                    updateModel.Tags && updateModel.Tags.length > 0
+                        ? JSON.stringify(updateModel.Tags)
+                        : null;
             }
             await assessmentTemplate.save();
 

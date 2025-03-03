@@ -116,7 +116,7 @@ export class PatientStatisticsService {
         const date = new Date();
         const patientName = patient.User.Person.DisplayName;
         const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        var offsetMinutes = TimeHelper.getTimezoneOffset(timezone, DurationType.Minute);
         const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
         const dateObj = new Date(assessmentDate);
         const options: Intl.DateTimeFormatOptions = {
@@ -288,7 +288,7 @@ export class PatientStatisticsService {
         let sleepTrend = null;
         if (reportSetting.SleepHistory) {
             const sleepStats = await this._sleepRepo.getStats(patientUserId, reportSetting.ReportFrequency);
-            const sumSleepHours = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
+            const sumSleepMinutes = sleepStats.reduce((acc, x) => acc + x.SleepDuration, 0);
             var i = 0;
             if (sleepStats.length > 0) {
                 for await (var s of sleepStats) {
@@ -297,10 +297,13 @@ export class PatientStatisticsService {
                     }
                 }
             }
-            const averageSleepHours = sleepStats.length === 0 ? null : sumSleepHours / i;
-            const averageSleepHoursStr = averageSleepHours ? averageSleepHours.toFixed(1) : null;
+            const averageSleepHours = sleepStats.length === 0 ? null : (sumSleepMinutes / i) / 60;
+            const averageSleepHoursStr = this.convertHoursToHHMM(averageSleepHours ? averageSleepHours.toFixed(1) : null);
             sleepTrend = {
-                Stats               : sleepStats,
+                Stats : sleepStats.map(entry => ({
+                    ...entry,
+                    SleepDuration : entry.SleepDuration / 60
+                })),
                 AverageForLastMonth : averageSleepHoursStr,
             };
         }
@@ -1019,6 +1022,17 @@ export class PatientStatisticsService {
         return careplanTasks;
     };
 
+    private convertHoursToHHMM = (hoursStr: string): string => {
+        if (!hoursStr)
+        {
+            return null;
+        }
+    
+        const hours = Math.floor(parseFloat(hoursStr));
+        const minutes = Math.round((parseFloat(hoursStr) - hours) * 60);
+    
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    };
     //#endregion
 
 }

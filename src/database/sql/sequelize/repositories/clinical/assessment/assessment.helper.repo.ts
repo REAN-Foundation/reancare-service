@@ -565,10 +565,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 thisNode.Tags = updates['Tags'] ? JSON.stringify(updates['Tags']) : null;
             }
             thisNode = await thisNode.save();
-            // if (Helper.hasProperty(updates, 'Options')) {
-                
-            //     await this.updateOptions(thisNode.id, updates.Options);
-            // }
+
             return await this.populateNodeDetails(thisNode);
 
         } catch (error) {
@@ -1491,36 +1488,6 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
        }
    };
     
-    // private updateOptions = async (nodeId: uuid, options: CAssessmentQueryOption[]) => {
-    //     for (const option of options) {
-    //         const existingOption = await AssessmentQueryOption.findOne({
-    //             where : {
-    //                 NodeId      : nodeId,
-    //                 DisplayCode : option.DisplayCode,
-    //             }
-    //         });
-    
-    //         if (existingOption) {
-    //             existingOption.ProviderGivenCode = option.ProviderGivenCode;
-    //             existingOption.Text = option.Text;
-    //             existingOption.ImageUrl = option.ImageUrl;
-    //             existingOption.Sequence = option.Sequence;
-    //             await existingOption.save();
-    //             Logger.instance().log(`Updated QueryOption - ${existingOption.DisplayCode}`);
-    //         } else {
-    //             const optEntity = {
-    //                 DisplayCode       : option.DisplayCode,
-    //                 ProviderGivenCode : option.ProviderGivenCode,
-    //                 NodeId            : nodeId,
-    //                 Text              : option.Text,
-    //                 ImageUrl          : option.ImageUrl,
-    //                 Sequence          : option.Sequence,
-    //             };
-    //             const queryOption = await AssessmentQueryOption.create(optEntity);
-    //             Logger.instance().log(`Created QueryOption - ${queryOption.DisplayCode}`);
-    //         }
-    //     }
-    // };
     //#endregion
 
 }

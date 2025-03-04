@@ -107,4 +107,12 @@ export interface IAssessmentHelperRepo {
 
     setNextNodeToPath(parentNodeId: uuid, pathId: uuid, nextNodeId: uuid): Promise<CAssessmentNodePath>;
 
+    addOption(optionId: uuid, option: CAssessmentQueryOption): Promise<CAssessmentQueryOption>;
+
+    updateOption(optionId: uuid, updates: any): Promise<CAssessmentQueryOption>;
+
+    getOption(optionId: uuid): Promise<CAssessmentQueryOption>;
+
+    deleteOption(optionId: uuid): Promise<boolean>;
+
 }

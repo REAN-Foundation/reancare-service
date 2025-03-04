@@ -434,5 +434,6 @@ export class AssessmentHelperMapper {
 
         return conditionDto;
     }
-
+    
 }
+

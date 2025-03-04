@@ -654,6 +654,89 @@ export class AssessmentTemplateController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+    
+    addOption = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.authorizeTemplateAccess(request);
+            
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+
+            const model = await this._validator.addOption(request);
+            const option = await this._service.addOption(nodeId, model);
+            if (option == null) {
+                throw new ApiError(400, 'Cannot create record for option!');
+            }
+            ResponseHandler.success(request, response, 'Option record created successfully!', 201, {
+                NodeOption : option,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateOption = async (request: express.Request, response: express.Response) => {
+        try {
+            await this.authorizeTemplateAccess(request);
+            
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const optionId: uuid = await this._validator.getParamUuid(request, 'optionId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const updates = await this._validator.updateOption(request);
+            const option = await this._service.updateOption(optionId, updates);
+            if (option == null) {
+                throw new ApiError(400, 'Cannot update record for option!');
+            }
+            ResponseHandler.success(request, response, 'Option record updated successfully!', 200, {
+                NodeOption : option,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getOption = async (request: express.Request, response: express.Response) => {
+        try {
+            await this.authorizeTemplateAccess(request);
+            
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const optionId: uuid = await this._validator.getParamUuid(request, 'optionId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const path = await this._service.getPath(optionId);
+            if (path == null) {
+                throw new ApiError(404, 'Cannot retrieve record for option!');
+            }
+            ResponseHandler.success(request, response, 'Option record retrieved successfully!', 200, {
+                NodePath : path,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deleteOption = async (request: express.Request, response: express.Response) => {
+        try {
+            await this.authorizeTemplateAccess(request);
+            
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const optionId: uuid = await this._validator.getParamUuid(request, 'optionId');
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            await this.checkNodeAndTemplate(nodeId, templateId);
+            const deleted = await this._service.deleteOption(optionId);
+            if (!deleted) {
+                throw new ApiError(400, 'Cannot remove option for assessment node!');
+            }
+            ResponseHandler.success(request, response, 'Assessment node option record removed successfully!', 200, {
+                Deleted : deleted,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     private async checkNodeAndTemplate(nodeId: string, templateId: string) {
         const node = await this._service.getNode(nodeId);

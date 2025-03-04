@@ -5,7 +5,7 @@ import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces
 import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from '../../../domain.types/clinical/assessment/assessment.template.dto';
 import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from "../../../domain.types/clinical/assessment/assessment.template.search.types";
-import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentNodePath, CAssessmentPathCondition, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from "../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentNodePath, CAssessmentPathCondition, CAssessmentQueryOption, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentTemplateFileConverter } from "./assessment.template.file.converter";
 import { AssessmentNodeSearchFilters } from "../../../domain.types/clinical/assessment/assessment.node.search.types";
@@ -183,6 +183,22 @@ export class AssessmentTemplateService {
 
     setNextNodeToPath = async (parentNodeId: uuid, pathId: uuid, nextNodeId: uuid): Promise<CAssessmentNodePath> => {
         return await this._assessmentHelperRepo.setNextNodeToPath(parentNodeId, pathId, nextNodeId);
+    };
+
+    addOption = async (nodeId: uuid, option: CAssessmentQueryOption ): Promise<CAssessmentQueryOption> => {
+        return await this._assessmentHelperRepo.addOption(nodeId, option);
+    };
+
+    updateOption = async (optionId: uuid, updates: CAssessmentQueryOption): Promise<CAssessmentQueryOption> => {
+        return await this._assessmentHelperRepo.updateOption(optionId, updates);
+    };
+
+    getOption = async (optionId: uuid): Promise<CAssessmentQueryOption> => {
+        return await this._assessmentHelperRepo.getOption(optionId);
+    };
+
+    deleteOption = async (optionId: uuid): Promise<boolean> => {
+        return await this._assessmentHelperRepo.deleteOption(optionId);
     };
 
 }

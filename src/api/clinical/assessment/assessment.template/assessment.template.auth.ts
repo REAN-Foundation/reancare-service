@@ -239,4 +239,36 @@ export class AssessmentTemplateAuth {
         RequestType : RequestType.CreateOne,
     };
 
+    static readonly addOption: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.AddOption`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly getOption: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetOption`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
+    };
+
+    static readonly updateOption: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.UpdateOption`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
+    };
+
+    static readonly deleteOption: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.DeleteOption`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
+    };
+
 }

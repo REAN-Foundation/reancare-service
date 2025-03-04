@@ -201,9 +201,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
         await this.validateObject(request, 'RawData', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, false);
+        await this.validateArray(request, 'Options', Where.Body, false, false);
 
         this.validateRequest(request);
-
         return request.body;
     };
 
@@ -361,6 +361,37 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Children             : [],
         };
         return condition;
+    };
+
+    addOption = async (request: express.Request): Promise<CAssessmentQueryOption> => {
+        await this.validateString(request, 'DisplayCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderGivenCode', Where.Body, false, true);
+        await this.validateUuid(request, 'NodeId', Where.Body, false, false);
+        await this.validateString(request, 'Text', Where.Body, false, false);
+        await this.validateInt(request, 'Sequence', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        var path: CAssessmentQueryOption = {
+            DisplayCode       : request.body.DisplayCode ?? null,
+            ProviderGivenCode : request.body.ProviderGivenCode ?? null,
+            NodeId            : request.body.NodeId,
+            Text              : request.body.Text,
+            Sequence          : request.body.Sequence,
+        };
+        return path;
+    };
+
+    updateOption = async (request: express.Request): Promise<CAssessmentQueryOption> => {
+        await this.validateString(request, 'DisplayCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderGivenCode', Where.Body, false, true);
+        await this.validateUuid(request, 'NodeId', Where.Body, false, false);
+        await this.validateString(request, 'Text', Where.Body, false, false);
+        await this.validateInt(request, 'Sequence', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        return request.body;
     };
 
 }

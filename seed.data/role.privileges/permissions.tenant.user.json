@@ -109,7 +109,11 @@
                 "UpdatePathCondition": true,
                 "DeletePathCondition": true,
                 "GetConditionsForPath": true,
-                "SetNextNodeToPath": true
+                "SetNextNodeToPath": true,
+                "AddOption": true,
+                "GetOption": true,
+                "UpdateOption": true,
+                "DeleteOption": true
             },
             "DailyAssessment": {
                 "Create": true,

@@ -544,7 +544,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 thisNode.Sequence = updates['Sequence'];
             }
             if (Helper.hasProperty(updates, 'CorrectAnswer')) {
-                thisNode.CorrectAnswer = updates['CorrectAnswer'];
+                thisNode.CorrectAnswer = updates['CorrectAnswer'] ? JSON.stringify(updates['CorrectAnswer']) : null;
             }
             if (Helper.hasProperty(updates, 'Score')) {
                 thisNode.Score = updates['Score'];
@@ -565,6 +565,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 thisNode.Tags = updates['Tags'] ? JSON.stringify(updates['Tags']) : null;
             }
             thisNode = await thisNode.save();
+            // if (Helper.hasProperty(updates, 'Options')) {
+                
+            //     await this.updateOptions(thisNode.id, updates.Options);
+            // }
             return await this.populateNodeDetails(thisNode);
 
         } catch (error) {
@@ -1191,13 +1195,13 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const parentNode = await AssessmentNode.findByPk(nodeId);
             const nextNode = path.NextNodeId ? await AssessmentNode.findByPk(path.NextNodeId) : null;
             const entity = {
-                DisplayCode          : displayCode,
-                ParentNodeId         : parentNode.id,
-                NextNodeId           : nextNode ? nextNode.id         : null,
-                NextNodeDisplayCode  : nextNode ? nextNode.DisplayCode: null,
-                ConditionId          : null,
-                IsExitPath           : path.IsExitPath,
-                MessageBeforeQuestion: path.MessageBeforeQuestion,
+                DisplayCode           : displayCode,
+                ParentNodeId          : parentNode.id,
+                NextNodeId            : nextNode ? nextNode.id         : null,
+                NextNodeDisplayCode   : nextNode ? nextNode.DisplayCode : null,
+                ConditionId           : null,
+                IsExitPath            : path.IsExitPath,
+                MessageBeforeQuestion : path.MessageBeforeQuestion,
             };
             var thisPath = await AssessmentNodePath.create(entity);
             return AssessmentHelperMapper.toPathDto(thisPath);
@@ -1314,22 +1318,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 condition.DisplayCode = Helper.generateDisplayCode('Condition');
             }
             const record = await AssessmentPathCondition.create({
-                DisplayCode          : condition.DisplayCode,
-                NodeId               : path.ParentNodeId,
-                PathId               : path.id,
-                ParentConditionId    : null,
-                IsCompositeCondition : condition.IsCompositeCondition,
-                CompositionType      : condition.CompositionType ?? ConditionCompositionType.And,
-                OperatorType         : condition.OperatorType,
-                FirstOperandName     : condition.FirstOperand.Name,
-                FirstOperandValue    : condition.FirstOperand.Value,
-                FirstOperandDataType : condition.FirstOperand.DataType,
-                SecondOperandName    : condition.SecondOperand.Name,
-                SecondOperandValue   : condition.SecondOperand.Value,
-                SecondOperandDataType: condition.SecondOperand.DataType,
-                ThirdOperandName     : condition.ThirdOperand ? condition.ThirdOperand.Name : null,
-                ThirdOperandValue    : condition.ThirdOperand ? condition.ThirdOperand.Value : null,
-                ThirdOperandDataType : condition.ThirdOperand ? condition.ThirdOperand.DataType : null,
+                DisplayCode           : condition.DisplayCode,
+                NodeId                : path.ParentNodeId,
+                PathId                : path.id,
+                ParentConditionId     : null,
+                IsCompositeCondition  : condition.IsCompositeCondition,
+                CompositionType       : condition.CompositionType ?? ConditionCompositionType.And,
+                OperatorType          : condition.OperatorType,
+                FirstOperandName      : condition.FirstOperand.Name,
+                FirstOperandValue     : condition.FirstOperand.Value,
+                FirstOperandDataType  : condition.FirstOperand.DataType,
+                SecondOperandName     : condition.SecondOperand.Name,
+                SecondOperandValue    : condition.SecondOperand.Value,
+                SecondOperandDataType : condition.SecondOperand.DataType,
+                ThirdOperandName      : condition.ThirdOperand ? condition.ThirdOperand.Name : null,
+                ThirdOperandValue     : condition.ThirdOperand ? condition.ThirdOperand.Value : null,
+                ThirdOperandDataType  : condition.ThirdOperand ? condition.ThirdOperand.DataType : null,
             });
             path.ConditionId = record.id;
             await path.save();
@@ -1387,8 +1391,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             var condition = await AssessmentPathCondition.findByPk(conditionId);
             if (condition) {
                 var children = await AssessmentPathCondition.findAll({
-                    where: {
-                        ParentConditionId: condition.id
+                    where : {
+                        ParentConditionId : condition.id
                     }
                 });
                 if (children.length > 0) {
@@ -1424,7 +1428,99 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    addOption = async (nodeId: uuid, option: CAssessmentQueryOption): Promise<CAssessmentQueryOption> => {
+        try {
+            const displayCode = option.DisplayCode ?? Helper.generateDisplayCode('Option');
+            const entity = {
+                DisplayCode       : displayCode,
+                ProviderGivenCode : option.ProviderGivenCode,
+                NodeId            : nodeId,
+                Text              : option.Text,
+                Sequence          : option.Sequence,
+                ImageUrl          : option.ImageUrl
+            
+            };
+      
+            var thisPath = await AssessmentQueryOption.create(entity);
+            return AssessmentHelperMapper.toOptionDto(thisPath);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getOption = async (optionId: uuid): Promise<CAssessmentQueryOption> => {
+        try {
+            var option = await AssessmentQueryOption.findByPk(optionId);
+            return AssessmentHelperMapper.toOptionDto(option);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    updateOption = async (optionId: string, updates: any): Promise<CAssessmentQueryOption> => {
+        try {
+            var option = await AssessmentQueryOption.findByPk(optionId);
+            if (Helper.hasProperty(updates, 'Text')) {
+                option.Text = updates['Text'];
+            }
+            if (Helper.hasProperty(updates, 'Sequence')) {
+                option.Sequence = updates['Sequence'];
+            }
+            if (Helper.hasProperty(updates, 'ImageUrl')) {
+                option.ImageUrl = updates['ImageUrl'];
+            }
+            option = await option.save();
+            return AssessmentHelperMapper.toOptionDto(option);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+   deleteOption = async (id: uuid): Promise<boolean> => {
+       try {
+           await AssessmentQueryOption.destroy({ where: { id: id } });
+           return true;
+       } catch (error) {
+           Logger.instance().log(error.message);
+           throw new ApiError(500, error.message);
+       }
+   };
     
+    // private updateOptions = async (nodeId: uuid, options: CAssessmentQueryOption[]) => {
+    //     for (const option of options) {
+    //         const existingOption = await AssessmentQueryOption.findOne({
+    //             where : {
+    //                 NodeId      : nodeId,
+    //                 DisplayCode : option.DisplayCode,
+    //             }
+    //         });
+    
+    //         if (existingOption) {
+    //             existingOption.ProviderGivenCode = option.ProviderGivenCode;
+    //             existingOption.Text = option.Text;
+    //             existingOption.ImageUrl = option.ImageUrl;
+    //             existingOption.Sequence = option.Sequence;
+    //             await existingOption.save();
+    //             Logger.instance().log(`Updated QueryOption - ${existingOption.DisplayCode}`);
+    //         } else {
+    //             const optEntity = {
+    //                 DisplayCode       : option.DisplayCode,
+    //                 ProviderGivenCode : option.ProviderGivenCode,
+    //                 NodeId            : nodeId,
+    //                 Text              : option.Text,
+    //                 ImageUrl          : option.ImageUrl,
+    //                 Sequence          : option.Sequence,
+    //             };
+    //             const queryOption = await AssessmentQueryOption.create(optEntity);
+    //             Logger.instance().log(`Created QueryOption - ${queryOption.DisplayCode}`);
+    //         }
+    //     }
+    // };
     //#endregion
 
 }

@@ -63,7 +63,8 @@ export class PatientValidator extends BaseValidator {
             UserId                        : request.params.userId ?? null,
             Address                       : request.body.Address ?? null,
             CohortId                      : request.body.CohortId ?? null,
-            ExternalMedicalRegistrationId : request.body.ExternalMedicalRegistrationId ?? null
+            ExternalMedicalRegistrationId : request.body.ExternalMedicalRegistrationId ?? null,
+            GenerateOtp                   : request.body.GenerateOtp ?? true
         };
 
         return entity;
@@ -194,6 +195,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);
         await this.validateString(request, 'UserName', Where.Body, false, true);
         await this.validateString(request, 'ExternalMedicalRegistrationId', Where.Body, false, true);
+        await this.validateBoolean(request, 'GenerateOtp', Where.Body, false, true);
 
         await body('AddressIds').optional()
             .isArray()

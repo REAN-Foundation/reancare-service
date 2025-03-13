@@ -26,4 +26,5 @@ export interface PatientDomainModel {
     InsuranceIds?                 : string[];
     EmergencyContactIds?          : string[];
     Address?                      : AddressDomainModel;
+    GenerateOtp?                  : boolean;
 }

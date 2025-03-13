@@ -179,7 +179,10 @@ export class UserHelper {
                 Purpose : 'Login',
                 RoleId  : roleId
             };
-            await this._userService.generateOtp(otpDetails);
+            if (createModel.GenerateOtp) {
+                await this._userService.generateOtp(otpDetails);
+            }
+       
         }
         healthProfile = await this._patientHealthProfileService.updateByPatientUserId(patient.UserId,
             createModel.HealthProfile);

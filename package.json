@@ -37,7 +37,7 @@
         "approx-string-match": "^1.1.0",
         "async": "^3.2.4",
         "aws-sdk": "^2.1542.0",
-        "axios": "^1.7.4",
+        "axios": "^1.8.2",
         "bcryptjs": "^2.4.3",
         "better-sqlite3": "^8.6.0",
         "body-parser": "^1.20.2",

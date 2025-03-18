@@ -29,6 +29,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
             TenantId                    : request.body.TenantId ?? request.currentUser.TenantId,
+            Tags                        : request.body.Tags ?? [],
         };
 
         return model;
@@ -43,6 +44,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'title', Where.Query, false, false);
         await this.validateString(request, 'type', Where.Query, false, false, true);
         await this.validateString(request, 'displayCode', Where.Query, false, false, true);
+        await this.validateString(request, 'tags', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getFilter(request);
@@ -53,6 +55,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Title       : request.query.title ?? null,
             Type        : request.query.type ?? null,
             DisplayCode : request.query.displayCode ?? null,
+            Tags        : request.query.tags ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -76,6 +79,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'DisplayCode', Where.Body, false, false);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
         await this.validateUuid(request, 'TenantId', Where.Body, false, true);
+        await this.validateArray(request, 'Tags', Where.Body, false, true);
         this.validateRequest(request);
     }
 
@@ -88,6 +92,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, true);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
+        await this.validateArray(request, 'Tags', Where.Body, false, false);
         this.validateRequest(request);
     }
 
@@ -109,6 +114,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateDecimal(request, 'Score', Where.Body, false, false);
         await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
         await this.validateObject(request, 'RawData', Where.Body, false, false);
+        await this.validateArray(request, 'Tags', Where.Body, false, true);
 
         this.validateRequest(request);
 
@@ -128,6 +134,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 CorrectAnswer     : request.body.CorrectAnswer ? JSON.stringify(request.body.CorrectAnswer) : null,
                 Options           : [],
                 RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
+                Tags              : request.body.Tags ?? [],
             };
             if (request.body.Options && request.body.Options.length > 0) {
                 var options: CAssessmentQueryOption[] = [];
@@ -158,6 +165,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 ChildrenNodeDisplayCodes    : [],
                 ChildrenNodeIds             : [],
                 ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce,
+                Tags                        : request.body.Tags ?? [],
             };
             return listNode;
         } else {
@@ -174,6 +182,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Message           : request.body.Message,
                 Acknowledged      : false,
                 RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
+                Tags              : request.body.Tags ?? [],
             };
             return messageNode;
         }
@@ -191,9 +200,10 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateDecimal(request, 'Sequence', Where.Body, false, false);
         await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
         await this.validateObject(request, 'RawData', Where.Body, false, false);
+        await this.validateArray(request, 'Tags', Where.Body, false, false);
+        await this.validateArray(request, 'Options', Where.Body, false, false);
 
         this.validateRequest(request);
-
         return request.body;
     };
 
@@ -246,6 +256,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'title', Where.Query, false, false);
         await this.validateString(request, 'nodeType', Where.Query, false, false, true);
         await this.validateString(request, 'templateId', Where.Query, false, false, true);
+        await this.validateString(request, 'tags', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getNodeFilter(request);
@@ -256,6 +267,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Title      : request.query.title ?? null,
             NodeType   : request.query.nodeType ?? null,
             TemplateId : request.query.templateId ?? null,
+            Tags       : request.query.tags ?? null,
+
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -348,6 +361,37 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Children             : [],
         };
         return condition;
+    };
+
+    addOption = async (request: express.Request): Promise<CAssessmentQueryOption> => {
+        await this.validateString(request, 'DisplayCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderGivenCode', Where.Body, false, true);
+        await this.validateUuid(request, 'NodeId', Where.Body, false, false);
+        await this.validateString(request, 'Text', Where.Body, false, false);
+        await this.validateInt(request, 'Sequence', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        var path: CAssessmentQueryOption = {
+            DisplayCode       : request.body.DisplayCode ?? null,
+            ProviderGivenCode : request.body.ProviderGivenCode ?? null,
+            NodeId            : request.body.NodeId,
+            Text              : request.body.Text,
+            Sequence          : request.body.Sequence,
+        };
+        return path;
+    };
+
+    updateOption = async (request: express.Request): Promise<CAssessmentQueryOption> => {
+        await this.validateString(request, 'DisplayCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderGivenCode', Where.Body, false, true);
+        await this.validateUuid(request, 'NodeId', Where.Body, false, false);
+        await this.validateString(request, 'Text', Where.Body, false, false);
+        await this.validateInt(request, 'Sequence', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        return request.body;
     };
 
 }

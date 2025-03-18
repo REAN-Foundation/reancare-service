@@ -119,6 +119,7 @@ export class AssessmentHelperMapper {
         dto.Score = node.Score;
         dto.ServeListNodeChildrenAtOnce = node.ServeListNodeChildrenAtOnce;
         dto.RawData = node.RawData;
+        dto.Tags = node.Tags ? JSON.parse(node.Tags) : [];
     }
 
     static toNodeDto = (
@@ -433,5 +434,6 @@ export class AssessmentHelperMapper {
 
         return conditionDto;
     }
-
+    
 }
+

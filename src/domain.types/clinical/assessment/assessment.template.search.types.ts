@@ -9,6 +9,7 @@ export interface AssessmentTemplateSearchFilters extends BaseSearchFilters{
     DisplayCode?     : string;
     CreatedDateFrom? : Date;
     CreatedDateTo?   : Date;
+    Tags?            : string;
 }
 
 export interface AssessmentTemplateSearchResults extends BaseSearchResults{

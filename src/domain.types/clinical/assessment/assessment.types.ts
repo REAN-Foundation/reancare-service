@@ -170,6 +170,7 @@ export class CAssessmentTemplate {
     CreatedAt?                   : Date;
     UpdatedAt?                   : Date;
     CreatedBy?                   : uuid;
+    Tags?                        : string[];
 
     constructor() {
         this.Nodes = [];
@@ -212,6 +213,7 @@ export class CAssessmentNode {
     Score                   : number;
     ChildrenNodeDisplayCodes? : string[];
     ServeListNodeChildrenAtOnce?: boolean;
+    Tags?                   : string[];
 
 }
 

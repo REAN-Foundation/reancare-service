@@ -74,6 +74,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 ProviderAssessmentCode      : t.ProviderAssessmentCode,
                 FileResourceId              : t.FileResourceId,
                 ServeListNodeChildrenAtOnce : t.ServeListNodeChildrenAtOnce,
+                Tags                        : t.Tags,
             };
 
             var template = await AssessmentTemplate.create(templateModel as any);
@@ -146,6 +147,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             RootNodeDisplayCode    : rootNode.DisplayCode,
             Nodes                  : nodes,
             Type                   : template.Type as AssessmentType,
+            Tags                   : Array.isArray(template.Tags) ? template.Tags : [template.Tags],
+
         };
         return templateObj;
     };
@@ -472,6 +475,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce,
                 QueryResponseType           : QueryResponseType.None,
                 RawData                     : nodeObj.RawData ?? null,
+                Tags                        : nodeObj.Tags && nodeObj.Tags.length > 0 ? JSON.stringify(nodeObj.Tags) : null,
             };
 
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -540,7 +544,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 thisNode.Sequence = updates['Sequence'];
             }
             if (Helper.hasProperty(updates, 'CorrectAnswer')) {
-                thisNode.CorrectAnswer = updates['CorrectAnswer'];
+                thisNode.CorrectAnswer = updates['CorrectAnswer'] ? JSON.stringify(updates['CorrectAnswer']) : null;
             }
             if (Helper.hasProperty(updates, 'Score')) {
                 thisNode.Score = updates['Score'];
@@ -557,7 +561,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (Helper.hasProperty(updates, 'ServeListNodeChildrenAtOnce')) {
                 thisNode.ServeListNodeChildrenAtOnce = updates['ServeListNodeChildrenAtOnce'];
             }
+            if (Helper.hasProperty(updates, 'Tags')) {
+                thisNode.Tags = updates['Tags'] ? JSON.stringify(updates['Tags']) : null;
+            }
             thisNode = await thisNode.save();
+
             return await this.populateNodeDetails(thisNode);
 
         } catch (error) {
@@ -579,6 +587,14 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (filters.TemplateId != null) {
                 search.where['TemplateId'] = filters.TemplateId;
+            }
+            if (filters.Tags != null) {
+                const tags = filters.Tags.split(',').map(tag => tag.trim());
+                search.where[Op.or] = tags.map(tag => ({
+                    Tags : {
+                        [Op.like] : `%${tag}%`,
+                    },
+                }));
             }
             let orderByColum = 'Title';
             if (filters.OrderBy) {
@@ -1176,13 +1192,13 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const parentNode = await AssessmentNode.findByPk(nodeId);
             const nextNode = path.NextNodeId ? await AssessmentNode.findByPk(path.NextNodeId) : null;
             const entity = {
-                DisplayCode          : displayCode,
-                ParentNodeId         : parentNode.id,
-                NextNodeId           : nextNode ? nextNode.id         : null,
-                NextNodeDisplayCode  : nextNode ? nextNode.DisplayCode: null,
-                ConditionId          : null,
-                IsExitPath           : path.IsExitPath,
-                MessageBeforeQuestion: path.MessageBeforeQuestion,
+                DisplayCode           : displayCode,
+                ParentNodeId          : parentNode.id,
+                NextNodeId            : nextNode ? nextNode.id         : null,
+                NextNodeDisplayCode   : nextNode ? nextNode.DisplayCode : null,
+                ConditionId           : null,
+                IsExitPath            : path.IsExitPath,
+                MessageBeforeQuestion : path.MessageBeforeQuestion,
             };
             var thisPath = await AssessmentNodePath.create(entity);
             return AssessmentHelperMapper.toPathDto(thisPath);
@@ -1299,22 +1315,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 condition.DisplayCode = Helper.generateDisplayCode('Condition');
             }
             const record = await AssessmentPathCondition.create({
-                DisplayCode          : condition.DisplayCode,
-                NodeId               : path.ParentNodeId,
-                PathId               : path.id,
-                ParentConditionId    : null,
-                IsCompositeCondition : condition.IsCompositeCondition,
-                CompositionType      : condition.CompositionType ?? ConditionCompositionType.And,
-                OperatorType         : condition.OperatorType,
-                FirstOperandName     : condition.FirstOperand.Name,
-                FirstOperandValue    : condition.FirstOperand.Value,
-                FirstOperandDataType : condition.FirstOperand.DataType,
-                SecondOperandName    : condition.SecondOperand.Name,
-                SecondOperandValue   : condition.SecondOperand.Value,
-                SecondOperandDataType: condition.SecondOperand.DataType,
-                ThirdOperandName     : condition.ThirdOperand ? condition.ThirdOperand.Name : null,
-                ThirdOperandValue    : condition.ThirdOperand ? condition.ThirdOperand.Value : null,
-                ThirdOperandDataType : condition.ThirdOperand ? condition.ThirdOperand.DataType : null,
+                DisplayCode           : condition.DisplayCode,
+                NodeId                : path.ParentNodeId,
+                PathId                : path.id,
+                ParentConditionId     : null,
+                IsCompositeCondition  : condition.IsCompositeCondition,
+                CompositionType       : condition.CompositionType ?? ConditionCompositionType.And,
+                OperatorType          : condition.OperatorType,
+                FirstOperandName      : condition.FirstOperand.Name,
+                FirstOperandValue     : condition.FirstOperand.Value,
+                FirstOperandDataType  : condition.FirstOperand.DataType,
+                SecondOperandName     : condition.SecondOperand.Name,
+                SecondOperandValue    : condition.SecondOperand.Value,
+                SecondOperandDataType : condition.SecondOperand.DataType,
+                ThirdOperandName      : condition.ThirdOperand ? condition.ThirdOperand.Name : null,
+                ThirdOperandValue     : condition.ThirdOperand ? condition.ThirdOperand.Value : null,
+                ThirdOperandDataType  : condition.ThirdOperand ? condition.ThirdOperand.DataType : null,
             });
             path.ConditionId = record.id;
             await path.save();
@@ -1372,8 +1388,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             var condition = await AssessmentPathCondition.findByPk(conditionId);
             if (condition) {
                 var children = await AssessmentPathCondition.findAll({
-                    where: {
-                        ParentConditionId: condition.id
+                    where : {
+                        ParentConditionId : condition.id
                     }
                 });
                 if (children.length > 0) {
@@ -1409,6 +1425,68 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    addOption = async (nodeId: uuid, option: CAssessmentQueryOption): Promise<CAssessmentQueryOption> => {
+        try {
+            const displayCode = option.DisplayCode ?? Helper.generateDisplayCode('Option');
+            const entity = {
+                DisplayCode       : displayCode,
+                ProviderGivenCode : option.ProviderGivenCode,
+                NodeId            : nodeId,
+                Text              : option.Text,
+                Sequence          : option.Sequence,
+                ImageUrl          : option.ImageUrl
+            
+            };
+      
+            var thisPath = await AssessmentQueryOption.create(entity);
+            return AssessmentHelperMapper.toOptionDto(thisPath);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getOption = async (optionId: uuid): Promise<CAssessmentQueryOption> => {
+        try {
+            var option = await AssessmentQueryOption.findByPk(optionId);
+            return AssessmentHelperMapper.toOptionDto(option);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    updateOption = async (optionId: string, updates: any): Promise<CAssessmentQueryOption> => {
+        try {
+            var option = await AssessmentQueryOption.findByPk(optionId);
+            if (Helper.hasProperty(updates, 'Text')) {
+                option.Text = updates['Text'];
+            }
+            if (Helper.hasProperty(updates, 'Sequence')) {
+                option.Sequence = updates['Sequence'];
+            }
+            if (Helper.hasProperty(updates, 'ImageUrl')) {
+                option.ImageUrl = updates['ImageUrl'];
+            }
+            option = await option.save();
+            return AssessmentHelperMapper.toOptionDto(option);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+   deleteOption = async (id: uuid): Promise<boolean> => {
+       try {
+           await AssessmentQueryOption.destroy({ where: { id: id } });
+           return true;
+       } catch (error) {
+           Logger.instance().log(error.message);
+           throw new ApiError(500, error.message);
+       }
+   };
     
     //#endregion
 

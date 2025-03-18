@@ -17,4 +17,5 @@ export interface AssessmentTemplateDto {
     RootNodeId?                   : uuid;
     QnAs?                         : any[];
     TotalNumberOfQuestions?       : number;
+    Tags?                         : string[];
 }

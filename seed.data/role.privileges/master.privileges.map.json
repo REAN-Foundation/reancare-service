@@ -249,6 +249,32 @@
             "Search": true,
             "Update": true
         },
+        "Maternity":{
+            "Pregnancy":{
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Search": true,
+                "Update": true
+
+            },
+            "Delivery":{
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Search": true,
+                "Update": true
+
+            },
+            "AntenatalVisit":{
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Search": true,
+                "Update": true
+
+            }
+        },
         "MedicalCondition": {
             "Create": true,
             "Delete": true,

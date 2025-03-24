@@ -6,7 +6,6 @@ import { PregnancyService } from '../../../../services/clinical/maternity/pregna
 import { Injector } from '../../../../startup/injector';
 import { PregnancyValidator } from './pregnancy.validator';
 import { BaseController } from '../../../base.controller';
-// import { UserService } from 'src/services/users/user/user.service';
 import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -28,47 +27,6 @@ export class PregnancyController extends BaseController {
     //#endregion
 
     //#region Action methods
-
-    // create = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         const model = await this._validator.create(request);
-
-    //         const userId = model.PatientUserId;
-    //     if (!userId) {
-    //         throw new ApiError(400, 'Patient user ID is missing in the request!');
-    //     }
-
-    //     // Check if the PatientUserId exists
-    //     const patientUser = await this._userService.getById(userId);
-    //     if (!patientUser) {
-    //         throw new ApiError(404, 'Patient user not found!');
-    //     }
-
-    //         const pregnancy = await this._service.create(model);
-    //         if (pregnancy == null) {
-    //             throw new ApiError(400, 'Cannot create record for pregnancy!');
-    //         }
-
-    //         ResponseHandler.success(request, response, 'Pregnancy record created successfully!', 201, {
-    //             Pregnancy: pregnancy,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
-
-// export class PregnancyController extends BaseController {
-
-//     //#region member variables and constructors
-
-//     _service: PregnancyService = Injector.Container.resolve(PregnancyService);
-
-//     _validator: PregnancyValidator = new PregnancyValidator();
-
-//     //#endregion
-
-//     //#region Action methods
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

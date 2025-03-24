@@ -99,6 +99,10 @@ import { AhaStatisticsRepo } from './repositories/statistics/aha.statistics.repo
 import { TenantSettingsRepo } from './repositories/tenant/tenant.settings.repo';
 import { HealthReportSettingsRepo } from './repositories/users/patient/health.report.setting.repo';
 import { FollowUpCancellationRepo } from './repositories/tenant/followups/cancellations/follow.up.cancellation.repo';
+import { PregnancyRepo } from './repositories/clinical/maternity/pregnancy.repo';
+import { DeliveryRepo } from './repositories/clinical/maternity/delivery.repo';
+import { AntenatalVisitRepo } from './repositories/clinical/maternity/antenatal.visit.repo';
+import { AntenatalMedicationRepo } from './repositories/clinical/maternity/antenatal.medication.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -207,6 +211,10 @@ export class SequelizeInjector {
         container.register('ITenantSettingsRepo',TenantSettingsRepo);
         container.register('IHealthReportSettingsRepo',HealthReportSettingsRepo);
         container.register('IFollowUpCancellationRepo',FollowUpCancellationRepo);
+        container.register('IPregnancyRepo',PregnancyRepo);
+        container.register('IDeliveryRepo',DeliveryRepo);
+        container.register('IAntenatalVisitRepo',AntenatalVisitRepo);
+        container.register('IAntenatalMedicationRepo',AntenatalMedicationRepo);
 
     }
 

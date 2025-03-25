@@ -4,7 +4,6 @@ import { Logger } from '../../../../../../common/logger';
 import { PregnancyDomainModel } from "../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.domain.model";
 import { PregnancyDetailsDto,PregnancyDto } from "../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto";
 import { PregnancySearchFilters, PregnancySearchResults } from "../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.search.type"
-// import { PregnancySearchFilters, PregnancySearchResults } from "../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.search.types";
 import { IPregnancyRepo } from '../../../../../repository.interfaces/clinical/maternity/pregnancy.repo.interface';
 import { PregnancyMapper } from '../../../mappers/clinical/maternity/pregnancy.mapper';
 import Pregnancy from '../../../models/clinical/maternity/pregnancy.model';
@@ -34,7 +33,7 @@ export class PregnancyRepo implements IPregnancyRepo {
             };
 
             const pregnancy = await Pregnancy.create(entity);
-            return await PregnancyMapper.toDetailsDto(pregnancy);
+            return await PregnancyMapper.toDto(pregnancy);
 
         } catch (error) {
             Logger.instance().log(error.message);

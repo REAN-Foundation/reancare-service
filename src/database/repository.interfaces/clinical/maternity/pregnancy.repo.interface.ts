@@ -4,7 +4,7 @@ import { PregnancySearchFilters, PregnancySearchResults } from "../../../../doma
 
 export interface IPregnancyRepo {
 
-    create(pregnancyDomainModel: PregnancyDomainModel): Promise<PregnancyDetailsDto>;
+    create(pregnancyDomainModel: PregnancyDomainModel): Promise<PregnancyDto>;
 
     getById(id: string): Promise<PregnancyDto>;
 

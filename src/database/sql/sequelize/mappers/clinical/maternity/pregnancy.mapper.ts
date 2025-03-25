@@ -8,24 +8,7 @@ import PregnancyModel from '../../../models/clinical/maternity/pregnancy.model';
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class PregnancyMapper {
-
-    static toDetailsDto = (pregnancy: Pregnancy, userDetailsDto: UserDetailsDto = null): PregnancyDetailsDto => {
-        if (pregnancy == null) {
-            return null;
-        }
-
-        const dto: PregnancyDetailsDto = {
-            id                           : pregnancy.id,
-            PatientUserId                : pregnancy.PatientUserId,
-            ExternalPregnancyId          : pregnancy.ExternalPregnancyId,
-            DateOfLastMenstrualPeriod    : pregnancy.DateOfLastMenstrualPeriod,
-            EstimatedDateOfChildBirth    : pregnancy.EstimatedDateOfChildBirth,
-            Gravidity                    : pregnancy.Gravidity,
-            Parity                       : pregnancy.Parity,
-        };
-        return dto;
-    };
-
+    
     static toDto = (pregnancy: Pregnancy,userDto: UserDto = null
     ): PregnancyDto => {
         if (pregnancy == null) {

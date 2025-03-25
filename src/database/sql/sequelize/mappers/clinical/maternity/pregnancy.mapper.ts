@@ -45,27 +45,3 @@ export class PregnancyMapper {
     };
 
 }
-
-// export class PregnancyMapper {
-
-
-//     static toDto = (pregnancy: Pregnancy, userDto:UserDetailsDto ): PregnancyDto => {
-//         if (pregnancy == null) {
-//             return null;
-//         }
-//         const dto: PregnancyDto = {
-//             id                           : pregnancy.id,
-//             PatientUserId                : pregnancy.PatientUserId,
-//             DateOfLastMenstrualPeriod    : pregnancy.DateOfLastMenstrualPeriod,
-//             EstimatedDateOfChildBirth    : pregnancy.EstimatedDateOfChildBirth,
-//             Gravidity                    : pregnancy.Gravidity,
-//             Parity                       : pregnancy.Parity,
-//             CreatedAt                    : pregnancy.CreatedAt,
-//             UpdatedAt                    : pregnancy.UpdatedAt,
-//             DeletedAt                    : pregnancy.DeletedAt,
-        
-//         };
-//         return dto;
-//     };
-
-// }

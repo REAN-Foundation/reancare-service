@@ -2,7 +2,7 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IPregnancyRepo } from "../../../database/repository.interfaces/clinical/maternity/pregnancy.repo.interface";
 import { PregnancyDomainModel } from "../../../domain.types/clinical/maternity/pregnancy/pregnancy.domain.model";
-import { PregnancyDetailsDto,PregnancyDto } from "../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto";
+import { PregnancyDto } from "../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto";
 import { PregnancySearchFilters, PregnancySearchResults } from "../../../domain.types/clinical/maternity/pregnancy/pregnancy.search.type";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@ export class PregnancyService {
         @inject('IPregnancyRepo') private _pregnancyRepo: IPregnancyRepo,
     ) { }
 
-    create = async (pregnancyDomainModel: PregnancyDomainModel): Promise<PregnancyDetailsDto> => {
+    create = async (pregnancyDomainModel: PregnancyDomainModel): Promise<PregnancyDto> => {
         return await this._pregnancyRepo.create(pregnancyDomainModel);
     };
 

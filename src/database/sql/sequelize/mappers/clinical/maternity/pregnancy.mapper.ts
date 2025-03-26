@@ -1,7 +1,4 @@
-// import { UserDetailsDto } from 'src/domain.types/users/user/user.dto';
-import { UserDetailsDto, UserDto } from '../../../../../../domain.types/users/user/user.dto';
-
-import { PregnancyDetailsDto,PregnancyDto } from '../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto';
+import { PregnancyDto } from '../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto';
 import Pregnancy from '../../../models/clinical/maternity/pregnancy.model';
 import PregnancyModel from '../../../models/clinical/maternity/pregnancy.model';
 
@@ -9,8 +6,7 @@ import PregnancyModel from '../../../models/clinical/maternity/pregnancy.model';
 
 export class PregnancyMapper {
     
-    static toDto = (pregnancy: Pregnancy,userDto: UserDto = null
-    ): PregnancyDto => {
+    static toDto = (pregnancy: Pregnancy): PregnancyDto => {
         if (pregnancy == null) {
             return null;
         }

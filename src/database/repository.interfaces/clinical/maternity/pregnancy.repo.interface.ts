@@ -1,5 +1,5 @@
 import { PregnancyDomainModel } from "../../../../domain.types/clinical/maternity/pregnancy/pregnancy.domain.model";
-import { PregnancyDetailsDto,PregnancyDto } from "../../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto";
+import { PregnancyDto } from "../../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto";
 import { PregnancySearchFilters, PregnancySearchResults } from "../../../../domain.types/clinical/maternity/pregnancy/pregnancy.search.type";
 
 export interface IPregnancyRepo {

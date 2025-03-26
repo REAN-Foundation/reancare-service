@@ -2,7 +2,7 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IDeliveryRepo } from "../../../database/repository.interfaces/clinical/maternity/delivery.repo.interface";
 import { DeliveryDomainModel } from "../../../domain.types/clinical/maternity/delivery/delivery.domain.model";
-import { DeliveryDetailsDto, DeliveryDto } from "../../../domain.types/clinical/maternity/delivery/delivery.dto";
+import { DeliveryDto } from "../../../domain.types/clinical/maternity/delivery/delivery.dto";
 import { DeliverySearchFilters, DeliverySearchResults } from "../../../domain.types/clinical/maternity/delivery/delivery.search.type";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@ export class DeliveryService {
         @inject('IDeliveryRepo') private _deliveryRepo: IDeliveryRepo,
     ) { }
 
-    create = async (deliveryDomainModel: DeliveryDomainModel): Promise<DeliveryDetailsDto> => {
+    create = async (deliveryDomainModel: DeliveryDomainModel): Promise<DeliveryDto> => {
         return await this._deliveryRepo.create(deliveryDomainModel);
     };
 

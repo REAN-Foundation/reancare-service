@@ -1,4 +1,4 @@
-import { DeliveryDetailsDto, DeliveryDto } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.dto';
+import { DeliveryDto } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.dto';
 import Delivery from '../../../models/clinical/maternity/delivery.model';
 import { DeliveryMode, DeliveryOutcome } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.type';
 

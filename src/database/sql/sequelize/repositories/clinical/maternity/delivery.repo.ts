@@ -2,7 +2,7 @@ import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { DeliveryDomainModel } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.domain.model';
-import { DeliveryDetailsDto, DeliveryDto } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.dto';
+import { DeliveryDto } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.dto';
 import { DeliverySearchFilters, DeliverySearchResults } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.search.type';
 
 import { IDeliveryRepo } from '../../../../../repository.interfaces/clinical/maternity/delivery.repo.interface';
@@ -22,7 +22,7 @@ export class DeliveryRepo implements IDeliveryRepo {
         }
     };
 
-    create = async (createModel: DeliveryDomainModel): Promise<DeliveryDetailsDto> => {
+    create = async (createModel: DeliveryDomainModel): Promise<DeliveryDto> => {
         try {
             const entity = {
                 PregnancyId        : createModel.PregnancyId,

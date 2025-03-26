@@ -1,10 +1,10 @@
 import { DeliveryDomainModel } from "../../../../domain.types/clinical/maternity/delivery/delivery.domain.model";
-import { DeliveryDetailsDto, DeliveryDto } from "../../../../domain.types/clinical/maternity/delivery/delivery.dto";
+import { DeliveryDto } from "../../../../domain.types/clinical/maternity/delivery/delivery.dto";
 import { DeliverySearchFilters, DeliverySearchResults } from "../../../../domain.types/clinical/maternity/delivery/delivery.search.type";
 
 export interface IDeliveryRepo {
 
-    create(deliveryDomainModel: DeliveryDomainModel): Promise<DeliveryDetailsDto>;
+    create(deliveryDomainModel: DeliveryDomainModel): Promise<DeliveryDto>;
 
     getById(id: string): Promise<DeliveryDto>;
 

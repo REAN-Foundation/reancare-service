@@ -255,8 +255,19 @@
                 "Delete": true,
                 "GetById": true,
                 "Search": true,
-                "Update": true
-
+                "Update": true,
+                "CreateAntenatalVisit": true,
+                "DeleteAntenatalVisit": true,
+                "GetAntenatalVisitById": true,
+                "UpdateAntenatalVisit": true,
+                "CreateAntenatalMedication": true,
+                "DeleteAntenatalMedication": true,
+                "GetAntenatalMedicationById": true,
+                "UpdateAntenatalMedication": true,
+                "CreateTest": true,
+                "DeleteTest": true,
+                "GetTestById": true,
+                "UpdateTest": true
             },
             "Delivery":{
                 "Create": true,
@@ -264,15 +275,6 @@
                 "GetById": true,
                 "Search": true,
                 "Update": true
-
-            },
-            "AntenatalVisit":{
-                "Create": true,
-                "Delete": true,
-                "GetById": true,
-                "Search": true,
-                "Update": true
-
             }
         },
         "MedicalCondition": {

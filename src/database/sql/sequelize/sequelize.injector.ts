@@ -103,6 +103,7 @@ import { PregnancyRepo } from './repositories/clinical/maternity/pregnancy.repo'
 import { DeliveryRepo } from './repositories/clinical/maternity/delivery.repo';
 import { AntenatalVisitRepo } from './repositories/clinical/maternity/antenatal.visit.repo';
 import { AntenatalMedicationRepo } from './repositories/clinical/maternity/antenatal.medication.repo';
+import { TestRepo } from './repositories/clinical/maternity/test.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -215,6 +216,7 @@ export class SequelizeInjector {
         container.register('IDeliveryRepo',DeliveryRepo);
         container.register('IAntenatalVisitRepo',AntenatalVisitRepo);
         container.register('IAntenatalMedicationRepo',AntenatalMedicationRepo);
+        container.register('ITestRepo',TestRepo);
 
     }
 

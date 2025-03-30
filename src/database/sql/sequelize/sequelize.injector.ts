@@ -101,9 +101,7 @@ import { HealthReportSettingsRepo } from './repositories/users/patient/health.re
 import { FollowUpCancellationRepo } from './repositories/tenant/followups/cancellations/follow.up.cancellation.repo';
 import { PregnancyRepo } from './repositories/clinical/maternity/pregnancy.repo';
 import { DeliveryRepo } from './repositories/clinical/maternity/delivery.repo';
-import { AntenatalVisitRepo } from './repositories/clinical/maternity/antenatal.visit.repo';
-import { AntenatalMedicationRepo } from './repositories/clinical/maternity/antenatal.medication.repo';
-
+import { VisitRepo } from './repositories/clinical/visit.repo';
 ////////////////////////////////////////////////////////////////////////////////
 
 export class SequelizeInjector {
@@ -213,8 +211,7 @@ export class SequelizeInjector {
         container.register('IFollowUpCancellationRepo',FollowUpCancellationRepo);
         container.register('IPregnancyRepo',PregnancyRepo);
         container.register('IDeliveryRepo',DeliveryRepo);
-        container.register('IAntenatalVisitRepo',AntenatalVisitRepo);
-        container.register('IAntenatalMedicationRepo',AntenatalMedicationRepo);
+        container.register('IVisitRepo',VisitRepo);
 
     }
 

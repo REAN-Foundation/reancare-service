@@ -347,6 +347,13 @@
                 "Search": true,
                 "Update": true
             }
+        },
+        "Visit": {
+            "Create": false,
+            "Delete": false,
+            "GetById": false,
+            "Search": true,
+            "Update": false
         }
     },
     "Community": {

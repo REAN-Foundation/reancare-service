@@ -346,6 +346,13 @@
                 "Search": true,
                 "Update": true
             }
+        },
+        "Visit": {
+            "Create": false,
+            "Delete": false,
+            "GetById": true,
+            "Search": true,
+            "Update": false
         }
     },
     "Community": {

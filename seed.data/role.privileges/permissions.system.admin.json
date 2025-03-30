@@ -348,6 +348,13 @@
                 "Search": true,
                 "Update": true
             }
+        },
+        "Visit": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
         }
     },
     "Community": {

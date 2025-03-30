@@ -91,7 +91,8 @@ import { register as registerTenantFeatureSettingRoutes } from './tenant/setting
 import { register as registerFollowUpCancellationRoutes } from './tenant/followups/cancellations/followup.cancellation.routes';
 import { register as registerPregnancyRoutes } from './clinical/maternity/pregnancy/pregnancy.route';
 import { register as registerDeliveryRoutes } from './clinical/maternity/delivery/delivery.route';
-import { register as registerAntenatalVisitRoutes } from './clinical/maternity/antenatal.visit/antenatal.visit.route';
+import { register as registerVisitRoutes } from './clinical/visit/visit.routes';
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -207,7 +208,7 @@ export class Router {
                 registerFollowUpCancellationRoutes(this._app);
                 registerPregnancyRoutes(this._app);
                 registerDeliveryRoutes(this._app);
-                registerAntenatalVisitRoutes(this._app);
+                registerVisitRoutes(this._app);
 
                 resolve(true);
 

@@ -102,6 +102,8 @@ import { FollowUpCancellationRepo } from './repositories/tenant/followups/cancel
 import { PregnancyRepo } from './repositories/clinical/maternity/pregnancy.repo';
 import { DeliveryRepo } from './repositories/clinical/maternity/delivery.repo';
 import { VisitRepo } from './repositories/clinical/visit.repo';
+import { PostnatalVisitRepo } from './repositories/clinical/maternity/postnatal.visit.repo';
+import { PostnatalMedicationRepo } from './repositories/clinical/maternity/postnatal.medication.repo';
 ////////////////////////////////////////////////////////////////////////////////
 
 export class SequelizeInjector {
@@ -212,6 +214,8 @@ export class SequelizeInjector {
         container.register('IPregnancyRepo',PregnancyRepo);
         container.register('IDeliveryRepo',DeliveryRepo);
         container.register('IVisitRepo',VisitRepo);
+        container.register('IPostnatalVisitRepo',PostnatalVisitRepo);
+        container.register('IPostnatalMedicationRepo',PostnatalMedicationRepo);
 
     }
 

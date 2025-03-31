@@ -53,6 +53,78 @@ export class DeliveryAuth {
         CustomAuthorization : true,
     };
 
+    static readonly createPostnatalVisit: AuthOptions = {
+        ...DefaultAuthOptions, 
+        Context     : `${this._baseContext}.CreatePostnatalVisit`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly updatePostnatalVisit: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.UpdatePostnatalVisit`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
+    };
+
+    static readonly deletePostnatalVisit: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.DeletePostnatalVisit`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
+    };
+
+    static readonly getPostnatalVisitById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetPostnatalVisitById`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
+    };
+
+    static readonly searchPostnatalVisit: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context             : `${this._baseContext}.SearchPostnatalVisit`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
+    };
+
+    static readonly createPostnatalMedication: AuthOptions = {
+        ...DefaultAuthOptions, 
+        Context     : `${this._baseContext}.CreatePostnatalMedication`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly updatePostnatalMedication: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.UpdatePostnatalMedication`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
+    };
+
+    static readonly deletePostnatalMedication: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.DeletePostnatalMedication`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
+    };
+
+    static readonly getPostnatalMedicationById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetPostnatalMedicationById`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
+    };
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

@@ -262,7 +262,16 @@
                 "Delete": false,
                 "GetById": false,
                 "Search": false,
-                "Update": false
+                "Update": false,
+                "CreatePostnatalVisit": false,
+                "DeletePostnatalVisit": false,
+                "GetPostnatalVisitById": false,
+                "SearchPostnatalVisit": false,
+                "UpdatePostnatalVisit": false,
+                "CreatePostnatalMedication": false,
+                "DeletePostnatalMedication": false,
+                "GetPostnatalMedicationById": false,
+                "UpdatePostnatalMedication": false
             },
             "AntenatalVisit":{
                 "Create": false,

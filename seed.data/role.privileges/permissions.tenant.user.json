@@ -255,7 +255,12 @@
                 "Delete": false,
                 "GetById": false,
                 "Search": false,
-                "Update": false
+                "Update": false,
+                "CreateVaccination": false,
+                "DeleteVaccination": false,
+                "GetVaccinationById": false,
+                "SearchVaccination": false,
+                "UpdateVaccination": false
             },
             "Delivery":{
                 "Create": false,
@@ -271,7 +276,17 @@
                 "CreatePostnatalMedication": false,
                 "DeletePostnatalMedication": false,
                 "GetPostnatalMedicationById": false,
-                "UpdatePostnatalMedication": false
+                "UpdatePostnatalMedication": false,
+                "CreateComplication": false,
+                "DeleteComplication": false,
+                "GetComplicationById": false,
+                "SearchComplication": false,
+                "UpdateComplication": false,
+                "CreateBaby": false,
+                "GetBabyById": false,
+                "CreateBreastfeeding": false,
+                "GetBreastfeedingById": false,
+                "UpdateBreastfeeding": false
             },
             "AntenatalVisit":{
                 "Create": false,

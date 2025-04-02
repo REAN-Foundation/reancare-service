@@ -17,7 +17,7 @@ export const register = (app: express.Application): void => {
     router.delete('/:id', auth(DeliveryAuth.delete), controller.delete);
 
     router.post('/:id/postnatal-visits', auth(DeliveryAuth.createPostnatalVisit), controller.createPostnatalVisit);
-    router.get('/:id/postnatal-visits/search', auth (DeliveryAuth.searchPostnatalVisit),controller.searchPostnatalVisit);
+    router.get('/:id/postnatal-visits/search', auth (DeliveryAuth.searchPostnatalVisits),controller.searchPostnatalVisits);
     router.get('/:id/postnatal-visits/:postnatalVisitId', auth(DeliveryAuth.getPostnatalVisitById),controller.getPostnatalVisitById);
     router.put('/:id/postnatal-visits/:postnatalVisitId', auth(DeliveryAuth.updatePostnatalVisit),controller.updatePostnatalVisit);
     router.delete('/:id/postnatal-visits/:postnatalVisitId', auth(DeliveryAuth.deletePostnatalVisit), controller.deletePostnatalVisit);
@@ -28,7 +28,7 @@ export const register = (app: express.Application): void => {
     router.delete('/:id/postnatal-medications/:postnatalMedicationId', auth(DeliveryAuth.deletePostnatalMedication), controller.deletePostnatalMedication);
 
     router.post('/:id/complications', auth(DeliveryAuth.createComplication), controller.createComplication);
-    router.get('/:id/complications/search', auth (DeliveryAuth.searchComplication),controller.searchComplication);
+    router.get('/:id/complications/search', auth (DeliveryAuth.searchComplications),controller.searchComplications);
     router.get('/:id/complications/:complicationId', auth(DeliveryAuth.getComplicationById),controller.getComplicationById);
     router.put('/:id/complications/:complicationId', auth(DeliveryAuth.updateComplication),controller.updateComplication);
     router.delete('/:id/complications/:complicationId', auth(DeliveryAuth.deleteComplication), controller.deleteComplication);

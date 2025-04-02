@@ -115,7 +115,7 @@ export class PregnancyValidator extends BaseValidator {
         return this.getVaccinationDomainModel(request);
     };
 
-    searchVaccination = async (request: express.Request): Promise<VaccinationSearchFilters> => {
+    searchVaccinations = async (request: express.Request): Promise<VaccinationSearchFilters> => {
         await this.validateUuid(request, 'PregnancyId', Where.Query, false, false);
         await this.validateString(request, 'VaccineName', Where.Query, false, false);
         await this.validateInt(request, 'DoseNumber', Where.Query, false, false);

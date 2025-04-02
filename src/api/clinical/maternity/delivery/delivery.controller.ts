@@ -170,9 +170,9 @@ export class DeliveryController extends BaseController {
         }
     };
 
-    searchPostnatalVisit = async (request: express.Request, response: express.Response): Promise<void> => {
+    searchPostnatalVisits = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await this._validator.searchPostnatalVisit(request);
+            const filters = await this._validator.searchPostnatalVisits(request);
             const searchResults = await this._postnatalVisitService.search(filters);
             const count = searchResults.Items.length;
             const message = count === 0 ? 'No postnatal visit records found!' : `Total ${count} postnatal visit records retrieved successfully!`;
@@ -343,9 +343,9 @@ export class DeliveryController extends BaseController {
         }
     };
 
-    searchComplication = async (request: express.Request, response: express.Response): Promise<void> => {
+    searchComplications = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await this._validator.searchComplication(request);
+            const filters = await this._validator.searchComplications(request);
             const searchResults = await this._complicationService.search(filters);
             const count = searchResults.Items.length;
             const message = count === 0 ? 'No complication records found!' : `Total ${count} complication records retrieved successfully!`;

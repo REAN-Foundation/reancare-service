@@ -85,9 +85,9 @@ export class DeliveryAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static readonly searchPostnatalVisit: AuthOptions = {
+    static readonly searchPostnatalVisits: AuthOptions = {
         ...DefaultAuthOptions,
-        Context             : `${this._baseContext}.SearchPostnatalVisit`,
+        Context             : `${this._baseContext}.SearchPostnatalVisits`,
         Ownership           : ResourceOwnership.Owner,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.Search,
@@ -158,9 +158,9 @@ export class DeliveryAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static readonly searchComplication: AuthOptions = {
+    static readonly searchComplications: AuthOptions = {
         ...DefaultAuthOptions,
-        Context             : `${this._baseContext}.SearchComplication`,
+        Context             : `${this._baseContext}.SearchComplications`,
         Ownership           : ResourceOwnership.Owner,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.Search,

@@ -128,7 +128,7 @@ export class DeliveryValidator extends BaseValidator {
         return this.getPostnatalVisitDomainModel(request);
     };
 
-    searchPostnatalVisit = async (request: express.Request): Promise<PostnatalVisitSearchFilters> => {
+    searchPostnatalVisits = async (request: express.Request): Promise<PostnatalVisitSearchFilters> => {
 
         await this.validateDate(request, 'DateOfVisit', Where.Query, false, false);
         await this.validateUuid(request, 'DeliveryId', Where.Query, false, false);
@@ -266,7 +266,7 @@ export class DeliveryValidator extends BaseValidator {
         return this.getComplicationDomainModel(request);
     };
 
-    searchComplication = async (request: express.Request): Promise<ComplicationSearchFilter> => {
+    searchComplications = async (request: express.Request): Promise<ComplicationSearchFilter> => {
         await this.validateUuid(request, 'DeliveryId', Where.Body, false, false);
         await this.validateUuid(request, 'BabyId1', Where.Body, false, false);
         await this.validateUuid(request, 'BabyId2', Where.Body, false, false);

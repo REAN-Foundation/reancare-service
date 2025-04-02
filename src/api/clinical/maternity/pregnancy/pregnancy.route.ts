@@ -17,10 +17,11 @@ export const register = (app: express.Application): void => {
     router.delete('/:id', auth(PregnancyAuth.delete), controller.delete);
 
     router.post('/:id/vaccinations', auth(PregnancyAuth.createVaccination), controller.createVaccination);
-    router.get('/:id/vaccinations/search', auth (PregnancyAuth.searchVaccination),controller.searchVaccination);
+    router.get('/:id/vaccinations/search', auth (PregnancyAuth.searchVaccinations),controller.searchVaccinations);
     router.get('/:id/vaccinations/:vaccinationId', auth(PregnancyAuth.getVaccinationById),controller.getVaccinationById);
     router.put('/:id/vaccinations/:vaccinationId', auth(PregnancyAuth.updateVaccination),controller.updateVaccination);
     router.delete('/:id/vaccinations/:vaccinationId', auth(PregnancyAuth.deleteVaccination), controller.deleteVaccination);
+    
     router.post('/:id/antenatal-visit',auth(PregnancyAuth.createAntenatalVisit),controller.createAntenatalVisit);
     router.get('/:id/antenatal-visit/:antenatalVisitId',auth(PregnancyAuth.getAntenatalVisitById),controller.getAntenatalVisitById);
     router.put('/:id/antenatal-visit/:antenatalVisitId',auth(PregnancyAuth.updateAntenatalVisit),controller.updateAntenatalVisit);

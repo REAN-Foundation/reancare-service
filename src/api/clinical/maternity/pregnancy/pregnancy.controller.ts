@@ -164,9 +164,9 @@ getVaccinationById = async (request: express.Request, response: express.Response
     }
 };
 
-searchVaccination = async (request: express.Request, response: express.Response): Promise<void> => {
+searchVaccinations = async (request: express.Request, response: express.Response): Promise<void> => {
     try {
-        const filters = await this._validator.searchVaccination(request);
+        const filters = await this._validator.searchVaccinations(request);
         const searchResults = await this._vaccinationService.search(filters);
         const count = searchResults.Items.length;
         const message =

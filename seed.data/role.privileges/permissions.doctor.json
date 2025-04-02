@@ -259,7 +259,7 @@
                 "CreateVaccination": false,
                 "DeleteVaccination": false,
                 "GetVaccinationById": false,
-                "SearchVaccination": false,
+                "SearchVaccinations": false,
                 "UpdateVaccination": false,
                 "CreateAntenatalVisit": false,
                 "DeleteAntenatalVisit": false,
@@ -283,7 +283,7 @@
                 "CreatePostnatalVisit": false,
                 "DeletePostnatalVisit": false,
                 "GetPostnatalVisitById": false,
-                "SearchPostnatalVisit": false,
+                "SearchPostnatalVisits": false,
                 "UpdatePostnatalVisit": false,
                 "CreatePostnatalMedication": false,
                 "DeletePostnatalMedication": false,
@@ -292,22 +292,13 @@
                 "CreateComplication": false,
                 "DeleteComplication": false,
                 "GetComplicationById": false,
-                "SearchComplication": false,
+                "SearchComplications": false,
                 "UpdateComplication": false,
                 "CreateBaby": false,
                 "GetBabyById": false,
                 "CreateBreastfeeding": false,
                 "GetBreastfeedingById": false,
                 "UpdateBreastfeeding": false
-
-            },
-            "AntenatalVisit":{
-                "Create": false,
-                "Delete": false,
-                "GetById": false,
-                "Search": false,
-                "Update": false
-
             }
         },
         "MedicalCondition": {

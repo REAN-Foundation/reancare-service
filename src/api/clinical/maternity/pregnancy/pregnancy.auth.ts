@@ -53,9 +53,7 @@ export class PregnancyAuth {
         RequestType         : RequestType.Search,
         CustomAuthorization : true,
     };
-    //#endregion
 
-    //#region Vaccination auth
     static readonly createVaccination: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateVaccination`,
@@ -88,9 +86,9 @@ export class PregnancyAuth {
         RequestType : RequestType.GetOne,
     };
 
-    static readonly searchVaccination: AuthOptions = {
+    static readonly searchVaccinations: AuthOptions = {
         ...DefaultAuthOptions,
-        Context             : `${this._baseContext}.SearchVaccination`,
+        Context             : `${this._baseContext}.SearchVaccinations`,
         Ownership           : ResourceOwnership.Owner,
         ActionScope         : ActionScope.Tenant,
         RequestType         : RequestType.Search,

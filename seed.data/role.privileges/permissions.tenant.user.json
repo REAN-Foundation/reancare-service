@@ -260,7 +260,19 @@
                 "DeleteVaccination": false,
                 "GetVaccinationById": false,
                 "SearchVaccination": false,
-                "UpdateVaccination": false
+                "UpdateVaccination": false,
+                "CreateAntenatalVisit": false,
+                "DeleteAntenatalVisit": false,
+                "GetAntenatalVisitById": false,
+                "UpdateAntenatalVisit": false,
+                "CreateAntenatalMedication": false,
+                "DeleteAntenatalMedication": false,
+                "GetAntenatalMedicationById": false,
+                "UpdateAntenatalMedication": false,
+                "CreateTest": false,
+                "DeleteTest": false,
+                "GetTestById": false,
+                "UpdateTest": false
             },
             "Delivery":{
                 "Create": false,

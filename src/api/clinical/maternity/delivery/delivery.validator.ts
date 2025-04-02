@@ -1,9 +1,7 @@
 import express from 'express';
 import { DeliveryDomainModel } from '../../../../domain.types/clinical/maternity/delivery/delivery.domain.model';
 import { DeliverySearchFilters } from '../../../../domain.types/clinical/maternity/delivery/delivery.search.type';
-import { DeliveryMode, DeliveryOutcome } from '../../../../domain.types/clinical/maternity/delivery/delivery.type';
 import { BaseValidator, Where } from '../../../base.validator';
-import { time } from 'console';
 import { PostnatalVisitDomainModel } from '../../../../domain.types/clinical/maternity/postnatal.visit/postnatal.visit.domain.model';
 import { PostnatalVisitSearchFilters } from '../../../../domain.types/clinical/maternity/postnatal.visit/postnatal.visit.search type';
 import { PostnatalMedicationDomainModel } from '../../../../domain.types/clinical/maternity/postnatal.medication/postnatal.medication.domain.model';
@@ -72,7 +70,7 @@ export class DeliveryValidator extends BaseValidator {
         await this.validateUuid(request, 'PregnancyId', Where.Body, true, false);
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateDate(request, 'DeliveryDate', Where.Body, true, false);
-        // await this.validateTime(request, 'DeliveryTime', Where.Body, true, false);
+        await this.validateDate(request, 'DeliveryTime', Where.Body, true, false);
         await this.validateInt(request, 'GestationAtBirth', Where.Body, true, false);
         await this.validateString(request, 'DeliveryMode', Where.Body, true, false);
         await this.validateString(request, 'DeliveryOutcome', Where.Body, true, false);
@@ -83,7 +81,7 @@ export class DeliveryValidator extends BaseValidator {
 
         await this.validateUuid(request, 'PregnancyId', Where.Body, false, false);
         await this.validateDate(request, 'DeliveryDate', Where.Body, false, false);
-        // await this.validateTime(request, 'DeliveryTime', Where.Body, false, false);
+        await this.validateDate(request, 'DeliveryTime', Where.Body, false, false);
         await this.validateInt(request, 'GestationAtBirth', Where.Body, false, false);
         await this.validateString(request, 'DeliveryMode', Where.Body, false, false);
         await this.validateString(request, 'DeliveryOutcome', Where.Body, false, false);
@@ -92,9 +90,6 @@ export class DeliveryValidator extends BaseValidator {
     }
 
     private static getFilter(request): DeliverySearchFilters {
-
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-        const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
         const filters: DeliverySearchFilters = { 
             DeliveryDate    : request.query.DeliveryDate ?? null,

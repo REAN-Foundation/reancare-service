@@ -1,5 +1,5 @@
 import {
-    Column, CreatedAt, DataType, DeletedAt, ForeignKey, Model, PrimaryKey, Table, UpdatedAt, HasMany, BelongsTo, IsUUID
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, Model, PrimaryKey, Table, UpdatedAt, IsUUID
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import Pregnancy from './pregnancy.model';

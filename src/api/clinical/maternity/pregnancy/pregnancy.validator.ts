@@ -4,6 +4,9 @@ import { PregnancySearchFilters } from '../../../../domain.types/clinical/matern
 import { BaseValidator, Where } from '../../../base.validator';
 import { VaccinationSearchFilters } from '../../../../domain.types/clinical/maternity/vaccination/vaccination.search.type';
 import { VaccinationDomainModel } from '../../../../domain.types/clinical/maternity/vaccination/vaccination.domain.model';
+import { AntenatalVisitDomainModel } from '../../../../domain.types/clinical/maternity/antenatal.visit/antenatal.visit.domain.type';
+import { AntenatalMedicationDomainModel } from '../../../../domain.types/clinical/maternity/antenatal.medication/antenatal.medication.domain.model';
+import { TestDomainModel } from '../../../../domain.types/clinical/maternity/test/test.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -79,18 +82,13 @@ export class PregnancyValidator extends BaseValidator {
     }
 
     private static getFilter(request): PregnancySearchFilters {
-   
-           const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-   
-           const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
-           const filters: PregnancySearchFilters = { 
+        const filters: PregnancySearchFilters = { 
             DateOfLastMenstrualPeriod : request.query.DateOfLastMenstrualPeriod ?? null,
-            EstimatedDateOfChildBirth   : request.query.EstimatedDateOfChildBirth ?? null,
-            Gravidity                     : request.query.Gravidity ? parseInt(request.query.Gravidity as string) : null,
-            Parity                        : request.query.Parity ? parseInt(request.query.Parity as string) : null,
+            EstimatedDateOfChildBirth : request.query.EstimatedDateOfChildBirth ?? null,
+            Gravidity                 : request.query.Gravidity ? parseInt(request.query.Gravidity as string) : null,
+            Parity                    : request.query.Parity ? parseInt(request.query.Parity as string) : null,
         };
-
         return filters;
     }
 
@@ -171,4 +169,95 @@ export class PregnancyValidator extends BaseValidator {
 
     //#endregion
 
+    createAntenatalVisit = async (request: express.Request): Promise<AntenatalVisitDomainModel> => {
+        await this.validateUuid(request, 'VisitId', Where.Body, true, false);
+        await this.validateUuid(request, 'PregnancyId', Where.Body, true, false);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateDate(request, 'DateOfVisit', Where.Body, true, false);
+        await this.validateInt(request, 'GestationInWeeks', Where.Body, true, false);
+        await this.validateInt(request, 'FetalHeartRateBPM', Where.Body, true, false);
+        await this.validateObject(request, 'FundalHeight', Where.Body, true, false);
+        await this.validateDate(request, 'DateOfNextVisit', Where.Body, true, false);
+        
+        this.validateRequest(request);
+        return request.body;
+    };
+
+    updateAntenatalVisit = async (request: express.Request): Promise<AntenatalVisitDomainModel> => {
+        await this.validateUuid(request, 'VisitId', Where.Body, false, false);
+        await this.validateUuid(request, 'PregnancyId', Where.Body, false, false);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateDate(request, 'DateOfVisit', Where.Body, false, false);
+        await this.validateInt(request, 'GestationInWeeks', Where.Body, false, false);
+        await this.validateInt(request, 'FetalHeartRateBPM', Where.Body, false, false);
+        await this.validateObject(request, 'FundalHeight', Where.Body, false, false);
+        await this.validateDate(request, 'DateOfNextVisit', Where.Body, false, false);
+        
+        this.validateRequest(request);
+        return request.body;
+    };
+
+    createAntenatalMedication = async (request: express.Request): Promise<AntenatalMedicationDomainModel> => {
+        await this.validateUuid(request, 'AnteNatalVisitId', Where.Body, true, false);
+        await this.validateUuid(request, 'PregnancyId', Where.Body, true, false);
+        await this.validateString(request, 'Name', Where.Body, true, false);
+        await this.validateUuid(request, 'VisitId', Where.Body, false, false);
+        await this.validateString(request, 'Given', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicationId', Where.Body, false, false);
+
+        this.validateRequest(request);
+        return request.body;
+    };
+
+    updateAntenatalMedication = async (request: express.Request): Promise<AntenatalMedicationDomainModel> => {
+        await this.validateUuid(request, 'AnteNatalVisitId', Where.Body, false, false);
+        await this.validateUuid(request, 'PregnancyId', Where.Body, false, false);
+        await this.validateUuid(request, 'VisitId', Where.Body, false, false);
+        await this.validateString(request, 'Name', Where.Body, false, false);
+        await this.validateString(request, 'Given', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicationId', Where.Body, false, false);
+
+        this.validateRequest(request);
+        return request.body;
+    };
+
+    getTestDomainModel = (request: express.Request): TestDomainModel => {
+        const TestModel: TestDomainModel = {
+            PregnancyId  : request.body.PregnancyId,
+            TestName     : request.body.TestName,
+            Type         : request.body.Type,
+            Impression   : request.body.Impression,
+            Parameters   : request.body.Parameters,
+            DateOfTest   : request.body.DateOfTest,
+        };
+        return TestModel;
+    }
+
+    createTest = async (request: express.Request): Promise<TestDomainModel> => {
+        await this.validateTestCreateBody(request);
+        return this.getTestDomainModel(request);
+    };
+
+    private async validateTestCreateBody (request: express.Request) {
+        await this.validateUuid(request, "PregnancyId", Where.Body, true, false);
+        await this.validateString(request, "TestName", Where.Body, true, false);
+        await this.validateString(request, "Type", Where.Body, false, false);
+        await this.validateString(request, "Impression", Where.Body, false, false);
+        await this.validateObject(request, "Parameters", Where.Body, false, false);
+        await this.validateDate(request, "DateOfTest", Where.Body, false, false);
+
+        this.validateRequest(request);
+    }
+
+    updateTest = async (request: express.Request): Promise<TestDomainModel> => {
+        await this.validateUuid(request, "PregnancyId", Where.Body, false, false);
+        await this.validateString(request, "TestName", Where.Body, false, false);
+        await this.validateString(request, "Type", Where.Body, false, false);
+        await this.validateString(request, "Impression", Where.Body, false, false);
+        await this.validateObject(request, "Parameters", Where.Body, false, false);
+        await this.validateDate(request, "DateOfTest", Where.Body, false, false);
+
+        this.validateRequest(request);
+        return request.body;
+    };
 }

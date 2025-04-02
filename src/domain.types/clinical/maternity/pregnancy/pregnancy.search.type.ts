@@ -1,5 +1,4 @@
 import { BaseSearchResults, BaseSearchFilters } from "../../../miscellaneous/base.search.types";
-import { uuid } from "../../../miscellaneous/system.types";
 import { PregnancyDto } from "./pregnancy.dto";
 
 //////////////////////////////////////////////////////////////////////

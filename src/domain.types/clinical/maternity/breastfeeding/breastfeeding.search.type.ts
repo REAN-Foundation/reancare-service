@@ -5,12 +5,12 @@ import { BreastfeedingStatus } from "./breastfeeding.status.type";
 //////////////////////////////////////////////////////////////////////
 
 export interface BreastfeedingSearchFilters extends BaseSearchFilters {
-    VisitId?               : string;
-    PostNatalVisitId?      : string;
-    BreastFeedingStatus?   : BreastfeedingStatus;
-    BreastfeedingFrequency?: string;
-    CreatedAtFrom?         : Date;
-    CreatedAtTo?           : Date;
+    VisitId?                 : string;
+    PostNatalVisitId?        : string;
+    BreastFeedingStatus?     : BreastfeedingStatus;
+    BreastfeedingFrequency?  : string;
+    CreatedAtFrom?           : Date;
+    CreatedAtTo?             : Date;
 }
 
 export interface BreastfeedingSearchResults extends BaseSearchResults {

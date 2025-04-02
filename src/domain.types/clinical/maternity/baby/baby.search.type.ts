@@ -4,10 +4,10 @@ import { BabyDto } from "./baby.dto";
 ///////////////////////////////////////////////////////////////////////
 
 export interface BabySearchFilters extends BaseSearchFilters {
-    DeliveryId?         : string;
-    PatientUserId?      : string;
-    Gender?             : string;
-    Status?             : string;
+    DeliveryId?           : string;
+    PatientUserId?        : string;
+    Gender?               : string;
+    Status?               : string;
     WeightAtBirthGrams?   : number;
 }
 

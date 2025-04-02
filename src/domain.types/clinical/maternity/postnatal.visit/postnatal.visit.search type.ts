@@ -5,13 +5,13 @@ import { PostnatalVisitDto } from "./postnatal.visit.dto";
 //////////////////////////////////////////////////////////////////////
 
 export interface PostnatalVisitSearchFilters extends BaseSearchFilters {
-    DeliveryId?      : uuid;
-    PatientUserId?    : uuid;
-    DateOfVisit?      : Date;
-    BodyWeightId?     : uuid;
-    ComplicationId?   : uuid;
-    BodyTemperatureId?: uuid;
-    BloodPressureId?  : uuid;
+    DeliveryId?         : uuid;
+    PatientUserId?      : uuid;
+    DateOfVisit?        : Date;
+    BodyWeightId?       : uuid;
+    ComplicationId?     : uuid;
+    BodyTemperatureId?  : uuid;
+    BloodPressureId?    : uuid;
 }
 
 export interface PostnatalVisitSearchResults extends BaseSearchResults {

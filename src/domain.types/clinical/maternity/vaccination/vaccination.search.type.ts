@@ -5,12 +5,12 @@ import { VaccinationDto } from "./vaccination.dto";
 //////////////////////////////////////////////////////////////////////
 
 export interface VaccinationSearchFilters extends BaseSearchFilters {
-    PregnancyId?             : uuid;
-    VaccineName?             : string;
-    DoseNumber?              : number;
-    DateAdministered         : Date;
-    MedicationId?            : uuid;
-    MedicationConsumptionId? : uuid;
+    PregnancyId?              : uuid;
+    VaccineName?              : string;
+    DoseNumber?               : number;
+    DateAdministered          : Date;
+    MedicationId?             : uuid;
+    MedicationConsumptionId?  : uuid;
 }
 
 export interface VaccinationSearchResults extends BaseSearchResults {

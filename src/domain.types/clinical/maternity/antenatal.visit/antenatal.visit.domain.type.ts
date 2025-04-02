@@ -11,7 +11,7 @@ export interface AntenatalVisitDomainModel {
     DateOfVisit?               : Date;
     GestationInWeeks?          : number;
     FetalHeartRateBPM?         : number;
-    FundalHeight       ?       : JSON;
+    FundalHeight?              : JSON;
     DateOfNextVisit?           : Date;
     BodyWeightID?              : uuid;
     BodyTemperatureId?         : uuid;

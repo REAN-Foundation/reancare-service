@@ -9,6 +9,7 @@ export class TestMapper {
         if (test == null) {
             return null;
         }
+        
         const dto: TestDto = {
             id        : test.id,
             PregnancyId: test.PregnancyId,

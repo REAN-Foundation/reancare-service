@@ -4,7 +4,6 @@ import {
 } from 'sequelize-typescript';
 import Pregnancy from './pregnancy.model';
 
-
 ///////////////////////////////////////////////////////////////////////
 
 @Table({

@@ -256,6 +256,11 @@
                 "GetById": true,
                 "Search": true,
                 "Update": true,
+                "CreateVaccination": true,
+                "DeleteVaccination": true,
+                "GetVaccinationById": true,
+                "SearchVaccinations": true,
+                "UpdateVaccination": true,
                 "CreateAntenatalVisit": true,
                 "DeleteAntenatalVisit": true,
                 "GetAntenatalVisitById": true,
@@ -274,7 +279,26 @@
                 "Delete": true,
                 "GetById": true,
                 "Search": true,
-                "Update": true
+                "Update": true,
+                "CreatePostnatalVisit": true,
+                "DeletePostnatalVisit": true,
+                "GetPostnatalVisitById": true,
+                "SearchPostnatalVisits": true,
+                "UpdatePostnatalVisit": true,
+                "CreatePostnatalMedication": true,
+                "DeletePostnatalMedication": true,
+                "GetPostnatalMedicationById": true,
+                "UpdatePostnatalMedication": true,
+                "CreateComplication": true,
+                "DeleteComplication": true,
+                "GetComplicationById": true,
+                "SearchComplications": true,
+                "UpdateComplication": true,
+                "CreateBaby": true,
+                "GetBabyById": true,
+                "CreateBreastfeeding": true,
+                "GetBreastfeedingById": true,
+                "UpdateBreastfeeding": true
             }
         },
         "MedicalCondition": {
@@ -351,6 +375,13 @@
                 "Search": true,
                 "Update": true
             }
+        },
+        "Visit": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
         }
     },
     "Community": {

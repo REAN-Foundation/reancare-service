@@ -1,4 +1,3 @@
-import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { AntenatalVisitDomainModel } from '../../../../../../domain.types/clinical/maternity/antenatal.visit/antenatal.visit.domain.type';

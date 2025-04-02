@@ -101,6 +101,13 @@ import { HealthReportSettingsRepo } from './repositories/users/patient/health.re
 import { FollowUpCancellationRepo } from './repositories/tenant/followups/cancellations/follow.up.cancellation.repo';
 import { PregnancyRepo } from './repositories/clinical/maternity/pregnancy.repo';
 import { DeliveryRepo } from './repositories/clinical/maternity/delivery.repo';
+import { VisitRepo } from './repositories/clinical/visit.repo';
+import { PostnatalVisitRepo } from './repositories/clinical/maternity/postnatal.visit.repo';
+import { PostnatalMedicationRepo } from './repositories/clinical/maternity/postnatal.medication.repo';
+import { VaccinationRepo } from './repositories/clinical/maternity/vaccination.repo';
+import { ComplicationRepo } from './repositories/clinical/maternity/complication.repo';
+import { BabyRepo } from './repositories/clinical/maternity/baby.repo';
+import { BreastfeedingRepo } from './repositories/clinical/maternity/breastfeeding.repo';
 import { AntenatalVisitRepo } from './repositories/clinical/maternity/antenatal.visit.repo';
 import { AntenatalMedicationRepo } from './repositories/clinical/maternity/antenatal.medication.repo';
 import { TestRepo } from './repositories/clinical/maternity/test.repo';
@@ -214,10 +221,16 @@ export class SequelizeInjector {
         container.register('IFollowUpCancellationRepo',FollowUpCancellationRepo);
         container.register('IPregnancyRepo',PregnancyRepo);
         container.register('IDeliveryRepo',DeliveryRepo);
+        container.register('IVisitRepo',VisitRepo);
+        container.register('IPostnatalVisitRepo',PostnatalVisitRepo);
+        container.register('IPostnatalMedicationRepo',PostnatalMedicationRepo);
+        container.register('IVaccinationRepo',VaccinationRepo);
+        container.register('IComplicationRepo',ComplicationRepo);
+        container.register('IBabyRepo',BabyRepo); 
+        container.register('IBreastfeedingRepo',BreastfeedingRepo); 
         container.register('IAntenatalVisitRepo',AntenatalVisitRepo);
         container.register('IAntenatalMedicationRepo',AntenatalMedicationRepo);
         container.register('ITestRepo',TestRepo);
 
     }
-
 }

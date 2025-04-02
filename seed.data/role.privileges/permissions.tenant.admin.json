@@ -255,16 +255,21 @@
                 "Delete": false,
                 "GetById": false,
                 "Search": false,
-                "Update": false
+                "Update": false,
+                "CreateAntenatalVisit": false,
+                "DeleteAntenatalVisit": false,
+                "GetAntenatalVisitById": false,
+                "UpdateAntenatalVisit": false,
+                "CreateAntenatalMedication": false,
+                "DeleteAntenatalMedication": false,
+                "GetAntenatalMedicationById": false,
+                "UpdateAntenatalMedication": false,
+                "CreateTest": false,
+                "DeleteTest": false,
+                "GetTestById": false,
+                "UpdateTest": false
             },
             "Delivery":{
-                "Create": false,
-                "Delete": false,
-                "GetById": false,
-                "Search": false,
-                "Update": false
-            },
-            "AntenatalVisit":{
                 "Create": false,
                 "Delete": false,
                 "GetById": false,

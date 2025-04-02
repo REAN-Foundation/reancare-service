@@ -12,6 +12,7 @@ export class DeliveryAuth {
 
     static readonly _baseContext = `Clinical.Maternity.Delivery`;
 
+    //#region Delivery auth
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
@@ -53,6 +54,10 @@ export class DeliveryAuth {
         CustomAuthorization : true,
     };
 
+    //#endregion
+
+    //#region PostnatalVisit auth
+
     static readonly createPostnatalVisit: AuthOptions = {
         ...DefaultAuthOptions, 
         Context     : `${this._baseContext}.CreatePostnatalVisit`,
@@ -93,6 +98,9 @@ export class DeliveryAuth {
         RequestType         : RequestType.Search,
         CustomAuthorization : true,
     };
+    //#endregion
+
+    //#region PostnatalMedication
 
     static readonly createPostnatalMedication: AuthOptions = {
         ...DefaultAuthOptions, 
@@ -125,6 +133,98 @@ export class DeliveryAuth {
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
+
+    //#endregion
+
+    //#region Complication
+
+    static readonly createComplication: AuthOptions = {
+        ...DefaultAuthOptions, 
+        Context     : `${this._baseContext}.CreateComplication`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly updateComplication: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.UpdateComplication`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
+    };
+
+    static readonly deleteComplication: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.DeleteComplication`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.DeleteOne,
+    };
+
+    static readonly getComplicationById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetComplicationById`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
+    };
+
+    static readonly searchComplication: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context             : `${this._baseContext}.SearchComplication`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.Search,
+        CustomAuthorization : true,
+    };
+
+    //#endregion
+
+    //#region Baby
+    static readonly createBaby: AuthOptions = {
+        ...DefaultAuthOptions, 
+        Context     : `${this._baseContext}.CreateBaby`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly getBabyById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetBabyById`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
+    };
+    //#endregion
+
+    //#region Breastfeeding
+
+    static readonly createBreastfeeding: AuthOptions = {
+        ...DefaultAuthOptions, 
+        Context     : `${this._baseContext}.CreateBreastfeeding`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly updateBreastfeeding: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.UpdateBreastfeeding`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.UpdateOne,
+    };
+
+    static readonly getBreastfeedingById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetBreastfeedingById`,
+        Ownership   : ResourceOwnership.Owner,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
+    };
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

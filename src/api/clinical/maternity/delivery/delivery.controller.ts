@@ -8,6 +8,10 @@ import { DeliveryValidator } from './delivery.validator';
 import { BaseController } from '../../../base.controller';
 import { PostnatalVisitService } from '../../../../services/clinical/maternity/postnatal.visit.service';
 import { PostnatalMedicationService } from '../../../../services/clinical/maternity/postnatal.medication.service';
+import { ComplicationService } from '../../../../services/clinical/maternity/complication.service';
+import { BabyService } from '../../../../services/clinical/maternity/baby.service';
+import { BreastfeedingService } from '../../../../services/clinical/maternity/breastfeeding.service';
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +24,12 @@ export class DeliveryController extends BaseController {
     _postnatalVisitService: PostnatalVisitService = Injector.Container.resolve(PostnatalVisitService);
 
     _postnatalMedicationService: PostnatalMedicationService = Injector.Container.resolve(PostnatalMedicationService);
+
+    _complicationService: ComplicationService = Injector.Container.resolve(ComplicationService);
+    
+    _babyService: BabyService = Injector.Container.resolve(BabyService);
+
+    _breastfeedingService: BreastfeedingService = Injector.Container.resolve(BreastfeedingService);
     
     _validator: DeliveryValidator = new DeliveryValidator();
 
@@ -29,7 +39,7 @@ export class DeliveryController extends BaseController {
 
     //#endregion
 
-    //#region Action methods
+    //#region Delivery methods
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -298,5 +308,191 @@ export class DeliveryController extends BaseController {
     };
 
     //#endregion
+
+    //#region Complication methods
+
+    createComplication = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model = await this._validator.createComplication(request); 
+            const complication = await this._complicationService.create(model);
+            if (complication == null) {
+                throw new ApiError(400, 'Cannot create record for complication!');
+            }
+
+            ResponseHandler.success(request, response, 'Complication record created successfully!', 201, {
+                Complication: complication,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getComplicationById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const complicationId: uuid = await this._validator.getParamUuid(request, 'complicationId');
+            const complication = await this._complicationService.getById(complicationId);
+            if (complication == null) {
+                throw new ApiError(404, 'Complication record not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Complication record retrieved successfully!', 200, {
+                Complication: complication,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    searchComplication = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const filters = await this._validator.searchComplication(request);
+            const searchResults = await this._complicationService.search(filters);
+            const count = searchResults.Items.length;
+            const message = count === 0 ? 'No complication records found!' : `Total ${count} complication records retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, {
+                Complications: searchResults,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateComplication = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const domainModel = await this._validator.updateComplication(request);
+            const complicationId: uuid = await this._validator.getParamUuid(request, 'complicationId');
+            const existingRecord = await this._complicationService.getById(complicationId);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Complication record not found.');
+            }
+
+            const updated = await this._complicationService.update(complicationId, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update complication record!');
+            }
+
+            ResponseHandler.success(request, response, 'Complication record updated successfully!', 200, {
+                Complication: updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deleteComplication = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const complicationId: uuid = await this._validator.getParamUuid(request, 'complicationId');
+            const existingRecord = await this._complicationService.getById(complicationId);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Complication record not found.');
+            }
+
+            const deleted = await this._complicationService.delete(complicationId);
+            if (!deleted) {
+                throw new ApiError(400, 'Complication record cannot be deleted.');
+            }
+
+            ResponseHandler.success(request, response, 'Complication record deleted successfully!', 200, {
+                Deleted: true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    //#endregion
+
+    //#region Baby
+
+    createBaby = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model = await this._validator.createBaby(request);
+            const baby = await this._babyService.create(model);
+            if (baby == null) {
+                throw new ApiError(400, 'Cannot create record for baby!');
+            }
+
+            ResponseHandler.success(request, response, 'Baby record created successfully!', 201, {
+                Baby: baby,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getBabyById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const babyId: uuid = await this._validator.getParamUuid(request, 'babyId');
+            const baby = await this._babyService.getById(babyId);
+            if (baby == null) {
+                throw new ApiError(404, 'Baby record not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Baby record retrieved successfully!', 200, {
+                Baby: baby,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    //#endregion
+
+    //#region Breastfeeding
+
+    createBreastfeeding = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model = await this._validator.createBreastfeeding(request);
+            const breastfeeding = await this._breastfeedingService.create(model);
+            if (breastfeeding == null) {
+                throw new ApiError(400, 'Cannot create record for breastfeeding!');
+            }
+
+            ResponseHandler.success(request, response, 'Breastfeeding record created successfully!', 201, {
+                Breastfeeding: breastfeeding,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getBreastfeedingById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const breastfeedingId: uuid = await this._validator.getParamUuid(request, 'breastfeedingId');
+            const breastfeeding = await this._breastfeedingService.getById(breastfeedingId);
+            if (breastfeeding == null) {
+                throw new ApiError(404, 'Breastfeeding record not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Breastfeeding record retrieved successfully!', 200, {
+                Breastfeeding: breastfeeding,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateBreastfeeding = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const domainModel = await this._validator.updateBreastfeeding(request);
+            const breastfeedingId: uuid = await this._validator.getParamUuid(request, 'breastfeedingId');
+            const existingRecord = await this._breastfeedingService.getById(breastfeedingId);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Breastfeeding record not found.');
+            }
+
+            const updated = await this._breastfeedingService.update(breastfeedingId, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update breastfeeding record!');
+            }
+
+            ResponseHandler.success(request, response, 'Breastfeeding record updated successfully!', 200, {
+                Breastfeeding: updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
 }

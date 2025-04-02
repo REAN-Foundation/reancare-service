@@ -29,6 +29,18 @@ export const register = (app: express.Application): void => {
     router.put('/:id/postnatal-medications/:postnatalMedicationId', auth(DeliveryAuth.updatePostnatalMedication), controller.updatePostnatalMedication);
     router.delete('/:id/postnatal-medications/:postnatalMedicationId', auth(DeliveryAuth.deletePostnatalMedication), controller.deletePostnatalMedication);
 
+    router.post('/:id/complications', auth(DeliveryAuth.createComplication), controller.createComplication);
+    router.get('/:id/complications/search', auth (DeliveryAuth.searchComplication),controller.searchComplication);
+    router.get('/:id/complications/:complicationId', auth(DeliveryAuth.getComplicationById),controller.getComplicationById);
+    router.put('/:id/complications/:complicationId', auth(DeliveryAuth.updateComplication),controller.updateComplication);
+    router.delete('/:id/complications/:complicationId', auth(DeliveryAuth.deleteComplication), controller.deleteComplication);
+
+    router.post('/:id/babies', auth(DeliveryAuth.createBaby), controller.createBaby);
+    router.get('/:id/babies/:babyId', auth (DeliveryAuth.getBabyById),controller.getBabyById);
+
+    router.post('/:id/breastfeedings', auth(DeliveryAuth.createBreastfeeding), controller.createBreastfeeding);
+    router.get('/:id/breastfeedings/:breastfeedingId', auth(DeliveryAuth.getBreastfeedingById),controller.getBreastfeedingById);
+    router.put('/:id/breastfeedings/:breastfeedingId', auth(DeliveryAuth.updateBreastfeeding),controller.updateBreastfeeding);
 
     app.use('/api/v1/clinical/maternity/maternity-deliveries', router);
 };

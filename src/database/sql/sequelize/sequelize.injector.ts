@@ -104,6 +104,10 @@ import { DeliveryRepo } from './repositories/clinical/maternity/delivery.repo';
 import { VisitRepo } from './repositories/clinical/visit.repo';
 import { PostnatalVisitRepo } from './repositories/clinical/maternity/postnatal.visit.repo';
 import { PostnatalMedicationRepo } from './repositories/clinical/maternity/postnatal.medication.repo';
+import { VaccinationRepo } from './repositories/clinical/maternity/vaccination.repo';
+import { ComplicationRepo } from './repositories/clinical/maternity/complication.repo';
+import { BabyRepo } from './repositories/clinical/maternity/baby.repo';
+import { BreastfeedingRepo } from './repositories/clinical/maternity/breastfeeding.repo';
 ////////////////////////////////////////////////////////////////////////////////
 
 export class SequelizeInjector {
@@ -216,7 +220,9 @@ export class SequelizeInjector {
         container.register('IVisitRepo',VisitRepo);
         container.register('IPostnatalVisitRepo',PostnatalVisitRepo);
         container.register('IPostnatalMedicationRepo',PostnatalMedicationRepo);
-
+        container.register('IVaccinationRepo',VaccinationRepo);
+        container.register('IComplicationRepo',ComplicationRepo);
+        container.register('IBabyRepo',BabyRepo); 
+        container.register('IBreastfeedingRepo',BreastfeedingRepo); 
     }
-
 }

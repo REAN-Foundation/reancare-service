@@ -47,8 +47,6 @@ export default class PostnatalMedication extends Model {
     })
     VisitId: string;
 
-    
-
     @Column({
         type      : DataType.STRING,
         allowNull : false,

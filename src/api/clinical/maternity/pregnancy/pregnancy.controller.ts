@@ -333,5 +333,4 @@ export class PregnancyController extends BaseController {
     };
 
     //#endregion
-
 }

@@ -3,8 +3,6 @@ import { DeliveryController } from './delivery.controller';
 import { DeliveryAuth } from './delivery.auth';
 import { auth } from '../../../../auth/auth.handler';
 
-// import { auth } from 'src/auth/auth.handler';
-
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {

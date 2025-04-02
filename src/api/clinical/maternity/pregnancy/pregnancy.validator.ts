@@ -80,18 +80,13 @@ export class PregnancyValidator extends BaseValidator {
     }
 
     private static getFilter(request): PregnancySearchFilters {
-   
-           const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-   
-           const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
-           const filters: PregnancySearchFilters = { 
+        const filters: PregnancySearchFilters = { 
             DateOfLastMenstrualPeriod : request.query.DateOfLastMenstrualPeriod ?? null,
             EstimatedDateOfChildBirth : request.query.EstimatedDateOfChildBirth ?? null,
             Gravidity                 : request.query.Gravidity ? parseInt(request.query.Gravidity as string) : null,
             Parity                    : request.query.Parity ? parseInt(request.query.Parity as string) : null,
         };
-
         return filters;
     }
 

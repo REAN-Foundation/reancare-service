@@ -3,8 +3,6 @@ import { PregnancyController } from './pregnancy.controller';
 import { PregnancyAuth } from './pregnancy.auth';
 import { auth } from '../../../../auth/auth.handler';
 
-// import { auth } from 'src/auth/auth.handler';
-
 ///////////////////////////////////////////////////////////////////////////////////
 
 export const register = (app: express.Application): void => {

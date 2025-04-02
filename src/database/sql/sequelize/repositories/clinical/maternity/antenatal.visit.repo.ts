@@ -30,7 +30,7 @@ export class AntenatalVisitRepo implements IAntenatalVisitRepo {
                 DateOfVisit              : createModel.DateOfVisit,
                 GestationInWeeks         : createModel.GestationInWeeks,
                 FetalHeartRateBPM        : createModel.FetalHeartRateBPM,
-                FundalHeight             : createModel.FundalHeight && createModel.FundalHeight? JSON.stringify(createModel.FundalHeight) : null,
+                FundalHeight             : createModel.FundalHeight ? JSON.stringify(createModel.FundalHeight) : null,
                 DateOfNextVisit          : createModel.DateOfNextVisit,
                 BodyWeightID             : createModel.BodyWeightID,
                 BodyTemperatureId        : createModel.BodyTemperatureId,

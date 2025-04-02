@@ -17,7 +17,7 @@ export class TestRepo implements ITestRepo {
                 TestName   : createModel.TestName,
                 Type       : createModel.Type,
                 Impression : createModel.Impression,
-                Parameters : createModel.Parameters && createModel.Parameters? JSON.stringify(createModel.Parameters) : null,
+                Parameters : createModel.Parameters ? JSON.stringify(createModel.Parameters) : null,
                 DateOfTest : createModel.DateOfTest,
             };
 

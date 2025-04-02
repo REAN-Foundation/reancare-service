@@ -1,6 +1,5 @@
 import { PregnancyDto } from '../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto';
 import Pregnancy from '../../../models/clinical/maternity/pregnancy.model';
-import PregnancyModel from '../../../models/clinical/maternity/pregnancy.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

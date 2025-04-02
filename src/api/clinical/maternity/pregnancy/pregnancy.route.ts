@@ -18,8 +18,11 @@ export const register = (app: express.Application): void => {
     router.put('/:id', auth(PregnancyAuth.update),controller.update);
     router.delete('/:id', auth(PregnancyAuth.delete), controller.delete);
 
-    // router.post('/:id/antenatalVisit', auth(PregnancyAuth.create), controller.create);
+    router.post('/:id/vaccinations', auth(PregnancyAuth.createVaccination), controller.createVaccination);
+    router.get('/:id/vaccinations/search', auth (PregnancyAuth.searchVaccination),controller.searchVaccination);
+    router.get('/:id/vaccinations/:vaccinationId', auth(PregnancyAuth.getVaccinationById),controller.getVaccinationById);
+    router.put('/:id/vaccinations/:vaccinationId', auth(PregnancyAuth.updateVaccination),controller.updateVaccination);
+    router.delete('/:id/vaccinations/:vaccinationId', auth(PregnancyAuth.deleteVaccination), controller.deleteVaccination);
 
     app.use('/api/v1/clinical/maternity/maternity-pregnancies', router);
 };
-//POST: `{{BASE_URL}}/maternity/pregnancies/:id/antenatalVisit

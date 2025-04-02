@@ -2,6 +2,8 @@ import express from 'express';
 import { PregnancyDomainModel } from '../../../../domain.types/clinical/maternity/pregnancy/pregnancy.domain.model';
 import { PregnancySearchFilters } from '../../../../domain.types/clinical/maternity/pregnancy/pregnancy.search.type';
 import { BaseValidator, Where } from '../../../base.validator';
+import { VaccinationSearchFilters } from '../../../../domain.types/clinical/maternity/vaccination/vaccination.search.type';
+import { VaccinationDomainModel } from '../../../../domain.types/clinical/maternity/vaccination/vaccination.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -91,5 +93,82 @@ export class PregnancyValidator extends BaseValidator {
 
         return filters;
     }
+
+     //#region Vaccination validation
+
+     getVaccinationDomainModel = (request: express.Request): VaccinationDomainModel => {
+        const VaccinationModel: VaccinationDomainModel = {
+            PregnancyId              : request.body.PregnancyId,
+            VaccineName              : request.body.VaccineName,
+            DoseNumber               : request.body.DoseNumber,
+            DateAdministered         : new Date(request.body.DateAdministered),
+            MedicationId             : request.body.MedicationId ?? null,
+            MedicationConsumptionId  : request.body.MedicationConsumptionId ?? null,
+        };
+        return VaccinationModel;
+    };
+
+    createVaccination = async (request: express.Request): Promise<VaccinationDomainModel> => {
+        await this.validateVaccinationCreateBody(request);
+        return this.getVaccinationDomainModel(request);
+    };
+
+    searchVaccination = async (request: express.Request): Promise<VaccinationSearchFilters> => {
+        await this.validateUuid(request, 'PregnancyId', Where.Query, false, false);
+        await this.validateString(request, 'VaccineName', Where.Query, false, false);
+        await this.validateInt(request, 'DoseNumber', Where.Query, false, false);
+        await this.validateDate(request, 'DateAdministered', Where.Query, false, false);
+
+        await this.validateBaseSearchFilters(request);
+        this.validateRequest(request);
+        return PregnancyValidator.getVaccinationSearchFilters(request);
+
+    };
+
+    updateVaccination = async (request: express.Request): Promise<VaccinationDomainModel> => {
+
+        await this.validateVaccinationUpdateBody(request);
+        const domainModel = this.getVaccinationDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'vaccinationId');
+        return domainModel;
+    };
+
+    private async validateVaccinationCreateBody(request: express.Request) {
+        await this.validateUuid(request, 'PregnancyId', Where.Body, true, false);
+        await this.validateString(request, 'VaccineName', Where.Body, true, false);
+        await this.validateInt(request, 'DoseNumber', Where.Body, true, false);
+        await this.validateDate(request, 'DateAdministered', Where.Body, true, false);
+        await this.validateUuid(request, 'MedicationId', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicationConsumptionId', Where.Body, false, false);
+        this.validateRequest(request);
+    }
+
+    private static getVaccinationSearchFilters(request): VaccinationSearchFilters {
+
+        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
+        const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+        const filters: VaccinationSearchFilters = {
+            PregnancyId             : request.query.PregnancyId ?? null,
+            VaccineName             : request.query.VaccineName ?? null,
+            DoseNumber              : request.query.DoseNumber ? parseInt(request.query.DoseNumber as string) : null,
+            DateAdministered        : request.query.DateAdministered ? new Date(request.query.DateAdministered as string) : null,
+            MedicationId            : request.query.MedicationId ?? null,
+            MedicationConsumptionId : request.query.MedicationConsumptionId ?? null,
+        };
+        return filters;
+    }
+
+    private async validateVaccinationUpdateBody(request: express.Request) {
+        await this.validateUuid(request, 'PregnancyId', Where.Body, false, false);
+        await this.validateString(request, 'VaccineName', Where.Body, false, false);
+        await this.validateInt(request, 'DoseNumber', Where.Body, false, false);
+        await this.validateDate(request, 'DateAdministered', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicationId', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicationConsumptionId', Where.Body, false, false);
+        
+        this.validateRequest(request);
+    }
+
+    //#endregion
 
 }

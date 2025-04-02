@@ -9,6 +9,7 @@ export class VaccinationMapper {
         if (vaccination == null) {
             return null;
         }
+        
         const dto: VaccinationDto = {
             id                    : vaccination.id,
             PregnancyId           : vaccination.PregnancyId,

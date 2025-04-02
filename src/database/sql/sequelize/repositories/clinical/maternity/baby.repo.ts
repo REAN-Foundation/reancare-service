@@ -1,9 +1,7 @@
-import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { BabyDomainModel } from '../../../../../../domain.types/clinical/maternity/baby/baby.domain.model';
 import { BabyDto } from '../../../../../../domain.types/clinical/maternity/baby/baby.dto';
-
 import { IBabyRepo } from '../../../../../repository.interfaces/clinical/maternity/baby.repo.interface';
 import { BabyMapper } from '../../../mappers/clinical/maternity/baby.mapper';
 import Baby from '../../../models/clinical/maternity/baby.model';

@@ -9,6 +9,7 @@ export class BabyMapper {
         if (!baby) {
             return null;
         }
+        
         const dto: BabyDto = {
             id                 : baby.id,
             DeliveryId         : baby.DeliveryId,

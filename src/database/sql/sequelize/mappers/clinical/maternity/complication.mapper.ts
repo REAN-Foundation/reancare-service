@@ -9,6 +9,7 @@ export class ComplicationMapper {
         if (complication == null) {
             return null;
         }
+        
         const dto: ComplicationDto = {
             id                : complication.id,
             DeliveryId        : complication.DeliveryId,

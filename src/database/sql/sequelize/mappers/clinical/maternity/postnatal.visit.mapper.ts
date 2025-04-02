@@ -10,6 +10,7 @@ export class PostnatalVisitMapper {
         if (visit == null) {
             return null;
         }
+        
         const dto: PostnatalVisitDto = {
             id               : visit.id,
             DeliveryId       : visit.DeliveryId,

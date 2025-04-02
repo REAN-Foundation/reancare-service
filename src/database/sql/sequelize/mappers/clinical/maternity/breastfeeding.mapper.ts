@@ -10,6 +10,7 @@ export class BreastfeedingMapper {
         if (!breastfeeding) {
             return null;
         }
+        
         const dto: BreastfeedingDto = {
             id                    : breastfeeding.id,
             VisitId               : breastfeeding.VisitId,

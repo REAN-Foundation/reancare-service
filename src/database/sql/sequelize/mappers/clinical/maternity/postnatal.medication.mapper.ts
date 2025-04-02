@@ -9,6 +9,7 @@ export class PostnatalMedicationMapper {
         if (medication == null) {
             return null;
         }
+        
         const dto: PostnatalMedicationDto = {
             id              : medication.id,
             PostNatalVisitId: medication.PostNatalVisitId,

@@ -33,6 +33,8 @@ export class PregnancyController extends BaseController {
         super();
     }
 
+    //#region Pregnancy
+
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model = await this._validator.create(request);
@@ -223,7 +225,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
     }
 };
 
-//#endregion
+    //#endregion
 
     //#region Antenatal Visit Action methods
 

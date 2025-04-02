@@ -16,6 +16,8 @@ export class PregnancyValidator extends BaseValidator {
         super();
     }
 
+    //#region Pregnancy
+
     getDomainModel = (request: express.Request): PregnancyDomainModel => {
 
         const PregnancyModel: PregnancyDomainModel = {
@@ -92,7 +94,9 @@ export class PregnancyValidator extends BaseValidator {
         return filters;
     }
 
-     //#region Vaccination validation
+    //#endregion
+
+    //#region Vaccination validation
 
      getVaccinationDomainModel = (request: express.Request): VaccinationDomainModel => {
         const VaccinationModel: VaccinationDomainModel = {
@@ -169,6 +173,8 @@ export class PregnancyValidator extends BaseValidator {
 
     //#endregion
 
+    //#region Antenatal visit
+
     createAntenatalVisit = async (request: express.Request): Promise<AntenatalVisitDomainModel> => {
         await this.validateUuid(request, 'VisitId', Where.Body, true, false);
         await this.validateUuid(request, 'PregnancyId', Where.Body, true, false);
@@ -220,6 +226,10 @@ export class PregnancyValidator extends BaseValidator {
         this.validateRequest(request);
         return request.body;
     };
+
+    //#endregion
+
+    //#region Test
 
     getTestDomainModel = (request: express.Request): TestDomainModel => {
         const TestModel: TestDomainModel = {

@@ -12,7 +12,6 @@ export class DeliveryAuth {
 
     static readonly _baseContext = `Clinical.Maternity.Delivery`;
 
-    //#region Delivery auth
     static readonly create: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Create`,
@@ -54,10 +53,6 @@ export class DeliveryAuth {
         CustomAuthorization : true,
     };
 
-    //#endregion
-
-    //#region PostnatalVisit auth
-
     static readonly createPostnatalVisit: AuthOptions = {
         ...DefaultAuthOptions, 
         Context     : `${this._baseContext}.CreatePostnatalVisit`,
@@ -98,9 +93,6 @@ export class DeliveryAuth {
         RequestType         : RequestType.Search,
         CustomAuthorization : true,
     };
-    //#endregion
-
-    //#region PostnatalMedication
 
     static readonly createPostnatalMedication: AuthOptions = {
         ...DefaultAuthOptions, 
@@ -133,10 +125,6 @@ export class DeliveryAuth {
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
-
-    //#endregion
-
-    //#region Complication
 
     static readonly createComplication: AuthOptions = {
         ...DefaultAuthOptions, 
@@ -179,9 +167,6 @@ export class DeliveryAuth {
         CustomAuthorization : true,
     };
 
-    //#endregion
-
-    //#region Baby
     static readonly createBaby: AuthOptions = {
         ...DefaultAuthOptions, 
         Context     : `${this._baseContext}.CreateBaby`,
@@ -197,9 +182,6 @@ export class DeliveryAuth {
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
-    //#endregion
-
-    //#region Breastfeeding
 
     static readonly createBreastfeeding: AuthOptions = {
         ...DefaultAuthOptions, 

@@ -18,6 +18,8 @@ export class DeliveryValidator extends BaseValidator {
         super();
     }
 
+    //#region Delivery
+
     getDomainModel = (request: express.Request): DeliveryDomainModel => {
 
         const DeliveryModel: DeliveryDomainModel = {
@@ -102,7 +104,9 @@ export class DeliveryValidator extends BaseValidator {
         return filters;
     }
 
-    //postnatal visit
+    //#endregion
+
+    //#region Postnatal visit
 
     getPostnatalVisitDomainModel = (request: express.Request): PostnatalVisitDomainModel => {
 
@@ -192,7 +196,9 @@ export class DeliveryValidator extends BaseValidator {
         return filters;
     }
 
-    // Postnatal Medication
+    //#endregion
+
+    //#region Postnatal Medication
 
     getPostnatalMedicationDomainModel = (request: express.Request): PostnatalMedicationDomainModel => {
         const PostnatalMedicationModel: PostnatalMedicationDomainModel = {

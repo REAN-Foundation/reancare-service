@@ -3,6 +3,7 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import Delivery from './delivery.model';
+import Complication from './complication.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -50,6 +51,8 @@ export default class PostNatalVisit extends Model {
     })
     BodyWeightId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Complication)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

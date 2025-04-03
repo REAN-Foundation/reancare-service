@@ -4,6 +4,7 @@ import {
 
 import { v4 } from 'uuid';
 import Pregnancy from './pregnancy.model';
+import Visit from '../visit.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -25,6 +26,8 @@ export default class AnteNatalVisit extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Visit)
     @Column({
         type      : DataType.UUID,
         allowNull : false,

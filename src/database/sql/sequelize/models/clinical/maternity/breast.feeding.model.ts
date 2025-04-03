@@ -4,6 +4,7 @@ import {
 import PostNatalVisit from './postnatal.visit.model';
 import { v4 } from 'uuid';
 import { BreastfeedingStatus,BreastfeedingStatusList } from '../../../../../../domain.types/clinical/maternity/breastfeeding/breastfeeding.status.type';
+import Visit from '../visit.model';
 
 @Table({
     timestamps      : true,
@@ -23,6 +24,8 @@ export default class Breastfeeding extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Visit)
     @Column({
         type      : DataType.UUID,
         allowNull : false,

@@ -269,8 +269,9 @@ export class AssessmentController extends BaseController {
             }
 
             const isAnswered = await this._service.isAnswered(assessment.id, questionId);
+            
             if (isAnswered) {
-                throw new ApiError(400, `The question has already been answered!`);
+                throw new ApiError(400, `The question has already been answered or skipped!`);
             }
 
             var answerResponse: AssessmentQuestionResponseDto = await this._service.answerQuestion(answerModel);
@@ -311,6 +312,36 @@ export class AssessmentController extends BaseController {
 
             ResponseHandler.success(request, response, message, 200, { AnswerResponse: answerResponse });
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    skipQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const questionId: uuid = await this._validator.getParamUuid(request, 'questionId');
+
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+            await this.authorizeOne(request, assessment.PatientUserId);
+            const question = await this._service.getQuestionById(id, questionId);
+            if (question == null) {
+                throw new ApiError(404, 'Assessment question not found.');
+            }
+
+            const isAnswered = await this._service.isAnswered(assessment.id, questionId);
+            if (isAnswered) {
+                throw new ApiError(400, `The question has already been answered or skipped!`);
+            }
+
+            var nextQuestion: AssessmentQuestionResponseDto = await this._service.skipQuestion(id, questionId);
+            Logger.instance().log(JSON.stringify(nextQuestion, null, '    ')); //TODO: Remove thisnextQuestion);
+            ResponseHandler.success(request, response, 'Assessment question skipped successfully!', 200, {
+                AnswerResponse : nextQuestion,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

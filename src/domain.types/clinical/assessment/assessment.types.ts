@@ -323,6 +323,7 @@ export class CAssessmentQueryResponse {
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt?           : Date;
+    Skipped?             : boolean;
 
     constructor() {
         this.ResponseType = QueryResponseType.None;
@@ -408,6 +409,7 @@ export interface BaseQueryAnswer {
     NodeDisplayCode?: string;
     Title?          : string;
     ResponseType    : QueryResponseType;
+    Skipped?        : boolean
 }
 
 export interface SingleChoiceQueryAnswer extends BaseQueryAnswer {

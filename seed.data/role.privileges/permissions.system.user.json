@@ -65,7 +65,8 @@
             "GetById": false,
             "GetForPatient": false,
             "Search": false,
-            "Update": false
+            "Update": false,
+            "SkipQuestion": true
         },
         "Assessments": {
             "Assessment": {
@@ -79,7 +80,8 @@
                 "ScoreAssessment": false,
                 "Search": true,
                 "StartAssessment": false,
-                "Update": false
+                "Update": false,
+                "SkipQuestion": false
             },
             "AssessmentTemplate": {
                 "AddNode": true,

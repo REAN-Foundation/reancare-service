@@ -120,6 +120,7 @@ export class AssessmentHelperMapper {
         dto.ServeListNodeChildrenAtOnce = node.ServeListNodeChildrenAtOnce;
         dto.RawData = node.RawData;
         dto.Tags = node.Tags ? JSON.parse(node.Tags) : [];
+        dto.Required = node.Required;
     }
 
     static toNodeDto = (
@@ -178,6 +179,8 @@ export class AssessmentHelperMapper {
         responseDto.Sequence = response.Sequence;
         responseDto.Additional = response.Additional;
         responseDto.CreatedAt = response.CreatedAt;
+        responseDto.Skipped = response.Skipped;
+        
 
         if (response.Node) {
             responseDto.Node = this.toNodeDto(response.Node);
@@ -214,9 +217,8 @@ export class AssessmentHelperMapper {
 
         return responseDto;
     }
-
-    static toSingleChoiceAnswerDto(
-        assessmentId: uuid,
+ 
+    static toSingleChoiceAnswerDto(assessmentId: uuid,
         questionNode: CAssessmentQuestionNode,
         answer: number,
         option: CAssessmentQueryOption

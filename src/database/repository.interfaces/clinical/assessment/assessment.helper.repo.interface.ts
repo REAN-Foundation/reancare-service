@@ -25,6 +25,7 @@ import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessm
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AssessmentNodeSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { AssessmentNodeSearchResults } from '../../../../domain.types/clinical/assessment/assessment.node.search.types';
+import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,7 +67,11 @@ export interface IAssessmentHelperRepo {
         | BooleanQueryAnswer
         | FileQueryAnswer
         | BiometricQueryAnswer): Promise<CAssessmentQueryResponse>;
-
+        
+    createSkipQueryResponse(assessment: AssessmentDto,
+    node: CAssessmentQuestionNode,nodeId: string, queryType
+    ): Promise<CAssessmentQueryResponse>;
+     
     getTemplateChildrenNodes(templateId: uuid)
         : Promise<(CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode)[]>;
 

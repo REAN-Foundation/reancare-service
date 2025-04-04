@@ -46,6 +46,7 @@ import { AssessmentNodeSearchResults } from '../../../../../../domain.types/clin
 import { AssessmentNodeSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { Op } from 'sequelize';
 import { cat } from 'shelljs';
+import { AssessmentDto } from '../../../../../../domain.types/clinical/assessment/assessment.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -424,6 +425,20 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     ): Promise<CAssessmentQueryResponse> => {
         try {
             const model = this.generateQueryAnswerModel(answer);
+            var response = await AssessmentQueryResponse.create(model);
+            return AssessmentHelperMapper.toQueryResponseDto(response);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public createSkipQueryResponse = async (assessment: AssessmentDto,
+        node: CAssessmentQuestionNode,nodeId: string, queryType: QueryResponseType
+      
+    ): Promise<CAssessmentQueryResponse> => {
+        try {
+            const model = this.generateSkipAnswerModel(node,assessment.id);
             var response = await AssessmentQueryResponse.create(model);
             return AssessmentHelperMapper.toQueryResponseDto(response);
         } catch (error) {
@@ -1017,6 +1032,18 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             };
         }
         return null;
+    };
+
+    private generateSkipAnswerModel = (node: CAssessmentQuestionNode,assessmentId: uuid) => {
+        const a = node;
+        return {
+            AssessmentId : assessmentId,
+            NodeId       : a.id,
+            Sequence     : a.Sequence,
+            Type         : a.QueryResponseType,
+            Skipped      : true
+        };
+    
     };
 
     private getNodeDisplayCode = (nodeType: AssessmentNodeType): string => {

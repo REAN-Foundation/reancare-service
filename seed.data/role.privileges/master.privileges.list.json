@@ -53,6 +53,7 @@
     "Clinical.Assessments.Assessment.GetQuestionById",
     "Clinical.Assessments.Assessment.ScoreAssessment",
     "Clinical.Assessments.Assessment.Search",
+    "Clinical.Assessments.Assessment.SkipQuestion",
     "Clinical.Assessments.Assessment.StartAssessment",
     "Clinical.Assessments.Assessment.Update",
     "Clinical.Assessments.AssessmentTemplate.AddNode",

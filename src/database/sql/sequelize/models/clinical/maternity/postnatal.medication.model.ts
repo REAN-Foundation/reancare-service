@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import PostNatalVisit from './postnatal.visit.model';
 import Delivery from './delivery.model';
 import Visit from '../visit.model';
+import Medication from '../medication/medication.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -62,6 +63,8 @@ export default class PostnatalMedication extends Model {
     })
     Given: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Medication)
     @Column({
         type      : DataType.UUID,
         allowNull : false,

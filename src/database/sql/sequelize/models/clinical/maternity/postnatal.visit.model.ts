@@ -4,6 +4,8 @@ import {
 import { v4 } from 'uuid';
 import Delivery from './delivery.model';
 import Complication from './complication.model';
+import BodyTemperature from '../biometrics/body.temperature.model';
+import BloodPressure from '../biometrics/blood.pressure.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -59,12 +61,16 @@ export default class PostNatalVisit extends Model {
     })
     ComplicationId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => BodyTemperature)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     BodyTemperatureId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => BloodPressure)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

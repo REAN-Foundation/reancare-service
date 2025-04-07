@@ -241,25 +241,21 @@ deleteVaccination = async (request: express.Request, response: express.Response)
         try {
             const model = await this._validator.createAntenatalVisit(request);
     
-            // Fetch Visit
             const visit = await this._visitService.getById(model.VisitId);
             if (!visit) {
                 throw new ApiError(404, 'Associated visit not found with the given VisitId.');
             }
-    
-            // Fetch Pregnancy
+
             const pregnancy = await this._pregnancyService.getById(model.PregnancyId);
             if (!pregnancy) {
                 throw new ApiError(404, 'Associated pregnancy not found with the given PregnancyId.');
             }
-    
-            // Create Antenatal Visit
+
             const antenatalVisit = await this._antenatalService.create(model);
             if (antenatalVisit == null) {
                 throw new ApiError(400, 'Cannot create record for antenatal visit!');
             }
-    
-            // Attach related records to the response
+
             const responseData = {
                 ...antenatalVisit,
                 Visit: visit,
@@ -274,58 +270,6 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
-
-    // createAntenatalVisit = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         const model = await this._validator.createAntenatalVisit(request);
-    
-    //         const visit = await this._visitService.getById(model.VisitId);
-    //         if (!visit) {
-    //             throw new ApiError(404, 'Associated visit not found with the given VisitId.');
-    //         }
-    
-    //         const antenatalVisit = await this._antenatalService.create(model);
-    //         if (antenatalVisit == null) {
-    //             throw new ApiError(400, 'Cannot create record for antenatal visit!');
-    //         }
-    
-    //         const responseData = {
-    //             ...antenatalVisit,
-    //             Visit: visit
-    //         };
-    
-    //         ResponseHandler.success(request, response, 'Antenatal visit record created successfully!', 201, {
-    //             AntenatalVisit: responseData,
-    //         });
-    
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-    
-
-    // createAntenatalVisit = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         const model = await this._validator.createAntenatalVisit(request);
-
-    //         const visit = await this._visitService.getById(model.VisitId);
-    //         if (!visit) {
-    //             throw new ApiError(404, 'Associated visit not found with the given VisitId.');
-    //         }
-
-    //         const antenatalVisit = await this._antenatalService.create(model);
-    //         if (antenatalVisit == null) {
-    //             throw new ApiError(400, 'Cannot create record for antenatal visit!');
-    //         }
-
-    //         ResponseHandler.success(request, response, 'Antenatal visit record created successfully!', 201, {
-    //             AntenatalVisit: antenatalVisit,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     } 
-    // };
 
     getAntenatalVisitById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

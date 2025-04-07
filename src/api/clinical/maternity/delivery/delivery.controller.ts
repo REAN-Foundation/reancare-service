@@ -159,22 +159,18 @@ export class DeliveryController extends BaseController {
 
      createPostnatalVisit = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            // Validate input and get model
+            
             const model = await this._validator.createPostnatalVisit(request);
-    
-            // Fetch associated Delivery
             const delivery = await this._service.getById(model.DeliveryId);
             if (!delivery) {
                 throw new ApiError(404, 'Associated delivery not found with the given DeliveryId.');
             }
     
-            // Create Postnatal Visit record
             const postnatalVisit = await this._postnatalVisitService.create(model);
             if (postnatalVisit == null) {
                 throw new ApiError(400, 'Cannot create record for postnatal visit!');
             }
-    
-            // Prepare response with Delivery info
+
             const responseData = {
                 ...postnatalVisit,
                 Delivery: delivery
@@ -188,23 +184,6 @@ export class DeliveryController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
-
-    //  createPostnatalVisit = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         const model = await this._validator.createPostnatalVisit(request);
-    //         const postnatalVisit = await this._postnatalVisitService.create(model);
-    //         if (postnatalVisit == null) {
-    //             throw new ApiError(400, 'Cannot create record for postnatal visit!');
-    //         }
-
-    //         ResponseHandler.success(request, response, 'Postnatal visit record created successfully!', 201, {
-    //             PostnatalVisit: postnatalVisit,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
 
     getPostnatalVisitById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

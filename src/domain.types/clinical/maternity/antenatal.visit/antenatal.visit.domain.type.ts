@@ -1,4 +1,6 @@
 import { uuid } from "../../../miscellaneous/system.types";
+import { VisitDomainModel } from "../../visit/visit.domain.model";
+import { PregnancyDomainModel } from "../pregnancy/pregnancy.domain.model";
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -16,4 +18,6 @@ export interface AntenatalVisitDomainModel {
     BodyWeightID?              : uuid;
     BodyTemperatureId?         : uuid;
     BloodPressureId?           : uuid;
+    Visit?                     : VisitDomainModel;
+    Pregnancy?                 : PregnancyDomainModel;
 }

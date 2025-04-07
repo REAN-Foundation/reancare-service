@@ -175,7 +175,38 @@ export class PregnancyValidator extends BaseValidator {
 
     //#region Antenatal visit
 
+    getAntenatalVisitDomainModel = (request: express.Request): AntenatalVisitDomainModel => {
+
+        const antenatalVisitModel: AntenatalVisitDomainModel = {
+            VisitId           : request.body.VisitId ?? null,
+            Visit             : request.body.Visit ?? null,
+            PregnancyId       : request.body.PregnancyId,
+            Pregnancy         : request.body.Pregnancy ?? null,
+            PatientUserId     : request.body.PatientUserId,
+            DateOfVisit       : request.body.DateOfVisit,
+            GestationInWeeks  : request.body.GestationInWeeks,
+            FetalHeartRateBPM : request.body.FetalHeartRateBPM,
+            FundalHeight      : request.body.FundalHeight,
+            DateOfNextVisit   : request.body.DateOfNextVisit,
+        };
+    
+        return antenatalVisitModel;
+    };
+    
     createAntenatalVisit = async (request: express.Request): Promise<AntenatalVisitDomainModel> => {
+        await this.validateAntenatalVisitCreateBody(request);
+        return this.getAntenatalVisitDomainModel(request);
+    };
+    
+    updateAntenatalVisit = async (request: express.Request): Promise<AntenatalVisitDomainModel> => {
+        await this.validateAntenatalVisitUpdateBody(request);
+        const domainModel = this.getAntenatalVisitDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
+        return domainModel;
+    };
+    
+    private async validateAntenatalVisitCreateBody(request: express.Request) {
+    
         await this.validateUuid(request, 'VisitId', Where.Body, true, false);
         await this.validateUuid(request, 'PregnancyId', Where.Body, true, false);
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
@@ -184,12 +215,12 @@ export class PregnancyValidator extends BaseValidator {
         await this.validateInt(request, 'FetalHeartRateBPM', Where.Body, true, false);
         await this.validateObject(request, 'FundalHeight', Where.Body, true, false);
         await this.validateDate(request, 'DateOfNextVisit', Where.Body, true, false);
-        
+    
         this.validateRequest(request);
-        return request.body;
-    };
-
-    updateAntenatalVisit = async (request: express.Request): Promise<AntenatalVisitDomainModel> => {
+    }
+    
+    private async validateAntenatalVisitUpdateBody(request: express.Request) {
+    
         await this.validateUuid(request, 'VisitId', Where.Body, false, false);
         await this.validateUuid(request, 'PregnancyId', Where.Body, false, false);
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
@@ -198,10 +229,9 @@ export class PregnancyValidator extends BaseValidator {
         await this.validateInt(request, 'FetalHeartRateBPM', Where.Body, false, false);
         await this.validateObject(request, 'FundalHeight', Where.Body, false, false);
         await this.validateDate(request, 'DateOfNextVisit', Where.Body, false, false);
-        
+    
         this.validateRequest(request);
-        return request.body;
-    };
+    }
 
     createAntenatalMedication = async (request: express.Request): Promise<AntenatalMedicationDomainModel> => {
         await this.validateUuid(request, 'AnteNatalVisitId', Where.Body, true, false);
@@ -271,3 +301,7 @@ export class PregnancyValidator extends BaseValidator {
         return request.body;
     };
 }
+function uuidv4() {
+    throw new Error('Function not implemented.');
+}
+

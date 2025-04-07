@@ -1,4 +1,6 @@
 import { uuid } from "../../../miscellaneous/system.types";
+import { VisitDto } from "../../visit/visit.dto";
+import { PregnancyDto } from "../pregnancy/pregnancy.dto";
 
 export interface AntenatalVisitDto {
     id?                    :uuid;
@@ -13,4 +15,6 @@ export interface AntenatalVisitDto {
     BodyWeightID?          : string;
     BodyTemperatureId?     : string;
     BloodPressureId?       : string;
+    Visit?                 : VisitDto;
+    Pregnancy?             :PregnancyDto;
 }

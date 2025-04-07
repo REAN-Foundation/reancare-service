@@ -1,7 +1,9 @@
 import {
-    Column, CreatedAt, DataType, DeletedAt, IsUUID, Model, PrimaryKey, Table, UpdatedAt
+    Column, CreatedAt, DataType, DeletedAt, HasMany, HasOne, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
+import AnteNatalVisit from './antenatal.visit.model';
+import Delivery from './delivery.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -58,6 +60,12 @@ export default class Pregnancy extends Model {
         allowNull : false,
     })
     Parity: number;
+
+    @HasMany(() => AnteNatalVisit)
+    AnteNatalVisits: AnteNatalVisit[];
+
+    @HasOne(() => Delivery)
+    Delivery: Delivery;
 
     @Column
     @CreatedAt

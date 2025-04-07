@@ -1,4 +1,5 @@
 import {
+    BelongsTo,
     Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 

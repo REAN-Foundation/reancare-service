@@ -1,3 +1,5 @@
+import { DeliveryDto } from "../delivery/delivery.dto";
+
 export interface PostnatalVisitDto {
     id?                  : string;
     DeliveryId           : string;
@@ -7,4 +9,5 @@ export interface PostnatalVisitDto {
     ComplicationId?      : string;
     BodyTemperatureId?   : string;
     BloodPressureId?     : string;
+    Delivery?            : DeliveryDto;
 }

@@ -36,6 +36,7 @@ import { ConditionProcessor } from './condition.processor';
 import { Injector } from '../../../startup/injector';
 import { Logger } from '../../../common/logger';
 import { log } from 'console';
+import { Type } from '@aws-sdk/client-s3/dist-types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -647,6 +648,23 @@ export class AssessmentService {
                 chosenPath = path;
                 break;
             }
+            if (resolved === false) {
+                const node = await this._assessmentHelperRepo.getNodeById(nodeId);
+                var parentDetailsDerived = await this._assessmentHelperRepo.getNodeById(node.ParentNodeId);
+                while (parentDetailsDerived.NodeType !== AssessmentNodeType.NodeList) {
+                    parentDetailsDerived = await this._assessmentHelperRepo.getNodeById(parentDetailsDerived.ParentNodeId);//Type checking
+                }
+                const paths = await this._assessmentHelperRepo.getNodePaths(parentDetailsDerived.id);
+                for await (var path of paths) {
+                    const nextNode = await this._assessmentHelperRepo.getNodeById(path.NextNodeId);//Type checking 
+                    if (nextNode.id !== nodeId){
+                        chosenPath = path;
+                        break;
+                    }
+                    
+                }
+
+            }
         }
         return chosenPath;
     }
@@ -755,14 +773,24 @@ export class AssessmentService {
         );
 
         const chosenOptionSequence = answerModel.IntegerValue;
-        if (
+        if ((
+            answerModel.IntegerValue !== null || answerModel.FloatValue !== -1 || answerModel.TextValue !== null) && (
             !chosenOptionSequence ||
             chosenOptionSequence < minSequenceValue ||
             chosenOptionSequence > maxSequenceValue
-        ) {
+        )) {
             throw new Error(`Invalid option index! Cannot process the condition!`);
         }
-
+        else if (answerModel.IntegerValue === null || answerModel.FloatValue === -1 || answerModel.TextValue !== null) {
+            const answer = null;
+            const answerDto = AssessmentHelperMapper.toSingleChoiceAnswerDto(
+                assessmentId,
+                questionNode,
+                chosenOptionSequence,
+                answer
+            );
+            return { answerDto, paths, chosenOptionSequence, nodeId };
+        }
         const answer = options.find((x) => x.Sequence === chosenOptionSequence);
         const answerDto = AssessmentHelperMapper.toSingleChoiceAnswerDto(
             assessmentId,
@@ -840,9 +868,14 @@ export class AssessmentService {
             if (!choice || choice < minSequenceValue || choice > maxSequenceValue) {
                 throw new Error(`Invalid option index! Cannot process the condition!`);
             }
-            const answer = options.find((x) => x.Sequence === choice);
-            selectedOptions.push(answer);
-        }
+            else if (answerModel.IntegerValue !== null || answerModel.FloatValue !== -1 || answerModel.TextValue !== null) {
+                const answer = null;
+                selectedOptions.push(answer);
+            }
+            else {
+                const answer = options.find((x) => x.Sequence === choice);
+                selectedOptions.push(answer);
+            } }
 
         const answerDto = AssessmentHelperMapper.toMultiChoiceAnswerDto(
             assessmentId,

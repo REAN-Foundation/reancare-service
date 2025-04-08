@@ -17,6 +17,10 @@ export class ConditionProcessor {
 
     public processCondition = async (condition: CAssessmentPathCondition, argument: any): Promise<boolean> => {
 
+        if (!argument){
+            return false;
+        }
+        
         if (!condition || !argument) {
             throw new Error(`Invalid condition to process!`);
         }
